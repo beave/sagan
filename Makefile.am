@@ -11,11 +11,11 @@ INCLUDES = @INCLUDES@
 
 install-data-local:
 	test -z "$(sysconfdir)" || /bin/mkdir -p "$(sysconfdir)"
-	test -f $(sysconfdir)/sagan.conf || $(INSTALL_DATA) etc/sagan.conf $(sysconfdir)/sagan.conf
-	test -z "$(sbindir)" || /bin/mkdir -p "$(sbindir)"
-	$(INSTALL) -m 755 src/sagan $(sbindir)/sagan
-	$(INSTALL) -d /var/log/sagan
-	$(INSTALL) -d /var/run/sagan
+	test -f $(sysconfdir)/sagan.conf || $(INSTALL_DATA) etc/sagan.conf "$(DESTDIR)$(sysconfdir)/sagan.conf"
+	test -z "$(DESTDIR)$(sbindir)" || /bin/mkdir -p "$(DESTDIR)$(sbindir)"
+	$(INSTALL) -m 755 src/sagan "$(DESTDIR)$(sbindir)/sagan"
+	$(INSTALL) -d "$(DESTDIR)/var/log/sagan"
+	$(INSTALL) -d "$(DESTDIR)/var/run/sagan"
 	@echo ""
 	@echo "------------------------------------------------------------------------------"
 	@echo "Sagan has been installed!  You still need to do a few more things before your"
