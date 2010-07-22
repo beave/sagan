@@ -10,8 +10,8 @@ INCLUDES = @INCLUDES@
 #	$(INSTALL_DATA)sagan.conf $(sysconfdir)/sagan.conf
 
 install-data-local:
-	test -z "$(sysconfdir)" || /bin/mkdir -p "$(sysconfdir)"
-	test -f $(sysconfdir)/sagan.conf || $(INSTALL_DATA) etc/sagan.conf "$(DESTDIR)$(sysconfdir)/sagan.conf"
+	test -z "$(DESTDIR)$(sysconfdir)" || /bin/mkdir -p "$(DESTDIR)$(sysconfdir)"
+	test -f "$(DESTDIR)$(sysconfdir)/sagan.conf" || $(INSTALL_DATA) etc/sagan.conf "$(DESTDIR)$(sysconfdir)/sagan.conf"
 	test -z "$(DESTDIR)$(sbindir)" || /bin/mkdir -p "$(DESTDIR)$(sbindir)"
 	$(INSTALL) -m 755 src/sagan "$(DESTDIR)$(sbindir)/sagan"
 	$(INSTALL) -d "$(DESTDIR)/var/log/sagan"
