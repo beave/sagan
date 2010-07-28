@@ -508,7 +508,7 @@ if (pid == 0) {} else { exit(0); }
 
 /* We don't want the key_handler() if we're in program/daemon mode! */
 
-if (!daemonize && !program) { 
+if (!daemonize && !programmode) { 
 
 if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 	removelockfile();
