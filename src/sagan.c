@@ -349,12 +349,6 @@ int key;
 time_t t;
 struct tm *now;
 
-if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) { 
-        removelockfile();
-        sagan_log(1, "[%s, line %d] Error creating signa handler thread.", __FILE__, __LINE__);
-        }
-
-
 /* Get command line arg's */
 while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1) { 
    
@@ -407,10 +401,19 @@ sig_thread_args[0].daemonize = daemonize;
 sagan_log(0, "Sagan version %s is firing up!", VERSION);
 load_config();
 sagan_log(0, "Configuration file loaded and %d rules loaded.", rulecount);
+droppriv(runas);
 sagan_log(0, "---------------------------------------------------------------------------");
 
-/* Allocate memory for external program thread structure */
+/* Create signal handler thread */ 
 
+if (!daemonize) { 
+if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
+        removelockfile();
+        sagan_log(1, "[%s, line %d] Error creating signa handler thread.", __FILE__, __LINE__);
+        }
+}
+
+/* Allocate memory for external program thread structure */
 
 if ( strcmp(sagan_extern, "" )) { 
 ext_thread_args = malloc(MAX_THREADS * sizeof(struct ext_thread_args));
@@ -466,8 +469,6 @@ if ( fifoi == 0 ) {
    sagan_log(0, "Opening syslog FIFO (%s)", fifo);
    fd = open(fifo, O_RDONLY); 
    }
-
-droppriv(runas);	/* Drop priv's here,  so we can open FIFO even if owned by 'root' */
 
 
 sagan_log(0, "");
