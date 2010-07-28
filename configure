@@ -732,8 +732,14 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_mysql
+with_libmysql_includes
+with_mysql_libraries
 enable_postgresql
+with_libpostgresql_includes
+with_postgresql_libraries
 enable_esmtp
+with_libesmtp_includes
+with_esmtp_libraries
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1380,6 +1386,16 @@ Optional Features:
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-mysql-includes=DIR    MySQL include directory
+  --with-mysql-libraries=DIR   MySQL library directory
+  --with-postgresql-includes=DIR    PostgreSQL include directory
+  --with-postgresql-libraries=DIR   PostgreSQL library directory
+  --with-esmtp-includes=DIR    libesmtp include directory
+  --with-esmtp-libraries=DIR   libesmtp library directory
+
 Some influential environment variables:
   CC          C compiler command
   CFLAGS      C compiler flags
@@ -2002,6 +2018,33 @@ else
 fi
 
 
+
+# Check whether --with-libmysql_includes was given.
+if test "${with_libmysql_includes+set}" = set; then
+  withval=$with_libmysql_includes; with_mysql_includes="$withval"
+else
+  with_mysql_includes="no"
+fi
+
+
+
+# Check whether --with-mysql_libraries was given.
+if test "${with_mysql_libraries+set}" = set; then
+  withval=$with_mysql_libraries; with_mysql_libraries="$withval"
+else
+  with_mysql_libraries="no"
+fi
+
+
+if test "x$with_mysql_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_mysql_includes}"
+   fi
+
+if test "x$with_mysql_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_mysql_libraries}"
+fi
+
+
 # Check whether --enable-postgresql was given.
 if test "${enable_postgresql+set}" = set; then
   enableval=$enable_postgresql;  POSTGRES="$enableval"
@@ -2011,12 +2054,66 @@ else
 fi
 
 
+
+# Check whether --with-libpostgresql_includes was given.
+if test "${with_libpostgresql_includes+set}" = set; then
+  withval=$with_libpostgresql_includes; with_postgresql_includes="$withval"
+else
+  with_postgresql_includes="no"
+fi
+
+
+
+# Check whether --with-postgresql_libraries was given.
+if test "${with_postgresql_libraries+set}" = set; then
+  withval=$with_postgresql_libraries; with_postgresql_libraries="$withval"
+else
+  with_postgresql_libraries="no"
+fi
+
+
+if test "x$with_postgresql_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_postgresql_includes}"
+   fi
+
+if test "x$with_postgresql_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_postgresql_libraries}"
+fi
+
+
 # Check whether --enable-esmtp was given.
 if test "${enable_esmtp+set}" = set; then
   enableval=$enable_esmtp;  ESMTP="$enableval"
 else
    ESMTP="yes"
 
+fi
+
+
+
+# Check whether --with-libesmtp_includes was given.
+if test "${with_libesmtp_includes+set}" = set; then
+  withval=$with_libesmtp_includes; with_esmtp_includes="$withval"
+else
+  with_esmtp_includes="no"
+fi
+
+
+
+# Check whether --with-esmtp_libraries was given.
+if test "${with_esmtp_libraries+set}" = set; then
+  withval=$with_esmtp_libraries; with_esmtp_libraries="$withval"
+else
+  with_esmtp_libraries="no"
+fi
+
+
+if test "x$with_esmtp_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_esmtp_includes}"
+   fi
+
+if test "x$with_esmtp_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_esmtp_libraries}"
 fi
 
 
