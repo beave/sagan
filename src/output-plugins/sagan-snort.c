@@ -355,11 +355,15 @@ return(t_sig_id);
 
 void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int dbtype ) { 
 
-char *timestamp = NULL;
+//char *timestamp = NULL;
 char sqltmp[MAXSQL];
 char *sql;
 
-timestamp = gettimestamp();
+char timestamp[50];
+
+
+snprintf(timestamp, sizeof(timestamp), "%s", gettimestamp() );
+//timestamp = gettimestamp();
 
 printf("DEBUG TIMESTAMP: |%s|\n", timestamp);
 
