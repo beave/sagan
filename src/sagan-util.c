@@ -111,6 +111,8 @@ int len = 30;
 now = localtime(&t); 
 strftime(timebuf, len, "%Y-%m-%d %H:%M:%S", now);
 timeret=timebuf;
+
+printf("DEBUG2: %s\n", timeret);
 return(timeret);
 
 }

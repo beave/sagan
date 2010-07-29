@@ -355,19 +355,19 @@ return(t_sig_id);
 
 void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int dbtype ) { 
 
-//char *timestamp = NULL;
+char *timestamp = NULL;
 char sqltmp[MAXSQL];
 char *sql;
 
-char timestamp[50];
+//snprintf(timestamp, sizeof(timestamp), "%s", gettimestamp() );
+timestamp = gettimestamp();
 
+//printf("DEBUG1 TIMESTAMP: |%s|\n", timestamp);
 
-snprintf(timestamp, sizeof(timestamp), "%s", gettimestamp() );
-//timestamp = gettimestamp();
+//snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, timestamp );
 
-printf("DEBUG TIMESTAMP: |%s|\n", timestamp);
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, gettimestamp() );
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, timestamp );
 sql=sqltmp;
 db_query( dbtype, sql );
 
@@ -552,12 +552,20 @@ int i;
 char *hex_data = NULL;
 char message[MAX_SYSLOGMSG];
 
+char ip_srctmp[65];
+char ip_dsttmp[65];
+
 snprintf(message, sizeof(message), "%s", targs->message);  /* Collison if targs->message is used */
+snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", targs->ip_src);
+snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", targs->ip_dst);
 
 sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
 
 insert_event( sensor_id, targs->cid, sig_sid, dbtype);
-insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
+//insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
+
+insert_hdr(sensor_id, targs->cid, ip_srctmp, ip_dsttmp, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
+
 hex_data = fasthex(message, strlen(message));
 insert_payload ( sensor_id, targs->cid, hex_data, dbtype ) ;
 

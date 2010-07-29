@@ -855,8 +855,12 @@ while(1) {
 
 		   /* Never,  ever give us loopback.  That does us no good. */
 
+		   printf("ip_src_b: %s\n", ip_src);
+
 		   if (!strcmp(ip_src, "127.0.0.1")) ip_src = sagan_host;
 		   if (!strcmp(ip_dst, "127.0.0.1")) ip_dst = sagan_host;
+
+		   printf("ip_src_a: %s\n", ip_src);
 
 		   thresh_log_flag = 0;
 
