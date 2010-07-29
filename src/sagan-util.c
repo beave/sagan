@@ -93,29 +93,6 @@ void droppriv(const char *username)
 	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 }
 
-/*******************************************************************************
- * Get current timestamp based on localtime.  Should probably add gmtime later *
- *******************************************************************************/
-
-char *gettimestamp( void ) { 
-
-time_t	t;
-struct tm *now; 
-t = time(NULL);
-
-char timebuf[30];
-char *timeret; 
-
-int len = 30;
-
-now = localtime(&t); 
-strftime(timebuf, len, "%Y-%m-%d %H:%M:%S", now);
-timeret=timebuf;
-
-return(timeret);
-
-}
-
 /***************************************************************/
 /* Convert syslog data to hex for input into the payload table */
 /***************************************************************/

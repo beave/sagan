@@ -353,18 +353,13 @@ return(t_sig_id);
 /* Insert into event table */
 /***************************/
 
-void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int dbtype ) { 
+void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int dbtype,  char *date,  char *time ) { 
 
 char *timestamp = NULL;
 char sqltmp[MAXSQL];
 char *sql;
 
-//snprintf(timestamp, sizeof(timestamp), "%s", gettimestamp() );
-//timestamp = gettimestamp();
-//printf("DEBUG1 TIMESTAMP: |%s|\n", timestamp);
-//snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, timestamp );
-
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, gettimestamp() );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
 
 sql=sqltmp;
 db_query( dbtype, sql );
@@ -559,7 +554,7 @@ snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", targs->ip_dst);
 
 sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
 
-insert_event( sensor_id, targs->cid, sig_sid, dbtype);
+insert_event( sensor_id, targs->cid, sig_sid, dbtype, targs->date, targs->time );
 //insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
 
 insert_hdr(sensor_id, targs->cid, ip_srctmp, ip_dsttmp, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );

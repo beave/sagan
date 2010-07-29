@@ -53,7 +53,7 @@
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-#define HAVE_LIBPQ 1
+/* #undef HAVE_LIBPQ */
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1

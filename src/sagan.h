@@ -125,7 +125,7 @@ int  get_sig_sid( char *,  char *,
                   int         ,  int  );
 
 
-void insert_event (int, unsigned long long, int, int );
+void insert_event (int, unsigned long long, int, int, char *, char * );
 
 void insert_hdr (int , unsigned long long , 
                  char *,  char *, 
@@ -229,6 +229,8 @@ struct db_args {
 	int endian;
 	int dst_port;
 	int src_port;
+        char *date;
+	char *time;
         }; 
 
 struct db_info {
@@ -249,6 +251,8 @@ struct db_thread_args {
 	int endian;
 	int dst_port;
 	int src_port;
+ 	char *date;
+	char *time;
         };
 
 struct logzilla_thread_args {

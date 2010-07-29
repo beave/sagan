@@ -1133,6 +1133,8 @@ while(1) {
 		   db_args[threadid].endian=endianchk;
 		   db_args[threadid].dst_port = rulestruct[b].dst_port;
 		   db_args[threadid].src_port = src_port;
+		   db_args[threadid].date = syslog_date;
+                   db_args[threadid].time = syslog_time;
 
 		if ( pthread_create( threaddb_id, &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
 		    removelockfile();
