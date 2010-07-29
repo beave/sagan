@@ -360,10 +360,8 @@ char sqltmp[MAXSQL];
 char *sql;
 
 //snprintf(timestamp, sizeof(timestamp), "%s", gettimestamp() );
-timestamp = gettimestamp();
-
+//timestamp = gettimestamp();
 //printf("DEBUG1 TIMESTAMP: |%s|\n", timestamp);
-
 //snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, timestamp );
 
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, gettimestamp() );

@@ -257,6 +257,9 @@ pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
+
+char ip_srctmp[65];
+
 int  src_port;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
@@ -638,8 +641,8 @@ while(1) {
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
    snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
-//   snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
-//   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
+   snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
+   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
    snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
    snprintf(syslog_tagtmp, sizeof(syslog_tagtmp), "%s", syslog_tag);
@@ -839,12 +842,12 @@ while(1) {
 		         
 			 if (strcmp(fip,"0")) 
                             {
-                            ip_src = fip; ip_dst = syslog_host;
+                            ip_src = fip; ip_dst = syslog_hosttmp;
                             } else { 
-                            ip_src = syslog_host; ip_dst = sagan_host;
+                            ip_src = syslog_hosttmp; ip_dst = sagan_host;
                             }
                       } else { 
-                      ip_src = syslog_host; ip_dst = sagan_host;
+                      ip_src = syslog_hosttmp; ip_dst = sagan_host;
                       }
 
 		   if ( rulestruct[b].s_find_port == 1) { 
@@ -855,12 +858,8 @@ while(1) {
 
 		   /* Never,  ever give us loopback.  That does us no good. */
 
-		   printf("ip_src_b: %s\n", ip_src);
-
 		   if (!strcmp(ip_src, "127.0.0.1")) ip_src = sagan_host;
 		   if (!strcmp(ip_dst, "127.0.0.1")) ip_dst = sagan_host;
-
-		   printf("ip_src_a: %s\n", ip_src);
 
 		   thresh_log_flag = 0;
 
