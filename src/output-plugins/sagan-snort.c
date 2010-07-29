@@ -361,6 +361,8 @@ char *sql;
 
 timestamp = gettimestamp();
 
+printf("DEBUG TIMESTAMP: |%s|\n", timestamp);
+
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s')", t_sid, t_cid, t_sig_sid, timestamp );
 sql=sqltmp;
 db_query( dbtype, sql );

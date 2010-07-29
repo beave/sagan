@@ -638,7 +638,7 @@ while(1) {
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
    snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
-   snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
+//   snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
 //   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
    snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
@@ -670,7 +670,7 @@ while(1) {
                       logzilla_thread_args[threadid].priority=syslog_prioritytmp;
                       logzilla_thread_args[threadid].level=syslog_leveltmp;
                       logzilla_thread_args[threadid].tag=syslog_tagtmp;
-                      logzilla_thread_args[threadid].date=syslog_datetmp;
+                      logzilla_thread_args[threadid].date=syslog_date;
                       logzilla_thread_args[threadid].time=syslog_time;
                       logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
@@ -956,7 +956,7 @@ while(1) {
 
 		   /* alert log file */
 		   
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_datetmp, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port );
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_date, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port );
 
 
 #ifdef HAVE_LIBESMTP
@@ -987,7 +987,7 @@ while(1) {
                    	  email_thread_args[threadid].msg = rulestruct[b].s_msg;
                    	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    	  email_thread_args[threadid].pri = fpri;
-                   	  email_thread_args[threadid].date = syslog_datetmp;
+                   	  email_thread_args[threadid].date = syslog_date;
                    	  email_thread_args[threadid].time = syslog_time;
                    	  email_thread_args[threadid].ip_src = ip_src;
                    	  email_thread_args[threadid].ip_dst = ip_dst;
@@ -1028,7 +1028,7 @@ while(1) {
                    ext_thread_args[threadid].msg = rulestruct[b].s_msg;
                    ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    ext_thread_args[threadid].pri = fpri;
-                   ext_thread_args[threadid].date = syslog_datetmp;
+                   ext_thread_args[threadid].date = syslog_date;
                    ext_thread_args[threadid].time = syslog_time;
  		   ext_thread_args[threadid].ip_src = ip_src;
                    ext_thread_args[threadid].ip_dst = ip_dst;
@@ -1076,7 +1076,7 @@ while(1) {
 		      logzilla_thread_args[threadid].priority=syslog_prioritytmp;
 		      logzilla_thread_args[threadid].level=syslog_leveltmp;
 		      logzilla_thread_args[threadid].tag=syslog_tagtmp;
-		      logzilla_thread_args[threadid].date=syslog_datetmp;
+		      logzilla_thread_args[threadid].date=syslog_date;
 		      logzilla_thread_args[threadid].time=syslog_time;
 		      logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
