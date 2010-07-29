@@ -63,7 +63,7 @@ int dochroot=0;
 
 unsigned long long sigcid;		/* Used for CID passing when signal's are caught */
 
-char sagan_hostname[50]="localhost";
+char sagan_hostname[50]="sagan_hostname";
 char sagan_interface[50]="syslog";
 char sagan_filter[50]="none";
 int  sagan_detail=1;
@@ -257,8 +257,6 @@ pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
-char  ip_srctmp[MAXIP];
-char  ip_dsttmp[MAXIP];
 int  src_port;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
@@ -636,12 +634,12 @@ while(1) {
 
 
    pthread_mutex_lock( &general_mutex );
-
+      
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
    snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
-   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
+//   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
    snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
    snprintf(syslog_tagtmp, sizeof(syslog_tagtmp), "%s", syslog_tag);
@@ -673,7 +671,7 @@ while(1) {
                       logzilla_thread_args[threadid].level=syslog_leveltmp;
                       logzilla_thread_args[threadid].tag=syslog_tagtmp;
                       logzilla_thread_args[threadid].date=syslog_datetmp;
-                      logzilla_thread_args[threadid].time=syslog_timetmp;
+                      logzilla_thread_args[threadid].time=syslog_time;
                       logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
 
@@ -855,8 +853,10 @@ while(1) {
 		   src_port = atoi(sagan_port);
 		   }
 
-		   snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", ip_src);
-		   snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", ip_dst);
+		   /* Never,  ever give us loopback.  That does us no good. */
+
+		   if (!strcmp(ip_src, "127.0.0.1")) ip_src = sagan_host;
+		   if (!strcmp(ip_dst, "127.0.0.1")) ip_dst = sagan_host;
 
 		   thresh_log_flag = 0;
 
@@ -956,7 +956,7 @@ while(1) {
 
 		   /* alert log file */
 		   
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port );
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_datetmp, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port );
 
 
 #ifdef HAVE_LIBESMTP
@@ -988,9 +988,9 @@ while(1) {
                    	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    	  email_thread_args[threadid].pri = fpri;
                    	  email_thread_args[threadid].date = syslog_datetmp;
-                   	  email_thread_args[threadid].time = syslog_timetmp;
-                   	  email_thread_args[threadid].ip_src = ip_srctmp;
-                   	  email_thread_args[threadid].ip_dst = ip_dsttmp;
+                   	  email_thread_args[threadid].time = syslog_time;
+                   	  email_thread_args[threadid].ip_src = ip_src;
+                   	  email_thread_args[threadid].ip_dst = ip_dst;
                    	  email_thread_args[threadid].facility = syslog_facilitytmp;
                    	  email_thread_args[threadid].fpri = syslog_leveltmp;
 		   	  email_thread_args[threadid].sysmsg = sysmsg;
@@ -1029,9 +1029,9 @@ while(1) {
                    ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    ext_thread_args[threadid].pri = fpri;
                    ext_thread_args[threadid].date = syslog_datetmp;
-                   ext_thread_args[threadid].time = syslog_timetmp;
- 		   ext_thread_args[threadid].ip_src = ip_srctmp;
-                   ext_thread_args[threadid].ip_dst = ip_dsttmp;
+                   ext_thread_args[threadid].time = syslog_time;
+ 		   ext_thread_args[threadid].ip_src = ip_src;
+                   ext_thread_args[threadid].ip_dst = ip_dst;
                    ext_thread_args[threadid].facility = syslog_facilitytmp;
                    ext_thread_args[threadid].fpri = syslog_leveltmp;
 		   ext_thread_args[threadid].sysmsg = sysmsg;
@@ -1071,13 +1071,13 @@ while(1) {
 		      
 		      if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
 
-		      logzilla_thread_args[threadid].host=ip_srctmp;
+		      logzilla_thread_args[threadid].host=ip_src;
 		      logzilla_thread_args[threadid].facility=syslog_facilitytmp;
 		      logzilla_thread_args[threadid].priority=syslog_prioritytmp;
 		      logzilla_thread_args[threadid].level=syslog_leveltmp;
 		      logzilla_thread_args[threadid].tag=syslog_tagtmp;
 		      logzilla_thread_args[threadid].date=syslog_datetmp;
-		      logzilla_thread_args[threadid].time=syslog_timetmp;
+		      logzilla_thread_args[threadid].time=syslog_time;
 		      logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
 		      
@@ -1121,8 +1121,8 @@ while(1) {
 		   sigcid=cid;
 		   pthread_mutex_unlock( &db_mutex );
 
-		   db_args[threadid].ip_src=ip_srctmp;
-		   db_args[threadid].ip_dst=ip_dsttmp;
+		   db_args[threadid].ip_src=ip_src;
+		   db_args[threadid].ip_dst=ip_dst;
                    db_args[threadid].found=b;
                    db_args[threadid].pri=fpri;
 		   db_args[threadid].message=sysmsg;
@@ -1141,7 +1141,7 @@ while(1) {
 		    sagandrop++;
 		    sagan_log(0, "Snort database thread handler: Out of threads");
 	        }
-	   }
+	    }
 #endif
 	 	    
         }
@@ -1161,41 +1161,4 @@ while(1) {
  }
 } /* end of main */
 
-
-/***************************************************************************/
-/* Snort specific thread code                                              */
-/***************************************************************************/
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-void *sagan_db_thread( void *sthreadargs ) { 
-
-struct db_thread_args * targs = (struct db_thread_args *) sthreadargs;
-
-int sig_sid; 
-int i;
-char *hex_data = NULL;                                         
-
-sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype ); 
-insert_event( sensor_id, targs->cid, sig_sid, dbtype);
-
-insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
-
-pthread_mutex_lock( &db_mutex );			
-hex_data = fasthex(targs->message, strlen(targs->message));
-pthread_mutex_unlock( &db_mutex );
-
-insert_payload ( sensor_id, targs->cid, hex_data, dbtype ) ;
-
-for (i = 0; i < rulestruct[targs->found].ref_count; i++ ) {  
-   query_reference( rulestruct[targs->found].s_reference[i], rulestruct[targs->found].s_sid, sig_sid, i );
-   }
-
-pthread_mutex_lock( &db_mutex );
-threaddbc--;
-pthread_mutex_unlock( &db_mutex );
-
-pthread_exit(NULL);
-}
-#endif
 

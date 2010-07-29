@@ -108,7 +108,6 @@ char *timeret;
 
 int len = 30;
 
-
 now = localtime(&t); 
 strftime(timebuf, len, "%Y-%m-%d %H:%M:%S", now);
 timeret=timebuf;

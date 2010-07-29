@@ -70,6 +70,8 @@ int  sagan_detail;
 
 int sensor_id;
 
+int  threaddbc;
+
 unsigned long long sigcid;
 
 struct rule_struct *rulestruct;
@@ -162,10 +164,10 @@ return(0);
 
 char *db_query ( int dbtype,  char *sql ) { 
 
-pthread_mutex_lock( &db_mutex );
-
 char sqltmp[MAXSQL]; 	/* Make this a MAXSQL or something */
 char *re=NULL;		/* "return" point for row */
+
+pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
@@ -528,6 +530,40 @@ if ( sqlout == NULL )  {
 
    }
 
+}
+
+
+/***************************************************************************/
+/* Snort specific thread code                                              */
+/***************************************************************************/
+
+void *sagan_db_thread( void *sthreadargs ) {
+
+struct db_thread_args * targs = (struct db_thread_args *) sthreadargs;
+
+int sig_sid;
+int i;
+char *hex_data = NULL;
+char message[MAX_SYSLOGMSG];
+
+snprintf(message, sizeof(message), "%s", targs->message);  /* Collison if targs->message is used */
+
+sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
+
+insert_event( sensor_id, targs->cid, sig_sid, dbtype);
+insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
+hex_data = fasthex(message, strlen(message));
+insert_payload ( sensor_id, targs->cid, hex_data, dbtype ) ;
+
+for (i = 0; i < rulestruct[targs->found].ref_count; i++ ) {
+   query_reference( rulestruct[targs->found].s_reference[i], rulestruct[targs->found].s_sid, sig_sid, i );
+   }
+
+pthread_mutex_lock( &db_mutex );
+threaddbc--;
+pthread_mutex_unlock( &db_mutex );
+
+pthread_exit(NULL);
 }
 
 #endif
