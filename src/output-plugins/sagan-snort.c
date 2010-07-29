@@ -548,13 +548,18 @@ char message[MAX_SYSLOGMSG];
 char ip_srctmp[65];
 char ip_dsttmp[65];
 
+char time[30];
+char date[30];
+
 snprintf(message, sizeof(message), "%s", targs->message);  /* Collison if targs->message is used */
 snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", targs->ip_src);
 snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", targs->ip_dst);
+snprintf(time, sizeof(time), "%s", targs->time);
+snprintf(date, sizeof(date), "%s", targs->date);
 
 sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
 
-insert_event( sensor_id, targs->cid, sig_sid, dbtype, targs->date, targs->time );
+insert_event( sensor_id, targs->cid, sig_sid, dbtype, date, time );
 //insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
 
 insert_hdr(sensor_id, targs->cid, ip_srctmp, ip_dsttmp, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
