@@ -560,8 +560,6 @@ snprintf(date, sizeof(date), "%s", targs->date);
 sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
 
 insert_event( sensor_id, targs->cid, sig_sid, dbtype, date, time );
-//insert_hdr(sensor_id, targs->cid, targs->ip_src, targs->ip_dst, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
-
 insert_hdr(sensor_id, targs->cid, ip_srctmp, ip_dsttmp, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
 
 hex_data = fasthex(message, strlen(message));
