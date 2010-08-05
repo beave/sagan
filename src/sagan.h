@@ -108,13 +108,16 @@ char *remquotes(char *);
 void load_classifications( void );
 void load_reference ( void );
 void load_rules ( void );
+char *betweenquotes( char * );
+
 
 void *sagan_alert ( char *,  char *, 
                     char *,  int, 
                     char *,  char *, 
                     char *,  char *, 
                     char *,  char *, 
-                    int   ,  int );  
+                    int   ,  int, 
+		    char * );  
 
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
@@ -178,6 +181,7 @@ int ref_count;
 int dst_port;
 int ip_proto;
 int s_find_port;
+int s_find_ip; 
 
 int threshold_type;		// 1 = limit,  2 = thresh,
 int threshold_src_or_dst;	// 1 ==  src,  2 == dst

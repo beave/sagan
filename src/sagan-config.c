@@ -85,7 +85,6 @@ int min_email_priority;
 
 int max_ext_threads=MAX_EXT_THREADS;
 int programmode;
-int sagan_find_ip;
 
 struct rule_struct *rulestruct;
 int rulecount,i,check;
@@ -171,12 +170,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          sagan_var = strtok_r(NULL, " ", &tok);
          max_logzilla_threads = atoi(sagan_var);
          }
-
-
-     if (!strcmp(sagan_option, "sagan_find_ip")) { 
-        sagan_var = strtok_r(NULL, " ", &tok); 
-	sagan_find_ip = atoi(sagan_var);
-	}
 
      if (!strcmp(sagan_option, "sagan_host")) {
         snprintf(sagan_host, sizeof(sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));

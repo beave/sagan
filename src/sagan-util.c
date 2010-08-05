@@ -473,3 +473,31 @@ if ( from == 1 ) {
 }
 #endif
 
+/* Grab's information between "quotes" and returns it.  Use for things like
+ * parsing msg: and pcre */
+
+char *betweenquotes(char *instring)
+{
+int flag=0;
+int i;
+char tmp1[2];
+char tmp2[512]="";
+char *ret;
+
+for ( i=0; i<strlen(instring); i++) { 
+
+if ( flag == 1 && instring[i] == '\"' ) flag = 0;
+if ( flag == 1 ) { 
+   snprintf(tmp1, sizeof(tmp1), "%c", instring[i]); 
+   strlcat(tmp2, tmp1, sizeof(tmp2));
+   }
+
+if ( instring[i] == '\"' ) flag++;
+
+}
+
+ret=tmp2;
+return(ret);
+}
+
+

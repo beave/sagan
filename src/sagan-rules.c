@@ -45,342 +45,398 @@
 #include "version.h"
 #include "sagan.h"
 
-char *msg=NULL;
-char *pcrerule=NULL;
+char ruleset[MAXPATH];
 
-char *content=NULL;
-char *reference=NULL;
-char *classtype="";
-char *sid=NULL;
-char *rev=NULL;
-char *pri=NULL;
-char *program=NULL;
-char *facility=NULL;
-char *syspri=NULL;
-char *level=NULL;
-char *tag=NULL;
-int dst_port;
-int ip_proto;
-int sagan_proto;
-
-char *defaultpri;
-
-int rulecount;
 int devdebug;
-char sagan_port[6];
 
 struct rule_struct *rulestruct;
-
-char ruleset[MAXPATH];
+int rulecount;
+int sagan_proto;
+char sagan_port[6];
 
 void load_rules( void ) { 
 
-	FILE *rulesfile;
+FILE *rulesfile;
 
-	char *token;
-	char *tmptoken;
-	char rulebuf[RULEBUF];
-	char *firststring=NULL;
-	char *netstring=NULL;
-	char *laststring=NULL;
-	char *saveptr1=NULL;
-	char *saveptr2=NULL;
-	char *saveptr3=NULL;
-	char *str1=NULL;
-	char *threshold_tmp;
-	char *thresh_tmp;
+char *rulestring;
+char *netstring; 
 
-	char tmptoken2[128];
+char *tokenrule;
+char *tokennet;
+char *rulesplit;
+char *arg;
+char *arg2;
+char *saveptrnet;
+char *saveptrrule1;
+char *saveptrrule2;
+char *saveptrrule3;
+char *pcrerule;
+char *tmptoken;
+char *threshold_tmp;
+char *thresh_tmp;
 
-	int find_port=0;
-	int nocase=0;
+char netstr[RULEBUF];
+char rulestr[RULEBUF];
+char rulebuf[RULEBUF];
+char *pcretmp;
+char pcretmp2[RULEBUF];
+char tmp2[512];
+char tmp[2];
 
-        int i;
-	int pcre_count=0;
-	char tmp[10];
-	char *pcretmp;
-	char pcretmp2[1024]="";
-	int pcreoptions=0;
-	int pcreflag;
-	int content_count=0;
-	int linecount=0;
-	int ref_count=0;
+int linecount=0;
+int netcount=0;
+int ref_count=0;
+int content_count=0;
+int pcre_count=0;
+int pcreflag=0;
+int pcreoptions=0;
 
-         if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
-            sagan_log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
-          }
+int i, forward, reverse; 
 
-         sagan_log(0, "Loading %s rule file", ruleset);
+/* Rule vars */
 
-                while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
-                   {
-		   linecount++;
+int ip_proto;
+int dst_port;
+
+
+if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
+   sagan_log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
+   }
+
+sagan_log(0, "Loading %s rule file", ruleset);
+
+while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
 		   
-		   if (rulebuf[0] == '#' || rulebuf[0] == 10 || rulebuf[0] == ';' || rulebuf[0] == 32) { 
-		       continue;
-		       } else { 
-		       /* Allocate memory for rules, but not comments */
-		       rulestruct = (rule_struct *) realloc(rulestruct, (rulecount+1) * sizeof(rule_struct));
-		       }
+	linecount++;
+   
+	if (rulebuf[0] == '#' || rulebuf[0] == 10 || rulebuf[0] == ';' || rulebuf[0] == 32) { 
+        continue;
+        } else { 
+	/* Allocate memory for rules, but not comments */
+	rulestruct = (rule_struct *) realloc(rulestruct, (rulecount+1) * sizeof(rule_struct));
+	}
 
-                   firststring = strtok_r(rulebuf, "(", &saveptr2);
-                   tmptoken = strtok_r(NULL, "(" , &saveptr2);
-                   laststring = strtok_r(tmptoken, ")", &saveptr2);
+remrt(rulebuf);
 
-		   netstring = strtok_r(firststring, " ", &saveptr1);
+/* Parse forward for the first '(' */
 
-                   classtype=""; pcrerule=""; reference=""; sid=""; rev=""; pri="";
-                   program=""; facility=""; syspri=""; level=""; tag=""; content="";
-		   dst_port = atoi(sagan_port);
+for (i=0; i<strlen(rulebuf); i++) {
+    if ( rulebuf[i] == '(' ) {
+       forward=i; break;
+       }
+}
 
-		   /* We aren't using $HOME_NET (yet).  We do need port information, 
-		    * so we move to that position - ie $HOME_NET 22, we need the
-		    * port 22 */
+/* Parse reverse for the first ')' */
 
-		   for ( i = 0; i < 1; i++) { 
-		   token = strtok_r(NULL, " ", &saveptr1);
-		   }
+for (i=strlen(rulebuf); i>0; i--) {
+    if ( rulebuf[i] == ')' ) {
+       reverse=i; break;
+       }
+}
 
-		   if ( strcmp(token, "tcp") && strcmp(token, "udp" ) && strcmp(token, "icmp" ) ) 
-		       {
-		       ip_proto = sagan_proto; // Unknown? Got with default
-		       } else {
-		       if (!strcmp(token, "icmp")) ip_proto = 1;
-		       if (!strcmp(token, "tcp")) ip_proto = 6;
-		       if (!strcmp(token, "udp")) ip_proto = 17;
-		       }
+/* Get rule structure,  minus the ( ) */
 
-                   for ( i = 1; i < 6; i++) {
-                   token = strtok_r(NULL, " ", &saveptr1);
-                   }
+for (i=forward+1; i<reverse; i++) {
+    snprintf(tmp, sizeof(tmp), "%c", rulebuf[i]);
+    strlcat(rulestr, tmp, sizeof(rulestr));
+}
 
-		   if ( token == NULL ) sagan_log(1, "[%s, line %d] Destination port error on line number %d in %s.", __FILE__, __LINE__, linecount, ruleset);
-		   if (strcmp(token, "any")) dst_port = atoi(token); // If not any, fill with value.
+/* Get the network information, before the rule */
 
-                   for(i = 0, str1 = laststring; ;i++, str1 = NULL )
-                      {
-                      if ( i == 0 ) { token = strtok_r(laststring, ";", &saveptr2); } else { token = strtok_r(NULL, ";", &saveptr2);
-                      }
+for (i=0; i<forward; i++) { 
+    snprintf(tmp, sizeof(tmp), "%c", rulebuf[i]);
+    strlcat(netstr, tmp, sizeof(netstr)); 
+}
+
+/* Assign pointer's to values */
+
+netstring = netstr;
+rulestring = rulestr;
+
+
+/****************************************************************************/
+/* Parse the section _before_ the rule set.  This is stuff like $HOME_NET,  */
+/* $EXTERNAL_NET, etc                                                       */
+/****************************************************************************/
+
+tokennet = strtok_r(netstring, " ", &saveptrnet);
+while ( tokennet != NULL ) {
+
+   /* Protocol */
+   if ( netcount == 1 ) { 
+      ip_proto = sagan_proto;
+      if (!strcmp(tokennet, "icmp" )) ip_proto = 1; 
+      if (!strcmp(tokennet, "tcp"  )) ip_proto = 6;
+      if (!strcmp(tokennet, "udp"  )) ip_proto = 17;
+      }
+
+      rulestruct[rulecount].ip_proto = ip_proto;
+
+   /* Destination Port */
+   if ( netcount == 6 ) { 
+      dst_port = atoi(sagan_port);
+      if (strcmp(tokennet, "any")) dst_port = atoi(tokennet); 
+      }
+      
+      rulestruct[rulecount].dst_port = dst_port; 
+
+   tokennet = strtok_r(NULL, " ", &saveptrnet);
+   netcount++;
+}
+
+
+/*****************************************************************************/
+/* Parse the rule set!                                                       */
+/*****************************************************************************/
+
+
+tokenrule = strtok_r(rulestring, ";", &saveptrrule1);
+
+while ( tokenrule != NULL ) {
+
+rulesplit = strtok_r(tokenrule, ":", &saveptrrule2);
+remspaces(rulesplit);
+
+	/* single flag options.  (nocase, find_port, etc) */
+
+	if (!strcmp(rulesplit, "nocase")) { 
+	       strtok_r(NULL, ":", &saveptrrule2);
+	       rulestruct[rulecount].s_nocase = 1;
+	       }
+
+	if (!strcmp(rulesplit, "find_port")) {
+	       strtok_r(NULL, ":", &saveptrrule2);
+	       rulestruct[rulecount].s_find_port = 1;
+	       }
+
+	if (!strcmp(rulesplit, "find_ip")) { 
+	       strtok_r(NULL, ":", &saveptrrule2);
+	       rulestruct[rulecount].s_find_ip = 1;
+	       }
+
+	/* Non-quioted information (sid, reference, etc) */
+
+	if (!strcmp(rulesplit, "rev" )) {
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"rev\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_rev, sizeof(rulestruct[rulecount].s_rev), "%s", remspaces(arg));
+		}
+
+	if (!strcmp(rulesplit, "classtype" )) { 
+	        arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"classtype\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_classtype, sizeof(rulestruct[rulecount].s_classtype), "%s", remspaces(arg));
+		}
+	
+	if (!strcmp(rulesplit, "program" )) { 
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"program\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_program, sizeof(rulestruct[rulecount].s_program), "%s", remspaces(arg));
+		}
+
+	if (!strcmp(rulesplit, "reference" )) {
+	 	arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"reference\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_reference[ref_count], sizeof(rulestruct[rulecount].s_reference[ref_count]), "%s", remspaces(arg));
+		rulestruct[rulecount].ref_count=ref_count;
+		ref_count++;
+		}
+
+	if (!strcmp(rulesplit, "sid" )) { 
+	        arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"sid\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_sid, sizeof(rulestruct[rulecount].s_sid), "%s", remspaces(arg));
+		}
+	
+        if (!strcmp(rulesplit, "tag" )) {
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+                if (arg == NULL ) sagan_log(1, "The \"tag\" appears to be incomplete");
+                snprintf(rulestruct[rulecount].s_tag, sizeof(rulestruct[rulecount].s_tag), "%s", remspaces(arg));
+                }
+
+        if (!strcmp(rulesplit, "facility" )) {
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+                if (arg == NULL ) sagan_log(1, "The \"facility\" appears to be incomplete");
+                snprintf(rulestruct[rulecount].s_facility, sizeof(rulestruct[rulecount].s_facility), "%s", remspaces(arg));
+                }
+
+        if (!strcmp(rulesplit, "level" )) {
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+                if (arg == NULL ) sagan_log(1, "The \"level\" appears to be incomplete");
+                snprintf(rulestruct[rulecount].s_level, sizeof(rulestruct[rulecount].s_level), "%s", remspaces(arg));
+                }
+
+        if (!strcmp(rulesplit, "pri" )) {
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+                if (arg == NULL ) sagan_log(1, "The \"priority\" appears to be incomplete");
+                snprintf(rulestruct[rulecount].s_pri, sizeof(rulestruct[rulecount].s_pri), "%s", remspaces(arg));
+                }
+	
+	/* Quoted information (content, pcre, msg)  */ 
+
+        if (!strcmp(rulesplit, "msg" )) {
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+		if (tmp2 == NULL ) sagan_log(1, "The \"msg\" appears to be incomplete");
+                snprintf(rulestruct[rulecount].s_msg, sizeof(rulestruct[rulecount].s_msg), "%s", tmp2);
+                }
+
+	if (!strcmp(rulesplit, "content" )) { 
+		if ( content_count > MAX_CONTENT ) sagan_log(1, "There is to many \"content\" types in the rule");
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+		if (tmp2 == NULL ) sagan_log(1, "The \"content\" appears to be incomplete");
+		snprintf(rulestruct[rulecount].s_content[content_count], sizeof(rulestruct[rulecount].s_content[content_count]), "%s", tmp2);
+		content_count++;
+		rulestruct[rulecount].content_count=content_count;
+		}
+
+
+	/* PCRE needs a little extra "work" */
+
+        if (!strcmp(rulesplit, "pcre" )) {
+                if ( pcre_count > MAX_PCRE ) sagan_log(1, "There is to many \"pcre\" types in the rule");
+		arg = strtok_r(NULL, ";", &saveptrrule2);
+		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+                if (tmp2 == NULL ) sagan_log(1, "The \"pcre\" appears to be incomplete");
+
+		pcreflag=0;
+		strlcpy(pcretmp2, "", sizeof(pcretmp2));
+		for ( i = 1; i < strlen(tmp2); i++) {
 			
-
-                   if ( token==NULL) break;
-
-		   snprintf(tmptoken2, sizeof(tmptoken2), "%s", token);
-		   remspaces(tmptoken2);
-
-                   if ( strstr(tmptoken2, "find_port" )) find_port=1;
-		   if ( strstr(tmptoken2, "nocase" )) nocase=1;
-
-
-		   if ( strstr(tmptoken2, "msg:" )) { 
-		      strtok_r(token, "\"", &saveptr1 ); 
-		      msg = strtok_r(NULL, "\"", &saveptr1 ); 
-		      remquotes(msg); 
-		   }
-                  
-		   if ( strstr(tmptoken2, "pcre:" )) { 
-		      strtok_r(token, "\"", &saveptr1);
-		      pcretmp = strtok_r(NULL, "\"", &saveptr1);
-		      //pcre[strlen(pcre)+1] = '\0';
-		      remquotes(pcretmp); 
-		      
-		      if ( pcretmp[0] != '/' ) sagan_log(1, "[%s, line %d] Missing first '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-
-		      pcreflag=0;
-		      strcpy(pcretmp2, "");
-		      for ( i = 1; i < strlen(pcretmp); i++) {
-
-		        if ( pcretmp[i] == '/' && pcretmp[i-1] != '\\' ) pcreflag++;
-
+			if ( tmp2[i] == '/' && tmp2[i-1] != '\\' ) pcreflag++;
+			
 			if ( pcreflag == 0 ) { 
-		        snprintf(tmp, sizeof(tmp), "%c", pcretmp[i]);
+			snprintf(tmp, sizeof(tmp), "%c", tmp2[i]);
 			strlcat(pcretmp2, tmp, sizeof(pcretmp2));
 			}
 
-			switch(pcretmp[i]) {
-			  case 'i':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_CASELESS; break;
-			  case 's':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_DOTALL; break;
-			  case 'm':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_MULTILINE; break;
-			  case 'x':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_EXTENDED; break;
-			  case 'A': 
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_ANCHORED; break;
-			  case 'E':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_DOLLAR_ENDONLY; break;
-			  case 'G':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_UNGREEDY; break;
+			/* are we /past/ and at the args? */
 
-			/* PCRE options that aren't really used? */
+			if ( pcreflag == 1 ) { 
+			switch(tmp2[i]) {
+		          case 'i':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_CASELESS; break;
+                          case 's':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_DOTALL; break;
+                          case 'm':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_MULTILINE; break;
+                          case 'x':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_EXTENDED; break;
+                          case 'A':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_ANCHORED; break;
+                          case 'E':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_DOLLAR_ENDONLY; break;
+                          case 'G':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_UNGREEDY; break;
 
-			/*
-			  case 'f':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_FIRSTLINE; break;
-			  case 'C':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_AUTO_CALLOUT; break;
-			  case 'J':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_DUPNAMES; break;
-			  case 'N':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_NO_AUTO_CAPTURE; break;
-			  case 'X':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_EXTRA; break;
-			  case '8':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_UTF8; break;
-			  case '?':
-			        if ( pcreflag == 1 ) pcreoptions |= PCRE_NO_UTF8_CHECK; break;
-				*/
-			    }
+                        /* PCRE options that aren't really used? */
+
+                        /*
+                          case 'f':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_FIRSTLINE; break;
+                          case 'C':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_AUTO_CALLOUT; break;
+                          case 'J':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_DUPNAMES; break;
+                          case 'N':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_NO_AUTO_CAPTURE; break;
+                          case 'X':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_EXTRA; break;
+                          case '8':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_UTF8; break;
+                          case '?':
+                                if ( pcreflag == 1 ) pcreoptions |= PCRE_NO_UTF8_CHECK; break;
+                                */
+			
+                            }
 			}
-
-		      if ( pcreflag == 0 ) sagan_log(1, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-
+		    }
+                      if ( pcreflag == 0 ) sagan_log(1, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
 		      pcrerule = pcretmp2;
-
 		      snprintf(rulestruct[rulecount].s_pcre[pcre_count], sizeof(rulestruct[rulecount].s_pcre[pcre_count]), "%s", pcrerule);
 		      rulestruct[rulecount].s_pcreoptions[pcre_count] = pcreoptions;
-
 		      pcre_count++;
-		      if ( pcre_count > MAX_CONTENT ) sagan_log(1, "[%s, line %d] To many \"pcre:\" flags in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
 		      rulestruct[rulecount].pcre_count=pcre_count;
-		   }
+                }
 
-		   if ( strstr(tmptoken2, "reference:" )) { 
-		      strtok_r(token, ":", &saveptr1);
-		      reference=strtok_r(NULL, ":", &saveptr1); 
-		      remspaces(reference);
-		      snprintf(rulestruct[rulecount].s_reference[ref_count], sizeof(rulestruct[rulecount].s_reference[ref_count]), "%s", reference);
-		      ref_count++;
-		      if ( ref_count > MAX_CONTENT ) sagan_log(1, "[%s, line %d] To many \"reference:\" flags in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-		      rulestruct[rulecount].ref_count=ref_count;
-		   }
 
-                   if ( strstr(tmptoken2, "classtype:" )) { strtok_r(token, ":", &saveptr1); classtype = strtok_r(NULL, ";", &saveptr1); remspaces(classtype); }
-                   if ( strstr(tmptoken2, "sid:" )) { strtok_r(token, ":", &saveptr1); sid = strtok_r(NULL, ";", &saveptr1); remspaces(sid); }
-                   if ( strstr(tmptoken2, "rev:" )) { strtok_r(token, ":", &saveptr1); rev = strtok_r(NULL, ";", &saveptr1); remspaces(rev); }
-                   if ( strstr(tmptoken2, "pri:" )) { strtok_r(token, ":", &saveptr1); pri = strtok_r(NULL, ";", &saveptr1); remspaces(pri); }
-                   if ( strstr(tmptoken2, "program:")) { strtok_r(token, ":", &saveptr1); program = strtok_r(NULL, ";", &saveptr1); remspaces(program); }
-                   if ( strstr(tmptoken2, "facility:")) { strtok_r(token, ":", &saveptr1); facility = strtok_r(NULL, ";", &saveptr1); remspaces(facility); }
+	if (!strcmp(rulesplit, "threshold" )) {
+		threshold_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                tmptoken = strtok_r(threshold_tmp, ",", &saveptrrule2);
 
-                   if ( strstr(tmptoken2, "content:" )) { 
-		      strtok_r(token, "\"", &saveptr1);
-		      content = strtok_r(NULL, "\"", &saveptr1);
-		      remquotes(content); 
-		      snprintf(rulestruct[rulecount].s_content[content_count], sizeof(rulestruct[rulecount].s_content[content_count]), "%s", content);
-		      content_count++;
-		      if ( content_count > MAX_CONTENT ) sagan_log(1, "[%s, line %d] To many \"content:\" flags in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-		      rulestruct[rulecount].content_count=content_count;
-		      }
+                      while( tmptoken != NULL ) {
+                      if (strstr(tmptoken, "type")) {
+                            if (strstr(tmptoken, "limit")) rulestruct[rulecount].threshold_type = 1;
+                            if (strstr(tmptoken, "threshold")) rulestruct[rulecount].threshold_type = 2;
+                            }
 
-                   if ( strstr(tmptoken2, "level:" )) { strtok_r(token, ":", &saveptr1); level = strtok_r(NULL, ";", &saveptr1); remspaces(level); }
-                   if ( strstr(tmptoken2, "tag:" )) { strtok_r(token, ":", &saveptr1); tag = strtok_r(NULL, ";", &saveptr1); remspaces(tag); }
+                      if (strstr(tmptoken, "track")) {
+                            if (strstr(tmptoken, "by_src")) rulestruct[rulecount].threshold_src_or_dst = 1;
+                            if (strstr(tmptoken, "by_dst")) rulestruct[rulecount].threshold_src_or_dst = 2;
+                            }
 
-		   if ( strstr(tmptoken2, "threshold:" )) 
-		      { 
-		      strtok_r(token, ":", &saveptr1); 
-		      threshold_tmp = strtok_r(NULL, ";", &saveptr1); 
-		      tmptoken = strtok_r(threshold_tmp, ",", &saveptr1); 
-		      
-		      while( tmptoken != NULL ) { 
-		      if (strstr(tmptoken, "type")) { 
-		            if (strstr(tmptoken, "limit")) rulestruct[rulecount].threshold_type = 1; 
-			    if (strstr(tmptoken, "threshold")) rulestruct[rulecount].threshold_type = 2;
-			    }
-
-		      if (strstr(tmptoken, "track")) { 
-		            if (strstr(tmptoken, "by_src")) rulestruct[rulecount].threshold_src_or_dst = 1; 
-			    if (strstr(tmptoken, "by_dst")) rulestruct[rulecount].threshold_src_or_dst = 2;
-			    }
-
-		      if (strstr(tmptoken, "count")) { 
-			   thresh_tmp = strtok_r(tmptoken, " ", &saveptr3);
-			   thresh_tmp = strtok_r(NULL, " ", &saveptr3 );
-			   rulestruct[rulecount].threshold_count = atoi(thresh_tmp);
-			   }
- 
-                      if (strstr(tmptoken, "seconds")) { 
-		           thresh_tmp = strtok_r(tmptoken, " ", &saveptr3);
-			   thresh_tmp = strtok_r(NULL, " ", &saveptr3 );
-			   rulestruct[rulecount].threshold_seconds = atoi(thresh_tmp);
-			   }
-
-		      tmptoken = strtok_r(NULL, ",", &saveptr1);
-		      }
-		     }
-                    }
-
-		   
-                   if ( pri == NULL || !strcmp(pri, "") ) pri=defaultpri;
-
-                   snprintf(rulestruct[rulecount].s_msg, sizeof(rulestruct[rulecount].s_msg), "%s", msg);
-                   snprintf(rulestruct[rulecount].s_classtype, sizeof(rulestruct[rulecount].s_classtype), "%s", classtype);
-                   snprintf(rulestruct[rulecount].s_sid, sizeof(rulestruct[rulecount].s_sid), "%s", sid);
-                   snprintf(rulestruct[rulecount].s_rev, sizeof(rulestruct[rulecount].s_rev), "%s", rev);
-                   snprintf(rulestruct[rulecount].s_pri, sizeof(rulestruct[rulecount].s_pri), "%s", pri);
-                   snprintf(rulestruct[rulecount].s_program, sizeof(rulestruct[rulecount].s_program), "%s", program);
-                   snprintf(rulestruct[rulecount].s_facility, sizeof(rulestruct[rulecount].s_facility), "%s", facility);
-                   snprintf(rulestruct[rulecount].s_level, sizeof(rulestruct[rulecount].s_level), "%s", level);
-                   snprintf(rulestruct[rulecount].s_tag, sizeof(rulestruct[rulecount].s_tag), "%s", tag);
-		   rulestruct[rulecount].dst_port = dst_port;
-                   rulestruct[rulecount].s_nocase = nocase;
-		   rulestruct[rulecount].ip_proto = ip_proto;
-		   rulestruct[rulecount].s_find_port = find_port;
-
-		   /* Minium for a rule to be a rule */
-		  
-		   if (!strcmp(sid,  "" )) sagan_log(1, "[%s, line %d] Error at line number %d in %s [missing sid:]", __FILE__, __LINE__, linecount, ruleset);
-		   if (!strcmp(content, "") && !strcmp(pcrerule, "") ) sagan_log(1, "[%s, line %d] Error at line number %d in %s [missing pcre: and/or content:]", __FILE__, __LINE__, linecount, ruleset);
-
-		   if (!strcmp(msg, "")) sagan_log(1, "[%s, line %d] Error at line number %d in %s [missing msg:]", __FILE__, __LINE__, linecount, ruleset);
-
-                   if (devdebug == 1) {
-                           printf("\n[D-%d] msg: %s\n", rulecount, rulestruct[rulecount].s_msg);
-
-			   for (i=0; i<pcre_count; i++) { 
-                           printf("pcre: |%s|\n", rulestruct[rulecount].s_pcre[i]);
-			   }
-
-			   for (i=0; i<content_count; i++) { 
-			   printf("content: |%s|\n", rulestruct[rulecount].s_content[i]);
-			   }
-
-			   for (i=0; i<ref_count; i++) { 
-			   printf("reference: %s\n", rulestruct[rulecount].s_reference[i]);
-			   }
-
-                           printf("classtype: %s\n", rulestruct[rulecount].s_classtype);
-                           printf("sid: |%s|\n", rulestruct[rulecount].s_sid);
-                           printf("rev: %s\n", rulestruct[rulecount].s_rev);
-                           printf("nocase: %d\n", rulestruct[rulecount].s_nocase);
-			   printf("find_port: %d\n", rulestruct[rulecount].s_find_port);
-                           printf("pri: %s\n", rulestruct[rulecount].s_pri);
-                           printf("program: |%s|\n", rulestruct[rulecount].s_program);
-			   printf("facility: %s\n", rulestruct[rulecount].s_facility);
-			   printf("level: %s\n", rulestruct[rulecount].s_level);
-			   printf("tag: %s\n", rulestruct[rulecount].s_tag);
-			   printf("dst_port: %d\n", rulestruct[rulecount].dst_port);
-			   printf("ip_proto: %d\n", rulestruct[rulecount].ip_proto);
-			   printf("ref_count: %d\n", rulestruct[rulecount].ref_count);
-			   printf("threshold_type: %d\n", rulestruct[rulecount].threshold_type);
-			   printf("threshold_src_dst: %d\n", rulestruct[rulecount].threshold_src_or_dst);
-			   printf("threshold_count: %d\n", rulestruct[rulecount].threshold_count);
-			   printf("threshold_seconds: %d\n", rulestruct[rulecount].threshold_seconds);
-			   
-
+                      if (strstr(tmptoken, "count")) {
+                           thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           thresh_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                           rulestruct[rulecount].threshold_count = atoi(thresh_tmp);
                            }
 
-                   pri=NULL;
-                   rulecount++;
+                      if (strstr(tmptoken, "seconds")) {
+                           thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           thresh_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                           rulestruct[rulecount].threshold_seconds = atoi(thresh_tmp);
+                           }
 
-                   }
-		   pcre_count=0;
-		   content_count=0;
-		   ref_count=0;
-		   find_port=0;
-		   nocase=0;
+                        tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		}
+	}
 
-                }
+
+
+
+tokenrule = strtok_r(NULL, ";", &saveptrrule1);
+}
+
+
+if ( devdebug ) { 
+printf("---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
+
+printf("sid: %s\n", rulestruct[rulecount].s_sid);
+printf("rev: %s\n", rulestruct[rulecount].s_rev);
+printf("msg: %s\n", rulestruct[rulecount].s_msg);
+
+if ( rulestruct[rulecount].s_nocase != 0 ) printf("nocase\n");
+if ( rulestruct[rulecount].s_find_ip != 0 ) printf("find_ip\n");
+if ( rulestruct[rulecount].s_find_port != 0 ) printf("find_port\n");
+
+for (i=0; i<content_count; i++) {
+    printf("[%d] content: %s\n", i, rulestruct[rulecount].s_content[i]);
+    }
+
+for (i=0; i<pcre_count; i++) {
+    printf("[%d] pcre: %s\n", i,  rulestruct[rulecount].s_pcre[i]);
+    }
+
+for (i=0; i<ref_count; i++) {
+    printf("[%d] reference: %s\n", i,  rulestruct[rulecount].s_reference[i]);
+    }
+
+}
+
+/* Reset for next rule */
+
+pcre_count=0;
+content_count=0;
+netcount=0;
+ref_count=0;
+strlcpy(netstr, "", 1);
+strlcpy(rulestr, "", 1);
+rulecount++;
+pcretmp=NULL;
+
+
+} /* end of while loop */
 
 fclose(rulesfile);
 }

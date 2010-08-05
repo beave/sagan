@@ -56,7 +56,6 @@
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 
-int sagan_find_ip=0;
 int daemonize=0;
 int programmode=0;
 int dochroot=0;
@@ -756,10 +755,10 @@ while(1) {
 
 		if ( match == 0 ) { 
 
-		if ( strcmp(rulestruct[b].s_content[0], "" )) { 
+		if ( rulestruct[b].content_count != 0 ) { 
 
 		for(z=0; z<rulestruct[b].content_count; z++) {
-		 
+
 		   /* If case insensitive */
 		   if ( rulestruct[b].s_nocase == 1 ) {
 		      snprintf(syslog_msg_origtmp,  sizeof(syslog_msg_origtmp), "%s", syslog_msg);
@@ -779,8 +778,8 @@ while(1) {
 	       
 	       	/* Search via PCRE */
 
-                if ( strcmp(rulestruct[b].s_pcre[0], "" )) {
-	
+		if ( rulestruct[b].pcre_count != 0 ) { 
+
 		   for(z=0; z<rulestruct[b].pcre_count; z++) {
  		      pattern=rulestruct[b].s_pcre[z];
 		      option=rulestruct[b].s_pcreoptions[z];
@@ -810,7 +809,7 @@ while(1) {
 	
 		/* if you got match */
 
-		if ( pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
+		if ( pcrematch != 0 && pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
 		   {
 		
 		   /*
@@ -836,7 +835,7 @@ while(1) {
 
 		   /* Search message for possible IP addresses */
 
-		   if ( sagan_find_ip == 1 ) 
+		   if ( rulestruct[b].s_find_ip == 1 ) 
 		      {
 		      snprintf(fip, sizeof(fip), "%s", findipinmsg(syslog_msg));
 		         
@@ -959,7 +958,7 @@ while(1) {
 
 		   /* alert log file */
 		   
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_date, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port );
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_date, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
 
 
 #ifdef HAVE_LIBESMTP

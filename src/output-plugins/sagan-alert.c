@@ -50,7 +50,8 @@ void *sagan_alert ( char *s_sid,
 		    char *s_facility, 
 		    char *s_fpri, 
 		    int  dst_port, 
-		    int  src_port ) {
+		    int  src_port, 
+		    char *message ) {
 
 if (( alertfp = fopen(ALERTLOG, "a" )) == NULL ) {
   removelockfile();
@@ -60,6 +61,7 @@ if (( alertfp = fopen(ALERTLOG, "a" )) == NULL ) {
 fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);
 fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
 fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
+fprintf(alertfp, "Message: %s", message);
 fflush(alertfp);
 fclose(alertfp);
 
