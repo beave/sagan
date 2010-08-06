@@ -208,6 +208,13 @@ if (( result = PQexec(psql, sql )) == NULL ) {
    sagan_log(1, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    }
 
+if (PQresultStatus(result) != PGRES_COMMAND_OK && 
+    PQresultStatus(result) != PGRES_TUPLES_OK) {
+   sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
+   PQclear(result);
+   sagan_log(1, "DB Query failed: %s", sql);
+   }
+
 
 if ( PQntuples(result) != 0 ) { 
     re = PQgetvalue(result,0,0);
@@ -308,7 +315,7 @@ if ( sqlout == NULL ) {
    
    /* classification hasn't been recorded in sig_class,  so put it in */
 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_class(sig_class_id, sig_class_name) VALUES ('', '%s')", classtype);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_class(sig_class_id, sig_class_name) VALUES (DEFAULT, '%s')", classtype);
    sql=sqltmp;
    db_query( dbtype, sql);
 
@@ -490,7 +497,7 @@ sqlout = db_query( dbtype, sql );
 /* reference_system hasn't been entered into the DB.  Do so now */
 
 if ( sqlout == NULL )  { 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference_system (ref_system_id, ref_system_name) VALUES ('', '%s')", tmptoken1);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference_system (ref_system_id, ref_system_name) VALUES (DEFAULT, '%s')", tmptoken1);
    sql=sqltmp;
    db_query( dbtype, sql );
 
@@ -506,7 +513,7 @@ sql=sqltmp;
 sqlout = db_query( dbtype, sql );
 
 if ( sqlout == NULL )  { 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference (ref_id, ref_system_id, ref_tag) VALUES ('', '%d', '%s')", ref_system_id, tmptoken2);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference (ref_id, ref_system_id, ref_tag) VALUES (DEFAULT, '%d', '%s')", ref_system_id, tmptoken2);
    sql=sqltmp;
    sqlout = db_query( dbtype, sql );
 
