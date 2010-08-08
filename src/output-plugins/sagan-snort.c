@@ -196,8 +196,10 @@ pthread_mutex_unlock( &db_mutex );
 return(re);
 }
 #else
-removelockfile();
-sagan_log(1, "Sagan was not compiled with MySQL support.  Aborting!");
+if ( dbtype == 1 ) {
+    removelockfile();
+    sagan_log(1, "Sagan was not compiled with MySQL support.  Aborting!");
+}
 #endif
 
 #ifdef HAVE_LIBPQ
@@ -226,8 +228,10 @@ return(re);
 
 }
 #else
-removelockfile();
-sagan_log(1, "[%s, line %d] Sagan was not compiled with PostgreSQL support.  Aborting!", __FILE__, __LINE__);
+if ( dbtype == 2 ) {
+    removelockfile();
+    sagan_log(1, "[%s, line %d] Sagan was not compiled with PostgreSQL support.  Aborting!", __FILE__, __LINE__);
+}
 #endif
 
 return(0);
