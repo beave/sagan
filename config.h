@@ -2,7 +2,7 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
 /* Sagan configuration file */
-#define CONFIG_FILE_PATH "/usr/local/etc/sagan.conf"
+#define CONFIG_FILE_PATH "/etc/sagan.conf"
 
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #define HAVE_ARPA_INET_H 1

@@ -7865,7 +7865,7 @@ fi
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 
 cat >>confdefs.h <<_ACEOF
-#define CONFIG_FILE_PATH "`eval echo "${prefix}/etc/sagan.conf"`"
+#define CONFIG_FILE_PATH "`eval echo "${sysconfdir}/sagan.conf"`"
 _ACEOF
 
 
