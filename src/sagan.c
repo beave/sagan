@@ -677,7 +677,7 @@ while(1) {
                       logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
 
-                     if ( pthread_create( threadlogzilla_id, &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
+                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
                           removelockfile();
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
        		          }
@@ -999,7 +999,7 @@ while(1) {
 		    	  email_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   	  email_thread_args[threadid].src_port = src_port;
 	
-                if ( pthread_create( threademail_id, &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
+                if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
 		      removelockfile();
                       sagan_log(1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
                       }
@@ -1040,7 +1040,7 @@ while(1) {
 		   ext_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   ext_thread_args[threadid].src_port = src_port;
 
-		   if ( pthread_create( threadext_id, &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
+		   if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
 		     removelockfile();
 		     sagan_log(1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
 		      }
@@ -1085,7 +1085,7 @@ while(1) {
 		      
 
 
-                     if ( pthread_create( threadlogzilla_id, &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
+                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
                           removelockfile();
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		   }
