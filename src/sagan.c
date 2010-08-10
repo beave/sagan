@@ -1135,7 +1135,7 @@ while(1) {
 		   db_args[threadid].date = syslog_date;
                    db_args[threadid].time = syslog_time;
 
-		if ( pthread_create( threaddb_id, &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
+		if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
 		    removelockfile();
 		    sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		    }
