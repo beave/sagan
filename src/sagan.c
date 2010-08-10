@@ -857,8 +857,8 @@ while(1) {
 
 		   /* Never,  ever give us loopback.  That does us no good. */
 
-		   if (!strcmp(ip_src, "127.0.0.1")) ip_src = sagan_host;
-		   if (!strcmp(ip_dst, "127.0.0.1")) ip_dst = sagan_host;
+		   if (!strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "" )) ip_src = sagan_host;
+		   if (!strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "" )) ip_dst = sagan_host;
 
 		   thresh_log_flag = 0;
 
