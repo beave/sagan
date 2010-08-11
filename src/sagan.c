@@ -406,7 +406,7 @@ sagan_log(0, "------------------------------------------------------------------
 
 /* Create signal handler thread */ 
 
-if (!daemonize) { 
+if (daemonize == 0) { 
 if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
         removelockfile();
         sagan_log(1, "[%s, line %d] Error creating signa handler thread.", __FILE__, __LINE__);
@@ -488,15 +488,16 @@ if (daemonize)
 /* Unblock signals so the daemon can catch them */
 
 sigfillset(&signal_set);
+
 pthread_sigmask(SIG_UNBLOCK, &signal_set, NULL );
 
-signal (SIGHUP,  &sig_handler );
-signal (SIGINT,  &sig_handler );
-signal (SIGQUIT, &sig_handler );
-signal (SIGTERM, &sig_handler );
-signal (SIGABRT, &sig_handler );
-signal (SIGSEGV, &sig_handler );
-signal (SIGUSR1, &sig_handler );
+signal (SIGHUP,  &sig_handler_daemon );
+signal (SIGINT,  &sig_handler_daemon );
+signal (SIGQUIT, &sig_handler_daemon );
+signal (SIGTERM, &sig_handler_daemon );
+signal (SIGABRT, &sig_handler_daemon );
+signal (SIGSEGV, &sig_handler_daemon );
+signal (SIGUSR1, &sig_handler_daemon );
 
 sagan_log(0, "Becoming a daemon!");
 

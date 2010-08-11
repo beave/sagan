@@ -66,11 +66,11 @@ unsigned long long threshold_total;
 
 FILE *alertfp;
 
+pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void sig_handler(int sigargs )
+void sig_handler(int sigargs ) {
 
-{
-	pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
+//	pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
         sigset_t signal_set;
         int sig;
 	int key;
@@ -103,11 +103,7 @@ void sig_handler(int sigargs )
 
                  case SIGHUP:
                    pthread_mutex_lock(&sig_mutex);
-		   if ( daemonize == 0 ) {
    		   sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
-   		   } else {
-   		   sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
-   		   }
 
 		      /* Reset counters */
 		   refcount=0; classcount=0; rulecount=0; ruletotal=0;
@@ -135,3 +131,60 @@ void sig_handler(int sigargs )
         }
 }
 
+
+/****************************************************************************/
+/* sig_handler_daemon,  for handling signals when the --daemon flag is used */
+/* We don't spawn a sig_handler() thread in the event --daemon is used.     */
+/* Signals must be handled differently.  This is really redundant code and  */
+/* I don't like it,  but oh well.                                           */
+/****************************************************************************/
+
+void sig_handler_daemon( int sig ) {
+
+switch( sig )
+	{
+        case SIGQUIT:
+        case SIGINT:
+        case SIGTERM:
+        case SIGSEGV:
+        case SIGABRT:
+
+        sagan_log(0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+        sagan_statistics();
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+        if ( dbtype != 0 ) record_last_cid();
+#endif
+        removelockfile();
+        exit(0);
+        break;
+
+
+        case SIGHUP:
+	        pthread_mutex_lock(&sig_mutex);
+                sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
+
+                /* Reset counters */
+                refcount=0; classcount=0; rulecount=0; ruletotal=0;
+
+                /* Re-load everything */
+                load_config();
+
+                pthread_mutex_unlock(&sig_mutex);
+
+		sagan_log(0, "Configuration reloaded.");
+                break;
+
+	case 17:                /* Child process has exited. */
+	case 28:                /* Terminal 'resize'/alarm. */
+	break;
+
+	case SIGUSR1:
+        sagan_statistics();
+        break;
+
+        default:
+        sagan_log(0, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
+	}
+
+}

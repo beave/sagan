@@ -81,6 +81,7 @@ int strlcat(char *, const char *, size_t );
 //void *sig_handler( void *);
 
 void sig_handler( int );
+void sig_handler_daemon( int );
 void key_handler( int );
 
 void *sagan_ext_thread( void * );
