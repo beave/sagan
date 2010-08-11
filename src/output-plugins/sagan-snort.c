@@ -69,6 +69,7 @@ char sagan_filter[50];
 int  sagan_detail;
 
 int sensor_id;
+int devdebug;
 
 int  threaddbc;
 
@@ -171,6 +172,8 @@ pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
+if ( devdebug == 1 ) printf("%s\n", sqltmp); 
+
 #ifdef HAVE_LIBMYSQLCLIENT_R
 if ( dbtype == 1 ) {
 
@@ -205,7 +208,7 @@ if ( dbtype == 1 ) {
 #ifdef HAVE_LIBPQ
 if ( dbtype == 2 ) {
 
-if (( result = PQexec(psql, sql )) == NULL ) { 
+if (( result = PQexec(psql, sqltmp )) == NULL ) { 
    removelockfile();
    sagan_log(1, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    }
@@ -214,7 +217,7 @@ if (PQresultStatus(result) != PGRES_COMMAND_OK &&
     PQresultStatus(result) != PGRES_TUPLES_OK) {
    sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    PQclear(result);
-   sagan_log(1, "DB Query failed: %s", sql);
+   sagan_log(1, "DB Query failed: %s", sqltmp);
    }
 
 
