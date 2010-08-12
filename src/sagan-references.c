@@ -91,7 +91,7 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      snprintf(refstruct[refcount].s_refurl, sizeof(refstruct[refcount].s_refurl), "%s", laststring);
      refstruct[refcount].s_refurl[strlen(refstruct[refcount].s_refurl)-1] = '\0';
 
-    if (devdebug) printf("\n[D-%d] Reference: %s|%s", refcount, refstruct[refcount].s_refid, refstruct[refcount].s_refurl);
+    if (devdebug) sagan_log(0, "[D-%d] Reference: %s|%s", refcount, refstruct[refcount].s_refid, refstruct[refcount].s_refurl);
 		      
      refcount++;
 

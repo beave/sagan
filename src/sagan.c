@@ -635,9 +635,6 @@ while(1) {
 		fflush(stdout);
 		}
 
-
-   pthread_mutex_lock( &general_mutex );
-      
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
    snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
@@ -647,8 +644,6 @@ while(1) {
    snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
    snprintf(syslog_tagtmp, sizeof(syslog_tagtmp), "%s", syslog_tag);
    snprintf(syslog_leveltmp, sizeof(syslog_leveltmp), "%s", syslog_level);
-
-   pthread_mutex_unlock( &general_mutex );
 
 /***************************************************************************/
 /* Logzilla _FULL_ logging support.  This logs everything!		   */
@@ -673,8 +668,8 @@ while(1) {
                       logzilla_thread_args[threadid].priority=syslog_prioritytmp;
                       logzilla_thread_args[threadid].level=syslog_leveltmp;
                       logzilla_thread_args[threadid].tag=syslog_tagtmp;
-                      logzilla_thread_args[threadid].date=syslog_date;
-                      logzilla_thread_args[threadid].time=syslog_time;
+                      logzilla_thread_args[threadid].date=syslog_datetmp;
+                      logzilla_thread_args[threadid].time=syslog_timetmp;
                       logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
 
@@ -959,7 +954,7 @@ while(1) {
 
 		   /* alert log file */
 		   
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_date, syslog_time, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
 
 
 #ifdef HAVE_LIBESMTP
@@ -990,8 +985,8 @@ while(1) {
                    	  email_thread_args[threadid].msg = rulestruct[b].s_msg;
                    	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    	  email_thread_args[threadid].pri = fpri;
-                   	  email_thread_args[threadid].date = syslog_date;
-                   	  email_thread_args[threadid].time = syslog_time;
+                   	  email_thread_args[threadid].date = syslog_datetmp;
+                   	  email_thread_args[threadid].time = syslog_timetmp;
                    	  email_thread_args[threadid].ip_src = ip_src;
                    	  email_thread_args[threadid].ip_dst = ip_dst;
                    	  email_thread_args[threadid].facility = syslog_facilitytmp;
@@ -1031,8 +1026,8 @@ while(1) {
                    ext_thread_args[threadid].msg = rulestruct[b].s_msg;
                    ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    ext_thread_args[threadid].pri = fpri;
-                   ext_thread_args[threadid].date = syslog_date;
-                   ext_thread_args[threadid].time = syslog_time;
+                   ext_thread_args[threadid].date = syslog_datetmp;
+                   ext_thread_args[threadid].time = syslog_timetmp;
  		   ext_thread_args[threadid].ip_src = ip_src;
                    ext_thread_args[threadid].ip_dst = ip_dst;
                    ext_thread_args[threadid].facility = syslog_facilitytmp;
@@ -1079,8 +1074,8 @@ while(1) {
 		      logzilla_thread_args[threadid].priority=syslog_prioritytmp;
 		      logzilla_thread_args[threadid].level=syslog_leveltmp;
 		      logzilla_thread_args[threadid].tag=syslog_tagtmp;
-		      logzilla_thread_args[threadid].date=syslog_date;
-		      logzilla_thread_args[threadid].time=syslog_time;
+		      logzilla_thread_args[threadid].date=syslog_datetmp;
+		      logzilla_thread_args[threadid].time=syslog_timetmp;
 		      logzilla_thread_args[threadid].program=syslog_programtmp;
 		      logzilla_thread_args[threadid].msg=sysmsg;
 		      
@@ -1133,8 +1128,8 @@ while(1) {
 		   db_args[threadid].endian=endianchk;
 		   db_args[threadid].dst_port = rulestruct[b].dst_port;
 		   db_args[threadid].src_port = src_port;
-		   db_args[threadid].date = syslog_date;
-                   db_args[threadid].time = syslog_time;
+		   db_args[threadid].date = syslog_datetmp;
+                   db_args[threadid].time = syslog_timetmp;
 
 		if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
 		    removelockfile();

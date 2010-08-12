@@ -172,7 +172,7 @@ pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
-if ( devdebug == 1 ) printf("%s\n", sqltmp); 
+if ( devdebug ) sagan_log(0, "%s", sqltmp); 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 if ( dbtype == 1 ) {
@@ -211,15 +211,17 @@ if ( dbtype == 2 ) {
 if (( result = PQexec(psql, sqltmp )) == NULL ) { 
    removelockfile();
    sagan_log(1, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
+   record_last_cid();
    }
 
 if (PQresultStatus(result) != PGRES_COMMAND_OK && 
     PQresultStatus(result) != PGRES_TUPLES_OK) {
    sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    PQclear(result);
+   removelockfile();
    sagan_log(1, "DB Query failed: %s", sqltmp);
+   record_last_cid();
    }
-
 
 if ( PQntuples(result) != 0 ) { 
     re = PQgetvalue(result,0,0);
@@ -372,10 +374,18 @@ void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int db
 char *timestamp = NULL;
 char sqltmp[MAXSQL];
 char *sql;
+//char time[30];
+//char date[30];
 
+pthread_mutex_lock( &db_mutex );
+
+//snprintf(time, sizeof(time), "%s", timein);
+//snprintf(date, sizeof(date), "%s", datein);
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
-
 sql=sqltmp;
+
+pthread_mutex_unlock( &db_mutex );
+
 db_query( dbtype, sql );
 
 }

@@ -400,26 +400,26 @@ tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 
 
 if ( devdebug ) { 
-printf("---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
+sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
 
-printf("sid: %s\n", rulestruct[rulecount].s_sid);
-printf("rev: %s\n", rulestruct[rulecount].s_rev);
-printf("msg: %s\n", rulestruct[rulecount].s_msg);
+sagan_log(0, "= sid: %s", rulestruct[rulecount].s_sid);
+sagan_log(0, "= rev: %s", rulestruct[rulecount].s_rev);
+sagan_log(0, "= msg: %s", rulestruct[rulecount].s_msg);
 
-if ( rulestruct[rulecount].s_nocase != 0 ) printf("nocase\n");
-if ( rulestruct[rulecount].s_find_ip != 0 ) printf("find_ip\n");
-if ( rulestruct[rulecount].s_find_port != 0 ) printf("find_port\n");
+if ( rulestruct[rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
+if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= find_ip");
+if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "find_port");
 
 for (i=0; i<content_count; i++) {
-    printf("[%d] content: %s\n", i, rulestruct[rulecount].s_content[i]);
+    sagan_log(0, "= [%d] content: %s", i, rulestruct[rulecount].s_content[i]);
     }
 
 for (i=0; i<pcre_count; i++) {
-    printf("[%d] pcre: %s\n", i,  rulestruct[rulecount].s_pcre[i]);
+    sagan_log(0, "= [%d] pcre: %s", i,  rulestruct[rulecount].s_pcre[i]);
     }
 
 for (i=0; i<ref_count; i++) {
-    printf("[%d] reference: %s\n", i,  rulestruct[rulecount].s_reference[i]);
+    sagan_log(0, "= [%d] reference: %s", i,  rulestruct[rulecount].s_reference[i]);
     }
 
 }
