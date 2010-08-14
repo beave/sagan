@@ -46,12 +46,13 @@ MYSQL    *mysql, *mysql_logzilla;
 #include <sys/socket.h>
 #include <string.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <ctype.h>
 #include "sagan.h"
 #include "version.h"
 
 char sagan_path[MAXPATH];
 
-char *findipinmsg ( char * );
 char sagan_port[6];
 int daemonize;
 int programmode;
@@ -229,61 +230,6 @@ retbuf=tmpbuf;
 return(retbuf);
 }
 
-/* Simple search routine to find IP addresses within a message */
-
-char *findipinmsg ( char *syslogmessage ) { 
-
-struct sockaddr_in sa;
-int result, i, b;
-int flag=0;
-
-char lastgood[33];
-char *retbuf = NULL;
-
-char ctmp[2];
-char msg[MAX_SYSLOGMSG];
-
-
-for (b=0; b < strlen(syslogmessage); b++) 
-    {
-    
-    for (i = b; i < strlen(syslogmessage); i++)
-        {
-	snprintf(ctmp, sizeof(ctmp), "%c", syslogmessage[i]);
-        strlcat(msg, ctmp, MAX_SYSLOGMSG);
-
-	result = inet_pton(AF_INET, msg,  &(sa.sin_addr));
-
-	   if ( result != 0 )
-	      { 
-	      flag=1;
-	      strlcpy(lastgood, msg, sizeof(lastgood)); /* Store the last "good" value */
-	      }
-
-        /* If we had a good value,  now bad - we use the last known "good" value */
-
-	if ( flag == 1 && result == 0 ) 
-	    {
-
-            /* If the "good" value is 127.0.0.1,  that won't do us much good.  If
-	     * that is the case,  we revert back to the original IP address */
-	    
-	    if (!strcmp(lastgood, "127.0.0.1")) { 
-	       return("0");
-	       }
-
-	    retbuf=lastgood;
-	    return(retbuf);
-	    }
-	}
-     strlcpy(msg, "", 1);	/* Reset */
-
-    }
-return("0");
-}
-
-/* Check string to see if it's numeric or now */
-
 int isnumeric (char *str) {
 
 if(strlen(str) == strspn(str, "0123456789")) {
@@ -291,117 +237,6 @@ if(strlen(str) == strspn(str, "0123456789")) {
 	 } else {
 	return(0);
 	}
-}
-
-int getport(char *msg) { 
-
-char *portstring=NULL;
-char *saveptr1=NULL;
-char *saveptr2=NULL;
-char *str=NULL;
-char *token=NULL;
-char *tmpport=NULL;
-int port;
-int i;
-struct sockaddr_in sa;
-int result;
-
-port = atoi(sagan_port);
-
-char tmpmsg[MAX_SYSLOGMSG];
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
-
-/* See if the work " port" is in the string */
-
-if ( strstr(tmpmsg, " PORT ")) { 
-   
-   portstring = strtok_r(tmpmsg, " ", &saveptr1);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  { 
-      
-      token = strtok_r(NULL, " ", &saveptr1);
-      if ( token == NULL ) break;
-
-      /* tokenize by " ",  grab string after "port".  */
-       
-      if (!strcmp(token, "PORT")) { 
-         tmpport = strtok_r(NULL, " ", &saveptr1);
-	 if (tmpport == NULL) break; 
-	 /* if it's a number, set it.  If not,  default */
-	 if (isnumeric(tmpport)) { 
-	     port=atoi(tmpport); 
-	     } else { 
-	     /* drop last char.  Sometimes port ends in port "#." */
-	     tmpport[strlen(tmpport) - 1] = '\0';
-	     if (isnumeric(tmpport)) port=atoi(tmpport);
-	     }
-
-	 }
-     }
-}
-
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
-
-if ( strstr(tmpmsg, ":")) {
-
-   portstring = strtok_r(tmpmsg, ":", &saveptr1);
-   token = strtok_r(portstring, " ", &saveptr2);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  {
-   token = strtok_r(NULL, " ", &saveptr2);
-   if ( token == NULL ) break;
-   
-   result = inet_pton(AF_INET, token,  &(sa.sin_addr));
-
-      /* Found IP,  get the port */
-      if ( result != 0 ) { 
-         /* IP:PORT */  
-         portstring = strtok_r(NULL, ":", &saveptr1);
-	 if (isnumeric(portstring)) {
-	     port=atoi(portstring);
-	     } else { 
-	     /* IP:PORT string or IP::PORT */ 
-	     token = strtok_r(portstring, " ", &saveptr1); 
-	     if (isnumeric(token)) port=atoi(portstring);
-	     }
-	 }
-   }
-}
-
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
-
-if ( strstr(tmpmsg, "#")) {
-
-   portstring = strtok_r(tmpmsg, "#", &saveptr1);
-   token = strtok_r(portstring, " ", &saveptr2);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  {
-   token = strtok_r(NULL, " ", &saveptr2);
-   if ( token == NULL ) break;
-
-   result = inet_pton(AF_INET, token,  &(sa.sin_addr));
-
-      /* Found IP,  get the port */
-      if ( result != 0 ) {
-         /* IP#PORT */
-         portstring = strtok_r(NULL, "#", &saveptr1);
-         if (isnumeric(portstring)) {
-             port=atoi(portstring);
-             } else {
-             /* IP:PORT string or IP##PORT */
-             token = strtok_r(portstring, " ", &saveptr1);
-             if (isnumeric(token)) { 
-	        port=atoi(token);
-		} else {
-                token[strlen(token) - 1] = '\0';
-                if (isnumeric(token)) port=atoi(token);
-		}
-             }
-         }
-   }
-}
-
-return(port);
 }
 
 /* Escape SQL.   This was taken from Prelude.  */

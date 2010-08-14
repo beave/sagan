@@ -85,9 +85,15 @@ char sagan_path[MAXPATH];
 int  sagan_exttype=0;
 
 unsigned long long threshold_total=0;
-unsigned long long int sagantotal=0;
-unsigned long long int saganfound=0;
-unsigned long long int sagandrop=0;
+unsigned long long sagantotal=0;
+unsigned long long saganfound=0;
+unsigned long long sagandrop=0;
+
+unsigned long long saganesmtpdrop=0;
+unsigned long long saganexternaldrop=0;
+unsigned long long saganlogzilladrop=0;
+unsigned long long sagansnortdrop=0;
+
 
 char *defaultpri="0";                           /* Default priority */
 
@@ -257,8 +263,6 @@ pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 char *ip_src = NULL;
 char *ip_dst = NULL;
 
-char ip_srctmp[65];
-
 int  src_port;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
@@ -272,7 +276,6 @@ struct thresh_by_dst *threshbydst = NULL;
 unsigned long long thresh_oldtime_src;
 
 char *pattern;
-char *prgpattern;
 
 char fip[MAXIP];
 
@@ -344,7 +347,6 @@ int b;
 int z;
 int match=0;
 int pcrematch=0;
-int key;
 
 time_t t;
 struct tm *now;
@@ -551,7 +553,6 @@ while(1) {
 
 		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
 		   sagan_log(0, "Dropped input in 'program' mode!");
-		   sagandrop++;
 		}
 		pthread_mutex_unlock( &general_mutex );
 		}
@@ -678,6 +679,7 @@ while(1) {
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
        		          }
 	                	} else {
+				saganlogzilladrop++;
                    		sagandrop++;
                    		sagan_log(0, "Logzilla thread handler: Out of threads");
                   	  }
@@ -833,7 +835,8 @@ while(1) {
 
 		   if ( rulestruct[b].s_find_ip == 1 ) 
 		      {
-		      snprintf(fip, sizeof(fip), "%s", findipinmsg(syslog_msg));
+//		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(syslog_msg));
+		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg));
 		         
 			 if (strcmp(fip,"0")) 
                             {
@@ -846,7 +849,8 @@ while(1) {
                       }
 
 		   if ( rulestruct[b].s_find_port == 1) { 
-		   src_port = getport(syslog_msg);
+//		   src_port = parse_port_simple(syslog_msg);
+		   src_port = parse_port_simple(sysmsg);
 		   } else { 
 		   src_port = atoi(sagan_port);
 		   }
@@ -1001,6 +1005,7 @@ while(1) {
                       }
 				} else { 
 				sagandrop++;
+				saganesmtpdrop++;
 				sagan_log(0, "SMTP thread call handler: Out of threads\n");
 		      }
 		}
@@ -1042,7 +1047,7 @@ while(1) {
 		      }
 
 		   } else {
-
+		   saganexternaldrop++;
 		   sagandrop++; 
 		   sagan_log(0, "External thread call handler: Out of threads\n");
 
@@ -1087,7 +1092,7 @@ while(1) {
 		   }
 
 		} else { 
-		   
+		   saganlogzilladrop++;
 		   sagandrop++;
 		   sagan_log(0, "Logzilla thread handler: Out of threads");
 		  }
@@ -1137,7 +1142,7 @@ while(1) {
 		    }
 
 		    } else { 
-
+		    sagansnortdrop++;
 		    sagandrop++;
 		    sagan_log(0, "Snort database thread handler: Out of threads");
 	        }

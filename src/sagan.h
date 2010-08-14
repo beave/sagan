@@ -78,12 +78,18 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
-//void *sig_handler( void *);
+/* Parsers */
+
+char *parse_ip_simple( char * );
+int   parse_port_simple( char * );
 
 void sig_handler( int );
 void sig_handler_daemon( int );
 void key_handler( int );
 
+int isnumeric (char *);
+char *toupperc(char* const );
+void sagan_statistics( void );
 void *sagan_ext_thread( void * );
 void sagan_error(const char *, ...);
 void sagan_log( int, const char *, ... );
@@ -101,8 +107,6 @@ unsigned long long get_cid ( int , int );
 void removelockfile ( void );
 void checklockfile ( void );
 void droppriv( const char * );
-char *toupperc( char * );
-int  getport( char * );
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);

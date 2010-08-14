@@ -165,7 +165,7 @@ if ( mysql_real_query(mysql_logzilla, sqltmp,  strlen(sqltmp))) {
 logzilla_res = mysql_use_result(mysql_logzilla);
 
 if ( logzilla_res != NULL ) {
-   while(logzilla_row = mysql_fetch_row(logzilla_res)) {
+   while((logzilla_row = mysql_fetch_row(logzilla_res))) {
    snprintf(sqltmp, sizeof(sqltmp), "%s", logzilla_row[0]);
    re=sqltmp;
    }

@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <string.h>
 #include "sagan.h"
 
-unsigned long long int sagantotal;
-unsigned long long int saganfound;
-unsigned long long int sagandrop;
+unsigned long long sagantotal;
+unsigned long long saganfound;
+unsigned long long sagandrop;
 unsigned long long threshold_total;
+
 
 char sagan_extern[MAXPATH];
 
@@ -19,26 +21,30 @@ int  logzilla_log;
 int threadmaxlogzillac;
 int threadmaxemailc;
 
+unsigned long long saganesmtpdrop;
+unsigned long long saganexternaldrop;
+unsigned long long saganlogzilladrop;
+unsigned long long sagansnortdrop;
+
 void sagan_statistics() { 
 
-
-                 sagan_log(0, "Total number of events processed: %lu", sagantotal);
+		    sagan_log(0, "-------------------------------------------------------------------------------");
+                    sagan_log(0, "Total number of events processed: %lu", sagantotal);
                     sagan_log(0, "Total number of events thresholded: %lu", threshold_total);
                     sagan_log(0, "Total number of signatures matched: %lu", saganfound);
+		    sagan_log(0, "Total events dropped: %d", sagandrop);
+		    sagan_log(0, "-------------------------------------------------------------------------------");
 
-                    if ( strcmp(sagan_extern, "" )) sagan_log(0, "Max external threads reached: %d", threadmaxextc);
+                    if ( strcmp(sagan_extern, "" )) sagan_log(0, "Max external threads: %d | External events dropped: %lu", threadmaxextc, saganexternaldrop);
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-                       if ( dbtype != 0 ) {
-                       sagan_log(0, "Max database threads reached: %d", threadmaxdbc);
-                       }
-
-                       if ( logzilla_log != 0 ) sagan_log(0, "Max Logzilla threads reached: %d", threadmaxlogzillac );
+                   if ( dbtype != 0 ) sagan_log(0, "Max Snort database threads: %d | Snort DB drops: %lu", threadmaxdbc, sagansnortdrop);
+                   if ( logzilla_log != 0 ) sagan_log(0, "Max Logzilla threads: %d | Logzilla events dropped: %lu", threadmaxlogzillac, saganlogzilladrop);
 #endif
 
 #ifdef HAVE_LIBESMTP
-                       if ( strcmp(sagan_esmtp_server, "" )) sagan_log(0, "Max SMTP threads reached: %d", threadmaxemailc);
+                   if ( strcmp(sagan_esmtp_server, "" )) sagan_log(0, "Max SMTP threads reached: %d | SMTP events dropped: %lu", threadmaxemailc, saganesmtpdrop);
 #endif
-                    sagan_log(0, "Events dropped: %d", sagandrop);
 
+sagan_log(0, "-------------------------------------------------------------------------------");
 }

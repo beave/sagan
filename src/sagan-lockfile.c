@@ -36,6 +36,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <pthread.h>
+#include <unistd.h>
+#include <signal.h>
 
 #include "sagan.h"
 #include "version.h"

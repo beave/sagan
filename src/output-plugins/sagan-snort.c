@@ -37,6 +37,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <string.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 #include "sagan.h"
@@ -188,7 +189,7 @@ if ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp))) {
 res = mysql_use_result(mysql);
 
 if ( res != NULL ) { 
-   while(row = mysql_fetch_row(res)) {
+   while((row = mysql_fetch_row(res))) {
    snprintf(sqltmp, sizeof(sqltmp), "%s", row[0]);
    re=sqltmp;
    }
@@ -371,16 +372,11 @@ return(t_sig_id);
 
 void insert_event (int t_sid,  unsigned long long t_cid,  int t_sig_sid,  int dbtype,  char *date,  char *time ) { 
 
-char *timestamp = NULL;
 char sqltmp[MAXSQL];
 char *sql;
-//char time[30];
-//char date[30];
 
 pthread_mutex_lock( &db_mutex );
 
-//snprintf(time, sizeof(time), "%s", timein);
-//snprintf(date, sizeof(date), "%s", datein);
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
 sql=sqltmp;
 

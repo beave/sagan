@@ -36,6 +36,8 @@
 #include <libesmtp.h>		/* Needs to be after above headers */
 #include <pthread.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "sagan.h"
 #include "version.h"

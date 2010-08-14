@@ -65,7 +65,6 @@ char *tokenrule;
 char *tokennet;
 char *rulesplit;
 char *arg;
-char *arg2;
 char *saveptrnet;
 char *saveptrrule1;
 char *saveptrrule2;
@@ -91,12 +90,14 @@ int pcre_count=0;
 int pcreflag=0;
 int pcreoptions=0;
 
-int i, forward, reverse; 
+int i=0;
+int forward=0;
+int reverse=0;
 
 /* Rule vars */
 
-int ip_proto;
-int dst_port;
+int ip_proto=0;
+int dst_port=0;
 
 
 if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
@@ -204,12 +205,12 @@ remspaces(rulesplit);
 	       rulestruct[rulecount].s_nocase = 1;
 	       }
 
-	if (!strcmp(rulesplit, "find_port")) {
+	if (!strcmp(rulesplit, "parse_port_simple")) {
 	       strtok_r(NULL, ":", &saveptrrule2);
 	       rulestruct[rulecount].s_find_port = 1;
 	       }
 
-	if (!strcmp(rulesplit, "find_ip")) { 
+	if (!strcmp(rulesplit, "parse_ip_simple")) { 
 	       strtok_r(NULL, ":", &saveptrrule2);
 	       rulestruct[rulecount].s_find_ip = 1;
 	       }

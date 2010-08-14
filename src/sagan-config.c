@@ -116,7 +116,6 @@ char *replace_str(char *str, char *orig, char *rep)
 void load_config( void ) { 
 
 char tmpbuf[CONFBUF];
-char tmplog[MAXPATH];
 char tmpstring[CONFBUF];
 
 char *sagan_option=NULL;

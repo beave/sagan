@@ -36,6 +36,7 @@
 #include "version.h"
 #include "sagan.h"
 
+
 int classcount;
 int refcount;
 int rulecount;
@@ -70,10 +71,8 @@ pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void sig_handler(int sigargs ) {
 
-//	pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
         sigset_t signal_set;
         int sig;
-	int key;
 
         for(;;) {
                 /* wait for any and all signals */
