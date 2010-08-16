@@ -58,12 +58,12 @@ unsigned long long sagansnortdrop;
 
 void sagan_statistics() { 
 
-		    sagan_log(0, "-------------------------------------------------------------------------------");
+		    sagan_log(0, "--------------------------------------------------------------------------");
                     sagan_log(0, "Total number of events processed: %lu", sagantotal);
                     sagan_log(0, "Total number of events thresholded: %lu", threshold_total);
                     sagan_log(0, "Total number of signatures matched: %lu", saganfound);
 		    sagan_log(0, "Total events dropped: %d", sagandrop);
-		    sagan_log(0, "-------------------------------------------------------------------------------");
+		    sagan_log(0, "--------------------------------------------------------------------------");
 
                     if ( strcmp(sagan_extern, "" )) sagan_log(0, "Max external threads: %d | External events dropped: %lu", threadmaxextc, saganexternaldrop);
 
@@ -76,5 +76,5 @@ void sagan_statistics() {
                    if ( strcmp(sagan_esmtp_server, "" )) sagan_log(0, "Max SMTP threads reached: %d | SMTP events dropped: %lu", threadmaxemailc, saganesmtpdrop);
 #endif
 
-sagan_log(0, "-------------------------------------------------------------------------------");
+sagan_log(0, "--------------------------------------------------------------------------");
 }

@@ -93,7 +93,9 @@ if (stat(LOCKFILE, &lckcheck) == 0 ) {
 
 void removelockfile ( void ) { 
 
-if ( unlink(LOCKFILE) != 0 ) { 
-   sagan_log(1, "[%s, line %d] Cannot remove lock file (%s)\n", __FILE__, __LINE__, LOCKFILE);
-   }
+struct stat lckcheck;
+
+if ((stat(LOCKFILE, &lckcheck) == 0) && unlink(LOCKFILE) != 0 ) {
+    sagan_log(1, "[%s, line %d] Cannot remove lock file (%s)\n", __FILE__, __LINE__, LOCKFILE);
+    }
 }
