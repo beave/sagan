@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "sagan.h"
 
 unsigned long long sagantotal;
@@ -58,6 +59,8 @@ unsigned long long sagansnortdrop;
 
 void sagan_statistics() { 
 
+	if ((isatty(1))) {
+
 		    sagan_log(0, "--------------------------------------------------------------------------");
                     sagan_log(0, "Total number of events processed: %lu", sagantotal);
                     sagan_log(0, "Total number of events thresholded: %lu", threshold_total);
@@ -77,4 +80,6 @@ void sagan_statistics() {
 #endif
 
 sagan_log(0, "--------------------------------------------------------------------------");
+	}
+
 }
