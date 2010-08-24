@@ -52,6 +52,9 @@ int  logzilla_log;
 int threadmaxlogzillac;
 int threadmaxemailc;
 
+int flag=0;
+
+
 unsigned long long saganesmtpdrop;
 unsigned long long saganexternaldrop;
 unsigned long long saganlogzilladrop;
@@ -68,18 +71,32 @@ void sagan_statistics() {
 		    sagan_log(0, "Total events dropped: %d", sagandrop);
 		    sagan_log(0, "--------------------------------------------------------------------------");
 
-                    if ( strcmp(sagan_extern, "" )) sagan_log(0, "Max external threads: %d | External events dropped: %lu", threadmaxextc, saganexternaldrop);
+                    if ( strcmp(sagan_extern, "" )) { 
+		       sagan_log(0, "Max external threads: %d | External events dropped: %lu", threadmaxextc, saganexternaldrop);
+		       flag=1;
+		       }
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-                   if ( dbtype != 0 ) sagan_log(0, "Max Snort database threads: %d | Snort DB drops: %lu", threadmaxdbc, sagansnortdrop);
-                   if ( logzilla_log != 0 ) sagan_log(0, "Max Logzilla threads: %d | Logzilla events dropped: %lu", threadmaxlogzillac, saganlogzilladrop);
+                    
+		    if ( dbtype != 0 ) { 
+		       sagan_log(0, "Max Snort database threads: %d | Snort DB drops: %lu", threadmaxdbc, sagansnortdrop);
+		       flag=1;
+		       }
+
+                    if ( logzilla_log != 0 ) { 
+		       sagan_log(0, "Max Logzilla threads: %d | Logzilla events dropped: %lu", threadmaxlogzillac, saganlogzilladrop);
+		       flag=1;
+		       }
 #endif
 
 #ifdef HAVE_LIBESMTP
-                   if ( strcmp(sagan_esmtp_server, "" )) sagan_log(0, "Max SMTP threads reached: %d | SMTP events dropped: %lu", threadmaxemailc, saganesmtpdrop);
+                    if ( strcmp(sagan_esmtp_server, "" )) {
+		       sagan_log(0, "Max SMTP threads reached: %d | SMTP events dropped: %lu", threadmaxemailc, saganesmtpdrop);
+		       flag=1;
+		       }
 #endif
 
-sagan_log(0, "--------------------------------------------------------------------------");
+if ( flag == 1) sagan_log(0, "--------------------------------------------------------------------------");
+	
 	}
-
 }
