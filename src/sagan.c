@@ -95,10 +95,7 @@ unsigned long long saganlogzilladrop=0;
 unsigned long long sagansnortdrop=0;
 
 
-char *defaultpri="0";                           /* Default priority */
-
 int debug=0;
-int fpri=0;
 int devdebug=0;
 
 int rulecount=0;
@@ -302,7 +299,6 @@ char syslog_timetmp[MAXTIME];
 
 char *syslog_program;
 char syslog_programtmp[MAXPROGRAM];
-
 
 char *syslog_msg;
 char  syslog_msg_origtmp[MAX_SYSLOGMSG];
@@ -638,7 +634,8 @@ while(1) {
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
-   snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
+// snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
+   strlcpy(sysmsg, syslog_msg, sizeof(sysmsg));
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
    snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
@@ -768,7 +765,7 @@ while(1) {
 		      } else { 
 
 		   /* If case sensitive */
-		   if (strstr(syslog_msg, rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
+		   if (strstr(sysmsg, rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
 		   }
 		  }
 		 }
@@ -793,7 +790,7 @@ while(1) {
                 sagan_log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
                 }
 
-                rc = pcre_exec( re, NULL, syslog_msg, (int)strlen(syslog_msg), 0, 0, ovector, OVECCOUNT);
+                rc = pcre_exec( re, NULL, sysmsg, (int)strlen(sysmsg), 0, 0, ovector, OVECCOUNT);
                 pcre_free(re);
 
                 }  /* End of pcre if */
@@ -810,23 +807,6 @@ while(1) {
 		if ( pcrematch != 0 && pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
 		   {
 		
-		   /*
-		    * Signature should have a classification.  If it does,  we set the priority of
-		    * the alert here.  
-		    */
-
-		    for(i=0; i<classcount;i++) { 
-			   if (!strstr(classstruct[i].s_shortname, rulestruct[b].s_classtype)) {
-				   fpri=classstruct[i].s_priority;
-			   	}
-		   	}
-
-		/* If ruleset has a 'priority' statement,  then that will over ride classificatons */
-		/* Note: Don't have 'classification' or 'priority'?  Then it gets set to the defaultpri */
-
-                if ( atoi(rulestruct[b].s_pri) != 0 ) fpri = atoi(rulestruct[b].s_pri);
-
-
 		   if ( match == 0 ) { 
 
 		   saganfound++;
@@ -835,7 +815,6 @@ while(1) {
 
 		   if ( rulestruct[b].s_find_ip == 1 ) 
 		      {
-//		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(syslog_msg));
 		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg));
 		         
 			 if (strcmp(fip,"0")) 
@@ -849,7 +828,6 @@ while(1) {
                       }
 
 		   if ( rulestruct[b].s_find_port == 1) { 
-//		   src_port = parse_port_simple(syslog_msg);
 		   src_port = parse_port_simple(sysmsg);
 		   } else { 
 		   src_port = atoi(sagan_port);
@@ -954,11 +932,10 @@ while(1) {
                          }
 
 		      }			/* End of thresholding */
-		      
 
 		   /* alert log file */
-		   
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, fpri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
+		  
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
 
 
 #ifdef HAVE_LIBESMTP
@@ -972,7 +949,7 @@ while(1) {
 		  
 		  /* E-mail only if over min_email_priority */ 
 
-		  if ( min_email_priority >= fpri || min_email_priority == 0 ) { 
+		  if ( min_email_priority >= rulestruct[b].s_pri || min_email_priority == 0 ) { 
 
 		   if ( threademailc < max_email_threads ) { 
 		  
@@ -988,7 +965,7 @@ while(1) {
                    	  email_thread_args[threadid].sid = rulestruct[b].s_sid;
                    	  email_thread_args[threadid].msg = rulestruct[b].s_msg;
                    	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-                   	  email_thread_args[threadid].pri = fpri;
+                   	  email_thread_args[threadid].pri = rulestruct[b].s_pri;
                    	  email_thread_args[threadid].date = syslog_datetmp;
                    	  email_thread_args[threadid].time = syslog_timetmp;
                    	  email_thread_args[threadid].ip_src = ip_src;
@@ -1030,7 +1007,7 @@ while(1) {
                    ext_thread_args[threadid].sid = rulestruct[b].s_sid;
                    ext_thread_args[threadid].msg = rulestruct[b].s_msg;
                    ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-                   ext_thread_args[threadid].pri = fpri;
+                   ext_thread_args[threadid].pri = rulestruct[b].s_pri;
                    ext_thread_args[threadid].date = syslog_datetmp;
                    ext_thread_args[threadid].time = syslog_timetmp;
  		   ext_thread_args[threadid].ip_src = ip_src;
@@ -1127,7 +1104,7 @@ while(1) {
 		   db_args[threadid].ip_src=ip_src;
 		   db_args[threadid].ip_dst=ip_dst;
                    db_args[threadid].found=b;
-                   db_args[threadid].pri=fpri;
+                   db_args[threadid].pri=rulestruct[b].s_pri;
 		   db_args[threadid].message=sysmsg;
 		   db_args[threadid].cid=cid;
 		   db_args[threadid].endian=endianchk;
@@ -1154,7 +1131,6 @@ while(1) {
 
      match=0;  /* Reset match! */
      pcrematch=0;
-     fpri=0;
      rc=0;
   }
 

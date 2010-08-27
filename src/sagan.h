@@ -173,7 +173,7 @@ char s_reference[MAX_REFERENCE][512];
 char s_classtype[512];
 char s_sid[512];
 char s_rev[512];
-char s_pri[5];
+int  s_pri;
 char s_program[512];
 char s_facility[50];
 char s_syspri[25];

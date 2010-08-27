@@ -50,7 +50,10 @@ char ruleset[MAXPATH];
 int devdebug;
 
 struct rule_struct *rulestruct;
+struct class_struct *classstruct;
+
 int rulecount;
+int classcount;
 int sagan_proto;
 char sagan_port[6];
 
@@ -227,6 +230,12 @@ remspaces(rulesplit);
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"classtype\" appears to be incomplete");
 		snprintf(rulestruct[rulecount].s_classtype, sizeof(rulestruct[rulecount].s_classtype), "%s", remspaces(arg));
+
+		for(i=0; i<classcount;i++) {
+			if (!strcmp(classstruct[i].s_shortname, rulestruct[rulecount].s_classtype)) {
+				rulestruct[rulecount].s_pri = classstruct[i].s_priority;
+                                }
+                        }
 		}
 	
 	if (!strcmp(rulesplit, "program" )) { 
@@ -267,12 +276,14 @@ remspaces(rulesplit);
                 snprintf(rulestruct[rulecount].s_level, sizeof(rulestruct[rulecount].s_level), "%s", remspaces(arg));
                 }
 
+
         if (!strcmp(rulesplit, "pri" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) sagan_log(1, "The \"priority\" appears to be incomplete");
-                snprintf(rulestruct[rulecount].s_pri, sizeof(rulestruct[rulecount].s_pri), "%s", remspaces(arg));
+		remspaces(arg);
+		rulestruct[rulecount].s_pri = atoi(arg);
                 }
-	
+
 	/* Quoted information (content, pcre, msg)  */ 
 
         if (!strcmp(rulesplit, "msg" )) {
@@ -406,10 +417,12 @@ sagan_log(0, "---[Rule %s]------------------------------------------------------
 sagan_log(0, "= sid: %s", rulestruct[rulecount].s_sid);
 sagan_log(0, "= rev: %s", rulestruct[rulecount].s_rev);
 sagan_log(0, "= msg: %s", rulestruct[rulecount].s_msg);
+sagan_log(0, "= pri: %d", rulestruct[rulecount].s_pri);
+sagan_log(0, "= classtype: %s", rulestruct[rulecount].s_classtype);
 
 if ( rulestruct[rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
-if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= find_ip");
-if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "find_port");
+if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip_simple");
+if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "= parse_port_simple");
 
 for (i=0; i<content_count; i++) {
     sagan_log(0, "= [%d] content: %s", i, rulestruct[rulecount].s_content[i]);
