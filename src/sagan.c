@@ -610,9 +610,11 @@ while(1) {
                 if ( syslog_program == NULL ) {
                    syslog_program = "SAGAN: PROGRAM ERROR";
                    sagan_log(0, "Sagan received a malformed 'program'");
+                   } 
+                else {
+                   syslog_msg=syslog_program + strlen(syslog_program) + 1;
                    }
 
-                syslog_msg=strtok_r(NULL, "|", &tok);
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
                    sagan_log(0, "Sagan received a malformed 'message'");
