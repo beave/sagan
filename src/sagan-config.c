@@ -96,9 +96,9 @@ int  sagan_exttype;
 char saganconf[MAXPATH];
 char fifo[MAXPATH];
 char rule_path[MAXPATH];
-char lockfile[MAXPATH];
-char saganlog[MAXPATH];
-char alertlog[MAXPATH];
+char lockfile[MAXPATH]=LOCKFILE;
+char saganlog[MAXPATH]=SAGANLOG;
+char alertlog[MAXPATH]=ALERTLOG;
 FILE *sagancfg;
 
 char *rulesetptr;
