@@ -57,6 +57,7 @@ char sagan_port[6];
 int daemonize;
 int programmode;
 int dochroot;
+char saganlog[MAXPATH];
 
 /************************************************
  * Drop priv's so we aren't running as "root".  *
@@ -173,12 +174,12 @@ void sagan_log (int type, const char *format,... ) {
    t = time(NULL);
    now=localtime(&t);
    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
-   snprintf(tmplog, sizeof(tmplog), "%s", SAGANLOG);
+   snprintf(tmplog, sizeof(tmplog), "%s", saganlog);
 
    if ( type == 1 ) chr="E";
 
      if ((log = fopen(tmplog, "a")) == NULL) {
-       fprintf(stderr, "[E] Cannot open %s! [%s line %d]\n", SAGANLOG, __FILE__, __LINE__);
+       fprintf(stderr, "[E] Cannot open %s! [%s line %d]\n", saganlog, __FILE__, __LINE__);
        exit(1);
        }
 
@@ -334,5 +335,3 @@ if ( instring[i] == '\"' ) flag++;
 ret=tmp2;
 return(ret);
 }
-
-

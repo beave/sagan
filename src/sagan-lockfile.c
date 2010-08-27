@@ -42,6 +42,7 @@
 #include "sagan.h"
 #include "version.h"
 
+char lockfile[MAXPATH];
 
 /* Was using liblockfile but decided for portability reasons, it was a
  * bad idea */
@@ -55,13 +56,13 @@ struct stat lckcheck;
 
 /* Check for lockfile first */
 
-if (stat(LOCKFILE, &lckcheck) == 0 ) {
+if (stat(lockfile, &lckcheck) == 0 ) {
    
    /* Lock file is present,  open for read */
-   if (( lck = fopen(LOCKFILE, "r" )) == NULL ) {
-      sagan_log(1, "[%s, line %d] Lock file (%s) is present but can't be read", __FILE__, __LINE__, LOCKFILE);
+   if (( lck = fopen(lockfile, "r" )) == NULL ) {
+      sagan_log(1, "[%s, line %d] Lock file (%s) is present but can't be read", __FILE__, __LINE__, lockfile);
       } else {
-      if (!fgets(buf, sizeof(buf), lck)) sagan_log(1, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, LOCKFILE);
+      if (!fgets(buf, sizeof(buf), lck)) sagan_log(1, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, lockfile);
       fclose(lck);
       pid = atoi(buf);
       if ( pid == 0 ) sagan_log(1, "[%s, line %d] Lock file read but pid value is zero.  Aborting.....", __FILE__, __LINE__);
@@ -82,8 +83,8 @@ if (stat(LOCKFILE, &lckcheck) == 0 ) {
 
       /* No lock file present, so create it */
 
-      if (( lck = fopen(LOCKFILE, "w" )) == NULL ) {
-      sagan_log(1, "[%s, line %d] Cannot create lock file (%s)", __FILE__, __LINE__, LOCKFILE);
+      if (( lck = fopen(lockfile, "w" )) == NULL ) {
+      sagan_log(1, "[%s, line %d] Cannot create lock file (%s)", __FILE__, __LINE__, lockfile);
       } else {
       fprintf(lck, "%d", getpid() );
       fflush(lck); fclose(lck);
@@ -95,7 +96,7 @@ void removelockfile ( void ) {
 
 struct stat lckcheck;
 
-if ((stat(LOCKFILE, &lckcheck) == 0) && unlink(LOCKFILE) != 0 ) {
-    sagan_log(1, "[%s, line %d] Cannot remove lock file (%s)\n", __FILE__, __LINE__, LOCKFILE);
+if ((stat(lockfile, &lckcheck) == 0) && unlink(lockfile) != 0 ) {
+    sagan_log(1, "[%s, line %d] Cannot remove lock file (%s)\n", __FILE__, __LINE__, lockfile);
     }
 }

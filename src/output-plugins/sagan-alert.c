@@ -38,6 +38,7 @@
 
 
 FILE *alertfp;
+char alertlog[MAXPATH];
 
 void *sagan_alert ( char *s_sid, 
  		    char *s_msg,
@@ -53,9 +54,9 @@ void *sagan_alert ( char *s_sid,
 		    int  src_port, 
 		    char *message ) {
 
-if (( alertfp = fopen(ALERTLOG, "a" )) == NULL ) {
+if (( alertfp = fopen(alertlog, "a" )) == NULL ) {
   removelockfile();
-  sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, ALERTLOG);
+  sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
 }
 
 fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);

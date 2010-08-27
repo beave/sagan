@@ -172,13 +172,14 @@ const struct option long_options[] = {
 	{ "program", 	  no_argument,		NULL, 	'p' },
 	{ "devdebug", 	  no_argument, 		NULL,   'Z' },
 	{ "user",	  required_argument,	NULL,	'U' },
-	{ "chroot", 	  no_argument, 		NULL, 	'c' }, 
+	{ "chroot", 	  no_argument, 		NULL, 	'c' },
+	{ "config",	  required_argument, 	NULL, 	'f' },
 	{0, 0, 0, 0}
 
 };
 
 static const char *short_options =
-":pdDhZUc";
+"f:pdDhZUc";
 
 int option_index = 0;
 
@@ -360,7 +361,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 	   
 	   case 'd':
-	   sagan_log(0, "Debug enabled");
+	   //sagan_log(0, "Debug enabled");
 	   debug=1;
 	   break;
           
@@ -384,6 +385,11 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   dochroot=1;
 	   break;
 
+	   case 'f':
+	   strncpy(saganconf,optarg,sizeof(saganconf) - 1);
+	   saganconf[sizeof(saganconf)-1] = '\0';
+	   break;
+
 	  default:
           fprintf(stderr, "Invalid argument! See below for command line switches.\n");
           sagan_usage();
@@ -396,9 +402,9 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 
 sig_thread_args[0].daemonize = daemonize;
 
-sagan_log(0, "Sagan version %s is firing up!", VERSION);
 load_config();
-sagan_log(0, "Configuration file loaded and %d rules loaded.", rulecount);
+sagan_log(0, "Sagan version %s is firing up!", VERSION);
+sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, rulecount);
 droppriv(runas);
 sagan_log(0, "---------------------------------------------------------------------------");
 

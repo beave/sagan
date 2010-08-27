@@ -96,6 +96,9 @@ int  sagan_exttype;
 char saganconf[MAXPATH];
 char fifo[MAXPATH];
 char rule_path[MAXPATH];
+char lockfile[MAXPATH];
+char saganlog[MAXPATH];
+char alertlog[MAXPATH];
 FILE *sagancfg;
 
 char *rulesetptr;
@@ -378,9 +381,25 @@ if (!strcmp(sagan_option, "output")) {
 
         if (!strcmp(sagan_var, "RULE_PATH" )) {
            snprintf(rule_path, sizeof(rule_path), "%s", strtok_r(NULL, " ", &tok));
-           rule_path[strlen(rule_path)-1] = '\0'; }
-        }
+           rule_path[strlen(rule_path)-1] = '\0'; 
+		}
 
+        if (!strcmp(sagan_var, "LOCKFILE" )) {
+           snprintf(lockfile, sizeof(lockfile), "%s", strtok_r(NULL, " ", &tok));
+           lockfile[strlen(lockfile)-1] = '\0'; 
+		}
+
+        if (!strcmp(sagan_var, "SAGANLOG" )) {
+           snprintf(saganlog, sizeof(saganlog), "%s", strtok_r(NULL, " ", &tok));
+           saganlog[strlen(saganlog)-1] = '\0'; 
+		}
+
+        if (!strcmp(sagan_var, "ALERTLOG" )) {
+           snprintf(alertlog, sizeof(alertlog), "%s", strtok_r(NULL, " ", &tok));
+           alertlog[strlen(alertlog)-1] = '\0'; 
+		}
+
+        }
      /* "include */
 
      if (!strcmp(sagan_option, "include" )) {
