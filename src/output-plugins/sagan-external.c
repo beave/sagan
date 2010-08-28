@@ -54,6 +54,7 @@ int out[2];
 int n, pid;
 char buf[MAX_SYSLOGMSG];
 char data[MAX_SYSLOGMSG];
+char tmpref[2048];
 int ret;
 
 if ( sagan_exttype == 1 ) { 
@@ -66,7 +67,9 @@ if ( sagan_exttype == 1 ) {
 
   /* Alert like */
 
-   snprintf(data, sizeof(data), "\n[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\n\nSyslog message: %s", eargs->sid, eargs->msg, eargs->classtype, eargs->pri, eargs->date, eargs->time, eargs->ip_src, eargs->src_port, eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, eargs->sysmsg);
+  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem ));
+
+  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri, eargs->date, eargs->time, eargs->ip_src, eargs->src_port, eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, eargs->sysmsg, tmpref);
   }
 
 

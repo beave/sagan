@@ -1028,6 +1028,7 @@ while(1) {
 		   ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
 		   ext_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   ext_thread_args[threadid].src_port = src_port;
+		   ext_thread_args[threadid].rulemem = b;
 
 		   if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
 		     removelockfile();

@@ -307,6 +307,7 @@ struct ext_thread_args {
         char *sysmsg;
         int  dst_port;
         int  src_port;
+	int  rulemem;
         };
 
 /****************************************************************************/
