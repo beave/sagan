@@ -56,9 +56,13 @@ pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 struct email_thread_args * emailargs = (struct email_thread_args *) emailthreadargs;
 
+char tmpref[2048];
+
 char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
+
+snprintf(tmpref, sizeof(tmpref), "%s", reflookup( emailargs->rulemem ));
 
 if ((r = snprintf(tmpa, sizeof(tmpa), 
 	"MIME-Version: 1.0\r\n"
@@ -70,8 +74,8 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"\r\n\n"
 	"[**] [%s] %s [**]\n"
 	"[Classification: %s] [Priority: %d]\n"
-	"%s %s %s:%d -> %s:%d %s %s\n\n"
-	"Syslog message: %s\n\r",
+	"%s %s %s:%d -> %s:%d %s %s\n"
+	"Syslog message: %s%s\n\r",
 	sagan_esmtp_from,
 	sagan_esmtp_to,
 	emailargs->msg,
@@ -87,7 +91,8 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	emailargs->dst_port,
 	emailargs->facility,
 	emailargs->fpri,
-	emailargs->sysmsg)) < 0) {
+	emailargs->sysmsg,
+	tmpref)) < 0) {
 	sagan_log(0, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
 	goto failure;
 }

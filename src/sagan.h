@@ -45,7 +45,7 @@
 #define MAXTAG		10		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
 
-
+#define MAX_MSGSLOT	100		/* Slots for syslog message passing */
 #define MAX_THREADS     4096            /* Max system threads */
 #define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */
 
@@ -114,6 +114,9 @@ void load_classifications( void );
 void load_reference ( void );
 void load_rules ( void );
 char *betweenquotes( char * );
+char *reflookup( int );
+
+char *referencelookup( int );
 
 
 void *sagan_alert ( char *,  char *, 
@@ -122,7 +125,7 @@ void *sagan_alert ( char *,  char *,
                     char *,  char *, 
                     char *,  char *, 
                     int   ,  int, 
-		    char * );  
+		    char *,  int );  
 
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
@@ -325,6 +328,7 @@ struct email_thread_args {
         char *sysmsg;
         int  dst_port;
         int  src_port;
+	int  rulemem;
         };
 
 #define ESMTPTO         32		/* 'To' buffer size max */

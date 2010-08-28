@@ -47,6 +47,7 @@
 #include "sagan.h"
 
 struct ref_struct *refstruct;
+struct rule_struct *rulestruct;
 
 int refcount;
 int devdebug;
@@ -98,4 +99,42 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
 } 
 fclose(reffile);
 sagan_log(0, "%d references loaded.", refcount);
+}
+
+
+/****************************************************************************/
+/* This simple looks up references and returns a string with them formatted */
+/* properly.  It gets passed the location of the rule in memory (based on   */
+/* the rulecount.  This is used for sagan-alert.c and sagan-esmtp.c         */
+/****************************************************************************/
+
+char *reflookup( int rulemem ) { 
+
+int i=0;
+int b=0;
+char *tmptok=NULL;
+char *tmp=NULL;
+char *tmp2=NULL;
+char refinfo[512]="";
+char refinfo2[512]="";
+char reftmp[2048]="";
+char *ret;
+
+for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
+
+        strlcpy(refinfo, rulestruct[rulemem].s_reference[i], sizeof(refinfo));
+        tmp = strtok_r(refinfo, ",", &tmptok);
+        tmp2 = strtok_r(NULL, ",", &tmptok);
+
+    for ( b=0; b < refcount; b++) {
+
+        if (!strcmp(refstruct[b].s_refid,  tmp)) {
+	   snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, tmp2);
+	   strlcat(reftmp,  refinfo2,  sizeof(reftmp));
+           }
+        }
+}
+
+ret=reftmp;
+return(ret);
 }

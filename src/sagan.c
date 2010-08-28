@@ -317,7 +317,8 @@ int option;
 int ovector[OVECCOUNT];
 
 char syslogstring[MAX_SYSLOGMSG];
-char sysmsg[MAX_SYSLOGMSG];
+char sysmsg[MAX_MSGSLOT][MAX_SYSLOGMSG]; 
+int  msgslot=0;
 char syslogtmp[2];
 char c;
 
@@ -530,6 +531,8 @@ checklockfile();
 
 while(1) { 
 
+		
+
 		if ( fifoi == 1 ) { 
 
 		pthread_mutex_lock( &general_mutex );
@@ -642,8 +645,7 @@ while(1) {
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
-// snprintf(sysmsg, sizeof(sysmsg), "%s", syslog_msg);
-   strlcpy(sysmsg, syslog_msg, sizeof(sysmsg));
+   snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
    snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
@@ -677,7 +679,7 @@ while(1) {
                       logzilla_thread_args[threadid].date=syslog_datetmp;
                       logzilla_thread_args[threadid].time=syslog_timetmp;
                       logzilla_thread_args[threadid].program=syslog_programtmp;
-		      logzilla_thread_args[threadid].msg=sysmsg;
+		      logzilla_thread_args[threadid].msg=sysmsg[msgslot];
 
                      if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
                           removelockfile();
@@ -773,7 +775,7 @@ while(1) {
 		      } else { 
 
 		   /* If case sensitive */
-		   if (strstr(sysmsg, rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
+		   if (strstr(sysmsg[msgslot], rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
 		   }
 		  }
 		 }
@@ -798,7 +800,7 @@ while(1) {
                 sagan_log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
                 }
 
-                rc = pcre_exec( re, NULL, sysmsg, (int)strlen(sysmsg), 0, 0, ovector, OVECCOUNT);
+                rc = pcre_exec( re, NULL, sysmsg[msgslot], (int)strlen(sysmsg[msgslot]), 0, 0, ovector, OVECCOUNT);
                 pcre_free(re);
 
                 }  /* End of pcre if */
@@ -823,7 +825,7 @@ while(1) {
 
 		   if ( rulestruct[b].s_find_ip == 1 ) 
 		      {
-		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg));
+		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
 		         
 			 if (strcmp(fip,"0")) 
                             {
@@ -836,7 +838,7 @@ while(1) {
                       }
 
 		   if ( rulestruct[b].s_find_port == 1) { 
-		   src_port = parse_port_simple(sysmsg);
+		   src_port = parse_port_simple(sysmsg[msgslot]);
 		   } else { 
 		   src_port = atoi(sagan_port);
 		   }
@@ -943,7 +945,7 @@ while(1) {
 
 		   /* alert log file */
 		  
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg );
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg[msgslot], b );
 
 
 #ifdef HAVE_LIBESMTP
@@ -980,9 +982,10 @@ while(1) {
                    	  email_thread_args[threadid].ip_dst = ip_dst;
                    	  email_thread_args[threadid].facility = syslog_facilitytmp;
                    	  email_thread_args[threadid].fpri = syslog_leveltmp;
-		   	  email_thread_args[threadid].sysmsg = sysmsg;
+		   	  email_thread_args[threadid].sysmsg = sysmsg[msgslot];
 		    	  email_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   	  email_thread_args[threadid].src_port = src_port;
+			  email_thread_args[threadid].rulemem = b;
 	
                 if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
 		      removelockfile();
@@ -1022,7 +1025,7 @@ while(1) {
                    ext_thread_args[threadid].ip_dst = ip_dst;
                    ext_thread_args[threadid].facility = syslog_facilitytmp;
                    ext_thread_args[threadid].fpri = syslog_leveltmp;
-		   ext_thread_args[threadid].sysmsg = sysmsg;
+		   ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
 		   ext_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   ext_thread_args[threadid].src_port = src_port;
 
@@ -1067,7 +1070,7 @@ while(1) {
 		      logzilla_thread_args[threadid].date=syslog_datetmp;
 		      logzilla_thread_args[threadid].time=syslog_timetmp;
 		      logzilla_thread_args[threadid].program=syslog_programtmp;
-		      logzilla_thread_args[threadid].msg=sysmsg;
+		      logzilla_thread_args[threadid].msg=sysmsg[msgslot];
 		      
 
 
@@ -1113,7 +1116,7 @@ while(1) {
 		   db_args[threadid].ip_dst=ip_dst;
                    db_args[threadid].found=b;
                    db_args[threadid].pri=rulestruct[b].s_pri;
-		   db_args[threadid].message=sysmsg;
+		   db_args[threadid].message=sysmsg[msgslot];
 		   db_args[threadid].cid=cid;
 		   db_args[threadid].endian=endianchk;
 		   db_args[threadid].dst_port = rulestruct[b].dst_port;
@@ -1147,6 +1150,10 @@ while(1) {
   strlcpy(syslogtmp, "", sizeof(syslogtmp));
   pthread_mutex_unlock( &general_mutex );
   }
+
+  msgslot++;
+  if ( msgslot > MAX_MSGSLOT ) msgslot=0;
+
  }
 } /* end of main */
 

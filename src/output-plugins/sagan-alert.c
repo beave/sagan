@@ -32,13 +32,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "version.h"
 
-
 FILE *alertfp;
 char alertlog[MAXPATH];
+int refcount;
+
+struct rule_struct *rulestruct;
+struct ref_struct *refstruct;
 
 void *sagan_alert ( char *s_sid, 
  		    char *s_msg,
@@ -52,7 +56,11 @@ void *sagan_alert ( char *s_sid,
 		    char *s_fpri, 
 		    int  dst_port, 
 		    int  src_port, 
-		    char *message ) {
+		    char *message,
+		    int  rulemem
+		    ) {
+
+char tmpref[2048];
 
 if (( alertfp = fopen(alertlog, "a" )) == NULL ) {
   removelockfile();
@@ -63,6 +71,9 @@ fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);
 fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
 fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
 fprintf(alertfp, "Message: %s", message);
+snprintf(tmpref, sizeof(tmpref), "%s", reflookup( rulemem ));
+fprintf(alertfp, "%s\n", tmpref);
+
 fflush(alertfp);
 fclose(alertfp);
 
