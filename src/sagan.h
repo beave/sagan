@@ -114,7 +114,7 @@ void load_classifications( void );
 void load_reference ( void );
 void load_rules ( void );
 char *betweenquotes( char * );
-char *reflookup( int );
+char *reflookup( int, int );
 
 char *referencelookup( int );
 

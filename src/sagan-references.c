@@ -108,7 +108,10 @@ sagan_log(0, "%d references loaded.", refcount);
 /* the rulecount.  This is used for sagan-alert.c and sagan-esmtp.c         */
 /****************************************************************************/
 
-char *reflookup( int rulemem ) { 
+// 0 == alert
+// 1 == parsable.
+
+char *reflookup( int rulemem, int type ) { 
 
 int i=0;
 int b=0;
@@ -118,7 +121,7 @@ char *tmp2=NULL;
 char refinfo[512]="";
 char refinfo2[512]="";
 char reftmp[2048]="";
-char *ret;
+char *ret=NULL;
 
 for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
 
@@ -129,7 +132,8 @@ for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
     for ( b=0; b < refcount; b++) {
 
         if (!strcmp(refstruct[b].s_refid,  tmp)) {
-	   snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, tmp2);
+	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, tmp2);
+	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2), "Reference:%s%s\n", refstruct[b].s_refurl, tmp2);
 	   strlcat(reftmp,  refinfo2,  sizeof(reftmp));
            }
         }

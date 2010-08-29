@@ -62,7 +62,7 @@ char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
 
-snprintf(tmpref, sizeof(tmpref), "%s", reflookup( emailargs->rulemem ));
+snprintf(tmpref, sizeof(tmpref), "%s", reflookup( emailargs->rulemem, 0 ));
 
 if ((r = snprintf(tmpa, sizeof(tmpa), 
 	"MIME-Version: 1.0\r\n"

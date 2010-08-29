@@ -61,13 +61,15 @@ if ( sagan_exttype == 1 ) {
    
    /* Parsable */
 
-  snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\nSyslog message: %s\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri,  eargs->date, eargs->time, eargs->ip_src, eargs->src_port,  eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, eargs->sysmsg);
+  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem, 1 ));
+
+  snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri,  eargs->date, eargs->time, eargs->ip_src, eargs->src_port,  eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, tmpref, eargs->sysmsg);
    
   } else { 
 
   /* Alert like */
 
-  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem ));
+  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem, 0 ));
 
   snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri, eargs->date, eargs->time, eargs->ip_src, eargs->src_port, eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, eargs->sysmsg, tmpref);
   }
