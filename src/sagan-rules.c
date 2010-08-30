@@ -287,7 +287,7 @@ remspaces(rulesplit);
 	/* Quoted information (content, pcre, msg)  */ 
 
         if (!strcmp(rulesplit, "msg" )) {
-                arg = strtok_r(NULL, ":", &saveptrrule2);
+                arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) sagan_log(1, "The \"msg\" appears to be incomplete");
                 snprintf(rulestruct[rulecount].s_msg, sizeof(rulestruct[rulecount].s_msg), "%s", tmp2);
