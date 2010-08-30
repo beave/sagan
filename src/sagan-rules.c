@@ -295,7 +295,7 @@ remspaces(rulesplit);
 
 	if (!strcmp(rulesplit, "content" )) { 
 		if ( content_count > MAX_CONTENT ) sagan_log(1, "There is to many \"content\" types in the rule");
-		arg = strtok_r(NULL, ":", &saveptrrule2);
+		arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) sagan_log(1, "The \"content\" appears to be incomplete");
 		snprintf(rulestruct[rulecount].s_content[content_count], sizeof(rulestruct[rulecount].s_content[content_count]), "%s", tmp2);
