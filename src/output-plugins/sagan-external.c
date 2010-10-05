@@ -56,6 +56,7 @@ char buf[MAX_SYSLOGMSG];
 char data[MAX_SYSLOGMSG];
 char tmpref[2048];
 int ret;
+char tmp[6];
 
 if ( sagan_exttype == 1 ) { 
    
@@ -63,7 +64,13 @@ if ( sagan_exttype == 1 ) {
 
   snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem, 1 ));
 
-  snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri,  eargs->date, eargs->time, eargs->ip_src, eargs->src_port,  eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, tmpref, eargs->sysmsg);
+if ( eargs->drop == 1 ) { 
+   snprintf(tmp, sizeof(tmp), "True");
+   } else { 
+   snprintf(tmp, sizeof(tmp), "False");
+   }
+
+   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", eargs->sid, eargs->msg, eargs->classtype, tmp, eargs->pri,  eargs->date, eargs->time, eargs->ip_src, eargs->src_port,  eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, tmpref, eargs->sysmsg);
    
   } else { 
 

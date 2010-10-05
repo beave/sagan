@@ -94,7 +94,6 @@ unsigned long long saganexternaldrop=0;
 unsigned long long saganlogzilladrop=0;
 unsigned long long sagansnortdrop=0;
 
-
 int debug=0;
 int devdebug=0;
 
@@ -1029,6 +1028,7 @@ while(1) {
 		   ext_thread_args[threadid].dst_port = rulestruct[b].dst_port;
 		   ext_thread_args[threadid].src_port = src_port;
 		   ext_thread_args[threadid].rulemem = b;
+		   ext_thread_args[threadid].drop = rulestruct[b].drop;
 
 		   if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
 		     removelockfile();

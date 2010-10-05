@@ -166,6 +166,15 @@ rulestring = rulestr;
 tokennet = strtok_r(netstring, " ", &saveptrnet);
 while ( tokennet != NULL ) {
 
+   if ( netcount == 0 ) { 
+      if (!strcmp(tokennet, "drop" )) 
+         { 
+	 rulestruct[rulecount].drop = 1; 
+	 } else {
+	 rulestruct[rulecount].drop = 0;
+	 }
+       }
+
    /* Protocol */
    if ( netcount == 1 ) { 
       ip_proto = sagan_proto;
@@ -419,6 +428,7 @@ sagan_log(0, "= rev: %s", rulestruct[rulecount].s_rev);
 sagan_log(0, "= msg: %s", rulestruct[rulecount].s_msg);
 sagan_log(0, "= pri: %d", rulestruct[rulecount].s_pri);
 sagan_log(0, "= classtype: %s", rulestruct[rulecount].s_classtype);
+sagan_log(0, "= drop: %d\n", rulestruct[rulecount].drop);
 
 if ( rulestruct[rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
 if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip_simple");
