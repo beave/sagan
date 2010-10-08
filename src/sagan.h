@@ -29,6 +29,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#include <stdint.h> 
+
 /* Various buffers used during configurations loading */
 
 #define CLASSBUF	1024
@@ -42,7 +44,7 @@
 #define MAXTIME		10		/* Max syslog 'time length */
 #define MAXFACILITY	25		/* Max syslog 'facility' length */
 #define MAXPRIORITY	20		/* Max syslog 'priority' length */
-#define MAXTAG		10		/* Max syslog 'tag' length */
+#define MAXTAG		32		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
 
 #define MAX_MSGSLOT	100		/* Slots for syslog message passing */
@@ -103,7 +105,7 @@ void load_config( void );
 int  logzilla_db_connect( void );
 int  db_connect( void );
 int  get_sensor_id ( char *,  char *,  char *,  int , int  );
-unsigned long long get_cid ( int , int );
+uint64_t get_cid ( int , int );
 void removelockfile ( void );
 void checklockfile ( void );
 void droppriv( const char * );
@@ -115,6 +117,7 @@ void load_reference ( void );
 void load_rules ( void );
 char *betweenquotes( char * );
 char *reflookup( int, int );
+double CalcPct(uint64_t, uint64_t);
 
 char *referencelookup( int );
 
@@ -136,13 +139,13 @@ int  get_sig_sid( char *,  char *,
                   int         ,  int  );
 
 
-void insert_event (int, unsigned long long, int, int, char *, char * );
+void insert_event (int, uint64_t, int, int, char *, char * );
 
-void insert_hdr (int , unsigned long long , 
+void insert_hdr (int , uint64_t, 
                  char *,  char *, 
 		 int, int, int, int, int);
 
-void insert_payload ( int,  unsigned long long, char *,  int );
+void insert_payload ( int,  uint64_t, char *,  int );
 
 void query_reference ( char *, char *, int, int );
 #endif
@@ -205,7 +208,7 @@ struct thresh_by_src {
 unsigned s_size_thresh_by_src;
 char ipsrc[64];
 int  count;
-unsigned long long utime;
+uint64_t utime;
 char sid[512];
 };
 
@@ -215,7 +218,7 @@ struct thresh_by_dst {
 unsigned s_size_thresh_by_dst;
 char ipdst[64];
 int  count;
-unsigned long long utime;
+uint64_t utime;
 char sid[512];
 };
 
@@ -238,7 +241,7 @@ struct db_args {
         int  found; 
         int  pri;
         char *message;
-        unsigned long long cid;
+        uint64_t cid;
 	int endian;
 	int dst_port;
 	int src_port;
@@ -260,7 +263,7 @@ struct db_thread_args {
         int  found;
         int  pri;
 	char *message;
-	unsigned long long cid;
+	uint64_t cid;
 	int endian;
 	int dst_port;
 	int src_port;
@@ -350,11 +353,11 @@ void *sagan_esmtp_thread( void *);
 
 struct sig_thread_args {
         int daemonize;
-        unsigned long long cid;
+        uint64_t cid;
         } sig_thread_args[1];
 
 struct sig_args {
         int daemonize;
-        unsigned long long cid;
+        uint64_t cid;
         } sig_args[1];
 

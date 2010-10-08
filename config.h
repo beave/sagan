@@ -207,7 +207,7 @@
 #define PACKAGE_NAME "sagan"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Sagan 0.1.6-svn"
+#define PACKAGE_STRING "Sagan 0.1.7-svn"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "sagan"
@@ -216,7 +216,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.1.6-svn"
+#define PACKAGE_VERSION "0.1.7-svn"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -240,7 +240,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "0.1.6-svn"
+#define VERSION "0.1.7-svn"
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */

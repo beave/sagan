@@ -45,6 +45,7 @@
 #include <signal.h>
 #include <pcre.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "sagan.h"
 #include "version.h"
@@ -60,7 +61,7 @@ int daemonize=0;
 int programmode=0;
 int dochroot=0;
 
-unsigned long long sigcid;		/* Used for CID passing when signal's are caught */
+uint64_t sigcid;		/* Used for CID passing when signal's are caught */
 
 char sagan_hostname[50]="sagan_hostname";
 char sagan_interface[50]="syslog";
@@ -84,15 +85,15 @@ char sagan_path[MAXPATH];
 
 int  sagan_exttype=0;
 
-unsigned long long threshold_total=0;
-unsigned long long sagantotal=0;
-unsigned long long saganfound=0;
-unsigned long long sagandrop=0;
+uint64_t threshold_total=0;
+uint64_t sagantotal=0;
+uint64_t saganfound=0;
+uint64_t sagandrop=0;
 
-unsigned long long saganesmtpdrop=0;
-unsigned long long saganexternaldrop=0;
-unsigned long long saganlogzilladrop=0;
-unsigned long long sagansnortdrop=0;
+uint64_t saganesmtpdrop=0;
+uint64_t saganexternaldrop=0;
+uint64_t saganlogzilladrop=0;
+uint64_t sagansnortdrop=0;
 
 int debug=0;
 int devdebug=0;
@@ -196,7 +197,7 @@ int main(int argc, char **argv) {
 
 int  endianchk;
 
-unsigned long long cid = 0;
+uint64_t cid = 0;
 
 struct db_args *db_args = NULL;
 struct logzilla_thread_args *logzilla_thread_args = NULL;
@@ -270,7 +271,7 @@ char  timet[20];
 struct thresh_by_src *threshbysrc = NULL;
 struct thresh_by_dst *threshbydst = NULL;
 
-unsigned long long thresh_oldtime_src;
+uint64_t thresh_oldtime_src;
 
 char *pattern;
 
@@ -460,7 +461,7 @@ sagan_log(0, "Sensor ID            : %d", sensor_id);
 cid = get_cid( sensor_id, dbtype );
 cid++;
 sigcid=cid;
-sagan_log(0, "Next CID             : %llu", cid);
+sagan_log(0, "Next CID             : %lu", cid);
 
 }
 #endif
@@ -1153,7 +1154,7 @@ while(1) {
   }
 
   msgslot++;
-  if ( msgslot > MAX_MSGSLOT ) msgslot=0;
+  if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
  }
 } /* end of main */

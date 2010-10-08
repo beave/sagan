@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <pthread.h>
+#include <stdint.h>
 
 #include "version.h"
 #include "sagan.h"
@@ -56,14 +57,14 @@ char sagan_extern[255];
 char sagan_esmtp_server[255];
 int logzilla_log;
 
-unsigned long long sigcid;		/* For CID on recv. of signal */
+uint64_t sigcid;		/* For CID on recv. of signal */
 
 int daemonize;
 
-unsigned long long int sagantotal;
-unsigned long long int saganfound;
-unsigned long long int sagandrop;
-unsigned long long threshold_total;
+uint64_t sagantotal;
+uint64_t saganfound;
+uint64_t sagandrop;
+uint64_t threshold_total;
 
 FILE *alertfp;
 
