@@ -37,7 +37,7 @@
 #include "sagan.h"
 #include "version.h"
 
-FILE *alertfp;
+//FILE *alertfp;
 char alertlog[MAXPATH];
 int refcount;
 
@@ -60,7 +60,9 @@ void *sagan_alert ( char *s_sid,
 		    int  rulemem
 		    ) {
 
-char tmpref[2048];
+char tmpref[2048]="";
+
+FILE *alertfp;
 
 if (( alertfp = fopen(alertlog, "a" )) == NULL ) {
   removelockfile();
@@ -72,7 +74,7 @@ fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
 fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
 fprintf(alertfp, "Message: %s", message);
 snprintf(tmpref, sizeof(tmpref), "%s", reflookup( rulemem, 0 ));
-fprintf(alertfp, "%s\n", tmpref, 0);
+fprintf(alertfp, "%s\n", tmpref);
 
 fflush(alertfp);
 fclose(alertfp);
