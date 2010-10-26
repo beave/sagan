@@ -281,35 +281,35 @@ struct thresh_by_dst *threshbydst = NULL;
 
 uint64_t thresh_oldtime_src;
 
-char *pattern;
+char *pattern=NULL;
 
 char fip[MAXIP];
 
-char *syslog_host;
+char *syslog_host=NULL;
 char  syslog_hosttmp[MAXHOST];
 
-char *syslog_facility;
+char *syslog_facility=NULL;
 char syslog_facilitytmp[MAXFACILITY];
 
-char *syslog_priority;
+char *syslog_priority=NULL;
 char syslog_prioritytmp[MAXPRIORITY];
 
-char *syslog_level;
+char *syslog_level=NULL;
 char syslog_leveltmp[MAXLEVEL];
 
-char *syslog_tag;
+char *syslog_tag=NULL;
 char syslog_tagtmp[MAXTAG];
 
-char *syslog_date;
+char *syslog_date=NULL;
 char syslog_datetmp[MAXDATE];
 
-char *syslog_time;
+char *syslog_time=NULL;
 char syslog_timetmp[MAXTIME];
 
-char *syslog_program;
+char *syslog_program=NULL;
 char syslog_programtmp[MAXPROGRAM];
 
-char *syslog_msg;
+char *syslog_msg=NULL;
 char  syslog_msg_origtmp[MAX_SYSLOGMSG];
 
 struct ext_thread_args *ext_thread_args = NULL;
@@ -478,7 +478,7 @@ sagan_log(0, "Sensor ID            : %d", sensor_id);
 cid = get_cid( sensor_id, dbtype );
 cid++;
 sigcid=cid;
-sagan_log(0, "Next CID             : %lu", cid);
+sagan_log(0, "Next CID             : %llu", cid);
 
 }
 #endif

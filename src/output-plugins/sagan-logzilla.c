@@ -65,8 +65,6 @@ pthread_mutex_t logzilla_db_mutex;
 
 int logzilla_db_connect( void ) {
 
-char pgconnect[2048];
-
 char *dbh=NULL;
 char *dbu=NULL;
 char *dbp=NULL;

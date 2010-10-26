@@ -210,7 +210,7 @@ int checkendian() {
 char *ip2bit (char *ipaddr,  int endian) { 
 
 struct sockaddr_in ipv4;
-unsigned long ip;
+uint32_t ip;
 char *retbuf = NULL;
 char tmpbuf[MAXHOST];
 
@@ -225,7 +225,7 @@ if ( endian == 0 ) {
    ip = ipv4.sin_addr.s_addr;
    }
 
-snprintf(tmpbuf, sizeof(tmpbuf), "%lu", ip);
+snprintf(tmpbuf, sizeof(tmpbuf), "%u", ip);
 retbuf=tmpbuf;
 
 return(retbuf);

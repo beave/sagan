@@ -70,33 +70,33 @@ void sagan_statistics() {
 	if ((isatty(1))) {
 
 		    sagan_log(0, "--------------------------------------------------------------------------");
-                    sagan_log(0, "Total number of events processed: %lu", sagantotal);
-                    sagan_log(0, "Total number of events thresholded: %lu (%.3f%%)", threshold_total, CalcPct( threshold_total, sagantotal) );
-                    sagan_log(0, "Total number of signatures matched: %lu (%.3f%%)",  saganfound, CalcPct( saganfound, sagantotal) );
-		    sagan_log(0, "Total events dropped: %lu (%.3f%%)", sagandrop, CalcPct(sagandrop, sagantotal) );
+                    sagan_log(0, "Total number of events processed: %llu", sagantotal);
+                    sagan_log(0, "Total number of events thresholded: %llu (%.3f%%)", threshold_total, CalcPct( threshold_total, sagantotal) );
+                    sagan_log(0, "Total number of signatures matched: %llu (%.3f%%)",  saganfound, CalcPct( saganfound, sagantotal ) );
+		    sagan_log(0, "Total events dropped: %llu (%.3f%%)", sagandrop, CalcPct(sagandrop, sagantotal) );
 		    sagan_log(0, "--------------------------------------------------------------------------");
 
                     if ( strcmp(sagan_extern, "" )) { 
-		       sagan_log(0, "Max external threads: %d of %d (%.3f%%) | External events dropped: %lu", threadmaxextc,  max_ext_threads, CalcPct( threadmaxextc, max_ext_threads), saganexternaldrop);
+		       sagan_log(0, "Max external threads: %llu of %llu (%.3f%%) | External events dropped: %llu", threadmaxextc,  max_ext_threads, CalcPct( threadmaxextc, max_ext_threads), saganexternaldrop);
 		       flag=1;
 		       }
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
                     
 		    if ( dbtype != 0 ) { 
-		       sagan_log(0, "Max Snort database threads: %d of %d (%.3f%%) | Snort DB drops: %lu", threadmaxdbc, maxdb_threads, CalcPct( threadmaxdbc, maxdb_threads), sagansnortdrop);
+		       sagan_log(0, "Max Snort database threads: %llu of %llu (%.3f%%) | Snort DB drops: %llu", threadmaxdbc, maxdb_threads, CalcPct( threadmaxdbc, maxdb_threads), sagansnortdrop);
 		       flag=1;
 		       }
 
                     if ( logzilla_log != 0 ) { 
-		       sagan_log(0, "Max Logzilla threads: %d of %d (%.3f%%) | Logzilla events dropped: %lu", threadmaxlogzillac, max_logzilla_threads, CalcPct( threadmaxlogzillac, max_logzilla_threads), saganlogzilladrop);
+		       sagan_log(0, "Max Logzilla threads: %llu of %llu (%.3f%%) | Logzilla events dropped: %llu", threadmaxlogzillac, max_logzilla_threads, CalcPct( threadmaxlogzillac, max_logzilla_threads), saganlogzilladrop);
 		       flag=1;
 		       }
 #endif
 
 #ifdef HAVE_LIBESMTP
                     if ( strcmp(sagan_esmtp_server, "" )) {
-		       sagan_log(0, "Max SMTP threads reached: %d of %d (%.3f%%) | SMTP events dropped: %lu", threadmaxemailc, max_email_threads, CalcPct( threadmaxemailc, max_email_threads), saganesmtpdrop);
+		       sagan_log(0, "Max SMTP threads reached: %llu of %llu (%.3f%%) | SMTP events dropped: %llu", threadmaxemailc, max_email_threads, CalcPct( threadmaxemailc, max_email_threads), saganesmtpdrop);
 		       flag=1;
 		       }
 #endif

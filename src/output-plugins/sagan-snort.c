@@ -88,8 +88,6 @@ pthread_mutex_t db_mutex;
 
 int db_connect( void ) { 
 
-char pgconnect[2048];
-
 char *dbh=NULL;
 char *dbu=NULL;
 char *dbp=NULL;
@@ -378,7 +376,7 @@ char *sql;
 
 pthread_mutex_lock( &db_mutex );
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%lu', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%llu', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
 sql=sqltmp;
 
 pthread_mutex_unlock( &db_mutex );
@@ -407,14 +405,14 @@ snprintf(ipdstbit, sizeof(ipdstbit), "%s", ip2bit(t_ipdst, endian));
 
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%lu', '%s', '%s', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ipsrcbit, ipdstbit, t_ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%llu', '%s', '%s', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ipsrcbit, ipdstbit, t_ipproto );
 
 sql=sqltmp;
 db_query( dbtype, sql );
 
 /* "tcp" */
 if ( t_ipproto == 6 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%lu', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", t_sid, t_cid, src_port, dst_port  );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%llu', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", t_sid, t_cid, src_port, dst_port  );
 sql=sqltmp;
 db_query( dbtype, sql );
 } 
@@ -422,7 +420,7 @@ db_query( dbtype, sql );
 /* "udp" */
 
 if ( t_ipproto == 17 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%lu', '%d', '%d', '0', '0' )", t_sid, t_cid, src_port, dst_port  );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%llu', '%d', '%d', '0', '0' )", t_sid, t_cid, src_port, dst_port  );
 sql=sqltmp;
 db_query( dbtype, sql );
 }
@@ -431,7 +429,7 @@ db_query( dbtype, sql );
 /* May expand on this if there's actually a use for it */
 
 if ( t_ipproto == 1 ) { 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%lu', '8', '8', '0', '0', '0' )", t_sid, t_cid );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%llu', '8', '8', '0', '0', '0' )", t_sid, t_cid );
 sql=sqltmp;
 db_query( dbtype, sql );
 }
@@ -449,7 +447,7 @@ char sqltmp[MAXSQL];
 char *sql;
 
 pthread_mutex_lock( &db_mutex );
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%lu', '%s')", t_sid, t_cid, t_hex_data);
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%llu', '%s')", t_sid, t_cid, t_hex_data);
 sql=sqltmp;
 pthread_mutex_unlock( &db_mutex );
 db_query( dbtype, sql );
@@ -465,7 +463,7 @@ void record_last_cid ( void )  {
 char sqltmp[MAXSQL];
 char *sql;
 
-snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%lu' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sigcid, sensor_id, sagan_hostname, sagan_interface, sagan_filter, sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%llu' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sigcid, sensor_id, sagan_hostname, sagan_interface, sagan_filter, sagan_detail);
 sql=sqltmp;
 db_query( dbtype, sql );
 
