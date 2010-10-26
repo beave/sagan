@@ -44,7 +44,7 @@
 #define HAVE_LIBESMTP 1
 
 /* Define to 1 if you have the `idmef' library (-lidmef). */
-/* #undef HAVE_LIBIDMEF */
+#define HAVE_LIBIDMEF 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1

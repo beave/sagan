@@ -46,6 +46,7 @@
 #include <pcre.h>
 #include <limits.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #include "sagan.h"
 #include "version.h"
@@ -478,7 +479,7 @@ sagan_log(0, "Sensor ID            : %d", sensor_id);
 cid = get_cid( sensor_id, dbtype );
 cid++;
 sigcid=cid;
-sagan_log(0, "Next CID             : %llu", cid);
+sagan_log(0, "Next CID             : %" PRIu64 "", cid);
 
 }
 #endif
