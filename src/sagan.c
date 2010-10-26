@@ -73,7 +73,7 @@ char saganconf[MAXPATH]=CONFIG_FILE_PATH;
 char *runas=RUNAS;
 
 int  threadextc=0;
-int  threadmaxextc=0;
+uint64_t threadmaxextc=0;
 int  dropped=0;
 int  classcount=0;
 int  threadid =0;
@@ -107,7 +107,7 @@ int  fifoi=0;
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-int max_ext_threads;
+uint64_t max_ext_threads;
 
 /****************************************************************************/
 /*  MySQL/PostgreSQL specific global variables.  Used for Logzilla & Snort  */
@@ -123,8 +123,8 @@ char dbhost[MAXHOST];
 
 int  dbtype;
 int  threaddbc=0;
-int  threadmaxdbc=0;
-int  maxdb_threads;
+uint64_t  threadmaxdbc=0;
+uint64_t  maxdb_threads;
 
 char logzilla_user[MAXUSER];
 char logzilla_password[MAXPASS];
@@ -134,8 +134,8 @@ char logzilla_dbhost[MAXHOST];
 int  logzilla_log;
 int  logzilla_dbtype;
 int  threadlogzillac=0;
-int  threadmaxlogzillac=0;
-int  max_logzilla_threads;
+uint64_t threadmaxlogzillac=0;
+uint64_t max_logzilla_threads;
 
 
 pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -153,15 +153,23 @@ char sagan_esmtp_from[ESMTPFROM];
 char sagan_esmtp_to[ESMTPTO];
 char sagan_esmtp_server[ESMTPSERVER];
 
-int  max_email_threads;
+uint64_t  max_email_threads;
 int  min_email_priority=0;
-int  threadmaxemailc=0;
+uint64_t  threadmaxemailc=0;
 int  threademailc=0;
 
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-
 #endif 
+
+
+/****************************************************************************/
+/* libidmef support                                                         */
+/****************************************************************************/
+
+#ifdef HAVE_LIBIDMEF
+char sagan_idmef_file[255];
+#endif
 
 /* Command line options */
 
@@ -417,6 +425,15 @@ if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args ))
         sagan_log(1, "[%s, line %d] Error creating signa handler thread.", __FILE__, __LINE__);
         }
 }
+
+
+/* IDMEF */
+
+#ifdef HAVE_LIBIDMEF
+if ( strcmp(sagan_idmef_file, "" )) { 
+sagan_log(0, "IDMEF output is being stored to: %s", sagan_idmef_file);
+}
+#endif
 
 /* Allocate memory for external program thread structure */
 

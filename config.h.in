@@ -42,6 +42,9 @@
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 #undef HAVE_LIBESMTP
 
+/* Define to 1 if you have the `idmef' library (-lidmef). */
+#undef HAVE_LIBIDMEF
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 

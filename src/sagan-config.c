@@ -60,7 +60,7 @@ char logzilla_user[MAXUSER]="";
 char logzilla_password[MAXPASS]="";
 char logzilla_dbname[MAXDBNAME]="";
 char logzilla_dbhost[MAXHOST]="";
-int maxdb_threads=MAX_DB_THREADS;
+uint64_t maxdb_threads=MAX_DB_THREADS;
 
 char sagan_hostname[MAXHOST];
 char sagan_interface[50];
@@ -71,7 +71,7 @@ char sagan_host[17];
 char sagan_port[6]="514";
 int  sagan_proto = 6;
 
-int max_logzilla_threads=MAX_LOGZILLA_THREADS;
+uint64_t max_logzilla_threads=MAX_LOGZILLA_THREADS;
 
 #endif
 
@@ -79,11 +79,15 @@ int max_logzilla_threads=MAX_LOGZILLA_THREADS;
 char sagan_esmtp_from[ESMTPSERVER];
 char sagan_esmtp_to[255];
 char sagan_esmtp_server[255];
-int max_email_threads=MAX_EMAIL_THREADS;
+uint64_t max_email_threads=MAX_EMAIL_THREADS;
 int min_email_priority;
 #endif
 
-int max_ext_threads=MAX_EXT_THREADS;
+#ifdef HAVE_LIBIDMEF
+char sagan_idmef_file[255];
+#endif
+
+uint64_t max_ext_threads=MAX_EXT_THREADS;
 int programmode;
 
 struct rule_struct *rulestruct;
@@ -218,6 +222,18 @@ if (!strcmp(sagan_option, "output")) {
         snprintf(sagan_extern, sizeof(sagan_extern), "%s", strtok_r(NULL, " ", &tok));
            if (strstr(strtok_r(NULL, " ", &tok), "parsable")) sagan_exttype=1;
         }
+
+
+
+#ifdef HAVE_LIBIDMEF
+	
+	if (!strcmp(sagan_var, "idmef:")) { 
+	   ptmp = sagan_var; 
+           ptmp = strtok_r(NULL, " ", &tok);
+	   snprintf(sagan_idmef_file, sizeof(sagan_idmef_file), "%s", ptmp);
+	   remrt(sagan_idmef_file);
+	   }
+#endif
 
 
 #ifdef HAVE_LIBESMTP

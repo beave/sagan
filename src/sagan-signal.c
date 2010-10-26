@@ -42,10 +42,7 @@ int classcount;
 int refcount;
 int rulecount;
 int ruletotal;
-int threadmaxdbc;
-int threadmaxextc;
-int threadmaxemailc;
-int threadmaxlogzillac;
+uint64_t threadmaxemailc;
 int dbtype;
 int sensor_id;
 

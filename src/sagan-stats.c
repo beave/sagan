@@ -46,17 +46,17 @@ char sagan_extern[MAXPATH];
 char sagan_esmtp_server[ESMTPSERVER];
 #endif
 
-int threadmaxextc;
-int threadmaxdbc;
+uint64_t threadmaxextc;
+uint64_t threadmaxdbc;
 int  dbtype;
 int  logzilla_log;
-int threadmaxlogzillac;
-int threadmaxemailc;
+uint64_t threadmaxlogzillac;
+uint64_t threadmaxemailc;
 
-int max_ext_threads;
-int max_email_threads;
-int max_logzilla_threads;
-int maxdb_threads;
+uint64_t max_ext_threads;
+uint64_t max_email_threads;
+uint64_t max_logzilla_threads;
+uint64_t maxdb_threads;
 
 int flag=0;
 

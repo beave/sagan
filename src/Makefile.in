@@ -55,7 +55,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-util.$(OBJEXT) parse-ip-simple.$(OBJEXT) \
 	parse-port-simple.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
-	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT)
+	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
+	sagan-idmef.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
@@ -190,7 +191,8 @@ output-plugins/sagan-alert.c \
 output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
-output-plugins/sagan-logzilla.c
+output-plugins/sagan-logzilla.c \
+output-plugins/sagan-idmef.c
 
 all: all-am
 
@@ -265,6 +267,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-esmtp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-external.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-idmef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-logzilla.Po@am__quote@
@@ -390,6 +393,20 @@ sagan-logzilla.obj: output-plugins/sagan-logzilla.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-logzilla.c' object='sagan-logzilla.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-logzilla.obj `if test -f 'output-plugins/sagan-logzilla.c'; then $(CYGPATH_W) 'output-plugins/sagan-logzilla.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-logzilla.c'; fi`
+
+sagan-idmef.o: output-plugins/sagan-idmef.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-idmef.o -MD -MP -MF $(DEPDIR)/sagan-idmef.Tpo -c -o sagan-idmef.o `test -f 'output-plugins/sagan-idmef.c' || echo '$(srcdir)/'`output-plugins/sagan-idmef.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-idmef.Tpo $(DEPDIR)/sagan-idmef.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-idmef.c' object='sagan-idmef.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-idmef.o `test -f 'output-plugins/sagan-idmef.c' || echo '$(srcdir)/'`output-plugins/sagan-idmef.c
+
+sagan-idmef.obj: output-plugins/sagan-idmef.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-idmef.obj -MD -MP -MF $(DEPDIR)/sagan-idmef.Tpo -c -o sagan-idmef.obj `if test -f 'output-plugins/sagan-idmef.c'; then $(CYGPATH_W) 'output-plugins/sagan-idmef.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-idmef.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-idmef.Tpo $(DEPDIR)/sagan-idmef.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-idmef.c' object='sagan-idmef.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-idmef.obj `if test -f 'output-plugins/sagan-idmef.c'; then $(CYGPATH_W) 'output-plugins/sagan-idmef.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-idmef.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

@@ -688,6 +688,9 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_idmef
+with_libidmef_includes
+with_idmef_libraries
 enable_mysql
 with_libmysql_includes
 with_mysql_libraries
@@ -1326,6 +1329,7 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-idmef          Enable IDMEF output.
   --disable-mysql         Disable MySQL support.
   --disable-postgresql    Disable PostgreSQL support.
   --disable-esmtp	  Disable libesmtp support.
@@ -1335,6 +1339,8 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-idmef-includes=DIR    libidmef include directory
+  --with-idmef-libraries=DIR   libidmef library directory
   --with-mysql-includes=DIR    MySQL include directory
   --with-mysql-libraries=DIR   MySQL library directory
   --with-postgresql-includes=DIR    PostgreSQL include directory
@@ -2324,6 +2330,42 @@ test -n "$target_alias" &&
 #VERSION=`cat $srcdir/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
 
 VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
+
+# Check whether --enable-idmef was given.
+if test "${enable_idmef+set}" = set; then :
+  enableval=$enable_idmef;  ="$enableval"
+else
+   IDMEF="yes"
+
+fi
+
+
+
+# Check whether --with-libidmef_includes was given.
+if test "${with_libidmef_includes+set}" = set; then :
+  withval=$with_libidmef_includes; with_idmef_includes="$withval"
+else
+  with_idmef_includes="no"
+fi
+
+
+
+# Check whether --with-idmef_libraries was given.
+if test "${with_idmef_libraries+set}" = set; then :
+  withval=$with_idmef_libraries; with_idmef_libraries="$withval"
+else
+  with_idmef_libraries="no"
+fi
+
+
+if test "x$with_idmef_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_idmef_includes}"
+   fi
+
+if test "x$with_idmef_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_idmef_libraries}"
+fi
+
 
 # Check whether --enable-mysql was given.
 if test "${enable_mysql+set}" = set; then :
@@ -5435,6 +5477,59 @@ _ACEOF
 else
   as_fn_error "The PostgreSQL library cannot be found.
 If you're not interested in PostgreSQL support use the --disable-postgresql flag." "$LINENO" 5
+fi
+
+       fi
+
+if test "$IDMEF" = "yes"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- libidmef support is enabled -------" >&5
+$as_echo "------- libidmef support is enabled -------" >&6; }
+       ac_fn_c_check_header_mongrel "$LINENO" "libidmef/idmef_types.h" "ac_cv_header_libidmef_idmef_types_h" "$ac_includes_default"
+if test "x$ac_cv_header_libidmef_idmef_types_h" = x""yes; then :
+
+fi
+
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lidmef" >&5
+$as_echo_n "checking for main in -lidmef... " >&6; }
+if test "${ac_cv_lib_idmef_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lidmef  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_idmef_main=yes
+else
+  ac_cv_lib_idmef_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_idmef_main" >&5
+$as_echo "$ac_cv_lib_idmef_main" >&6; }
+if test "x$ac_cv_lib_idmef_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBIDMEF 1
+_ACEOF
+
+  LIBS="-lidmef $LIBS"
+
+else
+  as_fn_error "The IDMEF (libidmef) library cannot be found.
+If you're not interested in IDMEF output support use the --disable-idmef flag." "$LINENO" 5
 fi
 
        fi
