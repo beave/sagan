@@ -37,6 +37,7 @@
 #include "version.h"
 #include "sagan.h"
 
+FILE *alertfp;
 
 int classcount;
 int refcount;
@@ -152,6 +153,10 @@ switch( sig )
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
         if ( dbtype != 0 ) record_last_cid();
 #endif
+
+	fflush(alertfp); 
+	fclose(alertfp);		/* Close Sagan alert file */
+
         removelockfile();
         exit(0);
         break;

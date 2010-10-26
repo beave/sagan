@@ -51,9 +51,10 @@
 #include "sagan.h"
 #include "version.h"
 
-
 #define OVECCOUNT 30
 
+FILE *alertfp;
+char alertlog[MAXPATH];
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
@@ -162,15 +163,6 @@ int  threademailc=0;
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 #endif 
-
-
-/****************************************************************************/
-/* libidmef support                                                         */
-/****************************************************************************/
-
-#ifdef HAVE_LIBIDMEF
-char sagan_idmef_file[255];
-#endif
 
 /* Command line options */
 
@@ -427,14 +419,12 @@ if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args ))
         }
 }
 
+/* Open sagan alert file */
 
-/* IDMEF */
-
-#ifdef HAVE_LIBIDMEF
-if ( strcmp(sagan_idmef_file, "" )) { 
-sagan_log(0, "IDMEF output is being stored to: %s", sagan_idmef_file);
+if (( alertfp = fopen(alertlog, "a" )) == NULL ) {
+removelockfile();
+sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
 }
-#endif
 
 /* Allocate memory for external program thread structure */
 

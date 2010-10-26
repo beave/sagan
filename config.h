@@ -43,9 +43,6 @@
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 #define HAVE_LIBESMTP 1
 
-/* Define to 1 if you have the `idmef' library (-lidmef). */
-#define HAVE_LIBIDMEF 1
-
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
@@ -56,7 +53,7 @@
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-/* #undef HAVE_LIBPQ */
+#define HAVE_LIBPQ 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1

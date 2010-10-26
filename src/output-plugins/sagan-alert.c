@@ -37,8 +37,7 @@
 #include "sagan.h"
 #include "version.h"
 
-//FILE *alertfp;
-char alertlog[MAXPATH];
+FILE *alertfp;
 int refcount;
 
 struct rule_struct *rulestruct;
@@ -62,13 +61,6 @@ void *sagan_alert ( char *s_sid,
 
 char tmpref[2048]="";
 
-FILE *alertfp;
-
-if (( alertfp = fopen(alertlog, "a" )) == NULL ) {
-  removelockfile();
-  sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
-}
-
 fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);
 fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
 fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
@@ -77,7 +69,6 @@ snprintf(tmpref, sizeof(tmpref), "%s", reflookup( rulemem, 0 ));
 fprintf(alertfp, "%s\n", tmpref);
 
 fflush(alertfp);
-fclose(alertfp);
 
 return(0);
 }

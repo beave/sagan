@@ -3,10 +3,3 @@
 #endif
 
 
-#ifdef HAVE_LIBIDMEF
-
-#include <stdio.h>
-
-
-#endif
-

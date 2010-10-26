@@ -56,7 +56,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	parse-port-simple.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
-	sagan-idmef.$(OBJEXT)
+	sagan-prelude.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
@@ -192,7 +192,7 @@ output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-logzilla.c \
-output-plugins/sagan-idmef.c
+output-plugins/sagan-prelude.c
 
 all: all-am
 
@@ -267,10 +267,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-esmtp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-external.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-idmef.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-logzilla.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-prelude.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-references.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-rules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-signal.Po@am__quote@
@@ -394,19 +394,19 @@ sagan-logzilla.obj: output-plugins/sagan-logzilla.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-logzilla.obj `if test -f 'output-plugins/sagan-logzilla.c'; then $(CYGPATH_W) 'output-plugins/sagan-logzilla.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-logzilla.c'; fi`
 
-sagan-idmef.o: output-plugins/sagan-idmef.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-idmef.o -MD -MP -MF $(DEPDIR)/sagan-idmef.Tpo -c -o sagan-idmef.o `test -f 'output-plugins/sagan-idmef.c' || echo '$(srcdir)/'`output-plugins/sagan-idmef.c
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-idmef.Tpo $(DEPDIR)/sagan-idmef.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-idmef.c' object='sagan-idmef.o' libtool=no @AMDEPBACKSLASH@
+sagan-prelude.o: output-plugins/sagan-prelude.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-prelude.o -MD -MP -MF $(DEPDIR)/sagan-prelude.Tpo -c -o sagan-prelude.o `test -f 'output-plugins/sagan-prelude.c' || echo '$(srcdir)/'`output-plugins/sagan-prelude.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-prelude.Tpo $(DEPDIR)/sagan-prelude.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-prelude.c' object='sagan-prelude.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-idmef.o `test -f 'output-plugins/sagan-idmef.c' || echo '$(srcdir)/'`output-plugins/sagan-idmef.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-prelude.o `test -f 'output-plugins/sagan-prelude.c' || echo '$(srcdir)/'`output-plugins/sagan-prelude.c
 
-sagan-idmef.obj: output-plugins/sagan-idmef.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-idmef.obj -MD -MP -MF $(DEPDIR)/sagan-idmef.Tpo -c -o sagan-idmef.obj `if test -f 'output-plugins/sagan-idmef.c'; then $(CYGPATH_W) 'output-plugins/sagan-idmef.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-idmef.c'; fi`
-@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-idmef.Tpo $(DEPDIR)/sagan-idmef.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-idmef.c' object='sagan-idmef.obj' libtool=no @AMDEPBACKSLASH@
+sagan-prelude.obj: output-plugins/sagan-prelude.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-prelude.obj -MD -MP -MF $(DEPDIR)/sagan-prelude.Tpo -c -o sagan-prelude.obj `if test -f 'output-plugins/sagan-prelude.c'; then $(CYGPATH_W) 'output-plugins/sagan-prelude.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-prelude.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-prelude.Tpo $(DEPDIR)/sagan-prelude.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-prelude.c' object='sagan-prelude.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-idmef.obj `if test -f 'output-plugins/sagan-idmef.c'; then $(CYGPATH_W) 'output-plugins/sagan-idmef.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-idmef.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-prelude.obj `if test -f 'output-plugins/sagan-prelude.c'; then $(CYGPATH_W) 'output-plugins/sagan-prelude.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-prelude.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
