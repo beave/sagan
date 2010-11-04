@@ -48,6 +48,7 @@
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 #include <mysql/mysql.h>
+#include <mysql/errmsg.h>
 MYSQL    *connection, *mysql;
 #endif
 
@@ -169,6 +170,9 @@ char *db_query ( int dbtype,  char *sql ) {
 char sqltmp[MAXSQL]; 	/* Make this a MAXSQL or something */
 char *re=NULL;		/* "return" point for row */
 
+int mysql_last_errno = 0; 
+int mysql_reconnect_count = 0;
+
 pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
@@ -181,9 +185,28 @@ if ( dbtype == 1 ) {
 MYSQL_RES *res;
 MYSQL_ROW row;
 
-if ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp))) { 
-   removelockfile();
-   sagan_log(1, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
+while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) { 
+
+    mysql_last_errno = mysql_errno(mysql);
+    
+    if ( mysql_last_errno == CR_CONNECTION_ERROR || 
+         mysql_last_errno == CR_CONN_HOST_ERROR || 
+	 mysql_last_errno == CR_SERVER_GONE_ERROR ) { 
+	 mysql_reconnect_count++;
+	 sagan_log(0, "[%s, line %d] Lost connection to MySQL database. Trying %d", __FILE__,  __LINE__, mysql_reconnect_count);
+	 sleep(2);		// Give the DB time to recover
+
+	 } else { 
+
+        sagan_log(0, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
+	}
+   
+   }
+
+
+if ( mysql_reconnect_count != 0 ) { 			/* If there's a reconnect_count,  we must of lost connection */
+   sagan_log(0, "MySQL connection re-established!"); 	/* Log it */
+   mysql_reconnect_count=0;				/* Reset the counter */
    }
 
 res = mysql_use_result(mysql);
@@ -210,18 +233,16 @@ if ( dbtype == 1 ) {
 if ( dbtype == 2 ) {
 
 if (( result = PQexec(psql, sqltmp )) == NULL ) { 
-   removelockfile();
-   sagan_log(1, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
-   record_last_cid();
+   //removelockfile();
+   sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    }
 
 if (PQresultStatus(result) != PGRES_COMMAND_OK && 
     PQresultStatus(result) != PGRES_TUPLES_OK) {
    sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    PQclear(result);
-   removelockfile();
-   sagan_log(1, "DB Query failed: %s", sqltmp);
-   record_last_cid();
+   //removelockfile();
+   sagan_log(0, "DB Query failed: %s", sqltmp);
    }
 
 if ( PQntuples(result) != 0 ) { 

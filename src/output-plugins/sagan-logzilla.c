@@ -42,6 +42,7 @@
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 #include <mysql/mysql.h>
+#include <mysql/errmsg.h>
 MYSQL    *connection, *mysql_logzilla;
 #endif
 
@@ -147,6 +148,9 @@ pthread_mutex_lock( &logzilla_db_mutex );
 char sqltmp[MAXSQL];    /* Make this a MAXSQL or something */
 char *re=NULL;          /* "return" point for row */
 
+int mysql_last_errno = 0;
+int mysql_reconnect_count = 0;
+
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
@@ -155,10 +159,29 @@ if ( logzilla_dbtype == 1 ) {
 MYSQL_RES *logzilla_res;
 MYSQL_ROW logzilla_row;
 
-if ( mysql_real_query(mysql_logzilla, sqltmp,  strlen(sqltmp))) {
-   removelockfile();
+while ( mysql_real_query(mysql_logzilla, sqltmp,  strlen(sqltmp)) != 0 ) { 
+   
+   mysql_last_errno = mysql_errno(mysql_logzilla);
+
+   if ( mysql_last_errno == CR_CONNECTION_ERROR ||
+        mysql_last_errno == CR_CONN_HOST_ERROR ||
+	mysql_last_errno == CR_SERVER_GONE_ERROR ) {
+	mysql_reconnect_count++;
+	sagan_log(0, "[%s, line %d] Lost connection to MySQL database. Trying %d",  __FILE__, __LINE__, mysql_reconnect_count);
+	sleep(2);              // Give the DB time to recover
+
+	} else { 
+	
    sagan_log(1, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s", __FILE__, __LINE__, mysql_errno(mysql_logzilla), mysql_error(mysql_logzilla), sqltmp);
    }
+
+}
+
+if ( mysql_reconnect_count != 0 ) {                     /* If there's a reconnect_count,  we must of lost connection */
+   sagan_log(0, "MySQL connection re-established!");    /* Log it */
+   mysql_reconnect_count=0;                             /* Reset the counter */
+   }
+
 
 logzilla_res = mysql_use_result(mysql_logzilla);
 
@@ -182,8 +205,8 @@ sagan_log(1, "Sagan was not compiled with MySQL support.  Aborting!");
 if ( logzilla_dbtype == 2 ) {
 
 if (( result = PQexec(psql_logzilla, sql )) == NULL ) {
-   removelockfile();
-   sagan_log(1, "[%s, line %d] PostgreSQL Error: %s", __FILE__, __LINE__, PQerrorMessage( psql_logzilla ));
+//   removelockfile();
+   sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__, __LINE__, PQerrorMessage( psql_logzilla ));
    }
 
 if ( PQntuples(result) != 0 ) {
