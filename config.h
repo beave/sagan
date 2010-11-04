@@ -69,10 +69,10 @@
 #define HAVE_MEMORY_H 1
 
 /* Define to 1 if you have the <mysql/errmsg.h> header file. */
-#define HAVE_MYSQL_ERRMSG_H 1
+/* #undef HAVE_MYSQL_ERRMSG_H */
 
 /* Define to 1 if you have the <mysql/mysql.h> header file. */
-#define HAVE_MYSQL_MYSQL_H 1
+/* #undef HAVE_MYSQL_MYSQL_H */
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1
