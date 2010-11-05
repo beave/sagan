@@ -129,6 +129,8 @@ for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
         tmp = strtok_r(refinfo, ",", &tmptok);
         tmp2 = strtok_r(NULL, ",", &tmptok);
 
+ if ( tmp != NULL ) { 
+
     for ( b=0; b < refcount; b++) {
 
         if (!strcmp(refstruct[b].s_refid,  tmp)) {
@@ -136,7 +138,8 @@ for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
 	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2), "Reference:%s%s\n", refstruct[b].s_refurl, tmp2);
 	   strlcat(reftmp,  refinfo2,  sizeof(reftmp));
            }
-        }
+        } 
+   }
 }
 
 ret=reftmp;
