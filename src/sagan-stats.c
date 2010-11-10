@@ -48,8 +48,6 @@ uint64_t saganexternaldrop;
 char sagan_esmtp_server[ESMTPSERVER];
 int  sagan_esmtp_flag;
 uint64_t saganesmtpdrop;
-uint64_t saganlogzilladrop;
-uint64_t sagansnortdrop;
 uint64_t max_email_threads;
 uint64_t threadmaxemailc;
 #endif
@@ -61,6 +59,8 @@ int  logzilla_log;
 uint64_t threadmaxlogzillac;
 uint64_t max_logzilla_threads;
 uint64_t maxdb_threads;
+uint64_t sagansnortdrop;
+uint64_t saganlogzilladrop;
 #endif
 
 #ifdef HAVE_LIBPRELUDE

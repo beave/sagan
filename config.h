@@ -41,7 +41,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-#define HAVE_LIBESMTP 1
+/* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -53,7 +53,7 @@
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-#define HAVE_LIBPQ 1
+/* #undef HAVE_LIBPQ */
 
 /* Define to 1 if you have the `prelude' library (-lprelude). */
 #define HAVE_LIBPRELUDE 1
