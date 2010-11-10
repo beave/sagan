@@ -55,6 +55,9 @@
 /* Define to 1 if you have the `pq' library (-lpq). */
 #define HAVE_LIBPQ 1
 
+/* Define to 1 if you have the `prelude' library (-lprelude). */
+#define HAVE_LIBPRELUDE 1
+
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
 
@@ -67,12 +70,6 @@
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
-
-/* Define to 1 if you have the <mysql/errmsg.h> header file. */
-/* #undef HAVE_MYSQL_ERRMSG_H */
-
-/* Define to 1 if you have the <mysql/mysql.h> header file. */
-/* #undef HAVE_MYSQL_MYSQL_H */
 
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #define HAVE_NETINET_IN_H 1

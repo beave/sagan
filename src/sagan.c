@@ -84,6 +84,7 @@ char sagan_host[MAXHOST];
 char sagan_port[6];
 char sagan_extern[MAXPATH];
 char sagan_path[MAXPATH];
+int  sagan_ext_flag;
 
 int  sagan_exttype=0;
 
@@ -96,6 +97,7 @@ uint64_t saganesmtpdrop=0;
 uint64_t saganexternaldrop=0;
 uint64_t saganlogzilladrop=0;
 uint64_t sagansnortdrop=0;
+uint64_t saganpreludedrop=0;
 
 int debug=0;
 int devdebug=0;
@@ -112,12 +114,24 @@ pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
 uint64_t max_ext_threads;
 
 /****************************************************************************/
+/* Prelude framework globals                                                */
+/****************************************************************************/
+
+#ifdef HAVE_LIBPRELUDE
+int sagan_prelude_flag;
+char sagan_prelude_profile[255];
+pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
+uint64_t max_prelude_threads;
+uint64_t threadpreludec=0;
+uint64_t threadmaxpreludec=0;
+#endif
+
+/****************************************************************************/
 /*  MySQL/PostgreSQL specific global variables.  Used for Logzilla & Snort  */
 /*  Database support							    */
 /****************************************************************************/
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
 char dbusername[MAXUSER];
 char dbpassword[MAXUSER];
 char dbname[MAXDBNAME];
@@ -142,7 +156,6 @@ uint64_t max_logzilla_threads;
 
 pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 #endif
 
 /****************************************************************************/
@@ -150,10 +163,10 @@ pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
 /****************************************************************************/
 
 #ifdef HAVE_LIBESMTP
-
 char sagan_esmtp_from[ESMTPFROM];
 char sagan_esmtp_to[ESMTPTO];
 char sagan_esmtp_server[ESMTPSERVER];
+int  sagan_esmtp_flag;
 
 uint64_t  max_email_threads;
 int  min_email_priority=0;
@@ -161,7 +174,6 @@ uint64_t  threadmaxemailc=0;
 int  threademailc=0;
 
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 #endif 
 
 /* Command line options */
@@ -218,7 +230,21 @@ pthread_attr_init(&thread_logzilla_attr);
 pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
 
 endianchk = checkendian();	// Needed for Snort output
+#endif
 
+/****************************************************************************/
+/* Prelude support                                                          */
+/****************************************************************************/
+
+#ifdef HAVE_LIBPRELUDE
+struct prelude_thread_args *prelude_thread_args = NULL;
+
+pthread_t threadprelude_id[MAX_THREADS];
+pthread_attr_t thread_prelude_attr;
+pthread_mutex_init(&prelude_mutex, NULL);
+
+pthread_attr_init(&thread_prelude_attr);
+pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
 
 /****************************************************************************/
@@ -234,7 +260,6 @@ pthread_mutex_init(&email_mutex, NULL);
 
 pthread_attr_init(&thread_email_attr);
 pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
-
 #endif
 
 /****************************************************************************/
@@ -407,7 +432,7 @@ sig_thread_args[0].daemonize = daemonize;
 load_config();
 sagan_log(0, "Sagan version %s is firing up!", VERSION);
 sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, rulecount);
-droppriv(runas);
+droppriv(runas, fifo);
 sagan_log(0, "---------------------------------------------------------------------------");
 
 /* Create signal handler thread */ 
@@ -428,7 +453,7 @@ sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
 
 /* Allocate memory for external program thread structure */
 
-if ( strcmp(sagan_extern, "" )) { 
+if ( sagan_ext_flag != 0 ) { 
 ext_thread_args = malloc(MAX_THREADS * sizeof(struct ext_thread_args));
 sagan_log(0, "Max external threads : %d", max_ext_threads);
 }
@@ -436,7 +461,7 @@ sagan_log(0, "Max external threads : %d", max_ext_threads);
 /* Allocate memory for libesmtp thread struct */
 
 #ifdef HAVE_LIBESMTP
-if ( strcmp(sagan_esmtp_server, "" )) { 
+if ( sagan_esmtp_flag != 0 ) { 
 email_thread_args = malloc(MAX_THREADS * sizeof(struct email_thread_args));
 sagan_log(0, "Max SMTP threads     : %d", max_email_threads);
 }
@@ -449,7 +474,6 @@ sagan_log(0, "Max Logzilla threads : %d", max_logzilla_threads);
 logzilla_db_connect();
 }
 #endif 
-
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
@@ -472,6 +496,20 @@ sigcid=cid;
 sagan_log(0, "Next CID             : %" PRIu64 "", cid);
 
 }
+#endif
+
+#ifdef HAVE_LIBPRELUDE
+
+if ( sagan_prelude_flag != 0 ) {
+
+sagan_log(0, "Prelude profile: %s", sagan_prelude_profile);
+sagan_log(0, "Max Prelude threads: %d", max_prelude_threads);
+sagan_log(0, "");  /* libprelude dumps some information.  This is to make it pretty */
+
+prelude_thread_args = malloc(MAX_THREADS * sizeof(struct prelude_thread_args));
+PreludeInit();
+}
+
 #endif
 
 sagan_log(0, "");
@@ -851,11 +889,6 @@ while(1) {
 		   src_port = atoi(sagan_port);
 		   }
 
-		   /* Never,  ever give us loopback.  That does us no good. */
-
-		   if (!strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "" ) || ip_src == NULL ) ip_src = sagan_host;
-		   if (!strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "" ) || ip_dst == NULL ) ip_dst = sagan_host;
-
 		   thresh_log_flag = 0;
 
 		   /*********************************************************/
@@ -951,9 +984,47 @@ while(1) {
 
 		      }			/* End of thresholding */
 
+
+                   /* Never,  ever give us loopback.  That does us no good. */
+
+                   if (!strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "" ) || ip_src == NULL ) ip_src = sagan_host;
+                   if (!strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "" ) || ip_dst == NULL ) ip_dst = sagan_host;
+
 		   /* alert log file */
 		  
 		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg[msgslot], b );
+
+#if HAVE_LIBPRELUDE
+
+                if ( sagan_prelude_flag == 1 ) {
+	
+	        if ( threadpreludec < max_prelude_threads ) {
+                threadid++;
+		threadpreludec++;
+		if ( threadid >= MAX_THREADS ) threadid=0;
+
+		if ( threadpreludec > threadmaxpreludec ) threadmaxpreludec=threadpreludec;
+
+                prelude_thread_args[threadid].ip_src=ip_src;
+                prelude_thread_args[threadid].ip_dst=ip_dst;
+		prelude_thread_args[threadid].found=b;
+		prelude_thread_args[threadid].pri=rulestruct[b].s_pri;
+		prelude_thread_args[threadid].src_port = src_port;
+		prelude_thread_args[threadid].dst_port = rulestruct[b].dst_port;
+		prelude_thread_args[threadid].sysmsg = sysmsg[msgslot];
+
+		
+		if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &prelude_thread_args[threadid] ) ) { 
+		      removelockfile();
+		      sagan_log(1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
+		         } 
+		      	 } else { 
+                         sagandrop++;
+                         saganpreludedrop++;
+                         sagan_log(0, "Prelude thread call handler: Out of threads\n");
+                	 }
+		}
+#endif
 
 
 #ifdef HAVE_LIBESMTP

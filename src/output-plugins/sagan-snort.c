@@ -42,6 +42,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#include "sagan-snort.h"
+
 #include "sagan.h"
 #include "version.h"
 
@@ -592,7 +594,7 @@ char ip_dsttmp[65];
 char time[30];
 char date[30];
 
-snprintf(message, sizeof(message), "%s", targs->message);  /* Collison if targs->message is used */
+snprintf(message, sizeof(message), "%s", targs->message); 
 snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", targs->ip_src);
 snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", targs->ip_dst);
 snprintf(time, sizeof(time), "%s", targs->time);

@@ -40,6 +40,7 @@
 #include <unistd.h>
 
 #include "sagan.h"
+#include "sagan-esmtp.h"
 #include "version.h"
 
 char sagan_esmtp_from[ESMTPFROM];
@@ -48,7 +49,7 @@ char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
 int debug;
 
-int fixlf(char *dst, char *s);
+//int fixlf(char *dst, char *s);
 
 void *sagan_esmtp_thread( void *emailthreadargs ) {
 

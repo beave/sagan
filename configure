@@ -697,6 +697,9 @@ with_postgresql_libraries
 enable_esmtp
 with_libesmtp_includes
 with_esmtp_libraries
+enable_prelude
+with_libprelude_includes
+with_prelude_libraries
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1329,6 +1332,7 @@ Optional Features:
   --disable-mysql         Disable MySQL support.
   --disable-postgresql    Disable PostgreSQL support.
   --disable-esmtp	  Disable libesmtp support.
+  --disable-prelude      Disable Prelude support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
@@ -1341,6 +1345,8 @@ Optional Packages:
   --with-postgresql-libraries=DIR   PostgreSQL library directory
   --with-esmtp-includes=DIR    libesmtp include directory
   --with-esmtp-libraries=DIR   libesmtp library directory
+  --with-prelude-includes=DIR    libprelude include directory
+  --with-prelude-libraries=DIR   libprelude library directory
 
 Some influential environment variables:
   CC          C compiler command
@@ -2430,6 +2436,42 @@ if test "x$with_esmtp_includes" != "xno"; then
 
 if test "x$with_esmtp_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_esmtp_libraries}"
+fi
+
+
+# Check whether --enable-prelude was given.
+if test "${enable_prelude+set}" = set; then :
+  enableval=$enable_prelude;  PRELUDE="$enableval"
+else
+   PRELUDE="yes"
+
+fi
+
+
+
+# Check whether --with-libprelude_includes was given.
+if test "${with_libprelude_includes+set}" = set; then :
+  withval=$with_libprelude_includes; with_prelude_includes="$withval"
+else
+  with_prelude_includes="no"
+fi
+
+
+
+# Check whether --with-prelude_libraries was given.
+if test "${with_prelude_libraries+set}" = set; then :
+  withval=$with_prelude_libraries; with_prelude_libraries="$withval"
+else
+  with_prelude_libraries="no"
+fi
+
+
+if test "x$with_prelude_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_prelude_includes}"
+   fi
+
+if test "x$with_prelude_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_prelude_libraries}"
 fi
 
 
@@ -5497,6 +5539,60 @@ If you're not interested in libesmtp support use the --disable-esmtp flag." "$LI
 fi
 
        fi
+
+if test "$PRELUDE" = "yes"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- libprelude support is enabled -------" >&5
+$as_echo "------- libprelude support is enabled -------" >&6; }
+       ac_fn_c_check_header_mongrel "$LINENO" "libprelude/prelude.h" "ac_cv_header_libprelude_prelude_h" "$ac_includes_default"
+if test "x$ac_cv_header_libprelude_prelude_h" = x""yes; then :
+
+fi
+
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lprelude" >&5
+$as_echo_n "checking for main in -lprelude... " >&6; }
+if test "${ac_cv_lib_prelude_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lprelude  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_prelude_main=yes
+else
+  ac_cv_lib_prelude_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_prelude_main" >&5
+$as_echo "$ac_cv_lib_prelude_main" >&6; }
+if test "x$ac_cv_lib_prelude_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPRELUDE 1
+_ACEOF
+
+  LIBS="-lprelude $LIBS"
+
+else
+  as_fn_error "The libprelude library cannot be found.
+If you're not interested in Prelude support use the --disable-prelude flag." "$LINENO" 5
+fi
+
+       fi
+
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 

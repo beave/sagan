@@ -69,22 +69,26 @@ int  sagan_detail;
 
 char sagan_host[17];
 char sagan_port[6]="514";
-int  sagan_proto = 6;
+int  sagan_proto = 17;
 
 uint64_t max_logzilla_threads=MAX_LOGZILLA_THREADS;
 
 #endif
 
+#ifdef HAVE_LIBPRELUDE
+char sagan_prelude_profile[255];
+int sagan_prelude_flag=0;
+uint64_t max_prelude_threads=MAX_PRELUDE_THREADS;;
+#endif
+
+
 #ifdef HAVE_LIBESMTP
+int sagan_esmtp_flag;
 char sagan_esmtp_from[ESMTPSERVER];
 char sagan_esmtp_to[255];
 char sagan_esmtp_server[255];
 uint64_t max_email_threads=MAX_EMAIL_THREADS;
 int min_email_priority;
-#endif
-
-#ifdef HAVE_LIBIDMEF
-char sagan_idmef_file[255];
 #endif
 
 uint64_t max_ext_threads=MAX_EXT_THREADS;
@@ -97,6 +101,7 @@ int fifoi;
 
 char sagan_extern[MAXPATH];
 int  sagan_exttype;
+int  sagan_ext_flag;
 char saganconf[MAXPATH];
 char fifo[MAXPATH];
 char rule_path[MAXPATH];
@@ -150,7 +155,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          max_ext_threads = atoi(sagan_var);
          }
 
-
 #ifdef HAVE_LIBESMTP
 
    if (!strcmp(sagan_option, "max_email_threads")) {
@@ -165,16 +169,25 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
 #endif
 
+#ifdef HAVE_LIBPRELUDE
+
+     if (!strcmp(sagan_option, "max_prelude_threads")) { 
+        sagan_var = strtok_r(NULL, " ", &tok); 
+	max_prelude_threads = atol(sagan_var);
+	}
+
+#endif
+
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
      if (!strcmp(sagan_option, "maxdb_threads")) {
         sagan_var = strtok_r(NULL, " " , &tok);
-        maxdb_threads = atoi(sagan_var);
+        maxdb_threads = atol(sagan_var);
         }
 
      if (!strcmp(sagan_option, "max_logzilla_threads")) {
          sagan_var = strtok_r(NULL, " ", &tok);
-         max_logzilla_threads = atoi(sagan_var);
+         max_logzilla_threads = atol(sagan_var);
          }
 
      if (!strcmp(sagan_option, "sagan_host")) {
@@ -221,18 +234,28 @@ if (!strcmp(sagan_option, "output")) {
      if (!strcmp(sagan_var, "external:")) {
         snprintf(sagan_extern, sizeof(sagan_extern), "%s", strtok_r(NULL, " ", &tok));
            if (strstr(strtok_r(NULL, " ", &tok), "parsable")) sagan_exttype=1;
+	sagan_ext_flag=1;
         }
 
 
 
-#ifdef HAVE_LIBIDMEF
+#ifdef HAVE_LIBPRELUDE
 	
-	if (!strcmp(sagan_var, "idmef:")) { 
+	if (!strcmp(sagan_var, "prelude:")) { 
 	   ptmp = sagan_var; 
-           ptmp = strtok_r(NULL, " ", &tok);
-	   snprintf(sagan_idmef_file, sizeof(sagan_idmef_file), "%s", ptmp);
-	   remrt(sagan_idmef_file);
+
+	   while (ptmp != NULL ) { 
+
+	     if (!strcmp(ptmp, "profile")) { 
+	         ptmp = strtok_r(NULL, " ", &tok);
+		 snprintf(sagan_prelude_profile, sizeof(sagan_prelude_profile), "%s", ptmp); 
+		 remrt(sagan_prelude_profile);
+		 sagan_prelude_flag=1;
+		 }
+           
+	   ptmp = strtok_r(NULL, "=", &tok);
 	   }
+	}
 #endif
 
 
@@ -259,6 +282,7 @@ if (!strcmp(sagan_option, "output")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(sagan_esmtp_server, sizeof(sagan_esmtp_server), "%s", ptmp);
 		remrt(sagan_esmtp_server);
+		sagan_esmtp_flag=0;
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);    
@@ -267,7 +291,8 @@ if (!strcmp(sagan_option, "output")) {
 	  if (!strcmp(sagan_esmtp_from, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
 	  if (!strcmp(sagan_esmtp_to, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'to' field is missing!", __FILE__, __LINE__);
 	  if (!strcmp(sagan_esmtp_server, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing!", __FILE__, __LINE__);
-
+	  
+	  sagan_esmtp_flag=1;
 	}
 #endif
 

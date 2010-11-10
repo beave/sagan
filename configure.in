@@ -79,6 +79,29 @@ if test "x$with_esmtp_libraries" != "xno"; then
 fi
 
 
+AC_ARG_ENABLE(prelude,
+  [  --disable-prelude      Disable Prelude support.],
+  [ PRELUDE="$enableval"],
+  [ PRELUDE="yes" ]
+)
+
+AC_ARG_WITH(libprelude_includes,
+        [  --with-prelude-includes=DIR    libprelude include directory],
+        [with_prelude_includes="$withval"],[with_prelude_includes="no"])
+
+AC_ARG_WITH(prelude_libraries,
+        [  --with-prelude-libraries=DIR   libprelude library directory],
+        [with_prelude_libraries="$withval"],[with_prelude_libraries="no"])
+
+if test "x$with_prelude_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_prelude_includes}"
+   fi
+
+if test "x$with_prelude_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_prelude_libraries}"
+fi
+
+
 AC_SUBST(VERSION)
 AM_INIT_AUTOMAKE(sagan, ${VERSION})
 AC_CONFIG_HEADER(config.h)
@@ -139,6 +162,14 @@ if test "$ESMTP" = "yes"; then
        AC_CHECK_LIB(esmtp, main,,AC_MSG_ERROR(The libesmtp library cannot be found.
 If you're not interested in libesmtp support use the --disable-esmtp flag.))
        fi
+
+if test "$PRELUDE" = "yes"; then
+       AC_MSG_RESULT([------- libprelude support is enabled -------])
+       AC_CHECK_HEADER([libprelude/prelude.h])
+       AC_CHECK_LIB(prelude, main,,AC_MSG_ERROR(The libprelude library cannot be found.
+If you're not interested in Prelude support use the --disable-prelude flag.))
+       fi
+
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 

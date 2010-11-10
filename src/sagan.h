@@ -71,6 +71,7 @@
 #define MAX_EMAIL_THREADS	50
 #define MAX_DB_THREADS		50
 #define MAX_EXT_THREADS		50
+#define MAX_PRELUDE_THREADS	50
 
 #ifndef HAVE_STRLCPY
 int strlcpy(char *, const char *,  size_t );
@@ -102,13 +103,9 @@ void closesagan( int );
 int  checkendian( void );
 void sagan_usage( void );
 void load_config( void );
-int  logzilla_db_connect( void );
-int  db_connect( void );
-int  get_sensor_id ( char *,  char *,  char *,  int , int  );
-uint64_t get_cid ( int , int );
 void removelockfile ( void );
 void checklockfile ( void );
-void droppriv( const char * );
+void droppriv( const char * , const char *);
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);
@@ -130,25 +127,6 @@ void *sagan_alert ( char *,  char *,
                     int   ,  int, 
 		    char *,  int );  
 
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-void record_last_cid ( void );
-
-int  get_sig_sid( char *,  char *, 
-                  char *,  char *, 
-                  int         ,  int  );
-
-
-void insert_event (int, uint64_t, int, int, char *, char * );
-
-void insert_hdr (int , uint64_t, 
-                 char *,  char *, 
-		 int, int, int, int, int);
-
-void insert_payload ( int,  uint64_t, char *,  int );
-
-void query_reference ( char *, char *, int, int );
-#endif
 
 /* Reference structure */
 typedef struct ref_struct ref_struct;
@@ -249,28 +227,6 @@ struct db_args {
 	char *time;
         }; 
 
-struct db_info {
-        int  dbtype;
-        char *username;
-        char *password;
-        char *name;
-        char *host;
-        };
-
-struct db_thread_args { 
-        char *ip_src;
-	char *ip_dst;
-        int  found;
-        int  pri;
-	char *message;
-	uint64_t cid;
-	int endian;
-	int dst_port;
-	int src_port;
- 	char *date;
-	char *time;
-        };
-
 struct logzilla_thread_args {
         char *host;
         char *facility;
@@ -283,14 +239,32 @@ struct logzilla_thread_args {
         char *msg;
         };
 
+
 char *sql_escape(const char *, int );
 void *logzilla_insert_thread ( void *);
-void *sagan_db_thread(void *);
 void *sagan_logzilla_thread(void *);
+void *sagan_db_thread(void *);
 char *ip2bit( char *, int );
 char *fasthex(char *, int);
 
 #endif
+
+#ifdef HAVE_LIBPRELUDE
+
+void sagan_prelude( void * );
+
+struct prelude_thread_args {
+        char *ip_src;
+        char *ip_dst;
+	int  src_port;
+	int  dst_port;
+	int  found; 
+	int  pri; 
+	char *sysmsg;
+};
+
+#endif
+
 
 /****************************************************************************/
 /* External thread structures.   This is used when calling 'external'       */

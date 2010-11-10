@@ -34,6 +34,13 @@
 #include <pthread.h>
 #include <stdint.h>
 
+#ifdef HAVE_LIBPRELUDE
+#include <libprelude/prelude.h>
+char sagan_prelude_profile[255];
+int  sagan_prelude_flag;
+prelude_client_t *preludeclient;
+#endif
+
 #include "version.h"
 #include "sagan.h"
 
@@ -94,9 +101,24 @@ void sig_handler(int sigargs ) {
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 		  if ( dbtype != 0 ) record_last_cid();
 #endif
+
+#ifdef HAVE_LIBPRELUDE
+
+/* This comment is from the Snort source code. "Sensor reporting to Prelude
+   shall never go offline,  which is why we use the 
+   PRELUDE_CLIENT_EXIT_STATUS_FAILURE.  */
+
+if ( sagan_prelude_flag != 0 ) { 
+prelude_client_destroy(preludeclient, PRELUDE_CLIENT_EXIT_STATUS_FAILURE);
+prelude_deinit();
+}
+
+#endif
+
                   removelockfile();
                   exit(0);
                   break;
+
 
 
                  case SIGHUP:

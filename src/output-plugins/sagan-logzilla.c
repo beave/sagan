@@ -34,10 +34,11 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "sagan.h"
+#include "sagan-logzilla.h"
 #include "version.h"
-#include <pthread.h>
 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
