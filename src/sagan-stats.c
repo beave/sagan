@@ -41,11 +41,13 @@ uint64_t saganfound;
 uint64_t sagandrop;
 uint64_t threshold_total;
 
+uint64_t threadmaxextc;
+uint64_t saganexternaldrop;
+
 #ifdef HAVE_LIBESMTP
 char sagan_esmtp_server[ESMTPSERVER];
 int  sagan_esmtp_flag;
 uint64_t saganesmtpdrop;
-uint64_t saganexternaldrop;
 uint64_t saganlogzilladrop;
 uint64_t sagansnortdrop;
 uint64_t max_email_threads;
@@ -53,7 +55,6 @@ uint64_t threadmaxemailc;
 #endif
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-uint64_t threadmaxextc;
 uint64_t threadmaxdbc;
 int  dbtype;
 int  logzilla_log;
@@ -113,7 +114,7 @@ void sagan_statistics() {
 
 #ifdef HAVE_LIBPRELUDE
 		   if ( sagan_prelude_flag == 1 ) { 
-		      sagan_log(0, "Max Prelude threads reached: %" PRIu64 " of %" PRIu64 " (%.3f%%) | Prelude events dropped:  %" PRIu64 "", threadmaxpreludec, max_prelude_threads, CalcPct( threadmaxpreludec, max_prelude_threads), saganpreludedrop);
+		      sagan_log(0, "Max Prelude threads reached: %" PRIu64 " of %" PRIu64 " (%.3f%%) | Prelude events dropped: %" PRIu64 "", threadmaxpreludec, max_prelude_threads, CalcPct( threadmaxpreludec, max_prelude_threads), saganpreludedrop);
 		      flag=1;
 		      }
 #endif
