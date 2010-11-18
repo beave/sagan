@@ -248,6 +248,16 @@ pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
 
 /****************************************************************************/
+/* GTK (For Sagan X-Windows Popup messages) support			    */
+/****************************************************************************/
+
+#ifdef HAVE_GTK
+struct gtk_thread_args *gtk_thread_args = NULL;
+
+#endif
+
+
+/****************************************************************************/
 /* libesmtp (SMTP/e-mail) local variables				    */
 /****************************************************************************/
 
@@ -996,7 +1006,7 @@ while(1) {
 
 #if HAVE_LIBPRELUDE
 
-                if ( sagan_prelude_flag == 1 ) {
+                if ( sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
 	
 	        if ( threadpreludec < max_prelude_threads ) {
                 threadid++;
@@ -1026,6 +1036,10 @@ while(1) {
 		}
 #endif
 
+#ifdef HAVE_GTK
+
+#endif
+
 
 #ifdef HAVE_LIBESMTP
 
@@ -1034,7 +1048,7 @@ while(1) {
 /****************************************************************************/
 
 
-		if ( strcmp(sagan_esmtp_server, "") && thresh_log_flag == 0 ) { 
+		if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) { 
 		  
 		  /* E-mail only if over min_email_priority */ 
 

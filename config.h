@@ -35,7 +35,7 @@
 #define HAVE_GETOPT_LONG 1
 
 /* Define if GTK is available */
-/* #undef HAVE_GTK */
+#define HAVE_GTK 1
 
 /* Define to 1 if you have the `htons' function. */
 #define HAVE_HTONS 1
@@ -44,22 +44,22 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-#define HAVE_LIBESMTP 1
+/* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `mysqlclient_r' library (-lmysqlclient_r). */
-#define HAVE_LIBMYSQLCLIENT_R 1
+/* #undef HAVE_LIBMYSQLCLIENT_R */
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-#define HAVE_LIBPQ 1
+/* #undef HAVE_LIBPQ */
 
 /* Define to 1 if you have the `prelude' library (-lprelude). */
-#define HAVE_LIBPRELUDE 1
+/* #undef HAVE_LIBPRELUDE */
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
