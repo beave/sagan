@@ -56,7 +56,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	parse-port-simple.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
-	sagan-prelude.$(OBJEXT)
+	sagan-prelude.$(OBJEXT) sagan-gtk.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
@@ -91,6 +91,9 @@ ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
 GREP = @GREP@
+GTK_CFLAGS = @GTK_CFLAGS@
+GTK_LIBS = @GTK_LIBS@
+HAVE_GTK = @HAVE_GTK@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
@@ -111,6 +114,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PKG_CONFIG = @PKG_CONFIG@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -192,7 +196,8 @@ output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-logzilla.c \
-output-plugins/sagan-prelude.c
+output-plugins/sagan-prelude.c \
+output-plugins/sagan-gtk.c
 
 all: all-am
 
@@ -267,6 +272,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-esmtp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-external.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-gtk.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-logzilla.Po@am__quote@
@@ -407,6 +413,20 @@ sagan-prelude.obj: output-plugins/sagan-prelude.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-prelude.c' object='sagan-prelude.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-prelude.obj `if test -f 'output-plugins/sagan-prelude.c'; then $(CYGPATH_W) 'output-plugins/sagan-prelude.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-prelude.c'; fi`
+
+sagan-gtk.o: output-plugins/sagan-gtk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-gtk.o -MD -MP -MF $(DEPDIR)/sagan-gtk.Tpo -c -o sagan-gtk.o `test -f 'output-plugins/sagan-gtk.c' || echo '$(srcdir)/'`output-plugins/sagan-gtk.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-gtk.Tpo $(DEPDIR)/sagan-gtk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-gtk.c' object='sagan-gtk.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-gtk.o `test -f 'output-plugins/sagan-gtk.c' || echo '$(srcdir)/'`output-plugins/sagan-gtk.c
+
+sagan-gtk.obj: output-plugins/sagan-gtk.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-gtk.obj -MD -MP -MF $(DEPDIR)/sagan-gtk.Tpo -c -o sagan-gtk.obj `if test -f 'output-plugins/sagan-gtk.c'; then $(CYGPATH_W) 'output-plugins/sagan-gtk.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-gtk.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/sagan-gtk.Tpo $(DEPDIR)/sagan-gtk.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-gtk.c' object='sagan-gtk.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-gtk.obj `if test -f 'output-plugins/sagan-gtk.c'; then $(CYGPATH_W) 'output-plugins/sagan-gtk.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-gtk.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

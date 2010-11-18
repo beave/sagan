@@ -619,6 +619,10 @@ fi
 echo 'BEGIN {' >"$tmp/subs1.awk" &&
 cat >>"$tmp/subs1.awk" <<\_ACAWK &&
 S["LTLIBOBJS"]=""
+S["GTK_LIBS"]=""
+S["GTK_CFLAGS"]=""
+S["PKG_CONFIG"]="/usr/bin/pkg-config"
+S["HAVE_GTK"]=""
 S["LIBOBJS"]=""
 S["EGREP"]="/bin/grep -E"
 S["GREP"]="/bin/grep"

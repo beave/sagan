@@ -170,6 +170,15 @@ if test "$PRELUDE" = "yes"; then
 If you're not interested in Prelude support use the --disable-prelude flag.))
        fi
 
+AC_SUBST(HAVE_GTK)
+PKG_CHECK_MODULES(GTK, gtk+-2.0, have_gtk=yes, have_gtk=no)
+if [[ "$have_gtk" = "yes" ]]
+   then
+   AC_DEFINE(HAVE_GTK, 1, [Define if GTK is available])
+   CPPFLAGS="$CPPFLAGS $GTK_CFLAGS"
+   LIBS="$LIBS $GTK_LIBS"
+fi
+
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 
