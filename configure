@@ -689,16 +689,16 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_mysql
-with_libmysql_includes
+with_mysql_includes
 with_mysql_libraries
 enable_postgresql
-with_libpostgresql_includes
+with_postgresql_includes
 with_postgresql_libraries
 enable_esmtp
-with_libesmtp_includes
+with_esmtp_includes
 with_esmtp_libraries
 enable_prelude
-with_libprelude_includes
+with_prelude_includes
 with_prelude_libraries
 enable_dependency_tracking
 '
@@ -2341,9 +2341,9 @@ fi
 
 
 
-# Check whether --with-libmysql_includes was given.
-if test "${with_libmysql_includes+set}" = set; then :
-  withval=$with_libmysql_includes; with_mysql_includes="$withval"
+# Check whether --with-mysql_includes was given.
+if test "${with_mysql_includes+set}" = set; then :
+  withval=$with_mysql_includes; with_mysql_includes="$withval"
 else
   with_mysql_includes="no"
 fi
@@ -2377,9 +2377,9 @@ fi
 
 
 
-# Check whether --with-libpostgresql_includes was given.
-if test "${with_libpostgresql_includes+set}" = set; then :
-  withval=$with_libpostgresql_includes; with_postgresql_includes="$withval"
+# Check whether --with-postgresql_includes was given.
+if test "${with_postgresql_includes+set}" = set; then :
+  withval=$with_postgresql_includes; with_postgresql_includes="$withval"
 else
   with_postgresql_includes="no"
 fi
@@ -2413,9 +2413,9 @@ fi
 
 
 
-# Check whether --with-libesmtp_includes was given.
-if test "${with_libesmtp_includes+set}" = set; then :
-  withval=$with_libesmtp_includes; with_esmtp_includes="$withval"
+# Check whether --with-esmtp_includes was given.
+if test "${with_esmtp_includes+set}" = set; then :
+  withval=$with_esmtp_includes; with_esmtp_includes="$withval"
 else
   with_esmtp_includes="no"
 fi
@@ -2449,9 +2449,9 @@ fi
 
 
 
-# Check whether --with-libprelude_includes was given.
-if test "${with_libprelude_includes+set}" = set; then :
-  withval=$with_libprelude_includes; with_prelude_includes="$withval"
+# Check whether --with-prelude_includes was given.
+if test "${with_prelude_includes+set}" = set; then :
+  withval=$with_prelude_includes; with_prelude_includes="$withval"
 else
   with_prelude_includes="no"
 fi

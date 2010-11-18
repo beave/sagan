@@ -16,7 +16,7 @@ AC_ARG_ENABLE(mysql,
   [ MYSQL="yes" ]
 )
 
-AC_ARG_WITH(libmysql_includes,
+AC_ARG_WITH(mysql_includes,
         [  --with-mysql-includes=DIR    MySQL include directory],
         [with_mysql_includes="$withval"],[with_mysql_includes="no"])
 
@@ -39,7 +39,7 @@ AC_ARG_ENABLE(postgresql,
   [ POSTGRES="yes" ]
 )
 
-AC_ARG_WITH(libpostgresql_includes,
+AC_ARG_WITH(postgresql_includes,
         [  --with-postgresql-includes=DIR    PostgreSQL include directory],
         [with_postgresql_includes="$withval"],[with_postgresql_includes="no"])
 
@@ -62,7 +62,7 @@ AC_ARG_ENABLE(esmtp,
   [ ESMTP="yes" ]
 )
 
-AC_ARG_WITH(libesmtp_includes,
+AC_ARG_WITH(esmtp_includes,
         [  --with-esmtp-includes=DIR    libesmtp include directory],
         [with_esmtp_includes="$withval"],[with_esmtp_includes="no"])
 
@@ -85,7 +85,7 @@ AC_ARG_ENABLE(prelude,
   [ PRELUDE="yes" ]
 )
 
-AC_ARG_WITH(libprelude_includes,
+AC_ARG_WITH(prelude_includes,
         [  --with-prelude-includes=DIR    libprelude include directory],
         [with_prelude_includes="$withval"],[with_prelude_includes="no"])
 
