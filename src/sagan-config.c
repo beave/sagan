@@ -67,8 +67,6 @@ char sagan_interface[50];
 char sagan_filter[50];
 int  sagan_detail;
 
-char sagan_host[17];
-char sagan_port[6]="514";
 int  sagan_proto = 17;
 
 uint64_t max_logzilla_threads=MAX_LOGZILLA_THREADS;
@@ -103,6 +101,10 @@ char sagan_extern[MAXPATH];
 int  sagan_exttype;
 int  sagan_ext_flag;
 char saganconf[MAXPATH];
+
+char sagan_host[17];
+char sagan_port[6]="514";
+
 char fifo[MAXPATH];
 char rule_path[MAXPATH];
 char lockfile[MAXPATH]=LOCKFILE;
@@ -155,6 +157,16 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          max_ext_threads = atoi(sagan_var);
          }
 
+     if (!strcmp(sagan_option, "sagan_host")) {
+        snprintf(sagan_host, sizeof(sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));
+        sagan_host[strlen(sagan_host)-1] = '\0';
+        }
+
+     if (!strcmp(sagan_option, "sagan_port")) {
+         snprintf(sagan_port, sizeof(sagan_port), "%s", strtok_r(NULL, " " , &tok));
+         sagan_port[strlen(sagan_port)-1] = '\0';
+         }
+
 #ifdef HAVE_LIBESMTP
 
    if (!strcmp(sagan_option, "max_email_threads")) {
@@ -190,16 +202,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          max_logzilla_threads = atol(sagan_var);
          }
 
-     if (!strcmp(sagan_option, "sagan_host")) {
-        snprintf(sagan_host, sizeof(sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));
-	sagan_host[strlen(sagan_host)-1] = '\0';
-        }
-  
-     if (!strcmp(sagan_option, "sagan_port")) {
-         snprintf(sagan_port, sizeof(sagan_port), "%s", strtok_r(NULL, " " , &tok));
-	 sagan_port[strlen(sagan_port)-1] = '\0'; 
-         }
-     
      if (!strcmp(sagan_option, "sagan_proto")) { 
         sagan_var = strtok_r(NULL, " ", &tok);
 	sagan_proto = atoi(sagan_var);
@@ -228,6 +230,7 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 #endif
 
 
+
 if (!strcmp(sagan_option, "output")) {
              sagan_var = strtok_r(NULL," ", &tok);
 
@@ -236,8 +239,6 @@ if (!strcmp(sagan_option, "output")) {
            if (strstr(strtok_r(NULL, " ", &tok), "parsable")) sagan_exttype=1;
 	sagan_ext_flag=1;
         }
-
-
 
 #ifdef HAVE_LIBPRELUDE
 	

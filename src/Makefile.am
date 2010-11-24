@@ -24,8 +24,7 @@ output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-logzilla.c \
-output-plugins/sagan-prelude.c \
-output-plugins/sagan-gtk.c
+output-plugins/sagan-prelude.c
 
 install-data-local:
 

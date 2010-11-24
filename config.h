@@ -34,9 +34,6 @@
 /* Define to 1 if you have the `getopt_long' function. */
 #define HAVE_GETOPT_LONG 1
 
-/* Define if GTK is available */
-#define HAVE_GTK 1
-
 /* Define to 1 if you have the `htons' function. */
 #define HAVE_HTONS 1
 

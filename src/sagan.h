@@ -265,27 +265,6 @@ struct prelude_thread_args {
 
 #endif
 
-#ifdef HAVE_GTK
-
-void sagan_gtk ( void * ); 
-
-struct gtk_thread_args { 
-	char *sid;
-	char *msg;
-	char *classtype;
-	int s_pri;
-	char *date;
-	char *time;
-	char *ip_src;
-	char *ip_dst;
-	char *facility;
-	char *dst_port;
-	char *src_port;
-	int found;
-};
-
-#endif
-
 /****************************************************************************/
 /* External thread structures.   This is used when calling 'external'       */
 /* prgrams                                                                  */

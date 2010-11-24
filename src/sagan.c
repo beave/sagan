@@ -80,7 +80,7 @@ int  dropped=0;
 int  classcount=0;
 int  threadid =0;
 
-char sagan_host[MAXHOST];
+char sagan_host[17];
 char sagan_port[6];
 char sagan_extern[MAXPATH];
 char sagan_path[MAXPATH];
@@ -246,16 +246,6 @@ pthread_mutex_init(&prelude_mutex, NULL);
 pthread_attr_init(&thread_prelude_attr);
 pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
-
-/****************************************************************************/
-/* GTK (For Sagan X-Windows Popup messages) support			    */
-/****************************************************************************/
-
-#ifdef HAVE_GTK
-struct gtk_thread_args *gtk_thread_args = NULL;
-
-#endif
-
 
 /****************************************************************************/
 /* libesmtp (SMTP/e-mail) local variables				    */
@@ -1035,11 +1025,6 @@ while(1) {
                 	 }
 		}
 #endif
-
-#ifdef HAVE_GTK
-
-#endif
-
 
 #ifdef HAVE_LIBESMTP
 
