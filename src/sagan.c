@@ -1082,7 +1082,7 @@ while(1) {
 /* External program thread call                                             */
 /****************************************************************************/
 
-		if ( strcmp(sagan_extern, "" ) && thresh_log_flag == 0 ) { 
+		if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
 		   
 		   if ( threadextc < max_ext_threads ) { 
 		   pthread_mutex_lock ( &ext_mutex );
