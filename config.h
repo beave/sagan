@@ -41,22 +41,22 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-/* #undef HAVE_LIBESMTP */
+#define HAVE_LIBESMTP 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `mysqlclient_r' library (-lmysqlclient_r). */
-/* #undef HAVE_LIBMYSQLCLIENT_R */
+#define HAVE_LIBMYSQLCLIENT_R 1
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-/* #undef HAVE_LIBPQ */
+#define HAVE_LIBPQ 1
 
 /* Define to 1 if you have the `prelude' library (-lprelude). */
-/* #undef HAVE_LIBPRELUDE */
+#define HAVE_LIBPRELUDE 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1

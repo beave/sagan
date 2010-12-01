@@ -69,7 +69,7 @@ char dbhost[MAXHOST];
 
 char sagan_port[6];
 
-char sagan_hostname[[MAXHOST];];
+char sagan_hostname[MAXHOST];
 char sagan_interface[50];
 char sagan_filter[50];
 int  sagan_detail;
