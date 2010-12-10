@@ -101,6 +101,28 @@ if test "x$with_prelude_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_prelude_libraries}"
 fi
 
+AC_ARG_ENABLE(lognorm,
+  [  --disable-lognorm      Disable Lognorm (liblognorm) support.],
+  [ LOGNORM="$enableval"],
+  [ LOGNORM="yes" ]
+)
+
+AC_ARG_WITH(lognorm_includes,
+        [  --with-lognorm-includes=DIR    liblognorm include directory],
+        [with_lognorm_includes="$withval"],[with_lognorm_includes="no"])
+
+AC_ARG_WITH(lognorm_libraries,
+        [  --with-lognorm-libraries=DIR   liblognorm library directory],
+        [with_lognorm_libraries="$withval"],[with_lognorm_libraries="no"])
+
+if test "x$with_lognorm_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_lognorm_includes}"
+   fi
+
+if test "x$with_lognorm_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_lognorm_libraries}"
+fi
+
 
 AC_SUBST(VERSION)
 AM_INIT_AUTOMAKE(sagan, ${VERSION})
@@ -170,6 +192,23 @@ if test "$PRELUDE" = "yes"; then
 If you're not interested in Prelude support use the --disable-prelude flag.))
        fi
 
+if test "$LOGNORM" = "yes"; then
+       AC_MSG_RESULT([------- liblognorm support is enabled -------])
+       #AC_CHECK_HEADER([libestr.h])
+       #AC_CHECK_HEADER([libee/libee.h])
+       #AC_CHECK_HEADER([lognorm.h])
+       AC_CHECK_HEADER([liblognorm.h])
+       #AC_CHECK_HEADER([ptree.h])
+       #AC_CHECK_HEADER([lognorm.h])
+       AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
+This library is important for the correlation aspects of Sagan! While you 
+can disable support for liblognorm,  doing so will greatly restrict any
+log normalization or correlation that Sagan can do. If you are not
+interested in liblognorm support use the --disable-lognorm flag. For more
+information,  please see:
+https://wiki.softwink.com/bin/view/Main/LibLogNorm ))
+       fi
+
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 
 
@@ -195,10 +234,5 @@ AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2010 Softwink, Inc., et al.])
 AC_MSG_RESULT([  (|| ||) ])
 AC_MSG_RESULT([   oo-oo  ]) 
 AC_MSG_RESULT([])
-
-
-
-
-
 
 

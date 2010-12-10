@@ -43,6 +43,9 @@
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 #define HAVE_LIBESMTP 1
 
+/* Define to 1 if you have the `lognorm' library (-llognorm). */
+#define HAVE_LIBLOGNORM 1
+
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
