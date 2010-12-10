@@ -5518,7 +5518,7 @@ _ACEOF
 
 else
   as_fn_error "The MySQL library libmysqlclient_r is missing!
-	If you're not interested in MySQL support use the --disable-mysql flag." "$LINENO" 5
+If you're not interested in MySQL support use the --disable-mysql flag." "$LINENO" 5
 fi
 
 	fi
