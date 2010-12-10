@@ -5734,13 +5734,10 @@ _ACEOF
   LIBS="-llognorm $LIBS"
 
 else
-  { as_fn_set_status doing so will greatly restrict any
-log normalization or correlation that Sagan can do. If you are not
-interested in liblognorm support use the --disable-lognorm flag. For more
-information
-as_fn_error "The liblognorm library cannot be found.
-This library is important for the correlation aspects of Sagan! While you
-can disable support for liblognorm" "$LINENO" 5; }
+  as_fn_error "The liblognorm library cannot be found.
+This library is important for the correlation aspects of Sagan! Please
+https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable use the
+--disable-lognorm flag. " "$LINENO" 5
 fi
 
        fi
