@@ -201,9 +201,9 @@ if test "$LOGNORM" = "yes"; then
        #AC_CHECK_HEADER([ptree.h])
        #AC_CHECK_HEADER([lognorm.h])
        AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
-This library is important for the correlation aspects of Sagan! Please
-https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable use the
---disable-lognorm flag. ))
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. ))
        fi
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local

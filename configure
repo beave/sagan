@@ -5735,9 +5735,9 @@ _ACEOF
 
 else
   as_fn_error "The liblognorm library cannot be found.
-This library is important for the correlation aspects of Sagan! Please
-https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable use the
---disable-lognorm flag. " "$LINENO" 5
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. " "$LINENO" 5
 fi
 
        fi
