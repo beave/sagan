@@ -48,6 +48,13 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#ifdef HAVE_LIBLOGNORM
+#include <liblognorm.h>
+#include <ptree.h>
+#include <lognorm.h>
+#endif
+
+
 #include "sagan.h"
 #include "version.h"
 
@@ -84,7 +91,7 @@ char sagan_host[17];
 char sagan_port[6];
 char sagan_extern[MAXPATH];
 char sagan_path[MAXPATH];
-int  sagan_ext_flag;
+sbool sagan_ext_flag;
 
 int  sagan_exttype=0;
 
@@ -113,12 +120,33 @@ pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 uint64_t max_ext_threads;
 
+#ifdef HAVE_LIBLOGNORM
+
+struct stat fileinfo;
+
+struct liblognorm_struct *liblognormstruct;
+struct liblognorm_toload_struct *liblognormtoloadstruct;
+int liblognorm_count;
+int liblognormtoload_count;
+
+static ln_ctx ctx;
+static ee_ctx eectx;
+
+es_str_t *str;
+es_str_t *propName = NULL;
+
+struct ee_event *lnevent = NULL;;
+struct ee_field *field = NULL;
+char *cstr;
+
+#endif
+
 /****************************************************************************/
 /* Prelude framework globals                                                */
 /****************************************************************************/
 
 #ifdef HAVE_LIBPRELUDE
-int sagan_prelude_flag;
+sbool sagan_prelude_flag;
 char sagan_prelude_profile[255];
 pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
 uint64_t max_prelude_threads;
@@ -166,7 +194,7 @@ pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
 char sagan_esmtp_from[ESMTPFROM];
 char sagan_esmtp_to[ESMTPTO];
 char sagan_esmtp_server[ESMTPSERVER];
-int  sagan_esmtp_flag;
+sbool sagan_esmtp_flag;
 
 uint64_t  max_email_threads;
 int  min_email_priority=0;
@@ -286,12 +314,17 @@ pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
+char *username = NULL;
+char *uid = NULL;
+char s_msg[512];
 
 int  src_port;
+int  dst_port;
+
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
-int  thresh_flag=0;
-int  thresh_log_flag=0;
+sbool thresh_flag=0;
+sbool thresh_log_flag=0;
 char  timet[20];
 
 struct thresh_by_src *threshbysrc = NULL;
@@ -430,6 +463,27 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 sig_thread_args[0].daemonize = daemonize;
 
 load_config();
+
+/* Load/init liblognorm definitions.  I tried to move this into a subroutine,
+ * but * that ended up causing segfaults on ln_normalize() or causing 
+ * liblognorm not to function correctly (not parsing fields).  Make reloading
+ * a SIGHUP a issue as well.
+ * 12/17/2010 - Champ
+ */
+
+#ifdef HAVE_LIBLOGNORM
+if((ctx = ln_initCtx()) == NULL) sagan_log(1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
+if((eectx = ee_initCtx()) == NULL) sagan_log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
+
+ln_setEECtx(ctx, eectx);
+
+for (i=0; i < liblognormtoload_count; i++) { 
+sagan_log(0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
+if (stat(liblognormtoloadstruct[i].filepath, &fileinfo)) sagan_log(1, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
+ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
+}
+#endif
+
 sagan_log(0, "Sagan version %s is firing up!", VERSION);
 sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, rulecount);
 droppriv(runas, fifo);
@@ -691,6 +745,7 @@ while(1) {
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
+   remrt(syslog_msg);
    snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
    snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
@@ -867,27 +922,117 @@ while(1) {
 
 		   saganfound++;
 
-		   /* Search message for possible IP addresses */
+		   ip_src=NULL;
+		   src_port=0;
+		   ip_dst=NULL;
+		   dst_port=0;
+		   
+		   username=NULL;
+		   uid=NULL;
 
-		   if ( rulestruct[b].s_find_ip == 1 ) 
+#ifdef HAVE_LIBLOGNORM
+		   if ( rulestruct[b].normalize == 1 )  
 		      {
-		      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
-		         
-			 if (strcmp(fip,"0")) 
+		      str = es_newStrFromCStr(sysmsg[msgslot], strlen(sysmsg[msgslot] ));
+		      ln_normalize(ctx, str, &lnevent);
+                	if(lnevent != NULL) {
+                        es_emptyStr(str);
+                        ee_fmtEventToRFC5424(lnevent, &str);
+                        cstr = es_str2cstr(str, NULL);
+//			printf("Normalize: %s\n", cstr);
+
+			propName = es_newStrFromBuf("src-ip", 6);
+			if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			   str = ee_getFieldValueAsStr(field, 0);
+			   ip_src = es_str2cstr(str, NULL);
+			   }
+
+			propName = es_newStrFromBuf("dst-ip", 6);
+		        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			   str = ee_getFieldValueAsStr(field, 0);
+			   ip_dst = es_str2cstr(str, NULL);
+			   }
+
+			propName = es_newStrFromBuf("src-port", 8);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+			   cstr = es_str2cstr(str, NULL);
+			   src_port = atoi(cstr);
+                           }
+
+                        propName = es_newStrFromBuf("dst-port", 8);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+                           cstr = es_str2cstr(str, NULL);
+			   dst_port = atoi(cstr);
+                           }
+
+                        propName = es_newStrFromBuf("username", 8);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+                           username = es_str2cstr(str, NULL);
+			   }
+
+//                        propName = es_newStrFromBuf("uid", 3);
+//                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+//                           str = ee_getFieldValueAsStr(field, 0);
+//                           uid = es_str2cstr(str, NULL);
+//                           }
+
+                        free(cstr);
+                        ee_deleteEvent(lnevent);
+                        lnevent = NULL;
+                	}
+
+}
+#endif
+
+		   /* parse_ip_simple / parse_port_simple,  only if normalize is not being used */
+
+                   if ( rulestruct[b].s_find_ip == 1 && rulestruct[b].normalize == 0) {
+                      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
+
+                         if (strcmp(fip,"0"))
                             {
                             ip_src = fip; ip_dst = syslog_hosttmp;
-                            } else { 
+                            } else {
                             ip_src = syslog_hosttmp; ip_dst = sagan_host;
                             }
-                      } else { 
+                      } else {
                       ip_src = syslog_hosttmp; ip_dst = sagan_host;
-                      }
+                   }
 
-		   if ( rulestruct[b].s_find_port == 1) { 
-		   src_port = parse_port_simple(sysmsg[msgslot]);
-		   } else { 
-		   src_port = atoi(sagan_port);
-		   }
+                   if ( rulestruct[b].s_find_port == 1) {
+                   src_port = parse_port_simple(sysmsg[msgslot]);
+                   } else {
+                   src_port = atoi(sagan_port);
+                   }
+	
+
+if ( ip_src == NULL ) ip_src=syslog_hosttmp;
+if ( ip_dst == NULL ) ip_dst=syslog_hosttmp;
+
+if ( src_port == 0 ) src_port=atoi(sagan_port);
+if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
+
+if ( username == NULL ) {
+   snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
+   } else {
+   snprintf(s_msg, sizeof(s_msg), "%s [Username: %s]", rulestruct[b].s_msg, username);
+}
+
+//if ( uid == NULL ) {
+//   snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
+//   } else {
+//   snprintf(s_msg, sizeof(s_msg), "%s [UID: %s]", rulestruct[b].s_msg, username);
+//}
+
+/* We don't want 127.0.0.1,  so remap it to something more useful */
+
+if (!strcmp(ip_src, "127.0.0.1" )) ip_src=syslog_hosttmp;
+if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
+
+//printf("ip_src %s:%d , ip_dst: %s:%d : username: %s\n", ip_src, src_port, ip_dst, dst_port, username); fflush(stdout);
 
 		   thresh_log_flag = 0;
 
@@ -985,14 +1130,9 @@ while(1) {
 		      }			/* End of thresholding */
 
 
-                   /* Never,  ever give us loopback.  That does us no good. */
-
-                   if (!strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "" ) || ip_src == NULL ) ip_src = sagan_host;
-                   if (!strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "" ) || ip_dst == NULL ) ip_dst = sagan_host;
-
 		   /* alert log file */
-		  
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, rulestruct[b].s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, rulestruct[b].dst_port, src_port, sysmsg[msgslot], b );
+		 
+		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, dst_port, src_port, sysmsg[msgslot], b );
 
 #if HAVE_LIBPRELUDE
 
@@ -1010,7 +1150,7 @@ while(1) {
 		prelude_thread_args[threadid].found=b;
 		prelude_thread_args[threadid].pri=rulestruct[b].s_pri;
 		prelude_thread_args[threadid].src_port = src_port;
-		prelude_thread_args[threadid].dst_port = rulestruct[b].dst_port;
+		prelude_thread_args[threadid].dst_port = dst_port;
 		prelude_thread_args[threadid].sysmsg = sysmsg[msgslot];
 
 		
@@ -1051,7 +1191,7 @@ while(1) {
 		      if ( threademailc > threadmaxemailc ) threadmaxemailc=threademailc;
 		   
                    	  email_thread_args[threadid].sid = rulestruct[b].s_sid;
-                   	  email_thread_args[threadid].msg = rulestruct[b].s_msg;
+                   	  email_thread_args[threadid].msg = s_msg;
                    	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    	  email_thread_args[threadid].pri = rulestruct[b].s_pri;
                    	  email_thread_args[threadid].date = syslog_datetmp;
@@ -1061,7 +1201,7 @@ while(1) {
                    	  email_thread_args[threadid].facility = syslog_facilitytmp;
                    	  email_thread_args[threadid].fpri = syslog_leveltmp;
 		   	  email_thread_args[threadid].sysmsg = sysmsg[msgslot];
-		    	  email_thread_args[threadid].dst_port = rulestruct[b].dst_port;
+		    	  email_thread_args[threadid].dst_port = dst_port;
 		   	  email_thread_args[threadid].src_port = src_port;
 			  email_thread_args[threadid].rulemem = b;
 	
@@ -1094,7 +1234,7 @@ while(1) {
 		   if ( threadextc > threadmaxextc ) threadmaxextc=threadextc;
 		  
                    ext_thread_args[threadid].sid = rulestruct[b].s_sid;
-                   ext_thread_args[threadid].msg = rulestruct[b].s_msg;
+                   ext_thread_args[threadid].msg = s_msg;
                    ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
                    ext_thread_args[threadid].pri = rulestruct[b].s_pri;
                    ext_thread_args[threadid].date = syslog_datetmp;
@@ -1104,7 +1244,7 @@ while(1) {
                    ext_thread_args[threadid].facility = syslog_facilitytmp;
                    ext_thread_args[threadid].fpri = syslog_leveltmp;
 		   ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
-		   ext_thread_args[threadid].dst_port = rulestruct[b].dst_port;
+		   ext_thread_args[threadid].dst_port = dst_port;
 		   ext_thread_args[threadid].src_port = src_port;
 		   ext_thread_args[threadid].rulemem = b;
 		   ext_thread_args[threadid].drop = rulestruct[b].drop;
@@ -1199,7 +1339,7 @@ while(1) {
 		   db_args[threadid].message=sysmsg[msgslot];
 		   db_args[threadid].cid=cid;
 		   db_args[threadid].endian=endianchk;
-		   db_args[threadid].dst_port = rulestruct[b].dst_port;
+		   db_args[threadid].dst_port = dst_port;
 		   db_args[threadid].src_port = src_port;
 		   db_args[threadid].date = syslog_datetmp;
                    db_args[threadid].time = syslog_timetmp;

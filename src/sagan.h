@@ -64,6 +64,8 @@
 
 #define RUNAS		"sagan"
 
+typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  
+
 
 /* defaults if the user doesn't define */
 
@@ -103,6 +105,7 @@ void closesagan( int );
 int  checkendian( void );
 void sagan_usage( void );
 void load_config( void );
+void load_normalize( void );
 void removelockfile ( void );
 void checklockfile ( void );
 void droppriv( const char * , const char *);
@@ -169,8 +172,9 @@ int content_count;
 int ref_count;
 int dst_port;
 int ip_proto;
-int s_find_port;
-int s_find_ip; 
+sbool s_find_port;
+sbool s_find_ip; 
+sbool normalize;
 int drop;			// inline DROP for ext.
 
 int threshold_type;		// 1 = limit,  2 = thresh,
@@ -199,6 +203,22 @@ int  count;
 uint64_t utime;
 char sid[512];
 };
+
+#ifdef HAVE_LIBLOGNORM
+/* liblognorm struct */
+typedef struct liblognorm_struct liblognorm_struct; 
+struct liblognorm_struct { 
+char type[50];
+char filepath[MAXPATH];
+};
+
+typedef struct liblognorm_toload_struct liblognorm_toload_struct;
+struct liblognorm_toload_struct {
+char type[50];
+char filepath[MAXPATH];
+};
+#endif
+
 
 /****************************************************************************/
 /* MySQL & PostgreSQL support.  Including support for Snort database and    */

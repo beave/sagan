@@ -45,6 +45,13 @@
 #include "version.h"
 #include "sagan.h"
 
+#ifdef HAVE_LIBLOGNORM
+struct liblognorm_struct *liblognormstruct;
+struct liblognorm_toload_struct *liblognormtoloadstruct;
+int liblognorm_count;
+int liblognormtoload_count;
+#endif
+
 char ruleset[MAXPATH];
 
 int devdebug;
@@ -90,10 +97,12 @@ int netcount=0;
 int ref_count=0;
 int content_count=0;
 int pcre_count=0;
-int pcreflag=0;
+sbool pcreflag=0;
 int pcreoptions=0;
 
 int i=0;
+int a=0;
+
 int forward=0;
 int reverse=0;
 
@@ -102,6 +111,9 @@ int reverse=0;
 int ip_proto=0;
 int dst_port=0;
 
+#ifdef HAVE_LIBLOGNORM
+sbool liblognorm_flag=0;
+#endif
 
 if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
    sagan_log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
@@ -217,17 +229,18 @@ remspaces(rulesplit);
 	       rulestruct[rulecount].s_nocase = 1;
 	       }
 
-	if (!strcmp(rulesplit, "parse_port_simple")) {
-	       strtok_r(NULL, ":", &saveptrrule2);
-	       rulestruct[rulecount].s_find_port = 1;
-	       }
 
-	if (!strcmp(rulesplit, "parse_ip_simple")) { 
-	       strtok_r(NULL, ":", &saveptrrule2);
-	       rulestruct[rulecount].s_find_ip = 1;
-	       }
+        if (!strcmp(rulesplit, "parse_port_simple")) {
+               strtok_r(NULL, ":", &saveptrrule2);
+               rulestruct[rulecount].s_find_port = 1;
+               }
 
-	/* Non-quioted information (sid, reference, etc) */
+        if (!strcmp(rulesplit, "parse_ip_simple")) {
+               strtok_r(NULL, ":", &saveptrrule2);
+               rulestruct[rulecount].s_find_ip = 1;
+               }
+
+	/* Non-quoted information (sid, reference, etc) */
 
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -292,6 +305,39 @@ remspaces(rulesplit);
 		remspaces(arg);
 		rulestruct[rulecount].s_pri = atoi(arg);
                 }
+
+#ifdef HAVE_LIBLOGNORM
+	
+	if (!strcmp(rulesplit, "normalize" )) { 
+		rulestruct[rulecount].normalize = 1; 
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"normalize\" appears to be incomplete");
+		remspaces(arg);
+
+		/* Search for a normalize rule that fits the rule set's spec */
+
+		for (i=0; i < liblognorm_count; i++) { 
+		    if (!strcmp(liblognormstruct[i].type, arg )) { 
+
+			liblognorm_flag=1;
+			
+		    	for (a=0; a < liblognormtoload_count; a++) { 
+			    if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[a].type )) liblognorm_flag=0;
+			}
+
+			if ( liblognorm_flag == 1 ) { 
+			   liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+			   snprintf(liblognormtoloadstruct[liblognormtoload_count].type, sizeof(liblognormtoloadstruct[liblognormtoload_count].type), "%s",  liblognormstruct[i].type);
+			   snprintf(liblognormtoloadstruct[liblognormtoload_count].filepath, sizeof(liblognormtoloadstruct[liblognormtoload_count].filepath), "%s",  liblognormstruct[i].filepath);
+			   liblognormtoload_count++;
+			}
+
+		}
+	        
+	}
+}
+
+#endif
 
 	/* Quoted information (content, pcre, msg)  */ 
 
@@ -418,7 +464,6 @@ remspaces(rulesplit);
 
 tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 }
-
 
 if ( devdebug ) { 
 sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);

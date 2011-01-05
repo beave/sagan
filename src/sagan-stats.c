@@ -46,7 +46,7 @@ uint64_t saganexternaldrop;
 
 #ifdef HAVE_LIBESMTP
 char sagan_esmtp_server[ESMTPSERVER];
-int  sagan_esmtp_flag;
+sbool sagan_esmtp_flag;
 uint64_t saganesmtpdrop;
 uint64_t max_email_threads;
 uint64_t threadmaxemailc;
@@ -64,7 +64,7 @@ uint64_t saganlogzilladrop;
 #endif
 
 #ifdef HAVE_LIBPRELUDE
-int sagan_prelude_flag;
+sbool sagan_prelude_flag;
 uint64_t max_prelude_threads;
 uint64_t threadpreludec;
 uint64_t threadmaxpreludec;
@@ -74,7 +74,7 @@ uint64_t saganpreludedrop;
 uint64_t max_ext_threads;
 char sagan_extern[MAXPATH];
 
-int flag=0;
+sbool flag=0;
 
 void sagan_statistics() { 
 

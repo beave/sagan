@@ -319,7 +319,7 @@ if ( from == 1 ) {
 
 char *betweenquotes(char *instring)
 {
-int flag=0;
+sbool flag=0;
 int i;
 char tmp1[2];
 char tmp2[512]="";

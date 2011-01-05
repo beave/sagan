@@ -34,15 +34,23 @@
 #include <pthread.h>
 #include <stdint.h>
 
+#include "version.h"
+#include "sagan.h"
+
+#ifdef HAVE_LIBLOGNORM
+#include <liblognorm.h>
+#include <ptree.h>
+#include <lognorm.h>
+static ln_ctx ctx;
+int liblognorm_count;
+#endif
+
 #ifdef HAVE_LIBPRELUDE
 #include <libprelude/prelude.h>
 char sagan_prelude_profile[255];
-int  sagan_prelude_flag;
+sbool sagan_prelude_flag;
 prelude_client_t *preludeclient;
 #endif
-
-#include "version.h"
-#include "sagan.h"
 
 FILE *alertfp;
 
@@ -127,6 +135,10 @@ prelude_deinit();
 
 		      /* Reset counters */
 		   refcount=0; classcount=0; rulecount=0; ruletotal=0;
+
+#ifdef HAVE_LIBLOGNORM
+liblognorm_count=0;
+#endif
 		   
 		   /* Re-load everything */
 		   load_config();
@@ -174,6 +186,10 @@ switch( sig )
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
         if ( dbtype != 0 ) record_last_cid();
+#endif
+
+#ifdef HAVE_LIBLOGNORM
+	ln_exitCtx(ctx);
 #endif
 
 	fflush(alertfp); 

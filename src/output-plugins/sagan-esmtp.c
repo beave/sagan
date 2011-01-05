@@ -76,7 +76,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"[**] [%s] %s [**]\n"
 	"[Classification: %s] [Priority: %d]\n"
 	"%s %s %s:%d -> %s:%d %s %s\n"
-	"Syslog message: %s%s\n\r",
+	"Syslog message: %s\r\n%s\n\r",
 	sagan_esmtp_from,
 	sagan_esmtp_to,
 	emailargs->msg,

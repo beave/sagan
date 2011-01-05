@@ -42,11 +42,17 @@
 #include <time.h>
 #include <signal.h>
 
+#ifdef HAVE_LIBLOGNORM
+#include <liblognorm.h>
+#include <ptree.h>
+#include <lognorm.h>
+#endif
+
+
 #include "version.h"
 #include "sagan.h"
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
 int  dbtype=0;
 
 char dbusername[MAXUSER]="";
@@ -70,23 +76,27 @@ int  sagan_detail;
 int  sagan_proto = 17;
 
 uint64_t max_logzilla_threads=MAX_LOGZILLA_THREADS;
-
 #endif
 
 #ifdef HAVE_LIBPRELUDE
 char sagan_prelude_profile[255];
-int sagan_prelude_flag=0;
+sbool sagan_prelude_flag=0;
 uint64_t max_prelude_threads=MAX_PRELUDE_THREADS;;
 #endif
 
 
 #ifdef HAVE_LIBESMTP
-int sagan_esmtp_flag;
+sbool sagan_esmtp_flag;
 char sagan_esmtp_from[ESMTPSERVER];
 char sagan_esmtp_to[255];
 char sagan_esmtp_server[255];
 uint64_t max_email_threads=MAX_EMAIL_THREADS;
 int min_email_priority;
+#endif
+
+#ifdef HAVE_LIBLOGNORM
+struct liblognorm_struct *liblognormstruct;
+int liblognorm_count;
 #endif
 
 uint64_t max_ext_threads=MAX_EXT_THREADS;
@@ -99,7 +109,7 @@ int fifoi;
 
 char sagan_extern[MAXPATH];
 int  sagan_exttype;
-int  sagan_ext_flag;
+sbool sagan_ext_flag;
 char saganconf[MAXPATH];
 
 char sagan_host[17];
@@ -114,6 +124,7 @@ FILE *sagancfg;
 
 char *rulesetptr;
 char ruleset[MAXPATH];
+char normfile[MAXPATH];
 
 char *replace_str(char *str, char *orig, char *rep)
 {
@@ -137,6 +148,9 @@ char *sagan_var=NULL;
 char *ptmp=NULL;
 
 char *tok=NULL;
+
+int i;
+//struct stat fileinfo;
 
 /* Gather information for the master configuration file */
 
@@ -229,7 +243,31 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
 #endif
 
+#ifdef HAVE_LIBLOGNORM
 
+/*
+ We load the location for liblognorm's 'rule base/samples'.  We don't want to 
+ load them quiet yet.  We only want to load samples we need,  so we do the
+ actual ln_loadSamples() after the configuration file and all rules have
+ been analyzed */
+
+if (!strcmp(sagan_option, "normalize:")) {
+	liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
+	
+	sagan_var = strtok_r(NULL, ",", &tok);
+	remspaces(sagan_var);
+	snprintf(liblognormstruct[liblognorm_count].type, sizeof(liblognormstruct[liblognorm_count].type), "%s", sagan_var);
+
+	snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, ",", &tok));
+	remspaces(tmpstring);
+	tmpstring[strlen(tmpstring)-1] = '\0';
+	strlcpy(normfile, replace_str(tmpstring, "$RULE_PATH", rule_path), sizeof(normfile));
+	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
+
+	liblognorm_count++;
+}
+
+#endif
 
 if (!strcmp(sagan_option, "output")) {
              sagan_var = strtok_r(NULL," ", &tok);

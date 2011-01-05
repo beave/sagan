@@ -64,7 +64,7 @@ char tmpref[2048]="";
 fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);
 fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
 fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
-fprintf(alertfp, "Message: %s", message);
+fprintf(alertfp, "Message: %s\n", message);
 snprintf(tmpref, sizeof(tmpref), "%s", reflookup( rulemem, 0 ));
 if ( strcmp(tmpref, "")) fprintf(alertfp, "%s\n", tmpref);
 
