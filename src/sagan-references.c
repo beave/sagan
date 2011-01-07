@@ -50,7 +50,7 @@ struct ref_struct *refstruct;
 struct rule_struct *rulestruct;
 
 int refcount;
-int devdebug;
+sbool devdebug;
 
 char ruleset[1024];
 

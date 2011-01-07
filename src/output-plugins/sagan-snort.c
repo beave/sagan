@@ -75,7 +75,7 @@ char sagan_filter[50];
 int  sagan_detail;
 
 int sensor_id;
-int devdebug;
+sbool devdebug;
 
 int  threaddbc;
 

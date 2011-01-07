@@ -54,11 +54,11 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-signal.$(OBJEXT) sagan-key.$(OBJEXT) \
 	sagan-stats.$(OBJEXT) sagan-strlcat.$(OBJEXT) \
 	sagan-strlcpy.$(OBJEXT) sagan-usage.$(OBJEXT) \
-	sagan-util.$(OBJEXT) parse-ip-simple.$(OBJEXT) \
-	parse-port-simple.$(OBJEXT) sagan-alert.$(OBJEXT) \
-	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
-	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
-	sagan-prelude.$(OBJEXT)
+	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
+	parse-ip-simple.$(OBJEXT) parse-port-simple.$(OBJEXT) \
+	sagan-alert.$(OBJEXT) sagan-snort.$(OBJEXT) \
+	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
+	sagan-logzilla.$(OBJEXT) sagan-prelude.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -188,6 +188,7 @@ sagan-strlcat.c \
 sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
+sagan-plog.c \
 parsers/parse-ip-simple.c \
 parsers/parse-port-simple.c \
 output-plugins/sagan-alert.c \
@@ -288,6 +289,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-logzilla.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-plog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-prelude.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-references.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-rules.Po@am__quote@

@@ -78,6 +78,13 @@ int  sagan_proto = 17;
 uint64_t max_logzilla_threads=MAX_LOGZILLA_THREADS;
 #endif
 
+#ifdef HAVE_LIBPCAP
+char plog_interface[50]="eth0";
+char plog_logdev[50]="/dev/log";
+int  plog_port=514;
+sbool plog_flag=0;
+#endif
+
 #ifdef HAVE_LIBPRELUDE
 char sagan_prelude_profile[255];
 sbool sagan_prelude_flag=0;
@@ -201,6 +208,29 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
         sagan_var = strtok_r(NULL, " ", &tok); 
 	max_prelude_threads = atol(sagan_var);
 	}
+
+#endif
+
+#ifdef HAVE_LIBPCAP
+
+    if (!strcmp(sagan_option, "plog_interface")) { 
+       snprintf(plog_interface, sizeof(plog_interface)-1, "%s", strtok_r(NULL, " ", &tok));
+       plog_interface[strlen(plog_interface)-1] = '\0';
+       plog_flag=1;
+       }
+
+    if (!strcmp(sagan_option, "plog_logdev")) { 
+       snprintf(plog_logdev, sizeof(plog_logdev)-1, "%s", strtok_r(NULL, " ", &tok));
+       plog_logdev[strlen(plog_logdev)-1] = '\0';
+       plog_flag=1;
+       }
+
+    if (!strcmp(sagan_option, "plog_port")) {
+        sagan_var = strtok_r(NULL, " ", &tok); 
+	plog_port = atoi(sagan_var);
+	plog_flag = 1;
+        }
+
 
 #endif
 

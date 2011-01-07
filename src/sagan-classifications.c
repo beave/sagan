@@ -50,7 +50,7 @@
 
 struct class_struct *classstruct;
 int classcount;
-int devdebug;
+sbool devdebug;
 
 char ruleset[MAXPATH];
 

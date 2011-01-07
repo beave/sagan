@@ -91,6 +91,7 @@ int   parse_port_simple( char * );
 void sig_handler( int );
 void sig_handler_daemon( int );
 void key_handler( int );
+void plog_handler( void );
 
 int isnumeric (char *);
 char *toupperc(char* const );

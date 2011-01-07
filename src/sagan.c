@@ -106,8 +106,9 @@ uint64_t saganlogzilladrop=0;
 uint64_t sagansnortdrop=0;
 uint64_t saganpreludedrop=0;
 
-int debug=0;
-int devdebug=0;
+sbool debug=0;
+sbool devdebug=0;
+sbool plog_flag;
 
 int rulecount=0;
 int ruletotal=0;
@@ -288,6 +289,17 @@ pthread_mutex_init(&email_mutex, NULL);
 
 pthread_attr_init(&thread_email_attr);
 pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
+#endif
+
+/****************************************************************************/
+/* libpcap/PLOG (syslog sniffer) local variables                                 */
+/****************************************************************************/
+
+#ifdef HAVE_LIBPCAP
+pthread_t pcap_thread;
+pthread_attr_t thread_pcap_attr;
+pthread_attr_init(&thread_pcap_attr);
+pthread_attr_setdetachstate(&thread_pcap_attr,  PTHREAD_CREATE_DETACHED);
 #endif
 
 /****************************************************************************/
@@ -486,6 +498,22 @@ ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 
 sagan_log(0, "Sagan version %s is firing up!", VERSION);
 sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, rulecount);
+
+
+#ifdef HAVE_LIBPCAP
+
+/* Spawn a thread to 'sniff' syslog traffic (sagan-plog.c).  This redirects syslog
+ * traffic to the /dev/log socket */
+
+if ( plog_flag ) { 
+
+if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
+        removelockfile();
+        sagan_log(1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
+        }
+}
+#endif
+
 droppriv(runas, fifo);
 sagan_log(0, "---------------------------------------------------------------------------");
 
@@ -494,7 +522,7 @@ sagan_log(0, "------------------------------------------------------------------
 if (daemonize == 0) { 
 if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
         removelockfile();
-        sagan_log(1, "[%s, line %d] Error creating signa handler thread.", __FILE__, __LINE__);
+        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
         }
 }
 
@@ -507,7 +535,7 @@ sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
 
 /* Allocate memory for external program thread structure */
 
-if ( sagan_ext_flag != 0 ) { 
+if ( sagan_ext_flag ) { 
 ext_thread_args = malloc(MAX_THREADS * sizeof(struct ext_thread_args));
 sagan_log(0, "Max external threads : %d", max_ext_threads);
 }
@@ -515,14 +543,14 @@ sagan_log(0, "Max external threads : %d", max_ext_threads);
 /* Allocate memory for libesmtp thread struct */
 
 #ifdef HAVE_LIBESMTP
-if ( sagan_esmtp_flag != 0 ) { 
+if ( sagan_esmtp_flag ) { 
 email_thread_args = malloc(MAX_THREADS * sizeof(struct email_thread_args));
 sagan_log(0, "Max SMTP threads     : %d", max_email_threads);
 }
 #endif
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-if ( logzilla_dbtype != 0 ) { 
+if ( logzilla_dbtype ) { 
 logzilla_thread_args = malloc(MAX_THREADS * sizeof(struct logzilla_thread_args));
 sagan_log(0, "Max Logzilla threads : %d", max_logzilla_threads);
 logzilla_db_connect();
@@ -533,7 +561,7 @@ logzilla_db_connect();
 
 sig_thread_args[0].daemonize = daemonize;
 
-if ( dbtype != 0 ) { 
+if ( dbtype ) { 
 
 /* Allocate memory for DB thread structure */
 
@@ -554,7 +582,7 @@ sagan_log(0, "Next CID             : %" PRIu64 "", cid);
 
 #ifdef HAVE_LIBPRELUDE
 
-if ( sagan_prelude_flag != 0 ) {
+if ( sagan_prelude_flag ) {
 
 sagan_log(0, "Prelude profile: %s", sagan_prelude_profile);
 sagan_log(0, "Max Prelude threads: %d", max_prelude_threads);

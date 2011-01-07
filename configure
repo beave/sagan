@@ -705,6 +705,9 @@ with_prelude_libraries
 enable_lognorm
 with_lognorm_includes
 with_lognorm_libraries
+enable_libpcap
+with_libpcap_includes
+with_libpcap_libraries
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1339,6 +1342,7 @@ Optional Features:
   --disable-esmtp	  Disable libesmtp support.
   --disable-prelude      Disable Prelude support.
   --disable-lognorm      Disable Lognorm (liblognorm) support.
+  --disable-libpcap      Disable libpcap (plog) support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
@@ -1355,6 +1359,8 @@ Optional Packages:
   --with-prelude-libraries=DIR   libprelude library directory
   --with-lognorm-includes=DIR    liblognorm include directory
   --with-lognorm-libraries=DIR   liblognorm library directory
+  --with-libpcap-includes=DIR    libpcap include directory
+  --with-libpcap-libraries=DIR   libpcap library directory
 
 Some influential environment variables:
   CC          C compiler command
@@ -2516,6 +2522,43 @@ if test "x$with_lognorm_includes" != "xno"; then
 if test "x$with_lognorm_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_lognorm_libraries}"
 fi
+
+
+# Check whether --enable-libpcap was given.
+if test "${enable_libpcap+set}" = set; then :
+  enableval=$enable_libpcap;  LIBPCAP="$enableval"
+else
+   LIBPCAP="yes"
+
+fi
+
+
+
+# Check whether --with-libpcap_includes was given.
+if test "${with_libpcap_includes+set}" = set; then :
+  withval=$with_libpcap_includes; with_libpcap_includes="$withval"
+else
+  with_libpcap_includes="no"
+fi
+
+
+
+# Check whether --with-libpcap_libraries was given.
+if test "${with_libpcap_libraries+set}" = set; then :
+  withval=$with_libpcap_libraries; with_libpcap_libraries="$withval"
+else
+  with_libpcap_libraries="no"
+fi
+
+
+if test "x$with_libpcap_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_libpcap_includes}"
+   fi
+
+if test "x$with_libpcap_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_libpcap_libraries}"
+fi
+
 
 
 
@@ -4462,7 +4505,7 @@ fi
 done
 
 
-for ac_header in stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h arpa/inet.h netinet/in.h sys/time.h
+for ac_header in stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5738,6 +5781,97 @@ else
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. " "$LINENO" 5
+fi
+
+       fi
+
+if test "$LIBPCAP" = "yes"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- libpcap support is enabled -------" >&5
+$as_echo "------- libpcap support is enabled -------" >&6; }
+       ac_fn_c_check_header_mongrel "$LINENO" "pcap.h" "ac_cv_header_pcap_h" "$ac_includes_default"
+if test "x$ac_cv_header_pcap_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "net/if.h" "ac_cv_header_net_if_h" "$ac_includes_default"
+if test "x$ac_cv_header_net_if_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "net/if_arp.h" "ac_cv_header_net_if_arp_h" "$ac_includes_default"
+if test "x$ac_cv_header_net_if_arp_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "netinet/in_systm.h" "ac_cv_header_netinet_in_systm_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_in_systm_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "netinet/if_ether.h" "ac_cv_header_netinet_if_ether_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_if_ether_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "netinet/ip.h" "ac_cv_header_netinet_ip_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_ip_h" = x""yes; then :
+
+fi
+
+
+       ac_fn_c_check_header_mongrel "$LINENO" "netinet/udp.h" "ac_cv_header_netinet_udp_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_udp_h" = x""yes; then :
+
+fi
+
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lpcap" >&5
+$as_echo_n "checking for main in -lpcap... " >&6; }
+if test "${ac_cv_lib_pcap_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpcap  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_pcap_main=yes
+else
+  ac_cv_lib_pcap_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pcap_main" >&5
+$as_echo "$ac_cv_lib_pcap_main" >&6; }
+if test "x$ac_cv_lib_pcap_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPCAP 1
+_ACEOF
+
+  LIBS="-lpcap $LIBS"
+
+else
+  as_fn_error "The libpcap library cannot be found.
+This library is used to run Sagan in a syslog 'sniffer' mode.  Please see
+https://wiki.softwink.com/bin/view/Main/PLog.  To disable this feature use
+the --disable-libpcap flag. " "$LINENO" 5
 fi
 
        fi

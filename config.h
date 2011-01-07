@@ -52,6 +52,9 @@
 /* Define to 1 if you have the `mysqlclient_r' library (-lmysqlclient_r). */
 #define HAVE_LIBMYSQLCLIENT_R 1
 
+/* Define to 1 if you have the `pcap' library (-lpcap). */
+#define HAVE_LIBPCAP 1
+
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #define HAVE_LIBPCRE 1
 

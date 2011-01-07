@@ -54,7 +54,7 @@ int liblognormtoload_count;
 
 char ruleset[MAXPATH];
 
-int devdebug;
+sbool devdebug;
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;

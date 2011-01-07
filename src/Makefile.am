@@ -17,6 +17,7 @@ sagan-strlcat.c \
 sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
+sagan-plog.c \
 parsers/parse-ip-simple.c \
 parsers/parse-port-simple.c \
 output-plugins/sagan-alert.c \
@@ -25,6 +26,7 @@ output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-logzilla.c \
 output-plugins/sagan-prelude.c
+
 
 install-data-local:
 
