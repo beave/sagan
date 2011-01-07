@@ -1,10 +1,13 @@
-These are simple example's of Sagan "external" plug-ins.  That is,  they are
-programs Sagan calls externally.  Data is passed from Sagan to the external
-program via stdin.  The 'external' program can then do anything you want 
-with the data.  
+These are "extra" resources that can be used with Sagan. 
 
-sagan-gtk	- Displays a GTK/X11 "popup" window of a Sagan alert.  
+sagan-gtk	- Displays a GTK/X11 "popup" window of a Sagan alert.  [External 
+		  plugin for Sagan]
+
 sagan-notify	- Uses the libnotify X11/GTK function to create a temporary 
-		  "popup" message. 
+		  "popup" message. [External Plugin for Sagan]
+
+ossec-sagan.pl	- This utility takes a series of OSSEC rules, and generates
+		  a series of compatible SAGAN rules.  This was written 
+		  by Michael Iverson. [OSSEC to Sagan conversion utility]
 
 
