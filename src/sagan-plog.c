@@ -81,7 +81,7 @@ void plog_handler( void )
 	iface = plog_interface;
 
 	sagan_log(0, "");
-	sagan_log(0, "Initalizing Sagan syslog sniffier (PLOG)"); 
+	sagan_log(0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
 	sagan_log(0, "Interface: %s", iface); 
 	sagan_log(0, "UDP port to monitor: %d", plog_port);
 	sagan_log(0, "Log device: %s", plog_logdev);
@@ -111,8 +111,10 @@ void plog_handler( void )
 	  sagan_log(1, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
 
         /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
-        if(wiredevlog()) 
+        if(wiredevlog()) {
+	  removelockfile();
 	  sagan_log(1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, plog_logdev);
+	}
 	
         /* endless loop */
         (void)pcap_loop(bp,-1,logpkt,(char *)0);

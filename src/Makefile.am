@@ -18,8 +18,8 @@ sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
 sagan-plog.c \
-parsers/parse-ip-simple.c \
-parsers/parse-port-simple.c \
+parsers/parse-ip.c \
+parsers/parse-port.c \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \

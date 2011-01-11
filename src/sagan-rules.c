@@ -230,12 +230,12 @@ remspaces(rulesplit);
 	       }
 
 
-        if (!strcmp(rulesplit, "parse_port_simple")) {
+        if (!strcmp(rulesplit, "parse_port")) {
                strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[rulecount].s_find_port = 1;
                }
 
-        if (!strcmp(rulesplit, "parse_ip_simple")) {
+        if (!strcmp(rulesplit, "parse_ip")) {
                strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[rulecount].s_find_ip = 1;
                }

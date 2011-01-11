@@ -241,7 +241,7 @@ struct db_args {
         int  pri;
         char *message;
         uint64_t cid;
-	int endian;
+	sbool endian;
 	int dst_port;
 	int src_port;
         char *date;

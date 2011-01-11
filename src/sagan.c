@@ -54,7 +54,6 @@
 #include <lognorm.h>
 #endif
 
-
 #include "sagan.h"
 #include "version.h"
 
@@ -121,10 +120,12 @@ pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 uint64_t max_ext_threads;
 
+/****************************************************************************/
+/* Liblognorm Globals                                                       */
+/****************************************************************************/
+
 #ifdef HAVE_LIBLOGNORM
-
 struct stat fileinfo;
-
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
@@ -139,7 +140,6 @@ es_str_t *propName = NULL;
 struct ee_event *lnevent = NULL;;
 struct ee_field *field = NULL;
 char *cstr;
-
 #endif
 
 /****************************************************************************/
@@ -237,8 +237,7 @@ int main(int argc, char **argv) {
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-int  endianchk;
-
+sbool endianchk;
 uint64_t cid = 0;
 
 struct db_args *db_args = NULL;
@@ -313,10 +312,14 @@ pthread_t sig_thread;
 sigfillset( &signal_set );
 pthread_sigmask( SIG_BLOCK, &signal_set, NULL );
 
+/* Key board handler (displays stats, etc */
+
 pthread_t key_thread;
 pthread_attr_t key_thread_attr;
 pthread_attr_init(&key_thread_attr);
 pthread_attr_setdetachstate(&key_thread_attr,  PTHREAD_CREATE_DETACHED);
+
+/* External thread support */
 
 pthread_t threadext_id[MAX_THREADS];
 pthread_attr_t thread_ext_attr;
@@ -433,7 +436,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 	   
 	   case 'd':
-	   //sagan_log(0, "Debug enabled");
+	   sagan_log(0, "Sagan debugging enabled.");
 	   debug=1;
 	   break;
           
@@ -477,7 +480,7 @@ sig_thread_args[0].daemonize = daemonize;
 load_config();
 
 /* Load/init liblognorm definitions.  I tried to move this into a subroutine,
- * but * that ended up causing segfaults on ln_normalize() or causing 
+ * but that ended up causing segfaults on ln_normalize() or causing 
  * liblognorm not to function correctly (not parsing fields).  Make reloading
  * a SIGHUP a issue as well.
  * 12/17/2010 - Champ
@@ -496,9 +499,8 @@ ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 }
 #endif
 
-sagan_log(0, "Sagan version %s is firing up!", VERSION);
 sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, rulecount);
-
+sagan_log(0, "Sagan version %s is firing up!", VERSION);
 
 #ifdef HAVE_LIBPCAP
 
@@ -514,7 +516,7 @@ if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
 }
 #endif
 
-droppriv(runas, fifo);
+droppriv(runas, fifo);		/* Become the Sagan user */
 sagan_log(0, "---------------------------------------------------------------------------");
 
 /* Create signal handler thread */ 
@@ -658,8 +660,6 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 checklockfile();
 
 while(1) { 
-
-		
 
 		if ( fifoi == 1 ) { 
 
@@ -967,7 +967,9 @@ while(1) {
                         es_emptyStr(str);
                         ee_fmtEventToRFC5424(lnevent, &str);
                         cstr = es_str2cstr(str, NULL);
-//			printf("Normalize: %s\n", cstr);
+			
+			//if (debug) sagan_log(0, "Normalize: %s", cstr);
+			printf("Normlize: %s\n", cstr);
 
 			propName = es_newStrFromBuf("src-ip", 6);
 			if((field = ee_getEventField(lnevent, propName)) != NULL) {
@@ -1001,11 +1003,11 @@ while(1) {
                            username = es_str2cstr(str, NULL);
 			   }
 
-//                        propName = es_newStrFromBuf("uid", 3);
-//                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-//                           str = ee_getFieldValueAsStr(field, 0);
-//                           uid = es_str2cstr(str, NULL);
-//                           }
+                        propName = es_newStrFromBuf("uid", 3);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+                           uid = es_str2cstr(str, NULL);
+                           }
 
                         free(cstr);
                         ee_deleteEvent(lnevent);
@@ -1015,28 +1017,30 @@ while(1) {
 }
 #endif
 
-		   /* parse_ip_simple / parse_port_simple,  only if normalize is not being used */
+if ( rulestruct[b].normalize == 0 ) { 	/* Normlization over rides parse */
 
-                   if ( rulestruct[b].s_find_ip == 1 && rulestruct[b].normalize == 0) {
-                      snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
+	/* parse_ip && parse_port - Simple means of parsing */
 
-                         if (strcmp(fip,"0"))
-                            {
-                            ip_src = fip; ip_dst = syslog_hosttmp;
-                            } else {
-                            ip_src = syslog_hosttmp; ip_dst = sagan_host;
-                            }
-                      } else {
-                      ip_src = syslog_hosttmp; ip_dst = sagan_host;
-                   }
+ if ( rulestruct[b].s_find_ip == 1 ) {
 
-                   if ( rulestruct[b].s_find_port == 1) {
+   snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
+
+   if (strcmp(fip,"0")) {
+      ip_src = fip; ip_dst = syslog_hosttmp;
+       } else {
+      ip_src = syslog_hosttmp; ip_dst = sagan_host;
+      }
+        } else {
+      ip_src = syslog_hosttmp; ip_dst = sagan_host;
+ }
+}
+
+                   if ( rulestruct[b].s_find_port == 1 && rulestruct[b].normalize == 0 ) {
                    src_port = parse_port_simple(sysmsg[msgslot]);
                    } else {
                    src_port = atoi(sagan_port);
                    }
 	
-
 if ( ip_src == NULL ) ip_src=syslog_hosttmp;
 if ( ip_dst == NULL ) ip_dst=syslog_hosttmp;
 
@@ -1062,136 +1066,134 @@ if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
 
 //printf("ip_src %s:%d , ip_dst: %s:%d : username: %s\n", ip_src, src_port, ip_dst, dst_port, username); fflush(stdout);
 
-		   thresh_log_flag = 0;
+thresh_log_flag = 0;
 
-		   /*********************************************************/
-		   /* Thresh holding                                        */
-		   /*********************************************************/
+/*********************************************************/
+/* Thresh holding                                        */
+/*********************************************************/
 
-		   if ( rulestruct[b].threshold_type != 0 ) { 
+if ( rulestruct[b].threshold_type != 0 ) { 
 
-		      t = time(NULL);
-		      now=localtime(&t);
-		      strftime(timet, sizeof(timet), "%s",  now);
+      t = time(NULL);
+      now=localtime(&t);
+      strftime(timet, sizeof(timet), "%s",  now);
 
-		      /* Thresholding by source IP address */
+      /* Thresholding by source IP address */
 		      
-		      if ( rulestruct[b].threshold_src_or_dst == 1 ) { 
-		         thresh_flag = 0;
+      if ( rulestruct[b].threshold_src_or_dst == 1 ) { 
+         thresh_flag = 0;
 	
-			 /* Check array for matching src / sid */
+	 /* Check array for matching src / sid */
 
-			 for (i = 0; i < thresh_count_by_src; i++ ) { 
-			     if (!strcmp( threshbysrc[i].ipsrc, ip_src ) && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid )) { 
-			        thresh_flag=1;
-				threshbysrc[i].count++;
-				thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
-				threshbysrc[i].utime = atol(timet);
-				if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
-				   threshbysrc[i].count=1;
-				   threshbysrc[i].utime = atol(timet);
-				   thresh_log_flag=0;
-				   }
+	 for (i = 0; i < thresh_count_by_src; i++ ) { 
+	     if (!strcmp( threshbysrc[i].ipsrc, ip_src ) && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid )) { 
+	        thresh_flag=1;
+		threshbysrc[i].count++;
+		thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
+		threshbysrc[i].utime = atol(timet);
+		if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
+		   threshbysrc[i].count=1;
+		   threshbysrc[i].utime = atol(timet);
+		   thresh_log_flag=0;
+		   }
 
-				if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
-					{ 
-					thresh_log_flag = 1;
-					sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
-					threshold_total++;
-					}
-  					
-			     }
-			 }
+		if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
+			{ 
+			thresh_log_flag = 1;
+			sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+			threshold_total++;
+			}
+  			
+	     }
+	 }
 	
-			 /* If not found,  add it to the array */
-			
-			 if ( thresh_flag == 0 ) { 
-			    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-                            snprintf(threshbysrc[thresh_count_by_src].ipsrc, sizeof(threshbysrc[thresh_count_by_src].ipsrc), "%s", ip_src);
-			    snprintf(threshbysrc[thresh_count_by_src].sid, sizeof(threshbysrc[thresh_count_by_src].sid), "%s", rulestruct[b].s_sid );
-			    threshbysrc[thresh_count_by_src].count = 1;
-			    threshbysrc[thresh_count_by_src].utime = atol(timet);
-			    thresh_count_by_src++;
-			    }
-			 }
+	 /* If not found,  add it to the array */
+	
+	 if ( thresh_flag == 0 ) { 
+	    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
+            snprintf(threshbysrc[thresh_count_by_src].ipsrc, sizeof(threshbysrc[thresh_count_by_src].ipsrc), "%s", ip_src);
+	    snprintf(threshbysrc[thresh_count_by_src].sid, sizeof(threshbysrc[thresh_count_by_src].sid), "%s", rulestruct[b].s_sid );
+	    threshbysrc[thresh_count_by_src].count = 1;
+	    threshbysrc[thresh_count_by_src].utime = atol(timet);
+	    thresh_count_by_src++;
+	    }
+	 }
 
-		      /* Thresholding by destination IP address */
+      /* Thresholding by destination IP address */
 
-                      if ( rulestruct[b].threshold_src_or_dst == 2 ) {
-                         thresh_flag = 0;
+	if ( rulestruct[b].threshold_src_or_dst == 2 ) {
+            thresh_flag = 0;
        
-                         /* Check array for matching src / sid */
+	/* Check array for matching src / sid */
 
-                         for (i = 0; i < thresh_count_by_dst; i++ ) {
-                             if (!strcmp( threshbydst[i].ipdst, ip_dst ) && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid )) {
-                                thresh_flag=1;
-                                threshbydst[i].count++;
-                                thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
-                                threshbydst[i].utime = atol(timet);
-                                if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
-                                   threshbydst[i].count=1;
-                                   threshbydst[i].utime = atol(timet);
-                                   thresh_log_flag=0;
-                                   }
-
-                                if ( rulestruct[b].threshold_count < threshbydst[i].count ) 
-				   {
-				   thresh_log_flag = 1;
-				   sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_dst);
-				   threshold_total++;
-				   }
-                             }
+	for (i = 0; i < thresh_count_by_dst; i++ ) {
+		if (!strcmp( threshbydst[i].ipdst, ip_dst ) && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid )) {
+                   thresh_flag=1;
+                   threshbydst[i].count++;
+                   thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
+                   threshbydst[i].utime = atol(timet);
+                      if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
+                         threshbydst[i].count=1;
+                         threshbydst[i].utime = atol(timet);
+                         thresh_log_flag=0;
                          }
 
-                         /* If not found,  add it to the array */
+	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
+	   thresh_log_flag = 1;
+	   sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_dst);
+	   threshold_total++;
+	   }
+         }
+       }
 
-                         if ( thresh_flag == 0 ) {
-                            threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-                            snprintf(threshbydst[thresh_count_by_dst].ipdst, sizeof(threshbydst[thresh_count_by_dst].ipdst), "%s", ip_dst);
-                            snprintf(threshbydst[thresh_count_by_dst].sid, sizeof(threshbydst[thresh_count_by_dst].sid), "%s", rulestruct[b].s_sid );
-                            threshbydst[thresh_count_by_dst].count = 1;
-                            threshbydst[thresh_count_by_dst].utime = atol(timet);
-                            thresh_count_by_dst++;
-                            }
-                         }
+	/* If not found,  add it to the array */
 
-		      }			/* End of thresholding */
+	if ( thresh_flag == 0 ) {
+           threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
+           snprintf(threshbydst[thresh_count_by_dst].ipdst, sizeof(threshbydst[thresh_count_by_dst].ipdst), "%s", ip_dst);
+           snprintf(threshbydst[thresh_count_by_dst].sid, sizeof(threshbydst[thresh_count_by_dst].sid), "%s", rulestruct[b].s_sid );
+           threshbydst[thresh_count_by_dst].count = 1;
+           threshbydst[thresh_count_by_dst].utime = atol(timet);
+           thresh_count_by_dst++;
+           }
+        }
+}			/* End of thresholding */
 
 
-		   /* alert log file */
+/* alert log file */
 		 
-		   if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, dst_port, src_port, sysmsg[msgslot], b );
+if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, dst_port, src_port, sysmsg[msgslot], b );
 
 #if HAVE_LIBPRELUDE
 
-                if ( sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
+if ( sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
 	
-	        if ( threadpreludec < max_prelude_threads ) {
-                threadid++;
-		threadpreludec++;
-		if ( threadid >= MAX_THREADS ) threadid=0;
+if ( threadpreludec < max_prelude_threads ) {
+	threadid++;
+	threadpreludec++;
 
-		if ( threadpreludec > threadmaxpreludec ) threadmaxpreludec=threadpreludec;
+	if ( threadid >= MAX_THREADS ) threadid=0;
+	if ( threadpreludec > threadmaxpreludec ) threadmaxpreludec=threadpreludec;
 
-                prelude_thread_args[threadid].ip_src=ip_src;
-                prelude_thread_args[threadid].ip_dst=ip_dst;
-		prelude_thread_args[threadid].found=b;
-		prelude_thread_args[threadid].pri=rulestruct[b].s_pri;
-		prelude_thread_args[threadid].src_port = src_port;
-		prelude_thread_args[threadid].dst_port = dst_port;
-		prelude_thread_args[threadid].sysmsg = sysmsg[msgslot];
+	prelude_thread_args[threadid].ip_src=ip_src;
+	prelude_thread_args[threadid].ip_dst=ip_dst;
+	prelude_thread_args[threadid].found=b;
+	prelude_thread_args[threadid].pri=rulestruct[b].s_pri;
+	prelude_thread_args[threadid].src_port = src_port;
+	prelude_thread_args[threadid].dst_port = dst_port;
+	prelude_thread_args[threadid].sysmsg = sysmsg[msgslot];
 
 		
-		if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &prelude_thread_args[threadid] ) ) { 
-		      removelockfile();
-		      sagan_log(1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
-		         } 
-		      	 } else { 
-                         sagandrop++;
-                         saganpreludedrop++;
-                         sagan_log(0, "Prelude thread call handler: Out of threads\n");
-                	 }
-		}
+	if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &prelude_thread_args[threadid] ) ) { 
+		removelockfile();
+	        sagan_log(1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
+	        } 
+	      	 } else { 
+                sagandrop++;
+                saganpreludedrop++;
+                sagan_log(0, "Prelude thread call handler: Out of threads\n");
+              	}
+}
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -1201,95 +1203,92 @@ if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
 /****************************************************************************/
 
 
-		if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) { 
+if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) { 
 		  
-		  /* E-mail only if over min_email_priority */ 
+	/* E-mail only if over min_email_priority */ 
 
-		  if ( min_email_priority >= rulestruct[b].s_pri || min_email_priority == 0 ) { 
+	if ( min_email_priority >= rulestruct[b].s_pri || min_email_priority == 0 ) { 
 
-		   if ( threademailc < max_email_threads ) { 
+		if ( threademailc < max_email_threads ) { 
 		  
-		      pthread_mutex_lock ( &email_mutex );
-		      threademailc++;
-		      threadid++;
-		      if ( threadid >= MAX_THREADS ) threadid=0;
-		      pthread_mutex_unlock( &email_mutex );
+		    pthread_mutex_lock ( &email_mutex );
+		    threademailc++;
+		    threadid++;
+		    if ( threadid >= MAX_THREADS ) threadid=0;
+		    pthread_mutex_unlock( &email_mutex );
 	 
 
-		      if ( threademailc > threadmaxemailc ) threadmaxemailc=threademailc;
+		    if ( threademailc > threadmaxemailc ) threadmaxemailc=threademailc;
 		   
-                   	  email_thread_args[threadid].sid = rulestruct[b].s_sid;
-                   	  email_thread_args[threadid].msg = s_msg;
-                   	  email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-                   	  email_thread_args[threadid].pri = rulestruct[b].s_pri;
-                   	  email_thread_args[threadid].date = syslog_datetmp;
-                   	  email_thread_args[threadid].time = syslog_timetmp;
-                   	  email_thread_args[threadid].ip_src = ip_src;
-                   	  email_thread_args[threadid].ip_dst = ip_dst;
-                   	  email_thread_args[threadid].facility = syslog_facilitytmp;
-                   	  email_thread_args[threadid].fpri = syslog_leveltmp;
-		   	  email_thread_args[threadid].sysmsg = sysmsg[msgslot];
-		    	  email_thread_args[threadid].dst_port = dst_port;
-		   	  email_thread_args[threadid].src_port = src_port;
-			  email_thread_args[threadid].rulemem = b;
+		    email_thread_args[threadid].sid = rulestruct[b].s_sid;
+                    email_thread_args[threadid].msg = s_msg;
+                    email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
+                    email_thread_args[threadid].pri = rulestruct[b].s_pri;
+                    email_thread_args[threadid].date = syslog_datetmp;
+                    email_thread_args[threadid].time = syslog_timetmp;
+                    email_thread_args[threadid].ip_src = ip_src;
+                    email_thread_args[threadid].ip_dst = ip_dst;
+                    email_thread_args[threadid].facility = syslog_facilitytmp;
+                    email_thread_args[threadid].fpri = syslog_leveltmp;
+		    email_thread_args[threadid].sysmsg = sysmsg[msgslot];
+		    email_thread_args[threadid].dst_port = dst_port;
+		    email_thread_args[threadid].src_port = src_port;
+		    email_thread_args[threadid].rulemem = b;
 	
-                if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
-		      removelockfile();
-                      sagan_log(1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
-                      }
-				} else { 
-				sagandrop++;
-				saganesmtpdrop++;
-				sagan_log(0, "SMTP thread call handler: Out of threads\n");
-		      }
-		}
+                    if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
+		       removelockfile();
+                       sagan_log(1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
+                       }
+			} else { 
+		       sagandrop++;
+		       saganesmtpdrop++;
+		       sagan_log(0, "SMTP thread call handler: Out of threads\n");
+	        }
 	}
+}
 #endif
 		
 /****************************************************************************/
 /* External program thread call                                             */
 /****************************************************************************/
 
-		if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
+if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
 		   
-		   if ( threadextc < max_ext_threads ) { 
-		   pthread_mutex_lock ( &ext_mutex );
-		   threadextc++;
-		   threadid++;
-		   if ( threadid >= MAX_THREADS ) threadid=0;
-		   pthread_mutex_unlock( &ext_mutex );
+   if ( threadextc < max_ext_threads ) { 
+   	pthread_mutex_lock ( &ext_mutex );
+	threadextc++;
+	threadid++;
+	if ( threadid >= MAX_THREADS ) threadid=0;
+	pthread_mutex_unlock( &ext_mutex );
 		   
-		   if ( threadextc > threadmaxextc ) threadmaxextc=threadextc;
+	if ( threadextc > threadmaxextc ) threadmaxextc=threadextc;
 		  
-                   ext_thread_args[threadid].sid = rulestruct[b].s_sid;
-                   ext_thread_args[threadid].msg = s_msg;
-                   ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-                   ext_thread_args[threadid].pri = rulestruct[b].s_pri;
-                   ext_thread_args[threadid].date = syslog_datetmp;
-                   ext_thread_args[threadid].time = syslog_timetmp;
- 		   ext_thread_args[threadid].ip_src = ip_src;
-                   ext_thread_args[threadid].ip_dst = ip_dst;
-                   ext_thread_args[threadid].facility = syslog_facilitytmp;
-                   ext_thread_args[threadid].fpri = syslog_leveltmp;
-		   ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
-		   ext_thread_args[threadid].dst_port = dst_port;
-		   ext_thread_args[threadid].src_port = src_port;
-		   ext_thread_args[threadid].rulemem = b;
-		   ext_thread_args[threadid].drop = rulestruct[b].drop;
+        ext_thread_args[threadid].sid = rulestruct[b].s_sid;
+        ext_thread_args[threadid].msg = s_msg;
+        ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
+        ext_thread_args[threadid].pri = rulestruct[b].s_pri;
+        ext_thread_args[threadid].date = syslog_datetmp;
+        ext_thread_args[threadid].time = syslog_timetmp;
+ 	ext_thread_args[threadid].ip_src = ip_src;
+        ext_thread_args[threadid].ip_dst = ip_dst;
+        ext_thread_args[threadid].facility = syslog_facilitytmp;
+        ext_thread_args[threadid].fpri = syslog_leveltmp;
+	ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
+	ext_thread_args[threadid].dst_port = dst_port;
+	ext_thread_args[threadid].src_port = src_port;
+	ext_thread_args[threadid].rulemem = b;
+	ext_thread_args[threadid].drop = rulestruct[b].drop;
 
-		   if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
+		if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
 		     removelockfile();
 		     sagan_log(1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
-		      }
-
-		   } else {
-		   saganexternaldrop++;
-		   sagandrop++; 
-		   sagan_log(0, "External thread call handler: Out of threads\n");
-
+		     }
+		      } else {
+		     saganexternaldrop++;
+		     sagandrop++; 
+		     sagan_log(0, "External thread call handler: Out of threads\n");
 		   }
-                 }
-
+}
 
 
 /****************************************************************************/
@@ -1298,41 +1297,38 @@ if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-		if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) { 
+if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) { 
 		   
-		   if ( threadlogzillac < max_logzilla_threads) { 
+	if ( threadlogzillac < max_logzilla_threads) { 
 		      
-		      pthread_mutex_lock( &logzilla_mutex );
-		      threadlogzillac++;
-		      threadid++;
-		      if ( threadid >= MAX_THREADS ) threadid=0;
-		      pthread_mutex_unlock( &logzilla_mutex );
+		pthread_mutex_lock( &logzilla_mutex );
+	        threadlogzillac++;
+		threadid++;
+		if ( threadid >= MAX_THREADS ) threadid=0;
+		pthread_mutex_unlock( &logzilla_mutex );
 		      
-		      if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
+		if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
 
-		      logzilla_thread_args[threadid].host=ip_src;
-		      logzilla_thread_args[threadid].facility=syslog_facilitytmp;
-		      logzilla_thread_args[threadid].priority=syslog_prioritytmp;
-		      logzilla_thread_args[threadid].level=syslog_leveltmp;
-		      logzilla_thread_args[threadid].tag=syslog_tagtmp;
-		      logzilla_thread_args[threadid].date=syslog_datetmp;
-		      logzilla_thread_args[threadid].time=syslog_timetmp;
-		      logzilla_thread_args[threadid].program=syslog_programtmp;
-		      logzilla_thread_args[threadid].msg=sysmsg[msgslot];
+		logzilla_thread_args[threadid].host=ip_src;
+		logzilla_thread_args[threadid].facility=syslog_facilitytmp;
+		logzilla_thread_args[threadid].priority=syslog_prioritytmp;
+		logzilla_thread_args[threadid].level=syslog_leveltmp;
+		logzilla_thread_args[threadid].tag=syslog_tagtmp;
+		logzilla_thread_args[threadid].date=syslog_datetmp;
+		logzilla_thread_args[threadid].time=syslog_timetmp;
+		logzilla_thread_args[threadid].program=syslog_programtmp;
+		logzilla_thread_args[threadid].msg=sysmsg[msgslot];
 		      
-
-
                      if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
                           removelockfile();
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
-		   }
-
-		} else { 
-		   saganlogzilladrop++;
-		   sagandrop++;
-		   sagan_log(0, "Logzilla thread handler: Out of threads");
+		        }
+		           } else { 
+		          saganlogzilladrop++;
+		          sagandrop++;
+		          sagan_log(0, "Logzilla thread handler: Out of threads");
 		  }
-	  }
+}
 
 #endif
 
@@ -1343,66 +1339,65 @@ if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
- 		if ( dbtype != 0 && thresh_log_flag == 0 ) { 
+if ( dbtype != 0 && thresh_log_flag == 0 ) { 
 
-		   pthread_mutex_lock( &db_mutex );
-                   threaddbc++;
-                   threadid++;
-		   if ( threadid >= MAX_THREADS ) threadid=0;
+	pthread_mutex_lock( &db_mutex );
+        threaddbc++;
+        threadid++;
+		if ( threadid >= MAX_THREADS ) threadid=0;
 		   pthread_mutex_unlock( &db_mutex );
 
-	  	if ( threaddbc < maxdb_threads ) { 
+	  		if ( threaddbc < maxdb_threads ) { 
 
-		   if ( threaddbc > threadmaxdbc ) threadmaxdbc=threaddbc;
+			   if ( threaddbc > threadmaxdbc ) threadmaxdbc=threaddbc;
                 
-                   pthread_mutex_lock( &db_mutex );
-		   cid++; 
-		   sigcid=cid;
-		   pthread_mutex_unlock( &db_mutex );
+				pthread_mutex_lock( &db_mutex );
+		   		cid++; 
+		   		sigcid=cid;
+		   		pthread_mutex_unlock( &db_mutex );
 
-		   db_args[threadid].ip_src=ip_src;
-		   db_args[threadid].ip_dst=ip_dst;
-                   db_args[threadid].found=b;
-                   db_args[threadid].pri=rulestruct[b].s_pri;
-		   db_args[threadid].message=sysmsg[msgslot];
-		   db_args[threadid].cid=cid;
-		   db_args[threadid].endian=endianchk;
-		   db_args[threadid].dst_port = dst_port;
-		   db_args[threadid].src_port = src_port;
-		   db_args[threadid].date = syslog_datetmp;
-                   db_args[threadid].time = syslog_timetmp;
+		   		db_args[threadid].ip_src=ip_src;
+		   		db_args[threadid].ip_dst=ip_dst;
+                   		db_args[threadid].found=b;
+		                db_args[threadid].pri=rulestruct[b].s_pri;
+				db_args[threadid].message=sysmsg[msgslot];
+		   		db_args[threadid].cid=cid;
+		   		db_args[threadid].endian=endianchk;
+		   		db_args[threadid].dst_port = dst_port;
+		   		db_args[threadid].src_port = src_port;
+		   		db_args[threadid].date = syslog_datetmp;
+                   		db_args[threadid].time = syslog_timetmp;
 
-		if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
-		    removelockfile();
-		    sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
-		    }
-
-		    } else { 
-		    sagansnortdrop++;
-		    sagandrop++;
-		    sagan_log(0, "Snort database thread handler: Out of threads");
-	        }
-	    }
+				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
+		    		   removelockfile();
+		    		   sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
+		    		   }
+		    		    } else { 
+		    		   sagansnortdrop++;
+		    		   sagandrop++;
+		    		   sagan_log(0, "Snort database thread handler: Out of threads");
+	        		   }
+}
 #endif
 	 	    
-        }
-     }
+} /* End of match */
+} /* End of pcre match */
 
-     match=0;  /* Reset match! */
-     pcrematch=0;
-     rc=0;
-  }
+match=0;  /* Reset match! */
+pcrematch=0;
+rc=0;
+} /* End for for loop */
 
-  pthread_mutex_lock( &general_mutex );
-  strlcpy(syslogstring, "", sizeof(syslogstring));
-  strlcpy(syslogtmp, "", sizeof(syslogtmp));
-  pthread_mutex_unlock( &general_mutex );
-  }
+pthread_mutex_lock( &general_mutex );
+strlcpy(syslogstring, "", sizeof(syslogstring));
+strlcpy(syslogtmp, "", sizeof(syslogtmp));
+pthread_mutex_unlock( &general_mutex );
+}
 
-  msgslot++;
-  if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
+msgslot++;
+if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
- }
-} /* end of main */
+} /* End of while(1) */
+} /* End of main */
 
 

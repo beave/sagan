@@ -54,11 +54,11 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-signal.$(OBJEXT) sagan-key.$(OBJEXT) \
 	sagan-stats.$(OBJEXT) sagan-strlcat.$(OBJEXT) \
 	sagan-strlcpy.$(OBJEXT) sagan-usage.$(OBJEXT) \
-	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
-	parse-ip-simple.$(OBJEXT) parse-port-simple.$(OBJEXT) \
-	sagan-alert.$(OBJEXT) sagan-snort.$(OBJEXT) \
-	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
-	sagan-logzilla.$(OBJEXT) sagan-prelude.$(OBJEXT)
+	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) parse-ip.$(OBJEXT) \
+	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
+	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
+	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
+	sagan-prelude.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -189,8 +189,8 @@ sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
 sagan-plog.c \
-parsers/parse-ip-simple.c \
-parsers/parse-port-simple.c \
+parsers/parse-ip.c \
+parsers/parse-port.c \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
@@ -279,8 +279,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse-ip-simple.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse-port-simple.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse-ip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parse-port.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-classifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-config.Po@am__quote@
@@ -316,33 +316,33 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-parse-ip-simple.o: parsers/parse-ip-simple.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip-simple.o -MD -MP -MF $(DEPDIR)/parse-ip-simple.Tpo -c -o parse-ip-simple.o `test -f 'parsers/parse-ip-simple.c' || echo '$(srcdir)/'`parsers/parse-ip-simple.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-ip-simple.Tpo $(DEPDIR)/parse-ip-simple.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-ip-simple.c' object='parse-ip-simple.o' libtool=no @AMDEPBACKSLASH@
+parse-ip.o: parsers/parse-ip.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip.o -MD -MP -MF $(DEPDIR)/parse-ip.Tpo -c -o parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-ip.Tpo $(DEPDIR)/parse-ip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-ip.c' object='parse-ip.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip-simple.o `test -f 'parsers/parse-ip-simple.c' || echo '$(srcdir)/'`parsers/parse-ip-simple.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
 
-parse-ip-simple.obj: parsers/parse-ip-simple.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip-simple.obj -MD -MP -MF $(DEPDIR)/parse-ip-simple.Tpo -c -o parse-ip-simple.obj `if test -f 'parsers/parse-ip-simple.c'; then $(CYGPATH_W) 'parsers/parse-ip-simple.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip-simple.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-ip-simple.Tpo $(DEPDIR)/parse-ip-simple.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-ip-simple.c' object='parse-ip-simple.obj' libtool=no @AMDEPBACKSLASH@
+parse-ip.obj: parsers/parse-ip.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip.obj -MD -MP -MF $(DEPDIR)/parse-ip.Tpo -c -o parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-ip.Tpo $(DEPDIR)/parse-ip.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-ip.c' object='parse-ip.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip-simple.obj `if test -f 'parsers/parse-ip-simple.c'; then $(CYGPATH_W) 'parsers/parse-ip-simple.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip-simple.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
 
-parse-port-simple.o: parsers/parse-port-simple.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port-simple.o -MD -MP -MF $(DEPDIR)/parse-port-simple.Tpo -c -o parse-port-simple.o `test -f 'parsers/parse-port-simple.c' || echo '$(srcdir)/'`parsers/parse-port-simple.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-port-simple.Tpo $(DEPDIR)/parse-port-simple.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-port-simple.c' object='parse-port-simple.o' libtool=no @AMDEPBACKSLASH@
+parse-port.o: parsers/parse-port.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port.o -MD -MP -MF $(DEPDIR)/parse-port.Tpo -c -o parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-port.Tpo $(DEPDIR)/parse-port.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-port.c' object='parse-port.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port-simple.o `test -f 'parsers/parse-port-simple.c' || echo '$(srcdir)/'`parsers/parse-port-simple.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
 
-parse-port-simple.obj: parsers/parse-port-simple.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port-simple.obj -MD -MP -MF $(DEPDIR)/parse-port-simple.Tpo -c -o parse-port-simple.obj `if test -f 'parsers/parse-port-simple.c'; then $(CYGPATH_W) 'parsers/parse-port-simple.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port-simple.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-port-simple.Tpo $(DEPDIR)/parse-port-simple.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-port-simple.c' object='parse-port-simple.obj' libtool=no @AMDEPBACKSLASH@
+parse-port.obj: parsers/parse-port.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port.obj -MD -MP -MF $(DEPDIR)/parse-port.Tpo -c -o parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/parse-port.Tpo $(DEPDIR)/parse-port.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='parsers/parse-port.c' object='parse-port.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port-simple.obj `if test -f 'parsers/parse-port-simple.c'; then $(CYGPATH_W) 'parsers/parse-port-simple.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port-simple.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
 
 sagan-alert.o: output-plugins/sagan-alert.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-alert.o -MD -MP -MF $(DEPDIR)/sagan-alert.Tpo -c -o sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c
