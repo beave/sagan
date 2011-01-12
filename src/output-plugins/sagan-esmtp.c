@@ -47,7 +47,7 @@ char sagan_esmtp_from[ESMTPFROM];
 char sagan_esmtp_to[ESMTPTO];
 char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
-int debug;
+sbool debug;
 
 //int fixlf(char *dst, char *s);
 
