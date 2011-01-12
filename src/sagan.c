@@ -331,7 +331,7 @@ char *ip_src = NULL;
 char *ip_dst = NULL;
 char *username = NULL;
 char *uid = NULL;
-char s_msg[512];
+char s_msg[1024];
 
 int  src_port;
 int  dst_port;
@@ -1035,36 +1035,34 @@ if ( rulestruct[b].normalize == 0 ) { 	/* Normlization over rides parse */
  }
 }
 
-                   if ( rulestruct[b].s_find_port == 1 && rulestruct[b].normalize == 0 ) {
-                   src_port = parse_port_simple(sysmsg[msgslot]);
-                   } else {
-                   src_port = atoi(sagan_port);
-                   }
-	
+if ( rulestruct[b].s_find_port == 1 && rulestruct[b].normalize == 0 ) {
+   src_port = parse_port_simple(sysmsg[msgslot]);
+    } else {
+   src_port = atoi(sagan_port);
+}
+
+snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
+
 if ( ip_src == NULL ) ip_src=syslog_hosttmp;
 if ( ip_dst == NULL ) ip_dst=syslog_hosttmp;
 
 if ( src_port == 0 ) src_port=atoi(sagan_port);
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
 
-if ( username == NULL ) {
-   snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
-   } else {
-   snprintf(s_msg, sizeof(s_msg), "%s [Username: %s]", rulestruct[b].s_msg, username);
-}
+if (username != NULL ) {
+    snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", username);
+    strlcat(s_msg, tmpbuf, sizeof(s_msg));
+    }
 
-//if ( uid == NULL ) {
-//   snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
-//   } else {
-//   snprintf(s_msg, sizeof(s_msg), "%s [UID: %s]", rulestruct[b].s_msg, username);
-//}
+if (uid != NULL ) { 
+   snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", uid);
+   strlcat(s_msg, tmpbuf, sizeof(s_msg));
+   }
 
 /* We don't want 127.0.0.1,  so remap it to something more useful */
 
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=syslog_hosttmp;
 if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
-
-//printf("ip_src %s:%d , ip_dst: %s:%d : username: %s\n", ip_src, src_port, ip_dst, dst_port, username); fflush(stdout);
 
 thresh_log_flag = 0;
 
