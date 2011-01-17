@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2010 Softwink, Inc. 
-** Copyright (C) 2009-2010 Champ Clark III <champ@softwink.com>
+** Copyright (C) 2009-2011 Softwink, Inc. 
+** Copyright (C) 2009-2011 Champ Clark III <champ@softwink.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -633,7 +633,7 @@ sagan_log(0, "");
 sagan_log(0, " ,-._,-. 	-*> Sagan! <*-");
 sagan_log(0, " \\/)\"(\\/	Version %s", VERSION);
 sagan_log(0, "  (_o_)  	By Champ Clark III & The Softwink Team: http://www.softwink.com");
-sagan_log(0, "  /   \\/)	Copyright (C) 2009-2010 Softwink, Inc., et al.");
+sagan_log(0, "  /   \\/)	Copyright (C) 2009-2011 Softwink, Inc., et al.");
 sagan_log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
 sagan_log(0, "  oo-oo     Sagan is processing events.....");
 sagan_log(0, "");

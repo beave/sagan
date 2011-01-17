@@ -1,4 +1,4 @@
-/* sagan-strlcpy 
+/* sagan-strlcpy  
  *
  * Provided by the OpenBSD team.  This file is here for systems that 
  * do not support the strlcpy call.

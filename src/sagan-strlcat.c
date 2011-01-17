@@ -1,4 +1,4 @@
-/* sagan-strlcat 
+/* sagan-strlcat  
  *
  * Provided by the OpenBSD team.  This is here for systems that do not
  * support the strlcat call. 

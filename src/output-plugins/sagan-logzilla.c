@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2010 Softwink, Inc. 
-** Copyright (C) 2009-2010 Champ Clark III <champ@softwink.com>
+** Copyright (C) 2009-2011 Softwink, Inc. 
+** Copyright (C) 2009-2011 Champ Clark III <champ@softwink.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as

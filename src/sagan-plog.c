@@ -1,5 +1,5 @@
 /* 
-   sagan-plog.c is largely based of Marcus J. Ranum (2004) work known as 
+ - sagan-plog.c is largely based of Marcus J. Ranum (2004) work known as 
    plog.c.  The original source can be located at: 
 
    http://www.ranum.com/security/computer_security/code/plog.tar
