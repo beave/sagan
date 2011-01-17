@@ -50,7 +50,7 @@ struct ref_struct *refstruct;
 struct rule_struct *rulestruct;
 
 int refcount;
-sbool devdebug;
+sbool debugload;
 
 char ruleset[1024];
 
@@ -92,7 +92,7 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      snprintf(refstruct[refcount].s_refurl, sizeof(refstruct[refcount].s_refurl), "%s", laststring);
      refstruct[refcount].s_refurl[strlen(refstruct[refcount].s_refurl)-1] = '\0';
 
-    if (devdebug) sagan_log(0, "[D-%d] Reference: %s|%s", refcount, refstruct[refcount].s_refid, refstruct[refcount].s_refurl);
+    if (debugload) sagan_log(0, "[D-%d] Reference: %s|%s", refcount, refstruct[refcount].s_refid, refstruct[refcount].s_refurl);
 		      
      refcount++;
 

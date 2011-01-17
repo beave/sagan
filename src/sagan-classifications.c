@@ -50,7 +50,7 @@
 
 struct class_struct *classstruct;
 int classcount;
-sbool devdebug;
+sbool debugload;
 
 char ruleset[MAXPATH];
 
@@ -102,7 +102,7 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
 
      if ( classstruct[classcount].s_priority == 0 ) sagan_log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-     if (devdebug) sagan_log(0, "[D-%d] Classification: %s|%s|%d", classcount, classstruct[classcount].s_shortname, classstruct[classcount].s_desc, classstruct[classcount].s_priority);
+     if (debugload) sagan_log(0, "[D-%d] Classification: %s|%s|%d", classcount, classstruct[classcount].s_shortname, classstruct[classcount].s_desc, classstruct[classcount].s_priority);
 		      
      classcount++;
 

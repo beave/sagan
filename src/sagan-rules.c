@@ -54,7 +54,7 @@ int liblognormtoload_count;
 
 char ruleset[MAXPATH];
 
-sbool devdebug;
+sbool debugload;
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
@@ -465,7 +465,9 @@ remspaces(rulesplit);
 tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 }
 
-if ( devdebug ) { 
+/* Some new stuff (normalization) stuff needs to be added */
+
+if ( debugload ) { 
 sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
 
 sagan_log(0, "= sid: %s", rulestruct[rulecount].s_sid);
@@ -473,11 +475,11 @@ sagan_log(0, "= rev: %s", rulestruct[rulecount].s_rev);
 sagan_log(0, "= msg: %s", rulestruct[rulecount].s_msg);
 sagan_log(0, "= pri: %d", rulestruct[rulecount].s_pri);
 sagan_log(0, "= classtype: %s", rulestruct[rulecount].s_classtype);
-sagan_log(0, "= drop: %d\n", rulestruct[rulecount].drop);
+sagan_log(0, "= drop: %d", rulestruct[rulecount].drop);
 
 if ( rulestruct[rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
-if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip_simple");
-if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "= parse_port_simple");
+if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip");
+if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "= parse_port");
 
 for (i=0; i<content_count; i++) {
     sagan_log(0, "= [%d] content: %s", i, rulestruct[rulecount].s_content[i]);
