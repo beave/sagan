@@ -75,7 +75,7 @@ char sagan_filter[50];
 int  sagan_detail;
 
 int sensor_id;
-sbool devdebug;
+sbool debugsql;
 
 int  threaddbc;
 
@@ -179,7 +179,7 @@ pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
-if ( devdebug ) sagan_log(0, "%s", sqltmp); 
+if ( debugsql ) sagan_log(0, "%s", sqltmp); 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 if ( dbtype == 1 ) {

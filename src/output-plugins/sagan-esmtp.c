@@ -47,7 +47,9 @@ char sagan_esmtp_from[ESMTPFROM];
 char sagan_esmtp_to[ESMTPTO];
 char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
-sbool debug;
+sbool debugesmtp;
+
+//int fixlf(char *dst, char *s);
 
 void *sagan_esmtp_thread( void *emailthreadargs ) {
 
@@ -154,7 +156,7 @@ if (!smtp_start_session (session)) {
    /* SMTP sent successful */
 
 	status = smtp_message_transfer_status (message);
-	if ( debug ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
+	if ( debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
 }
 
