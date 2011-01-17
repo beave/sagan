@@ -105,8 +105,12 @@ uint64_t saganlogzilladrop=0;
 uint64_t sagansnortdrop=0;
 uint64_t saganpreludedrop=0;
 
-sbool debug=0;
-sbool devdebug=0;
+sbool debugnormalize=0;
+sbool debugsyslog=0;
+sbool debugload=0;
+sbool debugsql=0;
+sbool debugesmtp=0;
+
 sbool plog_flag;
 
 int rulecount=0;
@@ -209,10 +213,9 @@ pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 const struct option long_options[] = {
 	{ "help",         no_argument,          NULL,   'h' },
-	{ "debug", 	  no_argument, 		NULL, 	'd' },
+	{ "debug", 	  required_argument,	NULL, 	'd' },
 	{ "daemon", 	  no_argument,		NULL,	'D' },
 	{ "program", 	  no_argument,		NULL, 	'p' },
-	{ "devdebug", 	  no_argument, 		NULL,   'Z' },
 	{ "user",	  required_argument,	NULL,	'U' },
 	{ "chroot", 	  no_argument, 		NULL, 	'c' },
 	{ "config",	  required_argument, 	NULL, 	'f' },
@@ -221,7 +224,7 @@ const struct option long_options[] = {
 };
 
 static const char *short_options =
-"f:pdDhZUc";
+"fUd:pDhc";
 
 int option_index = 0;
 
@@ -436,16 +439,36 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 	   
 	   case 'd':
-	   sagan_log(0, "Sagan debugging enabled.");
-	   debug=1;
+	      
+	      if (strstr(optarg, "normalize" )) { 
+	         sagan_log(0, "Sagan liblognorn 'normalizing' debugging enabled.");
+	         debugnormalize=1;
+		 }
+              
+	      if (strstr(optarg, "syslog")) { 
+	         sagan_log(0, "Sagan sylog debugging enabled.");
+		 debugsyslog=1;
+		 }
+
+	      if (strstr(optarg, "load")) { 
+	         sagan_log(0, "Sagan rules/config load time debugging enabled.");
+		 debugload=1;
+		 }
+	      
+	      if (strstr(optarg, "sql")) { 
+	         sagan_log(0, "Sagan SQL debugging is enabled.");
+		 debugsql=1;
+		 }
+
+	      if (strstr(optarg, "smtp")) { 
+	         sagan_log(0, "Sagan SMTP (libesmtp) debugging is enabled.");
+		 debugesmtp=1;
+		 }
+
 	   break;
           
 	   case 'D':
 	   daemonize=1;
-	   break;
-
-	   case 'Z':
-	   devdebug=1;
 	   break;
 
 	   case 'U':
@@ -758,18 +781,7 @@ while(1) {
                    }
 
 
-		if (debug) { 
-		printf("= Host: [%s] ", syslog_host);
-		printf("Facility: [%s] ", syslog_facility);
-		printf("Pri: [%s] ", syslog_priority);
-		printf("Level: [%s] ", syslog_level);
-		printf("Tag: [%s] ", syslog_tag);
-		printf("Date: [%s] ", syslog_date);
-		printf("Time [%s] ", syslog_time);
-		printf("Program: [%s] ", syslog_program);
-		printf("Msg: [%s]\n", syslog_msg);
-		fflush(stdout);
-		}
+		if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%s|Time:%s|Prgm:%s|Msg:%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
@@ -968,8 +980,7 @@ while(1) {
                         ee_fmtEventToRFC5424(lnevent, &str);
                         cstr = es_str2cstr(str, NULL);
 			
-			//if (debug) sagan_log(0, "Normalize: %s", cstr);
-			printf("Normlize: %s\n", cstr);
+			if ( debugnormalize ) sagan_log(0, "Normalize output: %s", cstr);
 
 			propName = es_newStrFromBuf("src-ip", 6);
 			if((field = ee_getEventField(lnevent, propName)) != NULL) {
@@ -1017,11 +1028,14 @@ while(1) {
 }
 #endif
 
-if ( rulestruct[b].normalize == 0 ) { 	/* Normlization over rides parse */
+/* Normalization always over rides parse_ip/parse_port */ 
+
+if ( rulestruct[b].normalize == 0 ) {
 
 	/* parse_ip && parse_port - Simple means of parsing */
 
  if ( rulestruct[b].s_find_ip == 1 ) {
+   printf("I shouldn't be in here\n");
 
    snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
 
@@ -1033,21 +1047,22 @@ if ( rulestruct[b].normalize == 0 ) { 	/* Normlization over rides parse */
         } else {
       ip_src = syslog_hosttmp; ip_dst = sagan_host;
  }
-}
 
-if ( rulestruct[b].s_find_port == 1 && rulestruct[b].normalize == 0 ) {
+if ( rulestruct[b].s_find_port == 1 ) {
    src_port = parse_port_simple(sysmsg[msgslot]);
     } else {
    src_port = atoi(sagan_port);
+   }
 }
-
-snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
 if ( ip_src == NULL ) ip_src=syslog_hosttmp;
 if ( ip_dst == NULL ) ip_dst=syslog_hosttmp;
 
 if ( src_port == 0 ) src_port=atoi(sagan_port);
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
+
+
+snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
 if (username != NULL ) {
     snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", username);
@@ -1061,8 +1076,8 @@ if (uid != NULL ) {
 
 /* We don't want 127.0.0.1,  so remap it to something more useful */
 
-if (!strcmp(ip_src, "127.0.0.1" )) ip_src=syslog_hosttmp;
-if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=syslog_hosttmp;
+if (!strcmp(ip_src, "127.0.0.1" )) ip_src=sagan_host;
+if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=sagan_host;
 
 thresh_log_flag = 0;
 
