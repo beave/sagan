@@ -1035,7 +1035,6 @@ if ( rulestruct[b].normalize == 0 ) {
 	/* parse_ip && parse_port - Simple means of parsing */
 
  if ( rulestruct[b].s_find_ip == 1 ) {
-   printf("I shouldn't be in here\n");
 
    snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
 
