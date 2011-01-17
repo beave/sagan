@@ -49,8 +49,6 @@ char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
 sbool debugesmtp;
 
-//int fixlf(char *dst, char *s);
-
 void *sagan_esmtp_thread( void *emailthreadargs ) {
 
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
