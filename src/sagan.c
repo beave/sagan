@@ -330,6 +330,8 @@ pthread_mutex_init(&ext_mutex, NULL);
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
+sbool fifoerr=0;
+
 char *ip_src = NULL;
 char *ip_dst = NULL;
 char *username = NULL;
@@ -686,31 +688,54 @@ while(1) {
 
 		if ( fifoi == 1 ) { 
 
-		pthread_mutex_lock( &general_mutex );
+//		pthread_mutex_lock( &general_mutex );
 
                 if(fd < 0) {
 		        removelockfile();
 			sagan_log(1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, fifo, errno);
-                }
+               }
+
                 i = read(fd, &c, 1);
-                if(i < 0) {
-		        removelockfile();
-                        sagan_log(1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, fifo, errno);
+                
+		if(i < 0) {
+  	               removelockfile();
+                       sagan_log(1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, fifo, errno);
                         }
+
+		/* Error on reading (FIFO writer left) and we have no 
+		 * previous error state. */
+
+		if (i == 0 && fifoerr == 0 ) { 
+		   sagan_log(0, "FIFO closed (writer exited). Will start processing when writer resumes.");
+		   fifoerr=1;
+		   }
+
+		/* If previous state was error,  now we see data,
+		 * then the write is back online. */
+
+		if ( fifoerr == 1 && i == 1 )  { 
+		   sagan_log(0,"FIFO writer detected, resuming...");
+		   fifoerr=0;  /* Rest error state */
+		   }
+
+		/* FIFO will return null and eat CPU.  We sleep to avoid
+		 * this until the FIFO writer comes back online */
+
+		if ( fifoerr == 1 ) sleep(1);  
 
                 snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
                 strncat(syslogstring, syslogtmp, 1); 
 
-		pthread_mutex_unlock( &general_mutex );
+//		pthread_mutex_unlock( &general_mutex );
 
 		} else { 
 
-		pthread_mutex_lock( &general_mutex );
+//		pthread_mutex_lock( &general_mutex );
 
 		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
 		   sagan_log(0, "Dropped input in 'program' mode!");
 		}
-		pthread_mutex_unlock( &general_mutex );
+//		pthread_mutex_unlock( &general_mutex );
 		}
 
 		if ( c == '\n' || c == '\r' || fifoi == 0  ) 
@@ -724,52 +749,57 @@ while(1) {
 		 * here.  If we 'see' a bad valid,  we attempt to correct 
 		 * it */
 
+		/* If fifoerr is set,  we've likely lost our FIFO writer. 
+		 * If that's the case,  don't report because it's useless
+		 * information & will fill our logs */
+
 		syslog_host = strtok_r(syslogstring, "|", &tok);
+		
 		if (syslog_host == NULL ) { 
 		   syslog_host = "SAGAN: HOST ERROR"; 
-		   sagan_log(0, "Sagan received a malformed 'host'");
+		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'host'");
 		   }
 		
 		syslog_facility=strtok_r(NULL, "|", &tok);
 		if ( syslog_facility == NULL ) { 
 		   syslog_facility = "SAGAN: FACILITY ERROR";
-		   sagan_log(0, "Sagan received a malformed 'facility'");
+		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'facility'");
 		   }
 
                 syslog_priority=strtok_r(NULL, "|", &tok);
 		if ( syslog_priority == NULL ) { 
 		   syslog_priority = "SAGAN: PRIORITY ERROR";
-		   sagan_log(0, "Sagan received a malformed 'priority'");
+		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'priority'");
 		   }
 
                 syslog_level=strtok_r(NULL, "|", &tok);
 		if ( syslog_level == NULL ) { 
 		   syslog_level = "SAGAN: LEVEL ERROR";
-		   sagan_log(0, "Sagan received a malformed 'priority'");
+		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'priority'");
 		   }
 
                 syslog_tag=strtok_r(NULL, "|", &tok);
                 if ( syslog_tag == NULL ) {
                    syslog_tag = "SAGAN: TAG ERROR";
-                   sagan_log(0, "Sagan received a malformed 'tag'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'tag'");
                    }
 
                 syslog_date=strtok_r(NULL, "|", &tok);
                 if ( syslog_date == NULL ) {
                    syslog_date = "SAGAN: DATE ERROR";
-                   sagan_log(0, "Sagan received a malformed 'date'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'date'");
                    }
 
                 syslog_time=strtok_r(NULL, "|", &tok);
                 if ( syslog_time == NULL ) {
                    syslog_time = "SAGAN: TIME ERROR";
-                   sagan_log(0, "Sagan received a malformed 'time'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'time'");
                    }
 
                 syslog_program=strtok_r(NULL, "|", &tok);
                 if ( syslog_program == NULL ) {
                    syslog_program = "SAGAN: PROGRAM ERROR";
-                   sagan_log(0, "Sagan received a malformed 'program'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'program'");
                    } 
                 else {
                    syslog_msg=syslog_program + strlen(syslog_program) + 1;
@@ -777,7 +807,7 @@ while(1) {
 
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
-                   sagan_log(0, "Sagan received a malformed 'message'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'message'");
                    }
 
 
