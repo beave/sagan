@@ -219,6 +219,8 @@ uint32_t ip;
 char *retbuf = NULL;
 char tmpbuf[MAXHOST];
 
+/* Change to AF_UNSPEC for future ipv6 */
+/* Champ Clark III - 01/18/2011 */
 
 if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
 sagan_log(0, "Warning: inet_pton() error,  but continuing...");

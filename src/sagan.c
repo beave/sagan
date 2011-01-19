@@ -688,7 +688,7 @@ while(1) {
 
 		if ( fifoi == 1 ) { 
 
-//		pthread_mutex_lock( &general_mutex );
+		pthread_mutex_lock( &general_mutex );
 
                 if(fd < 0) {
 		        removelockfile();
@@ -726,16 +726,16 @@ while(1) {
                 snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
                 strncat(syslogstring, syslogtmp, 1); 
 
-//		pthread_mutex_unlock( &general_mutex );
+		pthread_mutex_unlock( &general_mutex );
 
 		} else { 
 
-//		pthread_mutex_lock( &general_mutex );
+		pthread_mutex_lock( &general_mutex );
 
 		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
 		   sagan_log(0, "Dropped input in 'program' mode!");
 		}
-//		pthread_mutex_unlock( &general_mutex );
+		pthread_mutex_unlock( &general_mutex );
 		}
 
 		if ( c == '\n' || c == '\r' || fifoi == 0  ) 
@@ -1050,6 +1050,14 @@ while(1) {
                            uid = es_str2cstr(str, NULL);
                            }
 
+                        propName = es_newStrFromBuf("src-host", 8);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+			   printf("Got it: %s\n", es_str2cstr(str, NULL));
+//                           uid = es_str2cstr(str, NULL);
+                         }
+
+
                         free(cstr);
                         ee_deleteEvent(lnevent);
                         lnevent = NULL;
@@ -1099,7 +1107,7 @@ if (username != NULL ) {
     }
 
 if (uid != NULL ) { 
-   snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", uid);
+   snprintf(tmpbuf, sizeof(tmpbuf), " [uid: %s]", uid);
    strlcat(s_msg, tmpbuf, sizeof(s_msg));
    }
 
