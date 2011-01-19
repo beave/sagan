@@ -114,6 +114,8 @@ int rulecount,i,check;
 
 int fifoi; 
 
+sbool disable_dns_warnings=0;
+
 char sagan_extern[MAXPATH];
 int  sagan_exttype;
 sbool sagan_ext_flag;
@@ -172,6 +174,11 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      if (tmpbuf[0] == 32 ) continue;
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
+
+     if (!strcmp(sagan_option, "disable_dns_warnings")) { 
+         sagan_log(0, "Supressing DNS warnings");
+         disable_dns_warnings = 1;
+	 }
 
      if (!strcmp(sagan_option, "max_ext_threads")) {
          sagan_var = strtok_r(NULL, " ", &tok);

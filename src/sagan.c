@@ -414,6 +414,8 @@ char *syspri;
 char *level;
 char *tag;
 char tmpbuf[128];
+char ipbuf_src[128];
+char ipbuf_dst[128];
 
 char *syslog_msg_case;
 char *s_content_case;
@@ -816,7 +818,11 @@ while(1) {
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
    remrt(syslog_msg);
+
+   pthread_mutex_lock( &general_mutex );
    snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
+   pthread_mutex_unlock( &general_mutex );
+
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
    snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
    snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
@@ -1053,10 +1059,17 @@ while(1) {
                         propName = es_newStrFromBuf("src-host", 8);
                         if((field = ee_getEventField(lnevent, propName)) != NULL) {
                            str = ee_getFieldValueAsStr(field, 0);
-			   printf("Got it: %s\n", es_str2cstr(str, NULL));
-//                           uid = es_str2cstr(str, NULL);
-                         }
+			   snprintf(ipbuf_src, sizeof(ipbuf_src), "%s", dns_lookup(es_str2cstr(str, NULL)));
+			   ip_src=ipbuf_src;
+                           }
 
+                       propName = es_newStrFromBuf("dst-host", 8);
+                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
+                           str = ee_getFieldValueAsStr(field, 0);
+			   snprintf(ipbuf_dst, sizeof(ipbuf_dst), "%s", dns_lookup(es_str2cstr(str, NULL)));
+			   ip_dst=ipbuf_dst;
+
+                           }
 
                         free(cstr);
                         ee_deleteEvent(lnevent);

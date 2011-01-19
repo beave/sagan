@@ -43,6 +43,7 @@ MYSQL    *mysql, *mysql_logzilla;
 #include <stdarg.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <sys/socket.h>
 #include <string.h>
 #include <pthread.h>
@@ -58,6 +59,8 @@ int daemonize;
 int programmode;
 int dochroot;
 char saganlog[MAXPATH];
+
+sbool disable_dns_warnings;
 
 /************************************************
  * Drop priv's so we aren't running as "root".  *
@@ -363,3 +366,43 @@ double CalcPct(uint64_t cnt, uint64_t total)
     return pct;
 }
 
+/* DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely
+ * based on Beej's showip.c */
+
+char *dns_lookup(char *host) 
+{
+    struct addrinfo hints, *res; //,// *p;
+    int status;
+    char ipstr[INET6_ADDRSTRLEN];
+    char *ret;
+    void *addr;
+
+       if ( disable_dns_warnings == 0 ) { 
+       sagan_log(0, "--------------------------------------------------------------------------");
+       sagan_log(0, "Sagan DNS lookup need for %s.", host); 
+       sagan_log(0, "This can affect performance.  Please see:" );
+       sagan_log(0, "https://wiki.softwink.com/bin/view/Main/SaganDNS");
+       sagan_log(0, "--------------------------------------------------------------------------");
+       }
+
+       memset(&hints, 0, sizeof hints);
+       hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
+       hints.ai_socktype = SOCK_STREAM;
+
+    if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
+	sagan_log(0, "getaddrinfo: %s", gai_strerror(status));
+        return NULL;
+    }
+
+        if (res->ai_family == AF_INET) { // IPv4
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
+            addr = &(ipv4->sin_addr);
+        } else { // IPv6
+            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res->ai_addr;
+            addr = &(ipv6->sin6_addr);
+        }
+     
+    inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
+    ret=ipstr;
+    return ret;
+}
