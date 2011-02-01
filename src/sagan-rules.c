@@ -66,6 +66,9 @@ char sagan_port[6];
 
 void load_rules( void ) { 
 
+const char *error;
+int erroffset;
+
 FILE *rulesfile;
 
 char *rulestring;
@@ -79,7 +82,6 @@ char *saveptrnet;
 char *saveptrrule1;
 char *saveptrrule2;
 char *saveptrrule3;
-char *pcrerule;
 char *tmptoken;
 char *threshold_tmp;
 char *thresh_tmp;
@@ -87,8 +89,7 @@ char *thresh_tmp;
 char netstr[RULEBUF];
 char rulestr[RULEBUF];
 char rulebuf[RULEBUF];
-char *pcretmp;
-char pcretmp2[RULEBUF];
+char pcrerule[RULEBUF];
 char tmp2[512];
 char tmp[2];
 
@@ -368,14 +369,14 @@ remspaces(rulesplit);
                 if (tmp2 == NULL ) sagan_log(1, "The \"pcre\" appears to be incomplete");
 
 		pcreflag=0;
-		strlcpy(pcretmp2, "", sizeof(pcretmp2));
+		strlcpy(pcrerule, "", sizeof(pcrerule));
 		for ( i = 1; i < strlen(tmp2); i++) {
 			
 			if ( tmp2[i] == '/' && tmp2[i-1] != '\\' ) pcreflag++;
 			
 			if ( pcreflag == 0 ) { 
 			snprintf(tmp, sizeof(tmp), "%c", tmp2[i]);
-			strlcat(pcretmp2, tmp, sizeof(pcretmp2));
+			strlcat(pcrerule, tmp, sizeof(pcrerule));
 			}
 
 			/* are we /past/ and at the args? */
@@ -419,10 +420,19 @@ remspaces(rulesplit);
                             }
 			}
 		    }
+		      
                       if ( pcreflag == 0 ) sagan_log(1, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-		      pcrerule = pcretmp2;
-		      snprintf(rulestruct[rulecount].s_pcre[pcre_count], sizeof(rulestruct[rulecount].s_pcre[pcre_count]), "%s", pcrerule);
-		      rulestruct[rulecount].s_pcreoptions[pcre_count] = pcreoptions;
+
+		      /* We store the compiled/study results.  This saves use some CPU tmpe during searching - Champ Clark III - 02/01/2011 */
+		      
+		      rulestruct[rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
+		      rulestruct[rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[rulecount].re_pcre[pcre_count], pcreoptions, &error);
+		      
+	                if (  rulestruct[rulecount].re_pcre[pcre_count]  == NULL ) {
+       		         removelockfile();
+                 	 sagan_log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
+                	}
+
 		      pcre_count++;
 		      rulestruct[rulecount].pcre_count=pcre_count;
                 }
@@ -468,6 +478,7 @@ tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 /* Some new stuff (normalization) stuff needs to be added */
 
 if ( debugload ) { 
+
 sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
 
 sagan_log(0, "= sid: %s", rulestruct[rulecount].s_sid);
@@ -485,14 +496,9 @@ for (i=0; i<content_count; i++) {
     sagan_log(0, "= [%d] content: %s", i, rulestruct[rulecount].s_content[i]);
     }
 
-for (i=0; i<pcre_count; i++) {
-    sagan_log(0, "= [%d] pcre: %s", i,  rulestruct[rulecount].s_pcre[i]);
-    }
-
 for (i=0; i<ref_count; i++) {
     sagan_log(0, "= [%d] reference: %s", i,  rulestruct[rulecount].s_reference[i]);
     }
-
 }
 
 /* Reset for next rule */
@@ -504,8 +510,6 @@ ref_count=0;
 strlcpy(netstr, "", 1);
 strlcpy(rulestr, "", 1);
 rulecount++;
-pcretmp=NULL;
-
 
 } /* end of while loop */
 

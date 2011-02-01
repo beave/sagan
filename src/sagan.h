@@ -30,6 +30,7 @@
 #endif
 
 #include <stdint.h> 
+#include <pcre.h>
 
 /* Various buffers used during configurations loading */
 
@@ -144,8 +145,10 @@ typedef struct rule_struct rule_struct;
 struct rule_struct {
 unsigned s_size_rule;
 char s_msg[512];
-char s_pcre[MAX_PCRE][1024];
-int  s_pcreoptions[MAX_PCRE];
+
+pcre *re_pcre[MAX_PCRE];
+pcre_extra *pcre_extra[MAX_PCRE];
+
 char s_content[MAX_CONTENT][512];
 char s_reference[MAX_REFERENCE][512];
 char s_classtype[512];

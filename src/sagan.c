@@ -930,29 +930,15 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 		if ( rulestruct[b].pcre_count != 0 ) { 
 
 		   for(z=0; z<rulestruct[b].pcre_count; z++) {
- 		      pattern=rulestruct[b].s_pcre[z];
-		      option=rulestruct[b].s_pcreoptions[z];
-
-	                /* Compile regexp string */
-
-       		re =  pcre_compile( pattern, option, &error, &erroffset, NULL );
 		
-		/* pcre_study() here? */
+		   rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], sysmsg[msgslot], (int)strlen(sysmsg[msgslot]), 0, 0, ovector, OVECCOUNT);
 
-                if ( re == NULL ) {
-                removelockfile();
-                sagan_log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
-                }
-
-                rc = pcre_exec( re, NULL, sysmsg[msgslot], (int)strlen(sysmsg[msgslot]), 0, 0, ovector, OVECCOUNT);
-                pcre_free(re);
-
-                }  /* End of pcre if */
+                   }  /* End of pcre if */
 
                 if ( rc == 1 ) {
                    pcrematch++;
                    }
-                  }
+                }
 		
 		} /* End of content: & pcre */
 	
