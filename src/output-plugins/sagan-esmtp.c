@@ -49,11 +49,9 @@ char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
 sbool debugesmtp;
 
-void *sagan_esmtp_thread( void *emailthreadargs ) {
+void sagan_esmtp_thread (SaganEvent *Event) { 
 
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-struct email_thread_args * emailargs = (struct email_thread_args *) emailthreadargs;
 
 char tmpref[2048];
 
@@ -61,7 +59,7 @@ char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
 
-snprintf(tmpref, sizeof(tmpref), "%s", reflookup( emailargs->rulemem, 0 ));
+snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
 
 if ((r = snprintf(tmpa, sizeof(tmpa), 
 	"MIME-Version: 1.0\r\n"
@@ -77,20 +75,20 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"Syslog message: %s\r\n%s\n\r",
 	sagan_esmtp_from,
 	sagan_esmtp_to,
-	emailargs->msg,
-	emailargs->sid, 
-	emailargs->msg,
-	emailargs->classtype,
-	emailargs->pri,
-	emailargs->date,
-	emailargs->time,
-	emailargs->ip_src,
-	emailargs->src_port,
-	emailargs->ip_dst,
-	emailargs->dst_port,
-	emailargs->facility,
-	emailargs->fpri,
-	emailargs->sysmsg,
+	Event->f_msg,
+	Event->sid, 
+	Event->f_msg,
+	Event->classtype,
+	Event->pri,
+	Event->date,
+	Event->time,
+	Event->ip_src,
+	Event->src_port,
+	Event->ip_dst,
+	Event->dst_port,
+	Event->facility,
+	Event->priority,
+	Event->message,
 	tmpref)) < 0) {
 	sagan_log(0, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
 	goto failure;
@@ -208,6 +206,5 @@ fixlf(char *d, char *s)
 
 	return j;
 }
-
 
 #endif

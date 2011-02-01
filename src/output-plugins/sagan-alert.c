@@ -43,32 +43,17 @@ int refcount;
 struct rule_struct *rulestruct;
 struct ref_struct *refstruct;
 
-void *sagan_alert ( char *s_sid, 
- 		    char *s_msg,
-		    char *s_classtype,
-		    int   s_pri,
-		    char *s_date,  
-		    char *s_time, 
-		    char *s_src, 
-		    char *s_dst,
-		    char *s_facility, 
-		    char *s_fpri, 
-		    int  dst_port, 
-		    int  src_port, 
-		    char *message,
-		    int  rulemem
-		    ) {
+void sagan_alert( SaganEvent *Event ) { 
 
 char tmpref[2048]="";
 
-fprintf(alertfp, "\n[**] [%s] %s [**]\n", s_sid, s_msg);
-fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", s_classtype, s_pri );
-fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", s_date, s_time, s_src, src_port,s_dst, dst_port, s_facility, s_fpri);
-fprintf(alertfp, "Message: %s\n", message);
-snprintf(tmpref, sizeof(tmpref), "%s", reflookup( rulemem, 0 ));
+fprintf(alertfp, "\n[**] [%s] %s [**]\n", Event->sid, Event->f_msg);
+fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", Event->classtype, Event->pri );
+fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
+fprintf(alertfp, "Message: %s\n", Event->message);
+snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
 if ( strcmp(tmpref, "")) fprintf(alertfp, "%s\n", tmpref);
 
 fflush(alertfp);
 
-return(0);
 }

@@ -97,7 +97,6 @@ char *dns_lookup(char *);
 int isnumeric (char *);
 char *toupperc(char* const );
 void sagan_statistics( void );
-void *sagan_ext_thread( void * );
 void sagan_error(const char *, ...);
 void sagan_log( int, const char *, ... );
 char *gettimestamp( void );
@@ -122,16 +121,6 @@ char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
 
 char *referencelookup( int );
-
-
-void *sagan_alert ( char *,  char *, 
-                    char *,  int, 
-                    char *,  char *, 
-                    char *,  char *, 
-                    char *,  char *, 
-                    int   ,  int, 
-		    char *,  int );  
-
 
 /* Reference structure */
 typedef struct ref_struct ref_struct;
@@ -186,6 +175,48 @@ int threshold_seconds;
 
 };
 
+typedef struct Sagan_Event 
+{
+        char *ip_src;
+        char *ip_dst;
+        int   dst_port;
+        int   src_port;
+	int   ip_proto;
+
+
+        char *sid;
+        char *classtype;
+
+        int  found;
+        int  pri;
+
+        char *fpri;             /* ?? == *priority */
+
+        sbool endian;
+        sbool drop;
+
+	char *f_msg;
+
+
+        /* message information */
+
+        char *time;
+        char *date;
+
+        char *priority;         /* Syslog priority */
+        char *host;
+        char *facility;
+        char *level;
+        char *tag;
+        char *program;
+        char *message;          /* msg + sysmsg? */
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+	uint64_t cid;
+#endif
+
+} SaganEvent;
+
 /* Thresholding structure by source */
 typedef struct thresh_by_src thresh_by_src;
 struct thresh_by_src { 
@@ -235,102 +266,20 @@ char filepath[MAXPATH];
 #define MAXSQL  	4096
 #define MYSQL_PORT      3306
 
-struct db_args { 
-        char *ip_src;
-	char *ip_dst;
-        int  found; 
-        int  pri;
-        char *message;
-        uint64_t cid;
-	sbool endian;
-	int dst_port;
-	int src_port;
-        char *date;
-	char *time;
-        }; 
-
-struct logzilla_thread_args {
-        char *host;
-        char *facility;
-        char *priority;
-        char *level;
-        char *tag;
-        char *date;
-        char *time;
-        char *program;
-        char *msg;
-        };
-
-
 char *sql_escape(const char *, int );
 void *logzilla_insert_thread ( void *);
-void *sagan_logzilla_thread(void *);
-void *sagan_db_thread(void *);
+void sagan_logzilla_thread(SaganEvent *);
+void sagan_db_thread( SaganEvent * );
 char *ip2bit( char *, int );
 char *fasthex(char *, int);
 
 #endif
-
-#ifdef HAVE_LIBPRELUDE
-
-void sagan_prelude( void * );
-
-struct prelude_thread_args {
-        char *ip_src;
-        char *ip_dst;
-	int  src_port;
-	int  dst_port;
-	int  found; 
-	int  pri; 
-	char *sysmsg;
-};
-
-#endif
-
-/****************************************************************************/
-/* External thread structures.   This is used when calling 'external'       */
-/* prgrams                                                                  */
-/****************************************************************************/
-
-struct ext_thread_args { 
-        char *sid;
-        char *msg;
-        char *classtype;
-        int   pri;
-        char *date;
-        char *time;
-        char *ip_src;
-        char *ip_dst;
-        char *facility;
-        char *fpri;
-        char *sysmsg;
-        int  dst_port;
-        int  src_port;
-	int  rulemem;
-	int  drop;
-        };
 
 /****************************************************************************/
 /* libesmtp support                                                         */
 /****************************************************************************/
 
 #ifdef HAVE_LIBESMTP
-struct email_thread_args {
-        char *sid;
-        char *msg;
-        char *classtype;
-        int   pri;
-        char *date;
-        char *time;
-        char *ip_src;
-        char *ip_dst;
-        char *facility;
-        char *fpri;
-        char *sysmsg;
-        int  dst_port;
-        int  src_port;
-	int  rulemem;
-        };
 
 #define ESMTPTO         32		/* 'To' buffer size max */
 #define ESMTPFROM       32		/* 'From' buffer size max */
@@ -338,7 +287,7 @@ struct email_thread_args {
 #define MAX_EMAILSIZE   15360		/* Largest e-mail that can be sent */
 
 const char *esmtp_cb (void **, int *, void *);
-void *sagan_esmtp_thread( void *);
+void sagan_esmtp_thread( SaganEvent * );
 
 #endif
 
@@ -355,4 +304,12 @@ struct sig_args {
         int daemonize;
         uint64_t cid;
         } sig_args[1];
+
+void sagan_alert( SaganEvent * );
+void sagan_ext_thread( SaganEvent * );
+
+
+#ifdef HAVE_LIBPRELUDE
+void sagan_prelude( SaganEvent * );
+#endif
 

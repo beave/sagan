@@ -23,7 +23,7 @@
 void PreludeInit(void);
 int setup_analyzer(idmef_analyzer_t *);
 int add_int_data(idmef_alert_t *, const char *, uint32_t );
-void sagan_prelude( void * );
+void sagan_prelude( SaganEvent * );
 int event_to_impact(int, idmef_alert_t *);
 int event_to_reference(char *, idmef_classification_t *);
 int event_to_source_target(char *, char *, int ,int ,int , idmef_alert_t *);

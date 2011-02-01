@@ -238,13 +238,13 @@ int main(int argc, char **argv) {
 /* MySQL / PostgreSQL (snort/logzilla) local variables			    */
 /****************************************************************************/
 
+struct Sagan_Event *SaganEvent = NULL;
+SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
+
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
 sbool endianchk;
 uint64_t cid = 0;
-
-struct db_args *db_args = NULL;
-struct logzilla_thread_args *logzilla_thread_args = NULL;
 
 pthread_t threaddb_id[MAX_THREADS];
 pthread_attr_t thread_db_attr;
@@ -268,12 +268,9 @@ endianchk = checkendian();	// Needed for Snort output
 /****************************************************************************/
 
 #ifdef HAVE_LIBPRELUDE
-struct prelude_thread_args *prelude_thread_args = NULL;
-
 pthread_t threadprelude_id[MAX_THREADS];
 pthread_attr_t thread_prelude_attr;
 pthread_mutex_init(&prelude_mutex, NULL);
-
 pthread_attr_init(&thread_prelude_attr);
 pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -283,12 +280,9 @@ pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 /****************************************************************************/
 
 #ifdef HAVE_LIBESMTP
-struct email_thread_args *email_thread_args = NULL;
-
 pthread_t threademail_id[MAX_THREADS];
 pthread_attr_t thread_email_attr;
 pthread_mutex_init(&email_mutex, NULL);
-
 pthread_attr_init(&thread_email_attr);
 pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -382,8 +376,6 @@ char syslog_programtmp[MAXPROGRAM];
 
 char *syslog_msg=NULL;
 char  syslog_msg_origtmp[MAX_SYSLOGMSG];
-
-struct ext_thread_args *ext_thread_args = NULL;
 
 pcre *re;
 
@@ -562,25 +554,14 @@ removelockfile();
 sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, alertlog);
 }
 
-/* Allocate memory for external program thread structure */
-
-if ( sagan_ext_flag ) { 
-ext_thread_args = malloc(MAX_THREADS * sizeof(struct ext_thread_args));
-sagan_log(0, "Max external threads : %d", max_ext_threads);
-}
-
-/* Allocate memory for libesmtp thread struct */
+if ( sagan_ext_flag ) sagan_log(0, "Max external threads : %d", max_ext_threads);
 
 #ifdef HAVE_LIBESMTP
-if ( sagan_esmtp_flag ) { 
-email_thread_args = malloc(MAX_THREADS * sizeof(struct email_thread_args));
-sagan_log(0, "Max SMTP threads     : %d", max_email_threads);
-}
+if ( sagan_esmtp_flag ) sagan_log(0, "Max SMTP threads     : %d", max_email_threads);
 #endif
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 if ( logzilla_dbtype ) { 
-logzilla_thread_args = malloc(MAX_THREADS * sizeof(struct logzilla_thread_args));
 sagan_log(0, "Max Logzilla threads : %d", max_logzilla_threads);
 logzilla_db_connect();
 }
@@ -592,11 +573,7 @@ sig_thread_args[0].daemonize = daemonize;
 
 if ( dbtype ) { 
 
-/* Allocate memory for DB thread structure */
-
-db_args = malloc(MAX_THREADS * sizeof(struct db_args)); 
 sagan_log(0, "Max database threads : %d", maxdb_threads);
-
 
 db_connect();
 get_sensor_id( sagan_hostname, sagan_interface, sagan_filter, sagan_detail, dbtype);
@@ -617,7 +594,6 @@ sagan_log(0, "Prelude profile: %s", sagan_prelude_profile);
 sagan_log(0, "Max Prelude threads: %d", max_prelude_threads);
 sagan_log(0, "");  /* libprelude dumps some information.  This is to make it pretty */
 
-prelude_thread_args = malloc(MAX_THREADS * sizeof(struct prelude_thread_args));
 PreludeInit();
 }
 
@@ -813,7 +789,7 @@ while(1) {
                    }
 
 
-		if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%s|Time:%s|Prgm:%s|Msg:%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
+if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%s|Time:%s|Prgm:%s|Msg:%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
@@ -834,6 +810,7 @@ while(1) {
 /* Logzilla _FULL_ logging support.  This logs everything!		   */
 /***************************************************************************/
 
+/*
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
                 if ( logzilla_dbtype != 0 && logzilla_log == 1 ) {
@@ -842,23 +819,12 @@ while(1) {
 
                       pthread_mutex_lock( &logzilla_mutex );
                       threadlogzillac++;
-                      threadid++;
 		      if ( threadid >= MAX_THREADS ) threadid=0;
 		      pthread_mutex_unlock( &logzilla_mutex );
 
                       if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
 
-		      logzilla_thread_args[threadid].host=syslog_hosttmp;
-                      logzilla_thread_args[threadid].facility=syslog_facilitytmp;
-                      logzilla_thread_args[threadid].priority=syslog_prioritytmp;
-                      logzilla_thread_args[threadid].level=syslog_leveltmp;
-                      logzilla_thread_args[threadid].tag=syslog_tagtmp;
-                      logzilla_thread_args[threadid].date=syslog_datetmp;
-                      logzilla_thread_args[threadid].time=syslog_timetmp;
-                      logzilla_thread_args[threadid].program=syslog_programtmp;
-		      logzilla_thread_args[threadid].msg=sysmsg[msgslot];
-
-                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
+                      if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &SaganEvent[threadid]) ) {
                           removelockfile();
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
        		          }
@@ -870,6 +836,7 @@ while(1) {
                   }
 
 #endif
+*/
 
 		/* Search for matches */
 
@@ -1220,34 +1187,54 @@ if ( rulestruct[b].threshold_type != 0 ) {
            thresh_count_by_dst++;
            }
         }
-}			/* End of thresholding */
+}  /* End of thresholding */
+
+/****************************************************************************/
+/* Populate the SaganEvent array with the information needed.  This info    */
+/* will be passed to the threads.  No need to populate it _if_ we're in a   */
+/* threshold state.                                                         */
+/****************************************************************************/
+
+if ( thresh_log_flag == 0 ) { 
+
+if ( threadid >= MAX_THREADS ) threadid=0;
+threadid++;			
+
+SaganEvent[threadid].ip_src    =       ip_src;
+SaganEvent[threadid].ip_dst    =       ip_dst;
+SaganEvent[threadid].dst_port  =       dst_port;
+SaganEvent[threadid].src_port  =       src_port;
+SaganEvent[threadid].found     =       b;
+SaganEvent[threadid].pri       =       rulestruct[b].s_pri;
+SaganEvent[threadid].message   =       sysmsg[msgslot];
+SaganEvent[threadid].endian    =       endianchk;
+SaganEvent[threadid].time      =       syslog_timetmp;
+SaganEvent[threadid].date      =       syslog_datetmp;
+SaganEvent[threadid].classtype =       rulestruct[b].s_classtype;
+SaganEvent[threadid].f_msg     =       s_msg; 
+SaganEvent[threadid].sid       =       rulestruct[b].s_sid;
+SaganEvent[threadid].facility  =       syslog_facility;
+SaganEvent[threadid].priority  =       syslog_leveltmp;
+SaganEvent[threadid].tag       =       syslog_tagtmp;
+
+}
 
 
 /* alert log file */
-		 
-if ( thresh_log_flag == 0 ) sagan_alert( rulestruct[b].s_sid, s_msg, rulestruct[b].s_classtype, rulestruct[b].s_pri, syslog_datetmp, syslog_timetmp, ip_src, ip_dst, syslog_facilitytmp, syslog_leveltmp, dst_port, src_port, sysmsg[msgslot], b );
 
+if ( thresh_log_flag == 0 ) sagan_alert( &SaganEvent[threadid] );
+		 
 #if HAVE_LIBPRELUDE
 
 if ( sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
 	
 if ( threadpreludec < max_prelude_threads ) {
-	threadid++;
+	
 	threadpreludec++;
 
-	if ( threadid >= MAX_THREADS ) threadid=0;
 	if ( threadpreludec > threadmaxpreludec ) threadmaxpreludec=threadpreludec;
 
-	prelude_thread_args[threadid].ip_src=ip_src;
-	prelude_thread_args[threadid].ip_dst=ip_dst;
-	prelude_thread_args[threadid].found=b;
-	prelude_thread_args[threadid].pri=rulestruct[b].s_pri;
-	prelude_thread_args[threadid].src_port = src_port;
-	prelude_thread_args[threadid].dst_port = dst_port;
-	prelude_thread_args[threadid].sysmsg = sysmsg[msgslot];
-
-		
-	if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &prelude_thread_args[threadid] ) ) { 
+	if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &SaganEvent[threadid] ) ) { 
 		removelockfile();
 	        sagan_log(1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
 	        } 
@@ -1274,34 +1261,17 @@ if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 
 		if ( threademailc < max_email_threads ) { 
 		  
-		    pthread_mutex_lock ( &email_mutex );
+		    //pthread_mutex_lock ( &email_mutex );
 		    threademailc++;
-		    threadid++;
-		    if ( threadid >= MAX_THREADS ) threadid=0;
-		    pthread_mutex_unlock( &email_mutex );
-	 
+		    //pthread_mutex_unlock( &email_mutex );
 
 		    if ( threademailc > threadmaxemailc ) threadmaxemailc=threademailc;
-		   
-		    email_thread_args[threadid].sid = rulestruct[b].s_sid;
-                    email_thread_args[threadid].msg = s_msg;
-                    email_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-                    email_thread_args[threadid].pri = rulestruct[b].s_pri;
-                    email_thread_args[threadid].date = syslog_datetmp;
-                    email_thread_args[threadid].time = syslog_timetmp;
-                    email_thread_args[threadid].ip_src = ip_src;
-                    email_thread_args[threadid].ip_dst = ip_dst;
-                    email_thread_args[threadid].facility = syslog_facilitytmp;
-                    email_thread_args[threadid].fpri = syslog_leveltmp;
-		    email_thread_args[threadid].sysmsg = sysmsg[msgslot];
-		    email_thread_args[threadid].dst_port = dst_port;
-		    email_thread_args[threadid].src_port = src_port;
-		    email_thread_args[threadid].rulemem = b;
-	
-                    if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &email_thread_args[threadid] ) ) {
+
+                    if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &SaganEvent[threadid] ) ) {
 		       removelockfile();
                        sagan_log(1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
                        }
+
 			} else { 
 		       sagandrop++;
 		       saganesmtpdrop++;
@@ -1318,31 +1288,14 @@ if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
 		   
    if ( threadextc < max_ext_threads ) { 
-   	pthread_mutex_lock ( &ext_mutex );
+//   	pthread_mutex_lock ( &ext_mutex );
 	threadextc++;
-	threadid++;
-	if ( threadid >= MAX_THREADS ) threadid=0;
-	pthread_mutex_unlock( &ext_mutex );
+//	if ( threadid >= MAX_THREADS ) threadid=0;
+//	pthread_mutex_unlock( &ext_mutex );
 		   
 	if ( threadextc > threadmaxextc ) threadmaxextc=threadextc;
-		  
-        ext_thread_args[threadid].sid = rulestruct[b].s_sid;
-        ext_thread_args[threadid].msg = s_msg;
-        ext_thread_args[threadid].classtype = rulestruct[b].s_classtype;
-        ext_thread_args[threadid].pri = rulestruct[b].s_pri;
-        ext_thread_args[threadid].date = syslog_datetmp;
-        ext_thread_args[threadid].time = syslog_timetmp;
- 	ext_thread_args[threadid].ip_src = ip_src;
-        ext_thread_args[threadid].ip_dst = ip_dst;
-        ext_thread_args[threadid].facility = syslog_facilitytmp;
-        ext_thread_args[threadid].fpri = syslog_leveltmp;
-	ext_thread_args[threadid].sysmsg = sysmsg[msgslot];
-	ext_thread_args[threadid].dst_port = dst_port;
-	ext_thread_args[threadid].src_port = src_port;
-	ext_thread_args[threadid].rulemem = b;
-	ext_thread_args[threadid].drop = rulestruct[b].drop;
-
-		if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &ext_thread_args[threadid] ) ) { 
+	
+		if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &SaganEvent[threadid] ) ) { 
 		     removelockfile();
 		     sagan_log(1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
 		     }
@@ -1364,25 +1317,14 @@ if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) {
 		   
 	if ( threadlogzillac < max_logzilla_threads) { 
 		      
-		pthread_mutex_lock( &logzilla_mutex );
+//		pthread_mutex_lock( &logzilla_mutex );
 	        threadlogzillac++;
-		threadid++;
-		if ( threadid >= MAX_THREADS ) threadid=0;
-		pthread_mutex_unlock( &logzilla_mutex );
+//		if ( threadid >= MAX_THREADS ) threadid=0;
+//		pthread_mutex_unlock( &logzilla_mutex );
 		      
 		if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
 
-		logzilla_thread_args[threadid].host=ip_src;
-		logzilla_thread_args[threadid].facility=syslog_facilitytmp;
-		logzilla_thread_args[threadid].priority=syslog_prioritytmp;
-		logzilla_thread_args[threadid].level=syslog_leveltmp;
-		logzilla_thread_args[threadid].tag=syslog_tagtmp;
-		logzilla_thread_args[threadid].date=syslog_datetmp;
-		logzilla_thread_args[threadid].time=syslog_timetmp;
-		logzilla_thread_args[threadid].program=syslog_programtmp;
-		logzilla_thread_args[threadid].msg=sysmsg[msgslot];
-		      
-                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &logzilla_thread_args[threadid]) ) {
+                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &SaganEvent[threadid]) ) {
                           removelockfile();
                           sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		        }
@@ -1406,32 +1348,22 @@ if ( dbtype != 0 && thresh_log_flag == 0 ) {
 
 	pthread_mutex_lock( &db_mutex );
         threaddbc++;
-        threadid++;
-		if ( threadid >= MAX_THREADS ) threadid=0;
+//        threadid++;
+//		if ( threadid >= MAX_THREADS ) threadid=0;
 		   pthread_mutex_unlock( &db_mutex );
 
 	  		if ( threaddbc < maxdb_threads ) { 
 
 			   if ( threaddbc > threadmaxdbc ) threadmaxdbc=threaddbc;
+
                 
-				pthread_mutex_lock( &db_mutex );
+				//pthread_mutex_lock( &db_mutex );
 		   		cid++; 
 		   		sigcid=cid;
-		   		pthread_mutex_unlock( &db_mutex );
+		   		//pthread_mutex_unlock( &db_mutex );
+				SaganEvent[threadid].cid = cid;
 
-		   		db_args[threadid].ip_src=ip_src;
-		   		db_args[threadid].ip_dst=ip_dst;
-                   		db_args[threadid].found=b;
-		                db_args[threadid].pri=rulestruct[b].s_pri;
-				db_args[threadid].message=sysmsg[msgslot];
-		   		db_args[threadid].cid=cid;
-		   		db_args[threadid].endian=endianchk;
-		   		db_args[threadid].dst_port = dst_port;
-		   		db_args[threadid].src_port = src_port;
-		   		db_args[threadid].date = syslog_datetmp;
-                   		db_args[threadid].time = syslog_timetmp;
-
-				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &db_args[threadid]) ) { 
+				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &SaganEvent[threadid]) ) { 
 		    		   removelockfile();
 		    		   sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		    		   }

@@ -177,10 +177,9 @@ int add_int_data(idmef_alert_t *alert, const char *meaning, uint32_t data)
 /* sagan_prelude() - This is the sub/thread called from the main process    */
 /****************************************************************************/
 
-void sagan_prelude( void *sthreadargs ) 
+void sagan_prelude( SaganEvent *Event ) 
 {
 
-struct prelude_thread_args * targs = (struct prelude_thread_args *) sthreadargs;
 pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int ret;
@@ -223,30 +222,30 @@ ret = idmef_classification_new_text(class, &str);
 	 goto err;
 	 }
 
-prelude_string_set_ref(str, rulestruct[targs->found].s_msg );
+prelude_string_set_ref(str, rulestruct[Event->found].s_msg );
 
-ret = event_to_impact(targs->pri, alert);
+ret = event_to_impact(Event->pri, alert);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] event_to_impact() failed", __FILE__, __LINE__);
          goto err;
          }
 
-ret = event_to_reference(rulestruct[targs->found].s_sid, class);
+ret = event_to_reference(Event->sid, class);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] event_to_reference() failed", __FILE__, __LINE__);
          goto err;
          }
 
-ret = event_to_source_target(targs->ip_src, targs->ip_dst, targs->src_port, targs->dst_port, rulestruct[targs->found].ip_proto, alert);
+ret = event_to_source_target(Event->ip_src, Event->ip_dst, Event->src_port, Event->dst_port, rulestruct[Event->found].ip_proto, alert);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] event_to_source_target() failed", __FILE__, __LINE__);
          goto err;
          }
 
-sid = atoi(rulestruct[targs->found].s_sid);
-rev = atoi(rulestruct[targs->found].s_rev);
+sid = atoi(rulestruct[Event->found].s_sid);
+rev = atoi(rulestruct[Event->found].s_rev);
 
-ret = syslog_to_data(rulestruct[targs->found].s_sid, rulestruct[targs->found].s_rev, rulestruct[targs->found].ip_proto, targs->sysmsg, alert);
+ret = syslog_to_data(rulestruct[Event->found].s_sid, rulestruct[Event->found].s_rev, rulestruct[Event->found].ip_proto, Event->message, alert);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] syslog_to_data() failed", __FILE__, __LINE__);
          goto err;

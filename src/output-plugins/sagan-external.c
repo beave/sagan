@@ -44,10 +44,9 @@ char sagan_extern[MAXPATH];
 int  sagan_exttype;
 int  threadextc;
 
-void *sagan_ext_thread( void *ethreadargs ) {
+void sagan_ext_thread ( SaganEvent *Event ) {
 
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
-struct ext_thread_args * eargs = (struct ext_thread_args *) ethreadargs;
 
 int in[2];
 int out[2];
@@ -62,23 +61,23 @@ if ( sagan_exttype == 1 ) {
    
    /* Parsable */
 
-  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem, 1 ));
+  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 1 ));
 
-if ( eargs->drop == 1 ) { 
+if ( Event->drop == 1 ) { 
    snprintf(tmp, sizeof(tmp), "True");
    } else { 
    snprintf(tmp, sizeof(tmp), "False");
    }
 
-   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", eargs->sid, eargs->msg, eargs->classtype, tmp, eargs->pri,  eargs->date, eargs->time, eargs->ip_src, eargs->src_port,  eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, tmpref, eargs->sysmsg);
+   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->sid, Event->f_msg, Event->classtype, tmp, Event->pri,  Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
    
   } else { 
 
   /* Alert like */
 
-  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( eargs->rulemem, 0 ));
+  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
 
-  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", eargs->sid, eargs->msg, eargs->classtype, eargs->pri, eargs->date, eargs->time, eargs->ip_src, eargs->src_port, eargs->ip_dst, eargs->dst_port, eargs->facility, eargs->fpri, eargs->sysmsg, tmpref);
+  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->sid, Event->f_msg, Event->classtype, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
   }
 
 

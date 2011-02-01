@@ -228,9 +228,7 @@ return(0);
 }
 
 
-void *sagan_logzilla_thread ( void *logzillathreadargs ) { 
-
-struct logzilla_thread_args * eargs = (struct logzilla_thread_args *) logzillathreadargs;
+void sagan_logzilla_thread ( SaganEvent *Event ) { 
 
 char sqltmp[MAXSQL];
 char *sql=NULL;
@@ -238,10 +236,10 @@ char *sql=NULL;
 char escprg[MAXPROGRAM];
 char escmsg[MAX_SYSLOGMSG];
 
-snprintf(escprg, sizeof(escprg), "%s", sql_escape(eargs->program, 1));
-snprintf(escmsg, sizeof(escmsg), "%s", sql_escape(eargs->msg, 1));
+snprintf(escprg, sizeof(escprg), "%s", sql_escape(Event->program, 1));
+snprintf(escmsg, sizeof(escmsg), "%s", sql_escape(Event->message, 1));
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO logs (host, facility, priority, level, tag, program, msg, fo, lo) VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, '%s %s', '%s %s')", eargs->host, eargs->facility, eargs->priority, eargs->level, eargs->tag, escprg , escmsg, eargs->date, eargs->time, eargs->date, eargs->time  );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO logs (host, facility, priority, level, tag, program, msg, fo, lo) VALUES ('%s', '%s', '%s', '%s', '%s', %s, %s, '%s %s', '%s %s')", Event->host, Event->facility, Event->priority, Event->level, Event->tag, escprg , escmsg, Event->date, Event->time, Event->date, Event->time  );
 
 
 sql=sqltmp;
@@ -249,7 +247,6 @@ logzilla_db_query(logzilla_dbtype, sql);
 
 threadlogzillac--;
 
-return(0);
 }
 
 #endif

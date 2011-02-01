@@ -579,9 +579,7 @@ if ( sqlout == NULL )  {
 /* Snort specific thread code                                              */
 /***************************************************************************/
 
-void *sagan_db_thread( void *sthreadargs ) {
-
-struct db_thread_args * targs = (struct db_thread_args *) sthreadargs;
+void sagan_db_thread( SaganEvent *Event ) {
 
 int sig_sid;
 int i;
@@ -594,22 +592,22 @@ char ip_dsttmp[65];
 char time[30];
 char date[30];
 
-snprintf(message, sizeof(message), "%s", targs->message); 
-snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", targs->ip_src);
-snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", targs->ip_dst);
-snprintf(time, sizeof(time), "%s", targs->time);
-snprintf(date, sizeof(date), "%s", targs->date);
+snprintf(message, sizeof(message), "%s", Event->message); 
+snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", Event->ip_src);
+snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", Event->ip_dst);
+snprintf(time, sizeof(time), "%s", Event->time);
+snprintf(date, sizeof(date), "%s", Event->date);
 
-sig_sid = get_sig_sid(rulestruct[targs->found].s_msg, rulestruct[targs->found].s_rev,  rulestruct[targs->found].s_sid, rulestruct[targs->found].s_classtype,  targs->pri , dbtype );
+sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype,  Event->pri , dbtype );
 
-insert_event( sensor_id, targs->cid, sig_sid, dbtype, date, time );
-insert_hdr(sensor_id, targs->cid, ip_srctmp, ip_dsttmp, rulestruct[targs->found].ip_proto, targs->endian, dbtype, targs->dst_port,targs->src_port );
+insert_event( sensor_id, Event->cid, sig_sid, dbtype, date, time );
+insert_hdr(sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, dbtype, Event->dst_port, Event->src_port );
 
 hex_data = fasthex(message, strlen(message));
-insert_payload ( sensor_id, targs->cid, hex_data, dbtype ) ;
+insert_payload ( sensor_id, Event->cid, hex_data, dbtype ) ;
 
-for (i = 0; i < rulestruct[targs->found].ref_count; i++ ) {
-   query_reference( rulestruct[targs->found].s_reference[i], rulestruct[targs->found].s_sid, sig_sid, i );
+for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
+   query_reference( rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
    }
 
 pthread_mutex_lock( &db_mutex );
