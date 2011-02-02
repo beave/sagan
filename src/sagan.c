@@ -119,8 +119,8 @@ int ruletotal=0;
 char fifo[MAX_SYSLOGMSG]="";
 int  fifoi=0;
 
-pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 uint64_t max_ext_threads;
 
@@ -153,7 +153,7 @@ char *cstr;
 #ifdef HAVE_LIBPRELUDE
 sbool sagan_prelude_flag;
 char sagan_prelude_profile[255];
-pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
 uint64_t max_prelude_threads;
 uint64_t threadpreludec=0;
 uint64_t threadmaxpreludec=0;
@@ -187,8 +187,8 @@ uint64_t threadmaxlogzillac=0;
 uint64_t max_logzilla_threads;
 
 
-pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 /****************************************************************************/
@@ -206,7 +206,7 @@ int  min_email_priority=0;
 uint64_t  threadmaxemailc=0;
 int  threademailc=0;
 
-pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif 
 
 /* Command line options */
@@ -248,14 +248,14 @@ uint64_t cid = 0;
 
 pthread_t threaddb_id[MAX_THREADS];
 pthread_attr_t thread_db_attr;
-pthread_mutex_init(&db_mutex, NULL);
+//pthread_mutex_init(&db_mutex, NULL);
 
 pthread_attr_init(&thread_db_attr);
 pthread_attr_setdetachstate(&thread_db_attr,  PTHREAD_CREATE_DETACHED);
 
 pthread_t threadlogzilla_id[MAX_THREADS];
 pthread_attr_t thread_logzilla_attr;
-pthread_mutex_init(&logzilla_mutex, NULL);
+//pthread_mutex_init(&logzilla_mutex, NULL);
 
 pthread_attr_init(&thread_logzilla_attr);
 pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
@@ -270,7 +270,7 @@ endianchk = checkendian();	// Needed for Snort output
 #ifdef HAVE_LIBPRELUDE
 pthread_t threadprelude_id[MAX_THREADS];
 pthread_attr_t thread_prelude_attr;
-pthread_mutex_init(&prelude_mutex, NULL);
+//pthread_mutex_init(&prelude_mutex, NULL);
 pthread_attr_init(&thread_prelude_attr);
 pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -282,7 +282,7 @@ pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #ifdef HAVE_LIBESMTP
 pthread_t threademail_id[MAX_THREADS];
 pthread_attr_t thread_email_attr;
-pthread_mutex_init(&email_mutex, NULL);
+//pthread_mutex_init(&email_mutex, NULL);
 pthread_attr_init(&thread_email_attr);
 pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -320,7 +320,7 @@ pthread_attr_setdetachstate(&key_thread_attr,  PTHREAD_CREATE_DETACHED);
 
 pthread_t threadext_id[MAX_THREADS];
 pthread_attr_t thread_ext_attr;
-pthread_mutex_init(&ext_mutex, NULL);
+//pthread_mutex_init(&ext_mutex, NULL);
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
@@ -345,8 +345,6 @@ struct thresh_by_src *threshbysrc = NULL;
 struct thresh_by_dst *threshbydst = NULL;
 
 uint64_t thresh_oldtime_src;
-
-char *pattern=NULL;
 
 char fip[MAXIP];
 
@@ -377,13 +375,7 @@ char syslog_programtmp[MAXPROGRAM];
 char *syslog_msg=NULL;
 char  syslog_msg_origtmp[MAX_SYSLOGMSG];
 
-pcre *re;
-
-const char *error;
-
-int erroffset;
 int rc=0;
-int option;
 
 int ovector[OVECCOUNT];
 
@@ -666,7 +658,7 @@ while(1) {
 
 		if ( fifoi == 1 ) { 
 
-		pthread_mutex_lock( &general_mutex );
+//		pthread_mutex_lock( &general_mutex );
 
                 if(fd < 0) {
 		        removelockfile();
@@ -704,16 +696,16 @@ while(1) {
                 snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
                 strncat(syslogstring, syslogtmp, 1); 
 
-		pthread_mutex_unlock( &general_mutex );
+//		pthread_mutex_unlock( &general_mutex );
 
 		} else { 
 
-		pthread_mutex_lock( &general_mutex );
+//		pthread_mutex_lock( &general_mutex );
 
 		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
 		   sagan_log(0, "Dropped input in 'program' mode!");
 		}
-		pthread_mutex_unlock( &general_mutex );
+//		pthread_mutex_unlock( &general_mutex );
 		}
 
 		if ( c == '\n' || c == '\r' || fifoi == 0  ) 
@@ -793,11 +785,13 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 
    snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
    snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
-   remrt(syslog_msg);
+   
+   syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
+   syslog_msg[strcspn ( syslog_msg, "\r" )] = '\0';
 
-   pthread_mutex_lock( &general_mutex );
+   //remrt(syslog_msg);
+
    snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
-   pthread_mutex_unlock( &general_mutex );
 
    snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
    snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
@@ -805,38 +799,6 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
    snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
    snprintf(syslog_tagtmp, sizeof(syslog_tagtmp), "%s", syslog_tag);
    snprintf(syslog_leveltmp, sizeof(syslog_leveltmp), "%s", syslog_level);
-
-/***************************************************************************/
-/* Logzilla _FULL_ logging support.  This logs everything!		   */
-/***************************************************************************/
-
-/*
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-                if ( logzilla_dbtype != 0 && logzilla_log == 1 ) {
-
-                   if ( threadlogzillac < max_logzilla_threads) {
-
-                      pthread_mutex_lock( &logzilla_mutex );
-                      threadlogzillac++;
-		      if ( threadid >= MAX_THREADS ) threadid=0;
-		      pthread_mutex_unlock( &logzilla_mutex );
-
-                      if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
-
-                      if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &SaganEvent[threadid]) ) {
-                          removelockfile();
-                          sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
-       		          }
-	                	} else {
-				saganlogzilladrop++;
-                   		sagandrop++;
-                   		sagan_log(0, "Logzilla thread handler: Out of threads");
-                  	  }
-                  }
-
-#endif
-*/
 
 		/* Search for matches */
 
@@ -1247,9 +1209,7 @@ if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 
 		if ( threademailc < max_email_threads ) { 
 		  
-		    //pthread_mutex_lock ( &email_mutex );
 		    threademailc++;
-		    //pthread_mutex_unlock( &email_mutex );
 
 		    if ( threademailc > threadmaxemailc ) threadmaxemailc=threademailc;
 
@@ -1274,10 +1234,8 @@ if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
 		   
    if ( threadextc < max_ext_threads ) { 
-//   	pthread_mutex_lock ( &ext_mutex );
+
 	threadextc++;
-//	if ( threadid >= MAX_THREADS ) threadid=0;
-//	pthread_mutex_unlock( &ext_mutex );
 		   
 	if ( threadextc > threadmaxextc ) threadmaxextc=threadextc;
 	
@@ -1303,10 +1261,7 @@ if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) {
 		   
 	if ( threadlogzillac < max_logzilla_threads) { 
 		      
-//		pthread_mutex_lock( &logzilla_mutex );
 	        threadlogzillac++;
-//		if ( threadid >= MAX_THREADS ) threadid=0;
-//		pthread_mutex_unlock( &logzilla_mutex );
 		      
 		if ( threadlogzillac > threadmaxlogzillac ) threadmaxlogzillac=threadlogzillac;
 
@@ -1332,21 +1287,16 @@ if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) {
 
 if ( dbtype != 0 && thresh_log_flag == 0 ) { 
 
-	pthread_mutex_lock( &db_mutex );
         threaddbc++;
-//        threadid++;
-//		if ( threadid >= MAX_THREADS ) threadid=0;
-		   pthread_mutex_unlock( &db_mutex );
 
-	  		if ( threaddbc < maxdb_threads ) { 
+  		if ( threaddbc < maxdb_threads ) { 
 
 			   if ( threaddbc > threadmaxdbc ) threadmaxdbc=threaddbc;
 
                 
-				//pthread_mutex_lock( &db_mutex );
 		   		cid++; 
 		   		sigcid=cid;
-		   		//pthread_mutex_unlock( &db_mutex );
+
 				SaganEvent[threadid].cid = cid;
 
 				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &SaganEvent[threadid]) ) { 
@@ -1369,14 +1319,14 @@ pcrematch=0;
 rc=0;
 } /* End for for loop */
 
-pthread_mutex_lock( &general_mutex );
+//pthread_mutex_lock( &general_mutex );
 strlcpy(syslogstring, "", sizeof(syslogstring));
 strlcpy(syslogtmp, "", sizeof(syslogtmp));
-pthread_mutex_unlock( &general_mutex );
+//pthread_mutex_unlock( &general_mutex );
 }
 
-msgslot++;
-if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
+//msgslot++;
+//if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
 } /* End of while(1) */
 } /* End of main */

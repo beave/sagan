@@ -41,6 +41,7 @@
 #include <pthread.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <unistd.h>
 
 #include "sagan-snort.h"
 

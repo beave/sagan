@@ -70,8 +70,6 @@ int ret;
 
 prelude_client_flags_t flags;
 
-prelude_string_t *string;
-
 ret = prelude_thread_init(NULL);
 
 if ( ret < 0 ) { 
@@ -191,11 +189,6 @@ idmef_message_t *idmef;
 idmef_alert_t *alert;
 idmef_classification_t *class;
 prelude_string_t *str;
-idmef_impact_severity_t severity;
-idmef_impact_t *impact;
-idmef_assessment_t *assessment;
-
-char tmp[255]=""; 
 
 /* IDMEF message init */
 
@@ -294,8 +287,6 @@ int event_to_reference(char *sid , idmef_classification_t *class)
 {
 int ret;
 prelude_string_t *str;
-idmef_reference_t *ref;
-idmef_service_t *service;
 
 ret = idmef_classification_new_ident(class, &str);
       if ( ret < 0 ) return ret; 
@@ -468,6 +459,9 @@ if ( ret < 0 ) return ret;
 ret = prelude_string_sprintf(str, ANALYZER_SID_URL "%s", sid);
 return ret;
    }
+
+return(0);
+
 }
 
 #endif

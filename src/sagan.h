@@ -65,7 +65,7 @@
 
 #define RUNAS		"sagan"
 
-typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  
+typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
 
 
 /* defaults if the user doesn't define */
@@ -93,6 +93,7 @@ void sig_handler( int );
 void sig_handler_daemon( int );
 void key_handler( int );
 void plog_handler( void );
+
 
 char *dns_lookup(char *);
 int isnumeric (char *);
