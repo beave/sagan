@@ -335,6 +335,7 @@ char ip_dsttmp[MAX_MSGSLOT][MAXIP];
 char *username = NULL;
 char *uid = NULL;
 char s_msg[1024];
+char s_msgtmp[MAX_MSGSLOT][1024];
 
 int  src_port;
 int  dst_port;
@@ -777,8 +778,7 @@ while(1) {
                 if ( syslog_program == NULL ) {
                    syslog_program = "SAGAN: PROGRAM ERROR";
                    if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'program'");
-                   } 
-                else {
+                   } else {
                    syslog_msg=syslog_program + strlen(syslog_program) + 1;
                    }
 
@@ -906,15 +906,13 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 
 		   saganfound++;
 
-/*
 		   ip_src=NULL;
-		   src_port=0;
 		   ip_dst=NULL;
 		   dst_port=0;
+		   src_port=0;
 		   
 		   username=NULL;
 		   uid=NULL;
-		   */
 
 #ifdef HAVE_LIBLOGNORM
 		   if ( rulestruct[b].normalize == 1 )  
@@ -1146,6 +1144,12 @@ if ( threadid >= MAX_THREADS ) threadid=0;
 msgslot++;
 if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
+/* We can't use the pointers from our syslog data.  If two (or more) event's
+ * fire at the same time,  the two alerts will have corrupted information 
+ * (due to threading).   So we populate the SaganEvent[threadid] with the
+ * var[msgslot] information. - Champ Clark 02/02/2011
+ */
+
 snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
 snprintf(syslog_timetmp[msgslot], sizeof(syslog_timetmp[msgslot]), "%s", syslog_time);
 snprintf(syslog_datetmp[msgslot], sizeof(syslog_datetmp[msgslot]), "%s", syslog_date);
@@ -1156,6 +1160,7 @@ snprintf(syslog_programtmp[msgslot], sizeof(syslog_programtmp[msgslot]), "%s", s
 snprintf(ip_srctmp[msgslot], sizeof(ip_srctmp[msgslot]), "%s", ip_src);
 snprintf(ip_dsttmp[msgslot], sizeof(ip_dsttmp[msgslot]), "%s", ip_dst);
 snprintf(syslog_hosttmp[msgslot], sizeof(syslog_hosttmp[msgslot]), "%s", syslog_host);
+snprintf(s_msgtmp[msgslot], sizeof(s_msgtmp[msgslot]), "%s", s_msg);
 src_porttmp[msgslot] = src_port; 
 dst_porttmp[msgslot] = dst_port;
 
@@ -1171,7 +1176,7 @@ SaganEvent[threadid].endian    =       endianchk;
 SaganEvent[threadid].time      =       syslog_timetmp[msgslot];
 SaganEvent[threadid].date      =       syslog_datetmp[msgslot];
 SaganEvent[threadid].classtype =       rulestruct[b].s_classtype;
-SaganEvent[threadid].f_msg     =       s_msg; 
+SaganEvent[threadid].f_msg     =       s_msgtmp[msgslot]; 
 SaganEvent[threadid].sid       =       rulestruct[b].s_sid;
 SaganEvent[threadid].facility  =       syslog_facilitytmp[msgslot];
 SaganEvent[threadid].priority  =       syslog_leveltmp[msgslot];
@@ -1181,10 +1186,15 @@ SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
 }
 
 
-/* alert log file */
+/* Log alert to alert.log file */
 
 if ( thresh_log_flag == 0 ) sagan_alert( &SaganEvent[threadid] );
-		 
+
+
+/****************************************************************************/
+/* Prelude framework thread call (libprelude                                */
+/****************************************************************************/
+
 #if HAVE_LIBPRELUDE
 
 if ( sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
@@ -1207,12 +1217,12 @@ if ( threadpreludec < max_prelude_threads ) {
 }
 #endif
 
-#ifdef HAVE_LIBESMTP
 
 /****************************************************************************/
 /* libesmtp thread call (SMTP/email)                                        */
 /****************************************************************************/
 
+#ifdef HAVE_LIBESMTP
 
 if ( sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) { 
 		  
@@ -1332,14 +1342,9 @@ pcrematch=0;
 rc=0;
 } /* End for for loop */
 
-//pthread_mutex_lock( &general_mutex );
-strlcpy(syslogstring, "", sizeof(syslogstring));
-strlcpy(syslogtmp, "", sizeof(syslogtmp));
-//pthread_mutex_unlock( &general_mutex );
+syslogstring[0]='\0';		/* Reset values */
+syslogtmp[0]='\0';
 }
-
-//msgslot++;
-//if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
 } /* End of while(1) */
 } /* End of main */
