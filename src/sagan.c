@@ -328,12 +328,19 @@ sbool fifoerr=0;
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
+
+char ip_srctmp[MAX_MSGSLOT][MAXIP];
+char ip_dsttmp[MAX_MSGSLOT][MAXIP];
+
 char *username = NULL;
 char *uid = NULL;
 char s_msg[1024];
 
 int  src_port;
 int  dst_port;
+
+int src_porttmp[MAX_MSGSLOT];
+int dst_porttmp[MAX_MSGSLOT];
 
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
@@ -349,28 +356,28 @@ uint64_t thresh_oldtime_src;
 char fip[MAXIP];
 
 char *syslog_host=NULL;
-char  syslog_hosttmp[MAXHOST];
+char  syslog_hosttmp[MAX_MSGSLOT][MAXHOST];
 
 char *syslog_facility=NULL;
-char syslog_facilitytmp[MAXFACILITY];
+char syslog_facilitytmp[MAX_MSGSLOT][MAXFACILITY];
 
 char *syslog_priority=NULL;
 char syslog_prioritytmp[MAXPRIORITY];
 
 char *syslog_level=NULL;
-char syslog_leveltmp[MAXLEVEL];
+char syslog_leveltmp[MAX_MSGSLOT][MAXLEVEL];
 
 char *syslog_tag=NULL;
-char syslog_tagtmp[MAXTAG];
+char syslog_tagtmp[MAX_MSGSLOT][MAXTAG];
 
 char *syslog_date=NULL;
-char syslog_datetmp[MAXDATE];
+char syslog_datetmp[MAX_MSGSLOT][MAXDATE];
 
 char *syslog_time=NULL;
-char syslog_timetmp[MAXTIME];
+char syslog_timetmp[MAX_MSGSLOT][MAXTIME];
 
 char *syslog_program=NULL;
-char syslog_programtmp[MAXPROGRAM];
+char syslog_programtmp[MAX_MSGSLOT][MAXPROGRAM];
 
 char *syslog_msg=NULL;
 char  syslog_msg_origtmp[MAX_SYSLOGMSG];
@@ -783,22 +790,8 @@ while(1) {
 
 if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%s|Time:%s|Prgm:%s|Msg:%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
-   snprintf(syslog_hosttmp, sizeof(syslog_hosttmp), "%s", syslog_host);
-   snprintf(syslog_programtmp, sizeof(syslog_programtmp), "%s", syslog_program);
-   
    syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
    syslog_msg[strcspn ( syslog_msg, "\r" )] = '\0';
-
-   //remrt(syslog_msg);
-
-   snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
-
-   snprintf(syslog_datetmp, sizeof(syslog_datetmp), "%s", syslog_date);
-   snprintf(syslog_timetmp, sizeof(syslog_timetmp), "%s", syslog_time);
-   snprintf(syslog_facilitytmp, sizeof(syslog_facilitytmp), "%s", syslog_facility);
-   snprintf(syslog_prioritytmp, sizeof(syslog_prioritytmp), "%s", syslog_priority);
-   snprintf(syslog_tagtmp, sizeof(syslog_tagtmp), "%s", syslog_tag);
-   snprintf(syslog_leveltmp, sizeof(syslog_leveltmp), "%s", syslog_level);
 
 		/* Search for matches */
 
@@ -814,7 +807,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                       if (!strcmp(ptmp, syslog_programtmp)) match=0;
+                       if (!strcmp(ptmp, syslog_program)) match=0;
                        ptmp = strtok_r(NULL, "|", &tok2);
                        }
                 }
@@ -824,7 +817,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                      if (!strcmp(ptmp, syslog_facilitytmp)) match=0;
+                      if (!strcmp(ptmp, syslog_facility)) match=0;
                       ptmp = strtok_r(NULL, "|", &tok2);
                       }
                 }
@@ -834,7 +827,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                      if (!strcmp(ptmp, syslog_prioritytmp)) match=0;
+                      if (!strcmp(ptmp, syslog_priority)) match=0;
                       ptmp = strtok_r(NULL, "|", &tok2);
                       }
                   }
@@ -844,7 +837,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                      if (!strcmp(ptmp, syslog_leveltmp)) match=0;
+                      if (!strcmp(ptmp, syslog_level)) match=0;
                        ptmp = strtok_r(NULL, "|", &tok2);
                        }
                    }
@@ -854,7 +847,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                      if (!strcmp(ptmp, syslog_tagtmp)) match=0;
+                      if (!strcmp(ptmp, syslog_tag)) match=0;
                       ptmp = strtok_r(NULL, "|", &tok2);
                       }
                 }
@@ -881,7 +874,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 		      } else { 
 
 		   /* If case sensitive */
-		   if (strstr(sysmsg[msgslot], rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
+		   if (strstr(syslog_msg, rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
 		   }
 		  }
 		 }
@@ -893,7 +886,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 
 		   for(z=0; z<rulestruct[b].pcre_count; z++) {
 		
-		   rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], sysmsg[msgslot], (int)strlen(sysmsg[msgslot]), 0, 0, ovector, OVECCOUNT);
+		   rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], syslog_msg, (int)strlen(syslog_msg), 0, 0, ovector, OVECCOUNT);
 
                    }  /* End of pcre if */
 
@@ -913,6 +906,7 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 
 		   saganfound++;
 
+/*
 		   ip_src=NULL;
 		   src_port=0;
 		   ip_dst=NULL;
@@ -920,11 +914,12 @@ if (debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s|Date:%
 		   
 		   username=NULL;
 		   uid=NULL;
+		   */
 
 #ifdef HAVE_LIBLOGNORM
 		   if ( rulestruct[b].normalize == 1 )  
 		      {
-		      str = es_newStrFromCStr(sysmsg[msgslot], strlen(sysmsg[msgslot] ));
+		      str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
 		      ln_normalize(ctx, str, &lnevent);
                 	if(lnevent != NULL) {
                         es_emptyStr(str);
@@ -1002,30 +997,29 @@ if ( rulestruct[b].normalize == 0 ) {
 
  if ( rulestruct[b].s_find_ip == 1 ) {
 
-   snprintf(fip, sizeof(fip), "%s", parse_ip_simple(sysmsg[msgslot]));
+   snprintf(fip, sizeof(fip), "%s", parse_ip_simple(syslog_msg));
 
    if (strcmp(fip,"0")) {
-      ip_src = fip; ip_dst = syslog_hosttmp;
+      ip_src = fip; ip_dst = syslog_host;
        } else {
-      ip_src = syslog_hosttmp; ip_dst = sagan_host;
+      ip_src = syslog_host; ip_dst = sagan_host;
       }
         } else {
-      ip_src = syslog_hosttmp; ip_dst = sagan_host;
+      ip_src = syslog_host; ip_dst = sagan_host;
  }
 
 if ( rulestruct[b].s_find_port == 1 ) {
-   src_port = parse_port_simple(sysmsg[msgslot]);
+   src_port = parse_port_simple(syslog_msg);
     } else {
    src_port = atoi(sagan_port);
    }
 }
 
-if ( ip_src == NULL ) ip_src=syslog_hosttmp;
-if ( ip_dst == NULL ) ip_dst=syslog_hosttmp;
+if ( ip_src == NULL ) ip_src=syslog_host;
+if ( ip_dst == NULL ) ip_dst=syslog_host;
 
 if ( src_port == 0 ) src_port=atoi(sagan_port);
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
-
 
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
@@ -1043,6 +1037,7 @@ if (uid != NULL ) {
 
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=sagan_host;
 if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=sagan_host;
+
 
 thresh_log_flag = 0;
 
@@ -1145,25 +1140,43 @@ if ( rulestruct[b].threshold_type != 0 ) {
 
 if ( thresh_log_flag == 0 ) { 
 
+threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;
-threadid++;			
 
-SaganEvent[threadid].ip_src    =       ip_src;
-SaganEvent[threadid].ip_dst    =       ip_dst;
-SaganEvent[threadid].dst_port  =       dst_port;
-SaganEvent[threadid].src_port  =       src_port;
+msgslot++;
+if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
+
+snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", syslog_msg);
+snprintf(syslog_timetmp[msgslot], sizeof(syslog_timetmp[msgslot]), "%s", syslog_time);
+snprintf(syslog_datetmp[msgslot], sizeof(syslog_datetmp[msgslot]), "%s", syslog_date);
+snprintf(syslog_leveltmp[msgslot], sizeof(syslog_leveltmp[msgslot]), "%s", syslog_level);
+snprintf(syslog_tagtmp[msgslot], sizeof(syslog_tagtmp[msgslot]), "%s", syslog_tag);
+snprintf(syslog_facilitytmp[msgslot], sizeof(syslog_facilitytmp[msgslot]), "%s", syslog_facility);
+snprintf(syslog_programtmp[msgslot], sizeof(syslog_programtmp[msgslot]), "%s", syslog_program);
+snprintf(ip_srctmp[msgslot], sizeof(ip_srctmp[msgslot]), "%s", ip_src);
+snprintf(ip_dsttmp[msgslot], sizeof(ip_dsttmp[msgslot]), "%s", ip_dst);
+snprintf(syslog_hosttmp[msgslot], sizeof(syslog_hosttmp[msgslot]), "%s", syslog_host);
+src_porttmp[msgslot] = src_port; 
+dst_porttmp[msgslot] = dst_port;
+
+SaganEvent[threadid].ip_src    =       ip_srctmp[msgslot];
+SaganEvent[threadid].ip_dst    =       ip_dsttmp[msgslot];
+SaganEvent[threadid].dst_port  =       dst_porttmp[msgslot];
+SaganEvent[threadid].src_port  =       src_porttmp[msgslot];
 SaganEvent[threadid].found     =       b;
+SaganEvent[threadid].program   =       syslog_programtmp[msgslot];
 SaganEvent[threadid].pri       =       rulestruct[b].s_pri;
 SaganEvent[threadid].message   =       sysmsg[msgslot];
 SaganEvent[threadid].endian    =       endianchk;
-SaganEvent[threadid].time      =       syslog_timetmp;
-SaganEvent[threadid].date      =       syslog_datetmp;
+SaganEvent[threadid].time      =       syslog_timetmp[msgslot];
+SaganEvent[threadid].date      =       syslog_datetmp[msgslot];
 SaganEvent[threadid].classtype =       rulestruct[b].s_classtype;
 SaganEvent[threadid].f_msg     =       s_msg; 
 SaganEvent[threadid].sid       =       rulestruct[b].s_sid;
-SaganEvent[threadid].facility  =       syslog_facility;
-SaganEvent[threadid].priority  =       syslog_leveltmp;
-SaganEvent[threadid].tag       =       syslog_tagtmp;
+SaganEvent[threadid].facility  =       syslog_facilitytmp[msgslot];
+SaganEvent[threadid].priority  =       syslog_leveltmp[msgslot];
+SaganEvent[threadid].tag       =       syslog_tagtmp[msgslot];
+SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
 
 }
 
