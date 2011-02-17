@@ -52,6 +52,11 @@ sbool sagan_prelude_flag;
 prelude_client_t *preludeclient;
 #endif
 
+#ifdef HAVE_LIBDNET
+#include "output-plugins/sagan-unified2.h"
+sbool sagan_unified2_flag;
+#endif
+
 FILE *alertfp;
 
 int classcount;
@@ -123,6 +128,12 @@ prelude_deinit();
 
 #endif
 
+//#ifdef HAVE_LIBDNET
+//	if ( sagan_unified2_flag ) { 
+//	    fclose(config->stream);
+//	}
+//#endif
+
                   removelockfile();
                   exit(0);
                   break;
@@ -136,9 +147,6 @@ prelude_deinit();
 		      /* Reset counters */
 		   refcount=0; classcount=0; rulecount=0; ruletotal=0;
 
-#ifdef HAVE_LIBLOGNORM
-liblognorm_count=0;
-#endif
 		   
 		   /* Re-load everything */
 		   load_config();

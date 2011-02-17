@@ -129,9 +129,6 @@ int ruletotal=0;
 char fifo[MAX_SYSLOGMSG]="";
 int  fifoi=0;
 
-//pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t general_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 uint64_t max_ext_threads;
 
 /****************************************************************************/
@@ -163,7 +160,6 @@ char *cstr;
 #ifdef HAVE_LIBPRELUDE
 sbool sagan_prelude_flag;
 char sagan_prelude_profile[255];
-//pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
 uint64_t max_prelude_threads;
 uint64_t threadpreludec=0;
 uint64_t threadmaxpreludec=0;
@@ -195,9 +191,6 @@ int  threadlogzillac=0;
 uint64_t threadmaxlogzillac=0;
 uint64_t max_logzilla_threads;
 
-
-//pthread_mutex_t db_mutex = PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t logzilla_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif
 
 /****************************************************************************/
@@ -215,7 +208,6 @@ int  min_email_priority=0;
 uint64_t  threadmaxemailc=0;
 int  threademailc=0;
 
-//pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 #endif 
 
 /* Command line options */
@@ -257,14 +249,12 @@ uint64_t cid = 0;
 
 pthread_t threaddb_id[MAX_THREADS];
 pthread_attr_t thread_db_attr;
-//pthread_mutex_init(&db_mutex, NULL);
 
 pthread_attr_init(&thread_db_attr);
 pthread_attr_setdetachstate(&thread_db_attr,  PTHREAD_CREATE_DETACHED);
 
 pthread_t threadlogzilla_id[MAX_THREADS];
 pthread_attr_t thread_logzilla_attr;
-//pthread_mutex_init(&logzilla_mutex, NULL);
 
 pthread_attr_init(&thread_logzilla_attr);
 pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
@@ -279,7 +269,6 @@ endianchk = checkendian();	// Needed for Snort output
 #ifdef HAVE_LIBPRELUDE
 pthread_t threadprelude_id[MAX_THREADS];
 pthread_attr_t thread_prelude_attr;
-//pthread_mutex_init(&prelude_mutex, NULL);
 pthread_attr_init(&thread_prelude_attr);
 pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -291,7 +280,6 @@ pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
 #ifdef HAVE_LIBESMTP
 pthread_t threademail_id[MAX_THREADS];
 pthread_attr_t thread_email_attr;
-//pthread_mutex_init(&email_mutex, NULL);
 pthread_attr_init(&thread_email_attr);
 pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
 #endif
@@ -329,7 +317,6 @@ pthread_attr_setdetachstate(&key_thread_attr,  PTHREAD_CREATE_DETACHED);
 
 pthread_t threadext_id[MAX_THREADS];
 pthread_attr_t thread_ext_attr;
-//pthread_mutex_init(&ext_mutex, NULL);
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
@@ -622,7 +609,7 @@ config->nostamp = 0;
 
 sagan_log(0, "");
 sagan_log(0, "Unified2 file: %s", config->filepath);
-sagan_log(0, "Unified2 limit: %d", config->limit);
+sagan_log(0, "Unified2 limit: %dM", unified2_limit );
 Unified2InitFile( config );
 
 }
@@ -697,8 +684,6 @@ while(1) {
 
 		if ( fifoi == 1 ) { 
 
-//		pthread_mutex_lock( &general_mutex );
-
                 if(fd < 0) {
 		        removelockfile();
 			sagan_log(1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, fifo, errno);
@@ -735,16 +720,12 @@ while(1) {
                 snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
                 strncat(syslogstring, syslogtmp, 1); 
 
-//		pthread_mutex_unlock( &general_mutex );
-
 		} else { 
 
-//		pthread_mutex_lock( &general_mutex );
 
 		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
 		   sagan_log(0, "Dropped input in 'program' mode!");
 		}
-//		pthread_mutex_unlock( &general_mutex );
 		}
 
 		if ( c == '\n' || c == '\r' || fifoi == 0  ) 
