@@ -215,7 +215,7 @@ int checkendian() {
  * snort supports DB IPv6.
  */
 
-char *ip2bit (char *ipaddr,  int endian) { 
+int ip2bit (char *ipaddr,  int endian) { 
 
 struct sockaddr_in ipv4;
 uint32_t ip;
@@ -235,10 +235,10 @@ if ( endian == 0 ) {
    ip = ipv4.sin_addr.s_addr;
    }
 
-snprintf(tmpbuf, sizeof(tmpbuf), "%u", ip);
-retbuf=tmpbuf;
+//snprintf(tmpbuf, sizeof(tmpbuf), "%u", ip);
+//retbuf=tmpbuf;
 
-return(retbuf);
+return(ip);
 }
 
 int isnumeric (char *str) {

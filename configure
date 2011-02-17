@@ -709,6 +709,9 @@ with_lognorm_libraries
 enable_libpcap
 with_libpcap_includes
 with_libpcap_libraries
+enable_libdnet
+with_libdnet_includes
+with_libdnet_libraries
 enable_dependency_tracking
 '
       ac_precious_vars='build_alias
@@ -1344,6 +1347,7 @@ Optional Features:
   --disable-prelude      Disable Prelude support.
   --disable-lognorm      Disable Lognorm (liblognorm) support.
   --disable-libpcap      Disable libpcap (plog) support.
+  --disable-libdnet      Disable libdnet (unified2) support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
@@ -1362,6 +1366,8 @@ Optional Packages:
   --with-lognorm-libraries=DIR   liblognorm library directory
   --with-libpcap-includes=DIR    libpcap include directory
   --with-libpcap-libraries=DIR   libpcap library directory
+  --with-libdnet-includes=DIR    libdnet include directory
+  --with-libdnet-libraries=DIR   libdnet library directory
 
 Some influential environment variables:
   CC          C compiler command
@@ -3977,6 +3983,40 @@ if test "x$with_libpcap_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_libpcap_libraries}"
 fi
 
+# Check whether --enable-libdnet was given.
+if test "${enable_libdnet+set}" = set; then :
+  enableval=$enable_libdnet;  LIBDNET="$enableval"
+else
+   LIBDNET="yes"
+
+fi
+
+
+
+# Check whether --with-libdnet_includes was given.
+if test "${with_libdnet_includes+set}" = set; then :
+  withval=$with_libdnet_includes; with_libdnet_includes="$withval"
+else
+  with_libdnet_includes="no"
+fi
+
+
+
+# Check whether --with-libdnet_libraries was given.
+if test "${with_libdnet_libraries+set}" = set; then :
+  withval=$with_libdnet_libraries; with_libdnet_libraries="$withval"
+else
+  with_libdnet_libraries="no"
+fi
+
+
+if test "x$with_libdnet_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_libdnet_includes}"
+   fi
+
+if test "x$with_libdnet_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_libdnet_libraries}"
+fi
 
 
 
@@ -6755,6 +6795,62 @@ the --disable-libpcap flag. " "$LINENO" 5
 fi
 
        fi
+
+if test "$LIBDNET" = "yes"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- libdnet support is enabled -------" >&5
+$as_echo "------- libdnet support is enabled -------" >&6; }
+       ac_fn_c_check_header_mongrel "$LINENO" "dnet.h" "ac_cv_header_dnet_h" "$ac_includes_default"
+if test "x$ac_cv_header_dnet_h" = x""yes; then :
+
+fi
+
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -ldnet" >&5
+$as_echo_n "checking for main in -ldnet... " >&6; }
+if test "${ac_cv_lib_dnet_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-ldnet  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_dnet_main=yes
+else
+  ac_cv_lib_dnet_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_dnet_main" >&5
+$as_echo "$ac_cv_lib_dnet_main" >&6; }
+if test "x$ac_cv_lib_dnet_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBDNET 1
+_ACEOF
+
+  LIBS="-ldnet $LIBS"
+
+else
+  as_fn_error "The libdnet library cannot be found.
+This library is used for Sagan's Unified2 output support.  Please see
+https://wiki.softwink.com/bin/view/Main/Unified2Output for more information.
+To disable this feature use the --disable-libdnet flag. " "$LINENO" 5
+fi
+
+       fi
+
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 

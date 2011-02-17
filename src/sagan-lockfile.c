@@ -75,7 +75,7 @@ if (stat(lockfile, &lckcheck) == 0 ) {
          sagan_log(1, "[%s, line %d] It appears that Sagan is already running (pid: %d).", __FILE__, __LINE__, pid);
 	 } else {
 
-	 sagan_log(1, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (stale lock file?)", __FILE__, __LINE__, pid);
+	 sagan_log(1, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (stale %s file?)", __FILE__, __LINE__, pid, lockfile);
 	 }
         } 
 

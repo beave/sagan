@@ -57,6 +57,16 @@
 #include "sagan.h"
 #include "version.h"
 
+#ifdef HAVE_LIBDNET
+#include "output-plugins/sagan-unified2.h"
+uint64_t unified_event_id=0;
+sbool sagan_unified2_flag;
+char unified2_filepath[MAXPATH];
+int  unified2_limit;
+int  unified2_nostamp;
+#endif
+
+
 #define OVECCOUNT 30
 
 FILE *alertfp;
@@ -180,7 +190,6 @@ char logzilla_password[MAXPASS];
 char logzilla_dbname[MAXDBNAME];
 char logzilla_dbhost[MAXHOST];
 
-int  logzilla_log;
 int  logzilla_dbtype;
 int  threadlogzillac=0;
 uint64_t threadmaxlogzillac=0;
@@ -363,7 +372,7 @@ char *syslog_facility=NULL;
 char syslog_facilitytmp[MAX_MSGSLOT][MAXFACILITY];
 
 char *syslog_priority=NULL;
-char syslog_prioritytmp[MAXPRIORITY];
+//char syslog_prioritytmp[MAXPRIORITY];
 
 char *syslog_level=NULL;
 char syslog_leveltmp[MAX_MSGSLOT][MAXLEVEL];
@@ -381,7 +390,7 @@ char *syslog_program=NULL;
 char syslog_programtmp[MAX_MSGSLOT][MAXPROGRAM];
 
 char *syslog_msg=NULL;
-char  syslog_msg_origtmp[MAX_SYSLOGMSG];
+char syslog_msg_origtmp[MAX_SYSLOGMSG];
 
 int rc=0;
 
@@ -598,6 +607,28 @@ PreludeInit();
 }
 
 #endif
+
+Unified2Config *config = (Unified2Config *)SaganAlloc(sizeof(Unified2Config));
+
+#ifdef HAVE_LIBDNET
+
+if ( sagan_unified2_flag ) { 
+
+//Unified2Config *config = (Unified2Config *)SaganAlloc(sizeof(Unified2Config));
+snprintf(config->filepath, sizeof(config->filepath), "%s", unified2_filepath);
+
+config->limit = unified2_limit * 1024; 	//  Meg not bytes. :)
+config->nostamp = 0;
+
+sagan_log(0, "");
+sagan_log(0, "Unified2 file: %s", config->filepath);
+sagan_log(0, "Unified2 limit: %d", config->limit);
+Unified2InitFile( config );
+
+}
+
+#endif
+
 
 sagan_log(0, "");
 
@@ -1182,6 +1213,7 @@ SaganEvent[threadid].facility  =       syslog_facilitytmp[msgslot];
 SaganEvent[threadid].priority  =       syslog_leveltmp[msgslot];
 SaganEvent[threadid].tag       =       syslog_tagtmp[msgslot];
 SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
+SaganEvent[threadid].event_time_sec = 	time(NULL);
 
 }
 
@@ -1190,6 +1222,18 @@ SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
 
 if ( thresh_log_flag == 0 ) sagan_alert( &SaganEvent[threadid] );
 
+/* Unified2 README */
+
+#ifdef HAVE_LIBDNET
+
+if ( sagan_unified2_flag ) {
+
+if ( thresh_log_flag == 0 ) Sagan_Unified2( config,  &SaganEvent[threadid] );
+if ( thresh_log_flag == 0 ) Sagan_Unified2LogPacketAlert( config, &SaganEvent[threadid] );
+
+}
+
+#endif
 
 /****************************************************************************/
 /* Prelude framework thread call (libprelude                                */
@@ -1280,7 +1324,7 @@ if ( sagan_ext_flag == 1 && thresh_log_flag == 0 ) {
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-if ( logzilla_dbtype != 0 && thresh_log_flag == 0 && logzilla_log == 2 ) { 
+if ( logzilla_dbtype != 0 && thresh_log_flag == 0 ) { 
 		   
 	if ( threadlogzillac < max_logzilla_threads) { 
 		      

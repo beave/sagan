@@ -18,8 +18,15 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 /* sagan-logzilla.h  */
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
 int  logzilla_db_connect( void );
 char *logzilla_db_query ( int ,  char * );
 
+#endif

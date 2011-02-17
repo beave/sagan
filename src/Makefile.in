@@ -58,7 +58,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
-	sagan-prelude.$(OBJEXT)
+	sagan-prelude.$(OBJEXT) sagan-unified2.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -197,7 +197,8 @@ output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-logzilla.c \
-output-plugins/sagan-prelude.c
+output-plugins/sagan-prelude.c \
+output-plugins/sagan-unified2.c
 
 all: all-am
 
@@ -299,6 +300,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-stats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strlcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strlcpy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-unified2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-usage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan.Po@am__quote@
@@ -428,6 +430,20 @@ sagan-prelude.obj: output-plugins/sagan-prelude.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-prelude.c' object='sagan-prelude.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-prelude.obj `if test -f 'output-plugins/sagan-prelude.c'; then $(CYGPATH_W) 'output-plugins/sagan-prelude.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-prelude.c'; fi`
+
+sagan-unified2.o: output-plugins/sagan-unified2.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-unified2.o -MD -MP -MF $(DEPDIR)/sagan-unified2.Tpo -c -o sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-unified2.Tpo $(DEPDIR)/sagan-unified2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-unified2.c' object='sagan-unified2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
+
+sagan-unified2.obj: output-plugins/sagan-unified2.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-unified2.obj -MD -MP -MF $(DEPDIR)/sagan-unified2.Tpo -c -o sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-unified2.Tpo $(DEPDIR)/sagan-unified2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-unified2.c' object='sagan-unified2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

@@ -20,5 +20,13 @@
 
 /* sagan-esmtp.h  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
+#ifdef HAVE_LIBESMTP
+
 int fixlf(char *, char *);
+
+#endif
 

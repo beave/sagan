@@ -31,6 +31,7 @@
 
 #include <stdint.h> 
 #include <pcre.h>
+#include <time.h>
 
 /* Various buffers used during configurations loading */
 
@@ -50,7 +51,7 @@
 
 #define MAX_MSGSLOT	100		/* Slots for syslog message passing */
 #define MAX_THREADS     4096            /* Max system threads */
-#define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */
+#define MAX_SYSLOGMSG   63556		/* Max length of a syslog message */
 
 #define MAX_PCRE	5		/* Max PCRE within a rule */
 #define MAX_CONTENT	5		/* Max 'content' within a rule */
@@ -62,6 +63,7 @@
 #define LOCKFILE 	"/var/run/sagan/sagan.pid"
 #define SAGANLOG	"/var/log/sagan/sagan.log"
 #define ALERTLOG	"/var/log/sagan/alert"
+#define SAGANLOGPATH	"/var/log/sagan"
 
 #define RUNAS		"sagan"
 
@@ -185,8 +187,9 @@ typedef struct Sagan_Event
         char *ip_dst;
         int   dst_port;
         int   src_port;
-	int   ip_proto;
+//	int   ip_proto;
 
+	time_t event_time_sec;
 
         char *sid;
         char *classtype;
@@ -274,8 +277,9 @@ char *sql_escape(const char *, int );
 void *logzilla_insert_thread ( void *);
 void sagan_logzilla_thread(SaganEvent *);
 void sagan_db_thread( SaganEvent * );
-char *ip2bit( char *, int );
+int  ip2bit( char *, int );
 char *fasthex(char *, int);
+int logzilla_db_connect( void );
 
 #endif
 
@@ -315,5 +319,20 @@ void sagan_ext_thread( SaganEvent * );
 
 #ifdef HAVE_LIBPRELUDE
 void sagan_prelude( SaganEvent * );
+#endif
+
+
+#ifdef HAVE_LIBDNET
+typedef struct _Unified2Config
+{
+    char *base_filename;
+    char filepath[1024];
+    uint32_t timestamp;
+    FILE *stream;
+    unsigned int limit;
+    unsigned int current;
+    int nostamp;
+    int base_proto;
+} Unified2Config;
 #endif
 

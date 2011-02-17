@@ -20,6 +20,13 @@
 
 /* sagan-snort.h  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+
 int  db_connect( void );
 char *db_query ( int,  char * );
 int  get_sensor_id ( char *,  char *,  char *,  int , int  );
@@ -55,3 +62,4 @@ struct db_thread_args {
         char *time;
         };
 
+#endif

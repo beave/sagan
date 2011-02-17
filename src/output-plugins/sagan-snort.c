@@ -417,20 +417,15 @@ db_query( dbtype, sql );
 
 void insert_hdr(int t_sid, uint64_t t_cid, char *t_ipsrc, char *t_ipdst, int t_ipproto, int endian, int dbtype, int dst_port, int src_port) { 
 
-char ipsrcbit[MAXHOST];
-char ipdstbit[MAXHOST];
 
 char sqltmp[MAXSQL];
 char *sql;
 
 /* Temp. store 32bit IP address for DB insertion */
 
-snprintf(ipsrcbit, sizeof(ipsrcbit), "%s", ip2bit(t_ipsrc, endian));
-snprintf(ipdstbit, sizeof(ipdstbit), "%s", ip2bit(t_ipdst, endian));
-
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%s', '%s', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ipsrcbit, ipdstbit, t_ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ip2bit(t_ipsrc, endian), ip2bit(t_ipdst, endian), t_ipproto );
 
 sql=sqltmp;
 db_query( dbtype, sql );

@@ -48,9 +48,18 @@
 #include <lognorm.h>
 #endif
 
-
 #include "version.h"
 #include "sagan.h"
+
+#ifdef HAVE_LIBDNET
+#include "output-plugins/sagan-unified2.h"
+char unified2_filepath[MAXPATH];
+int  unified2_limit=128;
+int  unified2_nostamp=0;
+FILE unified2_stream;
+sbool sagan_unified2_flag=0;
+#endif
+
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 int  dbtype=0;
@@ -129,6 +138,7 @@ char rule_path[MAXPATH];
 char lockfile[MAXPATH]=LOCKFILE;
 char saganlog[MAXPATH]=SAGANLOG;
 char alertlog[MAXPATH]=ALERTLOG;
+char saganlogpath[MAXPATH]=SAGANLOGPATH;
 FILE *sagancfg;
 
 char *rulesetptr;
@@ -315,6 +325,37 @@ if (!strcmp(sagan_option, "output")) {
 	sagan_ext_flag=1;
         }
 
+#ifdef HAVE_LIBDNET
+
+
+if (!strcmp(sagan_var, "unified2:")) { 
+  
+  	   sagan_unified2_flag = 1;
+	   
+	   ptmp = sagan_var; 
+	   remrt(ptmp);
+
+	   while (ptmp != NULL ) {
+	     
+	     if (!strcmp(ptmp, "filename")) { 
+	        ptmp = strtok_r(NULL, ",", &tok);
+		snprintf(unified2_filepath, sizeof(unified2_filepath), "%s/%s", saganlogpath, ptmp);
+		}
+
+	     if (!strcmp(ptmp, "limit")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+	        unified2_limit = atoi(ptmp);
+		}
+
+             if (!strcmp(ptmp, "nostamp")) unified2_nostamp = 1;
+	   
+	   ptmp = strtok_r(NULL, " ", &tok);
+
+	   }
+}
+
+#endif
+
 #ifdef HAVE_LIBPRELUDE
 	
 	if (!strcmp(sagan_var, "prelude:")) { 
@@ -378,8 +419,6 @@ if (!strcmp(sagan_option, "output")) {
 	if (!strcmp(sagan_var, "logzilla:")) { 
 	   sagan_var = strtok_r(NULL, ",", &tok); 
 	   remspaces(sagan_var);
-
-	   if ( !strcmp(sagan_var, "full" )) logzilla_log = 1;
 
 	      sagan_var = strtok_r(NULL, ",", &tok); 
 	      remspaces(sagan_var);
@@ -515,6 +554,13 @@ if (!strcmp(sagan_option, "output")) {
            snprintf(alertlog, sizeof(alertlog), "%s", strtok_r(NULL, " ", &tok));
            alertlog[strlen(alertlog)-1] = '\0'; 
 		}
+
+	if (!strcmp(sagan_var, "SAGANLOGPATH" )) {
+           snprintf(saganlogpath, sizeof(saganlogpath), "%s", strtok_r(NULL, " ", &tok));
+           alertlog[strlen(saganlogpath)-1] = '\0';
+                }
+
+	
 
         }
      /* "include */

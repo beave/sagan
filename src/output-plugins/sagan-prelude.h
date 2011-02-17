@@ -20,6 +20,12 @@
 
 /* sagan-prelude.h  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
+#ifdef HAVE_LIBPRELUDE
+
 void PreludeInit(void);
 int setup_analyzer(idmef_analyzer_t *);
 int add_int_data(idmef_alert_t *, const char *, uint32_t );
@@ -31,5 +37,5 @@ int syslog_to_data( char * , char * , int , char *, idmef_alert_t * );
 int add_byte_data(idmef_alert_t *, const char *, const unsigned char *, size_t);
 int add_sagan_reference(idmef_classification_t *, char *);
 
-
+#endif
 
