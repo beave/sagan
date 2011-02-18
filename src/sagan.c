@@ -235,6 +235,8 @@ int option_index = 0;
 
 int main(int argc, char **argv) {
 
+sbool endianchk;
+
 /****************************************************************************/
 /* MySQL / PostgreSQL (snort/logzilla) local variables			    */
 /****************************************************************************/
@@ -319,7 +321,6 @@ pthread_attr_t thread_ext_attr;
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
-sbool endianchk;
 sbool fifoerr=0;
 
 char *ip_src = NULL;
