@@ -45,7 +45,23 @@
 
 #define ERRORRET return SAFEMEM_ERROR;
 
-//void Unified2InitFile( Unified2Config * );
+typedef struct _Unified2Config
+{
+    char *base_filename;
+    char filepath[1024];
+    uint32_t timestamp;
+    FILE *stream;
+    unsigned int limit;
+    unsigned int current;
+    int nostamp;
+    int vlan_event_types;
+    int base_proto;
+} Unified2Config;
+
+
+void Sagan_Unified2(Unified2Config *, SaganEvent * );
+void Sagan_Unified2LogPacketAlert(Unified2Config *, SaganEvent *);
+void Unified2InitFile( Unified2Config * );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc(unsigned long);
 

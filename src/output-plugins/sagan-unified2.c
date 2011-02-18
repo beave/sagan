@@ -42,9 +42,8 @@
 #include <dnet.h>
 #include <unistd.h>
 
-
-#include "sagan-unified2.h"
 #include "sagan.h"
+#include "sagan-unified2.h"
 
 sbool endian;
 uint64_t unified_event_id;
@@ -55,8 +54,8 @@ int classcount;
 int rulecount;
 
 
-void Sagan_Unified2 ( Unified2Config *, SaganEvent * );
-void Sagan_Unified2LogPacketAlert(Unified2Config *, SaganEvent *);
+//void Sagan_Unified2 ( Unified2Config *, SaganEvent * );
+//void Sagan_Unified2LogPacketAlert(Unified2Config *, SaganEvent *);
 static void Unified2Write(uint8_t *, uint32_t, Unified2Config *);
 static int SafeMemcpy(void *, const void *, size_t, const void *, const void *);
 static int inBounds(const uint8_t *, const uint8_t *, const uint8_t *);

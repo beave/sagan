@@ -274,7 +274,6 @@ void sagan_logzilla_thread(SaganEvent *);
 void sagan_db_thread( SaganEvent * );
 int  ip2bit( char *, int );
 char *fasthex(char *, int);
-int logzilla_db_connect( void );
 
 #endif
 
@@ -311,12 +310,13 @@ struct sig_args {
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
-
+/*
 #ifdef HAVE_LIBPRELUDE
 void sagan_prelude( SaganEvent * );
 #endif
+*/
 
-
+/*
 #ifdef HAVE_LIBDNET
 typedef struct _Unified2Config
 {
@@ -330,4 +330,4 @@ typedef struct _Unified2Config
     int base_proto;
 } Unified2Config;
 #endif
-
+*/

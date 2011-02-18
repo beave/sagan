@@ -76,7 +76,6 @@ void plog_handler( void )
 	char 			*iface=NULL;
         char                    eb[PCAP_ERRBUF_SIZE];
 	char 			filterstr[128];
-        int                     x;
 
 	iface = plog_interface;
 

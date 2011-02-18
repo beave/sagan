@@ -48,14 +48,26 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#include "sagan.h"
+#include "version.h"
+
+
 #ifdef HAVE_LIBLOGNORM
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>
 #endif
 
-#include "sagan.h"
-#include "version.h"
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+#include "output-plugins/sagan-snort.h"
+#include "output-plugins/sagan-logzilla.h"
+#endif
+
+#ifdef HAVE_LIBPRELUDE
+#include <libprelude/prelude.h>
+#include "output-plugins/sagan-prelude.h"
+#endif
+
 
 #ifdef HAVE_LIBDNET
 #include "output-plugins/sagan-unified2.h"
@@ -158,6 +170,7 @@ char *cstr;
 /****************************************************************************/
 
 #ifdef HAVE_LIBPRELUDE
+
 sbool sagan_prelude_flag;
 char sagan_prelude_profile[255];
 uint64_t max_prelude_threads;
@@ -171,6 +184,7 @@ uint64_t threadmaxpreludec=0;
 /****************************************************************************/
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+
 char dbusername[MAXUSER];
 char dbpassword[MAXUSER];
 char dbname[MAXDBNAME];

@@ -57,6 +57,12 @@ prelude_client_t *preludeclient;
 sbool sagan_unified2_flag;
 #endif
 
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+#include "output-plugins/sagan-snort.h"
+#include "output-plugins/sagan-logzilla.h"
+#endif
+
+
 FILE *alertfp;
 
 int classcount;

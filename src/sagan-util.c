@@ -219,8 +219,6 @@ int ip2bit (char *ipaddr,  int endian) {
 
 struct sockaddr_in ipv4;
 uint32_t ip;
-char *retbuf = NULL;
-char tmpbuf[MAXHOST];
 
 /* Change to AF_UNSPEC for future ipv6 */
 /* Champ Clark III - 01/18/2011 */
@@ -234,9 +232,6 @@ if ( endian == 0 ) {
    } else {
    ip = ipv4.sin_addr.s_addr;
    }
-
-//snprintf(tmpbuf, sizeof(tmpbuf), "%u", ip);
-//retbuf=tmpbuf;
 
 return(ip);
 }
