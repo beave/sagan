@@ -244,7 +244,6 @@ SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-sbool endianchk;
 uint64_t cid = 0;
 
 pthread_t threaddb_id[MAX_THREADS];
@@ -320,6 +319,7 @@ pthread_attr_t thread_ext_attr;
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
+sbool endianchk;
 sbool fifoerr=0;
 
 char *ip_src = NULL;
@@ -595,9 +595,9 @@ PreludeInit();
 
 #endif
 
-Unified2Config *config = (Unified2Config *)SaganAlloc(sizeof(Unified2Config));
-
 #ifdef HAVE_LIBDNET
+
+Unified2Config *config = (Unified2Config *)SaganAlloc(sizeof(Unified2Config));
 
 if ( sagan_unified2_flag ) { 
 
