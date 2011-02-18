@@ -124,7 +124,7 @@ memset(&alertdata, 0, sizeof(alertdata));
 alertdata.event_id = htonl(unified_event_id);  					// Event ID (increments)
 alertdata.event_second = htonl(Event->event_time_sec);				// Time of event;
 alertdata.event_microsecond = htonl(0);	                			// Not recording to the microsecond
-alertdata.signature_id = htonl(atoi(Event->sid));				// Rule triggered (sid #)
+alertdata.signature_id = htonl(atoi(rulestruct[Event->found].s_sid));		// Rule triggered (sid #)
 alertdata.signature_revision = htonl(atoi(rulestruct[Event->found].s_rev));	// Rule Revision
 
 /* Seach for the classification type. */
@@ -138,7 +138,7 @@ for(i=0; i<classcount;i++) {
          }
 }
 
-alertdata.priority_id = htonl(Event->pri);					// Rule priority
+alertdata.priority_id = htonl(rulestruct[Event->found].s_pri);			// Rule priority
 alertdata.protocol = rulestruct[Event->found].ip_proto;				// Protocol
 alertdata.generator_id = htonl(1);						// Typically comes from gen-msg.map
 

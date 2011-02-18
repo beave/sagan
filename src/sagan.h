@@ -187,15 +187,10 @@ typedef struct Sagan_Event
         char *ip_dst;
         int   dst_port;
         int   src_port;
-//	int   ip_proto;
 
 	time_t event_time_sec;
 
-        char *sid;
-        char *classtype;
-
         int  found;
-        int  pri;
 
         char *fpri;             /* ?? == *priority */
 

@@ -44,6 +44,8 @@ char sagan_extern[MAXPATH];
 int  sagan_exttype;
 int  threadextc;
 
+struct rule_struct *rulestruct;
+
 void sagan_ext_thread ( SaganEvent *Event ) {
 
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -69,7 +71,7 @@ if ( Event->drop == 1 ) {
    snprintf(tmp, sizeof(tmp), "False");
    }
 
-   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->sid, Event->f_msg, Event->classtype, tmp, Event->pri,  Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
+   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", rulestruct[Event->found].s_sid, Event->f_msg, rulestruct[Event->found].s_classtype, tmp, rulestruct[Event->found].s_pri,  Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
    
   } else { 
 
@@ -77,7 +79,7 @@ if ( Event->drop == 1 ) {
 
   snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
 
-  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->sid, Event->f_msg, Event->classtype, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
+  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", rulestruct[Event->found].s_sid, Event->f_msg, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
   }
 
 

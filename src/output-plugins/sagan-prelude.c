@@ -217,13 +217,13 @@ ret = idmef_classification_new_text(class, &str);
 
 prelude_string_set_ref(str, rulestruct[Event->found].s_msg );
 
-ret = event_to_impact(Event->pri, alert);
+ret = event_to_impact(rulestruct[Event->found].s_pri, alert);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] event_to_impact() failed", __FILE__, __LINE__);
          goto err;
          }
 
-ret = event_to_reference(Event->sid, class);
+ret = event_to_reference(rulestruct[Event->found].s_sid, class);
       if ( ret < 0 ) {
          sagan_log(0, "[%s, line %d] event_to_reference() failed", __FILE__, __LINE__);
          goto err;

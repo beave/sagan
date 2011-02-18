@@ -49,6 +49,8 @@ char sagan_esmtp_server[ESMTPSERVER];
 int threademailc;
 sbool debugesmtp;
 
+struct rule_struct *rulestruct;
+
 void sagan_esmtp_thread (SaganEvent *Event) { 
 
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -76,10 +78,10 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	sagan_esmtp_from,
 	sagan_esmtp_to,
 	Event->f_msg,
-	Event->sid, 
+	rulestruct[Event->found].s_sid, 
 	Event->f_msg,
-	Event->classtype,
-	Event->pri,
+	rulestruct[Event->found].s_classtype,
+	rulestruct[Event->found].s_pri,
 	Event->date,
 	Event->time,
 	Event->ip_src,

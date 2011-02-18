@@ -594,7 +594,7 @@ snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", Event->ip_dst);
 snprintf(time, sizeof(time), "%s", Event->time);
 snprintf(date, sizeof(date), "%s", Event->date);
 
-sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype,  Event->pri , dbtype );
+sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri , dbtype );
 
 insert_event( sensor_id, Event->cid, sig_sid, dbtype, date, time );
 insert_hdr(sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, dbtype, Event->dst_port, Event->src_port );
