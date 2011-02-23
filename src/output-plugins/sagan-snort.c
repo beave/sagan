@@ -66,8 +66,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
-int sensor_id;
-
 int  threaddbc;
 
 struct rule_struct *rulestruct;
@@ -471,7 +469,7 @@ void record_last_cid ( void )  {
 char sqltmp[MAXSQL];
 char *sql;
 
-snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->sigcid, sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->sigcid, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
 db_query( config->dbtype, sql );
 
@@ -584,11 +582,11 @@ snprintf(date, sizeof(date), "%s", Event->date);
 
 sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri , config->dbtype );
 
-insert_event( sensor_id, Event->cid, sig_sid, config->dbtype, date, time );
-insert_hdr(sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, config->dbtype, Event->dst_port, Event->src_port );
+insert_event( config->sensor_id, Event->cid, sig_sid, config->dbtype, date, time );
+insert_hdr(config->sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, config->dbtype, Event->dst_port, Event->src_port );
 
 hex_data = fasthex(message, strlen(message));
-insert_payload ( sensor_id, Event->cid, hex_data, config->dbtype ) ;
+insert_payload ( config->sensor_id, Event->cid, hex_data, config->dbtype ) ;
 
 for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    query_reference( rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
