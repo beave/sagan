@@ -40,11 +40,10 @@
 #include "sagan.h"
 #include "version.h"
 
-char sagan_extern[MAXPATH];
-int  sagan_exttype;
-int  threadextc;
-
+struct _SaganConfig *config;
 struct rule_struct *rulestruct;
+
+int  threadextc;
 
 void sagan_ext_thread ( SaganEvent *Event ) {
 
@@ -59,7 +58,7 @@ char tmpref[2048];
 int ret;
 char tmp[6];
 
-if ( sagan_exttype == 1 ) { 
+if ( config->sagan_exttype == 1 ) { 
    
    /* Parsable */
 
@@ -111,9 +110,9 @@ if (( pid = fork()) == 0 ) {
    close(out[0]);
    pthread_mutex_unlock( &ext_mutex );
 
-   ret=execl(sagan_extern, sagan_extern, NULL, (char *)NULL);
+   ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
    removelockfile();
-   sagan_log(1, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, sagan_extern);
+   sagan_log(1, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
    } 
 
    pthread_mutex_lock( &ext_mutex );

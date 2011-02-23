@@ -55,12 +55,7 @@ PGresult *result;
 char pgconnect[2048];
 #endif
 
-int logzilla_log;
-int logzilla_dbtype;
-char logzilla_user[MAXUSER];
-char logzilla_password[MAXPASS];
-char logzilla_dbname[MAXDBNAME];
-char logzilla_dbhost[MAXHOST];
+struct _SaganConfig *config;
 
 int  threadlogzillac;
 
@@ -73,17 +68,17 @@ char *dbu=NULL;
 char *dbp=NULL;
 char *dbn=NULL;
 
-dbu = logzilla_user;
-dbh = logzilla_dbhost;
-dbp = logzilla_password;
-dbn = logzilla_dbname;
+dbu = config->logzilla_user;
+dbh = config->logzilla_dbhost;
+dbp = config->logzilla_password;
+dbn = config->logzilla_dbname;
 
 /********************/
 /* MySQL connection */
 /********************/
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
-if ( logzilla_dbtype == 1 ) {
+if ( config->logzilla_dbtype == 1 ) {
 
 mysql_thread_init();
 mysql_logzilla = mysql_init(NULL);
@@ -95,7 +90,7 @@ if ( mysql_logzilla == NULL ) {
 
 
 my_bool reconnect = 1;
-mysql_options(mysql_logzilla,MYSQL_READ_DEFAULT_GROUP,logzilla_dbname);
+mysql_options(mysql_logzilla,MYSQL_READ_DEFAULT_GROUP,config->logzilla_dbname);
 
 /* Re-connect to the database if the connection is lost */
 
@@ -112,7 +107,7 @@ if (!mysql_real_connect(mysql_logzilla, dbh, dbu, dbp, dbn, MYSQL_PORT, NULL, 0)
 /*************************/
 
 #ifdef HAVE_LIBPQ
-if ( logzilla_dbtype == 2 ) {
+if ( config->logzilla_dbtype == 2 ) {
 
 //isthreadsafe = PQisthreadsafe();      // check
 
@@ -156,7 +151,7 @@ int mysql_reconnect_count = 0;
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
-if ( logzilla_dbtype == 1 ) {
+if ( config->logzilla_dbtype == 1 ) {
 
 MYSQL_RES *logzilla_res;
 MYSQL_ROW logzilla_row;
@@ -204,7 +199,7 @@ sagan_log(1, "Sagan was not compiled with MySQL support.  Aborting!");
 #endif
 
 #ifdef HAVE_LIBPQ
-if ( logzilla_dbtype == 2 ) {
+if ( config->logzilla_dbtype == 2 ) {
 
 if (( result = PQexec(psql_logzilla, sql )) == NULL ) {
 //   removelockfile();
@@ -244,7 +239,7 @@ snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO logs (host, facility, priority, le
 
 
 sql=sqltmp;
-logzilla_db_query(logzilla_dbtype, sql);
+logzilla_db_query(config->logzilla_dbtype, sql);
 
 threadlogzillac--;
 

@@ -52,15 +52,14 @@ MYSQL    *mysql, *mysql_logzilla;
 #include "sagan.h"
 #include "version.h"
 
+struct _SaganConfig *config;
+
 char sagan_path[MAXPATH];
 
-char sagan_port[6];
-int daemonize;
-int programmode;
-int dochroot;
-char saganlog[MAXPATH];
+sbool daemonize;
+sbool programmode;
+sbool dochroot;
 
-sbool disable_dns_warnings;
 
 /************************************************
  * Drop priv's so we aren't running as "root".  *
@@ -182,12 +181,12 @@ void sagan_log (int type, const char *format,... ) {
    t = time(NULL);
    now=localtime(&t);
    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
-   snprintf(tmplog, sizeof(tmplog), "%s", saganlog);
+   snprintf(tmplog, sizeof(tmplog), "%s", config->sagan_log_filepath);
 
    if ( type == 1 ) chr="E";
 
      if ((log = fopen(tmplog, "a")) == NULL) {
-       fprintf(stderr, "[E] Cannot open %s! [%s line %d]\n", saganlog, __FILE__, __LINE__);
+       fprintf(stderr, "[E] Cannot open %s! [%s line %d]\n", config->sagan_log_filepath, __FILE__, __LINE__);
        exit(1);
        }
 
@@ -372,7 +371,7 @@ char *dns_lookup(char *host)
     char *ret;
     void *addr;
 
-       if ( disable_dns_warnings == 0 ) { 
+       if ( config->disable_dns_warnings == 0 ) { 
        sagan_log(0, "--------------------------------------------------------------------------");
        sagan_log(0, "Sagan DNS lookup need for %s.", host); 
        sagan_log(0, "This can affect performance.  Please see:" );

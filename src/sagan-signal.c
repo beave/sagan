@@ -63,34 +63,24 @@ sbool sagan_unified2_flag;
 #endif
 
 
-FILE *alertfp;
-
-int classcount;
-int refcount;
-int rulecount;
-int ruletotal;
-uint64_t threadmaxemailc;
-int dbtype;
-int sensor_id;
+struct _SaganConfig *config;
+struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 struct ref_struct *refstruct;
 
+
 char sagan_extern[255];
 char sagan_esmtp_server[255];
 int logzilla_log;
 
-uint64_t sigcid;		/* For CID on recv. of signal */
-
-int daemonize;
+sbool daemonize;
 
 uint64_t sagantotal;
 uint64_t saganfound;
 uint64_t sagandrop;
 uint64_t threshold_total;
-
-FILE *alertfp;
 
 pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -118,7 +108,7 @@ void sig_handler(int sigargs ) {
 		  sagan_statistics();
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-		  if ( dbtype != 0 ) record_last_cid();
+		  if ( config->dbtype != 0 ) record_last_cid();
 #endif
 
 #ifdef HAVE_LIBPRELUDE
@@ -134,11 +124,9 @@ prelude_deinit();
 
 #endif
 
-//#ifdef HAVE_LIBDNET
-//	if ( sagan_unified2_flag ) { 
-//	    fclose(config->stream);
-//	}
-//#endif
+#ifdef HAVE_LIBDNET
+if ( sagan_unified2_flag ) Unified2CleanExit(); 
+#endif
 
                   removelockfile();
                   exit(0);
@@ -151,10 +139,10 @@ prelude_deinit();
    		   sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
 
 		      /* Reset counters */
-		   refcount=0; classcount=0; rulecount=0; ruletotal=0;
-
+		   counters->refcount=0; counters->classcount=0; counters->rulecount=0; counters->ruletotal=0;
 		   
 		   /* Re-load everything */
+
 		   load_config();
 
                   pthread_mutex_unlock(&sig_mutex);
@@ -199,15 +187,29 @@ switch( sig )
         sagan_statistics();
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-        if ( dbtype != 0 ) record_last_cid();
+                  if ( config->dbtype != 0 ) record_last_cid();
 #endif
 
-#ifdef HAVE_LIBLOGNORM
-	ln_exitCtx(ctx);
+#ifdef HAVE_LIBPRELUDE
+
+/* This comment is from the Snort source code. "Sensor reporting to Prelude
+   shall never go offline,  which is why we use the 
+   PRELUDE_CLIENT_EXIT_STATUS_FAILURE.  */
+
+if ( sagan_prelude_flag != 0 ) {
+prelude_client_destroy(preludeclient, PRELUDE_CLIENT_EXIT_STATUS_FAILURE);
+prelude_deinit();
+}
+
 #endif
 
-	fflush(alertfp); 
-	fclose(alertfp);		/* Close Sagan alert file */
+#ifdef HAVE_LIBDNET
+if ( sagan_unified2_flag ) Unified2CleanExit();
+#endif
+
+
+	fflush(config->sagan_alert_stream); 
+	fclose(config->sagan_alert_stream);		/* Close Sagan alert file */
 
         removelockfile();
         exit(0);
@@ -219,9 +221,11 @@ switch( sig )
                 sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
 
                 /* Reset counters */
-                refcount=0; classcount=0; rulecount=0; ruletotal=0;
+                counters->refcount=0; counters->classcount=0; counters->rulecount=0; counters->ruletotal=0;
 
                 /* Re-load everything */
+
+		free(config);
                 load_config();
 
                 pthread_mutex_unlock(&sig_mutex);

@@ -45,43 +45,13 @@
 
 #define ERRORRET return SAFEMEM_ERROR;
 
-typedef struct _Unified2Config
-{
-    char *base_filename;
-    char filepath[1024];
-    uint32_t timestamp;
-    FILE *stream;
-    unsigned int limit;
-    unsigned int current;
-    int nostamp;
-    int vlan_event_types;
-    int base_proto;
-} Unified2Config;
-
-
-void Sagan_Unified2(Unified2Config *, SaganEvent * );
-void Sagan_Unified2LogPacketAlert(Unified2Config *, SaganEvent *);
-void Unified2InitFile( Unified2Config * );
+void Sagan_Unified2( SaganEvent * );
+void Sagan_Unified2LogPacketAlert( SaganEvent * );
+void Unified2InitFile( void );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc(unsigned long);
 
-
-/* Configuration file struct */
-
-/*
-typedef struct _Unified2Config
-{
-    char *base_filename;
-    char filepath[1024];
-    uint32_t timestamp;
-    FILE *stream;
-    unsigned int limit;
-    unsigned int current;
-    int nostamp;
-    int vlan_event_types;
-    int base_proto;
-} Unified2Config;
-*/
+void Unified2CleanExit( void ); 
 
 /* Data structure used for serialization of Unified2 Records */
 typedef struct _Serial_Unified2_Header

@@ -50,16 +50,15 @@ uint64_t unified_event_id;
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
+struct _SaganConfig *config;
+
 int classcount;
 int rulecount;
 
-
-//void Sagan_Unified2 ( Unified2Config *, SaganEvent * );
-//void Sagan_Unified2LogPacketAlert(Unified2Config *, SaganEvent *);
-static void Unified2Write(uint8_t *, uint32_t, Unified2Config *);
+static void Unified2Write(uint8_t *, uint32_t);
 static int SafeMemcpy(void *, const void *, size_t, const void *, const void *);
 static int inBounds(const uint8_t *, const uint8_t *, const uint8_t *);
-static void Unified2RotateFile(Unified2Config *);
+static void Unified2RotateFile( void );
 
 /* Future note on IPv6 - This would have been 
  * Serial_Unified2IDSEventIPv6_legacy.  
@@ -77,30 +76,32 @@ char *eth_addr="00:11:22:33:44:55";	/* Bogus ethernet address for ethernet frame
 /* Unified2InitFile - Initializes the file to be openned */
 /*********************************************************/
 
-void Unified2InitFile( Unified2Config *config  )
+void Unified2InitFile( void  )
 {
 
     char filepath[1024];
     char *fname_ptr;
 
+	// README
+	//
     if (config == NULL) sagan_log(1, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ ); 
 
-    config->timestamp = (uint32_t)time(NULL);
+    config->unified2_timestamp = (uint32_t)time(NULL);
 
-    if (!config->nostamp)
+    if (!config->unified2_nostamp)
     {
         if (SaganSnprintf(filepath, sizeof(filepath), "%s.%u",
-                          config->filepath, config->timestamp) != SAGAN_SNPRINTF_SUCCESS)
+                          config->unified2_filepath, config->unified2_timestamp) != SAGAN_SNPRINTF_SUCCESS)
 			  sagan_log(1, "[%s, line %d] Failed to copy Unified2 file path", __FILE__, __LINE__);
         
 	fname_ptr = filepath;
     }
     else
     {
-        fname_ptr = config->filepath;
+        fname_ptr = config->unified2_filepath;
     }
 
-    if ((config->stream = fopen(fname_ptr, "wb")) == NULL)
+    if ((config->unified2_stream = fopen(fname_ptr, "wb")) == NULL)
        sagan_log(1, "[%s, line %d] Cannot open file %s.", __FILE__, __LINE__, fname_ptr);
 }
 
@@ -109,7 +110,7 @@ void Unified2InitFile( Unified2Config *config  )
 /* Sagan_Unified2 - Write the Unified2 event        */
 /****************************************************/
 
-void Sagan_Unified2(Unified2Config *config, SaganEvent *Event )
+void Sagan_Unified2( SaganEvent *Event )
 { 
 
 
@@ -149,8 +150,8 @@ alertdata.dport_icode = htons(Event->dst_port);
 
 /* Rotate if log has gotten to big */
 
-if ((config->current + write_len) > config->limit)
-     Unified2RotateFile(config);
+if ((config->unified2_current + write_len) > config->unified2_limit)
+     Unified2RotateFile();
 
 
 hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
@@ -171,7 +172,7 @@ if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header),
       return;
   }
 
-Unified2Write(write_pkt_buffer, write_len, config);
+Unified2Write(write_pkt_buffer, write_len);
 
 }
 
@@ -182,7 +183,7 @@ Unified2Write(write_pkt_buffer, write_len, config);
 /* file for reading by Barnyard2, etc.                                       */
 /*****************************************************************************/
 
-void Sagan_Unified2LogPacketAlert(Unified2Config *config, SaganEvent *Event)
+void Sagan_Unified2LogPacketAlert( SaganEvent *Event )
 {
 
 Serial_Unified2_Header hdr;
@@ -388,7 +389,7 @@ if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header) +
    }
 
       
-Unified2Write(write_pkt_buffer, write_len, config);
+Unified2Write(write_pkt_buffer, write_len);
 unified_event_id++;		
 
 }
@@ -399,11 +400,21 @@ unified_event_id++;
 /* compatibility.                                                            */
 /*****************************************************************************/
 
-static void Unified2RotateFile(Unified2Config *config)
+void Unified2CleanExit( void )
 {
-    fclose(config->stream);
-    config->current = 0;
-    Unified2InitFile(config);
+    if (config != NULL)
+    {   
+        if (config->unified2_stream != NULL)
+            fclose(config->unified2_stream);
+        free(config);
+    }
+}
+
+static void Unified2RotateFile( void )
+{
+    fclose(config->unified2_stream);
+    config->unified2_current = 0;
+    Unified2InitFile();
 }
 
 
@@ -494,18 +505,18 @@ int inBounds(const uint8_t *start, const uint8_t *end, const uint8_t *p)
     return 0;
 }
 
-static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config)
+static void Unified2Write(uint8_t *buf, uint32_t buf_len)
 {
     size_t fwcount = 0;
     int ffstatus = 0;
 
     /* Nothing to write or nothing to write to */
-    if ((buf == NULL) || (config == NULL) || (config->stream == NULL))
+    if ((buf == NULL) || (config == NULL) || (config->unified2_stream == NULL))
         return;
 
     /* Don't use fsync().  It is a total performance killer */
-    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->stream)) != 1) ||
-        ((ffstatus = fflush(config->stream)) != 0))
+    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) != 1) ||
+        ((ffstatus = fflush(config->unified2_stream)) != 0))
     {
         /* errno is saved just to avoid other intervening calls
          * (e.g. ErrorMessage) potentially reseting it to something else. */
@@ -518,13 +529,13 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config
          * is constantly interrupted */
         while ((error != 0) && (max_retries != 0))
         {
-            if (config->nostamp)
+            if (config->unified2_nostamp)
             {
-	    	sagan_log(1, "[%s, line %d] Failed to write Unified2 file (%s): %s", __FILE__, __LINE__, config->filepath, strerror(error));
+	    	sagan_log(1, "[%s, line %d] Failed to write Unified2 file (%s): %s", __FILE__, __LINE__, config->unified2_filepath, strerror(error));
             }
             else
             {
-	    	sagan_log(1, "[%s, line %d] Failed to write to Unified2 file. (%s.%u): %s", __FILE__, __LINE__, config->filepath, config->timestamp, strerror(error));
+	    	sagan_log(1, "[%s, line %d] Failed to write to Unified2 file. (%s.%u): %s", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp, strerror(error));
             }
 
             while ((error == EINTR) && (max_retries != 0))
@@ -539,15 +550,15 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config
 		if (fwcount != 1)
                 {
                     /* fwrite() failed.  Redo fwrite and fflush */
-                    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->stream)) == 1) &&
-                        ((ffstatus = fflush(config->stream)) == 0))
+                    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) == 1) &&
+                        ((ffstatus = fflush(config->unified2_stream)) == 0))
                     {
                       sagan_log(0, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                       error = 0;
                       break;
                     }
                 }
-                else if ((ffstatus = fflush(config->stream)) == 0)
+                else if ((ffstatus = fflush(config->unified2_stream)) == 0)
                 {
 		    sagan_log(0, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                     error = 0;
@@ -572,17 +583,17 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config
 		        sagan_log(1, "[%s, line %d] Unified2 file is corrupt", __FILE__, __LINE__);
 //              NEEDED
 //                    Unified2RotateFile(config);
-                    if (config->nostamp)
+                    if (config->unified2_nostamp)
                     {
-		    sagan_log(0, "[%s, line %d] New Unified2 file: %s", __FILE__, __LINE__, config->filepath);
+		    sagan_log(0, "[%s, line %d] New Unified2 file: %s", __FILE__, __LINE__, config->unified2_filepath);
                     }
                     else
                     {
-		    sagan_log(0, "[%s, line %d] New Unified2 file: %s.%u", __FILE__, __LINE__, config->filepath, config->timestamp);
+		    sagan_log(0, "[%s, line %d] New Unified2 file: %s.%u", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp);
                     }
 
-                    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->stream)) == 1) &&
-                        ((ffstatus = fflush(config->stream)) == 0))
+                    if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) == 1) &&
+                        ((ffstatus = fflush(config->unified2_stream)) == 0))
                     {
 		        sagan_log(0, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                         error = 0;
@@ -596,7 +607,7 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config
                         break;
 
                     /* Write out error message again, then fall through and fatal */
-                    if (config->nostamp)
+                    if (config->unified2_nostamp)
                     {
 		    	sagan_log(1, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
                     }
@@ -619,7 +630,7 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len, Unified2Config *config
 
         if ((max_retries == 0) && (error != 0)) sagan_log(1, "[%s, line %d] Maximum number of interrupts exceeded.", __FILE__, __LINE__);
     }
-    config->current += buf_len;
+    config->unified2_current += buf_len;
 }
 
 #endif

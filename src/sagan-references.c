@@ -46,11 +46,11 @@
 #include "version.h"
 #include "sagan.h"
 
+struct _SaganDebug *debug;
+struct _SaganCounters *counters;
+
 struct ref_struct *refstruct;
 struct rule_struct *rulestruct;
-
-int refcount;
-sbool debugload;
 
 char ruleset[1024];
 
@@ -79,26 +79,26 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      continue;
      } else {
      /* Allocate memory for references,  not comments */
-     refstruct = (ref_struct *) realloc(refstruct, (refcount+1) * sizeof(ref_struct));
+     refstruct = (ref_struct *) realloc(refstruct, (counters->refcount+1) * sizeof(ref_struct));
      }
 
      firststring = strtok_r(refbuf, ":", &saveptr);
      tmptoken = strtok_r(NULL, " " , &saveptr);
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
-     snprintf(refstruct[refcount].s_refid, sizeof(refstruct[refcount].s_refid), "%s", laststring);
+     snprintf(refstruct[counters->refcount].s_refid, sizeof(refstruct[counters->refcount].s_refid), "%s", laststring);
      
      laststring = strtok_r(NULL, ",", &saveptr);
-     snprintf(refstruct[refcount].s_refurl, sizeof(refstruct[refcount].s_refurl), "%s", laststring);
-     refstruct[refcount].s_refurl[strlen(refstruct[refcount].s_refurl)-1] = '\0';
+     snprintf(refstruct[counters->refcount].s_refurl, sizeof(refstruct[counters->refcount].s_refurl), "%s", laststring);
+     refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
 
-    if (debugload) sagan_log(0, "[D-%d] Reference: %s|%s", refcount, refstruct[refcount].s_refid, refstruct[refcount].s_refurl);
+    if (debug->debugload) sagan_log(0, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
 		      
-     refcount++;
+     counters->refcount++;
 
 } 
 fclose(reffile);
-sagan_log(0, "%d references loaded.", refcount);
+sagan_log(0, "%d references loaded.", counters->refcount);
 }
 
 
@@ -131,7 +131,7 @@ for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
 
  if ( tmp != NULL ) { 
 
-    for ( b=0; b < refcount; b++) {
+    for ( b=0; b < counters->refcount; b++) {
 
         if (!strcmp(refstruct[b].s_refid,  tmp)) {
 	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, tmp2);

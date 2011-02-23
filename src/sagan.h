@@ -57,6 +57,9 @@
 #define MAX_CONTENT	5		/* Max 'content' within a rule */
 #define MAX_REFERENCE	10		/* Max references within a rule */
 
+#define MAXUSER         32
+#define	MAXPASS		64
+
 #define BUFLEN 		8192		/* For libesmtp */
 #define MAXIP		16		/* Max IP length.  Change to 64 for future IPv6 support */
 
@@ -67,16 +70,26 @@
 
 #define RUNAS		"sagan"
 
+
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
 
 
 /* defaults if the user doesn't define */
 
+#define MAX_EXT_THREADS         50
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 #define MAX_LOGZILLA_THREADS	50
+#define MAX_DB_THREADS          50
+#endif
+
+#ifdef HAVE_LIBESMTP
 #define MAX_EMAIL_THREADS	50
-#define MAX_DB_THREADS		50
-#define MAX_EXT_THREADS		50
+#endif 
+
+#ifdef HAVE_LIBPRELUDE
 #define MAX_PRELUDE_THREADS	50
+#endif
 
 #ifndef HAVE_STRLCPY
 int strlcpy(char *, const char *,  size_t );
@@ -125,6 +138,162 @@ char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
 
 char *referencelookup( int );
+
+typedef struct _SaganCounters _SaganCounters;
+struct _SaganCounters { 
+
+    uint64_t threshold_total;
+    uint64_t sagantotal;
+    uint64_t saganfound;
+    uint64_t sagandrop;
+
+    uint64_t threadmaxextc;
+    uint64_t saganexternaldrop;
+
+    int      threadextc;
+
+    int	     classcount;
+    int      rulecount;
+    int	     refcount;
+    int      ruletotal;
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+    uint64_t sigcid;            /* For passing CID with signal */
+    uint64_t threadmaxdbc;
+    uint64_t threadmaxlogzillac;
+    int      threadlogzillac;
+    int	     threaddbc;
+
+    uint64_t sagansnortdrop;
+    uint64_t saganlogzilladrop;
+#endif
+
+#ifdef HAVE_LIBESMTP
+    int      threademailc;
+    uint64_t saganesmtpdrop;
+    uint64_t threadmaxemailc;
+#endif
+
+#ifdef HAVE_LIBPRELUDE
+    int      threadpreludec;
+    uint64_t threadmaxpreludec;
+    uint64_t saganpreludedrop;
+#endif
+};   
+
+typedef struct _SaganDebug _SaganDebug;
+struct _SaganDebug { 
+
+    sbool debugsyslog;
+    sbool debugload;
+
+#ifdef HAVE_LIBLOGNORM
+    sbool debugnormalize;
+#endif
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+    sbool debugsql;
+#endif
+
+#ifdef HAVE_LIBESMTP
+    sbool debugesmtp;
+#endif 
+
+#ifdef HAVE_LIBPCAP
+    sbool debugplog;
+#endif
+
+};
+
+/* Sagan configuration struct (global) */
+
+typedef struct _SaganConfig _SaganConfig;
+struct _SaganConfig {
+
+/* Non-dependent var's */
+
+    char         sagan_alert_filepath[MAXPATH];
+    FILE         *sagan_alert_stream;
+    char	 sagan_log_filepath[MAXPATH];
+    FILE	 *sagan_log_stream;
+    char	 sagan_lockfile[MAXPATH];
+    char	 sagan_fifo[MAXPATH];
+    char	 sagan_log_path[MAXPATH];
+    char 	 sagan_rule_path[MAXPATH];
+    char         sagan_host[MAXHOST];
+    char         sagan_extern[MAXPATH];
+    uint64_t	 max_external_threads;
+    int		 sagan_port;
+    int		 sagan_exttype;
+    sbool	 sagan_ext_flag;
+    sbool        disable_dns_warnings;
+    int		 daemonize;
+
+
+/* libesmtp/SMTP support */
+    
+#ifdef HAVE_LIBESMTP
+    uint64_t	max_email_threads;
+    int		min_email_priority;
+    char	sagan_esmtp_to[255];
+    char	sagan_esmtp_from[255];
+    char	sagan_esmtp_server[255];
+    sbool	sagan_esmtp_flag;
+#endif
+
+/* Prelude framework support */
+
+#ifdef HAVE_LIBPRELUDE
+    uint64_t 	max_prelude_threads;
+    char	sagan_prelude_profile[255];
+    sbool	sagan_prelude_flag;
+#endif
+
+/* "plog" - syslog sniffing vars */
+
+#ifdef HAVE_LIBPCAP
+    char	plog_interface[50];
+    char	plog_logdev[50];
+    int		plog_port;
+    sbool	plog_flag;
+#endif
+
+/* libdnet - Used for unified2 support */
+
+#ifdef HAVE_LIBDNET
+    char         unified2_filepath[MAXPATH];
+    uint32_t     unified2_timestamp;
+    FILE         *unified2_stream;
+    unsigned int unified2_limit;
+    unsigned int unified2_current;
+    int          unified2_nostamp;
+    sbool	 sagan_unified2_flag;
+#endif
+
+/* MySQL/PostgreSQL support for Snort/Logzilla */
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+    int		 dbtype;
+    int		 logzilla_dbtype;
+    int          sagan_proto;
+    int          sagan_detail;
+    int		 sensor_id;
+    uint64_t	 maxdb_threads;
+    uint64_t	 max_logzilla_threads;
+    char	 sagan_hostname[MAXHOST];
+    char	 sagan_interface[50];
+    char	 sagan_filter[50];
+    char	 logzilla_user[MAXUSER];
+    char	 logzilla_password[MAXPASS];
+    char	 logzilla_dbname[50];
+    char	 logzilla_dbhost[50];	
+    char         dbuser[MAXUSER];
+    char         dbpassword[MAXPASS];
+    char         dbname[50]; 
+    char         dbhost[50];
+#endif
+
+};
 
 /* Reference structure */
 typedef struct ref_struct ref_struct;
@@ -239,6 +408,27 @@ uint64_t utime;
 char sid[512];
 };
 
+/****************************************************************************/
+/* MySQL & PostgreSQL support.  Including support for Snort database and    */
+/* Logzilla.                                                                */
+/****************************************************************************/
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+
+#define MAXDBNAME       32
+#define MAXSQL          4096
+#define MYSQL_PORT      3306
+
+char *sql_escape(const char *, int );
+void *logzilla_insert_thread ( void *);
+void sagan_logzilla_thread(SaganEvent *);
+void sagan_db_thread( SaganEvent * );
+int  ip2bit( char *, int );
+char *fasthex(char *, int);
+
+#endif
+
+
 #ifdef HAVE_LIBLOGNORM
 /* liblognorm struct */
 typedef struct liblognorm_struct liblognorm_struct; 
@@ -254,28 +444,6 @@ char filepath[MAXPATH];
 };
 #endif
 
-
-/****************************************************************************/
-/* MySQL & PostgreSQL support.  Including support for Snort database and    */
-/* Logzilla.                                                                */
-/****************************************************************************/
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-#define MAXUSER         32
-#define MAXPASS         32
-#define MAXDBNAME       32
-#define MAXSQL  	4096
-#define MYSQL_PORT      3306
-
-char *sql_escape(const char *, int );
-void *logzilla_insert_thread ( void *);
-void sagan_logzilla_thread(SaganEvent *);
-void sagan_db_thread( SaganEvent * );
-int  ip2bit( char *, int );
-char *fasthex(char *, int);
-
-#endif
 
 /****************************************************************************/
 /* libesmtp support                                                         */

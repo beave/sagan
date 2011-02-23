@@ -43,11 +43,10 @@
 #include "sagan-esmtp.h"
 #include "version.h"
 
-char sagan_esmtp_from[ESMTPFROM];
-char sagan_esmtp_to[ESMTPTO];
-char sagan_esmtp_server[ESMTPSERVER];
+struct _SaganConfig *config;
+struct _SaganDebug *debug;
+
 int threademailc;
-sbool debugesmtp;
 
 struct rule_struct *rulestruct;
 
@@ -75,8 +74,8 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"[Classification: %s] [Priority: %d]\n"
 	"%s %s %s:%d -> %s:%d %s %s\n"
 	"Syslog message: %s\r\n%s\n\r",
-	sagan_esmtp_from,
-	sagan_esmtp_to,
+	config->sagan_esmtp_from,
+	config->sagan_esmtp_to,
 	Event->f_msg,
 	rulestruct[Event->found].s_sid, 
 	Event->f_msg,
@@ -118,7 +117,7 @@ if((message = smtp_add_message (session)) == NULL) {
 	sagan_log(1, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
 	goto failure;
 }
-if(!smtp_set_server (session, sagan_esmtp_server)) {
+if(!smtp_set_server (session, config->sagan_esmtp_server)) {
 	sagan_log(0, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
 	goto failure;
 }
@@ -130,11 +129,11 @@ if(!smtp_set_message_str (message, tmpb)) {
 	sagan_log(0, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
 	goto failure;
 }
-if(!smtp_set_reverse_path (message, sagan_esmtp_from)) {
+if(!smtp_set_reverse_path (message, config->sagan_esmtp_from)) {
 	sagan_log(0, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
 	goto failure;
 }
-if((recipient = smtp_add_recipient (message, sagan_esmtp_to)) == NULL) {
+if((recipient = smtp_add_recipient (message, config->sagan_esmtp_to)) == NULL) {
 	sagan_log(0, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
 	goto failure;
 }
@@ -154,7 +153,7 @@ if (!smtp_start_session (session)) {
    /* SMTP sent successful */
 
 	status = smtp_message_transfer_status (message);
-	if ( debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
+	if ( debug->debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
 }
 

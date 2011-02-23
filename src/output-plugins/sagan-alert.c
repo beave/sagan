@@ -37,23 +37,23 @@
 #include "sagan.h"
 #include "version.h"
 
-FILE *alertfp;
 int refcount;
 
 struct rule_struct *rulestruct;
 struct ref_struct *refstruct;
+struct _SaganConfig *config;
 
 void sagan_alert( SaganEvent *Event ) { 
 
 char tmpref[2048]="";
 
-fprintf(alertfp, "\n[**] [%s] %s [**]\n", rulestruct[Event->found].s_sid, Event->f_msg);
-fprintf(alertfp, "[Classification: %s] [Priority: %d]\n", rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri );
-fprintf(alertfp, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
-fprintf(alertfp, "Message: %s\n", Event->message);
+fprintf(config->sagan_alert_stream, "\n[**] [%s] %s [**]\n", rulestruct[Event->found].s_sid, Event->f_msg);
+fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d]\n", rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri );
+fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
+fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
-if ( strcmp(tmpref, "")) fprintf(alertfp, "%s\n", tmpref);
+if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);
 
-fflush(alertfp);
+fflush(config->sagan_alert_stream);
 
 }

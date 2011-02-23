@@ -45,6 +45,7 @@
 #include "sagan.h"
 #include "sagan-prelude.h"
 
+struct _SaganConfig *config;
 
 #define ANALYZER_CLASS "Log Analyzer"
 #define ANALYZER_MODEL "Sagan"
@@ -53,8 +54,8 @@
 #define DEFAULT_ANALYZER_NAME "sagan"
 #define ANALYZER_INTERFACE "syslog"
 
-char sagan_interface[50];
-char sagan_prelude_profile[255];
+//char sagan_interface[50];
+//char sagan_prelude_profile[255];
 int threadpreludec;
 
 prelude_client_t *preludeclient;
@@ -83,7 +84,7 @@ if ( ret < 0 ) {
         sagan_log(1, "[%s, line %d] %s: Unable to init the Prelude library: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         }
 
-ret = prelude_client_new(&preludeclient, sagan_prelude_profile ? sagan_prelude_profile : DEFAULT_ANALYZER_NAME);
+ret = prelude_client_new(&preludeclient, config->sagan_prelude_profile ? config->sagan_prelude_profile : DEFAULT_ANALYZER_NAME);
 
 if ( ret < 0 ) {
         removelockfile();
@@ -319,7 +320,7 @@ if ( ret < 0 ) return ret;
 ret = idmef_source_new_interface(source, &string);
 if ( ret < 0 ) return ret;
 
-prelude_string_set_ref(string, sagan_interface);
+prelude_string_set_ref(string, config->sagan_interface);
 
 ret = idmef_source_new_service(source, &service);
 if ( ret < 0 ) return ret;

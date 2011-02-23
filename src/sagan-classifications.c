@@ -47,10 +47,10 @@
 #include "version.h"
 #include "sagan.h"
 
+struct _SaganDebug *debug;
+struct _SaganCounters *counters;
 
 struct class_struct *classstruct;
-int classcount;
-sbool debugload;
 
 char ruleset[MAXPATH];
 
@@ -82,7 +82,7 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
      continue;
      } else { 
      /* Allocate memory for classifications,  but not comments */
-     classstruct = (class_struct *) realloc(classstruct, (classcount+1) * sizeof(class_struct));
+     classstruct = (class_struct *) realloc(classstruct, (counters->classcount+1) * sizeof(class_struct));
      }
 
      firststring = strtok_r(classbuf, ":", &saveptr);
@@ -90,26 +90,26 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
      remspaces(laststring);
-     snprintf(classstruct[classcount].s_shortname, sizeof(classstruct[classcount].s_shortname), "%s", laststring);
+     snprintf(classstruct[counters->classcount].s_shortname, sizeof(classstruct[counters->classcount].s_shortname), "%s", laststring);
 
      laststring = strtok_r(NULL, ",", &saveptr);
-     snprintf(classstruct[classcount].s_desc, sizeof(classstruct[classcount].s_desc), "%s", laststring);
+     snprintf(classstruct[counters->classcount].s_desc, sizeof(classstruct[counters->classcount].s_desc), "%s", laststring);
 
      laststring = strtok_r(NULL, ",", &saveptr);
      snprintf(tmpbuf2, sizeof(tmpbuf2), "%s", laststring);
      tmpbuf2[strlen(tmpbuf2)-1] = '\0';
-     classstruct[classcount].s_priority=atoi(tmpbuf2);
+     classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
-     if ( classstruct[classcount].s_priority == 0 ) sagan_log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+     if ( classstruct[counters->classcount].s_priority == 0 ) sagan_log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-     if (debugload) sagan_log(0, "[D-%d] Classification: %s|%s|%d", classcount, classstruct[classcount].s_shortname, classstruct[classcount].s_desc, classstruct[classcount].s_priority);
+     if (debug->debugload) sagan_log(0, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
 		      
-     classcount++;
+     counters->classcount++;
 
 } 
 fclose(classfile);
 
-sagan_log(0, "%d classifications loaded", classcount);
+sagan_log(0, "%d classifications loaded", counters->classcount);
 
 }
 
@@ -118,7 +118,7 @@ char *classlookup( char *classtype ) {
 int i; 
 char *ret;
 
-for ( i=0; i < classcount; i++ ) { 
+for ( i=0; i < counters->classcount; i++ ) { 
 
 if ( !strcmp( classstruct[i].s_shortname, classtype ) )  { 
    ret=classstruct[i].s_desc;

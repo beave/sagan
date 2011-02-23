@@ -62,25 +62,13 @@ PGresult *result;
 char pgconnect[2048];
 #endif
 
-int  dbtype;
-char dbusername[MAXUSER];
-char dbpassword[MAXPASS];
-char dbname[MAXDBNAME];
-char dbhost[MAXHOST];
-
-char sagan_port[6];
-
-char sagan_hostname[MAXHOST];
-char sagan_interface[50];
-char sagan_filter[50];
-int  sagan_detail;
+struct _SaganConfig *config;
+struct _SaganDebug *debug;
+struct _SaganCounters *counters;
 
 int sensor_id;
-sbool debugsql;
 
 int  threaddbc;
-
-uint64_t sigcid;
 
 struct rule_struct *rulestruct;
 
@@ -98,17 +86,17 @@ char *dbu=NULL;
 char *dbp=NULL;
 char *dbn=NULL;
 
-dbu = dbusername;
-dbh = dbhost;
-dbp = dbpassword;
-dbn = dbname;
+dbu = config->dbuser;
+dbh = config->dbhost;
+dbp = config->dbpassword;
+dbn = config->dbname;
 
 /********************/
 /* MySQL connection */
 /********************/
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
-if ( dbtype == 1 ) { 
+if ( config->dbtype == 1 ) { 
 
 mysql_thread_init();
 mysql = mysql_init(NULL);
@@ -120,7 +108,7 @@ if ( mysql == NULL ) {
 
 
 my_bool reconnect = 1;
-mysql_options(mysql,MYSQL_READ_DEFAULT_GROUP,dbname);
+mysql_options(mysql,MYSQL_READ_DEFAULT_GROUP,config->dbname);
 
 /* Re-connect to the database if the connection is lost */
 
@@ -138,7 +126,7 @@ if (!mysql_real_connect(mysql, dbh, dbu, dbp, dbn, MYSQL_PORT, NULL, 0)) {
 /*************************/
 
 #ifdef HAVE_LIBPQ
-if ( dbtype == 2 ) { 
+if ( config->dbtype == 2 ) { 
 
 //isthreadsafe = PQisthreadsafe(); 	// check
 
@@ -180,7 +168,7 @@ pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
-if ( debugsql ) sagan_log(0, "%s", sqltmp); 
+if ( debug->debugsql ) sagan_log(0, "%s", sqltmp); 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 if ( dbtype == 1 ) {
@@ -294,7 +282,7 @@ if ( sqlout == NULL ) {
    sqlout = db_query( dbtype, sql );
    }
 
-sensor_id = atoi(sqlout);
+config->sensor_id = atoi(sqlout);
 //return(sensor_id);
 return(0);
 
@@ -312,7 +300,7 @@ char *sqlout;
 uint64_t t_cid; 
 
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT last_cid from sensor where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sensor_sid, sagan_hostname, sagan_interface, sagan_filter, sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT last_cid from sensor where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sensor_sid, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 
 sql=sqltmp; 
 sqlout = db_query( dbtype, sql );
@@ -483,9 +471,9 @@ void record_last_cid ( void )  {
 char sqltmp[MAXSQL];
 char *sql;
 
-snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sigcid, sensor_id, sagan_hostname, sagan_interface, sagan_filter, sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->sigcid, sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
-db_query( dbtype, sql );
+db_query( config->dbtype, sql );
 
 }
 
@@ -524,34 +512,34 @@ if (tmptoken1 == NULL || tmptoken2 == NULL )
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_system_id from reference_system where ref_system_name='%s'", tmptoken1);
 sql=sqltmp;
-sqlout = db_query( dbtype, sql );
+sqlout = db_query( config->dbtype, sql );
 
 /* reference_system hasn't been entered into the DB.  Do so now */
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference_system (ref_system_id, ref_system_name) VALUES (DEFAULT, '%s')", tmptoken1);
    sql=sqltmp;
-   db_query( dbtype, sql );
+   db_query( config->dbtype, sql );
 
    snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_system_id from reference_system where ref_system_name='%s'", tmptoken1);
    sql=sqltmp;
-   sqlout = db_query( dbtype, sql );
+   sqlout = db_query( config->dbtype, sql );
    }
 
 ref_system_id = atoi(sqlout);
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_id from reference where ref_system_id='%d' and ref_tag='%s'", ref_system_id, tmptoken2);
 sql=sqltmp;
-sqlout = db_query( dbtype, sql );
+sqlout = db_query( config->dbtype, sql );
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference (ref_id, ref_system_id, ref_tag) VALUES (DEFAULT, '%d', '%s')", ref_system_id, tmptoken2);
    sql=sqltmp;
-   sqlout = db_query( dbtype, sql );
+   sqlout = db_query( config->dbtype, sql );
 
    snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_id from reference where ref_system_id='%d' and ref_tag='%s'", ref_system_id, tmptoken2);
    sql=sqltmp;
-   sqlout = db_query( dbtype, sql );
+   sqlout = db_query( config->dbtype, sql );
 
    }
 
@@ -559,12 +547,12 @@ ref_id = atoi(sqlout);
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id from sig_reference where sig_id='%d' and ref_id='%d'", sig_sid,  ref_id); 
 sql=sqltmp;
-sqlout = db_query( dbtype, sql );
+sqlout = db_query( config->dbtype, sql );
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_reference (sig_id, ref_seq, ref_id) VALUES ('%d', '%d', '%d')", sig_sid, seq, ref_id);
    sql=sqltmp;
-   sqlout = db_query( dbtype, sql );
+   sqlout = db_query( config->dbtype, sql );
 
    }
 
@@ -594,13 +582,13 @@ snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", Event->ip_dst);
 snprintf(time, sizeof(time), "%s", Event->time);
 snprintf(date, sizeof(date), "%s", Event->date);
 
-sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri , dbtype );
+sig_sid = get_sig_sid(rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri , config->dbtype );
 
-insert_event( sensor_id, Event->cid, sig_sid, dbtype, date, time );
-insert_hdr(sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, dbtype, Event->dst_port, Event->src_port );
+insert_event( sensor_id, Event->cid, sig_sid, config->dbtype, date, time );
+insert_hdr(sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, config->dbtype, Event->dst_port, Event->src_port );
 
 hex_data = fasthex(message, strlen(message));
-insert_payload ( sensor_id, Event->cid, hex_data, dbtype ) ;
+insert_payload ( sensor_id, Event->cid, hex_data, config->dbtype ) ;
 
 for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    query_reference( rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );

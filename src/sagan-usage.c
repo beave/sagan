@@ -39,8 +39,26 @@ void sagan_usage(void)
 {
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
-fprintf(stderr, "-d, --debug [type]\tEnabled debugging. Valid types: syslog, normalize,\n"); 
-fprintf(stderr, "\t\t\tsql, and smtp. Multiple values allowed.\n");
+fprintf(stderr, "-d, --debug [type]\tTypes: syslog,load");
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+fprintf(stderr, ", sql");
+#endif
+
+#ifdef HAVE_LIBESMTP
+fprintf(stderr, ", smtp");
+#endif
+
+#ifdef HAVE_LIBLOGNORM
+fprintf(stderr, ", normalize");
+#endif
+
+#ifdef HAVE_LIBPCAP
+fprintf(stderr, ", plog");
+#endif
+
+fprintf(stderr, ".\n");
+
 fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
 fprintf(stderr, "-U, --user\t\tRun as user (defaults to 'sagan').\n");
 fprintf(stderr, "-c, --chroot\t\tChroot to username 'sagan's home.\n");
@@ -64,6 +82,11 @@ fprintf(stderr, "* Prelude (libprelude) support is included\n");
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-fprintf(stderr, "* liblognorm (log normalization) is included\n");
+fprintf(stderr, "* liblognorm (log normalization) support is included\n");
 #endif
+
+#ifdef HAVE_LIBPCAP
+fprintf(stderr, "* PLOG (syslog sniffer) support is included\n");
+#endif
+
 }

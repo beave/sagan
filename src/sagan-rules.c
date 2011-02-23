@@ -45,6 +45,10 @@
 #include "version.h"
 #include "sagan.h"
 
+struct _SaganConfig *config;
+struct _SaganDebug *debug;
+struct _SaganCounters *counters;
+
 #ifdef HAVE_LIBLOGNORM
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
@@ -54,15 +58,8 @@ int liblognormtoload_count;
 
 char ruleset[MAXPATH];
 
-sbool debugload;
-
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
-
-int rulecount;
-int classcount;
-int sagan_proto;
-char sagan_port[6];
 
 void load_rules( void ) { 
 
@@ -130,7 +127,7 @@ while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
         continue;
         } else { 
 	/* Allocate memory for rules, but not comments */
-	rulestruct = (rule_struct *) realloc(rulestruct, (rulecount+1) * sizeof(rule_struct));
+	rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(rule_struct));
 	}
 
 remrt(rulebuf);
@@ -182,29 +179,29 @@ while ( tokennet != NULL ) {
    if ( netcount == 0 ) { 
       if (!strcmp(tokennet, "drop" )) 
          { 
-	 rulestruct[rulecount].drop = 1; 
+	 rulestruct[counters->rulecount].drop = 1; 
 	 } else {
-	 rulestruct[rulecount].drop = 0;
+	 rulestruct[counters->rulecount].drop = 0;
 	 }
        }
 
    /* Protocol */
    if ( netcount == 1 ) { 
-      ip_proto = sagan_proto;
+      ip_proto = config->sagan_proto;
       if (!strcmp(tokennet, "icmp" )) ip_proto = 1; 
       if (!strcmp(tokennet, "tcp"  )) ip_proto = 6;
       if (!strcmp(tokennet, "udp"  )) ip_proto = 17;
       }
 
-      rulestruct[rulecount].ip_proto = ip_proto;
+      rulestruct[counters->rulecount].ip_proto = ip_proto;
 
    /* Destination Port */
    if ( netcount == 6 ) { 
-      dst_port = atoi(sagan_port);
+      dst_port = config->sagan_port;
       if (strcmp(tokennet, "any")) dst_port = atoi(tokennet); 
       }
       
-      rulestruct[rulecount].dst_port = dst_port; 
+      rulestruct[counters->rulecount].dst_port = dst_port; 
 
    tokennet = strtok_r(NULL, " ", &saveptrnet);
    netcount++;
@@ -227,18 +224,18 @@ remspaces(rulesplit);
 
 	if (!strcmp(rulesplit, "nocase")) { 
 	       strtok_r(NULL, ":", &saveptrrule2);
-	       rulestruct[rulecount].s_nocase = 1;
+	       rulestruct[counters->rulecount].s_nocase = 1;
 	       }
 
 
         if (!strcmp(rulesplit, "parse_port")) {
                strtok_r(NULL, ":", &saveptrrule2);
-               rulestruct[rulecount].s_find_port = 1;
+               rulestruct[counters->rulecount].s_find_port = 1;
                }
 
         if (!strcmp(rulesplit, "parse_ip")) {
                strtok_r(NULL, ":", &saveptrrule2);
-               rulestruct[rulecount].s_find_ip = 1;
+               rulestruct[counters->rulecount].s_find_ip = 1;
                }
 
 	/* Non-quoted information (sid, reference, etc) */
@@ -246,17 +243,17 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"rev\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_rev, sizeof(rulestruct[rulecount].s_rev), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_rev, sizeof(rulestruct[counters->rulecount].s_rev), "%s", remspaces(arg));
 		}
 
 	if (!strcmp(rulesplit, "classtype" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"classtype\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_classtype, sizeof(rulestruct[rulecount].s_classtype), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_classtype, sizeof(rulestruct[counters->rulecount].s_classtype), "%s", remspaces(arg));
 
-		for(i=0; i<classcount;i++) {
-			if (!strcmp(classstruct[i].s_shortname, rulestruct[rulecount].s_classtype)) {
-				rulestruct[rulecount].s_pri = classstruct[i].s_priority;
+		for(i=0; i < counters->classcount; i++) {
+			if (!strcmp(classstruct[i].s_shortname, rulestruct[counters->rulecount].s_classtype)) {
+				rulestruct[counters->rulecount].s_pri = classstruct[i].s_priority;
                                 }
                         }
 		}
@@ -264,39 +261,39 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "program" )) { 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"program\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_program, sizeof(rulestruct[rulecount].s_program), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_program, sizeof(rulestruct[counters->rulecount].s_program), "%s", remspaces(arg));
 		}
 
 	if (!strcmp(rulesplit, "reference" )) {
 	 	arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"reference\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_reference[ref_count], sizeof(rulestruct[rulecount].s_reference[ref_count]), "%s", remspaces(arg));
-		rulestruct[rulecount].ref_count=ref_count;
+		snprintf(rulestruct[counters->rulecount].s_reference[ref_count], sizeof(rulestruct[counters->rulecount].s_reference[ref_count]), "%s", remspaces(arg));
+		rulestruct[counters->rulecount].ref_count=ref_count;
 		ref_count++;
 		}
 
 	if (!strcmp(rulesplit, "sid" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"sid\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_sid, sizeof(rulestruct[rulecount].s_sid), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_sid, sizeof(rulestruct[counters->rulecount].s_sid), "%s", remspaces(arg));
 		}
 	
         if (!strcmp(rulesplit, "tag" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) sagan_log(1, "The \"tag\" appears to be incomplete");
-                snprintf(rulestruct[rulecount].s_tag, sizeof(rulestruct[rulecount].s_tag), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_tag, sizeof(rulestruct[counters->rulecount].s_tag), "%s", remspaces(arg));
                 }
 
         if (!strcmp(rulesplit, "facility" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) sagan_log(1, "The \"facility\" appears to be incomplete");
-                snprintf(rulestruct[rulecount].s_facility, sizeof(rulestruct[rulecount].s_facility), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_facility, sizeof(rulestruct[counters->rulecount].s_facility), "%s", remspaces(arg));
                 }
 
         if (!strcmp(rulesplit, "level" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) sagan_log(1, "The \"level\" appears to be incomplete");
-                snprintf(rulestruct[rulecount].s_level, sizeof(rulestruct[rulecount].s_level), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_level, sizeof(rulestruct[counters->rulecount].s_level), "%s", remspaces(arg));
                 }
 
 
@@ -304,13 +301,13 @@ remspaces(rulesplit);
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) sagan_log(1, "The \"priority\" appears to be incomplete");
 		remspaces(arg);
-		rulestruct[rulecount].s_pri = atoi(arg);
+		rulestruct[counters->rulecount].s_pri = atoi(arg);
                 }
 
 #ifdef HAVE_LIBLOGNORM
 	
 	if (!strcmp(rulesplit, "normalize" )) { 
-		rulestruct[rulecount].normalize = 1; 
+		rulestruct[counters->rulecount].normalize = 1; 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) sagan_log(1, "The \"normalize\" appears to be incomplete");
 		remspaces(arg);
@@ -346,7 +343,7 @@ remspaces(rulesplit);
                 arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) sagan_log(1, "The \"msg\" appears to be incomplete");
-                snprintf(rulestruct[rulecount].s_msg, sizeof(rulestruct[rulecount].s_msg), "%s", tmp2);
+                snprintf(rulestruct[counters->rulecount].s_msg, sizeof(rulestruct[counters->rulecount].s_msg), "%s", tmp2);
                 }
 
 	if (!strcmp(rulesplit, "content" )) { 
@@ -354,9 +351,9 @@ remspaces(rulesplit);
 		arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) sagan_log(1, "The \"content\" appears to be incomplete");
-		snprintf(rulestruct[rulecount].s_content[content_count], sizeof(rulestruct[rulecount].s_content[content_count]), "%s", tmp2);
+		snprintf(rulestruct[counters->rulecount].s_content[content_count], sizeof(rulestruct[counters->rulecount].s_content[content_count]), "%s", tmp2);
 		content_count++;
-		rulestruct[rulecount].content_count=content_count;
+		rulestruct[counters->rulecount].content_count=content_count;
 		}
 
 
@@ -425,16 +422,16 @@ remspaces(rulesplit);
 
 		      /* We store the compiled/study results.  This saves use some CPU tmpe during searching - Champ Clark III - 02/01/2011 */
 		      
-		      rulestruct[rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
-		      rulestruct[rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[rulecount].re_pcre[pcre_count], pcreoptions, &error);
+		      rulestruct[counters->rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
+		      rulestruct[counters->rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[counters->rulecount].re_pcre[pcre_count], pcreoptions, &error);
 		      
-	                if (  rulestruct[rulecount].re_pcre[pcre_count]  == NULL ) {
+	                if (  rulestruct[counters->rulecount].re_pcre[pcre_count]  == NULL ) {
        		         removelockfile();
                  	 sagan_log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
                 	}
 
 		      pcre_count++;
-		      rulestruct[rulecount].pcre_count=pcre_count;
+		      rulestruct[counters->rulecount].pcre_count=pcre_count;
                 }
 
 
@@ -444,25 +441,25 @@ remspaces(rulesplit);
 
                       while( tmptoken != NULL ) {
                       if (strstr(tmptoken, "type")) {
-                            if (strstr(tmptoken, "limit")) rulestruct[rulecount].threshold_type = 1;
-                            if (strstr(tmptoken, "threshold")) rulestruct[rulecount].threshold_type = 2;
+                            if (strstr(tmptoken, "limit")) rulestruct[counters->rulecount].threshold_type = 1;
+                            if (strstr(tmptoken, "threshold")) rulestruct[counters->rulecount].threshold_type = 2;
                             }
 
                       if (strstr(tmptoken, "track")) {
-                            if (strstr(tmptoken, "by_src")) rulestruct[rulecount].threshold_src_or_dst = 1;
-                            if (strstr(tmptoken, "by_dst")) rulestruct[rulecount].threshold_src_or_dst = 2;
+                            if (strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].threshold_src_or_dst = 1;
+                            if (strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].threshold_src_or_dst = 2;
                             }
 
                       if (strstr(tmptoken, "count")) {
                            thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                            thresh_tmp = strtok_r(NULL, " ", &saveptrrule3);
-                           rulestruct[rulecount].threshold_count = atoi(thresh_tmp);
+                           rulestruct[counters->rulecount].threshold_count = atoi(thresh_tmp);
                            }
 
                       if (strstr(tmptoken, "seconds")) {
                            thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                            thresh_tmp = strtok_r(NULL, " ", &saveptrrule3 );
-                           rulestruct[rulecount].threshold_seconds = atoi(thresh_tmp);
+                           rulestruct[counters->rulecount].threshold_seconds = atoi(thresh_tmp);
                            }
 
                         tmptoken = strtok_r(NULL, ",", &saveptrrule2);
@@ -477,27 +474,27 @@ tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 
 /* Some new stuff (normalization) stuff needs to be added */
 
-if ( debugload ) { 
+if ( debug->debugload ) { 
 
-sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[rulecount].s_sid);
+sagan_log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[counters->rulecount].s_sid);
 
-sagan_log(0, "= sid: %s", rulestruct[rulecount].s_sid);
-sagan_log(0, "= rev: %s", rulestruct[rulecount].s_rev);
-sagan_log(0, "= msg: %s", rulestruct[rulecount].s_msg);
-sagan_log(0, "= pri: %d", rulestruct[rulecount].s_pri);
-sagan_log(0, "= classtype: %s", rulestruct[rulecount].s_classtype);
-sagan_log(0, "= drop: %d", rulestruct[rulecount].drop);
+sagan_log(0, "= sid: %s", rulestruct[counters->rulecount].s_sid);
+sagan_log(0, "= rev: %s", rulestruct[counters->rulecount].s_rev);
+sagan_log(0, "= msg: %s", rulestruct[counters->rulecount].s_msg);
+sagan_log(0, "= pri: %d", rulestruct[counters->rulecount].s_pri);
+sagan_log(0, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
+sagan_log(0, "= drop: %d", rulestruct[counters->rulecount].drop);
 
-if ( rulestruct[rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
-if ( rulestruct[rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip");
-if ( rulestruct[rulecount].s_find_port != 0 ) sagan_log(0, "= parse_port");
+if ( rulestruct[counters->rulecount].s_nocase != 0 )    sagan_log(0, "= nocase");
+if ( rulestruct[counters->rulecount].s_find_ip != 0 )   sagan_log(0, "= parse_ip");
+if ( rulestruct[counters->rulecount].s_find_port != 0 ) sagan_log(0, "= parse_port");
 
 for (i=0; i<content_count; i++) {
-    sagan_log(0, "= [%d] content: %s", i, rulestruct[rulecount].s_content[i]);
+    sagan_log(0, "= [%d] content: %s", i, rulestruct[counters->rulecount].s_content[i]);
     }
 
 for (i=0; i<ref_count; i++) {
-    sagan_log(0, "= [%d] reference: %s", i,  rulestruct[rulecount].s_reference[i]);
+    sagan_log(0, "= [%d] reference: %s", i,  rulestruct[counters->rulecount].s_reference[i]);
     }
 }
 
@@ -509,7 +506,7 @@ netcount=0;
 ref_count=0;
 strlcpy(netstr, "", 1);
 strlcpy(rulestr, "", 1);
-rulecount++;
+counters->rulecount++;
 
 } /* end of while loop */
 

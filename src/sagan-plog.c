@@ -51,6 +51,9 @@ III from Marcus J. Ranum on Jan. 6th, 2011.
 
 #include "sagan.h"
 
+struct _SaganConfig *config;
+struct _SaganDebug *debug;
+
 struct my_udphdr {
          u_int16_t uh_sport;           /* source port */
          u_int16_t uh_dport;           /* destination port */
@@ -62,11 +65,6 @@ static  void    logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
 static  int     wiredevlog();
 static  int     outf;
 
-char plog_interface[50];
-char plog_logdev[50];
-int  plog_port; 
-
-sbool debug;
 
 void plog_handler( void )
 {
@@ -77,13 +75,13 @@ void plog_handler( void )
         char                    eb[PCAP_ERRBUF_SIZE];
 	char 			filterstr[128];
 
-	iface = plog_interface;
+	iface = config->plog_interface;
 
 	sagan_log(0, "");
 	sagan_log(0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
 	sagan_log(0, "Interface: %s", iface); 
-	sagan_log(0, "UDP port to monitor: %d", plog_port);
-	sagan_log(0, "Log device: %s", plog_logdev);
+	sagan_log(0, "UDP port to monitor: %d", config->plog_port);
+	sagan_log(0, "Log device: %s", config->plog_logdev);
 	sagan_log(0, "");
 	
         if(iface == (char *)0) {
@@ -99,9 +97,9 @@ void plog_handler( void )
 
         /* compile and install our filter */
 
-	/* Port is configurable via int plog_port */ 
+	/* Port is configurable via int config->plog_port */ 
 
-	snprintf(filterstr, sizeof(filterstr), "udp port %d", plog_port);
+	snprintf(filterstr, sizeof(filterstr), "udp port %d", config->plog_port);
 
         if(pcap_compile(bp,&filtr,filterstr,1,0))
 	  sagan_log(1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
@@ -112,7 +110,7 @@ void plog_handler( void )
         /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
         if(wiredevlog()) {
 	  removelockfile();
-	  sagan_log(1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, plog_logdev);
+	  sagan_log(1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
 	}
 	
         /* endless loop */
@@ -167,7 +165,7 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
         /* our log message ought to be just past the UDP header now... */
         l = (char *)u + sizeof(struct udphdr);
         len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
-        if(debug) {
+        if(debug->debugplog) {
                 int     x;
 
 		/* I can't use sagan_log() here,  so we dump to strerr.
@@ -201,7 +199,7 @@ wiredevlog()
         struct  sockaddr        s;
 
         s.sa_family = AF_UNIX;
-        (void)strncpy(s.sa_data,plog_logdev,sizeof(s.sa_data));
+        (void)strncpy(s.sa_data,config->plog_logdev,sizeof(s.sa_data));
 
 	/* Might want to investigate SOCK_STREAM (see syslog-ng) in the future. 
 	 * Right now,  the syslog server must use SOCK_DGRAM */ 
