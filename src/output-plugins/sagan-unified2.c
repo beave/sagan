@@ -40,6 +40,8 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <dnet.h>
+#include <dnet/addr.h>
+#include <dnet/ip.h>
 #include <unistd.h>
 
 #include "sagan.h"

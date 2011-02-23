@@ -134,7 +134,7 @@ config->max_email_threads=MAX_EMAIL_THREADS;
 config->max_prelude_threads=MAX_PRELUDE_THREADS;
 #endif
 
-config->sagan_proto=17;		// UDP
+config->sagan_proto = 17;
 
 /* Start loading configuration */
 

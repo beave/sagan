@@ -145,6 +145,8 @@ int main(int argc, char **argv) {
 struct Sagan_Event *SaganEvent = NULL;
 SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 
+int endianchk;
+
 /****************************************************************************/
 /* MySQL / PostgreSQL (snort/logzilla) local variables			    */
 /****************************************************************************/
@@ -164,8 +166,6 @@ pthread_attr_t thread_logzilla_attr;
 
 pthread_attr_init(&thread_logzilla_attr);
 pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
-
-int endianchk;
 
 endianchk = checkendian();	// Needed for Snort output
 #endif

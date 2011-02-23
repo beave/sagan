@@ -228,6 +228,7 @@ struct _SaganConfig {
     sbool	 sagan_ext_flag;
     sbool        disable_dns_warnings;
     int		 daemonize;
+    int          sagan_proto;
 
 
 /* libesmtp/SMTP support */
@@ -275,7 +276,6 @@ struct _SaganConfig {
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
     int		 dbtype;
     int		 logzilla_dbtype;
-    int          sagan_proto;
     int          sagan_detail;
     int		 sensor_id;
     uint64_t	 maxdb_threads;
