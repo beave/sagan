@@ -13,6 +13,7 @@ install-data-local:
 	test -z "$(DESTDIR)$(sysconfdir)" || /bin/mkdir -p "$(DESTDIR)$(sysconfdir)"
 	test -f "$(DESTDIR)$(sysconfdir)/sagan.conf" || $(INSTALL_DATA) etc/sagan.conf "$(DESTDIR)$(sysconfdir)/sagan.conf"
 	test -z "$(DESTDIR)$(sbindir)" || /bin/mkdir -p "$(DESTDIR)$(sbindir)"
+	$(INSTALL) -m 644 etc/sagan.8 "$(DESTDIR)$(mandir)/man8/"
 	$(INSTALL) -m 755 src/sagan "$(DESTDIR)$(sbindir)/sagan"
 	$(INSTALL) -d "$(DESTDIR)/var/log/sagan"
 	$(INSTALL) -d "$(DESTDIR)/var/run/sagan"
