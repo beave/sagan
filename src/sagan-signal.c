@@ -143,6 +143,7 @@ if ( sagan_unified2_flag ) Unified2CleanExit();
 		   
 		   /* Re-load everything */
 
+		   free(config);
 		   load_config();
 
                   pthread_mutex_unlock(&sig_mutex);
