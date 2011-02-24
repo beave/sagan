@@ -134,7 +134,7 @@ config->max_email_threads=MAX_EMAIL_THREADS;
 config->max_prelude_threads=MAX_PRELUDE_THREADS;
 #endif
 
-config->sagan_proto = 17;
+config->sagan_proto = 17;		/* Default to UDP */
 
 /* Start loading configuration */
 
@@ -565,6 +565,10 @@ for (i = 0; i < rulecount; i++) {
             sagan_log(1, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
        }
    }
+
+
+if (!strcmp(config->sagan_host, "" )) sagan_log(1, "The 'sagan_host' option was not found and is required.");
+if ( config->sagan_port == 0 ) sagan_log(1, "The 'sagan_port' option was not set and is required.");
 
 }
 
