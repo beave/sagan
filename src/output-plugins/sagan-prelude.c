@@ -46,6 +46,7 @@
 #include "sagan-prelude.h"
 
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
 
 #define ANALYZER_CLASS "Log Analyzer"
 #define ANALYZER_MODEL "Sagan"
@@ -53,10 +54,6 @@ struct _SaganConfig *config;
 #define ANALYZER_SID_URL "https://wiki.softwink.com/bin/view/Main/"
 #define DEFAULT_ANALYZER_NAME "sagan"
 #define ANALYZER_INTERFACE "syslog"
-
-//char sagan_interface[50];
-//char sagan_prelude_profile[255];
-int threadpreludec;
 
 prelude_client_t *preludeclient;
 
@@ -251,7 +248,7 @@ err:
 idmef_message_destroy(idmef);
 
 pthread_mutex_lock ( &prelude_mutex );
-threadpreludec--;
+counters->threadpreludec--;
 pthread_mutex_unlock ( &prelude_mutex );
 
 pthread_exit(NULL);

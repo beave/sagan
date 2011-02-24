@@ -66,8 +66,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
-int  threaddbc;
-
 struct rule_struct *rulestruct;
 
 pthread_mutex_t db_mutex;
@@ -593,7 +591,7 @@ for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    }
 
 pthread_mutex_lock( &db_mutex );
-threaddbc--;
+counters->threaddbc--;
 pthread_mutex_unlock( &db_mutex );
 
 pthread_exit(NULL);

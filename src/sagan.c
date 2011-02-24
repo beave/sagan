@@ -1163,6 +1163,8 @@ if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 
 	if ( config->min_email_priority >= rulestruct[b].s_pri || config->min_email_priority == 0 ) { 
 
+		printf("-> smtp: %" PRIu64 " %" PRIu64 "\n" , counters->threademailc, config->max_email_threads);
+
 		if ( counters->threademailc < config->max_email_threads ) { 
 		  
 		    counters->threademailc++;

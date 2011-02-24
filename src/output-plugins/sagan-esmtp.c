@@ -45,8 +45,7 @@
 
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
-
-int threademailc;
+struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
 
@@ -162,7 +161,7 @@ if(session != NULL)
 	smtp_destroy_session (session);
 
 pthread_mutex_lock ( &email_mutex );
-threademailc--;
+counters->threademailc--;
 pthread_mutex_unlock ( &email_mutex );
 
 pthread_exit(NULL);

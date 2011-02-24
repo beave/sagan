@@ -56,8 +56,7 @@ char pgconnect[2048];
 #endif
 
 struct _SaganConfig *config;
-
-int  threadlogzillac;
+struct _SaganCounters *counters;
 
 pthread_mutex_t logzilla_db_mutex;
 
@@ -241,7 +240,9 @@ snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO logs (host, facility, priority, le
 sql=sqltmp;
 logzilla_db_query(config->logzilla_dbtype, sql);
 
-threadlogzillac--;
+pthread_mutex_lock ( &logzilla_db_mutex );
+counters->threadlogzillac--;
+pthread_mutex_unlock ( &logzilla_db_mutex );
 
 }
 

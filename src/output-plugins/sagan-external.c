@@ -41,9 +41,8 @@
 #include "version.h"
 
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
 struct rule_struct *rulestruct;
-
-int  threadextc;
 
 void sagan_ext_thread ( SaganEvent *Event ) {
 
@@ -134,7 +133,7 @@ if (( pid = fork()) == 0 ) {
    waitpid(pid, NULL, 0);
 
 pthread_mutex_lock( &ext_mutex );
-threadextc--;
+counters->threadextc--;
 pthread_mutex_unlock( &ext_mutex );
 
 pthread_exit(NULL);
