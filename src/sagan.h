@@ -49,7 +49,13 @@
 #define MAXTAG		32		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
 
-#define MAX_MSGSLOT	100		/* Slots for syslog message passing */
+/* Used for the syslog "msgslot" array.  This can be increased,  but 
+ * anything > || == 30 causes SEGFAULTs under FreeBSD 
+ * Champ Clark - 02/28/2010
+ */
+
+#define MAX_MSGSLOT	25		/* Slots for syslog message passing */
+
 #define MAX_THREADS     4096            /* Max system threads */
 #define MAX_SYSLOGMSG   63556		/* Max length of a syslog message */
 
