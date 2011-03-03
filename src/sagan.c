@@ -730,7 +730,7 @@ if ( programmode == 0 ) {
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
-                       if (!strcmp(ptmp, syslog_program)) match=0;
+                       if (!strcmp(ptmp, syslog_program)) match=0; 
                        ptmp = strtok_r(NULL, "|", &tok2);
                        }
                 }
@@ -822,7 +822,11 @@ if ( programmode == 0 ) {
 	
 		/* if you got match */
 
-		if ( pcrematch != 0 && pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
+// README
+//		printf("match == %d | if %d != 0 && pcrematch == %d + %d\n", match, pcrematch, rulestruct[b].pcre_count, rulestruct[b].content_count);
+		//if ( pcrematch != 0 && pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
+		
+		if ( pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count ) 
 		   {
 		
 		   if ( match == 0 ) { 
