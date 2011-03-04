@@ -154,7 +154,7 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
-     if (!strcmp(sagan_option, "disable_dns_warnings")) { 
+     if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
          sagan_log(0, "Supressing DNS warnings");
          config->disable_dns_warnings = 1;
 	 }
@@ -175,6 +175,14 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          }
 
 #ifdef HAVE_LIBESMTP
+
+   if (!strcmp(sagan_option, "send-to")) { 
+      sagan_var = strtok_r(NULL, " ", &tok);
+      snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", sagan_var);
+      remrt(config->sagan_esmtp_to);
+      config->sagan_esmtp_flag=1;
+      config->sagan_sendto_flag=1;
+      }
 
    if (!strcmp(sagan_option, "max_email_threads")) {
        sagan_var = strtok_r(NULL, " ", &tok);
@@ -351,12 +359,6 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 	   while (ptmp != NULL ) { 
 
-	     if (!strcmp(ptmp, "to")) { 
-	        ptmp = strtok_r(NULL, " ", &tok);
-		snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", ptmp);
-		remrt(config->sagan_esmtp_to);
-		}
-             
              if (!strcmp(ptmp, "from")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->sagan_esmtp_from, sizeof(config->sagan_esmtp_from), "%s", ptmp);
@@ -367,17 +369,12 @@ if (!strcmp(sagan_var, "unified2:")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->sagan_esmtp_server, sizeof(config->sagan_esmtp_server), "%s", ptmp);
 		remrt(config->sagan_esmtp_server);
-		config->sagan_esmtp_flag=0;
+		printf("in config: %s\n", config->sagan_esmtp_server);
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);    
 	  }
 
-	  if (!strcmp(config->sagan_esmtp_from, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
-	  if (!strcmp(config->sagan_esmtp_to, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'to' field is missing!", __FILE__, __LINE__);
-	  if (!strcmp(config->sagan_esmtp_server, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing!", __FILE__, __LINE__);
-	  
-	  config->sagan_esmtp_flag=1;
 	}
 #endif
 
@@ -566,6 +563,14 @@ for (i = 0; i < rulecount; i++) {
        }
    }
 
+/* If we have the "send-to" option,  verify the configuration has the proper smtpserver, etc.  */
+
+#ifdef HAVE_LIBESMTP
+
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) sagan_log(1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
+
+#endif 
 
 if (!strcmp(config->sagan_host, "" )) sagan_log(1, "The 'sagan_host' option was not found and is required.");
 if ( config->sagan_port == 0 ) sagan_log(1, "The 'sagan_port' option was not set and is required.");

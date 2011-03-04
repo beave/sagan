@@ -243,6 +243,7 @@ struct _SaganConfig {
     uint64_t	max_email_threads;
     int		min_email_priority;
     char	sagan_esmtp_to[255];
+    sbool	sagan_sendto_flag;
     char	sagan_esmtp_from[255];
     char	sagan_esmtp_server[255];
     sbool	sagan_esmtp_flag;
@@ -338,6 +339,10 @@ char s_facility[50];
 char s_syspri[25];
 char s_level[25];
 char s_tag[10];
+
+char email[255];
+sbool email_flag;
+
 int s_nocase;
 int pcre_count;
 int content_count;

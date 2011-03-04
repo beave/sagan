@@ -1115,7 +1115,7 @@ SaganEvent[threadid].event_time_sec = 	time(NULL);
 
 if ( thresh_log_flag == 0 ) sagan_alert( &SaganEvent[threadid] );
 
-/* Unified2 README */
+/* Log to unified2 output (if enabled and have libdnet). */
 
 #ifdef HAVE_LIBDNET
 
@@ -1161,7 +1161,13 @@ if ( counters->threadpreludec < config->max_prelude_threads ) {
 
 #ifdef HAVE_LIBESMTP
 
-if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) { 
+/* Has e-mail been turned on? */
+
+if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
+
+   /* If so,  this rule based (email:) or configuration based (send-to) */
+   
+   if ( rulestruct[b].email_flag  || config->sagan_sendto_flag ) { 
 		  
 	/* E-mail only if over min_email_priority */ 
 
@@ -1182,8 +1188,9 @@ if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 		       counters->sagandrop++;
 		       counters->saganesmtpdrop++;
 		       sagan_log(0, "SMTP thread call handler: Out of threads\n");
-	        }
-	}
+          }
+      }
+   }
 }
 #endif
 		

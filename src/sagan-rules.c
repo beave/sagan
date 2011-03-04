@@ -57,6 +57,7 @@ int liblognormtoload_count;
 #endif
 
 char ruleset[MAXPATH];
+char saganconf[MAXPATH];
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
@@ -303,6 +304,18 @@ remspaces(rulesplit);
 		remspaces(arg);
 		rulestruct[counters->rulecount].s_pri = atoi(arg);
                 }
+
+#ifdef HAVE_LIBESMTP
+	
+	if (!strcmp(rulesplit, "email" )) { 
+		arg = strtok_r(NULL, " ", &saveptrrule2);
+		if (arg == NULL ) sagan_log(1, "The \"email\" appears to be incomplete");
+	        if (!strcmp(config->sagan_esmtp_server, "" )) sagan_log(1, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s", __FILE__, __LINE__, linecount, ruleset, saganconf);
+		snprintf(rulestruct[counters->rulecount].email, sizeof(rulestruct[counters->rulecount].email), "%s", remspaces(arg));
+		rulestruct[counters->rulecount].email_flag=1; 
+		config->sagan_esmtp_flag=1;
+		}
+#endif
 
 #ifdef HAVE_LIBLOGNORM
 	

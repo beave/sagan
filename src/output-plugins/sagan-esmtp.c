@@ -54,12 +54,21 @@ void sagan_esmtp_thread (SaganEvent *Event) {
 pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 char tmpref[2048];
+char tmpemail[255];
 
 char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
 
 snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
+
+/* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
+ 
+if ( rulestruct[Event->found].email_flag )  { 
+   snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
+   } else { 
+   if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
+   }
 
 if ((r = snprintf(tmpa, sizeof(tmpa), 
 	"MIME-Version: 1.0\r\n"
@@ -74,7 +83,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"%s %s %s:%d -> %s:%d %s %s\n"
 	"Syslog message: %s\r\n%s\n\r",
 	config->sagan_esmtp_from,
-	config->sagan_esmtp_to,
+	tmpemail, 
 	Event->f_msg,
 	rulestruct[Event->found].s_sid, 
 	Event->f_msg,
@@ -146,6 +155,7 @@ if (!smtp_start_session (session)) {
     */
 
 	sagan_log(0, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
+	counters->saganesmtpdrop++;
 
    } else {
 
