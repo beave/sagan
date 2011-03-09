@@ -512,7 +512,7 @@ if ( config->sagan_unified2_flag ) {
 
 sagan_log(0, "");
 sagan_log(0, "Unified2 file: %s", config->unified2_filepath);
-sagan_log(0, "Unified2 limit: %dM", config->unified2_limit  / 1024 );
+sagan_log(0, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
 Unified2InitFile( );
 
 }
@@ -702,7 +702,7 @@ while(1) {
                    }
 
                 if ( syslog_msg == NULL ) {
-                   syslog_msg = "SAGAN: MESSAGE ERROR";
+                   syslog_msg = "SAGAN: MESSAGE ERROR\r\n";			/* Needs \r\n for strcspn() or segfault occurs */
                    if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'message'");
                    }
 

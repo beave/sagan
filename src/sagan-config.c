@@ -320,7 +320,7 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 	     if (!strcmp(ptmp, "limit")) { 
 	        ptmp = strtok_r(NULL, " ", &tok);
-	        config->unified2_limit = atoi(ptmp) * 1024;
+	        config->unified2_limit = atoi(ptmp) * 1024 * 1024;
 		}
 
              if (!strcmp(ptmp, "nostamp")) config->unified2_nostamp = 1;
@@ -523,11 +523,9 @@ if (!strcmp(sagan_var, "unified2:")) {
 	if (!strcmp(sagan_var, "SAGANLOGPATH" )) {
 	   snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", strtok_r(NULL, " ", &tok));
 	   config->sagan_log_path[strlen(config->sagan_log_path)-1] = '\0';
-            }
-
-	
-
-        }
+           }
+        
+	}
      /* "include */
 
      if (!strcmp(sagan_option, "include" )) {
