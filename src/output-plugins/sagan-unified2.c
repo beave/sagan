@@ -51,9 +51,7 @@ uint64_t unified_event_id;
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 struct _SaganConfig *config;
-
-int classcount;
-int rulecount;
+struct _SaganCounters *counters;
 
 static void Unified2Write(uint8_t *, uint32_t);
 static int SafeMemcpy(void *, const void *, size_t, const void *, const void *);
@@ -82,8 +80,6 @@ void Unified2InitFile( void  )
     char filepath[1024];
     char *fname_ptr;
 
-	// README
-	//
     if (config == NULL) sagan_log(1, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ ); 
 
     config->unified2_timestamp = (uint32_t)time(NULL);
@@ -131,11 +127,8 @@ alertdata.signature_revision = htonl(atoi(rulestruct[Event->found].s_rev));	// R
 
 /* There's probably a better way to do this - Champ Clark III - 02/17/2011 */
 
-for(i=0; i<classcount;i++) {
-    
-    if (!strcmp(rulestruct[Event->found].s_classtype, classstruct[i].s_shortname)) {
-	 alertdata.classification_id = htonl(i + 1);
-         }
+for(i=0; i < counters->classcount; i++) {
+    if (!strcmp(rulestruct[Event->found].s_classtype, classstruct[i].s_shortname)) alertdata.classification_id = htonl(i + 1);
 }
 
 alertdata.priority_id = htonl(rulestruct[Event->found].s_pri);			// Rule priority
@@ -254,7 +247,7 @@ if ( rulestruct[Event->found].ip_proto == 17 ) {
 	udp = (struct udp_hdr *)udp_buf;
 	memset(udp, 0, sizeof(*udp));
 
-	udp->uh_sport = htons(Event->src_port);	// README wasn't gettign port ?
+	udp->uh_sport = htons(Event->src_port);
 	udp->uh_dport = htons(Event->dst_port);
 
 	p_udp = udp_buf + UDP_HDR_LEN;
@@ -581,8 +574,9 @@ static void Unified2Write(uint8_t *buf, uint32_t buf_len)
 
                 case EIO:
 		        sagan_log(1, "[%s, line %d] Unified2 file is corrupt", __FILE__, __LINE__);
-//              NEEDED
-//                    Unified2RotateFile(config);
+                    
+		    Unified2RotateFile();
+
                     if (config->unified2_nostamp)
                     {
 		    sagan_log(0, "[%s, line %d] New Unified2 file: %s", __FILE__, __LINE__, config->unified2_filepath);

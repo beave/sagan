@@ -229,7 +229,6 @@ pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
 sbool fifoerr=0;
-sbool msgerr=0;
 
 int   threadid=0;
 
@@ -651,7 +650,6 @@ while(1) {
 		 * If that's the case,  don't report because it's useless
 		 * information & will fill our logs */
 
-		msgerr=0;
 		syslog_host = strtok_r(syslogstring, "|", &tok);
 		
 		if (syslog_host == NULL ) { 
@@ -705,8 +703,7 @@ while(1) {
 
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
-		   msgerr = 1;
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'message'");
+                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'message'\n");
                    }
 
 
@@ -714,9 +711,8 @@ if (debug->debugsyslog) sagan_log(0, "Host:%s|Facility:%s|Pri:%s|Level:%s|Tag:%s
 
 /* If in "program" mode,  we need the \r \n's */
 
-if ( programmode == 0 && msgerr == 0 ) { 
+if ( programmode == 0 ) {
    syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
-   syslog_msg[strcspn ( syslog_msg, "\r" )] = '\0';
    }
 
 		/* Search for matches */
@@ -724,7 +720,7 @@ if ( programmode == 0 && msgerr == 0 ) {
 		/* First we search for 'program' and such.   This way,  we don't waste CPU
 		 * time with pcre/content.  */
 
-		for(b=0; b < counters-> rulecount; b++) {
+		for(b=0; b < counters->rulecount; b++) {
 
                 match = 0; program=""; facility=""; syspri=""; level=""; tag=""; content="";
 
@@ -825,10 +821,6 @@ if ( programmode == 0 && msgerr == 0 ) {
 	
 		/* if you got match */
 
-// README
-//		printf("match == %d | if %d != 0 && pcrematch == %d + %d\n", match, pcrematch, rulestruct[b].pcre_count, rulestruct[b].content_count);
-		//if ( pcrematch != 0 && pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
-		
 		if ( pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count ) 
 		   {
 		

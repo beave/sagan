@@ -219,6 +219,7 @@ struct _SaganConfig {
 /* Non-dependent var's */
 
     char         sagan_alert_filepath[MAXPATH];
+    char         sagan_interface[50];
     FILE         *sagan_alert_stream;
     char	 sagan_log_filepath[MAXPATH];
     FILE	 *sagan_log_stream;
@@ -288,7 +289,6 @@ struct _SaganConfig {
     uint64_t	 maxdb_threads;
     uint64_t	 max_logzilla_threads;
     char	 sagan_hostname[MAXHOST];
-    char	 sagan_interface[50];
     char	 sagan_filter[50];
     char	 logzilla_user[MAXUSER];
     char	 logzilla_password[MAXPASS];
