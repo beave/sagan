@@ -37,8 +37,6 @@
 #include "sagan.h"
 #include "version.h"
 
-int refcount;
-
 struct rule_struct *rulestruct;
 struct ref_struct *refstruct;
 struct _SaganConfig *config;

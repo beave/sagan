@@ -68,8 +68,9 @@ sbool programmode;
 
 struct rule_struct *rulestruct;
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
 
-int rulecount,i,check;
+int i,check;
 
 sbool fifoi; 
 
@@ -138,7 +139,7 @@ config->sagan_proto = 17;		/* Default to UDP */
 
 /* Start loading configuration */
 
-rulestruct = (rule_struct *) realloc(rulestruct, (rulecount+1) * sizeof(rule_struct));
+rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(rule_struct));
 
 /* Gather information for the master configuration file */
 
@@ -554,8 +555,8 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 /* Check rules for duplicate sid.  We can't have that! */
 
-for (i = 0; i < rulecount; i++) {
-   for ( check = i+1; check < rulecount; check ++) {
+for (i = 0; i < counters->rulecount; i++) {
+   for ( check = i+1; check < counters->rulecount; check ++) {
        if (!strcmp (rulestruct[check].s_sid, rulestruct[i].s_sid ))
             sagan_log(1, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
        }
