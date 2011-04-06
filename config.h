@@ -65,10 +65,10 @@
 #define HAVE_LIBPCRE 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-/* #undef HAVE_LIBPQ */
+#define HAVE_LIBPQ 1
 
 /* Define to 1 if you have the `prelude' library (-lprelude). */
-/* #undef HAVE_LIBPRELUDE */
+#define HAVE_LIBPRELUDE 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1

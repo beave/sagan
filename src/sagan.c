@@ -837,7 +837,7 @@ if ( programmode == 0 ) {
 		   uid=NULL;
 
 #ifdef HAVE_LIBLOGNORM
-		   if ( rulestruct[b].normalize == 1 )  
+		   if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 ) 
 		      {
 		      str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
 		      ln_normalize(ctx, str, &lnevent);

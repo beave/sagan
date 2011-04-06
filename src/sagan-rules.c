@@ -340,7 +340,7 @@ remspaces(rulesplit);
 			   liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
 			   snprintf(liblognormtoloadstruct[liblognormtoload_count].type, sizeof(liblognormtoloadstruct[liblognormtoload_count].type), "%s",  liblognormstruct[i].type);
 			   snprintf(liblognormtoloadstruct[liblognormtoload_count].filepath, sizeof(liblognormtoloadstruct[liblognormtoload_count].filepath), "%s",  liblognormstruct[i].filepath);
-			   liblognormtoload_count++;
+			   counters->liblognormtoload_count++;
 			}
 
 		}

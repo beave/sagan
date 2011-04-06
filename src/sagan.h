@@ -185,6 +185,11 @@ struct _SaganCounters {
     uint64_t threadmaxpreludec;
     uint64_t saganpreludedrop;
 #endif
+
+#ifdef HAVE_LIBLOGNORM
+    int liblognormtoload_count;
+#endif
+
 };   
 
 typedef struct _SaganDebug _SaganDebug;
