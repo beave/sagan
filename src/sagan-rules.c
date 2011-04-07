@@ -53,7 +53,6 @@ struct _SaganCounters *counters;
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
-int liblognormtoload_count;
 #endif
 
 char ruleset[MAXPATH];
@@ -332,14 +331,14 @@ remspaces(rulesplit);
 
 			liblognorm_flag=1;
 			
-		    	for (a=0; a < liblognormtoload_count; a++) { 
+		    	for (a=0; a < counters->liblognormtoload_count; a++) { 
 			    if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[a].type )) liblognorm_flag=0;
 			}
 
 			if ( liblognorm_flag == 1 ) { 
-			   liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
-			   snprintf(liblognormtoloadstruct[liblognormtoload_count].type, sizeof(liblognormtoloadstruct[liblognormtoload_count].type), "%s",  liblognormstruct[i].type);
-			   snprintf(liblognormtoloadstruct[liblognormtoload_count].filepath, sizeof(liblognormtoloadstruct[liblognormtoload_count].filepath), "%s",  liblognormstruct[i].filepath);
+			   liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+			   snprintf(liblognormtoloadstruct[counters->liblognormtoload_count].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type), "%s",  liblognormstruct[i].type);
+			   snprintf(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath), "%s",  liblognormstruct[i].filepath);
 			   counters->liblognormtoload_count++;
 			}
 

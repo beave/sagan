@@ -102,7 +102,6 @@ struct stat fileinfo;
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
-int liblognormtoload_count;
 
 static ln_ctx ctx;
 static ee_ctx eectx;
@@ -418,7 +417,7 @@ if((eectx = ee_initCtx()) == NULL) sagan_log(1, "[%s, line %d] Cannot initialize
 
 ln_setEECtx(ctx, eectx);
 
-for (i=0; i < liblognormtoload_count; i++) { 
+for (i=0; i < counters->liblognormtoload_count; i++) { 
 sagan_log(0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
 if (stat(liblognormtoloadstruct[i].filepath, &fileinfo)) sagan_log(1, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
 ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
