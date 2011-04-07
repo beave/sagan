@@ -370,7 +370,6 @@ if (!strcmp(sagan_var, "unified2:")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->sagan_esmtp_server, sizeof(config->sagan_esmtp_server), "%s", ptmp);
 		remrt(config->sagan_esmtp_server);
-		printf("in config: %s\n", config->sagan_esmtp_server);
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);    
@@ -527,6 +526,16 @@ if (!strcmp(sagan_var, "unified2:")) {
            }
         
 	}
+
+
+/* We open the sagan.log file here.  This keeps us from having to "re-open" the load
+ * file over and over - Champ Clark III 04/07/2011 */
+
+if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL) {
+    fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
+    exit(1);
+    }
+
      /* "include */
 
      if (!strcmp(sagan_option, "include" )) {
@@ -552,6 +561,7 @@ if (!strcmp(sagan_var, "unified2:")) {
           }
      }
 }
+
 
 /* Check rules for duplicate sid.  We can't have that! */
 

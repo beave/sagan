@@ -128,11 +128,15 @@ prelude_deinit();
 if ( sagan_unified2_flag ) Unified2CleanExit(); 
 #endif
 
-                  removelockfile();
-                  exit(0);
-                  break;
+	        fflush(config->sagan_alert_stream);
+	        fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
 
+       		fflush(config->sagan_log_stream);               /* Close the sagan.log */
+        	fclose(config->sagan_log_stream);
 
+                removelockfile();
+                exit(0);
+                break;
 
                  case SIGHUP:
                    pthread_mutex_lock(&sig_mutex);
@@ -212,6 +216,9 @@ if ( sagan_unified2_flag ) Unified2CleanExit();
 	fflush(config->sagan_alert_stream); 
 	fclose(config->sagan_alert_stream);		/* Close Sagan alert file */
 
+	fflush(config->sagan_log_stream);		/* Close the sagan.log */
+	fclose(config->sagan_log_stream);
+	
         removelockfile();
         exit(0);
         break;

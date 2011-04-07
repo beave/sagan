@@ -87,8 +87,11 @@ void droppriv(const char *username, const char *fifo)
 
 		/* Some syslog daemons re-open the FIFO as 'root'.  We reset that here */
 
-		ret = chown(fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, fifo, username);
+		ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+
+                ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+                if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_log_filepath, username);
 
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
@@ -168,8 +171,6 @@ char *toupperc(char* const s) {
 
 void sagan_log (int type, const char *format,... ) {
 
-   FILE *log; 
-
    char buf[1024];
    va_list ap;
    va_start(ap, format);
@@ -181,19 +182,13 @@ void sagan_log (int type, const char *format,... ) {
    t = time(NULL);
    now=localtime(&t);
    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
-   snprintf(tmplog, sizeof(tmplog), "%s", config->sagan_log_filepath);
 
    if ( type == 1 ) chr="E";
 
-     if ((log = fopen(tmplog, "a")) == NULL) {
-       fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
-       exit(1);
-       }
-
      vsnprintf(buf, sizeof(buf), format, ap);
-     fprintf(log, "[%s] [%s] - %s\n", chr, curtime, buf);
-     fflush(log);
-     fclose(log);
+     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
+     fflush(config->sagan_log_stream);
+
      if ( programmode == 0 && daemonize == 0) printf("[%s] %s\n", chr, buf);
      if ( type == 1 ) exit(1);
 }
