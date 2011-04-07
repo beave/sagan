@@ -88,15 +88,15 @@ void droppriv(const char *username, const char *fifo)
 		/* Some syslog daemons re-open the FIFO as 'root'.  We reset that here */
 
 		ret = chown(fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-		if ( ret < 0 ) sagan_log(1, "[%s line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, fifo, username);
+		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, fifo, username);
 
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-		        sagan_log(1, "[%s line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
+		        sagan_log(1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
                 }
         }
         else {
-	        sagan_log(1, "[%s line %d] User %.32s cannot be found. [%s line %d]", __FILE__, __LINE__, username);
+	        sagan_log(1, "[%s, line %d] User \"%.32s\" cannot be found.", __FILE__, __LINE__, username);
         }
 
 	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
@@ -186,7 +186,7 @@ void sagan_log (int type, const char *format,... ) {
    if ( type == 1 ) chr="E";
 
      if ((log = fopen(tmplog, "a")) == NULL) {
-       fprintf(stderr, "[E] Cannot open %s! [%s line %d]\n", config->sagan_log_filepath, __FILE__, __LINE__);
+       fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
        exit(1);
        }
 
@@ -269,7 +269,7 @@ char *sql_escape(const char *string, int from )
         escaped = malloc(len * 2 + 3);
         
 	if (! escaped) {
-                sagan_log(1, "[%s, line %d] memory exhausted.", __FILE__, __LINE__ );
+                sagan_log(1, "[%s, line %d] Memory exhausted.", __FILE__, __LINE__ );
                 return NULL;
         }
 
