@@ -75,7 +75,10 @@ if (stat(config->sagan_lockfile, &lckcheck) == 0 ) {
          sagan_log(1, "[%s, line %d] It appears that Sagan is already running (pid: %d).", __FILE__, __LINE__, pid);
 	 } else {
 
-	 sagan_log(1, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (stale %s file?)", __FILE__, __LINE__, pid, config->sagan_lockfile);
+	 sagan_log(0, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (Removing stale %s file)", __FILE__, __LINE__, pid, config->sagan_lockfile);
+	 if (unlink(config->sagan_lockfile)) { 
+	    sagan_log(1, "Unable to delete %s. ", config->sagan_lockfile);
+	    }
 	 }
         } 
 
