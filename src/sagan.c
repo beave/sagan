@@ -521,6 +521,7 @@ Unified2InitFile( );
 
 sagan_log(0, "");
 
+/*
 if ( fifoi == 0 ) { 
    if ( programmode == 0 ) 
       { 
@@ -531,7 +532,7 @@ if ( fifoi == 0 ) {
    sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
    fd = open(config->sagan_fifo, O_RDONLY); 
    }
-
+*/
 
 sagan_log(0, "");
 sagan_log(0, " ,-._,-. 	-*> Sagan! <*-");
@@ -580,6 +581,18 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 
 }
 
+/* We do this after forking so init scripts can complete */
+
+if ( fifoi == 0 ) {
+   if ( programmode == 0 )
+      {
+      sagan_log(0, "No FIFO option found,  assuming syslog-ng 'program' mode.");
+      programmode = 1;
+      }
+   } else {
+   sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
+   fd = open(config->sagan_fifo, O_RDONLY);
+}
 
 /* Check lock file _after_ thread.  If you don't it'll retreive the wrong pid
  * and incorrectly believe there is a stale lock file if --daemon */
