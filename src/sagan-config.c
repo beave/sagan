@@ -144,7 +144,8 @@ rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeo
 /* Gather information for the master configuration file */
 
 if ((sagancfg = fopen(saganconf, "r")) == NULL) {
-   sagan_log(1, "[%s, line %d] Cannot open configuration file (%s)", __FILE__,  __LINE__, saganconf);
+   fprintf(stderr, "[%s, line %d] Cannot open configuration file (%s)\n", __FILE__,  __LINE__, saganconf);
+   exit(1);
    }
 
 while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {

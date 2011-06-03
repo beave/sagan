@@ -129,7 +129,7 @@ const struct option long_options[] = {
 };
 
 static const char *short_options =
-"fUd:pDhc";
+"f:Ud:pDhc";
 
 int option_index = 0;
 
