@@ -39,7 +39,7 @@ void sagan_usage(void)
 {
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
-fprintf(stderr, "-d, --debug [type]\tTypes: syslog,load");
+fprintf(stderr, "-d, --debug [type]\tTypes: syslog, load");
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 fprintf(stderr, ", sql");
