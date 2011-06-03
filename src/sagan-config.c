@@ -110,15 +110,10 @@ char *tok=NULL;
 
 int i;
 
-memset(&config, 0, sizeof(config));
-config = malloc(sizeof(_SaganConfig));
-
 /* Set some system defaults */
 
 snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
-snprintf(config->sagan_log_filepath, sizeof(config->sagan_log_filepath), "%s", SAGANLOG);
 snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
-snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
 
 config->max_external_threads=MAX_EXT_THREADS;
 
@@ -511,33 +506,13 @@ if (!strcmp(sagan_var, "unified2:")) {
            config->sagan_lockfile[strlen(config->sagan_lockfile)-1] = '\0'; 
 	   }
 
-        if (!strcmp(sagan_var, "SAGANLOG" )) {
-	   snprintf(config->sagan_log_filepath, sizeof(config->sagan_log_filepath), "%s", strtok_r(NULL, " ", &tok));
-	   config->sagan_log_filepath[strlen(config->sagan_log_filepath)-1] = '\0';
-	   }
-
         if (!strcmp(sagan_var, "ALERTLOG" )) {
            snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", strtok_r(NULL, " ", &tok));
            config->sagan_alert_filepath[strlen(config->sagan_alert_filepath)-1] = '\0'; 
 	   }
-
-	if (!strcmp(sagan_var, "SAGANLOGPATH" )) {
-	   snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", strtok_r(NULL, " ", &tok));
-	   config->sagan_log_path[strlen(config->sagan_log_path)-1] = '\0';
-           }
-        
 	}
 
-
-/* We open the sagan.log file here.  This keeps us from having to "re-open" the load
- * file over and over - Champ Clark III 04/07/2011 */
-
-if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL) {
-    fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
-    exit(1);
-    }
-
-     /* "include */
+/* "include */
 
      if (!strcmp(sagan_option, "include" )) {
 

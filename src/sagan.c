@@ -124,12 +124,13 @@ const struct option long_options[] = {
 	{ "user",	  required_argument,	NULL,	'U' },
 	{ "chroot", 	  no_argument, 		NULL, 	'c' },
 	{ "config",	  required_argument, 	NULL, 	'f' },
+	{ "log",	  required_argument,	NULL,	'l' },
 	{0, 0, 0, 0}
 
 };
 
 static const char *short_options =
-"f:Ud:pDhc";
+"l:f:U:d:pDhc";
 
 int option_index = 0;
 
@@ -333,6 +334,13 @@ debug = malloc(sizeof(_SaganDebug));
 memset(&counters, 0, sizeof(counters));
 counters = malloc(sizeof(_SaganCounters));
 
+memset(&config, 0, sizeof(config));
+config = malloc(sizeof(_SaganConfig));
+
+/* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed 
+   shortly - 06/03/2011 - Champ Clark III */
+
+snprintf(config->sagan_log_filepath, sizeof(config->sagan_log_filepath), "%s", SAGANLOG);
 
 /* Get command line arg's */
 while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1) { 
@@ -386,9 +394,15 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 
 	   case 'f':
-	   strncpy(saganconf,optarg,sizeof(saganconf) - 1);
+	   strncpy(saganconf,optarg,sizeof(saganconf) - 1);		//	strlcpy
 	   saganconf[sizeof(saganconf)-1] = '\0';
 	   break;
+
+	   case 'l':
+	   strncpy(config->sagan_log_filepath,optarg,sizeof(config->sagan_log_filepath) - 1);
+	   saganconf[sizeof(saganconf)-1] = '\0';
+	   break;
+	   
 
 	  default:
           fprintf(stderr, "Invalid argument! See below for command line switches.\n");
@@ -397,6 +411,13 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	  break;
   	  }
 }
+
+/* Open the sagan.log file.  Moved from sagan-config.c as it became to complex 
+   06/03/2011 - Champ Clark */
+
+if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL) {
+    fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
+    }
 
 /* create the signal handling thread */
 
