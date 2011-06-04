@@ -420,6 +420,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 
 if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL) {
     fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
+    exit(1);
     }
 
 /* create the signal handling thread */
