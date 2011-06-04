@@ -328,14 +328,17 @@ int pcrematch=0;
 time_t t;
 struct tm *now;
 
-memset(&debug, 0, sizeof(debug));
+/* Allocate and clear memory for global structs */
+
 debug = malloc(sizeof(_SaganDebug));
+memset(debug, 0, sizeof(debug));
 
-memset(&counters, 0, sizeof(counters));
 counters = malloc(sizeof(_SaganCounters));
+memset(counters, 0, sizeof(counters));
 
-memset(&config, 0, sizeof(config));
 config = malloc(sizeof(_SaganConfig));
+memset(config, 0, sizeof(config));
+
 
 /* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed 
    shortly - 06/03/2011 - Champ Clark III */
