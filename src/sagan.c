@@ -331,13 +331,13 @@ struct tm *now;
 /* Allocate and clear memory for global structs */
 
 debug = malloc(sizeof(_SaganDebug));
-memset(debug, 0, sizeof(debug));
+memset(debug, 0, sizeof(_SaganDebug));
 
 counters = malloc(sizeof(_SaganCounters));
-memset(counters, 0, sizeof(counters));
+memset(counters, 0, sizeof(_SaganCounters));
 
 config = malloc(sizeof(_SaganConfig));
-memset(config, 0, sizeof(config));
+memset(config, 0, sizeof(_SaganConfig));
 
 
 /* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed 
