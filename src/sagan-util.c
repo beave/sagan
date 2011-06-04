@@ -87,22 +87,27 @@ void droppriv(const char *username, const char *fifo)
 
 		/* Some syslog daemons re-open the FIFO as 'root'.  We reset that here */
 
+		if ( getuid() == 0 ) {
+		
 		ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
-
-                ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-                if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_log_filepath, username);
-
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
 		        sagan_log(1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
-                }
+	       } 
+	       
+	       } /* getuid() */
         }
         else {
 	        sagan_log(1, "[%s, line %d] User \"%.32s\" cannot be found.", __FILE__, __LINE__, username);
         }
 
+	if ( getuid() == 0 ) { 
 	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+	} else { 
+	sagan_log(0, "Not dropping privileges.  Already running as a non-privileged user");
+	}
+
 }
 
 /***************************************************************/
