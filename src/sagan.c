@@ -83,12 +83,9 @@ struct class_struct *classstruct;
 
 sbool daemonize=0;
 sbool programmode=0;
-sbool dochroot=0;
 
 char saganconf[MAXPATH]=CONFIG_FILE_PATH;
 char *runas=RUNAS;
-
-char sagan_path[MAXPATH];
 
 sbool fifoi=0;
 
@@ -393,7 +390,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 
 	   case 'c':
-	   dochroot=1;
+	   sagan_chroot(runas);		/* Do chroot early on */
 	   break;
 
 	   case 'f':

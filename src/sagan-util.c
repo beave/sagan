@@ -54,11 +54,37 @@ MYSQL    *mysql, *mysql_logzilla;
 
 struct _SaganConfig *config;
 
-char sagan_path[MAXPATH];
+//char sagan_path[MAXPATH];
 
 sbool daemonize;
 sbool programmode;
-sbool dochroot;
+
+
+/*****************************************************************************
+ * This force Sagan to chroot.                                               *
+ *                                                                           *
+ * Note: printf/fprints are used,  because we actually chroot before the log *
+ * it initalized                                                             *
+ *****************************************************************************/
+
+void sagan_chroot(const char *username ) { 
+
+struct passwd *pw = NULL;
+int ret;
+
+pw = getpwnam(username);
+
+printf("[*] Chroot to %.64s\n", pw->pw_dir);
+if (pw) { 
+//	if (pw->pw_dir) snprintf(sagan_path, sizeof(sagan_path), "%s", pw->pw_dir);
+	if (pw->pw_dir) {
+		if (chroot(pw->pw_dir) != 0 || chdir ("/") != 0) {
+			 fprintf(stderr, "[E] Could not chroot/chdir to '%.64s'.",  pw->pw_dir);
+	      }
+	   }
+	}
+
+}
 
 
 /************************************************
@@ -72,42 +98,21 @@ void droppriv(const char *username, const char *fifo)
 	int ret;
 
         pw = getpwnam(username);
+
+	if (!pw) sagan_log(1, "Couldn't locate user '%s'. Aborting...", username);
         
-	if (pw) {
-	        
-		if (pw->pw_dir) snprintf(sagan_path, sizeof(sagan_path), "%s", pw->pw_dir);
-		 
-		if ( dochroot == 1) {
-                if (pw->pw_dir) {
-                        if (chroot(pw->pw_dir) != 0 || chdir ("/") != 0) {
-			        sagan_log(1, "Could not chroot/chdir to '%.64s'.",  pw->pw_dir);
-        		}
-          	    }
-		}
-
-		/* Some syslog daemons re-open the FIFO as 'root'.  We reset that here */
-
-		if ( getuid() == 0 ) {
-		
-		ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+	if ( getuid() == 0 ) {
+	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+	ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
 		        sagan_log(1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
 	       } 
 	       
-	       } /* getuid() */
-        }
-        else {
-	        sagan_log(1, "[%s, line %d] User \"%.32s\" cannot be found.", __FILE__, __LINE__, username);
-        }
-
-	if ( getuid() == 0 ) { 
-	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
-	} else { 
-	sagan_log(0, "Not dropping privileges.  Already running as a non-privileged user");
-	}
-
+	       } else { 
+	       sagan_log(0, "Not dropping privileges.  Already running as a non-privileged user");
+	       }
 }
 
 /***************************************************************/
