@@ -407,9 +407,11 @@ char *sql;
 
 /* Temp. store 32bit IP address for DB insertion */
 
+char ipsrc_tmp[64];
+
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ip2bit(t_ipsrc, endian), ip2bit(t_ipdst, endian), t_ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ip2bit(t_ipsrc, endian), ip2bit(t_ipdst, endian), t_ipproto );
 
 sql=sqltmp;
 db_query( dbtype, sql );
