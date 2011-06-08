@@ -133,7 +133,7 @@ void load_normalize( void );
 void removelockfile ( void );
 void checklockfile ( void );
 void sagan_droppriv( const char * , const char *);
-void sagan_chroot( const char * );
+void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);

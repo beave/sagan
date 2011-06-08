@@ -34,6 +34,7 @@
 #include "sagan.h"
 #include "version.h"
 
+struct _SaganConfig *config;
 
 void sagan_usage(void)
 {
@@ -60,11 +61,11 @@ fprintf(stderr, ", plog");
 fprintf(stderr, ".\n");
 
 fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
-fprintf(stderr, "-U, --user\t\tRun as user (defaults to 'sagan').\n");
-fprintf(stderr, "-c, --chroot\t\tChroot to username 'sagan's home.\n");
+fprintf(stderr, "-u, --user\t\tRun as user (defaults to 'sagan').\n");
+fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
 fprintf(stderr, "-f, --config\t\tSagan configuration file to load.\n");
 fprintf(stderr, "-p, --program\t\tRun Sagan in syslog-ng's 'program' mode.\n");
-fprintf(stderr, "-l, --log\t\tWhere to store the 'sagan.log'.\n\n");
+fprintf(stderr, "-l, --log\t\tsagan.log location [default: %s].\n\n", config->sagan_log_filepath);
 
 #ifdef HAVE_LIBPQ
 fprintf(stderr, "* PostgreSQL support is included\n");

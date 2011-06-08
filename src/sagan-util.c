@@ -67,25 +67,20 @@ sbool programmode;
  * it initalized                                                             *
  *****************************************************************************/
 
-void sagan_chroot(const char *username ) { 
+void sagan_chroot(const char *username, const char *chrootdir ) { 
 
 struct passwd *pw = NULL;
 int ret;
 
 pw = getpwnam(username);
 
-printf("[*] Chroot to %.64s\n", pw->pw_dir);
-if (pw) { 
-//	if (pw->pw_dir) snprintf(sagan_path, sizeof(sagan_path), "%s", pw->pw_dir);
-	if (pw->pw_dir) {
-		if (chroot(pw->pw_dir) != 0 || chdir ("/") != 0) {
-			 fprintf(stderr, "[E] Could not chroot/chdir to '%.64s'.",  pw->pw_dir);
-	      }
-	   }
-	}
+printf("[*] Chroot to %s\n", chrootdir);
 
+if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
+    fprintf(stderr, "[E] Could not chroot to '%s'.\n",  chrootdir);
+    exit(1);		/* sagan.log isn't open yet */
+   }
 }
-
 
 /************************************************
  * Drop priv's so we aren't running as "root".  *

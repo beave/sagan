@@ -127,7 +127,7 @@ const struct option long_options[] = {
 };
 
 static const char *short_options =
-"l:f:U:d:pDhc";
+"l:f:u:d:c:pDh";
 
 int option_index = 0;
 
@@ -381,7 +381,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   daemonize=1;
 	   break;
 
-	   case 'U':
+	   case 'u':
 	   runas=optarg;
 	   break;
 
@@ -390,7 +390,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 
 	   case 'c':
-	   sagan_chroot(runas);		/* Do chroot early on */
+	   sagan_chroot(runas,optarg);
 	   break;
 
 	   case 'f':

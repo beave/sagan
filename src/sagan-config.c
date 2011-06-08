@@ -114,6 +114,7 @@ int i;
 
 snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
 snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
+snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
 
 config->max_external_threads=MAX_EXT_THREADS;
 
@@ -510,6 +511,11 @@ if (!strcmp(sagan_var, "unified2:")) {
            snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", strtok_r(NULL, " ", &tok));
            config->sagan_alert_filepath[strlen(config->sagan_alert_filepath)-1] = '\0'; 
 	   }
+	
+	if (!strcmp(sagan_var, "SAGANLOGPATH" )) {
+           snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", strtok_r(NULL, " ", &tok));
+           config->sagan_log_path[strlen(config->sagan_log_path)-1] = '\0';
+           }
 	}
 
 /* "include */
