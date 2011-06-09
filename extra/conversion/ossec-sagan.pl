@@ -4,10 +4,10 @@
 ## This utility takes a series of OSSEC rules, and generates a series of compatible SAGAN rules. 
 ## Originally developed by Michael Iverson.
 ##
-## Copyright (c) 2009-2011, Softwink, Inc.
+## Copyright (c) 2009-2011, Quadrant Information Security
 ## All rights reserved.
 ##
-## Please submit any custom rules or ideas sagan-sigs@mailman.softwink.com mailing list
+## Please submit any custom rules or ideas sagan-sigs@softwink.com mailing list
 ##
 ##*************************************************************
 ##  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the

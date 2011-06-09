@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Softwink, Inc. 
-** Copyright (C) 2009-2011 Champ Clark III <champ@softwink.com>
+** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -82,12 +82,9 @@ struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 
 sbool daemonize=0;
-sbool programmode=0;
 
 char saganconf[MAXPATH]=CONFIG_FILE_PATH;
 char *runas=RUNAS;
-
-sbool fifoi=0;
 
 
 /****************************************************************************/
@@ -385,9 +382,9 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   runas=optarg;
 	   break;
 
-	   case 'p':
-	   programmode=1;
-	   break;
+//	   case 'p':
+//	   programmode=1;
+//	   break;
 
 	   case 'c':
 	   sagan_chroot(runas,optarg);
@@ -543,24 +540,11 @@ Unified2InitFile( );
 
 sagan_log(0, "");
 
-/*
-if ( fifoi == 0 ) { 
-   if ( programmode == 0 ) 
-      { 
-      sagan_log(0, "No FIFO option found,  assuming syslog-ng 'program' mode.");
-      programmode = 1;
-      }
-   } else { 
-   sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
-   fd = open(config->sagan_fifo, O_RDONLY); 
-   }
-*/
-
 sagan_log(0, "");
 sagan_log(0, " ,-._,-. 	-*> Sagan! <*-");
 sagan_log(0, " \\/)\"(\\/	Version %s", VERSION);
-sagan_log(0, "  (_o_)  	By Champ Clark III & The Softwink Team: http://www.softwink.com");
-sagan_log(0, "  /   \\/)	Copyright (C) 2009-2011 Softwink, Inc., et al.");
+sagan_log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [www.quadrantsec.com]");
+sagan_log(0, "  /   \\/)	Copyright (C) 2009-2011 Quadrant Information Security, et al.");
 sagan_log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
 sagan_log(0, "  oo-oo     Sagan is processing events.....");
 sagan_log(0, "");
@@ -592,9 +576,9 @@ pid = fork();
 if (pid == 0) {} else { exit(0); }
 } 
 
-/* We don't want the key_handler() if we're in program/daemon mode! */
+/* We don't want the key_handler() if we're in daemon mode! */
 
-if (!daemonize && !programmode) { 
+if (!daemonize) { 
 
 if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 	removelockfile();
@@ -605,16 +589,8 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 
 /* We do this after forking so init scripts can complete */
 
-if ( fifoi == 0 ) {
-   if ( programmode == 0 )
-      {
-      sagan_log(0, "No FIFO option found,  assuming syslog-ng 'program' mode.");
-      programmode = 1;
-      }
-   } else {
-   sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
-   fd = open(config->sagan_fifo, O_RDONLY);
-}
+sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
+fd = open(config->sagan_fifo, O_RDONLY);
 
 /* Check lock file _after_ thread.  If you don't it'll retreive the wrong pid
  * and incorrectly believe there is a stale lock file if --daemon */
@@ -623,18 +599,16 @@ checklockfile();
 
 while(1) { 
 
-		if ( fifoi == 1 ) { 
-
                 if(fd < 0) {
 		        removelockfile();
 			sagan_log(1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
-               }
+                        }
 
                 i = read(fd, &c, 1);
                 
-		if(i < 0) {
-  	               removelockfile();
-                       sagan_log(1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
+		 if(i < 0) {
+  	                removelockfile();
+                        sagan_log(1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
                         }
 
 		/* Error on reading (FIFO writer left) and we have no 
@@ -661,15 +635,7 @@ while(1) {
                 snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
                 strncat(syslogstring, syslogtmp, 1); 
 
-		} else { 
-
-
-		if (!fgets(syslogstring, sizeof(syslogstring), stdin)) { 
-		   sagan_log(0, "Dropped input in 'program' mode!");
-		}
-		}
-
-		if ( c == '\n' || c == '\r' || fifoi == 0  ) 
+		if ( c == '\n' || c == '\r' ) 
                 {
 
 		counters->sagantotal++;
@@ -745,9 +711,9 @@ if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
 
 /* If in "program" mode,  we need the \r \n's */
 
-if ( programmode == 0 ) {
-   syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
-   }
+//if ( programmode == 0 ) {
+//   syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
+//   }
 
 		/* Search for matches */
 

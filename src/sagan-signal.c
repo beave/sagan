@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Softwink, Inc. 
-** Copyright (C) 2009-2011 Champ Clark III <champ@softwink.com>
+** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -147,8 +147,8 @@ if ( sagan_unified2_flag ) Unified2CleanExit();
 		   
 		   /* Re-load everything */
 
-		   free(config);
-		   load_config();
+		  free(config);
+		  load_config();
 
                   pthread_mutex_unlock(&sig_mutex);
 		  
