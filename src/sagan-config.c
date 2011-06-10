@@ -75,7 +75,6 @@ int i,check;
 sbool fifoi; 
 
 char saganconf[MAXPATH];
-FILE *sagancfg;
 
 char *rulesetptr;
 char ruleset[MAXPATH];
@@ -94,6 +93,8 @@ char *replace_str(char *str, char *orig, char *rep)
 }
 
 void load_config( void ) { 
+
+FILE *sagancfg; 
 
 struct sockaddr_in ipv4;
 uint32_t ip;
@@ -138,6 +139,7 @@ config->sagan_proto = 17;		/* Default to UDP */
 rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(rule_struct));
 
 /* Gather information for the master configuration file */
+
 
 if ((sagancfg = fopen(saganconf, "r")) == NULL) {
    fprintf(stderr, "[%s, line %d] Cannot open configuration file (%s)\n", __FILE__,  __LINE__, saganconf);
@@ -544,6 +546,7 @@ if (!strcmp(sagan_var, "unified2:")) {
      }
 }
 
+fclose(sagancfg);
 
 /* Check rules for duplicate sid.  We can't have that! */
 
@@ -567,4 +570,3 @@ if (!strcmp(config->sagan_host, "" )) sagan_log(1, "The 'sagan_host' option was 
 if ( config->sagan_port == 0 ) sagan_log(1, "The 'sagan_port' option was not set and is required.");
 
 }
-

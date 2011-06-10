@@ -50,9 +50,9 @@ struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 struct ref_struct *refstruct;
-struct rule_struct *rulestruct;
+extern struct rule_struct *rulestruct;
 
-char ruleset[1024];
+//char ruleset[1024];
 
 void load_reference( void )  { 
 

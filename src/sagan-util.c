@@ -49,6 +49,8 @@ MYSQL    *mysql, *mysql_logzilla;
 #include <pthread.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <sys/stat.h>
+
 #include "sagan.h"
 #include "version.h"
 
@@ -89,6 +91,7 @@ if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
 void droppriv(const char *username, const char *fifo)
 {
 
+	struct stat fifocheck;
         struct passwd *pw = NULL;
 	int ret;
 
@@ -99,7 +102,11 @@ void droppriv(const char *username, const char *fifo)
 	if ( getuid() == 0 ) {
 	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 	ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) sagan_log(1, "Cannot open %s FIFO!", config->sagan_fifo);
+
 		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
 		        sagan_log(1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);

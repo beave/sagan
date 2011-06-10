@@ -105,6 +105,8 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
+extern char ruleset[MAXPATH];
+
 /* Parsers */
 
 char *parse_ip_simple( char * );

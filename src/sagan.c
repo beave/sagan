@@ -589,13 +589,14 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 
 /* We do this after forking so init scripts can complete */
 
-sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
-fd = open(config->sagan_fifo, O_RDONLY);
-
 /* Check lock file _after_ thread.  If you don't it'll retreive the wrong pid
  * and incorrectly believe there is a stale lock file if --daemon */
 
 checklockfile();
+
+sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
+
+fd = open(config->sagan_fifo, O_RDONLY);
 
 while(1) { 
 

@@ -56,6 +56,7 @@ char ruleset[MAXPATH];
 
 void load_classifications( void )  { 
 
+
 FILE *classfile;
 
 char classbuf[CLASSBUF];
