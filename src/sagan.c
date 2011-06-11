@@ -705,6 +705,12 @@ while(1) {
                    }
 
 
+               /* Strip any \n or \r from the syslog_msg */
+
+               syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
+               syslog_msg[strcspn ( syslog_msg, "\r" )] = '\0';
+
+
 if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
 

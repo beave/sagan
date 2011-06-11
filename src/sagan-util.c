@@ -157,7 +157,6 @@ char  *remrt(char *s) {
        while( *s2 == '\n' )s2++;
       return s;
 }
-			    
 
 
 /* Removes spaces from certain rule fields, etc */
