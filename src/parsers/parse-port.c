@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Softwink, Inc. 
-** Copyright (C) 2009-2011 Champ Clark III <champ@softwink.com>
+** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -47,8 +47,7 @@
 #include "sagan.h"
 #include "version.h"
 
-
-char sagan_port[6];
+struct _SaganConfig *config;
 
 int parse_port_simple (char *msg) {
 
@@ -63,7 +62,7 @@ int i;
 struct sockaddr_in sa;
 int result;
 
-port = atoi(sagan_port);
+port = config->sagan_port;
 
 char tmpmsg[MAX_SYSLOGMSG];
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);

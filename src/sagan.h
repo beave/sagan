@@ -143,6 +143,8 @@ void load_rules ( const char * );
 char *betweenquotes( char * );
 char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
+char *sagan_replace_str(char *, char *, char *);
+char *sagan_getfilename(char *);
 
 char *referencelookup( int );
 

@@ -403,3 +403,41 @@ char *dns_lookup(char *host)
     ret=ipstr;
     return ret;
 }
+
+
+/* String replacement function.  Used for things like $RULE_PATH */
+
+char *sagan_replace_str(char *str, char *orig, char *rep)
+{
+
+  static char buffer[4096];
+  char *p;
+
+  if(!(p = strstr(str, orig)))  return str;
+
+  strlcpy(buffer, str, p-str); 
+  buffer[p-str] = '\0';
+  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+  return(buffer);
+}
+
+
+/* Get the filename from a path */
+
+char *sagan_getfilename(char *file) {
+
+    char *pfile;
+    pfile = file + strlen(file);
+    for (; pfile > file; pfile--)
+    {
+        if ((*pfile == '\\') || (*pfile == '/'))	/* *nix/Windows */
+        {
+            pfile++;
+            break;
+        }
+    }
+
+return(pfile);
+
+}
+

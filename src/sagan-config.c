@@ -68,30 +68,13 @@ struct rule_struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-char *rulesetptr; 
-
-char *replace_str(char *str, char *orig, char *rep)
-{
-
-  static char buffer[4096];
-  char *p;
-
-  if(!(p = strstr(str, orig)))  return str;
-
-  strlcpy(buffer, str, p-str); 
-  buffer[p-str] = '\0';
-  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
-  rulesetptr=p+strlen(orig);
-  return(buffer);
-}
-
-
 void load_config( void ) { 
 
 FILE *sagancfg; 
 
 char normfile[MAXPATH];
 
+char *filename;
 char ruleset[MAXPATH];
 
 char tmpbuf[CONFBUF];
@@ -278,7 +261,7 @@ if (!strcmp(sagan_option, "normalize:")) {
 	snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, ",", &tok));
 	remspaces(tmpstring);
 	tmpstring[strlen(tmpstring)-1] = '\0';
-	strlcpy(normfile, replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(normfile));
+	strlcpy(normfile, sagan_replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(normfile));
 	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
 
 	liblognorm_count++;
@@ -517,19 +500,23 @@ if (!strcmp(sagan_var, "unified2:")) {
 
          tmpstring[strlen(tmpstring)-1] = '\0';
 	
-         strlcpy(ruleset, replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(ruleset));
+         strlcpy(ruleset, sagan_replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(ruleset));
 
-         if (!strcmp(rulesetptr, "/classification.config") || !strcmp(rulesetptr, "classification.config" ))
+	 filename=sagan_getfilename(ruleset);   /* Get the file name to figure out "what" we're loading */
+
+         if (!strcmp(filename, "classification.config"))
             {
                    load_classifications(ruleset);
             }
 
-         if (!strcmp(rulesetptr, "/reference.config") || !strcmp(rulesetptr, "reference.config" ))
+         if (!strcmp(filename, "reference.config"))
             {
                    load_reference(ruleset);
             }
-         if (strcmp(rulesetptr, "/reference.config") && strcmp(rulesetptr, "reference.config" ) &&
-             strcmp(rulesetptr, "/classification.config") && strcmp(rulesetptr, "classification.config" ))  {
+
+	 /* It's not a classifcations file or reference,  so it must be a ruleset */
+
+         if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config"))  {
                    
 		   load_rules(ruleset);
           }
