@@ -279,7 +279,6 @@ if ( sqlout == NULL ) {
    }
 
 config->sensor_id = atoi(sqlout);
-//return(sensor_id);
 return(0);
 
 }
@@ -406,8 +405,6 @@ char sqltmp[MAXSQL];
 char *sql;
 
 /* Temp. store 32bit IP address for DB insertion */
-
-char ipsrc_tmp[64];
 
 /* 4 == IPv4 */
 

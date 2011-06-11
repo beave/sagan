@@ -46,6 +46,7 @@
 #include "sagan-unified2.h"
 
 sbool endian;
+
 uint64_t unified_event_id;
 
 struct rule_struct *rulestruct;

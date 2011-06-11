@@ -105,8 +105,6 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
-extern char ruleset[MAXPATH];
-
 /* Parsers */
 
 char *parse_ip_simple( char * );
@@ -139,9 +137,9 @@ void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);
-void load_classifications( void );
-void load_reference ( void );
-void load_rules ( void );
+void load_classifications( const char * );
+void load_reference ( const char * );
+void load_rules ( const char * );
 char *betweenquotes( char * );
 char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
@@ -226,6 +224,7 @@ struct _SaganConfig {
 
 /* Non-dependent var's */
 
+    char	 sagan_config[MAXPATH];			/* Master Sagan configuration file */
     char         sagan_alert_filepath[MAXPATH];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;

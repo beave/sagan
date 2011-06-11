@@ -49,12 +49,10 @@
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
-struct ref_struct *refstruct;
+extern struct ref_struct *refstruct;
 extern struct rule_struct *rulestruct;
 
-//char ruleset[1024];
-
-void load_reference( void )  { 
+void load_reference( const char *ruleset )  { 
 
 FILE *reffile;
 

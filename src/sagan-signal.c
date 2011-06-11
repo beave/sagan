@@ -47,7 +47,6 @@ int liblognorm_count;
 
 #ifdef HAVE_LIBPRELUDE
 #include <libprelude/prelude.h>
-char sagan_prelude_profile[255];
 sbool sagan_prelude_flag;
 prelude_client_t *preludeclient;
 #endif
@@ -70,17 +69,7 @@ struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 struct ref_struct *refstruct;
 
-
-char sagan_extern[255];
-char sagan_esmtp_server[255];
-int logzilla_log;
-
 sbool daemonize;
-
-uint64_t sagantotal;
-uint64_t saganfound;
-uint64_t sagandrop;
-uint64_t threshold_total;
 
 pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 

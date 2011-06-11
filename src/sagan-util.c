@@ -59,8 +59,6 @@ struct _SaganConfig *config;
 //char sagan_path[MAXPATH];
 
 sbool daemonize;
-sbool programmode;
-
 
 /*****************************************************************************
  * This force Sagan to chroot.                                               *
@@ -72,7 +70,6 @@ sbool programmode;
 void sagan_chroot(const char *username, const char *chrootdir ) { 
 
 struct passwd *pw = NULL;
-int ret;
 
 pw = getpwnam(username);
 
@@ -88,7 +85,7 @@ if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
  * Drop priv's so we aren't running as "root".  *
  ************************************************/
 
-void droppriv(const char *username, const char *fifo)
+void sagan_droppriv(const char *username, const char *fifo)
 {
 
 	struct stat fifocheck;
@@ -188,7 +185,6 @@ void sagan_log (int type, const char *format,... ) {
    va_start(ap, format);
    char *chr="*";
    char curtime[64];
-   char tmplog[64];
    time_t t;
    struct tm *now;
    t = time(NULL);
@@ -201,7 +197,7 @@ void sagan_log (int type, const char *format,... ) {
      fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
      fflush(config->sagan_log_stream);
 
-     if ( programmode == 0 && daemonize == 0) printf("[%s] %s\n", chr, buf);
+     if ( daemonize == 0) printf("[%s] %s\n", chr, buf);
      if ( type == 1 ) exit(1);
 }
 

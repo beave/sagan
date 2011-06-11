@@ -114,7 +114,8 @@ void plog_handler( void )
 	}
 	
         /* endless loop */
-        (void)pcap_loop(bp,-1,logpkt,(char *)0);
+        (void)pcap_loop(bp,-1,logpkt,(unsigned char *)0);
+	
         pcap_close(bp);
         exit(0);
 }

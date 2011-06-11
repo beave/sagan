@@ -83,10 +83,6 @@ struct class_struct *classstruct;
 
 sbool daemonize=0;
 
-char saganconf[MAXPATH]=CONFIG_FILE_PATH;
-char *runas=RUNAS;
-
-
 /****************************************************************************/
 /* Liblognorm Globals                                                       */
 /****************************************************************************/
@@ -108,18 +104,22 @@ struct ee_field *field = NULL;
 char *cstr;
 #endif
 
-/* Command line options */
+/* ######################################################################## 
+ * Start of main() thread
+ * ######################################################################## */
+
+int main(int argc, char **argv) {
 
 const struct option long_options[] = {
-	{ "help",         no_argument,          NULL,   'h' },
-	{ "debug", 	  required_argument,	NULL, 	'd' },
-	{ "daemon", 	  no_argument,		NULL,	'D' },
-	{ "program", 	  no_argument,		NULL, 	'p' },
-	{ "user",	  required_argument,	NULL,	'U' },
-	{ "chroot", 	  no_argument, 		NULL, 	'c' },
-	{ "config",	  required_argument, 	NULL, 	'f' },
-	{ "log",	  required_argument,	NULL,	'l' },
-	{0, 0, 0, 0}
+        { "help",         no_argument,          NULL,   'h' },
+        { "debug",        required_argument,    NULL,   'd' },
+        { "daemon",       no_argument,          NULL,   'D' },
+        { "program",      no_argument,          NULL,   'p' },
+        { "user",         required_argument,    NULL,   'U' },
+        { "chroot",       no_argument,          NULL,   'c' },
+        { "config",       required_argument,    NULL,   'f' },
+        { "log",          required_argument,    NULL,   'l' },
+        {0, 0, 0, 0}
 
 };
 
@@ -128,11 +128,6 @@ static const char *short_options =
 
 int option_index = 0;
 
-/* ######################################################################## */
-/* Start of main() thread!
- * ######################################################################## */
-
-int main(int argc, char **argv) {
 
 /* Passing Sagan events to output plugins */
 
@@ -312,6 +307,8 @@ char ipbuf_dst[128];
 char *syslog_msg_case;
 char *s_content_case;
 
+char *runas=RUNAS;
+
 int i;
 int fd=0;
 int b;
@@ -333,6 +330,7 @@ memset(counters, 0, sizeof(_SaganCounters));
 config = malloc(sizeof(_SaganConfig));
 memset(config, 0, sizeof(_SaganConfig));
 
+snprintf(config->sagan_config, sizeof(config->sagan_config), "%s", CONFIG_FILE_PATH);
 
 /* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed 
    shortly - 06/03/2011 - Champ Clark III */
@@ -382,22 +380,18 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   runas=optarg;
 	   break;
 
-//	   case 'p':
-//	   programmode=1;
-//	   break;
-
 	   case 'c':
 	   sagan_chroot(runas,optarg);
 	   break;
 
 	   case 'f':
-	   strncpy(saganconf,optarg,sizeof(saganconf) - 1);		//	strlcpy
-	   saganconf[sizeof(saganconf)-1] = '\0';
+	   strncpy(config->sagan_config,optarg,sizeof(config->sagan_config) - 1);		//	strlcpy
+	   config->sagan_config[sizeof(config->sagan_config)-1] = '\0';
 	   break;
 
 	   case 'l':
 	   strncpy(config->sagan_log_filepath,optarg,sizeof(config->sagan_log_filepath) - 1);
-	   saganconf[sizeof(saganconf)-1] = '\0';
+	   config->sagan_log_filepath[sizeof(config->sagan_log_filepath)-1] = '\0';
 	   break;
 	   
 
@@ -443,7 +437,7 @@ ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 }
 #endif
 
-sagan_log(0, "Configuration file %s loaded and %d rules loaded.", saganconf, counters->rulecount);
+sagan_log(0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
 sagan_log(0, "Sagan version %s is firing up!", VERSION);
 
 #ifdef HAVE_LIBPCAP
@@ -460,7 +454,7 @@ if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
 }
 #endif
 
-droppriv(runas, config->sagan_fifo);		/* Become the Sagan user */
+sagan_droppriv(runas, config->sagan_fifo);		/* Become the Sagan user */
 sagan_log(0, "---------------------------------------------------------------------------");
 
 /* Create signal handler thread */ 
@@ -594,9 +588,11 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 
 checklockfile();
 
-sagan_log(0, "Opening syslog FIFO (%s)", config->sagan_fifo);
+sagan_log(0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
 
-fd = open(config->sagan_fifo, O_RDONLY);
+if ( fd == 0 ) fd = open(config->sagan_fifo, O_RDONLY);
+
+sagan_log(0, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
 while(1) { 
 
@@ -710,11 +706,6 @@ while(1) {
 
 if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
-/* If in "program" mode,  we need the \r \n's */
-
-//if ( programmode == 0 ) {
-//   syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
-//   }
 
 		/* Search for matches */
 

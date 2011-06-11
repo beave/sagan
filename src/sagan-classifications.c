@@ -52,9 +52,7 @@ struct _SaganCounters *counters;
 
 struct class_struct *classstruct;
 
-char ruleset[MAXPATH];
-
-void load_classifications( void )  { 
+void load_classifications( const char *ruleset )  { 
 
 
 FILE *classfile;

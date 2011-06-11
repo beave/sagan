@@ -64,41 +64,35 @@ struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
 #endif
 
-sbool programmode;
-
 struct rule_struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-int i,check;
-
-sbool fifoi; 
-
-char saganconf[MAXPATH];
-
-char *rulesetptr;
-char ruleset[MAXPATH];
-char normfile[MAXPATH];
+char *rulesetptr; 
 
 char *replace_str(char *str, char *orig, char *rep)
 {
+
   static char buffer[4096];
   char *p;
+
   if(!(p = strstr(str, orig)))  return str;
+
   strlcpy(buffer, str, p-str); 
   buffer[p-str] = '\0';
   sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
   rulesetptr=p+strlen(orig);
-  return buffer;
+  return(buffer);
 }
+
 
 void load_config( void ) { 
 
 FILE *sagancfg; 
 
-struct sockaddr_in ipv4;
-uint32_t ip;
+char normfile[MAXPATH];
 
+char ruleset[MAXPATH];
 
 char tmpbuf[CONFBUF];
 char tmpstring[CONFBUF];
@@ -109,7 +103,7 @@ char *ptmp=NULL;
 
 char *tok=NULL;
 
-int i;
+int i,check;
 
 /* Set some system defaults */
 
@@ -141,8 +135,8 @@ rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeo
 /* Gather information for the master configuration file */
 
 
-if ((sagancfg = fopen(saganconf, "r")) == NULL) {
-   fprintf(stderr, "[%s, line %d] Cannot open configuration file (%s)\n", __FILE__,  __LINE__, saganconf);
+if ((sagancfg = fopen(config->sagan_config, "r")) == NULL) {
+   fprintf(stderr, "[%s, line %d] Cannot open configuration file (%s)\n", __FILE__,  __LINE__, config->sagan_config);
    exit(1);
    }
 
@@ -492,12 +486,7 @@ if (!strcmp(sagan_var, "unified2:")) {
         if (!strcmp(sagan_var, "FIFO" )) {
 	   snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", strtok_r(NULL, " ", &tok));
            config->sagan_fifo[strlen(config->sagan_fifo)-1] = '\0'; 
-	   if ( programmode != 1 ) {			// --program over rides configuration option.
-	   fifoi = 1; 
-	   } else { 
-	   fifoi = 0;
 	   }
-        }
 
         if (!strcmp(sagan_var, "RULE_PATH" )) {
 	   snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", strtok_r(NULL, " ", &tok));
@@ -527,21 +516,22 @@ if (!strcmp(sagan_var, "unified2:")) {
          snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, " ", &tok));
 
          tmpstring[strlen(tmpstring)-1] = '\0';
-
+	
          strlcpy(ruleset, replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(ruleset));
 
          if (!strcmp(rulesetptr, "/classification.config") || !strcmp(rulesetptr, "classification.config" ))
             {
-                    load_classifications();
+                   load_classifications(ruleset);
             }
 
          if (!strcmp(rulesetptr, "/reference.config") || !strcmp(rulesetptr, "reference.config" ))
             {
-                    load_reference();
+                   load_reference(ruleset);
             }
-      if (strcmp(rulesetptr, "/reference.config") && strcmp(rulesetptr, "reference.config" ) &&
-          strcmp(rulesetptr, "/classification.config") && strcmp(rulesetptr, "classification.config" ))  {
-                   load_rules();
+         if (strcmp(rulesetptr, "/reference.config") && strcmp(rulesetptr, "reference.config" ) &&
+             strcmp(rulesetptr, "/classification.config") && strcmp(rulesetptr, "classification.config" ))  {
+                   
+		   load_rules(ruleset);
           }
      }
 }
