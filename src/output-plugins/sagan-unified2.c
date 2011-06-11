@@ -43,6 +43,7 @@
 #include <unistd.h>
 
 #include "sagan.h"
+
 #include "sagan-unified2.h"
 
 sbool endian;

@@ -35,6 +35,7 @@
 #include <string.h>
 
 #include "sagan.h"
+
 #include "version.h"
 
 struct rule_struct *rulestruct;

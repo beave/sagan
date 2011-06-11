@@ -44,6 +44,8 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <pthread.h>
+
+#include "sagan-defs.h"
 #include "sagan.h"
 #include "version.h"
 

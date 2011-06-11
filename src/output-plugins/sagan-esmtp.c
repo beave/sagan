@@ -40,6 +40,7 @@
 #include <unistd.h>
 
 #include "sagan.h"
+
 #include "sagan-esmtp.h"
 #include "version.h"
 

@@ -38,7 +38,10 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <string.h>
+
+#include "sagan-defs.h"
 #include "sagan.h"
+
 #include "version.h"
 
 

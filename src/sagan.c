@@ -48,6 +48,7 @@
 #include <inttypes.h>
 
 #include "sagan.h"
+
 #include "version.h"
 
 

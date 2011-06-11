@@ -52,6 +52,7 @@
 #endif
 
 #include "version.h"
+
 #include "sagan.h"
 
 #ifdef HAVE_LIBDNET

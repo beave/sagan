@@ -32,6 +32,7 @@
 #include <stdio.h>
 
 #include "sagan.h"
+
 #include "version.h"
 
 struct _SaganConfig *config;

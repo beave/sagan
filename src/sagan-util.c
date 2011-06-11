@@ -52,6 +52,7 @@ MYSQL    *mysql, *mysql_logzilla;
 #include <sys/stat.h>
 
 #include "sagan.h"
+
 #include "version.h"
 
 struct _SaganConfig *config;

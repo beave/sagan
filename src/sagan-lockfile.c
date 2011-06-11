@@ -40,6 +40,7 @@
 #include <signal.h>
 
 #include "sagan.h"
+
 #include "version.h"
 
 struct _SaganConfig *config;

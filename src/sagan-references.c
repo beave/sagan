@@ -44,6 +44,7 @@
 #include <pcre.h>
 
 #include "version.h"
+
 #include "sagan.h"
 
 struct _SaganDebug *debug;

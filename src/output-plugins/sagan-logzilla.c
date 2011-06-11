@@ -38,6 +38,7 @@
 #include <unistd.h>
 
 #include "sagan.h"
+
 #include "sagan-logzilla.h"
 #include "version.h"
 

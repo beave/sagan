@@ -35,6 +35,7 @@
 #include <pthread.h>
 
 #include "version.h"
+
 #include "sagan.h"
 
 void key_handler(int sigargs )

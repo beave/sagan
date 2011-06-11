@@ -43,6 +43,7 @@
 #include "version.h"
 
 #include "sagan.h"
+
 #include "sagan-prelude.h"
 
 struct _SaganConfig *config;

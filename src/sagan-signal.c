@@ -35,6 +35,7 @@
 #include <stdint.h>
 
 #include "version.h"
+
 #include "sagan.h"
 
 #ifdef HAVE_LIBLOGNORM
