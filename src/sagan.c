@@ -460,12 +460,12 @@ sagan_log(0, "------------------------------------------------------------------
 
 /* Create signal handler thread */ 
 
-if (daemonize == 0) { 
-if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
-        }
-}
+//if (daemonize == 0) { 
+//if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
+//        removelockfile();
+//        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
+//        }
+//}
 
 /* Open sagan alert file */
 
@@ -548,21 +548,6 @@ sagan_log(0, "");
 
 if ( daemonize )
 {
-
-/* Unblock signals so the daemon can catch them */
-
-sigfillset(&signal_set);
-
-pthread_sigmask(SIG_UNBLOCK, &signal_set, NULL );
-
-signal (SIGHUP,  &sig_handler_daemon );
-signal (SIGINT,  &sig_handler_daemon );
-signal (SIGQUIT, &sig_handler_daemon );
-signal (SIGTERM, &sig_handler_daemon );
-signal (SIGABRT, &sig_handler_daemon );
-signal (SIGSEGV, &sig_handler_daemon );
-signal (SIGUSR1, &sig_handler_daemon );
-
 sagan_log(0, "Becoming a daemon!");
 
 pid_t pid = 0;
@@ -570,6 +555,15 @@ setsid();
 pid = fork();
 if (pid == 0) {} else { exit(0); }
 } 
+
+/* Create the signal handlers thread _after_ the fork() so it can properly 
+ * handly signals - Champ Clark III - 06/13/2011 */
+
+if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
+        removelockfile();
+        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
+        }
+
 
 /* We don't want the key_handler() if we're in daemon mode! */
 
