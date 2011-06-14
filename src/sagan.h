@@ -429,11 +429,6 @@ struct sig_thread_args {
         uint64_t cid;
         } sig_thread_args[1];
 
-struct sig_args {
-        int daemonize;
-        uint64_t cid;
-        } sig_args[1];
-
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
