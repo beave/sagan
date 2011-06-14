@@ -48,12 +48,11 @@
 
 #include "sagan.h"
 
-struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 struct class_struct *classstruct;
 
-void load_classifications( const char *ruleset )  { 
+void load_classifications( _SaganDebug *debug, const char *ruleset )  { 
 
 
 FILE *classfile;

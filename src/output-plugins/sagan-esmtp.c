@@ -45,7 +45,6 @@
 #include "version.h"
 
 struct _SaganConfig *config;
-struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -163,7 +162,8 @@ if (!smtp_start_session (session)) {
    /* SMTP sent successful */
 
 	status = smtp_message_transfer_status (message);
-	if ( debug->debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
+
+	if ( Event->debug->debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
 }
 

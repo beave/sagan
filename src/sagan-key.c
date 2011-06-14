@@ -38,10 +38,11 @@
 
 #include "sagan.h"
 
-void key_handler(int sigargs )
+void key_handler( void )
 {
 
   while(1) {
+
 	int key; 
 
 	key=getchar();

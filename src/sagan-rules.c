@@ -47,7 +47,6 @@
 #include "sagan.h"
 
 struct _SaganConfig *config;
-struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 #ifdef HAVE_LIBLOGNORM
@@ -59,7 +58,7 @@ int liblognorm_count;
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 
-void load_rules( const char *ruleset ) { 
+void load_rules( _SaganDebug *debug, const char *ruleset ) { 
 
 const char *error;
 int erroffset;

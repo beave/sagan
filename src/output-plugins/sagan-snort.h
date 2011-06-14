@@ -28,25 +28,28 @@
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
 int  db_connect( void );
-char *db_query ( int,  char * );
-int  get_sensor_id ( char *,  char *,  char *,  int , int  );
-uint64_t get_cid ( int , int );
 
-void record_last_cid ( void );
+char *db_query ( _SaganDebug *, int,  char * );
 
-int  get_sig_sid( char *,  char *,
+int  get_sensor_id ( _SaganDebug *, char *,  char *,  char *,  int , int  );
+
+uint64_t get_cid ( _SaganDebug *,  int , int );
+
+void record_last_cid ( _SaganDebug * );
+
+int  get_sig_sid( _SaganDebug *, char *,  char *,
                   char *,  char *,
                   int         ,  int  );
 
-void insert_event (int, uint64_t, int, int, char *, char * );
+void insert_event ( _SaganDebug *, int, uint64_t, int, int, char *, char * );
 
-void insert_hdr (int , uint64_t,
+void insert_hdr ( _SaganDebug *, int , uint64_t,
                  char *,  char *,
                  int, int, int, int, int);
 
-void insert_payload ( int,  uint64_t, char *,  int );
+void insert_payload ( _SaganDebug *, int,  uint64_t, char *,  int );
 
-void query_reference ( char *, char *, int, int );
+void query_reference ( _SaganDebug *, char *, char *, int, int );
 
 struct db_thread_args {
         char *ip_src;

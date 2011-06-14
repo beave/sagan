@@ -76,7 +76,6 @@
 #define OVECCOUNT 30
 
 struct _SaganConfig *config;
-struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -128,7 +127,6 @@ static const char *short_options =
 "l:f:u:d:c:pDh";
 
 int option_index = 0;
-
 
 /* Passing Sagan events to output plugins */
 
@@ -322,6 +320,7 @@ struct tm *now;
 
 /* Allocate and clear memory for global structs */
 
+struct _SaganDebug *debug;
 debug = malloc(sizeof(_SaganDebug));
 memset(debug, 0, sizeof(_SaganDebug));
 
@@ -412,11 +411,8 @@ if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL)
     exit(1);
     }
 
-/* create the signal handling thread */
 
-sig_thread_args[0].daemonize = daemonize;
-
-load_config();
+load_config( debug );
 
 /* Load/init liblognorm definitions.  I tried to move this into a subroutine,
  * but that ended up causing segfaults on ln_normalize() or causing 
@@ -480,16 +476,14 @@ logzilla_db_connect();
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-sig_thread_args[0].daemonize = daemonize;
-
 if ( config->dbtype ) { 
 
 sagan_log(0, "Max database threads : %d", config->maxdb_threads);
 
 db_connect();
-get_sensor_id( config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail, config->dbtype);
+get_sensor_id( debug, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail, config->dbtype);
 sagan_log(0, "Sensor ID            : %d", config->sensor_id);
-cid = get_cid( config->sensor_id, config->dbtype );
+cid = get_cid( debug, config->sensor_id, config->dbtype );
 cid++;
 counters->sigcid=cid;
 sagan_log(0, "Next CID             : %" PRIu64 "", cid);
@@ -550,7 +544,10 @@ if (pid == 0) {} else { exit(0); }
 /* Create the signal handlers thread _after_ the fork() so it can properly 
  * handly signals - Champ Clark III - 06/13/2011 */
 
-if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
+SaganSigArgs.daemonize = daemonize;
+SaganSigArgs.debug     = debug;
+
+if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
         removelockfile();
         sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
         }
@@ -1086,6 +1083,8 @@ SaganEvent[threadid].priority  =       syslog_leveltmp[msgslot];
 SaganEvent[threadid].tag       =       syslog_tagtmp[msgslot];
 SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
 SaganEvent[threadid].event_time_sec = 	time(NULL);
+
+SaganEvent[threadid].debug     = 	debug;
 
 }
 

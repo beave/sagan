@@ -70,11 +70,9 @@ struct rule_struct *rulestruct;
 struct class_struct *classstruct;
 struct ref_struct *refstruct;
 
-sbool daemonize;
-
 pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void sig_handler(int sigargs ) {
+void sig_handler( struct sig_thread_args *args ) {
 
         sigset_t signal_set;
         int sig;
@@ -98,7 +96,7 @@ void sig_handler(int sigargs ) {
 		  sagan_statistics();
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-		  if ( config->dbtype != 0 ) record_last_cid();
+		  if ( config->dbtype != 0 ) record_last_cid(args->debug);
 #endif
 
 #ifdef HAVE_LIBPRELUDE
@@ -137,7 +135,7 @@ if ( sagan_unified2_flag ) Unified2CleanExit();
 		   
 		   /* Re-load everything */
 
-		  load_config();
+		  load_config(args->debug);
 
                   pthread_mutex_unlock(&sig_mutex);
 		  

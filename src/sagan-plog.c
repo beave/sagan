@@ -52,7 +52,7 @@ III from Marcus J. Ranum on Jan. 6th, 2011.
 #include "sagan.h"
 
 struct _SaganConfig *config;
-struct _SaganDebug *debug;
+//struct _SaganDebug *debug;
 
 struct my_udphdr {
          u_int16_t uh_sport;           /* source port */
@@ -66,7 +66,7 @@ static  int     wiredevlog();
 static  int     outf;
 
 
-void plog_handler( void )
+void plog_handler( _SaganDebug *debug )
 {
 
         pcap_t                  *bp;
@@ -166,8 +166,12 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
         /* our log message ought to be just past the UDP header now... */
         l = (char *)u + sizeof(struct udphdr);
         len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
+
+
+/*
         if(debug->debugplog) {
                 int     x;
+*/
 
 		/* I can't use sagan_log() here,  so we dump to strerr.
 		 * have the check the tty (isatty()) before dumping or
@@ -175,6 +179,7 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
 		 * - Champ Clark III Jan 7th 2011 
 		 */
 
+/*
                 for(x = 0; x < len; x++) {
                         if(isprint(l[x]) && (isatty(1)) )
                                 fprintf(stderr,"%c",(int)(l[x]));
@@ -183,6 +188,7 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
                 }
                 if (isatty(1)) fprintf(stderr,"\n");
         }
+*/
 
         /* send it! */
         if(send(outf,l,len,0) < 0) 

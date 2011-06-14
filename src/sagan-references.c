@@ -47,13 +47,13 @@
 
 #include "sagan.h"
 
-struct _SaganDebug *debug;
+//struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 extern struct ref_struct *refstruct;
 extern struct rule_struct *rulestruct;
 
-void load_reference( const char *ruleset )  { 
+void load_reference( _SaganDebug *debug,  const char *ruleset )  { 
 
 FILE *reffile;
 

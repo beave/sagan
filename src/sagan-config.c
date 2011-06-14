@@ -69,7 +69,7 @@ struct rule_struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void load_config( void ) { 
+void load_config( _SaganDebug *debug  ) { 
 
 FILE *sagancfg; 
 
@@ -507,19 +507,19 @@ if (!strcmp(sagan_var, "unified2:")) {
 
          if (!strcmp(filename, "classification.config"))
             {
-                   load_classifications(ruleset);
+                   load_classifications(debug, ruleset);
             }
 
          if (!strcmp(filename, "reference.config"))
             {
-                   load_reference(ruleset);
+                   load_reference(debug, ruleset);
             }
 
 	 /* It's not a classifcations file or reference,  so it must be a ruleset */
 
          if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config"))  {
                    
-		   load_rules(ruleset);
+		   load_rules(debug, ruleset);
           }
      }
 }

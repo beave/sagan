@@ -50,9 +50,9 @@ int strlcat(char *, const char *, size_t );
 char *parse_ip_simple( char * );
 int   parse_port_simple( char * );
 
-void sig_handler( int );
-void key_handler( int );
-void plog_handler( void );
+//void sig_handler( void );
+void key_handler( void  );
+//void plog_handler( void );
 
 
 char *dns_lookup(char *);
@@ -67,7 +67,7 @@ char *findipinmsg ( char * );
 void closesagan( int );
 int  checkendian( void );
 void sagan_usage( void );
-void load_config( void );
+//void load_config( void );
 void load_normalize( void );
 void removelockfile ( void );
 void checklockfile ( void );
@@ -76,9 +76,9 @@ void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);
-void load_classifications( const char * );
-void load_reference ( const char * );
-void load_rules ( const char * );
+//void load_classifications( const char * );
+//void load_reference ( const char * );
+//void load_rules ( const char * );
 char *betweenquotes( char * );
 char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
@@ -327,6 +327,8 @@ typedef struct Sagan_Event
 
 	char *f_msg;
 
+	_SaganDebug *debug;
+
 
         /* message information */
 
@@ -427,8 +429,15 @@ void sagan_esmtp_thread( SaganEvent * );
 struct sig_thread_args {
         int daemonize;
         uint64_t cid;
-        } sig_thread_args[1];
+	_SaganDebug *debug;
+        } SaganSigArgs;
 
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
+void load_config( _SaganDebug * );
+void sig_handler( struct sig_thread_args * );
+void load_classifications( _SaganDebug *,  const char * );
+void load_reference ( _SaganDebug *, const char * );
+void load_rules ( _SaganDebug *, const char * );
+void plog_handler( _SaganDebug * );
