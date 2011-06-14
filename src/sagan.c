@@ -458,15 +458,6 @@ if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
 sagan_droppriv(runas, config->sagan_fifo);		/* Become the Sagan user */
 sagan_log(0, "---------------------------------------------------------------------------");
 
-/* Create signal handler thread */ 
-
-//if (daemonize == 0) { 
-//if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sig_thread_args )) {
-//        removelockfile();
-//        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
-//        }
-//}
-
 /* Open sagan alert file */
 
 if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
