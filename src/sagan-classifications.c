@@ -111,7 +111,7 @@ fclose(classfile);
 sagan_log(0, "%d classifications loaded", counters->classcount);
 
 }
-
+/*
 char *classlookup( char *classtype ) {
 
 int i; 
@@ -130,4 +130,4 @@ ret="Classification not found!";
 return(ret);
 
 }
-
+*/
