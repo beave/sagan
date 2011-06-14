@@ -316,8 +316,7 @@ return(t_cid);
 /* Get signature ID.  If on doesn't exsist,  put one in. */
 /*********************************************************/
 
-
-int get_sig_sid( _SaganDebug *debug, char *t_msg, char *t_sig_rev, char *t_sig_sid, char *classtype, int t_sig_pri, int dbtype ) {
+int get_sig_sid ( SaganEvent *Event ) {
 
 
 char sqltmp[MAXSQL];
@@ -326,47 +325,47 @@ char *sqlout;
 int sig_class_id;
 int  t_sig_id; 
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", classtype);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", rulestruct[Event->found].s_classtype);
 sql=sqltmp;
-sqlout = db_query( debug, dbtype, sql ); 
+sqlout = db_query( Event->debug, Event->config->dbtype, sql ); 
 
 if ( sqlout == NULL ) {
    
    /* classification hasn't been recorded in sig_class,  so put it in */
 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_class(sig_class_id, sig_class_name) VALUES (DEFAULT, '%s')", classtype);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_class(sig_class_id, sig_class_name) VALUES (DEFAULT, '%s')", rulestruct[Event->found].s_classtype);
    sql=sqltmp;
-   db_query( debug, dbtype, sql);
+   db_query( Event->debug, Event->config->dbtype, sql);
 
    /* Grab new ID */
 
-   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", classtype);
+   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", rulestruct[Event->found].s_classtype);
    sql=sqltmp;
-   sqlout = db_query( debug, dbtype, sql );
+   sqlout = db_query( Event->debug, Event->config->dbtype, sql );
    }
  
 sig_class_id = atoi(sqlout);
 
 /* Look for the signature id */
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", t_msg, t_sig_rev, t_sig_sid);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid);
 sql=sqltmp;
 
 
-sqlout = db_query( debug, dbtype, sql );
+sqlout = db_query( Event->debug, Event->config->dbtype, sql );
 
 /* If not found, create a new entry for it */
 
 if ( sqlout == NULL ) {
 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", t_msg, sig_class_id, t_sig_pri, t_sig_rev, t_sig_sid);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", rulestruct[Event->found].s_msg, sig_class_id, rulestruct[Event->found].s_pri, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
-   db_query( debug, dbtype, sql );
+   db_query( Event->debug, Event->config->dbtype, sql );
 
    /* Get the new ID of the new entry */
-   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", t_msg, t_sig_rev, t_sig_sid);
+   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
-   sqlout = db_query( debug, dbtype, sql );;
+   sqlout = db_query( Event->debug, Event->config->dbtype, sql );
    }
 
 t_sig_id = atoi(sqlout);
@@ -379,19 +378,19 @@ return(t_sig_id);
 /* Insert into event table */
 /***************************/
 
-void insert_event ( _SaganDebug *debug, int t_sid,  uint64_t t_cid,  int t_sig_sid,  int dbtype,  char *date,  char *time ) { 
+void insert_event ( SaganEvent *Event, int sig_sid, char *date,  char *time ) { 
 
 char sqltmp[MAXSQL];
 char *sql;
 
 pthread_mutex_lock( &db_mutex );
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%" PRIu64 "', '%d', '%s %s')", t_sid, t_cid, t_sig_sid, date, time );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%" PRIu64 "', '%d', '%s %s')", Event->config->sensor_id, Event->cid, sig_sid, date, time );
 sql=sqltmp;
 
 pthread_mutex_unlock( &db_mutex );
 
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype, sql );
 
 }
 
@@ -400,43 +399,44 @@ db_query( debug, dbtype, sql );
 /* Insert data into iphdr and tcphdr - most of this is bogus as we're not really TCP/IP */
 /****************************************************************************************/
 
-void insert_hdr( _SaganDebug *debug, int t_sid, uint64_t t_cid, char *t_ipsrc, char *t_ipdst, int t_ipproto, int endian, int dbtype, int dst_port, int src_port) { 
-
+void insert_hdr ( SaganEvent *Event,  char *ipsrc, char *ipdst )  {
 
 char sqltmp[MAXSQL];
 char *sql;
+
+int ipproto = rulestruct[Event->found].ip_proto; 
 
 /* Temp. store 32bit IP address for DB insertion */
 
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", t_sid, t_cid, ip2bit(t_ipsrc, endian), ip2bit(t_ipdst, endian), t_ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", Event->config->sensor_id, Event->cid, ip2bit(ipsrc, Event->endian), ip2bit(ipdst, Event->endian), ipproto );
 
 sql=sqltmp;
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype, sql );
 
 /* "tcp" */
-if ( t_ipproto == 6 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", t_sid, t_cid, src_port, dst_port  );
+if ( ipproto == 6 )  {
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype, sql );
 } 
 
 /* "udp" */
 
-if ( t_ipproto == 17 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0' )", t_sid, t_cid, src_port, dst_port  );
+if ( ipproto == 17 )  {
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0' )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype, sql );
 }
 
 /* Basic ICMP - Set to type 8 (echo) , code of  8 */
 /* May expand on this if there's actually a use for it */
 
-if ( t_ipproto == 1 ) { 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%" PRIu64 "', '8', '8', '0', '0', '0' )", t_sid, t_cid );
+if ( ipproto == 1 ) { 
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%" PRIu64 "', '8', '8', '0', '0', '0' )", Event->config->sensor_id, Event->cid );
 sql=sqltmp;
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype,sql );
 }
 
 
@@ -446,16 +446,16 @@ db_query( debug, dbtype, sql );
 /* Insert into payload table */
 /*****************************/
 
-void insert_payload ( _SaganDebug *debug,  int t_sid, uint64_t t_cid, char *t_hex_data,  int dbtype ) { 
+void insert_payload ( SaganEvent *Event,  char *t_hex_data ) { 
 
 char sqltmp[MAXSQL]; 
 char *sql;
 
 pthread_mutex_lock( &db_mutex );
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", t_sid, t_cid, t_hex_data);
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", Event->config->sensor_id, Event->cid, t_hex_data);
 sql=sqltmp;
 pthread_mutex_unlock( &db_mutex );
-db_query( debug, dbtype, sql );
+db_query( Event->debug, Event->config->dbtype, sql );
 
 }
 
@@ -579,13 +579,13 @@ snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", Event->ip_dst);
 snprintf(time, sizeof(time), "%s", Event->time);
 snprintf(date, sizeof(date), "%s", Event->date);
 
-sig_sid = get_sig_sid(Event->debug, rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev,  rulestruct[Event->found].s_sid, rulestruct[Event->found].s_classtype, rulestruct[Event->found].s_pri , config->dbtype );
+sig_sid = get_sig_sid(Event);
 
-insert_event( Event->debug, config->sensor_id, Event->cid, sig_sid, config->dbtype, date, time );
-insert_hdr( Event->debug, config->sensor_id, Event->cid, ip_srctmp, ip_dsttmp, rulestruct[Event->found].ip_proto, Event->endian, config->dbtype, Event->dst_port, Event->src_port );
+insert_event( Event, sig_sid, date, time);
+insert_hdr ( Event,  ip_srctmp, ip_dsttmp );
 
 hex_data = fasthex(message, strlen(message));
-insert_payload ( Event->debug,  config->sensor_id, Event->cid, hex_data, config->dbtype ) ;
+insert_payload( Event, hex_data ); 
 
 for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    query_reference( Event->debug, rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );

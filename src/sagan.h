@@ -311,6 +311,10 @@ int threshold_seconds;
 
 typedef struct Sagan_Event 
 {
+
+        _SaganDebug *debug;
+        _SaganConfig *config;
+
         char *ip_src;
         char *ip_dst;
         int   dst_port;
@@ -326,9 +330,6 @@ typedef struct Sagan_Event
         sbool drop;
 
 	char *f_msg;
-
-	_SaganDebug *debug;
-
 
         /* message information */
 

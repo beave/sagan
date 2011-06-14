@@ -37,17 +37,18 @@ uint64_t get_cid ( _SaganDebug *,  int , int );
 
 void record_last_cid ( _SaganDebug * );
 
-int  get_sig_sid( _SaganDebug *, char *,  char *,
-                  char *,  char *,
-                  int         ,  int  );
+//int  get_sig_sid( _SaganDebug *, char *,  char *,
+//                  char *,  char *,
+//                  int         ,  int  );
 
-void insert_event ( _SaganDebug *, int, uint64_t, int, int, char *, char * );
+int  get_sig_sid( SaganEvent *); 
 
-void insert_hdr ( _SaganDebug *, int , uint64_t,
-                 char *,  char *,
-                 int, int, int, int, int);
+void insert_event ( SaganEvent *, int, char *,  char * );
 
-void insert_payload ( _SaganDebug *, int,  uint64_t, char *,  int );
+void insert_hdr ( SaganEvent *,  char *, char * );
+
+
+void insert_payload( SaganEvent *, char *); 
 
 void query_reference ( _SaganDebug *, char *, char *, int, int );
 

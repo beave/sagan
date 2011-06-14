@@ -1085,6 +1085,7 @@ SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
 SaganEvent[threadid].event_time_sec = 	time(NULL);
 
 SaganEvent[threadid].debug     = 	debug;
+SaganEvent[threadid].config    = 	config;
 
 }
 
