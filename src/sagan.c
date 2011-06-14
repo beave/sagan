@@ -523,7 +523,7 @@ sagan_log(0, "");
 sagan_log(0, "");
 sagan_log(0, " ,-._,-. 	-*> Sagan! <*-");
 sagan_log(0, " \\/)\"(\\/	Version %s", VERSION);
-sagan_log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [www.quadrantsec.com]");
+sagan_log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
 sagan_log(0, "  /   \\/)	Copyright (C) 2009-2011 Quadrant Information Security, et al.");
 sagan_log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
 sagan_log(0, "  oo-oo     Sagan is processing events.....");

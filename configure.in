@@ -299,7 +299,7 @@ AC_OUTPUT
 AC_MSG_RESULT([])
 AC_MSG_RESULT([  ,-._,-.    Sagan has been configured!])
 AC_MSG_RESULT([  \/)"(\/ ])
-AC_MSG_RESULT([   (_o_)     Champ Clark III & The Softwink Team: http://www.softwink.com])
+AC_MSG_RESULT([   (_o_)     Champ Clark III & The Quadrant InfoSec Team [[quadrantsec.com]]])
 AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2011 Softwink, Inc., et al.])
 AC_MSG_RESULT([  (|| ||) ])
 AC_MSG_RESULT([   oo-oo  ]) 
