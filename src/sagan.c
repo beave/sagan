@@ -502,7 +502,7 @@ sagan_log(config, 0, "Prelude profile: %s", config->sagan_prelude_profile);
 sagan_log(config, 0, "Max Prelude threads: %d", config->max_prelude_threads);
 sagan_log(config, 0, "");  /* libprelude dumps some information.  This is to make it pretty */
 
-PreludeInit();
+PreludeInit(config);
 }
 
 #endif

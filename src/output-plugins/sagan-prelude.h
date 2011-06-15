@@ -26,15 +26,15 @@
 
 #ifdef HAVE_LIBPRELUDE
 
-void PreludeInit(void);
+void PreludeInit( _SaganConfig *);
 int setup_analyzer(idmef_analyzer_t *);
-int add_int_data(idmef_alert_t *, const char *, uint32_t );
+int add_int_data(_SaganConfig *, idmef_alert_t *, const char *, uint32_t );
 void sagan_prelude( SaganEvent * );
-int event_to_impact(int, idmef_alert_t *);
+int event_to_impact(_SaganConfig *, int, idmef_alert_t *);
 int event_to_reference(char *, idmef_classification_t *);
-int event_to_source_target(char *, char *, int ,int ,int , idmef_alert_t *);
-int syslog_to_data( char * , char * , int , char *, idmef_alert_t * );
-int add_byte_data(idmef_alert_t *, const char *, const unsigned char *, size_t);
+int event_to_source_target(_SaganConfig *, char *, char *, int ,int ,int , idmef_alert_t *);
+int syslog_to_data( _SaganConfig *,  char * , char * , int , char *, idmef_alert_t * );
+int add_byte_data( _SaganConfig *, idmef_alert_t *, const char *, const unsigned char *, size_t);
 int add_sagan_reference(idmef_classification_t *, char *);
 
 #endif

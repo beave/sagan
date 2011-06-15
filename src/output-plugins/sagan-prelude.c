@@ -61,7 +61,7 @@ struct rule_struct *rulestruct;
 
 /* Init the Prelude sub system. */
 
-void PreludeInit(void) 
+void PreludeInit( _SaganConfig *config ) 
 {
 
 int ret; 
@@ -71,37 +71,37 @@ prelude_client_flags_t flags;
 ret = prelude_thread_init(NULL);
 
 if ( ret < 0 ) { 
-	removelockfile(); 
-	sagan_log(1, "[%s, line %d] %s: Unable to init the Prelude thread subsystem: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+	removelockfile(config); 
+	sagan_log(config, 1, "[%s, line %d] %s: Unable to init the Prelude thread subsystem: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
 	}
 
 ret = prelude_init(NULL, NULL);
 if ( ret < 0 ) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] %s: Unable to init the Prelude library: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] %s: Unable to init the Prelude library: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         }
 
 ret = prelude_client_new(&preludeclient, config->sagan_prelude_profile ? config->sagan_prelude_profile : DEFAULT_ANALYZER_NAME);
 
 if ( ret < 0 ) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] %s: Unable to create a Prelude client object: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] %s: Unable to create a Prelude client object: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         }
 
 flags = PRELUDE_CLIENT_FLAGS_ASYNC_SEND|PRELUDE_CLIENT_FLAGS_ASYNC_TIMER;
 ret = prelude_client_set_flags(preludeclient, prelude_client_get_flags(preludeclient) | flags);
 
 if ( ret < 0 ) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] %s: Unable to set asynchronous send and timer: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] %s: Unable to set asynchronous send and timer: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         }
 
 setup_analyzer(prelude_client_get_analyzer(preludeclient));
 
 ret = prelude_client_start(preludeclient);
 if ( ret < 0 ) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] %s: Unable to initialize Prelude client: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] %s: Unable to initialize Prelude client: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         }
 
 
@@ -139,7 +139,7 @@ int setup_analyzer(idmef_analyzer_t *analyzer)
         return 0;
 }
 
-int add_int_data(idmef_alert_t *alert, const char *meaning, uint32_t data)
+int add_int_data( _SaganConfig *config, idmef_alert_t *alert, const char *meaning, uint32_t data)
 {
         int ret;
         prelude_string_t *str;
@@ -153,14 +153,14 @@ int add_int_data(idmef_alert_t *alert, const char *meaning, uint32_t data)
 
         ret = idmef_additional_data_new_meaning(ad, &str);
         if ( ret < 0 ) {
-                sagan_log(0,"%s: error creating additional-data meaning: %s.\n",
+                sagan_log(config, 0,"%s: error creating additional-data meaning: %s.\n",
                              prelude_strsource(ret), prelude_strerror(ret));
                 return -1;
         }
 
         ret = prelude_string_set_ref(str, meaning);
         if ( ret < 0 ) {
-                sagan_log(0, "%s: error setting integer data meaning: %s.\n",
+                sagan_log(config, 0, "%s: error setting integer data meaning: %s.\n",
                              prelude_strsource(ret), prelude_strerror(ret));
                 return -1;
         }
@@ -193,52 +193,52 @@ prelude_string_t *str;
 ret = idmef_message_new(&idmef);
 if ( ret < 0 ) {
          prelude_client_destroy(preludeclient, PRELUDE_CLIENT_EXIT_STATUS_FAILURE);
-         sagan_log(1, "[%s, line %d] Error in idmef_message_new(). Aborting", __FILE__, __LINE__);
+         sagan_log(Event->config, 1, "[%s, line %d] Error in idmef_message_new(). Aborting", __FILE__, __LINE__);
          }
 
 ret = idmef_message_new_alert(idmef, &alert);
       if ( ret < 0 ) { 
-	 sagan_log(0, "[%s, line %d] Error in idmef_message_new_alert()", __FILE__, __LINE__); 
+	 sagan_log(Event->config, 0, "[%s, line %d] Error in idmef_message_new_alert()", __FILE__, __LINE__); 
 	 goto err;
 	 }
 
 ret = idmef_alert_new_classification(alert, &class);
       if ( ret < 0 ) {
-	 sagan_log(0, "[%s, line %d] Error in idmef_alert_new_classification()", __FILE__, __LINE__);
+	 sagan_log(Event->config, 0, "[%s, line %d] Error in idmef_alert_new_classification()", __FILE__, __LINE__);
 	 goto err;
 	 }
 ret = idmef_classification_new_text(class, &str);
       if ( ret < 0 ) {
-         sagan_log(0, "[%s, line %d] Error in idmef_classification_new_text()", __FILE__, __LINE__);
+         sagan_log(Event->config, 0, "[%s, line %d] Error in idmef_classification_new_text()", __FILE__, __LINE__);
 	 goto err;
 	 }
 
 prelude_string_set_ref(str, rulestruct[Event->found].s_msg );
 
-ret = event_to_impact(rulestruct[Event->found].s_pri, alert);
+ret = event_to_impact(Event->config, rulestruct[Event->found].s_pri, alert);
       if ( ret < 0 ) {
-         sagan_log(0, "[%s, line %d] event_to_impact() failed", __FILE__, __LINE__);
+         sagan_log(Event->config, 0, "[%s, line %d] event_to_impact() failed", __FILE__, __LINE__);
          goto err;
          }
 
 ret = event_to_reference(rulestruct[Event->found].s_sid, class);
       if ( ret < 0 ) {
-         sagan_log(0, "[%s, line %d] event_to_reference() failed", __FILE__, __LINE__);
+         sagan_log(Event->config, 0, "[%s, line %d] event_to_reference() failed", __FILE__, __LINE__);
          goto err;
          }
 
-ret = event_to_source_target(Event->ip_src, Event->ip_dst, Event->src_port, Event->dst_port, rulestruct[Event->found].ip_proto, alert);
+ret = event_to_source_target(Event->config, Event->ip_src, Event->ip_dst, Event->src_port, Event->dst_port, rulestruct[Event->found].ip_proto, alert);
       if ( ret < 0 ) {
-         sagan_log(0, "[%s, line %d] event_to_source_target() failed", __FILE__, __LINE__);
+         sagan_log(Event->config, 0, "[%s, line %d] event_to_source_target() failed", __FILE__, __LINE__);
          goto err;
          }
 
 sid = atoi(rulestruct[Event->found].s_sid);
 rev = atoi(rulestruct[Event->found].s_rev);
 
-ret = syslog_to_data(rulestruct[Event->found].s_sid, rulestruct[Event->found].s_rev, rulestruct[Event->found].ip_proto, Event->message, alert);
+ret = syslog_to_data(Event->config, rulestruct[Event->found].s_sid, rulestruct[Event->found].s_rev, rulestruct[Event->found].ip_proto, Event->message, alert);
       if ( ret < 0 ) {
-         sagan_log(0, "[%s, line %d] syslog_to_data() failed", __FILE__, __LINE__);
+         sagan_log(Event->config, 0, "[%s, line %d] syslog_to_data() failed", __FILE__, __LINE__);
          goto err;
          }
 
@@ -256,7 +256,7 @@ pthread_exit(NULL);
 
 /* Assigns severity to an event.  For example,  priority 1 == High */
 
-int event_to_impact(int pri, idmef_alert_t *alert) 
+int event_to_impact(_SaganConfig *config, int pri, idmef_alert_t *alert) 
 {
 
 int ret;
@@ -265,10 +265,10 @@ idmef_impact_severity_t severity;
 idmef_assessment_t *assessment;
 
 ret = idmef_alert_new_assessment(alert, &assessment);
-      if ( ret < 0 ) sagan_log(1, "[%s, line %d] Error in idmef_alert_new_assessment(). Abort.", __FILE__, __LINE__);
+      if ( ret < 0 ) sagan_log(config, 1, "[%s, line %d] Error in idmef_alert_new_assessment(). Abort.", __FILE__, __LINE__);
 
 ret = idmef_assessment_new_impact(assessment,  &impact);
-      if ( ret < 0 ) sagan_log(1,"[%s, line %d] Error in idmef_assessment_new_impact(). Abort.", __FILE__, __LINE__);
+      if ( ret < 0 ) sagan_log(config, 1,"[%s, line %d] Error in idmef_assessment_new_impact(). Abort.", __FILE__, __LINE__);
 
 if ( pri == 1 ) severity = IDMEF_IMPACT_SEVERITY_HIGH;
 else if ( pri == 2 ) severity = IDMEF_IMPACT_SEVERITY_MEDIUM;
@@ -299,7 +299,7 @@ return ret;
 
 /* Supply target/source/port information */
 
-int event_to_source_target(char *ip_src, char *ip_dst, int src_port, int dst_port, int proto, idmef_alert_t *alert)
+int event_to_source_target( _SaganConfig *config, char *ip_src, char *ip_dst, int src_port, int dst_port, int proto, idmef_alert_t *alert)
 {
 
 int ret;
@@ -369,22 +369,22 @@ prelude_string_set_ref(string, ip_dst);
 return 0;
 }
 
-int syslog_to_data ( char *sid,  char *rev, int proto, char *message, idmef_alert_t *alert )
+int syslog_to_data ( _SaganConfig *config,  char *sid,  char *rev, int proto, char *message, idmef_alert_t *alert )
 {
 
 int i;
 
 i = atoi(sid);
-add_int_data(alert, "sagan_rule_sid", i);
+add_int_data(config, alert, "sagan_rule_sid", i);
 i = atoi(rev);
-add_int_data(alert, "sagan_rule_rev", i );
+add_int_data(config, alert, "sagan_rule_rev", i );
 
-add_int_data(alert, "ip_ver", 4);
+add_int_data(config, alert, "ip_ver", 4);
 
-add_int_data(alert, "ip_proto", proto);
+add_int_data(config, alert, "ip_proto", proto);
 
 
-add_byte_data(alert, "payload", message, strlen(message));
+add_byte_data(config, alert, "payload", message, strlen(message));
 
 
 return 0;
@@ -392,7 +392,7 @@ return 0;
 
 /* Setup for the payload information */
 
-int add_byte_data(idmef_alert_t *alert, const char *meaning, const unsigned char *data, size_t size)
+int add_byte_data( _SaganConfig *config , idmef_alert_t *alert, const char *meaning, const unsigned char *data, size_t size)
 {
 
 int ret;
@@ -404,19 +404,19 @@ if ( ret < 0 ) return ret;
 
 ret = idmef_additional_data_set_byte_string_ref(ad, data, size);
 if ( ret < 0 )  { 
-	sagan_log(0, "[%s, line %d] %s Error setting byte string data: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+	sagan_log(config, 0, "[%s, line %d] %s Error setting byte string data: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
   	return -1;
 	}
 
 ret = idmef_additional_data_new_meaning(ad, &str);
 if ( ret < 0 )  {
-        sagan_log(0, "[%s, line %d] %s Error creating additional-data meaning: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        sagan_log(config, 0, "[%s, line %d] %s Error creating additional-data meaning: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         return -1;
 	}
 
 ret = prelude_string_set_ref(str, meaning);
 if ( ret < 0 )  {
-        sagan_log(0, "[%s, line %d] %s Error setting byte string data meaning: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
+        sagan_log(config, 0, "[%s, line %d] %s Error setting byte string data meaning: %s", __FILE__, __LINE__, prelude_strsource(ret), prelude_strerror(ret));
         return -1;
 	}
 
