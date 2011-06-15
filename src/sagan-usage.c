@@ -35,8 +35,6 @@
 
 #include "version.h"
 
-struct _SaganConfig *config;
-
 void sagan_usage(void)
 {
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
@@ -65,7 +63,7 @@ fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).
 fprintf(stderr, "-u, --user\t\tRun as user (defaults to 'sagan').\n");
 fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
 fprintf(stderr, "-f, --config\t\tSagan configuration file to load.\n");
-fprintf(stderr, "-l, --log\t\tsagan.log location [default: %s].\n\n", config->sagan_log_filepath);
+fprintf(stderr, "-l, --log\t\tsagan.log location [default: %s].\n\n", SAGANLOG );
 
 #ifdef HAVE_LIBPQ
 fprintf(stderr, "* PostgreSQL support is included\n");

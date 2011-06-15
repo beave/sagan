@@ -66,7 +66,6 @@ int liblognorm_count;
 #endif
 
 struct rule_struct *rulestruct;
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 void load_config( _SaganDebug *debug, _SaganConfig *config  ) { 

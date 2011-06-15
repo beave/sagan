@@ -46,7 +46,6 @@
 
 #include "sagan.h"
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 #ifdef HAVE_LIBLOGNORM

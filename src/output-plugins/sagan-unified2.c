@@ -52,7 +52,7 @@ uint64_t unified_event_id;
 
 struct rule_struct *rulestruct;
 struct class_struct *classstruct;
-//struct _SaganConfig *config;
+
 struct _SaganCounters *counters;
 
 static void Unified2Write( _SaganConfig *, uint8_t *, uint32_t);

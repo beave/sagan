@@ -63,7 +63,6 @@ sbool sagan_unified2_flag;
 #endif
 
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;

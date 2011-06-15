@@ -40,7 +40,6 @@
 
 struct rule_struct *rulestruct;
 struct ref_struct *refstruct;
-//struct _SaganConfig *config;
 
 void sagan_alert( SaganEvent *Event ) { 
 

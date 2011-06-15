@@ -51,7 +51,7 @@ III from Marcus J. Ranum on Jan. 6th, 2011.
 
 #include "sagan.h"
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 //struct _SaganDebug *debug;
 
 struct my_udphdr {
@@ -62,7 +62,7 @@ struct my_udphdr {
 };
 
 static  void    logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
-static  int     wiredevlog();
+static  int     wiredevlog( _SaganConfig *);
 static  int     outf;
 
 
@@ -75,13 +75,13 @@ void plog_handler( struct sig_thread_args *args )
         char                    eb[PCAP_ERRBUF_SIZE];
 	char 			filterstr[128];
 
-	iface = config->plog_interface;
+	iface = args->config->plog_interface;
 
 	sagan_log(args->config, 0, "");
 	sagan_log(args->config, 0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
 	sagan_log(args->config, 0, "Interface: %s", iface); 
-	sagan_log(args->config, 0, "UDP port to monitor: %d", config->plog_port);
-	sagan_log(args->config, 0, "Log device: %s", config->plog_logdev);
+	sagan_log(args->config, 0, "UDP port to monitor: %d", args->config->plog_port);
+	sagan_log(args->config, 0, "Log device: %s", args->config->plog_logdev);
 	sagan_log(args->config, 0, "");
 	
         if(iface == (char *)0) {
@@ -99,7 +99,7 @@ void plog_handler( struct sig_thread_args *args )
 
 	/* Port is configurable via int config->plog_port */ 
 
-	snprintf(filterstr, sizeof(filterstr), "udp port %d", config->plog_port);
+	snprintf(filterstr, sizeof(filterstr), "udp port %d", args->config->plog_port);
 
         if(pcap_compile(bp,&filtr,filterstr,1,0))
 	  sagan_log(args->config, 1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
@@ -108,9 +108,9 @@ void plog_handler( struct sig_thread_args *args )
 	  sagan_log(args->config, 1, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
 
         /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
-        if(wiredevlog()) {
+        if(wiredevlog(args->config)) {
 	  removelockfile(args->config);
-	  sagan_log(args->config, 1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
+	  sagan_log(args->config, 1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, args->config->plog_logdev);
 	}
 	
         /* endless loop */
@@ -203,7 +203,7 @@ bad:
 }
 
 static  int
-wiredevlog()
+wiredevlog( _SaganConfig *config )
 {
         struct  sockaddr        s;
 

@@ -44,7 +44,6 @@
 #include "sagan-esmtp.h"
 #include "version.h"
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;

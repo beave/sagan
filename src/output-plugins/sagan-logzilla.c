@@ -56,7 +56,6 @@ PGresult *result;
 char pgconnect[2048];
 #endif
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 pthread_mutex_t logzilla_db_mutex;

@@ -63,7 +63,6 @@ PGresult *result;
 char pgconnect[2048];
 #endif
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;

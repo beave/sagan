@@ -75,7 +75,6 @@
 
 #define OVECCOUNT 30
 
-//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;

@@ -47,7 +47,6 @@
 
 #include "sagan.h"
 
-//struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 extern struct ref_struct *refstruct;

@@ -43,7 +43,6 @@
 
 #include "version.h"
 
-//struct _SaganConfig *config;
 
 /* Was using liblockfile but decided for portability reasons, it was a
  * bad idea */

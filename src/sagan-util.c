@@ -55,7 +55,7 @@ MYSQL    *mysql, *mysql_logzilla;
 
 #include "version.h"
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 
 //char sagan_path[MAXPATH];
 
