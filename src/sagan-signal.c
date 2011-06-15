@@ -63,7 +63,7 @@ sbool sagan_unified2_flag;
 #endif
 
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -92,11 +92,11 @@ void sig_handler( struct sig_thread_args *args ) {
 		  case SIGSEGV:
 		  case SIGABRT:
 
-                  sagan_log(0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
-		  sagan_statistics();
+                  sagan_log(args->config, 0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+		  sagan_statistics(args->config);
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-		  if ( config->dbtype != 0 ) record_last_cid(args->debug);
+		  if ( args->config->dbtype != 0 ) record_last_cid(args->debug, args->config);
 #endif
 
 #ifdef HAVE_LIBPRELUDE
@@ -113,33 +113,33 @@ prelude_deinit();
 #endif
 
 #ifdef HAVE_LIBDNET
-if ( sagan_unified2_flag ) Unified2CleanExit(); 
+if ( sagan_unified2_flag ) Unified2CleanExit(args->config); 
 #endif
 
-	        fflush(config->sagan_alert_stream);
-	        fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
+	        fflush(args->config->sagan_alert_stream);
+	        fclose(args->config->sagan_alert_stream);             /* Close Sagan alert file */
 
-       		fflush(config->sagan_log_stream);               /* Close the sagan.log */
-        	fclose(config->sagan_log_stream);
+       		fflush(args->config->sagan_log_stream);               /* Close the sagan.log */
+        	fclose(args->config->sagan_log_stream);
 
-                removelockfile();
+                removelockfile(args->config);
                 exit(0);
                 break;
 
                  case SIGHUP:
                    pthread_mutex_lock(&sig_mutex);
-   		   sagan_log(0, "[Reloading Sagan version %s.]-------", VERSION);
+   		   sagan_log(args->config, 0, "[Reloading Sagan version %s.]-------", VERSION);
 
 		      /* Reset counters */
 		   counters->refcount=0; counters->classcount=0; counters->rulecount=0; counters->ruletotal=0;
 		   
 		   /* Re-load everything */
 
-		  load_config(args->debug);
+		  load_config(args->debug, args->config);
 
                   pthread_mutex_unlock(&sig_mutex);
 		  
-		  sagan_log(0, "Configuration reloaded.");
+		  sagan_log(args->config, 0, "Configuration reloaded.");
                   break;
 
 		/* Signals to ignore */
@@ -148,11 +148,11 @@ if ( sagan_unified2_flag ) Unified2CleanExit();
 		break;
 
 		case SIGUSR1:
-		sagan_statistics(); 
+		sagan_statistics(args->config); 
 		break;
 
 		default:
-		sagan_log(0, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
+		sagan_log(args->config, 0, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
                 }
         }
 }

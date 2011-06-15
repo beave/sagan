@@ -75,7 +75,7 @@
 
 #define OVECCOUNT 30
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -133,7 +133,7 @@ int option_index = 0;
 struct Sagan_Event *SaganEvent = NULL;
 SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 
-int endianchk;
+//int endianchk;
 
 /****************************************************************************/
 /* MySQL / PostgreSQL (snort/logzilla) local variables			    */
@@ -155,7 +155,7 @@ pthread_attr_t thread_logzilla_attr;
 pthread_attr_init(&thread_logzilla_attr);
 pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
 
-endianchk = checkendian();	// Needed for Snort output
+//config->endian = checkendian();	// Needed for Snort output
 #endif
 
 /****************************************************************************/
@@ -324,11 +324,13 @@ struct _SaganDebug *debug;
 debug = malloc(sizeof(_SaganDebug));
 memset(debug, 0, sizeof(_SaganDebug));
 
+struct _SaganConfig *config;
+config = malloc(sizeof(_SaganConfig));
+memset(config, 0, sizeof(_SaganConfig));
+
 counters = malloc(sizeof(_SaganCounters));
 memset(counters, 0, sizeof(_SaganCounters));
 
-config = malloc(sizeof(_SaganConfig));
-memset(config, 0, sizeof(_SaganConfig));
 
 snprintf(config->sagan_config, sizeof(config->sagan_config), "%s", CONFIG_FILE_PATH);
 
@@ -412,7 +414,7 @@ if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL)
     }
 
 
-load_config( debug );
+load_config( debug, config );
 
 /* Load/init liblognorm definitions.  I tried to move this into a subroutine,
  * but that ended up causing segfaults on ln_normalize() or causing 
@@ -422,20 +424,20 @@ load_config( debug );
  */
 
 #ifdef HAVE_LIBLOGNORM
-if((ctx = ln_initCtx()) == NULL) sagan_log(1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
-if((eectx = ee_initCtx()) == NULL) sagan_log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
+if((ctx = ln_initCtx()) == NULL) sagan_log(config, 1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
+if((eectx = ee_initCtx()) == NULL) sagan_log(config, 1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
 
 ln_setEECtx(ctx, eectx);
 
 for (i=0; i < counters->liblognormtoload_count; i++) { 
-sagan_log(0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
-if (stat(liblognormtoloadstruct[i].filepath, &fileinfo)) sagan_log(1, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
+sagan_log(config, 0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
+if (stat(liblognormtoloadstruct[i].filepath, &fileinfo)) sagan_log(config, 1, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
 ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 }
 #endif
 
-sagan_log(0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-sagan_log(0, "Sagan version %s is firing up!", VERSION);
+sagan_log(config, 0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
+sagan_log(config, 0, "Sagan version %s is firing up!", VERSION);
 
 #ifdef HAVE_LIBPCAP
 
@@ -445,32 +447,32 @@ sagan_log(0, "Sagan version %s is firing up!", VERSION);
 if ( config->plog_flag ) { 
 
 if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
         }
 }
 #endif
 
-sagan_droppriv(runas, config->sagan_fifo);		/* Become the Sagan user */
-sagan_log(0, "---------------------------------------------------------------------------");
+sagan_droppriv(config, runas);		/* Become the Sagan user */
+sagan_log(config, 0, "---------------------------------------------------------------------------");
 
 /* Open sagan alert file */
 
 if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
-removelockfile();
-sagan_log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
+removelockfile(config);
+sagan_log(config, 1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-if ( config->sagan_ext_flag ) sagan_log(0, "Max external threads : %d", config->max_external_threads);
+if ( config->sagan_ext_flag ) sagan_log(config, 0, "Max external threads : %d", config->max_external_threads);
 
 #ifdef HAVE_LIBESMTP
-if ( config->sagan_esmtp_flag ) sagan_log(0, "Max SMTP threads     : %d", config->max_email_threads);
+if ( config->sagan_esmtp_flag ) sagan_log(config, 0, "Max SMTP threads     : %d", config->max_email_threads);
 #endif
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 if ( config->logzilla_dbtype ) { 
-sagan_log(0, "Max Logzilla threads : %d", config->max_logzilla_threads);
-logzilla_db_connect();
+sagan_log(config, 0, "Max Logzilla threads : %d", config->max_logzilla_threads);
+logzilla_db_connect(config);
 }
 #endif 
 
@@ -478,15 +480,17 @@ logzilla_db_connect();
 
 if ( config->dbtype ) { 
 
-sagan_log(0, "Max database threads : %d", config->maxdb_threads);
+sagan_log(config, 0, "Max database threads : %d", config->maxdb_threads);
 
-db_connect();
-get_sensor_id( debug, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail, config->dbtype);
-sagan_log(0, "Sensor ID            : %d", config->sensor_id);
-cid = get_cid( debug, config->sensor_id, config->dbtype );
+db_connect(config);
+//get_sensor_id( debug, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail, config->dbtype);
+
+get_sensor_id( debug, config ); 
+sagan_log(config, 0, "Sensor ID            : %d", config->sensor_id);
+cid = get_cid( debug, config );
 cid++;
 counters->sigcid=cid;
-sagan_log(0, "Next CID             : %" PRIu64 "", cid);
+sagan_log(config, 0, "Next CID             : %" PRIu64 "", cid);
 
 }
 #endif
@@ -495,9 +499,9 @@ sagan_log(0, "Next CID             : %" PRIu64 "", cid);
 
 if ( config->sagan_prelude_flag ) {
 
-sagan_log(0, "Prelude profile: %s", config->sagan_prelude_profile);
-sagan_log(0, "Max Prelude threads: %d", config->max_prelude_threads);
-sagan_log(0, "");  /* libprelude dumps some information.  This is to make it pretty */
+sagan_log(config, 0, "Prelude profile: %s", config->sagan_prelude_profile);
+sagan_log(config, 0, "Max Prelude threads: %d", config->max_prelude_threads);
+sagan_log(config, 0, "");  /* libprelude dumps some information.  This is to make it pretty */
 
 PreludeInit();
 }
@@ -508,32 +512,32 @@ PreludeInit();
 
 if ( config->sagan_unified2_flag ) { 
 
-sagan_log(0, "");
-sagan_log(0, "Unified2 file: %s", config->unified2_filepath);
-sagan_log(0, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
-Unified2InitFile( );
+sagan_log(config, 0, "");
+sagan_log(config, 0, "Unified2 file: %s", config->unified2_filepath);
+sagan_log(config, 0, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
+Unified2InitFile( config );
 
 }
 
 #endif
 
 
-sagan_log(0, "");
+sagan_log(config, 0, "");
 
-sagan_log(0, "");
-sagan_log(0, " ,-._,-. 	-*> Sagan! <*-");
-sagan_log(0, " \\/)\"(\\/	Version %s", VERSION);
-sagan_log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-sagan_log(0, "  /   \\/)	Copyright (C) 2009-2011 Quadrant Information Security, et al.");
-sagan_log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
-sagan_log(0, "  oo-oo     Sagan is processing events.....");
-sagan_log(0, "");
+sagan_log(config, 0, "");
+sagan_log(config, 0, " ,-._,-. 	-*> Sagan! <*-");
+sagan_log(config, 0, " \\/)\"(\\/	Version %s", VERSION);
+sagan_log(config, 0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
+sagan_log(config, 0, "  /   \\/)	Copyright (C) 2009-2011 Quadrant Information Security, et al.");
+sagan_log(config, 0, " (|| ||) 	Using PCRE version: %s", pcre_version());
+sagan_log(config, 0, "  oo-oo     Sagan is processing events.....");
+sagan_log(config, 0, "");
 
 /* Become a daemon if requested */
 
 if ( daemonize )
 {
-sagan_log(0, "Becoming a daemon!");
+sagan_log(config, 0, "Becoming a daemon!");
 
 pid_t pid = 0;
 setsid();
@@ -546,10 +550,11 @@ if (pid == 0) {} else { exit(0); }
 
 SaganSigArgs.daemonize = daemonize;
 SaganSigArgs.debug     = debug;
+SaganSigArgs.config    = config;
 
 if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
-        removelockfile();
-        sagan_log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
         }
 
 
@@ -557,9 +562,11 @@ if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
 
 if (!daemonize) { 
 
-if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
-	removelockfile();
-	sagan_log(1, "[%s, line %d] Error creating key_handler thread.", __FILE__, __LINE__);
+//if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
+
+if (pthread_create( &key_thread, NULL, (void *)key_handler, config )) { ;
+	removelockfile(config);
+	sagan_log(config, 1, "[%s, line %d] Error creating key_handler thread.", __FILE__, __LINE__);
 	}
 
 }
@@ -569,33 +576,33 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
 /* Check lock file _after_ thread.  If you don't it'll retreive the wrong pid
  * and incorrectly believe there is a stale lock file if --daemon */
 
-checklockfile();
+checklockfile(config);
 
-sagan_log(0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
+sagan_log(config, 0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
 
 if ( fd == 0 ) fd = open(config->sagan_fifo, O_RDONLY);
 
-sagan_log(0, "Successfully opened FIFO (%s).", config->sagan_fifo);
+sagan_log(config, 0, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
 while(1) { 
 
                 if(fd < 0) {
-		        removelockfile();
-			sagan_log(1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
+		        removelockfile(config);
+			sagan_log(config, 1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
                         }
 
                 i = read(fd, &c, 1);
                 
 		 if(i < 0) {
-  	                removelockfile();
-                        sagan_log(1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
+  	                removelockfile(config);
+                        sagan_log(config, 1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
                         }
 
 		/* Error on reading (FIFO writer left) and we have no 
 		 * previous error state. */
 
 		if (i == 0 && fifoerr == 0 ) { 
-		   sagan_log(0, "FIFO closed (writer exited). Will start processing when writer resumes.");
+		   sagan_log(config, 0, "FIFO closed (writer exited). Will start processing when writer resumes.");
 		   fifoerr=1;
 		   }
 
@@ -603,7 +610,7 @@ while(1) {
 		 * then the write is back online. */
 
 		if ( fifoerr == 1 && i == 1 )  { 
-		   sagan_log(0,"FIFO writer detected, resuming...");
+		   sagan_log(config, 0,"FIFO writer detected, resuming...");
 		   fifoerr=0;  /* Rest error state */
 		   }
 
@@ -634,56 +641,56 @@ while(1) {
 		
 		if (syslog_host == NULL ) { 
 		   syslog_host = "SAGAN: HOST ERROR"; 
-		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'host'");
+		   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'host'");
 		   }
 		
 		syslog_facility=strtok_r(NULL, "|", &tok);
 		if ( syslog_facility == NULL ) { 
 		   syslog_facility = "SAGAN: FACILITY ERROR";
-		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'facility'");
+		   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'facility'");
 		   }
 
                 syslog_priority=strtok_r(NULL, "|", &tok);
 		if ( syslog_priority == NULL ) { 
 		   syslog_priority = "SAGAN: PRIORITY ERROR";
-		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'priority'");
+		   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'priority'");
 		   }
 
                 syslog_level=strtok_r(NULL, "|", &tok);
 		if ( syslog_level == NULL ) { 
 		   syslog_level = "SAGAN: LEVEL ERROR";
-		   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'priority'");
+		   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'priority'");
 		   }
 
                 syslog_tag=strtok_r(NULL, "|", &tok);
                 if ( syslog_tag == NULL ) {
                    syslog_tag = "SAGAN: TAG ERROR";
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'tag'");
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'tag'");
                    }
 
                 syslog_date=strtok_r(NULL, "|", &tok);
                 if ( syslog_date == NULL ) {
                    syslog_date = "SAGAN: DATE ERROR";
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'date'");
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'date'");
                    }
 
                 syslog_time=strtok_r(NULL, "|", &tok);
                 if ( syslog_time == NULL ) {
                    syslog_time = "SAGAN: TIME ERROR";
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'time'");
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'time'");
                    }
 
                 syslog_program=strtok_r(NULL, "|", &tok);
                 if ( syslog_program == NULL ) {
                    syslog_program = "SAGAN: PROGRAM ERROR";
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'program'");
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'program'");
                    } else {
                    syslog_msg=syslog_program + strlen(syslog_program) + 1;
                    }
 
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
-                   if ( !fifoerr ) sagan_log(0, "Sagan received a malformed 'message'\n");
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'message'\n");
                    }
 
 
@@ -693,7 +700,7 @@ while(1) {
                syslog_msg[strcspn ( syslog_msg, "\r" )] = '\0';
 
 
-if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
+if (debug->debugsyslog) sagan_log(config, 0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
 
 		/* Search for matches */
@@ -827,7 +834,7 @@ if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
                         ee_fmtEventToRFC5424(lnevent, &str);
                         cstr = es_str2cstr(str, NULL);
 			
-			if ( debug->debugnormalize ) sagan_log(0, "Normalize output: %s", cstr);
+			if ( debug->debugnormalize ) sagan_log(config, 0, "Normalize output: %s", cstr);
 
 			propName = es_newStrFromBuf("src-ip", 6);
 			if((field = ee_getEventField(lnevent, propName)) != NULL) {
@@ -870,14 +877,14 @@ if (debug->debugsyslog) sagan_log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
                         propName = es_newStrFromBuf("src-host", 8);
                         if((field = ee_getEventField(lnevent, propName)) != NULL) {
                            str = ee_getFieldValueAsStr(field, 0);
-			   snprintf(ipbuf_src, sizeof(ipbuf_src), "%s", dns_lookup(es_str2cstr(str, NULL)));
+			   snprintf(ipbuf_src, sizeof(ipbuf_src), "%s", dns_lookup(config, es_str2cstr(str, NULL)));
 			   ip_src=ipbuf_src;
                            }
 
                        propName = es_newStrFromBuf("dst-host", 8);
                         if((field = ee_getEventField(lnevent, propName)) != NULL) {
                            str = ee_getFieldValueAsStr(field, 0);
-			   snprintf(ipbuf_dst, sizeof(ipbuf_dst), "%s", dns_lookup(es_str2cstr(str, NULL)));
+			   snprintf(ipbuf_dst, sizeof(ipbuf_dst), "%s", dns_lookup(config, es_str2cstr(str, NULL)));
 			   ip_dst=ipbuf_dst;
 
                            }
@@ -974,7 +981,7 @@ if ( rulestruct[b].threshold_type != 0 ) {
 		if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
 			{ 
 			thresh_log_flag = 1;
-			sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+			sagan_log(config, 0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
 			counters->threshold_total++;
 			}
   			
@@ -1014,7 +1021,7 @@ if ( rulestruct[b].threshold_type != 0 ) {
 
 	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
 	   thresh_log_flag = 1;
-	   sagan_log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_dst);
+	   sagan_log(config, 0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_dst);
 	   counters->threshold_total++;
 	   }
          }
@@ -1074,7 +1081,7 @@ SaganEvent[threadid].src_port  =       src_porttmp[msgslot];
 SaganEvent[threadid].found     =       b;
 SaganEvent[threadid].program   =       syslog_programtmp[msgslot];
 SaganEvent[threadid].message   =       sysmsg[msgslot];
-SaganEvent[threadid].endian    =       endianchk;
+//SaganEvent[threadid].endian    =       endianchk;
 SaganEvent[threadid].time      =       syslog_timetmp[msgslot];
 SaganEvent[threadid].date      =       syslog_datetmp[msgslot];
 SaganEvent[threadid].f_msg     =       s_msgtmp[msgslot]; 
@@ -1122,13 +1129,13 @@ if ( counters->threadpreludec < config->max_prelude_threads ) {
 	if ( counters->threadpreludec > counters->threadmaxpreludec ) counters->threadmaxpreludec=counters->threadpreludec;
 
 	if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &SaganEvent[threadid] ) ) { 
-		removelockfile();
-	        sagan_log(1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
+		removelockfile(config);
+	        sagan_log(config, 1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
 	        } 
 	      	 } else { 
                 counters->sagandrop++;
                 counters->saganpreludedrop++;
-                sagan_log(0, "Prelude thread call handler: Out of threads\n");
+                sagan_log(config, 0, "Prelude thread call handler: Out of threads\n");
               	}
 }
 #endif
@@ -1159,14 +1166,14 @@ if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
 		    if ( counters->threademailc > counters->threadmaxemailc ) counters->threadmaxemailc=counters->threademailc;
 
                     if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &SaganEvent[threadid] ) ) {
-		       removelockfile();
-                       sagan_log(1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
+		       removelockfile(config);
+                       sagan_log(config, 1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
                        }
 
 			} else { 
 		       counters->sagandrop++;
 		       counters->saganesmtpdrop++;
-		       sagan_log(0, "SMTP thread call handler: Out of threads\n");
+		       sagan_log(config, 0, "SMTP thread call handler: Out of threads\n");
           }
       }
    }
@@ -1186,13 +1193,13 @@ if ( config->sagan_ext_flag == 1 && thresh_log_flag == 0 ) {
 	if ( counters->threadextc > counters->threadmaxextc ) counters->threadmaxextc=counters->threadextc;
 	
 		if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &SaganEvent[threadid] ) ) { 
-		     removelockfile();
-		     sagan_log(1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
+		     removelockfile(config);
+		     sagan_log(config, 1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
 		     }
 		      } else {
 		     counters->saganexternaldrop++;
 		     counters->sagandrop++; 
-		     sagan_log(0, "External thread call handler: Out of threads\n");
+		     sagan_log(config, 0, "External thread call handler: Out of threads\n");
 		   }
 }
 
@@ -1212,13 +1219,13 @@ if ( config->logzilla_dbtype != 0 && thresh_log_flag == 0 ) {
 		if ( counters->threadlogzillac > counters->threadmaxlogzillac ) counters->threadmaxlogzillac=counters->threadlogzillac;
 
                      if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &SaganEvent[threadid]) ) {
-                          removelockfile();
-                          sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
+                          removelockfile(config);
+                          sagan_log(config, 1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		        }
 		           } else { 
 		          counters->saganlogzilladrop++;
 		          counters->sagandrop++;
-		          sagan_log(0, "Logzilla thread handler: Out of threads");
+		          sagan_log(config, 0, "Logzilla thread handler: Out of threads");
 		  }
 }
 
@@ -1230,6 +1237,8 @@ if ( config->logzilla_dbtype != 0 && thresh_log_flag == 0 ) {
 
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+
+config->endian = checkendian();    // Needed for Snort output
 
 if ( config->dbtype != 0 && thresh_log_flag == 0 ) { 
 
@@ -1245,13 +1254,13 @@ if ( config->dbtype != 0 && thresh_log_flag == 0 ) {
 				SaganEvent[threadid].cid = cid;
 
 				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &SaganEvent[threadid]) ) { 
-		    		   removelockfile();
-		    		   sagan_log(1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
+		    		   removelockfile(config);
+		    		   sagan_log(config, 1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
 		    		   }
 		    		    } else { 
 		    		   counters->sagansnortdrop++;
 		    		   counters->sagandrop++;
-		    		   sagan_log(0, "Snort database thread handler: Out of threads");
+		    		   sagan_log(config, 0, "Snort database thread handler: Out of threads");
 	        		   }
 }
 #endif

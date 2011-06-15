@@ -66,7 +66,7 @@ static  int     wiredevlog();
 static  int     outf;
 
 
-void plog_handler( _SaganDebug *debug )
+void plog_handler( struct sig_thread_args *args )
 {
 
         pcap_t                  *bp;
@@ -77,12 +77,12 @@ void plog_handler( _SaganDebug *debug )
 
 	iface = config->plog_interface;
 
-	sagan_log(0, "");
-	sagan_log(0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
-	sagan_log(0, "Interface: %s", iface); 
-	sagan_log(0, "UDP port to monitor: %d", config->plog_port);
-	sagan_log(0, "Log device: %s", config->plog_logdev);
-	sagan_log(0, "");
+	sagan_log(args->config, 0, "");
+	sagan_log(args->config, 0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
+	sagan_log(args->config, 0, "Interface: %s", iface); 
+	sagan_log(args->config, 0, "UDP port to monitor: %d", config->plog_port);
+	sagan_log(args->config, 0, "Log device: %s", config->plog_logdev);
+	sagan_log(args->config, 0, "");
 	
         if(iface == (char *)0) {
                 if((iface = pcap_lookupdev(eb)) == (char *)0) {
@@ -93,7 +93,7 @@ void plog_handler( _SaganDebug *debug )
 
         bp = pcap_open_live(iface,4096,0,0,eb);
         if(bp == (pcap_t *)0) 
-	  sagan_log(1, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
+	  sagan_log(args->config, 1, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
 
         /* compile and install our filter */
 
@@ -102,15 +102,15 @@ void plog_handler( _SaganDebug *debug )
 	snprintf(filterstr, sizeof(filterstr), "udp port %d", config->plog_port);
 
         if(pcap_compile(bp,&filtr,filterstr,1,0))
-	  sagan_log(1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
+	  sagan_log(args->config, 1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
         
 	if(pcap_setfilter(bp,&filtr))
-	  sagan_log(1, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
+	  sagan_log(args->config, 1, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
 
         /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
         if(wiredevlog()) {
-	  removelockfile();
-	  sagan_log(1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
+	  removelockfile(args->config);
+	  sagan_log(args->config, 1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
 	}
 	
         /* endless loop */
@@ -192,11 +192,13 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
 
         /* send it! */
         if(send(outf,l,len,0) < 0) 
-	  sagan_log(1, "[%s, line %d] Send error", __FILE__, __LINE__);
+//	  sagan_log(1, "[%s, line %d] Send error", __FILE__, __LINE__);
+	printf("FIX ME\n");
         
 	return;
 bad:
-	  sagan_log(0, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
+//	  sagan_log(0, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
+	printf("FIX ME 2\n");
 
 }
 

@@ -44,7 +44,7 @@
 #include "sagan-esmtp.h"
 #include "version.h"
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -67,7 +67,7 @@ snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
 if ( rulestruct[Event->found].email_flag )  { 
    snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
    } else { 
-   if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
+   if ( Event->config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", Event->config->sagan_esmtp_to);
    }
 
 if ((r = snprintf(tmpa, sizeof(tmpa), 
@@ -82,7 +82,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"[Classification: %s] [Priority: %d]\n"
 	"%s %s %s:%d -> %s:%d %s %s\n"
 	"Syslog message: %s\r\n%s\n\r",
-	config->sagan_esmtp_from,
+	Event->config->sagan_esmtp_from,
 	tmpemail, 
 	Event->f_msg,
 	rulestruct[Event->found].s_sid, 
@@ -99,7 +99,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	Event->priority,
 	Event->message,
 	tmpref)) < 0) {
-	sagan_log(0, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
 	goto failure;
 }
 
@@ -118,31 +118,31 @@ sa.sa_flags = 0;
 sigaction (SIGPIPE, &sa, NULL);
 
 if((session = smtp_create_session ()) == NULL) {
-	sagan_log(0, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
 	goto failure;
 }
 if((message = smtp_add_message (session)) == NULL) {
-	sagan_log(1, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
+	sagan_log(Event->config, 1, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
 	goto failure;
 }
-if(!smtp_set_server (session, config->sagan_esmtp_server)) {
-	sagan_log(0, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
+if(!smtp_set_server (session, Event->config->sagan_esmtp_server)) {
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
 	goto failure;
 }
-if((r = fixlf(tmpb, tmpa)) <= 0) {
-	sagan_log(0, "[%s, line %d] Cannot fixlf.",  __FILE__, __LINE__);
+if((r = fixlf(Event->config, tmpb, tmpa)) <= 0) {
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot fixlf.",  __FILE__, __LINE__);
 	goto failure;
 }
 if(!smtp_set_message_str (message, tmpb)) {
-	sagan_log(0, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
 	goto failure;
 }
-if(!smtp_set_reverse_path (message, config->sagan_esmtp_from)) {
-	sagan_log(0, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
+if(!smtp_set_reverse_path (message, Event->config->sagan_esmtp_from)) {
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
 	goto failure;
 }
-if((recipient = smtp_add_recipient (message, config->sagan_esmtp_to)) == NULL) {
-	sagan_log(0, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
+if((recipient = smtp_add_recipient (message, Event->config->sagan_esmtp_to)) == NULL) {
+	sagan_log(Event->config, 0, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
 	goto failure;
 }
 
@@ -154,7 +154,7 @@ if (!smtp_start_session (session)) {
     * we might be storing alerts another way 
     */
 
-	sagan_log(0, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
+	sagan_log(Event->config, 0, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
 	counters->saganesmtpdrop++;
 
    } else {
@@ -163,7 +163,7 @@ if (!smtp_start_session (session)) {
 
 	status = smtp_message_transfer_status (message);
 
-	if ( Event->debug->debugesmtp ) sagan_log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
+	if ( Event->debug->debugesmtp ) sagan_log(Event->config, 0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
 }
 
@@ -180,7 +180,7 @@ pthread_exit(NULL);
 }
 
 int
-fixlf(char *d, char *s)
+fixlf( _SaganConfig *config, char *d, char *s)
 {
 	int sl=0;
 	int i=0;
@@ -197,13 +197,13 @@ fixlf(char *d, char *s)
 	if((sl=strlen(s)) >= MAX_EMAILSIZE) {
 		s[MAX_EMAILSIZE]='\0';
 		sl=MAX_EMAILSIZE;
-		sagan_log(0, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
+		sagan_log(config, 0, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
 	}
 
 	for(i=0;i<sl;i++) {
 		if(j>=MAX_EMAILSIZE){
 			d[MAX_EMAILSIZE]='\0';
-			sagan_log(0, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
+			sagan_log(config, 0, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
 			break;	
 		}
 		if(i>0 && s[i] == '\n' && s[i-1] != '\r'){

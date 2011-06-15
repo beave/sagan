@@ -66,10 +66,10 @@ int liblognorm_count;
 #endif
 
 struct rule_struct *rulestruct;
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void load_config( _SaganDebug *debug  ) { 
+void load_config( _SaganDebug *debug, _SaganConfig *config  ) { 
 
 FILE *sagancfg; 
 
@@ -133,7 +133,7 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
      if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
-         sagan_log(0, "Supressing DNS warnings");
+         sagan_log(config, 0, "Supressing DNS warnings");
          config->disable_dns_warnings = 1;
 	 }
 
@@ -507,19 +507,19 @@ if (!strcmp(sagan_var, "unified2:")) {
 
          if (!strcmp(filename, "classification.config"))
             {
-                   load_classifications(debug, ruleset);
+                   load_classifications(debug, config, ruleset);
             }
 
          if (!strcmp(filename, "reference.config"))
             {
-                   load_reference(debug, ruleset);
+                   load_reference(debug, config, ruleset);
             }
 
 	 /* It's not a classifcations file or reference,  so it must be a ruleset */
 
          if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config"))  {
                    
-		   load_rules(debug, ruleset);
+		   load_rules(debug, config,  ruleset);
           }
      }
 }
@@ -531,7 +531,7 @@ fclose(sagancfg);
 for (i = 0; i < counters->rulecount; i++) {
    for ( check = i+1; check < counters->rulecount; check ++) {
        if (!strcmp (rulestruct[check].s_sid, rulestruct[i].s_sid ))
-            sagan_log(1, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
+            sagan_log(config, 1, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
        }
    }
 
@@ -539,12 +539,12 @@ for (i = 0; i < counters->rulecount; i++) {
 
 #ifdef HAVE_LIBESMTP
 
-if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) sagan_log(1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
-if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) sagan_log(1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) sagan_log(config, 1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) sagan_log(config, 1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
 
 #endif 
 
-if (!strcmp(config->sagan_host, "" )) sagan_log(1, "The 'sagan_host' option was not found and is required.");
-if ( config->sagan_port == 0 ) sagan_log(1, "The 'sagan_port' option was not set and is required.");
+if (!strcmp(config->sagan_host, "" )) sagan_log(config, 1, "The 'sagan_host' option was not found and is required.");
+if ( config->sagan_port == 0 ) sagan_log(config, 1, "The 'sagan_port' option was not set and is required.");
 
 }

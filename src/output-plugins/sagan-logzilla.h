@@ -26,7 +26,7 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-int  logzilla_db_connect( void );
-char *logzilla_db_query ( int ,  char * );
+int  logzilla_db_connect( _SaganConfig * );
+char *logzilla_db_query ( _SaganConfig * ,  char * );
 
 #endif

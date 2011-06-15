@@ -46,7 +46,7 @@
 
 #include "sagan-prelude.h"
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 #define ANALYZER_CLASS "Log Analyzer"

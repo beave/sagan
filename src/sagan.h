@@ -51,16 +51,16 @@ char *parse_ip_simple( char * );
 int   parse_port_simple( char * );
 
 //void sig_handler( void );
-void key_handler( void  );
+//void key_handler( void  );
 //void plog_handler( void );
 
 
-char *dns_lookup(char *);
+//char *dns_lookup(char *);
 int isnumeric (char *);
 char *toupperc(char* const );
-void sagan_statistics( void );
+//void sagan_statistics( void );
 void sagan_error(const char *, ...);
-void sagan_log( int, const char *, ... );
+//void sagan_log(  int, const char *, ... );
 char *gettimestamp( void );
 void sagan_error( const char *, ... );
 char *findipinmsg ( char * );
@@ -69,9 +69,9 @@ int  checkendian( void );
 void sagan_usage( void );
 //void load_config( void );
 void load_normalize( void );
-void removelockfile ( void );
-void checklockfile ( void );
-void sagan_droppriv( const char * , const char *);
+//void removelockfile ( void );
+//void checklockfile ( void );
+//void sagan_droppriv( const char * , const char *);
 void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
@@ -184,6 +184,8 @@ struct _SaganConfig {
     sbool        disable_dns_warnings;
     int		 daemonize;
     int          sagan_proto;
+
+    sbool	 endian;
 
 
 /* libesmtp/SMTP support */
@@ -381,11 +383,11 @@ char sid[512];
 #define MAXSQL          4096
 #define MYSQL_PORT      3306
 
-char *sql_escape(const char *, int );
+char *sql_escape(_SaganConfig *, const char *, int );
 void *logzilla_insert_thread ( void *);
 void sagan_logzilla_thread(SaganEvent *);
 void sagan_db_thread( SaganEvent * );
-int  ip2bit( char *, int );
+int  ip2bit( _SaganConfig *, char * );
 char *fasthex(char *, int);
 
 #endif
@@ -431,14 +433,27 @@ struct sig_thread_args {
         int daemonize;
         uint64_t cid;
 	_SaganDebug *debug;
+	_SaganConfig *config;
         } SaganSigArgs;
 
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
-void load_config( _SaganDebug * );
+void load_config( _SaganDebug *, _SaganConfig * );
 void sig_handler( struct sig_thread_args * );
-void load_classifications( _SaganDebug *,  const char * );
-void load_reference ( _SaganDebug *, const char * );
-void load_rules ( _SaganDebug *, const char * );
-void plog_handler( _SaganDebug * );
+void load_classifications( _SaganDebug *, _SaganConfig *,  const char * );
+void load_reference ( _SaganDebug *, _SaganConfig *, const char * );
+void load_rules ( _SaganDebug *, _SaganConfig *,  const char * );
+void plog_handler( struct sig_thread_args * );
+void sagan_log( _SaganConfig *,  int, const char *, ... );
+
+void removelockfile ( _SaganConfig * );
+void checklockfile ( _SaganConfig * );
+
+void sagan_statistics( _SaganConfig * );
+
+void key_handler( _SaganConfig * );
+
+void sagan_droppriv( _SaganConfig *, const char *);
+
+char *dns_lookup( _SaganConfig *, char *);

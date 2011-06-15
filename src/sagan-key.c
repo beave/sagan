@@ -38,7 +38,7 @@
 
 #include "sagan.h"
 
-void key_handler( void )
+void key_handler( _SaganConfig *config )
 {
 
   while(1) {
@@ -47,7 +47,7 @@ void key_handler( void )
 
 	key=getchar();
 		   if ( key != 0 ) {
-		   sagan_statistics();
+		   sagan_statistics(config);
 		   }
 
 	}

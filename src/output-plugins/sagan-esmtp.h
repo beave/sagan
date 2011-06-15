@@ -26,7 +26,7 @@
 
 #ifdef HAVE_LIBESMTP
 
-int fixlf(char *, char *);
+int fixlf(_SaganConfig *, char *, char *);
 
 #endif
 

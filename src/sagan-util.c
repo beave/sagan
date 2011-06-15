@@ -86,7 +86,7 @@ if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
  * Drop priv's so we aren't running as "root".  *
  ************************************************/
 
-void sagan_droppriv(const char *username, const char *fifo)
+void sagan_droppriv(_SaganConfig *config, const char *username)
 {
 
 	struct stat fifocheck;
@@ -95,23 +95,23 @@ void sagan_droppriv(const char *username, const char *fifo)
 
         pw = getpwnam(username);
 
-	if (!pw) sagan_log(1, "Couldn't locate user '%s'. Aborting...", username);
+	if (!pw) sagan_log(config, 1, "Couldn't locate user '%s'. Aborting...", username);
         
 	if ( getuid() == 0 ) {
-	sagan_log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+	sagan_log(config, 0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 	ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
-	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) sagan_log(1, "Cannot open %s FIFO!", config->sagan_fifo);
+	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) sagan_log(config, 1, "Cannot open %s FIFO!", config->sagan_fifo);
 
-		if ( ret < 0 ) sagan_log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+		if ( ret < 0 ) sagan_log(config, 1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
 
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-		        sagan_log(1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
+		        sagan_log(config, 1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
 	       } 
 	       
 	       } else { 
-	       sagan_log(0, "Not dropping privileges.  Already running as a non-privileged user");
+	       sagan_log(config, 0, "Not dropping privileges.  Already running as a non-privileged user");
 	       }
 }
 
@@ -178,7 +178,7 @@ char *toupperc(char* const s) {
 }
 
 
-void sagan_log (int type, const char *format,... ) {
+void sagan_log (_SaganConfig *config , int type, const char *format,... ) {
 
    char buf[1024];
    va_list ap;
@@ -217,7 +217,7 @@ int checkendian() {
  * snort supports DB IPv6.
  */
 
-int ip2bit (char *ipaddr,  int endian) { 
+int ip2bit ( _SaganConfig *config, char *ipaddr ) { 
 
 struct sockaddr_in ipv4;
 uint32_t ip;
@@ -226,10 +226,10 @@ uint32_t ip;
 /* Champ Clark III - 01/18/2011 */
 
 if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-sagan_log(0, "Warning: inet_pton() error,  but continuing...");
+sagan_log(config, 0, "Warning: inet_pton() error,  but continuing...");
 }
 
-if ( endian == 0 ) {
+if ( config->endian == 0 ) {
    ip = htonl(ipv4.sin_addr.s_addr);
    } else {
    ip = ipv4.sin_addr.s_addr;
@@ -250,7 +250,7 @@ if(strlen(str) == strspn(str, "0123456789")) {
 /* Escape SQL.   This was taken from Prelude.  */
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-char *sql_escape(const char *string, int from )
+char *sql_escape(_SaganConfig *config, const char *string, int from )
 {
         size_t len;
         char *escaped=NULL;
@@ -272,7 +272,7 @@ char *sql_escape(const char *string, int from )
         escaped = malloc(len * 2 + 3);
         
 	if (! escaped) {
-                sagan_log(1, "[%s, line %d] Memory exhausted.", __FILE__, __LINE__ );
+                sagan_log(config, 1, "[%s, line %d] Memory exhausted.", __FILE__, __LINE__ );
                 return NULL;
         }
 
@@ -366,7 +366,7 @@ double CalcPct(uint64_t cnt, uint64_t total)
 /* DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely
  * based on Beej's showip.c */
 
-char *dns_lookup(char *host) 
+char *dns_lookup( _SaganConfig *config, char *host) 
 {
     struct addrinfo hints, *res; //,// *p;
     int status;
@@ -375,11 +375,11 @@ char *dns_lookup(char *host)
     void *addr;
 
        if ( config->disable_dns_warnings == 0 ) { 
-       sagan_log(0, "--------------------------------------------------------------------------");
-       sagan_log(0, "Sagan DNS lookup need for %s.", host); 
-       sagan_log(0, "This can affect performance.  Please see:" );
-       sagan_log(0, "https://wiki.softwink.com/bin/view/Main/SaganDNS");
-       sagan_log(0, "--------------------------------------------------------------------------");
+       sagan_log(config, 0, "--------------------------------------------------------------------------");
+       sagan_log(config, 0, "Sagan DNS lookup need for %s.", host); 
+       sagan_log(config, 0, "This can affect performance.  Please see:" );
+       sagan_log(config, 0, "https://wiki.softwink.com/bin/view/Main/SaganDNS");
+       sagan_log(config, 0, "--------------------------------------------------------------------------");
        }
 
        memset(&hints, 0, sizeof hints);
@@ -387,7 +387,7 @@ char *dns_lookup(char *host)
        hints.ai_socktype = SOCK_STREAM;
 
     if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
-	sagan_log(0, "getaddrinfo: %s", gai_strerror(status));
+	sagan_log(config, 0, "getaddrinfo: %s", gai_strerror(status));
         return NULL;
     }
 

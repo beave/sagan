@@ -27,15 +27,17 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-int  db_connect( void );
+int  db_connect( _SaganConfig * );
 
-char *db_query ( _SaganDebug *, int,  char * );
+char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
 
-int  get_sensor_id ( _SaganDebug *, char *,  char *,  char *,  int , int  );
+//int  get_sensor_id ( _SaganDebug *, char *,  char *,  char *,  int , int  );
 
-uint64_t get_cid ( _SaganDebug *,  int , int );
+int  get_sensor_id ( _SaganDebug *, _SaganConfig *);
 
-void record_last_cid ( _SaganDebug * );
+uint64_t get_cid ( _SaganDebug *,  _SaganConfig * );
+
+void record_last_cid ( _SaganDebug *, _SaganConfig * );
 
 //int  get_sig_sid( _SaganDebug *, char *,  char *,
 //                  char *,  char *,
@@ -50,7 +52,7 @@ void insert_hdr ( SaganEvent *,  char *, char * );
 
 void insert_payload( SaganEvent *, char *); 
 
-void query_reference ( _SaganDebug *, char *, char *, int, int );
+void query_reference ( _SaganDebug *, _SaganConfig *, char *, char *, int, int );
 
 struct db_thread_args {
         char *ip_src;

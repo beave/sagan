@@ -52,7 +52,7 @@ struct _SaganCounters *counters;
 
 struct class_struct *classstruct;
 
-void load_classifications( _SaganDebug *debug, const char *ruleset )  { 
+void load_classifications( _SaganDebug *debug, _SaganConfig *config, const char *ruleset )  { 
 
 
 FILE *classfile;
@@ -65,10 +65,10 @@ char *laststring=NULL;
 char tmpbuf2[5];
 int  linecount=0;
 
-sagan_log(0, "Loading classifications.conf file. [%s]", ruleset);
+sagan_log(config, 0, "Loading classifications.conf file. [%s]", ruleset);
 
          if (( classfile = fopen(ruleset, "r" )) == NULL ) {
-             sagan_log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
+             sagan_log(config, 1, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
              }
 
 while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
@@ -99,16 +99,16 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
      tmpbuf2[strlen(tmpbuf2)-1] = '\0';
      classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
-     if ( classstruct[counters->classcount].s_priority == 0 ) sagan_log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+     if ( classstruct[counters->classcount].s_priority == 0 ) sagan_log(config, 1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-     if (debug->debugload) sagan_log(0, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
+     if (debug->debugload) sagan_log(config, 0, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
 		      
      counters->classcount++;
 
 } 
 fclose(classfile);
 
-sagan_log(0, "%d classifications loaded", counters->classcount);
+sagan_log(config, 0, "%d classifications loaded", counters->classcount);
 
 }
 /*
@@ -125,7 +125,7 @@ if ( !strcmp( classstruct[i].s_shortname, classtype ) )  {
    }
 }
 
-sagan_log(0, "Hmmm.. Classification not found for a classification loaded?!?");
+sagan_log(config, 0, "Hmmm.. Classification not found for a classification loaded?!?");
 ret="Classification not found!";
 return(ret);
 

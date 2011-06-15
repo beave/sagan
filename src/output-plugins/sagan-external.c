@@ -41,7 +41,7 @@
 
 #include "version.h"
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 struct rule_struct *rulestruct;
 
@@ -58,7 +58,7 @@ char tmpref[2048];
 int ret;
 char tmp[6];
 
-if ( config->sagan_exttype == 1 ) { 
+if ( Event->config->sagan_exttype == 1 ) { 
    
    /* Parsable */
 
@@ -83,14 +83,14 @@ if ( Event->drop == 1 ) {
 
 
 if ( pipe(in) < 0 ) {
-   removelockfile();
-   sagan_log(1, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
+   removelockfile(Event->config);
+   sagan_log(Event->config, 1, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
    }
 
 
 if ( pipe(out) < 0 ) {
-   removelockfile();
-   sagan_log(1, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
+   removelockfile(Event->config);
+   sagan_log(Event->config, 1, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
    }
 
 
@@ -110,9 +110,9 @@ if (( pid = fork()) == 0 ) {
    close(out[0]);
    pthread_mutex_unlock( &ext_mutex );
 
-   ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-   removelockfile();
-   sagan_log(1, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
+   ret=execl(Event->config->sagan_extern, Event->config->sagan_extern, NULL, (char *)NULL);
+   removelockfile(Event->config);
+   sagan_log(Event->config, 0, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, Event->config->sagan_extern);
    } 
 
    pthread_mutex_lock( &ext_mutex );

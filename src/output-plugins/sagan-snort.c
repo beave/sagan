@@ -63,7 +63,7 @@ PGresult *result;
 char pgconnect[2048];
 #endif
 
-struct _SaganConfig *config;
+//struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct rule_struct *rulestruct;
@@ -75,7 +75,7 @@ pthread_mutex_t db_mutex;
 /* Connection to various types of databases */
 /********************************************/
 
-int db_connect( void ) { 
+int db_connect( _SaganConfig *config ) { 
 
 char *dbh=NULL;
 char *dbu=NULL;
@@ -98,8 +98,8 @@ mysql_thread_init();
 mysql = mysql_init(NULL);
 
 if ( mysql == NULL ) { 
-   removelockfile();
-   sagan_log(1, "[%s, line %d] Error initializing MySQL", __FILE__, __LINE__);
+   removelockfile(config);
+   sagan_log(config, 1, "[%s, line %d] Error initializing MySQL", __FILE__, __LINE__);
    }
 
 
@@ -111,7 +111,7 @@ mysql_options(mysql,MYSQL_READ_DEFAULT_GROUP,config->dbname);
 mysql_options(mysql,MYSQL_OPT_RECONNECT, &reconnect);
 
 if (!mysql_real_connect(mysql, dbh, dbu, dbp, dbn, MYSQL_PORT, NULL, 0)) {
-     sagan_log(1, "[%s, line %d] MySQL Error %u: \"%s\"", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql));
+     sagan_log(config, 1, "[%s, line %d] MySQL Error %u: \"%s\"", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql));
      }
 
 }
@@ -131,13 +131,13 @@ snprintf(pgconnect, sizeof(pgconnect), "hostaddr = '%s' port = '%d' dbname = '%s
 psql = PQconnectdb(pgconnect);
 
 if (!psql) { 
-   removelockfile();
-   sagan_log(1, "[%s, line %d] PostgreSQL: PQconnect Error", __FILE__,  __LINE__);
+   removelockfile(config);
+   sagan_log(config, 1, "[%s, line %d] PostgreSQL: PQconnect Error", __FILE__,  __LINE__);
    }
 
 if (PQstatus(psql) != CONNECTION_OK) { 
-   removelockfile();
-   sagan_log(1, "[%s, line %d] PostgreSQL status not OK", __FILE__,  __LINE__);
+   removelockfile(config);
+   sagan_log(config, 1, "[%s, line %d] PostgreSQL status not OK", __FILE__,  __LINE__);
    }
 
 } 
@@ -152,7 +152,7 @@ return(0);
  * For INSERT,  we don't need or get any results back                       *
  ****************************************************************************/
 
-char *db_query ( _SaganDebug *debug, int dbtype,  char *sql ) { 
+char *db_query ( _SaganDebug *debug, _SaganConfig *config, char *sql ) { 
 
 char sqltmp[MAXSQL]; 	/* Make this a MAXSQL or something */
 char *re=NULL;		/* "return" point for row */
@@ -165,10 +165,10 @@ pthread_mutex_lock( &db_mutex );
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
 
-if ( debug->debugsql ) sagan_log(0, "%s", sqltmp); 
+if ( debug->debugsql ) sagan_log(config, 0, "%s", sqltmp); 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
-if ( dbtype == 1 ) {
+if ( config->dbtype == 1 ) {
 
 MYSQL_RES *res;
 MYSQL_ROW row;
@@ -181,20 +181,20 @@ while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) {
          mysql_last_errno == CR_CONN_HOST_ERROR || 
 	 mysql_last_errno == CR_SERVER_GONE_ERROR ) { 
 	 mysql_reconnect_count++;
-	 sagan_log(0, "[%s, line %d] Lost connection to MySQL database. Trying %d", __FILE__,  __LINE__, mysql_reconnect_count);
+	 sagan_log(config, 0, "[%s, line %d] Lost connection to MySQL database. Trying %d", __FILE__,  __LINE__, mysql_reconnect_count);
 	 sleep(2);		// Give the DB time to recover
 
 	 } else { 
 
-	removelockfile();
-        sagan_log(1, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
+	removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
 	}
    
    }
 
 
 if ( mysql_reconnect_count != 0 ) { 			/* If there's a reconnect_count,  we must of lost connection */
-   sagan_log(0, "MySQL connection re-established!"); 	/* Log it */
+   sagan_log(config, 0, "MySQL connection re-established!"); 	/* Log it */
    mysql_reconnect_count=0;				/* Reset the counter */
    }
 
@@ -212,23 +212,23 @@ pthread_mutex_unlock( &db_mutex );
 return(re);
 }
 #else
-if ( dbtype == 1 ) {
-    removelockfile();
-    sagan_log(1, "Sagan was not compiled with MySQL support.  Aborting!");
+if ( config->dbtype == 1 ) {
+    removelockfile(config);
+    sagan_log(config, 1, "Sagan was not compiled with MySQL support.  Aborting!");
 }
 #endif
 
 #ifdef HAVE_LIBPQ
-if ( dbtype == 2 ) {
+if ( config->dbtype == 2 ) {
 
 if (( result = PQexec(psql, sqltmp )) == NULL ) { 
    //removelockfile();
-   sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
+   sagan_log(config, 0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    }
 
 if (PQresultStatus(result) != PGRES_COMMAND_OK && 
     PQresultStatus(result) != PGRES_TUPLES_OK) {
-   sagan_log(0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
+   sagan_log(config, 0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    PQclear(result);
    //removelockfile();
    sagan_log(0, "DB Query failed: %s", sqltmp);
@@ -244,9 +244,9 @@ return(re);
 
 }
 #else
-if ( dbtype == 2 ) {
-    removelockfile();
-    sagan_log(1, "[%s, line %d] Sagan was not compiled with PostgreSQL support.  Aborting!", __FILE__, __LINE__);
+if ( config->dbtype == 2 ) {
+    removelockfile(config);
+    sagan_log(config, 1, "[%s, line %d] Sagan was not compiled with PostgreSQL support.  Aborting!", __FILE__, __LINE__);
 }
 #endif
 
@@ -257,27 +257,29 @@ return(0);
 /* Get's the current sensor ID or creates a new one if this is the first run */
 /*****************************************************************************/
 
-int get_sensor_id ( _SaganDebug *debug, char *hostname,  char *interface,  char *filter,  int detail, int dbtype ) { 
+//int get_sensor_id ( _SaganDebug *debug, char *hostname,  char *interface,  char *filter,  int detail, int dbtype ) { 
+int get_sensor_id ( _SaganDebug *debug,  _SaganConfig *config ) { 
+
 
 char sqltmp[MAXSQL]; 
 char *sql;
 char *sqlout;
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT sid FROM sensor WHERE hostname='%s' AND interface='%s' AND filter='%s' AND detail='%d' AND encoding='0'",  hostname, interface, filter, detail);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT sid FROM sensor WHERE hostname='%s' AND interface='%s' AND filter='%s' AND detail='%d' AND encoding='0'",  config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
-sqlout = db_query(debug,  dbtype, sql);
+sqlout = db_query(debug,  config, sql);
 
 if ( sqlout == NULL ) { 
 
    /* Insert new sensor ID */
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sensor (hostname, interface, filter, detail, encoding, last_cid) VALUES ('%s', '%s', '%s', '%u', '0', '0')", hostname, interface, filter, detail);
+   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sensor (hostname, interface, filter, detail, encoding, last_cid) VALUES ('%s', '%s', '%s', '%u', '0', '0')", config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
    sql=sqltmp; 
-   db_query(debug, dbtype, sql);
+   db_query(debug, config, sql);
 
    /* Get new sensor ID */
-   snprintf(sqltmp, sizeof(sqltmp), "SELECT sid FROM sensor WHERE hostname='%s' AND interface='%s' AND filter='%s' AND detail='%d' AND encoding='0'",  hostname, interface, filter, detail);
+   snprintf(sqltmp, sizeof(sqltmp), "SELECT sid FROM sensor WHERE hostname='%s' AND interface='%s' AND filter='%s' AND detail='%d' AND encoding='0'", config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
    sql=sqltmp;
-   sqlout = db_query(debug, dbtype, sql);
+   sqlout = db_query(debug, config, sql);
    }
 
 config->sensor_id = atoi(sqlout);
@@ -289,7 +291,7 @@ return(0);
 /* Get the last used CID and increment it */
 /******************************************/
 
-uint64_t get_cid ( _SaganDebug *debug, int sensor_sid, int dbtype ) { 
+uint64_t get_cid ( _SaganDebug *debug, _SaganConfig *config ) { 
 
 char sqltmp[MAXSQL]; 
 char *sql;
@@ -297,10 +299,10 @@ char *sqlout;
 uint64_t t_cid; 
 
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT last_cid from sensor where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", sensor_sid, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT last_cid from sensor where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 
 sql=sqltmp; 
-sqlout = db_query( debug, dbtype, sql );
+sqlout = db_query( debug, config, sql );
 
 if ( sqlout == NULL ) { 
    t_cid = 0; 		/* Returned NULL,  no CID found */
@@ -327,7 +329,7 @@ int  t_sig_id;
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", rulestruct[Event->found].s_classtype);
 sql=sqltmp;
-sqlout = db_query( Event->debug, Event->config->dbtype, sql ); 
+sqlout = db_query( Event->debug, Event->config, sql ); 
 
 if ( sqlout == NULL ) {
    
@@ -335,13 +337,13 @@ if ( sqlout == NULL ) {
 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_class(sig_class_id, sig_class_name) VALUES (DEFAULT, '%s')", rulestruct[Event->found].s_classtype);
    sql=sqltmp;
-   db_query( Event->debug, Event->config->dbtype, sql);
+   db_query( Event->debug, Event->config, sql);
 
    /* Grab new ID */
 
    snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_class_id from sig_class where sig_class_name='%s'", rulestruct[Event->found].s_classtype);
    sql=sqltmp;
-   sqlout = db_query( Event->debug, Event->config->dbtype, sql );
+   sqlout = db_query( Event->debug, Event->config, sql );
    }
  
 sig_class_id = atoi(sqlout);
@@ -352,7 +354,7 @@ snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%
 sql=sqltmp;
 
 
-sqlout = db_query( Event->debug, Event->config->dbtype, sql );
+sqlout = db_query( Event->debug, Event->config, sql );
 
 /* If not found, create a new entry for it */
 
@@ -360,12 +362,12 @@ if ( sqlout == NULL ) {
 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", rulestruct[Event->found].s_msg, sig_class_id, rulestruct[Event->found].s_pri, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
-   db_query( Event->debug, Event->config->dbtype, sql );
+   db_query( Event->debug, Event->config, sql );
 
    /* Get the new ID of the new entry */
    snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
-   sqlout = db_query( Event->debug, Event->config->dbtype, sql );
+   sqlout = db_query( Event->debug, Event->config, sql );
    }
 
 t_sig_id = atoi(sqlout);
@@ -390,7 +392,7 @@ sql=sqltmp;
 
 pthread_mutex_unlock( &db_mutex );
 
-db_query( Event->debug, Event->config->dbtype, sql );
+db_query( Event->debug, Event->config, sql );
 
 }
 
@@ -410,16 +412,16 @@ int ipproto = rulestruct[Event->found].ip_proto;
 
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", Event->config->sensor_id, Event->cid, ip2bit(ipsrc, Event->endian), ip2bit(ipdst, Event->endian), ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", Event->config->sensor_id, Event->cid, ip2bit(Event->config, ipsrc ), ip2bit(Event->config, ipdst), ipproto );
 
 sql=sqltmp;
-db_query( Event->debug, Event->config->dbtype, sql );
+db_query( Event->debug, Event->config, sql );
 
 /* "tcp" */
 if ( ipproto == 6 )  {
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
-db_query( Event->debug, Event->config->dbtype, sql );
+db_query( Event->debug, Event->config, sql );
 } 
 
 /* "udp" */
@@ -427,7 +429,7 @@ db_query( Event->debug, Event->config->dbtype, sql );
 if ( ipproto == 17 )  {
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0' )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
-db_query( Event->debug, Event->config->dbtype, sql );
+db_query( Event->debug, Event->config, sql );
 }
 
 /* Basic ICMP - Set to type 8 (echo) , code of  8 */
@@ -436,7 +438,7 @@ db_query( Event->debug, Event->config->dbtype, sql );
 if ( ipproto == 1 ) { 
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%" PRIu64 "', '8', '8', '0', '0', '0' )", Event->config->sensor_id, Event->cid );
 sql=sqltmp;
-db_query( Event->debug, Event->config->dbtype,sql );
+db_query( Event->debug, Event->config, sql );
 }
 
 
@@ -455,7 +457,7 @@ pthread_mutex_lock( &db_mutex );
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", Event->config->sensor_id, Event->cid, t_hex_data);
 sql=sqltmp;
 pthread_mutex_unlock( &db_mutex );
-db_query( Event->debug, Event->config->dbtype, sql );
+db_query( Event->debug, Event->config, sql );
 
 }
 
@@ -463,14 +465,14 @@ db_query( Event->debug, Event->config->dbtype, sql );
 /* Record last cid */
 /*******************/
 
-void record_last_cid ( _SaganDebug *debug )  { 
+void record_last_cid ( _SaganDebug *debug, _SaganConfig *config )  { 
 
 char sqltmp[MAXSQL];
 char *sql;
 
 snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->sigcid, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
-db_query( debug, config->dbtype, sql );
+db_query( debug, config, sql );
 
 }
 
@@ -478,7 +480,7 @@ db_query( debug, config->dbtype, sql );
 /* Reference system */
 /********************/
 
-void query_reference ( _SaganDebug *debug, char *ref, char *rule_sid, int sig_sid, int seq ) 
+void query_reference ( _SaganDebug *debug, _SaganConfig *config, char *ref, char *rule_sid, int sig_sid, int seq ) 
 {
 
 char *saveptr=NULL;
@@ -503,40 +505,40 @@ tmptoken2 = strtok_r(NULL, "," , &saveptr);
 
 if (tmptoken1 == NULL || tmptoken2 == NULL ) 
    { 
-   sagan_log(0, "Warning: \"reference:\" contains a NULL value.  Check sid: %s", rule_sid);
+   sagan_log(config, 0, "Warning: \"reference:\" contains a NULL value.  Check sid: %s", rule_sid);
    return;
    }
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_system_id from reference_system where ref_system_name='%s'", tmptoken1);
 sql=sqltmp;
-sqlout = db_query( debug, config->dbtype, sql );
+sqlout = db_query( debug, config, sql );
 
 /* reference_system hasn't been entered into the DB.  Do so now */
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference_system (ref_system_id, ref_system_name) VALUES (DEFAULT, '%s')", tmptoken1);
    sql=sqltmp;
-   db_query( debug, config->dbtype, sql );
+   db_query( debug, config, sql );
 
    snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_system_id from reference_system where ref_system_name='%s'", tmptoken1);
    sql=sqltmp;
-   sqlout = db_query( debug, config->dbtype, sql );
+   sqlout = db_query( debug, config, sql );
    }
 
 ref_system_id = atoi(sqlout);
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_id from reference where ref_system_id='%d' and ref_tag='%s'", ref_system_id, tmptoken2);
 sql=sqltmp;
-sqlout = db_query( debug, config->dbtype, sql );
+sqlout = db_query( debug, config, sql );
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO reference (ref_id, ref_system_id, ref_tag) VALUES (DEFAULT, '%d', '%s')", ref_system_id, tmptoken2);
    sql=sqltmp;
-   sqlout = db_query( debug, config->dbtype, sql );
+   sqlout = db_query( debug, config, sql );
 
    snprintf(sqltmp, sizeof(sqltmp), "SELECT ref_id from reference where ref_system_id='%d' and ref_tag='%s'", ref_system_id, tmptoken2);
    sql=sqltmp;
-   sqlout = db_query( debug, config->dbtype, sql );
+   sqlout = db_query( debug, config, sql );
 
    }
 
@@ -544,12 +546,12 @@ ref_id = atoi(sqlout);
 
 snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id from sig_reference where sig_id='%d' and ref_id='%d'", sig_sid,  ref_id); 
 sql=sqltmp;
-sqlout = db_query( debug, config->dbtype, sql );
+sqlout = db_query( debug, config, sql );
 
 if ( sqlout == NULL )  { 
    snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO sig_reference (sig_id, ref_seq, ref_id) VALUES ('%d', '%d', '%d')", sig_sid, seq, ref_id);
    sql=sqltmp;
-   sqlout = db_query( debug, config->dbtype, sql );
+   sqlout = db_query( debug, config, sql );
 
    }
 
@@ -588,7 +590,7 @@ hex_data = fasthex(message, strlen(message));
 insert_payload( Event, hex_data ); 
 
 for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
-   query_reference( Event->debug, rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
+   query_reference( Event->debug, Event->config, rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
    }
 
 pthread_mutex_lock( &db_mutex );
