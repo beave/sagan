@@ -324,7 +324,11 @@ char *betweenquotes(char *instring)
 sbool flag=0;
 int i;
 char tmp1[2];
-char tmp2[512]="";
+
+/* quick and dirty fix added by drforbin....this function really should be reworked 
+fix added to make tmp2 presistent (non-automatic) so once the function returns it is presistent */
+
+static char tmp2[512]="";
 char *ret;
 
 for ( i=0; i<strlen(instring); i++) { 

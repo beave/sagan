@@ -299,6 +299,7 @@ char *syspri;
 char *level;
 char *tag;
 char tmpbuf[128];
+memset(tmpbuf,0,128);
 char ipbuf_src[128];
 char ipbuf_dst[128];
 
@@ -561,7 +562,7 @@ if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
 
 if (!daemonize) { 
 
-//if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL )) { ;
+//if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL ))  ;
 
 if (pthread_create( &key_thread, NULL, (void *)key_handler, config )) { ;
 	removelockfile(config);
@@ -1277,6 +1278,7 @@ syslogtmp[0]='\0';
 }
 
 } /* End of while(1) */
+
 } /* End of main */
 
 
