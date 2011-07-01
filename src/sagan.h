@@ -45,11 +45,6 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
-/* Parsers */
-
-char *parse_ip_simple( char * );
-int   parse_port_simple( char * );
-
 //void sig_handler( void );
 //void key_handler( void  );
 //void plog_handler( void );
@@ -251,6 +246,12 @@ struct _SaganConfig {
 #endif
 
 };
+
+
+/* Parsers */
+
+char *parse_ip_simple( char * );
+int   parse_port_simple(_SaganConfig *, char * );
 
 /* Reference structure */
 typedef struct ref_struct ref_struct;

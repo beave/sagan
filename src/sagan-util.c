@@ -328,7 +328,8 @@ char tmp1[2];
 /* quick and dirty fix added by drforbin....this function really should be reworked 
 fix added to make tmp2 presistent (non-automatic) so once the function returns it is presistent */
 
-static char tmp2[512]="";
+static char tmp2[512];
+memset(tmp2,0,sizeof(tmp2));
 char *ret;
 
 for ( i=0; i<strlen(instring); i++) { 

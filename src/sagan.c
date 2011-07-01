@@ -917,7 +917,7 @@ if ( rulestruct[b].normalize == 0 ) {
  }
 
 if ( rulestruct[b].s_find_port == 1 ) {
-   src_port = parse_port_simple(syslog_msg);
+   src_port = parse_port_simple(config, syslog_msg);
     } else {
    src_port = config->sagan_port;
    }

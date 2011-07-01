@@ -49,9 +49,8 @@
 #include "sagan.h"
 #include "version.h"
 
-struct _SaganConfig *config;
 
-int parse_port_simple (char *msg) {
+int parse_port_simple (_SaganConfig *config, char *msg) {
 
 char *portstring=NULL;
 char *saveptr1=NULL;
