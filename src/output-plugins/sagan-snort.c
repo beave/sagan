@@ -230,7 +230,7 @@ if (PQresultStatus(result) != PGRES_COMMAND_OK &&
    sagan_log(config, 0, "[%s, line %d] PostgreSQL Error: %s", __FILE__,  __LINE__, PQerrorMessage( psql ));
    PQclear(result);
    //removelockfile();
-   sagan_log(0, "DB Query failed: %s", sqltmp);
+   sagan_log(config, 0, "DB Query failed: %s", sqltmp);
    }
 
 if ( PQntuples(result) != 0 ) { 
