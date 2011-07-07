@@ -268,12 +268,11 @@ if (!strcmp(sagan_option, "output")) {
 
      if (!strcmp(sagan_var, "external:")) {
         snprintf(config->sagan_extern, sizeof(config->sagan_extern), "%s", strtok_r(NULL, " ", &tok));
-           if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
+        if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
 	config->sagan_ext_flag=1;
         }
 
 #ifdef HAVE_LIBDNET
-
 
 if (!strcmp(sagan_var, "unified2:")) { 
   
@@ -490,6 +489,7 @@ if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) sagan_lo
 
 #endif 
 
+if (!strcmp(config->sagan_fifo, "")) sagan_log(config, 1, "No FIFO option found which is required! Aborting!");
 if (!strcmp(config->sagan_host, "" )) sagan_log(config, 1, "The 'sagan_host' option was not found and is required.");
 if ( config->sagan_port == 0 ) sagan_log(config, 1, "The 'sagan_port' option was not set and is required.");
 
