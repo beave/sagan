@@ -57,8 +57,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) parse-ip.$(OBJEXT) \
 	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
-	sagan-external.$(OBJEXT) sagan-logzilla.$(OBJEXT) \
-	sagan-prelude.$(OBJEXT) sagan-unified2.$(OBJEXT)
+	sagan-external.$(OBJEXT) sagan-prelude.$(OBJEXT) \
+	sagan-unified2.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -196,7 +196,6 @@ output-plugins/sagan-alert.c \
 output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
-output-plugins/sagan-logzilla.c \
 output-plugins/sagan-prelude.c \
 output-plugins/sagan-unified2.c
 
@@ -290,7 +289,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-external.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-logzilla.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-plog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-prelude.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-references.Po@am__quote@
@@ -402,20 +400,6 @@ sagan-external.obj: output-plugins/sagan-external.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-external.c' object='sagan-external.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-external.obj `if test -f 'output-plugins/sagan-external.c'; then $(CYGPATH_W) 'output-plugins/sagan-external.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-external.c'; fi`
-
-sagan-logzilla.o: output-plugins/sagan-logzilla.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-logzilla.o -MD -MP -MF $(DEPDIR)/sagan-logzilla.Tpo -c -o sagan-logzilla.o `test -f 'output-plugins/sagan-logzilla.c' || echo '$(srcdir)/'`output-plugins/sagan-logzilla.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-logzilla.Tpo $(DEPDIR)/sagan-logzilla.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-logzilla.c' object='sagan-logzilla.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-logzilla.o `test -f 'output-plugins/sagan-logzilla.c' || echo '$(srcdir)/'`output-plugins/sagan-logzilla.c
-
-sagan-logzilla.obj: output-plugins/sagan-logzilla.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-logzilla.obj -MD -MP -MF $(DEPDIR)/sagan-logzilla.Tpo -c -o sagan-logzilla.obj `if test -f 'output-plugins/sagan-logzilla.c'; then $(CYGPATH_W) 'output-plugins/sagan-logzilla.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-logzilla.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-logzilla.Tpo $(DEPDIR)/sagan-logzilla.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-logzilla.c' object='sagan-logzilla.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-logzilla.obj `if test -f 'output-plugins/sagan-logzilla.c'; then $(CYGPATH_W) 'output-plugins/sagan-logzilla.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-logzilla.c'; fi`
 
 sagan-prelude.o: output-plugins/sagan-prelude.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-prelude.o -MD -MP -MF $(DEPDIR)/sagan-prelude.Tpo -c -o sagan-prelude.o `test -f 'output-plugins/sagan-prelude.c' || echo '$(srcdir)/'`output-plugins/sagan-prelude.c

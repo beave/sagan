@@ -77,7 +77,6 @@
 #define MAX_EXT_THREADS         50
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-#define MAX_LOGZILLA_THREADS	50
 #define MAX_DB_THREADS          50
 #endif
 

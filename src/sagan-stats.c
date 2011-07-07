@@ -63,10 +63,6 @@ sbool flag=0;
 		       flag=1;
 		       }
 
-                    if ( config->logzilla_dbtype ) { 
-		       sagan_log(config, 0, "Max Logzilla threads: %" PRIu64 " of %" PRIu64 " (%.3f%%) | Logzilla events dropped: %" PRIu64 "", counters->threadmaxlogzillac, config->max_logzilla_threads, CalcPct( counters->threadmaxlogzillac, config->max_logzilla_threads), counters->saganlogzilladrop);
-		       flag=1;
-		       }
 #endif
 
 #ifdef HAVE_LIBESMTP

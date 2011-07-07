@@ -98,7 +98,6 @@ config->max_external_threads=MAX_EXT_THREADS;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 config->maxdb_threads=MAX_DB_THREADS;
-config->max_logzilla_threads=MAX_LOGZILLA_THREADS;
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -210,11 +209,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
         sagan_var = strtok_r(NULL, " " , &tok);
         config->maxdb_threads = atol(sagan_var);
         }
-
-     if (!strcmp(sagan_option, "max_logzilla_threads")) {
-         sagan_var = strtok_r(NULL, " ", &tok);
-         config->max_logzilla_threads = atol(sagan_var);
-         }
 
      if (!strcmp(sagan_option, "sagan_proto")) { 
         sagan_var = strtok_r(NULL, " ", &tok);
@@ -356,53 +350,6 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-	if (!strcmp(sagan_var, "logzilla:")) { 
-	   sagan_var = strtok_r(NULL, ",", &tok); 
-	   remspaces(sagan_var);
-
-	      sagan_var = strtok_r(NULL, ",", &tok); 
-	      remspaces(sagan_var);
-
-	      if (!strcmp(sagan_var, "mysql")) config->logzilla_dbtype = 1;
-	      if (!strcmp(sagan_var, "postgresql")) config->logzilla_dbtype = 2;
-	      
-	      sagan_var = strtok_r(NULL, ",", &tok);
-
-	   
-	   remrt(sagan_var);
-
-	   strlcpy(tmpbuf, sagan_var, sizeof(tmpbuf)); 
-	   ptmp = strtok_r(tmpbuf, "=", &tok);
-
-	   while (ptmp != NULL) { 
-	      remspaces(ptmp);
-
-	      if (!strcmp(ptmp, "user")) { 
-	         ptmp = strtok_r(NULL, " ", &tok);
-		 snprintf(config->logzilla_user, sizeof(config->logzilla_user), "%s", ptmp);
-		 }
-
-	      if (!strcmp(ptmp, "password")) { 
-	         ptmp = strtok_r(NULL, " ", &tok);
-		 snprintf(config->logzilla_password, sizeof(config->logzilla_password), "%s", ptmp);
-		 }
-
-	      if (!strcmp(ptmp, "dbname")) { 
-	         ptmp = strtok_r(NULL, " ", &tok); 
-		 snprintf(config->logzilla_dbname, sizeof(config->logzilla_dbname), "%s", ptmp);
-		 }
-
-	      if (!strcmp(ptmp, "host")) { 
-	         ptmp = strtok_r(NULL, " ", &tok);
-		 snprintf(config->logzilla_dbhost, sizeof(config->logzilla_dbhost), "%s", ptmp);
-		 }
-
-             ptmp = strtok_r(NULL, "=", &tok);
-	     }
-
-
-	   }
 
 	/* output type (database, etc) */
 

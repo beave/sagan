@@ -103,12 +103,9 @@ struct _SaganCounters {
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
     uint64_t sigcid;            /* For passing CID with signal */
     uint64_t threadmaxdbc;
-    uint64_t threadmaxlogzillac;
-    int      threadlogzillac;
     int	     threaddbc;
 
     uint64_t sagansnortdrop;
-    uint64_t saganlogzilladrop;
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -224,21 +221,15 @@ struct _SaganConfig {
     sbool	 sagan_unified2_flag;
 #endif
 
-/* MySQL/PostgreSQL support for Snort/Logzilla */
+/* MySQL/PostgreSQL support for Snort DB */
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
     int		 dbtype;
-    int		 logzilla_dbtype;
     int          sagan_detail;
     int		 sensor_id;
     uint64_t	 maxdb_threads;
-    uint64_t	 max_logzilla_threads;
     char	 sagan_hostname[MAXHOST];
     char	 sagan_filter[50];
-    char	 logzilla_user[MAXUSER];
-    char	 logzilla_password[MAXPASS];
-    char	 logzilla_dbname[50];
-    char	 logzilla_dbhost[50];	
     char         dbuser[MAXUSER];
     char         dbpassword[MAXPASS];
     char         dbname[50]; 
@@ -374,8 +365,7 @@ char sid[512];
 };
 
 /****************************************************************************/
-/* MySQL & PostgreSQL support.  Including support for Snort database and    */
-/* Logzilla.                                                                */
+/* MySQL & PostgreSQL support.  Support for Snort databases                 */
 /****************************************************************************/
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
@@ -385,8 +375,6 @@ char sid[512];
 #define MYSQL_PORT      3306
 
 char *sql_escape(_SaganConfig *, const char *, int );
-void *logzilla_insert_thread ( void *);
-void sagan_logzilla_thread(SaganEvent *);
 void sagan_db_thread( SaganEvent * );
 int  ip2bit( _SaganConfig *, char * );
 char *fasthex(char *, int);

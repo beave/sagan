@@ -60,7 +60,6 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 #include "output-plugins/sagan-snort.h"
-#include "output-plugins/sagan-logzilla.h"
 #endif
 
 #ifdef HAVE_LIBPRELUDE
@@ -135,7 +134,7 @@ SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 //int endianchk;
 
 /****************************************************************************/
-/* MySQL / PostgreSQL (snort/logzilla) local variables			    */
+/* MySQL / PostgreSQL (snort) local variables			    */
 /****************************************************************************/
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
@@ -148,13 +147,6 @@ pthread_attr_t thread_db_attr;
 pthread_attr_init(&thread_db_attr);
 pthread_attr_setdetachstate(&thread_db_attr,  PTHREAD_CREATE_DETACHED);
 
-pthread_t threadlogzilla_id[MAX_THREADS];
-pthread_attr_t thread_logzilla_attr;
-
-pthread_attr_init(&thread_logzilla_attr);
-pthread_attr_setdetachstate(&thread_logzilla_attr,  PTHREAD_CREATE_DETACHED);
-
-//config->endian = checkendian();	// Needed for Snort output
 #endif
 
 /****************************************************************************/
@@ -468,13 +460,6 @@ if ( config->sagan_ext_flag ) sagan_log(config, 0, "Max external threads : %d", 
 #ifdef HAVE_LIBESMTP
 if ( config->sagan_esmtp_flag ) sagan_log(config, 0, "Max SMTP threads     : %d", config->max_email_threads);
 #endif
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-if ( config->logzilla_dbtype ) { 
-sagan_log(config, 0, "Max Logzilla threads : %d", config->max_logzilla_threads);
-logzilla_db_connect(config);
-}
-#endif 
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
@@ -1203,33 +1188,6 @@ if ( config->sagan_ext_flag == 1 && thresh_log_flag == 0 ) {
 		   }
 }
 
-
-/****************************************************************************/
-/* Logzilla,  alert only,  thread call                                      */
-/****************************************************************************/
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-if ( config->logzilla_dbtype != 0 && thresh_log_flag == 0 ) { 
-		   
-	if ( counters->threadlogzillac < config->max_logzilla_threads) { 
-		      
-	        counters->threadlogzillac++;
-		      
-		if ( counters->threadlogzillac > counters->threadmaxlogzillac ) counters->threadmaxlogzillac=counters->threadlogzillac;
-
-                     if ( pthread_create( &threadlogzilla_id[threadid], &thread_logzilla_attr, (void *)sagan_logzilla_thread, &SaganEvent[threadid]) ) {
-                          removelockfile(config);
-                          sagan_log(config, 1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
-		        }
-		           } else { 
-		          counters->saganlogzilladrop++;
-		          counters->sagandrop++;
-		          sagan_log(config, 0, "Logzilla thread handler: Out of threads");
-		  }
-}
-
-#endif
 
 /****************************************************************************/
 /* Snort database thread call                                               */

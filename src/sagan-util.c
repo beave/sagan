@@ -30,7 +30,7 @@
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
 #include <mysql/mysql.h>
-MYSQL    *mysql, *mysql_logzilla;
+MYSQL    *mysql;
 #endif
 
 #include <stdio.h>
@@ -288,20 +288,6 @@ if ( from == 0 ) {
 #endif
 #endif
 
-        escaped[len + 1] = '\'';
-        escaped[len + 2] = '\0';
-}
-
-/* Logzilla */
-
-if ( from == 1 ) {
-#ifdef HAVE_LIBMYSQLCLIENT_R
-#if MYSQL_VERSION_ID >= 32200
-        len = mysql_real_escape_string(mysql_logzilla, escaped + 1, string, len);
-#else   
-        len = mysql_escape_string(escaped + 1, string, len);
-#endif  
-#endif
         escaped[len + 1] = '\'';
         escaped[len + 2] = '\0';
 }

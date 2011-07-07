@@ -59,7 +59,6 @@ sbool sagan_unified2_flag;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 #include "output-plugins/sagan-snort.h"
-#include "output-plugins/sagan-logzilla.h"
 #endif
 
 
