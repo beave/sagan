@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH SAGAN 8 "February 15, 2011"
+.TH SAGAN 8 "July 7, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -48,8 +48,8 @@ A summary of options is included below.
 .B \-h, \-\-help
 Show summary of options.
 .TP
-.B \-d, \-\-debug
-Enable debugging
+.B \-d, \-\-debug [option]
+Enable debugging. Options are syslog, load, sql, smtp, normalize and plog
 .TP
 .B \-D, \-\-daemon
 Make process a daemon (fork to the background)
@@ -57,16 +57,16 @@ Make process a daemon (fork to the background)
 .B \-U, \-\-user
 Run as user (defaults to 'sagan')
 .TP
-.B \-c, \-\-chroot
-Chroot to username 'sagan's home
+.B \-c, \-\-chroot [directory]
+Chroots the Sagan process to the specified directory
 .TP
-.B \-f, \-\-config
+.B \-f, \-\-config [file]
 Sagan configuration file to load
 .TP
-.B \-p, \-\-program
-Run Sagan in syslog-ng's 'program' mode
+.B \-l, \-\-log [file]
+Set log file locaton and name.
 .SH AUTHOR
-Sagan was written by Champ Clark III <champ@softwink.com>
+Sagan was written by Champ Clark III <cclark@quadrantsec.com>
 .PP
 This manual page was written by Pierre Chifflier <pollux@debian.org>,
 for the Debian project (and may be used by others).
