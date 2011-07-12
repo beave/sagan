@@ -61,7 +61,10 @@ struct my_udphdr {
          u_int16_t uh_sum;             /* udp checksum */
 };
 
-static  void    logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
+//static  void    logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
+//static void logpkt(u_char *,const struct pcap_pkthdr *, _SaganConfig *);
+
+static void logpkt(struct sig_thread_args *,const struct pcap_pkthdr *, const u_char *);
 static  int     wiredevlog( _SaganConfig *);
 static  int     outf;
 
@@ -114,7 +117,9 @@ void plog_handler( struct sig_thread_args *args )
 	}
 	
         /* endless loop */
-        (void)pcap_loop(bp,-1,logpkt,(unsigned char *)0);
+//        (void)pcap_loop(bp,-1,logpkt,(unsigned char *)0);
+	(void)pcap_loop(bp,-1,logpkt, (u_char*)args);
+	
 	
         pcap_close(bp);
         exit(0);
@@ -123,7 +128,7 @@ void plog_handler( struct sig_thread_args *args )
 
 /* take a raw packet and write it to /dev/log... we are evil! */
 static  void
-logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
+logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *pkt)
 {
         struct  ether_header    *eh;
         struct  ip              *ih;
@@ -131,6 +136,7 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
         int                     off;
         int                     len;
         char                    *l;
+
 
         /* crack the ethernet header */
         eh = (struct ether_header *)pkt;
@@ -167,11 +173,9 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
         l = (char *)u + sizeof(struct udphdr);
         len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
 
+//        if(args->debug->debugplog) {
 
-/*
-        if(debug->debugplog) {
-                int     x;
-*/
+		int     x;
 
 		/* I can't use sagan_log() here,  so we dump to strerr.
 		 * have the check the tty (isatty()) before dumping or
@@ -179,26 +183,24 @@ logpkt(u_char *jnk,const struct pcap_pkthdr *p,const u_char *pkt)
 		 * - Champ Clark III Jan 7th 2011 
 		 */
 
-/*
+
                 for(x = 0; x < len; x++) {
-                        if(isprint(l[x]) && (isatty(1)) )
+                        if(isprint(l[x])) // && (isatty(1)) )
                                 fprintf(stderr,"%c",(int)(l[x]));
                         else
                                 fprintf(stderr,"[0x%x]",(int)(l[x]));
                 }
                 if (isatty(1)) fprintf(stderr,"\n");
-        }
-*/
+//        }
+
 
         /* send it! */
         if(send(outf,l,len,0) < 0) 
-//	  sagan_log(1, "[%s, line %d] Send error", __FILE__, __LINE__);
-	printf("FIX ME\n");
+	  sagan_log(args->config, 1, "[%s, line %d] Send error", __FILE__, __LINE__);
         
 	return;
 bad:
-//	  sagan_log(0, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
-	printf("FIX ME 2\n");
+	  sagan_log(args->config, 0, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
 
 }
 

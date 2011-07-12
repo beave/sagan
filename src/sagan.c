@@ -431,18 +431,28 @@ ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 sagan_log(config, 0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
 sagan_log(config, 0, "Sagan version %s is firing up!", VERSION);
 
+/* We go ahead and assign values to SaganSigArgs (struct sig_thread_args).  This
+ * struct is always used by the sig_handler thread,  and sometimes used by the
+ * plog_handler (below).  So we assign values now */
+
+SaganSigArgs.daemonize = daemonize;
+SaganSigArgs.debug     = debug;
+SaganSigArgs.config    = config;
+
 #ifdef HAVE_LIBPCAP
 
 /* Spawn a thread to 'sniff' syslog traffic (sagan-plog.c).  This redirects syslog
- * traffic to the /dev/log socket */
+   traffic to the /dev/log socket.  This needs "root" access,  so we drop priv's
+   after this thread is started */
 
 if ( config->plog_flag ) { 
 
-if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL)) {
+if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, &SaganSigArgs )) {
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
         }
 }
+sleep(1);
 #endif
 
 sagan_droppriv(config, runas);		/* Become the Sagan user */
@@ -532,10 +542,6 @@ if (pid == 0) {} else { exit(0); }
 
 /* Create the signal handlers thread _after_ the fork() so it can properly 
  * handly signals - Champ Clark III - 06/13/2011 */
-
-SaganSigArgs.daemonize = daemonize;
-SaganSigArgs.debug     = debug;
-SaganSigArgs.config    = config;
 
 if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
         removelockfile(config);
