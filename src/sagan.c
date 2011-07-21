@@ -451,8 +451,13 @@ if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, &SaganSigArgs )) 
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
         }
+
+sleep(1); 	/* Sleep to avoid race between main() and plog thread 
+		   plog thread needs "root" rights before sagan_droppriv().
+		   In some cases main() run sagan_droppriv() before thread
+		   can complete - Champ Clark - 07/20/2011 */
+			
 }
-sleep(1);
 #endif
 
 sagan_droppriv(config, runas);		/* Become the Sagan user */
