@@ -51,9 +51,6 @@ III from Marcus J. Ranum on Jan. 6th, 2011.
 
 #include "sagan.h"
 
-//struct _SaganConfig *config;
-//struct _SaganDebug *debug;
-
 struct my_udphdr {
          u_int16_t uh_sport;           /* source port */
          u_int16_t uh_dport;           /* destination port */
@@ -88,10 +85,8 @@ void plog_handler( struct sig_thread_args *args )
 	sagan_log(args->config, 0, "");
 	
         if(iface == (char *)0) {
-                if((iface = pcap_lookupdev(eb)) == (char *)0) {
-                        fprintf(stderr,"cannot get device: %s\n",eb);
-                        exit(1);
-                }
+                if((iface = pcap_lookupdev(eb)) == (char *)0)
+			sagan_log(args->config, 1, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
         }
 
         bp = pcap_open_live(iface,4096,0,0,eb);
@@ -117,9 +112,7 @@ void plog_handler( struct sig_thread_args *args )
 	}
 	
         /* endless loop */
-//        (void)pcap_loop(bp,-1,logpkt,(unsigned char *)0);
 	(void)pcap_loop(bp,-1,logpkt, (u_char*)args);
-	
 	
         pcap_close(bp);
         exit(0);
@@ -173,7 +166,7 @@ logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *p
         l = (char *)u + sizeof(struct udphdr);
         len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
 
-//        if(args->debug->debugplog) {
+        if(args->debug->debugplog) {
 
 		int     x;
 
@@ -185,13 +178,13 @@ logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *p
 
 
                 for(x = 0; x < len; x++) {
-                        if(isprint(l[x])) // && (isatty(1)) )
+			if(isprint(l[x]) && (isatty(1)) )
                                 fprintf(stderr,"%c",(int)(l[x]));
                         else
                                 fprintf(stderr,"[0x%x]",(int)(l[x]));
                 }
                 if (isatty(1)) fprintf(stderr,"\n");
-//        }
+        }
 
 
         /* send it! */
