@@ -320,6 +320,10 @@ struct _SaganConfig *config;
 config = malloc(sizeof(_SaganConfig));
 memset(config, 0, sizeof(_SaganConfig));
 
+struct _SaganSigArgs *sigargs;
+sigargs = malloc(sizeof(_SaganSigArgs));
+memset(sigargs, 0, sizeof(_SaganSigArgs));
+
 counters = malloc(sizeof(_SaganCounters));
 memset(counters, 0, sizeof(_SaganCounters));
 
@@ -435,9 +439,9 @@ sagan_log(config, 0, "Sagan version %s is firing up!", VERSION);
  * struct is always used by the sig_handler thread,  and sometimes used by the
  * plog_handler (below).  So we assign values now */
 
-SaganSigArgs.daemonize = daemonize;
-SaganSigArgs.debug     = debug;
-SaganSigArgs.config    = config;
+sigargs->daemonize = daemonize;
+sigargs->debug     = debug;
+sigargs->config    = config;
 
 #ifdef HAVE_LIBPCAP
 
@@ -447,7 +451,8 @@ SaganSigArgs.config    = config;
 
 if ( config->plog_flag ) { 
 
-if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, &SaganSigArgs )) {
+if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, &sigargs )) {
+
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
         }
@@ -548,7 +553,7 @@ if (pid == 0) {} else { exit(0); }
 /* Create the signal handlers thread _after_ the fork() so it can properly 
  * handly signals - Champ Clark III - 06/13/2011 */
 
-if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &SaganSigArgs )) {
+if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sigargs )) {
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
         }

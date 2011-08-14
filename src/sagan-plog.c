@@ -58,15 +58,16 @@ struct my_udphdr {
          u_int16_t uh_sum;             /* udp checksum */
 };
 
-//static  void    logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
+static  void  logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
 //static void logpkt(u_char *,const struct pcap_pkthdr *, _SaganConfig *);
 
-static void logpkt(struct sig_thread_args *,const struct pcap_pkthdr *, const u_char *);
+//static void logpkt(struct sig_thread_args *,const struct pcap_pkthdr *, const u_char *);
+
 static  int     wiredevlog( _SaganConfig *);
 static  int     outf;
 
 
-void plog_handler( struct sig_thread_args *args )
+void plog_handler(_SaganSigArgs *args )
 {
 
         pcap_t                  *bp;
@@ -121,7 +122,8 @@ void plog_handler( struct sig_thread_args *args )
 
 /* take a raw packet and write it to /dev/log... we are evil! */
 static  void
-logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *pkt)
+//logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *pkt)
+logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 {
         struct  ether_header    *eh;
         struct  ip              *ih;
@@ -130,6 +132,7 @@ logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *p
         int                     len;
         char                    *l;
 
+	_SaganSigArgs *args = (_SaganSigArgs *) pass_args;
 
         /* crack the ethernet header */
         eh = (struct ether_header *)pkt;
@@ -184,7 +187,7 @@ logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *p
                                 fprintf(stderr,"[0x%x]",(int)(l[x]));
                 }
                 if (isatty(1)) fprintf(stderr,"\n");
-        }
+       }
 
 
         /* send it! */

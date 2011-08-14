@@ -418,6 +418,7 @@ void sagan_esmtp_thread( SaganEvent * );
 /* 'Signal' thread options                                                  */
 /****************************************************************************/
 
+/*
 struct sig_thread_args {
         int daemonize;
         uint64_t cid;
@@ -425,15 +426,25 @@ struct sig_thread_args {
 	_SaganConfig *config;
         } SaganSigArgs;
 
+*/
+
+typedef struct _SaganSigArgs _SaganSigArgs;
+	struct _SaganSigArgs {
+        int daemonize;
+        uint64_t cid;
+        _SaganDebug *debug;
+        _SaganConfig *config;
+        };
+
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
 void load_config( _SaganDebug *, _SaganConfig * );
-void sig_handler( struct sig_thread_args * );
+void sig_handler( _SaganSigArgs * );
 void load_classifications( _SaganDebug *, _SaganConfig *,  const char * );
 void load_reference ( _SaganDebug *, _SaganConfig *, const char * );
 void load_rules ( _SaganDebug *, _SaganConfig *,  const char * );
-void plog_handler( struct sig_thread_args * );
+void plog_handler( _SaganSigArgs * );
 void sagan_log( _SaganConfig *,  int, const char *, ... );
 
 void removelockfile ( _SaganConfig * );
