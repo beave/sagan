@@ -418,16 +418,6 @@ void sagan_esmtp_thread( SaganEvent * );
 /* 'Signal' thread options                                                  */
 /****************************************************************************/
 
-/*
-struct sig_thread_args {
-        int daemonize;
-        uint64_t cid;
-	_SaganDebug *debug;
-	_SaganConfig *config;
-        } SaganSigArgs;
-
-*/
-
 typedef struct _SaganSigArgs _SaganSigArgs;
 	struct _SaganSigArgs {
         int daemonize;

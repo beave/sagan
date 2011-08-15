@@ -451,7 +451,7 @@ sigargs->config    = config;
 
 if ( config->plog_flag ) { 
 
-if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, &sigargs )) {
+if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, sigargs )) {
 
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
@@ -553,7 +553,7 @@ if (pid == 0) {} else { exit(0); }
 /* Create the signal handlers thread _after_ the fork() so it can properly 
  * handly signals - Champ Clark III - 06/13/2011 */
 
-if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sigargs )) {
+if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, sigargs )) {
         removelockfile(config);
         sagan_log(config, 1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
         }
@@ -562,8 +562,6 @@ if ( pthread_create( &sig_thread, NULL, (void *)sig_handler, &sigargs )) {
 /* We don't want the key_handler() if we're in daemon mode! */
 
 if (!daemonize) { 
-
-//if (pthread_create( &key_thread, NULL, (void *)key_handler, NULL ))  ;
 
 if (pthread_create( &key_thread, NULL, (void *)key_handler, config )) { ;
 	removelockfile(config);
