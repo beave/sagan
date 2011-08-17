@@ -45,35 +45,20 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
-//void sig_handler( void );
-//void key_handler( void  );
-//void plog_handler( void );
-
-
-//char *dns_lookup(char *);
 int isnumeric (char *);
 char *toupperc(char* const );
-//void sagan_statistics( void );
 void sagan_error(const char *, ...);
-//void sagan_log(  int, const char *, ... );
 char *gettimestamp( void );
 void sagan_error( const char *, ... );
 char *findipinmsg ( char * );
 void closesagan( int );
 int  checkendian( void );
 void sagan_usage( void );
-//void load_config( void );
 void load_normalize( void );
-//void removelockfile ( void );
-//void checklockfile ( void );
-//void sagan_droppriv( const char * , const char *);
 void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
 char *remquotes(char *);
-//void load_classifications( const char * );
-//void load_reference ( const char * );
-//void load_rules ( const char * );
 char *betweenquotes( char * );
 char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);

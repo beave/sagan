@@ -60,10 +60,10 @@ fprintf(stderr, ", plog");
 fprintf(stderr, ".\n");
 
 fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
-fprintf(stderr, "-u, --user\t\tRun as user (defaults to 'sagan').\n");
+fprintf(stderr, "-u, --user [username]\tRun as user (defaults to 'sagan').\n");
 fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
-fprintf(stderr, "-f, --config\t\tSagan configuration file to load.\n");
-fprintf(stderr, "-l, --log\t\tsagan.log location [default: %s].\n\n", SAGANLOG );
+fprintf(stderr, "-f, --config [file]\tSagan configuration file to load.\n");
+fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
 
 #ifdef HAVE_LIBPQ
 fprintf(stderr, "* PostgreSQL support is included\n");
