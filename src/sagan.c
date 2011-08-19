@@ -112,9 +112,8 @@ const struct option long_options[] = {
         { "help",         no_argument,          NULL,   'h' },
         { "debug",        required_argument,    NULL,   'd' },
         { "daemon",       no_argument,          NULL,   'D' },
-        { "program",      no_argument,          NULL,   'p' },
         { "user",         required_argument,    NULL,   'U' },
-        { "chroot",       no_argument,          NULL,   'c' },
+        { "chroot",       required_argument,    NULL,   'c' },
         { "config",       required_argument,    NULL,   'f' },
         { "log",          required_argument,    NULL,   'l' },
         {0, 0, 0, 0}
