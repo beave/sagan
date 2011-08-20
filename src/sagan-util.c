@@ -365,7 +365,7 @@ char *dns_lookup( _SaganConfig *config, char *host)
        sagan_log(config, 0, "--------------------------------------------------------------------------");
        sagan_log(config, 0, "Sagan DNS lookup need for %s.", host); 
        sagan_log(config, 0, "This can affect performance.  Please see:" );
-       sagan_log(config, 0, "https://wiki.softwink.com/bin/view/Main/SaganDNS");
+       sagan_log(config, 0, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
        sagan_log(config, 0, "--------------------------------------------------------------------------");
        }
 

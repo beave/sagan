@@ -50,8 +50,8 @@ struct _SaganCounters *counters;
 
 #define ANALYZER_CLASS "Log Analyzer"
 #define ANALYZER_MODEL "Sagan"
-#define ANALYZER_MANUFACTURER "http://sagan.softwink.com"
-#define ANALYZER_SID_URL "https://wiki.softwink.com/bin/view/Main/"
+#define ANALYZER_MANUFACTURER "http://sagan.quadrantsec.com"
+#define ANALYZER_SID_URL "https://wiki.quadrantsec.com/bin/view/Main/"
 #define DEFAULT_ANALYZER_NAME "sagan"
 #define ANALYZER_INTERFACE "syslog"
 
