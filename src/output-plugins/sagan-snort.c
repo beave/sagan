@@ -256,7 +256,6 @@ return(0);
 /* Get's the current sensor ID or creates a new one if this is the first run */
 /*****************************************************************************/
 
-//int get_sensor_id ( _SaganDebug *debug, char *hostname,  char *interface,  char *filter,  int detail, int dbtype ) { 
 int get_sensor_id ( _SaganDebug *debug,  _SaganConfig *config ) { 
 
 

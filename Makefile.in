@@ -706,9 +706,9 @@ install-data-local:
 	$(INSTALL) -d "$(DESTDIR)/var/run/sagan"
 	@echo ""
 	@echo "------------------------------------------------------------------------------"
-	@echo "Sagan has been installed!  You still need to do a few more things before your"
-	@echo "up and running. Please see https://wiki.softwink.com/bin/view/Main/SaganHOWTO"
-	@echo "for more information."
+	@echo "Sagan has been installed! You still need to do a few more things before your"
+	@echo "up and running. See https://wiki.quadrantsec.com/bin/view/Main/SaganHOWTO for"
+	@echo "more information."
 	@echo "------------------------------------------------------------------------------"
 	@echo ""
 

@@ -213,7 +213,7 @@
 #define PACKAGE "sagan"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "sagan@mailman.softwink.com"
+#define PACKAGE_BUGREPORT "cclark@quadrantsec.com"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "sagan"

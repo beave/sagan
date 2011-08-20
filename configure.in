@@ -250,7 +250,7 @@ if test "$LOGNORM" = "yes"; then
        #AC_CHECK_HEADER([lognorm.h])
        AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
 This library is important for the correlation aspects of Sagan! Please see
-https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable this feature
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. ))
        fi
 
@@ -265,7 +265,7 @@ if test "$LIBPCAP" = "yes"; then
        AC_CHECK_HEADER([netinet/udp.h])
        AC_CHECK_LIB(pcap, main,,AC_MSG_ERROR(The libpcap library cannot be found.
 This library is used to run Sagan in a syslog 'sniffer' mode.  Please see
-https://wiki.softwink.com/bin/view/Main/PLog.  To disable this feature use
+https://wiki.quadrantsec.com/bin/view/Main/PLog.  To disable this feature use
 the --disable-libpcap flag. ))
        fi
 
@@ -274,7 +274,7 @@ if test "$LIBDNET" = "yes"; then
        AC_CHECK_HEADER([dnet.h])
        AC_CHECK_LIB(dnet, main,,AC_MSG_ERROR(The libdnet library cannot be found.
 This library is used for Sagan's Unified2 output support.  Please see
-https://wiki.softwink.com/bin/view/Main/Unified2Output for more information. 
+https://wiki.quadrantsec.com/bin/view/Main/Unified2Output for more information. 
 To disable this feature use the --disable-libdnet flag. ))
        fi
 
@@ -284,7 +284,7 @@ AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [
 
 AC_DEFINE_UNQUOTED(PACKAGE_NAME, "sagan" )
 AC_DEFINE_UNQUOTED(PACKAGE_STRING, "Sagan $VERSION")
-AC_DEFINE_UNQUOTED(PACKAGE_BUGREPORT, "sagan@mailman.softwink.com" )
+AC_DEFINE_UNQUOTED(PACKAGE_BUGREPORT, "cclark@quadrantsec.com" )
 AC_DEFINE_UNQUOTED(PACKAGE_TARNAME, "sagan" )
 AC_DEFINE_UNQUOTED(PACKAGE_VERSION, "$VERSION" )
 
@@ -300,7 +300,7 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([  ,-._,-.    Sagan has been configured!])
 AC_MSG_RESULT([  \/)"(\/ ])
 AC_MSG_RESULT([   (_o_)     Champ Clark III & The Quadrant InfoSec Team [[quadrantsec.com]]])
-AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2011 Softwink, Inc., et al.])
+AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2011 Quadrant Information Security, et al.])
 AC_MSG_RESULT([  (|| ||) ])
 AC_MSG_RESULT([   oo-oo  ]) 
 AC_MSG_RESULT([])

@@ -55,10 +55,6 @@ MYSQL    *mysql;
 
 #include "version.h"
 
-//struct _SaganConfig *config;
-
-//char sagan_path[MAXPATH];
-
 sbool daemonize;
 
 /*****************************************************************************

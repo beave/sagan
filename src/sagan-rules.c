@@ -80,10 +80,12 @@ char *threshold_tmp;
 char *thresh_tmp;
 
 char netstr[RULEBUF];
+
 /* line added by drforbin array should be initialized */
 memset(netstr, 0, RULEBUF);
 char rulestr[RULEBUF];
 /* line added by drforbin array should be initialized */
+
 memset(rulestr, 0, RULEBUF);
 char rulebuf[RULEBUF];
 char pcrerule[RULEBUF];

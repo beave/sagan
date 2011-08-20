@@ -111,23 +111,3 @@ fclose(classfile);
 sagan_log(config, 0, "%d classifications loaded", counters->classcount);
 
 }
-/*
-char *classlookup( char *classtype ) {
-
-int i; 
-char *ret;
-
-for ( i=0; i < counters->classcount; i++ ) { 
-
-if ( !strcmp( classstruct[i].s_shortname, classtype ) )  { 
-   ret=classstruct[i].s_desc;
-   return(ret);
-   }
-}
-
-sagan_log(config, 0, "Hmmm.. Classification not found for a classification loaded?!?");
-ret="Classification not found!";
-return(ret);
-
-}
-*/

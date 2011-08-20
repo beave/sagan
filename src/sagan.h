@@ -411,6 +411,16 @@ typedef struct _SaganSigArgs _SaganSigArgs;
         _SaganConfig *config;
         };
 
+
+
+/****************************************************************************/
+/* The functions below depend on structs above                              */
+/****************************************************************************/
+
+#ifdef HAVE_LIBPCAP
+void plog_handler( _SaganSigArgs * );
+#endif
+
 void sagan_alert( SaganEvent * );
 void sagan_ext_thread( SaganEvent * );
 
@@ -419,16 +429,10 @@ void sig_handler( _SaganSigArgs * );
 void load_classifications( _SaganDebug *, _SaganConfig *,  const char * );
 void load_reference ( _SaganDebug *, _SaganConfig *, const char * );
 void load_rules ( _SaganDebug *, _SaganConfig *,  const char * );
-void plog_handler( _SaganSigArgs * );
 void sagan_log( _SaganConfig *,  int, const char *, ... );
-
 void removelockfile ( _SaganConfig * );
 void checklockfile ( _SaganConfig * );
-
 void sagan_statistics( _SaganConfig * );
-
 void key_handler( _SaganConfig * );
-
 void sagan_droppriv( _SaganConfig *, const char *);
-
 char *dns_lookup( _SaganConfig *, char *);

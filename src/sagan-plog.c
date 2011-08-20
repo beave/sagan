@@ -59,12 +59,8 @@ struct my_udphdr {
 };
 
 static  void  logpkt(u_char *,const struct pcap_pkthdr *,const u_char *);
-//static void logpkt(u_char *,const struct pcap_pkthdr *, _SaganConfig *);
-
-//static void logpkt(struct sig_thread_args *,const struct pcap_pkthdr *, const u_char *);
-
-static  int     wiredevlog( _SaganConfig *);
-static  int     outf;
+static  int   wiredevlog( _SaganConfig *);
+static  int   outf;
 
 
 void plog_handler(_SaganSigArgs *args )
@@ -122,7 +118,6 @@ void plog_handler(_SaganSigArgs *args )
 
 /* take a raw packet and write it to /dev/log... we are evil! */
 static  void
-//logpkt(struct sig_thread_args *args, const struct pcap_pkthdr *p,const u_char *pkt)
 logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 {
         struct  ether_header    *eh;

@@ -6699,7 +6699,7 @@ _ACEOF
 else
   as_fn_error "The liblognorm library cannot be found.
 This library is important for the correlation aspects of Sagan! Please see
-https://wiki.softwink.com/bin/view/Main/LibLogNorm. To disable this feature
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. " "$LINENO" 5
 fi
 
@@ -6790,7 +6790,7 @@ _ACEOF
 else
   as_fn_error "The libpcap library cannot be found.
 This library is used to run Sagan in a syslog 'sniffer' mode.  Please see
-https://wiki.softwink.com/bin/view/Main/PLog.  To disable this feature use
+https://wiki.quadrantsec.com/bin/view/Main/PLog.  To disable this feature use
 the --disable-libpcap flag. " "$LINENO" 5
 fi
 
@@ -6845,7 +6845,7 @@ _ACEOF
 else
   as_fn_error "The libdnet library cannot be found.
 This library is used for Sagan's Unified2 output support.  Please see
-https://wiki.softwink.com/bin/view/Main/Unified2Output for more information.
+https://wiki.quadrantsec.com/bin/view/Main/Unified2Output for more information.
 To disable this feature use the --disable-libdnet flag. " "$LINENO" 5
 fi
 
@@ -6868,7 +6868,7 @@ cat >>confdefs.h <<_ACEOF
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
-#define PACKAGE_BUGREPORT "sagan@mailman.softwink.com"
+#define PACKAGE_BUGREPORT "cclark@quadrantsec.com"
 _ACEOF
 
 cat >>confdefs.h <<_ACEOF
@@ -8326,8 +8326,8 @@ $as_echo "  ,-._,-.    Sagan has been configured!" >&6; }
 $as_echo "  \/)\"(\/ " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&5
 $as_echo "   (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2011 Softwink, Inc., et al." >&5
-$as_echo "   /   \/)   Copyright (C) 2009-2011 Softwink, Inc., et al." >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2011 Quadrant Information Security, et al." >&5
+$as_echo "   /   \/)   Copyright (C) 2009-2011 Quadrant Information Security, et al." >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:   (|| ||) " >&5
 $as_echo "  (|| ||) " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    oo-oo  " >&5

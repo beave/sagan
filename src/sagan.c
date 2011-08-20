@@ -130,8 +130,6 @@ int option_index = 0;
 struct Sagan_Event *SaganEvent = NULL;
 SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 
-//int endianchk;
-
 /****************************************************************************/
 /* MySQL / PostgreSQL (snort) local variables			    */
 /****************************************************************************/
@@ -247,7 +245,6 @@ char *syslog_facility=NULL;
 char syslog_facilitytmp[MAX_MSGSLOT][MAXFACILITY];
 
 char *syslog_priority=NULL;
-//char syslog_prioritytmp[MAXPRIORITY];
 
 char *syslog_level=NULL;
 char syslog_leveltmp[MAX_MSGSLOT][MAXLEVEL];
@@ -487,7 +484,6 @@ if ( config->dbtype ) {
 sagan_log(config, 0, "Max database threads : %d", config->maxdb_threads);
 
 db_connect(config);
-//get_sensor_id( debug, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail, config->dbtype);
 
 get_sensor_id( debug, config ); 
 sagan_log(config, 0, "Sensor ID            : %d", config->sensor_id);
@@ -778,11 +774,11 @@ if (debug->debugsyslog) sagan_log(config, 0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslo
 		      s_content_case=rulestruct[b].s_content[z];
 		      toupperc(syslog_msg_case);
 		      toupperc(s_content_case); 
-		      if (strstr(syslog_msg_case, s_content_case )) pcrematch++;   // rc=1;
+		      if (strstr(syslog_msg_case, s_content_case )) pcrematch++;
 		      } else { 
 
 		   /* If case sensitive */
-		   if (strstr(syslog_msg, rulestruct[b].s_content[z] )) pcrematch++;  // rc=1;
+		   if (strstr(syslog_msg, rulestruct[b].s_content[z] )) pcrematch++;
 		   }
 		  }
 		 }
@@ -1079,7 +1075,6 @@ SaganEvent[threadid].src_port  =       src_porttmp[msgslot];
 SaganEvent[threadid].found     =       b;
 SaganEvent[threadid].program   =       syslog_programtmp[msgslot];
 SaganEvent[threadid].message   =       sysmsg[msgslot];
-//SaganEvent[threadid].endian    =       endianchk;
 SaganEvent[threadid].time      =       syslog_timetmp[msgslot];
 SaganEvent[threadid].date      =       syslog_datetmp[msgslot];
 SaganEvent[threadid].f_msg     =       s_msgtmp[msgslot]; 
