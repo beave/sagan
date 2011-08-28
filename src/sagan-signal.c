@@ -90,8 +90,6 @@ void sig_handler( _SaganSigArgs *args ) {
 		  case SIGSEGV:
 		  case SIGABRT:
 
-		  printf("%d <-\n", args[0].daemonize);
-
                   sagan_log(args->config, 0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
 		  sagan_statistics(args->config);
 

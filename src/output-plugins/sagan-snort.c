@@ -348,7 +348,7 @@ sig_class_id = atoi(sqlout);
 
 /* Look for the signature id */
 
-snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid);
+snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", Event->f_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid);
 sql=sqltmp;
 
 
@@ -358,12 +358,16 @@ sqlout = db_query( Event->debug, Event->config, sql );
 
 if ( sqlout == NULL ) {
 
-   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", rulestruct[Event->found].s_msg, sig_class_id, rulestruct[Event->found].s_pri, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
+//   snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", rulestruct[Event->found].s_msg, sig_class_id, rulestruct[Event->found].s_pri, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
+
+// Event->f_msg
+
+ snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO signature(sig_name, sig_class_id, sig_priority, sig_rev, sig_sid) VALUES ('%s', '%d', '%d', '%s', '%s' )", Event->f_msg, sig_class_id, rulestruct[Event->found].s_pri, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
    db_query( Event->debug, Event->config, sql );
 
    /* Get the new ID of the new entry */
-   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", rulestruct[Event->found].s_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
+   snprintf(sqltmp, sizeof(sqltmp), "SELECT sig_id FROM signature WHERE sig_name='%s' AND sig_rev=%s AND sig_sid=%s", Event->f_msg, rulestruct[Event->found].s_rev, rulestruct[Event->found].s_sid );
    sql=sqltmp;
    sqlout = db_query( Event->debug, Event->config, sql );
    }
