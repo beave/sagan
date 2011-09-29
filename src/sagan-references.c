@@ -113,9 +113,13 @@ char *reflookup( int rulemem, int type ) {
 
 int i=0;
 int b=0;
+
 char *tmptok=NULL;
 char *tmp=NULL;
-char *tmp2=NULL;
+
+char reftype[25]="";
+char url[255]=""; 
+
 char refinfo[512]="";
 char refinfo2[512]="";
 char reftmp[2048]="";
@@ -124,22 +128,35 @@ char *ret=NULL;
 for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
 
         strlcpy(refinfo, rulestruct[rulemem].s_reference[i], sizeof(refinfo));
-        tmp = strtok_r(refinfo, ",", &tmptok);
-        tmp2 = strtok_r(NULL, ",", &tmptok);
+	
+	tmp = strtok_r(refinfo, ",", &tmptok);
 
- if ( tmp != NULL ) { 
+	if ( tmp != NULL ) { 
+	   strlcpy(reftype, tmp, sizeof(reftype)); 
+	   } else { 
+	   return("");
+	   }
+
+	tmp  = strtok_r(NULL, ",", &tmptok);
+	
+	if ( tmp != NULL ) { 
+	   strlcpy(url, tmp, sizeof(url)); 
+	   } else {
+	   return("");
+	   }
+
 
     for ( b=0; b < counters->refcount; b++) {
 
-        if (!strcmp(refstruct[b].s_refid,  tmp)) {
-	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, tmp2);
-	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2), "Reference:%s%s\n", refstruct[b].s_refurl, tmp2);
+        if (!strcmp(refstruct[b].s_refid,  reftype)) {
+	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, url);
+	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2), "Reference:%s%s\n", refstruct[b].s_refurl, url);
 	   strlcat(reftmp,  refinfo2,  sizeof(reftmp));
            }
         } 
    }
-}
 
 ret=reftmp;
+
 return(ret);
 }
