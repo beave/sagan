@@ -103,7 +103,7 @@ void sagan_droppriv(_SaganConfig *config, const char *username)
 
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-		        sagan_log(config, 1, "[%s, line %d] Could not change to '%.32s' uid=%lu gid=%lu.", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, pw->pw_dir);
+		    sagan_log(config, 1, "Could not drop privileges to uid: %lu gid: %lu!", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 	       } 
 	       
 	       } else { 
