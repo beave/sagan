@@ -304,7 +304,7 @@ int match=0;
 int pcrematch=0;
 
 time_t t;
-struct tm *now;
+struct tm *now, *run;
 
 /* Allocate and clear memory for global structs */
 
@@ -322,6 +322,10 @@ memset(sigargs, 0, sizeof(_SaganSigArgs));
 
 counters = malloc(sizeof(_SaganCounters));
 memset(counters, 0, sizeof(_SaganCounters));
+
+t = time(NULL);
+run=localtime(&t);
+strftime(config->sagan_startutime, sizeof(config->sagan_startutime), "%s",  run);
 
 
 snprintf(config->sagan_config, sizeof(config->sagan_config), "%s", CONFIG_FILE_PATH);

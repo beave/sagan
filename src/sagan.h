@@ -154,6 +154,7 @@ struct _SaganConfig {
     char 	 sagan_rule_path[MAXPATH];
     char         sagan_host[MAXHOST];
     char         sagan_extern[MAXPATH];
+    char	 sagan_startutime[20]; 			/* Records utime at startup */
     uint64_t	 max_external_threads;
     int		 sagan_port;
     int		 sagan_exttype;

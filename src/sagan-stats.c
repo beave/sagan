@@ -33,12 +33,32 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <time.h>
 
 #include "sagan.h"
 
 struct _SaganCounters *counters;
 
 void sagan_statistics( _SaganConfig *config ) { 
+
+char timet[20];
+
+time_t t;
+struct tm *now;
+unsigned long seconds = 0; 
+unsigned long total=0; 
+
+/* This is used to calulate the events per/second */
+/* Champ Clark III - 11/17/2011 */
+
+t = time(NULL);
+now=localtime(&t);
+strftime(timet, sizeof(timet), "%s",  now);
+seconds = atol(timet) - atol(config->sagan_startutime);
+
+/* if statement prevents floating point exception */
+
+if ( seconds != 0 ) total = counters->sagantotal / seconds; 
 
 sbool flag=0;
 
@@ -49,6 +69,14 @@ sbool flag=0;
                     sagan_log(config, 0, "Total number of events thresholded: %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
                     sagan_log(config, 0, "Total number of signatures matched: %" PRIu64 " (%.3f%%)",  counters->saganfound, CalcPct( counters->saganfound, counters->sagantotal ) );
 		    sagan_log(config, 0, "Total events dropped: %" PRIu64 " (%.3f%%)", counters->sagandrop, CalcPct(counters->sagandrop, counters->sagantotal) );
+
+		    if ( seconds < 60 || seconds == 0 ) { 
+		    sagan_log(config, 0, "Events Per-Second: %lu [More time needed for accuracy %lu of 60 seconds]", total, seconds);
+		    } else { 
+		    sagan_log(config, 0, "Events Per-Second: %lu", total);
+		    }
+
+		    
 		    sagan_log(config, 0, "--------------------------------------------------------------------------");
 
                     if ( config->sagan_ext_flag ) { 
