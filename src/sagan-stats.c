@@ -71,9 +71,9 @@ sbool flag=0;
 		    sagan_log(config, 0, "Total events dropped: %" PRIu64 " (%.3f%%)", counters->sagandrop, CalcPct(counters->sagandrop, counters->sagantotal) );
 
 		    if ( seconds < 60 || seconds == 0 ) { 
-		    sagan_log(config, 0, "Events Per-Second: %lu [More time needed for accuracy %lu of 60 seconds]", total, seconds);
+		    sagan_log(config, 0, "Average Events Per-Second: %lu [%lu of 60 seconds. Calculating...]", total, seconds);
 		    } else { 
-		    sagan_log(config, 0, "Events Per-Second: %lu", total);
+		    sagan_log(config, 0, "Average Events Per-Second: %lu", total);
 		    }
 
 		    
