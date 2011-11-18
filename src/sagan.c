@@ -689,6 +689,12 @@ while(1) {
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
                    if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'message'\n");
+
+		   /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,  
+		    * it's more likely to lose all  - Champ Clark III 11/17/2011 */
+
+		   counters->sagandrop++; 
+
                    }
 
 
