@@ -68,8 +68,12 @@ sbool flag=0;
                     sagan_log(config, 0, "Total number of events processed: %" PRIu64 "", counters->sagantotal);
                     sagan_log(config, 0, "Total number of events thresholded: %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
                     sagan_log(config, 0, "Total number of signatures matched: %" PRIu64 " (%.3f%%)",  counters->saganfound, CalcPct( counters->saganfound, counters->sagantotal ) );
-		    sagan_log(config, 0, "Total events dropped: %" PRIu64 " (%.3f%%)", counters->sagandrop, CalcPct(counters->sagandrop, counters->sagantotal) );
+		    if ( config->output_thread_flag ) sagan_log(config, 0, "Total output plugin dropped: %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
+		    if (  config->processor_thread_flag ) sagan_log(config, 0, "Total processor plugin dropped: %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop, CalcPct(counters->sagan_processor_drop, counters->sagantotal) );
+		    
+		    sagan_log(config, 0, "Total dropped: %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
 
+	
 		    if ( seconds < 60 || seconds == 0 ) { 
 		    sagan_log(config, 0, "Average Events Per-Second: %lu [%lu of 60 seconds. Calculating...]", total, seconds);
 		    } else { 
@@ -79,35 +83,6 @@ sbool flag=0;
 		    
 		    sagan_log(config, 0, "--------------------------------------------------------------------------");
 
-                    if ( config->sagan_ext_flag ) { 
-		       sagan_log(config, 0, "Max external threads: %" PRIu64 " of %" PRIu64 " (%.3f%%) | External events dropped: %" PRIu64 "", counters->threadmaxextc,  config->max_external_threads, CalcPct( counters->threadmaxextc, config->max_external_threads), counters->saganexternaldrop);
-		       flag=1;
-		       }
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-                    
-		    if ( config->dbtype ) { 
-		       sagan_log(config, 0, "Max Snort database threads: %" PRIu64 " of %" PRIu64 " (%.3f%%) | Snort DB drops: %" PRIu64 "", counters->threadmaxdbc, config->maxdb_threads, CalcPct( counters->threadmaxdbc, config->maxdb_threads), counters->sagansnortdrop);
-		       flag=1;
-		       }
-
-#endif
-
-#ifdef HAVE_LIBESMTP
-		    if ( config->sagan_esmtp_flag ) {
-		       sagan_log(config, 0, "Max SMTP threads reached: %" PRIu64 " of %" PRIu64 " (%.3f%%) | SMTP events dropped: %" PRIu64 "", counters->threadmaxemailc, config->max_email_threads, CalcPct( counters->threadmaxemailc, config->max_email_threads), counters->saganesmtpdrop);
-		       flag=1;
-		       }
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-		   if ( config->sagan_prelude_flag ) { 
-		      sagan_log(config, 0, "Max Prelude threads reached: %" PRIu64 " of %" PRIu64 " (%.3f%%) | Prelude events dropped: %" PRIu64 "", counters->threadmaxpreludec, config->max_prelude_threads, CalcPct( counters->threadmaxpreludec, config->max_prelude_threads), counters->saganpreludedrop);
-		      flag=1;
-		      }
-#endif
-
-if ( flag == 1) sagan_log(config, 0, "--------------------------------------------------------------------------");
 	
 	}
 }

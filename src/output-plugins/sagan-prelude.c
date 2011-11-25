@@ -247,10 +247,6 @@ prelude_client_send_idmef(preludeclient, idmef);
 err:
 idmef_message_destroy(idmef);
 
-pthread_mutex_lock ( &prelude_mutex );
-counters->threadpreludec--;
-pthread_mutex_unlock ( &prelude_mutex );
-
 pthread_exit(NULL);
 }
 

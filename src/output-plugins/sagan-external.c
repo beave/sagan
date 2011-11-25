@@ -132,10 +132,6 @@ if (( pid = fork()) == 0 ) {
 
    waitpid(pid, NULL, 0);
 
-pthread_mutex_lock( &ext_mutex );
-counters->threadextc--;
-pthread_mutex_unlock( &ext_mutex );
-
 pthread_exit(NULL);
 }
 

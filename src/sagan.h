@@ -73,12 +73,13 @@ struct _SaganCounters {
     uint64_t threshold_total;
     uint64_t sagantotal;
     uint64_t saganfound;
-    uint64_t sagandrop;
+    uint64_t sagan_output_drop;
+    uint64_t sagan_processor_drop;
+    uint64_t sagan_log_drop;
 
-    uint64_t threadmaxextc;
-    uint64_t saganexternaldrop;
 
-    int      threadextc;
+    int	     thread_output_counter; 
+    int	     thread_processor_counter;
 
     int	     classcount;
     int      rulecount;
@@ -86,23 +87,7 @@ struct _SaganCounters {
     int      ruletotal;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-    uint64_t sigcid;            /* For passing CID with signal */
-    uint64_t threadmaxdbc;
-    int	     threaddbc;
-
-    uint64_t sagansnortdrop;
-#endif
-
-#ifdef HAVE_LIBESMTP
-    int      threademailc;
-    uint64_t saganesmtpdrop;
-    uint64_t threadmaxemailc;
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-    int      threadpreludec;
-    uint64_t threadmaxpreludec;
-    uint64_t saganpreludedrop;
+    uint64_t cid;            /* For passing CID with signal */
 #endif
 
 #ifdef HAVE_LIBLOGNORM
@@ -155,7 +140,13 @@ struct _SaganConfig {
     char         sagan_host[MAXHOST];
     char         sagan_extern[MAXPATH];
     char	 sagan_startutime[20]; 			/* Records utime at startup */
-    uint64_t	 max_external_threads;
+    
+    uint64_t     max_output_threads;
+    sbool	 output_thread_flag;
+
+    uint64_t	 max_processor_threads;
+    sbool	 processor_thread_flag;
+
     int		 sagan_port;
     int		 sagan_exttype;
     sbool	 sagan_ext_flag;
@@ -169,7 +160,6 @@ struct _SaganConfig {
 /* libesmtp/SMTP support */
     
 #ifdef HAVE_LIBESMTP
-    uint64_t	max_email_threads;
     int		min_email_priority;
     char	sagan_esmtp_to[255];
     sbool	sagan_sendto_flag;
@@ -181,7 +171,6 @@ struct _SaganConfig {
 /* Prelude framework support */
 
 #ifdef HAVE_LIBPRELUDE
-    uint64_t 	max_prelude_threads;
     char	sagan_prelude_profile[255];
     sbool	sagan_prelude_flag;
 #endif
@@ -213,7 +202,6 @@ struct _SaganConfig {
     int		 dbtype;
     int          sagan_detail;
     int		 sensor_id;
-    uint64_t	 maxdb_threads;
     char	 sagan_hostname[MAXHOST];
     char	 sagan_filter[50];
     char         dbuser[MAXUSER];
@@ -294,6 +282,7 @@ typedef struct Sagan_Event
 
         _SaganDebug *debug;
         _SaganConfig *config;
+	_SaganCounters *counters;
 
         char *ip_src;
         char *ip_dst;
@@ -323,10 +312,6 @@ typedef struct Sagan_Event
         char *tag;
         char *program;
         char *message;          /* msg + sysmsg? */
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-	uint64_t cid;
-#endif
 
 } SaganEvent;
 
@@ -437,3 +422,6 @@ void sagan_statistics( _SaganConfig * );
 void key_handler( _SaganConfig * );
 void sagan_droppriv( _SaganConfig *, const char *);
 char *dns_lookup( _SaganConfig *, char *);
+
+void sagan_output( SaganEvent * );
+void sagan_processor( SaganEvent * );

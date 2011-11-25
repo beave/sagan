@@ -74,17 +74,7 @@
 
 /* defaults if the user doesn't define */
 
-#define MAX_EXT_THREADS         50
+#define MAX_OUTPUT_THREADS         50
+#define MAX_PROCESSOR_THREADS	   50
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-#define MAX_DB_THREADS          50
-#endif
-
-#ifdef HAVE_LIBESMTP
-#define MAX_EMAIL_THREADS	50
-#endif 
-
-#ifdef HAVE_LIBPRELUDE
-#define MAX_PRELUDE_THREADS	50
-#endif
 

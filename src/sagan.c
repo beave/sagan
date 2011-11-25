@@ -58,16 +58,6 @@
 #include <lognorm.h>
 #endif
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-#include "output-plugins/sagan-snort.h"
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-#include <libprelude/prelude.h>
-#include "output-plugins/sagan-prelude.h"
-#endif
-
-
 #ifdef HAVE_LIBDNET
 #include "output-plugins/sagan-unified2.h"
 #endif
@@ -130,46 +120,27 @@ int option_index = 0;
 struct Sagan_Event *SaganEvent = NULL;
 SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
 
-/****************************************************************************/
-/* MySQL / PostgreSQL (snort) local variables			    */
-/****************************************************************************/
+/***************************************************************************/
+/* pthread for the output plugins                                          */
+/***************************************************************************/
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-uint64_t cid = 0;
-
-pthread_t threaddb_id[MAX_THREADS];
-pthread_attr_t thread_db_attr;
-
-pthread_attr_init(&thread_db_attr);
-pthread_attr_setdetachstate(&thread_db_attr,  PTHREAD_CREATE_DETACHED);
-
-#endif
+pthread_t output_id[MAX_THREADS];
+pthread_attr_t thread_output_attr;
+pthread_attr_init(&thread_output_attr);
+pthread_attr_setdetachstate(&thread_output_attr,  PTHREAD_CREATE_DETACHED);
 
 /****************************************************************************/
-/* Prelude support                                                          */
+/* pthread for the processor plugins                                        */
 /****************************************************************************/
 
-#ifdef HAVE_LIBPRELUDE
-pthread_t threadprelude_id[MAX_THREADS];
-pthread_attr_t thread_prelude_attr;
-pthread_attr_init(&thread_prelude_attr);
-pthread_attr_setdetachstate(&thread_prelude_attr,  PTHREAD_CREATE_DETACHED);
-#endif
+pthread_t processor_id[MAX_THREADS];
+pthread_attr_t thread_processor_attr;
+pthread_attr_init(&thread_processor_attr);
+pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
+
 
 /****************************************************************************/
-/* libesmtp (SMTP/e-mail) local variables				    */
-/****************************************************************************/
-
-#ifdef HAVE_LIBESMTP
-pthread_t threademail_id[MAX_THREADS];
-pthread_attr_t thread_email_attr;
-pthread_attr_init(&thread_email_attr);
-pthread_attr_setdetachstate(&thread_email_attr,  PTHREAD_CREATE_DETACHED);
-#endif
-
-/****************************************************************************/
-/* libpcap/PLOG (syslog sniffer) local variables                                 */
+/* libpcap/PLOG (syslog sniffer) local variables                            */
 /****************************************************************************/
 
 #ifdef HAVE_LIBPCAP
@@ -475,27 +446,32 @@ removelockfile(config);
 sagan_log(config, 1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-if ( config->sagan_ext_flag ) sagan_log(config, 0, "Max external threads : %d", config->max_external_threads);
+if ( config->output_thread_flag ) { 
+sagan_log(config, 0, "Max Output Threads   : %" PRIu64 "", config->max_output_threads);
+} else { 
+sagan_log(config, 0, "Max Output Threads   : [None loaded]");
+}
 
-#ifdef HAVE_LIBESMTP
-if ( config->sagan_esmtp_flag ) sagan_log(config, 0, "Max SMTP threads     : %d", config->max_email_threads);
-#endif
+if ( config->processor_thread_flag ) { 
+sagan_log(config, 0, "Max Processor Threads: %" PRIu64 "", config->max_processor_threads);
+} else { 
+sagan_log(config, 0, "Max Processor Threads: [None loaded]"); 
+}
+
+sagan_log(config, 0, "");
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
 if ( config->dbtype ) { 
 
-sagan_log(config, 0, "Max database threads : %d", config->maxdb_threads);
+config->endian = checkendian();
 
 db_connect(config);
 
 get_sensor_id( debug, config ); 
 sagan_log(config, 0, "Sensor ID            : %d", config->sensor_id);
-cid = get_cid( debug, config );
-cid++;
-counters->sigcid=cid;
-sagan_log(config, 0, "Next CID             : %" PRIu64 "", cid);
+counters->cid = get_cid( debug, config ) + 1;
 
+sagan_log(config, 0, "Next CID             : %" PRIu64 "", counters->cid);
 }
 #endif
 
@@ -504,7 +480,6 @@ sagan_log(config, 0, "Next CID             : %" PRIu64 "", cid);
 if ( config->sagan_prelude_flag ) {
 
 sagan_log(config, 0, "Prelude profile: %s", config->sagan_prelude_profile);
-sagan_log(config, 0, "Max Prelude threads: %d", config->max_prelude_threads);
 sagan_log(config, 0, "");  /* libprelude dumps some information.  This is to make it pretty */
 
 PreludeInit(config);
@@ -693,7 +668,7 @@ while(1) {
 		   /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,  
 		    * it's more likely to lose all  - Champ Clark III 11/17/2011 */
 
-		   counters->sagandrop++; 
+		   counters->sagan_log_drop++; 
 
                    }
 
@@ -1099,149 +1074,71 @@ SaganEvent[threadid].config    = 	config;
 
 }
 
+/***************************************************************************/
+/* Output plugins that cannot be threaded and require little I/O (almost   */
+/* no I/O blocking) - IE - unified2/ASCII alerts                           */
+/***************************************************************************/
 
-/* Log alert to alert.log file */
+/* If thresholding isn't happening,  send to output plugins */
 
-if ( thresh_log_flag == 0 ) sagan_alert( &SaganEvent[threadid] );
+if ( thresh_log_flag == 0 ) { 
+
+sagan_alert( &SaganEvent[threadid] );	/* 
 
 /* Log to unified2 output (if enabled and have libdnet). */
 
 #ifdef HAVE_LIBDNET
-
 if ( config->sagan_unified2_flag ) {
-
 if ( thresh_log_flag == 0 ) Sagan_Unified2( &SaganEvent[threadid] );
 if ( thresh_log_flag == 0 ) Sagan_Unified2LogPacketAlert( &SaganEvent[threadid] );
-
-}
-
-#endif
-
-/****************************************************************************/
-/* Prelude framework thread call (libprelude                                */
-/****************************************************************************/
-
-#if HAVE_LIBPRELUDE
-
-if ( config->sagan_prelude_flag == 1 && thresh_log_flag == 0 ) {
-	
-if ( counters->threadpreludec < config->max_prelude_threads ) {
-	
-	counters->threadpreludec++;
-
-	if ( counters->threadpreludec > counters->threadmaxpreludec ) counters->threadmaxpreludec=counters->threadpreludec;
-
-	if ( pthread_create ( &threadprelude_id[threadid], &thread_prelude_attr, (void *)sagan_prelude, &SaganEvent[threadid] ) ) { 
-		removelockfile(config);
-	        sagan_log(config, 1, "[%s, line %d] Error creating Prelude thread", __FILE__, __LINE__);
-	        } 
-	      	 } else { 
-                counters->sagandrop++;
-                counters->saganpreludedrop++;
-                sagan_log(config, 0, "Prelude thread call handler: Out of threads\n");
-              	}
 }
 #endif
 
-
 /****************************************************************************/
-/* libesmtp thread call (SMTP/email)                                        */
+/* Output Plugin Threads - This is for output plugins like SQL/etc that     */
+/* might cause some I/O blocking                                            */
 /****************************************************************************/
 
-#ifdef HAVE_LIBESMTP
+if ( config->output_thread_flag )  {
 
-/* Has e-mail been turned on? */
+if (  counters->thread_output_counter < config->max_output_threads ) {
 
-if ( config->sagan_esmtp_flag == 1 && thresh_log_flag == 0 ) {
+        counters->thread_output_counter++;
 
-   /* If so,  this rule based (email:) or configuration based (send-to) */
-   
-   if ( rulestruct[b].email_flag  || config->sagan_sendto_flag ) { 
-		  
-	/* E-mail only if over min_email_priority */ 
-
-	if ( config->min_email_priority >= rulestruct[b].s_pri || config->min_email_priority == 0 ) { 
-
-		if ( counters->threademailc < config->max_email_threads ) { 
-		  
-		    counters->threademailc++;
-
-		    if ( counters->threademailc > counters->threadmaxemailc ) counters->threadmaxemailc=counters->threademailc;
-
-                    if ( pthread_create( &threademail_id[threadid], &thread_email_attr, (void *)sagan_esmtp_thread, &SaganEvent[threadid] ) ) {
-		       removelockfile(config);
-                       sagan_log(config, 1, "[%s, line %d] Error creating SMTP thread", __FILE__, __LINE__);
-                       }
-
-			} else { 
-		       counters->sagandrop++;
-		       counters->saganesmtpdrop++;
-		       sagan_log(config, 0, "SMTP thread call handler: Out of threads\n");
-          }
-      }
-   }
+if ( pthread_create ( &output_id[threadid], &thread_output_attr, (void *)sagan_output, &SaganEvent[threadid] ) ) {
+	removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] Error creating output-plugin thread", __FILE__, __LINE__);
+	} 
+} else { 
+	counters->sagan_output_drop++;
+	sagan_log(config, 0, "[%s, line %d] sagan_output(): Out of threads\n", __FILE__, __LINE__);
 }
-#endif
-		
+}
+      
 /****************************************************************************/
-/* External program thread call                                             */
+/* Log Processors that might take valuable CPU time (Geo IP, etc)           */
 /****************************************************************************/
 
-if ( config->sagan_ext_flag == 1 && thresh_log_flag == 0 ) { 
-		   
-   if ( counters->threadextc < config->max_external_threads ) { 
+if ( config->processor_thread_flag ) { 
 
-	counters->threadextc++;
-		   
-	if ( counters->threadextc > counters->threadmaxextc ) counters->threadmaxextc=counters->threadextc;
-	
-		if ( pthread_create( &threadext_id[threadid], &thread_ext_attr, (void *)sagan_ext_thread, &SaganEvent[threadid] ) ) { 
-		     removelockfile(config);
-		     sagan_log(config, 1, "[%s, line %d] Error creating external call thread", __FILE__, __LINE__);
-		     }
-		      } else {
-		     counters->saganexternaldrop++;
-		     counters->sagandrop++; 
-		     sagan_log(config, 0, "External thread call handler: Out of threads\n");
-		   }
+if ( counters->thread_processor_counter < config->max_processor_threads ) {
+
+        counters->thread_processor_counter++;
+
+if ( pthread_create ( &processor_id[threadid], &thread_processor_attr, (void *)sagan_processor, &SaganEvent[threadid] ) ) {
+        removelockfile(config);
+        sagan_log(config, 1, "[%s, line %d] Error creating processor-plugin thread", __FILE__, __LINE__);
+        }
+} else {
+        counters->sagan_processor_drop++;
+        sagan_log(config, 0, "[%s, line %d] sagan_processor(): Out of threads\n", __FILE__, __LINE__);
+}
 }
 
 
-/****************************************************************************/
-/* Snort database thread call                                               */
-/****************************************************************************/
 
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-config->endian = checkendian();    // Needed for Snort output
-
-if ( config->dbtype != 0 && thresh_log_flag == 0 ) { 
-
-        counters->threaddbc++;
-
-  		if ( counters->threaddbc < config->maxdb_threads ) { 
-
-			   if ( counters->threaddbc > counters->threadmaxdbc ) counters->threadmaxdbc=counters->threaddbc;
-                
-		   		cid++; 
-		   		counters->sigcid=cid;
-
-				SaganEvent[threadid].cid = cid;
-
-				if ( pthread_create( &threaddb_id[threadid], &thread_db_attr, (void *)sagan_db_thread, &SaganEvent[threadid]) ) { 
-		    		   removelockfile(config);
-		    		   sagan_log(config, 1, "[%s, line %d] Error creating database thread.", __FILE__, __LINE__);
-		    		   }
-		    		    } else { 
-		    		   counters->sagansnortdrop++;
-		    		   counters->sagandrop++;
-		    		   sagan_log(config, 0, "Snort database thread handler: Out of threads");
-	        		   }
-}
-#endif
-	 	    
-} /* End of match */
+  } /* End of threshold */
+ } /* End of match */
 } /* End of pcre match */
 
 match=0;  /* Reset match! */

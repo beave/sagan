@@ -18,6 +18,8 @@ sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
 sagan-plog.c \
+sagan-output.c \
+sagan-processor.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \

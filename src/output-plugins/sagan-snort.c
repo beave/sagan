@@ -389,7 +389,7 @@ char *sql;
 
 pthread_mutex_lock( &db_mutex );
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%" PRIu64 "', '%d', '%s %s')", Event->config->sensor_id, Event->cid, sig_sid, date, time );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%" PRIu64 "', '%d', '%s %s')", Event->config->sensor_id, counters->cid, sig_sid, date, time );
 sql=sqltmp;
 
 pthread_mutex_unlock( &db_mutex );
@@ -414,14 +414,14 @@ int ipproto = rulestruct[Event->found].ip_proto;
 
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", Event->config->sensor_id, Event->cid, ip2bit(Event->config, ipsrc ), ip2bit(Event->config, ipdst), ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", Event->config->sensor_id, counters->cid, ip2bit(Event->config, ipsrc ), ip2bit(Event->config, ipdst), ipproto );
 
 sql=sqltmp;
 db_query( Event->debug, Event->config, sql );
 
 /* "tcp" */
 if ( ipproto == 6 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO tcphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0', '0', '0', '0', '0', '0', '0'  )", Event->config->sensor_id, counters->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
 db_query( Event->debug, Event->config, sql );
 } 
@@ -429,7 +429,7 @@ db_query( Event->debug, Event->config, sql );
 /* "udp" */
 
 if ( ipproto == 17 )  {
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0' )", Event->config->sensor_id, Event->cid, Event->src_port, Event->dst_port  );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO udphdr VALUES ( '%d', '%" PRIu64 "', '%d', '%d', '0', '0' )", Event->config->sensor_id, counters->cid, Event->src_port, Event->dst_port  );
 sql=sqltmp;
 db_query( Event->debug, Event->config, sql );
 }
@@ -438,7 +438,7 @@ db_query( Event->debug, Event->config, sql );
 /* May expand on this if there's actually a use for it */
 
 if ( ipproto == 1 ) { 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%" PRIu64 "', '8', '8', '0', '0', '0' )", Event->config->sensor_id, Event->cid );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO icmphdr VALUES ( '%d', '%" PRIu64 "', '8', '8', '0', '0', '0' )", Event->config->sensor_id, counters->cid );
 sql=sqltmp;
 db_query( Event->debug, Event->config, sql );
 }
@@ -456,7 +456,7 @@ char sqltmp[MAXSQL];
 char *sql;
 
 pthread_mutex_lock( &db_mutex );
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", Event->config->sensor_id, Event->cid, t_hex_data);
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", Event->config->sensor_id, counters->cid, t_hex_data);
 sql=sqltmp;
 pthread_mutex_unlock( &db_mutex );
 db_query( Event->debug, Event->config, sql );
@@ -467,12 +467,12 @@ db_query( Event->debug, Event->config, sql );
 /* Record last cid */
 /*******************/
 
-void record_last_cid ( _SaganDebug *debug, _SaganConfig *config )  { 
+void record_last_cid ( _SaganDebug *debug, _SaganConfig *config, _SaganCounters *counters )  { 
 
 char sqltmp[MAXSQL];
 char *sql;
 
-snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->sigcid, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->cid, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
 db_query( debug, config, sql );
 
@@ -596,7 +596,7 @@ for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    }
 
 pthread_mutex_lock( &db_mutex );
-counters->threaddbc--;
+counters->cid++;
 pthread_mutex_unlock( &db_mutex );
 
 pthread_exit(NULL);

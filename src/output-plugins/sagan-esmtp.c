@@ -154,7 +154,6 @@ if (!smtp_start_session (session)) {
     */
 
 	sagan_log(Event->config, 0, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
-	counters->saganesmtpdrop++;
 
    } else {
 
@@ -169,10 +168,6 @@ if (!smtp_start_session (session)) {
 failure:
 if(session != NULL)
 	smtp_destroy_session (session);
-
-pthread_mutex_lock ( &email_mutex );
-counters->threademailc--;
-pthread_mutex_unlock ( &email_mutex );
 
 pthread_exit(NULL);
 

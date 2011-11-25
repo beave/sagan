@@ -54,8 +54,9 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-signal.$(OBJEXT) sagan-key.$(OBJEXT) \
 	sagan-stats.$(OBJEXT) sagan-strlcat.$(OBJEXT) \
 	sagan-strlcpy.$(OBJEXT) sagan-usage.$(OBJEXT) \
-	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) parse-ip.$(OBJEXT) \
-	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
+	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
+	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
+	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-prelude.$(OBJEXT) \
 	sagan-unified2.$(OBJEXT)
@@ -190,6 +191,8 @@ sagan-strlcpy.c \
 sagan-usage.c \
 sagan-util.c \
 sagan-plog.c \
+sagan-output.c \
+sagan-processor.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \
@@ -289,8 +292,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-external.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-lockfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-output.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-plog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-prelude.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-references.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-rules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-signal.Po@am__quote@

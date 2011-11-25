@@ -93,22 +93,9 @@ int i,check;
 snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
 snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
 snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
-
-config->max_external_threads=MAX_EXT_THREADS;
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-config->maxdb_threads=MAX_DB_THREADS;
-#endif
-
-#ifdef HAVE_LIBESMTP
-config->max_email_threads=MAX_EMAIL_THREADS; 
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-config->max_prelude_threads=MAX_PRELUDE_THREADS;
-#endif
-
 config->sagan_proto = 17;		/* Default to UDP */
+config->max_output_threads = MAX_OUTPUT_THREADS;
+config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
 /* Start loading configuration */
 
@@ -130,15 +117,18 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
+     if (!strcmp(remrt(sagan_option), "max_output_threads")) { 
+         config->max_output_threads = atoi(sagan_var);
+	 }
+
+     if (!strcmp(remrt(sagan_option), "max_processor_threads")) {
+         config->max_processor_threads = atoi(sagan_var);
+         }
+
      if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
          sagan_log(config, 0, "Supressing DNS warnings");
          config->disable_dns_warnings = 1;
 	 }
-
-     if (!strcmp(sagan_option, "max_ext_threads")) {
-         sagan_var = strtok_r(NULL, " ", &tok);
-         config->max_external_threads = atoi(sagan_var);
-         }
 
      if (!strcmp(sagan_option, "sagan_host")) {
         snprintf(config->sagan_host, sizeof(config->sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));
@@ -160,24 +150,10 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
       config->sagan_sendto_flag=1;
       }
 
-   if (!strcmp(sagan_option, "max_email_threads")) {
-       sagan_var = strtok_r(NULL, " ", &tok);
-       config->max_email_threads = atoi(sagan_var);
-       }
-
    if (!strcmp(sagan_option, "min_email_priority")) {
        sagan_var = strtok_r(NULL, " ", &tok);
        config->min_email_priority = atoi(sagan_var);
        }
-
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-
-     if (!strcmp(sagan_option, "max_prelude_threads")) { 
-        sagan_var = strtok_r(NULL, " ", &tok); 
-	config->max_prelude_threads = atol(sagan_var);
-	}
 
 #endif
 
@@ -204,11 +180,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 #endif
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-     if (!strcmp(sagan_option, "maxdb_threads")) {
-        sagan_var = strtok_r(NULL, " " , &tok);
-        config->maxdb_threads = atol(sagan_var);
-        }
 
      if (!strcmp(sagan_option, "sagan_proto")) { 
         sagan_var = strtok_r(NULL, " ", &tok);
@@ -305,6 +276,7 @@ if (!strcmp(sagan_var, "unified2:")) {
 #ifdef HAVE_LIBPRELUDE
 	
 	if (!strcmp(sagan_var, "prelude:")) { 
+	   config->output_thread_flag = 1; 
 	   ptmp = sagan_var; 
 
 	   while (ptmp != NULL ) { 
@@ -325,6 +297,7 @@ if (!strcmp(sagan_var, "unified2:")) {
 #ifdef HAVE_LIBESMTP
 
 	if (!strcmp(sagan_var, "email:")) { 
+	   config->output_thread_flag = 1;
 	   ptmp = sagan_var;
 
 	   while (ptmp != NULL ) { 
@@ -353,6 +326,7 @@ if (!strcmp(sagan_var, "unified2:")) {
 	/* output type (database, etc) */
 
 	if (!strcmp(sagan_var, "database:")) {
+	   config->output_thread_flag = 1;
 	   sagan_var = strtok_r(NULL, ",", &tok);
 	
 	   /* Type (only "log" is used right now */
