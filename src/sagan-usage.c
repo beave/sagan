@@ -90,7 +90,7 @@ fprintf(stderr, "* PLOG (syslog sniffer) support is included\n");
 #endif
 
 #ifdef HAVE_LIBDNET
-fprintf(stderr, "* libdnet (for unified2 output) support is included\n");
+fprintf(stderr, "* libdnet (for unified2) support is included\n");
 #endif
 
 }
