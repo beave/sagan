@@ -187,9 +187,7 @@ while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) {
         sagan_log(config, 0, "[%s, line %d] MySQL Error [%u] \"%s\"\n[*] Offending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
 	
 	pthread_mutex_unlock( &db_mutex );	/* Prevent deadlock! */
-
-	if (mysql_errno(mysql) == 1062) return("DUP");	/* DUP's,  we retry */
-	return("ERR");
+	return(0);
 	}
    
    }
