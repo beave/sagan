@@ -163,7 +163,6 @@ pthread_mutex_lock( &db_mutex );
 
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
-
 if ( debug->debugsql ) sagan_log(config, 0, "%s", sqltmp); 
 
 #ifdef HAVE_LIBMYSQLCLIENT_R
@@ -185,8 +184,12 @@ while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) {
 
 	 } else { 
 
-	removelockfile(config);
-        sagan_log(config, 1, "[%s, line %d] MySQL Error [%u:] \"%s\"\nOffending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
+        sagan_log(config, 0, "[%s, line %d] MySQL Error [%u] \"%s\"\n[*] Offending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
+	
+	pthread_mutex_unlock( &db_mutex );	/* Prevent deadlock! */
+
+	if (mysql_errno(mysql) == 1062) return("DUP");	/* DUP's,  we retry */
+	return("ERR");
 	}
    
    }
@@ -387,14 +390,9 @@ void insert_event ( SaganEvent *Event, int sig_sid, char *date,  char *time ) {
 char sqltmp[MAXSQL];
 char *sql;
 
-pthread_mutex_lock( &db_mutex );
-
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO event(sid, cid, signature, timestamp) VALUES ('%d', '%" PRIu64 "', '%d', '%s %s')", Event->config->sensor_id, counters->cid, sig_sid, date, time );
 sql=sqltmp;
-
-pthread_mutex_unlock( &db_mutex );
-
-db_query( Event->debug, Event->config, sql );
+db_query( Event->debug, Event->config, sql ); 
 
 }
 
@@ -599,7 +597,6 @@ pthread_mutex_lock( &db_mutex );
 counters->cid++;
 pthread_mutex_unlock( &db_mutex );
 
-pthread_exit(NULL);
 }
 
 #endif

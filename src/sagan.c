@@ -446,17 +446,8 @@ removelockfile(config);
 sagan_log(config, 1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-if ( config->output_thread_flag ) { 
 sagan_log(config, 0, "Max Output Threads   : %" PRIu64 "", config->max_output_threads);
-} else { 
-sagan_log(config, 0, "Max Output Threads   : [None loaded]");
-}
-
-if ( config->processor_thread_flag ) { 
 sagan_log(config, 0, "Max Processor Threads: %" PRIu64 "", config->max_processor_threads);
-} else { 
-sagan_log(config, 0, "Max Processor Threads: [None loaded]"); 
-}
 
 sagan_log(config, 0, "");
 

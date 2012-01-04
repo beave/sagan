@@ -41,7 +41,7 @@ pthread_mutex_t counters_mutex = PTHREAD_MUTEX_INITIALIZER;
 /****************************************************************************/
 /* External program support                                                 */
 /****************************************************************************/
- 
+
 if ( Event->config->sagan_ext_flag ) sagan_ext_thread( Event );
 
 /****************************************************************************/
@@ -49,9 +49,8 @@ if ( Event->config->sagan_ext_flag ) sagan_ext_thread( Event );
 /****************************************************************************/
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-if ( Event->config->dbtype != 0 ) sagan_db_thread( Event);
+if ( Event->config->dbtype != 0 ) sagan_db_thread( Event );
 #endif
-
 
 /****************************************************************************/
 /* SMTP/Email support (libesmtp)                                            */
@@ -69,9 +68,11 @@ if ( Event->config->sagan_esmtp_flag ) sagan_esmtp_thread( Event );
 if ( Event->config->sagan_prelude_flag ) sagan_prelude( Event );
 #endif
 
+
 pthread_mutex_lock(&counters_mutex);
 counters->thread_output_counter--;
 pthread_mutex_unlock(&counters_mutex);
 
+pthread_exit(NULL);
 }
 

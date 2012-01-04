@@ -247,7 +247,6 @@ prelude_client_send_idmef(preludeclient, idmef);
 err:
 idmef_message_destroy(idmef);
 
-pthread_exit(NULL);
 }
 
 /* Assigns severity to an event.  For example,  priority 1 == High */

@@ -169,8 +169,6 @@ failure:
 if(session != NULL)
 	smtp_destroy_session (session);
 
-pthread_exit(NULL);
-
 }
 
 int
