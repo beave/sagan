@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-db.c 
+/* sagan-snort.c 
  *
  * Threaded function for database support.   These functions are for both
  * MySQL and PostgreSQL.   These allow Sagan to report to Snort databases

@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -76,8 +76,11 @@ char *saveptrrule1;
 char *saveptrrule2;
 char *saveptrrule3;
 char *tmptoken;
-char *threshold_tmp;
-char *thresh_tmp;
+
+char *tok_tmp;
+char *tmptok_tmp;
+
+unsigned char fwsam_time_tmp;
 
 char netstr[RULEBUF];
 
@@ -449,9 +452,52 @@ remspaces(rulesplit);
                 }
 
 
+/* Snortsam */
+
+/* fwsam: src, 24 hours; */
+
+	if (!strcmp(rulesplit, "fwsam" )) { 
+
+		printf("%s\n", rulesplit);
+
+		/* Set some defaults - needs better error checking! */
+
+		rulestruct[counters->rulecount].fwsam_src_or_dst=1;	/* by src */
+		rulestruct[counters->rulecount].fwsam_seconds = 86400;   /* 1 day */
+
+		tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+		tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
+
+		if (strstr(tmptoken, "src")) rulestruct[counters->rulecount].fwsam_src_or_dst=1; 
+		if (strstr(tmptoken, "dst")) rulestruct[counters->rulecount].fwsam_src_or_dst=2;
+
+		tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+			
+		fwsam_time_tmp=atoi(tmptok_tmp);	/* Digit/time */
+		tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3); /* Type - hour/minute */
+
+
+		/* Covers both plural and non-plural (ie - minute/minutes) */
+
+		if (strstr(tmptok_tmp, "second")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
+		if (strstr(tmptok_tmp, "minute")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
+		if (strstr(tmptok_tmp, "hour")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60; 
+		if (strstr(tmptok_tmp, "day")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
+		if (strstr(tmptok_tmp, "week")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
+		if (strstr(tmptok_tmp, "month")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
+		if (strstr(tmptok_tmp, "year")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365; 
+	
+		}
+	
+
+
+
+/* Thresholding */
+
 	if (!strcmp(rulesplit, "threshold" )) {
-		threshold_tmp = strtok_r(NULL, ":", &saveptrrule2);
-                tmptoken = strtok_r(threshold_tmp, ",", &saveptrrule2);
+		tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
 
                       while( tmptoken != NULL ) {
                       if (strstr(tmptoken, "type")) {
@@ -465,15 +511,15 @@ remspaces(rulesplit);
                             }
 
                       if (strstr(tmptoken, "count")) {
-                           thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-                           thresh_tmp = strtok_r(NULL, " ", &saveptrrule3);
-                           rulestruct[counters->rulecount].threshold_count = atoi(thresh_tmp);
+                           tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                           rulestruct[counters->rulecount].threshold_count = atoi(tmptok_tmp);
                            }
 
                       if (strstr(tmptoken, "seconds")) {
-                           thresh_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-                           thresh_tmp = strtok_r(NULL, " ", &saveptrrule3 );
-                           rulestruct[counters->rulecount].threshold_seconds = atoi(thresh_tmp);
+                           tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                           rulestruct[counters->rulecount].threshold_seconds = atoi(tmptok_tmp);
                            }
 
                         tmptoken = strtok_r(NULL, ",", &saveptrrule2);

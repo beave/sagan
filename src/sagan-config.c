@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -140,6 +140,11 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 	 config->sagan_port = atoi(sagan_var);
          }
 
+#ifndef HAVE_LIBESMTP
+if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priority")) 
+   sagan_log(config,1, "\"libesmtp\" support not found. Re-compile with ESMTP support or disable in the sagan.conf.");
+#endif
+
 #ifdef HAVE_LIBESMTP
 
    if (!strcmp(sagan_option, "send-to")) { 
@@ -155,6 +160,11 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
        config->min_email_priority = atoi(sagan_var);
        }
 
+#endif
+
+#ifndef HAVE_LIBPCAP
+if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logdev") || !strcmp(sagan_option, "plog_port")) 
+   sagan_log(config,1, "\"libpcap\" support not found. Re-compile with PCAP support or disable in the sagan.conf.");
 #endif
 
 #ifdef HAVE_LIBPCAP
@@ -208,6 +218,13 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
 #endif
 
+#ifndef HAVE_LIBLOGNORM
+if (!strcmp(sagan_option, "normalize:")) {
+   sagan_log(config, 0, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
+   sagan_log(config, 0, "WARNING: Sagan will continue,  but _without_ liblognorm!");
+   }
+#endif
+
 #ifdef HAVE_LIBLOGNORM
 
 /*
@@ -243,6 +260,21 @@ if (!strcmp(sagan_option, "output")) {
 	config->sagan_ext_flag=1;
         }
 
+
+#ifdef WITH_SNORTSAM
+if (!strcmp(sagan_var, "alert_fwsam:")) { 
+       snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", remrt(strtok_r(NULL, " ", &tok)));
+       config->sagan_fwsam_flag=1; 
+       }
+#endif
+
+#ifndef HAVE_LIBDNET
+if (!strcmp(sagan_var, "unified2:")) { 
+   sagan_log(config, 0,"\"libdnet\" support not found.  This is needed for unified2."); 
+   sagan_log(config, 1, "Re-compile with libdnet support or disable in the sagan.conf.");
+   }
+#endif
+
 #ifdef HAVE_LIBDNET
 
 if (!strcmp(sagan_var, "unified2:")) { 
@@ -272,6 +304,11 @@ if (!strcmp(sagan_var, "unified2:")) {
 }
 
 #endif
+
+#ifndef HAVE_LIBPRELUDE
+	if (!strcmp(sagan_var, "prelude:"))
+           sagan(config,1, " libprelude support not found. Re-compile with Prelude support or disable in the sagan.conf.");
+#endif 
 
 #ifdef HAVE_LIBPRELUDE
 	
@@ -339,8 +376,21 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 	      remspaces(sagan_var);
 
-	      if (!strcmp(sagan_var, "mysql" )) config->dbtype=1; 
-	      if (!strcmp(sagan_var, "postgresql" )) config->dbtype=2; 
+
+	      if (!strcmp(sagan_var, "mysql" )) { 
+#ifndef HAVE_LIBMYSQLCLIENT_R
+   	         sagan_log(config, 1,"MySQL support not found. Re-compile with MySQL support or disable in the sagan.conf.");
+#endif
+	         config->dbtype=1; 
+	         }
+
+	      if (!strcmp(sagan_var, "postgresql" )) { 
+#ifndef HAVE_LIBPQ
+		 sagan_log(config, 1,"PostgreSQL support not found. Re-compile with PostgreSQL support or disable in the sagan.conf.");
+#endif
+		 config->dbtype=2; 
+		 }
+
 
 	      sagan_var = strtok_r(NULL, ",", &tok);
 	      remrt(sagan_var);					/* rm NL */

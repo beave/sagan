@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -32,6 +32,7 @@
 #include "sagan.h"
 
 struct _SaganCounters *counters;
+struct rule_struct *rulestruct;
 
 void sagan_output( SaganEvent *Event )
 {
@@ -39,10 +40,15 @@ void sagan_output( SaganEvent *Event )
 pthread_mutex_t counters_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************/
-/* External program support                                                 */
+/* Snortsam Support	                                                    */
 /****************************************************************************/
 
-if ( Event->config->sagan_ext_flag ) sagan_ext_thread( Event );
+/* If we have a snortsam server && the rule requires snortsam..... */
+
+#ifdef WITH_SNORTSAM
+if ( Event->config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) sagan_fwsam( Event );
+#endif
+
 
 /****************************************************************************/
 /* Snort DB/SQL support                                                     */
@@ -67,6 +73,12 @@ if ( Event->config->sagan_esmtp_flag ) sagan_esmtp_thread( Event );
 #if HAVE_LIBPRELUDE
 if ( Event->config->sagan_prelude_flag ) sagan_prelude( Event );
 #endif
+
+/****************************************************************************/
+/* External program support                                                 */
+/****************************************************************************/
+
+if ( Event->config->sagan_ext_flag ) sagan_ext_thread( Event );
 
 
 pthread_mutex_lock(&counters_mutex);

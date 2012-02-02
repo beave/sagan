@@ -692,6 +692,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_mysql
+enable_snortsam
 with_mysql_includes
 with_mysql_libraries
 enable_postgresql
@@ -1342,12 +1343,13 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-mysql         Disable MySQL support.
+  --disable-snortsam      Disable Snortsam support.
   --disable-postgresql    Disable PostgreSQL support.
   --disable-esmtp	  Disable libesmtp support.
-  --disable-prelude      Disable Prelude support.
-  --disable-lognorm      Disable Lognorm (liblognorm) support.
-  --disable-libpcap      Disable libpcap (plog) support.
-  --disable-libdnet      Disable libdnet (unified2) support.
+  --disable-prelude       Disable Prelude support.
+  --disable-lognorm       Disable Lognorm (liblognorm) support.
+  --disable-libpcap       Disable libpcap (plog) support.
+  --disable-libdnet       Disable libdnet (unified2) support.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
 
@@ -3768,12 +3770,20 @@ $as_echo "#define AC_APPLE_UNIVERSAL_BUILD 1" >>confdefs.h
  esac
 
 
-
 # Check whether --enable-mysql was given.
 if test "${enable_mysql+set}" = set; then :
   enableval=$enable_mysql;  MYSQL="$enableval"
 else
    MYSQL="yes"
+
+fi
+
+
+# Check whether --enable-snortsam was given.
+if test "${enable_snortsam+set}" = set; then :
+  enableval=$enable_snortsam;  SNORTSAM="$enableval"
+else
+   SNORTSAM="yes"
 
 fi
 
@@ -4017,7 +4027,6 @@ if test "x$with_libdnet_includes" != "xno"; then
 if test "x$with_libdnet_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_libdnet_libraries}"
 fi
-
 
 
 am__api_version='1.11'
@@ -6428,8 +6437,8 @@ fi
 
 
 if test "$MYSQL" = "yes"; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- MySQL Support is enabled -------" >&5
-$as_echo "------- MySQL Support is enabled -------" >&6; }
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- MySQL support is enabled -------" >&5
+$as_echo "------- MySQL support is enabled -------" >&6; }
 	ac_fn_c_check_header_mongrel "$LINENO" "mysql/mysql.h" "ac_cv_header_mysql_mysql_h" "$ac_includes_default"
 if test "x$ac_cv_header_mysql_mysql_h" = x""yes; then :
 
@@ -6850,6 +6859,14 @@ To disable this feature use the --disable-libdnet flag. " "$LINENO" 5
 fi
 
        fi
+
+if test "$SNORTSAM" = "yes"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- Snortsam support is enabled -------" >&5
+$as_echo "------- Snortsam support is enabled -------" >&6; }
+
+$as_echo "#define WITH_SNORTSAM 1" >>confdefs.h
+
+        fi
 
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
@@ -8326,8 +8343,8 @@ $as_echo "  ,-._,-.    Sagan has been configured!" >&6; }
 $as_echo "  \/)\"(\/ " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&5
 $as_echo "   (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2011 Quadrant Information Security, et al." >&5
-$as_echo "   /   \/)   Copyright (C) 2009-2011 Quadrant Information Security, et al." >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2012 Quadrant Information Security, et al." >&5
+$as_echo "   /   \/)   Copyright (C) 2009-2012 Quadrant Information Security, et al." >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:   (|| ||) " >&5
 $as_echo "  (|| ||) " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    oo-oo  " >&5

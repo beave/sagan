@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -322,6 +322,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 
               if (strstr(optarg, "syslog")) debug->debugsyslog=1;
               if (strstr(optarg, "load")) debug->debugload=1;
+	      if (strstr(optarg, "fwsam")) debug->debugfwsam=1;
 
 #ifdef HAVE_LIBLOGNORM
 	      if (strstr(optarg, "normalize" )) debug->debugnormalize=1;
@@ -498,7 +499,7 @@ sagan_log(config, 0, "");
 sagan_log(config, 0, " ,-._,-. 	-*> Sagan! <*-");
 sagan_log(config, 0, " \\/)\"(\\/	Version %s", VERSION);
 sagan_log(config, 0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-sagan_log(config, 0, "  /   \\/)	Copyright (C) 2009-2011 Quadrant Information Security, et al.");
+sagan_log(config, 0, "  /   \\/)	Copyright (C) 2009-2012 Quadrant Information Security, et al.");
 sagan_log(config, 0, " (|| ||) 	Using PCRE version: %s", pcre_version());
 sagan_log(config, 0, "  oo-oo     Sagan is processing events.....");
 sagan_log(config, 0, "");
@@ -1103,9 +1104,10 @@ if ( pthread_create ( &output_id[threadid], &thread_output_attr, (void *)sagan_o
 } else { 
 	counters->sagan_output_drop++;
 	sagan_log(config, 0, "[%s, line %d] sagan_output(): Out of threads\n", __FILE__, __LINE__);
+  }
 }
-}
-      
+
+
 /****************************************************************************/
 /* Log Processors that might take valuable CPU time (Geo IP, etc)           */
 /****************************************************************************/

@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -29,6 +29,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#include <stdio.h>
 #include <stdint.h> 
 #include <pcre.h>
 #include <time.h>
@@ -101,6 +102,7 @@ struct _SaganDebug {
 
     sbool debugsyslog;
     sbool debugload;
+    sbool debugfwsam;
 
 #ifdef HAVE_LIBLOGNORM
     sbool debugnormalize;
@@ -210,6 +212,9 @@ struct _SaganConfig {
     char         dbhost[50];
 #endif
 
+    sbool        sagan_fwsam_flag;
+    char 	 sagan_fwsam_info[1024];
+
 };
 
 
@@ -275,6 +280,9 @@ int threshold_src_or_dst;	// 1 ==  src,  2 == dst
 int threshold_count;		
 int threshold_seconds;
 
+int fwsam_src_or_dst;		// 1 == src,  2 == dst
+unsigned long  fwsam_seconds;		
+
 };
 
 typedef struct Sagan_Event 
@@ -314,6 +322,7 @@ typedef struct Sagan_Event
         char *message;          /* msg + sysmsg? */
 
 } SaganEvent;
+
 
 /* Thresholding structure by source */
 typedef struct thresh_by_src thresh_by_src;
@@ -425,3 +434,5 @@ char *dns_lookup( _SaganConfig *, char *);
 
 void sagan_output( SaganEvent * );
 void sagan_processor( SaganEvent * );
+
+void sagan_fwsam( SaganEvent * );

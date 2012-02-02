@@ -59,7 +59,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-prelude.$(OBJEXT) \
-	sagan-unified2.$(OBJEXT)
+	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
+	sagan-snortsam.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -200,7 +201,9 @@ output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-prelude.c \
-output-plugins/sagan-unified2.c
+output-plugins/sagan-unified2.c \
+output-plugins/sagan-twofish.c \
+output-plugins/sagan-snortsam.c
 
 all: all-am
 
@@ -300,9 +303,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-rules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-signal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-snort.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-snortsam.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-stats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strlcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strlcpy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-twofish.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-unified2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-usage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-util.Po@am__quote@
@@ -433,6 +438,34 @@ sagan-unified2.obj: output-plugins/sagan-unified2.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-unified2.c' object='sagan-unified2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
+
+sagan-twofish.o: output-plugins/sagan-twofish.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-twofish.o -MD -MP -MF $(DEPDIR)/sagan-twofish.Tpo -c -o sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-twofish.Tpo $(DEPDIR)/sagan-twofish.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-twofish.c' object='sagan-twofish.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
+
+sagan-twofish.obj: output-plugins/sagan-twofish.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-twofish.obj -MD -MP -MF $(DEPDIR)/sagan-twofish.Tpo -c -o sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-twofish.Tpo $(DEPDIR)/sagan-twofish.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-twofish.c' object='sagan-twofish.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
+
+sagan-snortsam.o: output-plugins/sagan-snortsam.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snortsam.o -MD -MP -MF $(DEPDIR)/sagan-snortsam.Tpo -c -o sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-snortsam.Tpo $(DEPDIR)/sagan-snortsam.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-snortsam.c' object='sagan-snortsam.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
+
+sagan-snortsam.obj: output-plugins/sagan-snortsam.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snortsam.obj -MD -MP -MF $(DEPDIR)/sagan-snortsam.Tpo -c -o sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/sagan-snortsam.Tpo $(DEPDIR)/sagan-snortsam.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='output-plugins/sagan-snortsam.c' object='sagan-snortsam.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
