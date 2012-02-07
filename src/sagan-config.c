@@ -307,7 +307,7 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 #ifndef HAVE_LIBPRELUDE
 	if (!strcmp(sagan_var, "prelude:"))
-           sagan(config,1, " libprelude support not found. Re-compile with Prelude support or disable in the sagan.conf.");
+           sagan_log(config,1, " libprelude support not found. Re-compile with Prelude support or disable in the sagan.conf.");
 #endif 
 
 #ifdef HAVE_LIBPRELUDE
