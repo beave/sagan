@@ -118,11 +118,13 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
      if (!strcmp(remrt(sagan_option), "max_output_threads")) { 
-         config->max_output_threads = atoi(sagan_var);
+	 sagan_var = strtok_r(NULL, " ", &tok);
+         config->max_output_threads = atol(sagan_var);
 	 }
 
      if (!strcmp(remrt(sagan_option), "max_processor_threads")) {
-         config->max_processor_threads = atoi(sagan_var);
+	 sagan_var = strtok_r(NULL, " ", &tok);
+         config->max_processor_threads = atol(sagan_var);
          }
 
      if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
