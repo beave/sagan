@@ -188,6 +188,7 @@ void sagan_log (_SaganConfig *config , int type, const char *format,... ) {
    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
    if ( type == 1 ) chr="E";
+   if ( type == 2 ) chr="W"; 
 
      vsnprintf(buf, sizeof(buf), format, ap);
      fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
@@ -362,11 +363,11 @@ char *dns_lookup( _SaganConfig *config, char *host)
     void *addr;
 
        if ( config->disable_dns_warnings == 0 ) { 
-       sagan_log(config, 0, "--------------------------------------------------------------------------");
-       sagan_log(config, 0, "Sagan DNS lookup need for %s.", host); 
-       sagan_log(config, 0, "This can affect performance.  Please see:" );
-       sagan_log(config, 0, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-       sagan_log(config, 0, "--------------------------------------------------------------------------");
+       sagan_log(config, 2, "--------------------------------------------------------------------------");
+       sagan_log(config, 2, "Sagan DNS lookup need for %s.", host); 
+       sagan_log(config, 2, "This can affect performance.  Please see:" );
+       sagan_log(config, 2, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+       sagan_log(config, 2, "--------------------------------------------------------------------------");
        }
 
        memset(&hints, 0, sizeof hints);
@@ -374,8 +375,8 @@ char *dns_lookup( _SaganConfig *config, char *host)
        hints.ai_socktype = SOCK_STREAM;
 
     if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
-	sagan_log(config, 0, "getaddrinfo: %s", gai_strerror(status));
-        return NULL;
+	sagan_log(config, 2, "%s: %s", gai_strerror(status), host);
+        return "0";
     }
 
         if (res->ai_family == AF_INET) { // IPv4
@@ -387,6 +388,7 @@ char *dns_lookup( _SaganConfig *config, char *host)
         }
      
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
+    free(res);
     ret=ipstr;
     return ret;
 }

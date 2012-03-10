@@ -132,6 +132,12 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          config->disable_dns_warnings = 1;
 	 }
 
+     if (!strcmp(remrt(sagan_option), "syslog_src_lookup")) { 
+         sagan_log(config, 0, "DNS lookup of source address supplied by syslog daemon");
+	 config->syslog_src_lookup = 1; 
+	 }
+
+
      if (!strcmp(sagan_option, "sagan_host")) {
         snprintf(config->sagan_host, sizeof(config->sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));
         config->sagan_host[strlen(config->sagan_host)-1] = '\0';

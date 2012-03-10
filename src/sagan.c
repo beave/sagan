@@ -46,6 +46,7 @@
 #include <limits.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <arpa/inet.h>
 
 #include "sagan.h"
 
@@ -175,6 +176,11 @@ pthread_attr_t thread_ext_attr;
 pthread_attr_init(&thread_ext_attr);
 pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
 
+struct sockaddr_in sa;
+char src_dns_lookup[20];
+int dns_cache_count=0;
+int  dns_flag=0;
+
 sbool fifoerr=0;
 
 int   threadid=0;
@@ -290,6 +296,10 @@ memset(config, 0, sizeof(_SaganConfig));
 struct _SaganSigArgs *sigargs;
 sigargs = malloc(sizeof(_SaganSigArgs));
 memset(sigargs, 0, sizeof(_SaganSigArgs));
+
+struct _SaganDNSCache *dnscache; 
+dnscache = malloc(sizeof(_SaganDNSCache)); 
+memset(dnscache, 0, sizeof(_SaganDNSCache));
 
 counters = malloc(sizeof(_SaganCounters));
 memset(counters, 0, sizeof(_SaganCounters));
@@ -591,24 +601,62 @@ while(1) {
                 {
 
 		counters->sagantotal++;
-
-		/* We have to check for values be "NULL" in the event that
-		 * the program generating the message did so incorrectly
-		 * *cough* Asterisk *cough*.  So we do a little checking 
-		 * here.  If we 'see' a bad valid,  we attempt to correct 
-		 * it */
-
-		/* If fifoerr is set,  we've likely lost our FIFO writer. 
-		 * If that's the case,  don't report because it's useless
-		 * information & will fill our logs */
-
 		syslog_host = strtok_r(syslogstring, "|", &tok);
-		
-		if (syslog_host == NULL ) { 
-		   syslog_host = "SAGAN: HOST ERROR"; 
-		   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'host'");
+
+		/* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
+		 * here.  We cache both good and bad lookups to not over load our DNS server(s).
+		 * The only way DNS cache can be cleared is to restart Sagan */
+
+		if (config->syslog_src_lookup ) { 
+		   if ( inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0 ) { 	/* Is inbound a valid IP? */
+		      dns_flag=0;							
+
+		   for(i=0; i <= counters->dns_cache_count ; i++) {			/* Check cache first */
+		      if (!strcmp( dnscache[i].hostname, syslog_host)) { 
+		          syslog_host = dnscache[i].src_ip;
+		          dns_flag=1;
+		          } 
 		   }
+
+		   /* If entry was not found in cache,  look it up */
+
+		   if ( dns_flag == 0 ) { 
+
+		      /* Do a DNS lookup */
+		      snprintf(src_dns_lookup, sizeof(src_dns_lookup), "%s", dns_lookup(config, syslog_host));
+		    
+		      /* Invalid lookups get the config->sagan_host value */
+
+		      if (!strcmp(src_dns_lookup, "0" )) { 
+		         snprintf(src_dns_lookup, sizeof(src_dns_lookup), "%s", config->sagan_host);
+		  	 counters->dns_miss_count++; 
+			 }
+
+
+                    /* Add entry to DNS Cache */
+
+                    dnscache = (_SaganDNSCache *) realloc(dnscache, (counters->dns_cache_count+1) * sizeof(_SaganDNSCache));
+                    snprintf(dnscache[counters->dns_cache_count].hostname, sizeof(dnscache[counters->dns_cache_count].hostname), "%s", syslog_host);
+                    snprintf(dnscache[counters->dns_cache_count].src_ip, sizeof(dnscache[counters->dns_cache_count].src_ip), "%s",  src_dns_lookup);
+                    counters->dns_cache_count++; 
+                    syslog_host = src_dns_lookup; 
+
+		    }
+	       }
 		
+	} else { 
+
+	        /* We check to see if values from our FIFO are valid.  If we aren't doing DNS related 
+		 * stuff (above),  we start basic check with the syslog_host */
+
+                if (syslog_host == NULL || inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0  ) { 
+                   syslog_host = config->sagan_host;
+                   if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
+                   }
+	       }
+
+		/* We know check the rest of the values */
+
 		syslog_facility=strtok_r(NULL, "|", &tok);
 		if ( syslog_facility == NULL ) { 
 		   syslog_facility = "SAGAN: FACILITY ERROR";

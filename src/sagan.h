@@ -68,6 +68,13 @@ char *sagan_getfilename(char *);
 
 char *referencelookup( int );
 
+typedef struct _SaganDNSCache _SaganDNSCache;
+struct _SaganDNSCache { 
+	
+	char hostname[64]; 
+	char src_ip[20];
+};
+
 typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters { 
 
@@ -77,6 +84,9 @@ struct _SaganCounters {
     uint64_t sagan_output_drop;
     uint64_t sagan_processor_drop;
     uint64_t sagan_log_drop;
+    uint64_t dns_cache_count;
+    uint64_t dns_miss_count;
+
 
 
     int	     thread_output_counter; 
@@ -153,6 +163,7 @@ struct _SaganConfig {
     int		 sagan_exttype;
     sbool	 sagan_ext_flag;
     sbool        disable_dns_warnings;
+    sbool	 syslog_src_lookup;
     int		 daemonize;
     int          sagan_proto;
 
