@@ -79,6 +79,7 @@ typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters { 
 
     uint64_t threshold_total;
+    uint64_t after_total;
     uint64_t sagantotal;
     uint64_t saganfound;
     uint64_t sagan_output_drop;
@@ -291,6 +292,10 @@ int threshold_src_or_dst;	// 1 ==  src,  2 == dst
 int threshold_count;		
 int threshold_seconds;
 
+int after_src_or_dst;       // 1 ==  src,  2 == dst
+int after_count;
+int after_seconds;
+
 int fwsam_src_or_dst;		// 1 == src,  2 == dst
 unsigned long  fwsam_seconds;		
 
@@ -349,6 +354,26 @@ char sid[512];
 typedef struct thresh_by_dst thresh_by_dst;
 struct thresh_by_dst {
 unsigned s_size_thresh_by_dst;
+char ipdst[64];
+int  count;
+uint64_t utime;
+char sid[512];
+};
+
+/* After structure by source */
+typedef struct after_by_src after_by_src;
+struct after_by_src {
+unsigned s_size_afterh_by_src;
+char ipsrc[64];
+int  count;
+uint64_t utime;
+char sid[512];
+};
+
+/* After structure by destination */
+typedef struct after_by_dst after_by_dst;
+struct after_by_dst {
+unsigned s_size_after_by_dst;
 char ipdst[64];
 int  count;
 uint64_t utime;

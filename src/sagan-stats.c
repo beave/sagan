@@ -65,13 +65,14 @@ sbool flag=0;
 	if ((isatty(1))) {
 
 		    sagan_log(config, 0, "--------------------------------------------------------------------------");
-                    sagan_log(config, 0, "Total number of events processed: %" PRIu64 "", counters->sagantotal);
-                    sagan_log(config, 0, "Total number of events thresholded: %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
-                    sagan_log(config, 0, "Total number of signatures matched: %" PRIu64 " (%.3f%%)",  counters->saganfound, CalcPct( counters->saganfound, counters->sagantotal ) );
-		    if ( config->output_thread_flag ) sagan_log(config, 0, "Total output plugin dropped: %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
+                    sagan_log(config, 0, "Total number of events processed   : %" PRIu64 "", counters->sagantotal);
+                    sagan_log(config, 0, "Total number of events thresholded : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
+		    sagan_log(config, 0, "Total number of events after       : %" PRIu64 " (%.3f%%)", counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
+                    sagan_log(config, 0, "Total number of signatures matched : %" PRIu64 " (%.3f%%)",  counters->saganfound, CalcPct( counters->saganfound, counters->sagantotal ) );
+		    if ( config->output_thread_flag ) sagan_log(config, 0, "Total output plugin dropped        : %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
 		    if (  config->processor_thread_flag ) sagan_log(config, 0, "Total processor plugin dropped: %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop, CalcPct(counters->sagan_processor_drop, counters->sagantotal) );
 		    
-		    sagan_log(config, 0, "Total dropped: %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
+		    sagan_log(config, 0, "Total dropped                      : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
 
 		    if (config->syslog_src_lookup) sagan_log(config, 0, "DNS Cache Statistics -  Cached: %" PRIu64 " Missed: %" PRIu64 " (%.3f%%)" , counters->dns_cache_count, counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
 

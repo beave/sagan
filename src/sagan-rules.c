@@ -527,6 +527,34 @@ remspaces(rulesplit);
 	}
 
 
+/* "after"; similar to thresholding,  but the opposite direction */
+
+        if (!strcmp(rulesplit, "after" )) { 
+                tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
+
+                      while( tmptoken != NULL ) {
+
+                      if (strstr(tmptoken, "track")) {
+                            if (strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].after_src_or_dst = 1;
+                            if (strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].after_src_or_dst = 2;
+                            }
+
+                      if (strstr(tmptoken, "count")) {
+                           tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                           rulestruct[counters->rulecount].after_count = atoi(tmptok_tmp);
+                           }
+
+                      if (strstr(tmptoken, "seconds")) {
+                           tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                           tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                           rulestruct[counters->rulecount].after_seconds = atoi(tmptok_tmp);
+                           }
+
+                        tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                }
+        }
 
 
 tokenrule = strtok_r(NULL, ";", &saveptrrule1);

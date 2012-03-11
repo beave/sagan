@@ -202,6 +202,11 @@ int  dst_port;
 int src_porttmp[MAX_MSGSLOT];
 int dst_porttmp[MAX_MSGSLOT];
 
+int  after_count_by_src=0;
+int  after_count_by_dst=0;
+sbool after_flag=0;
+sbool after_log_flag=0;
+
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 sbool thresh_flag=0;
@@ -211,7 +216,11 @@ char  timet[20];
 struct thresh_by_src *threshbysrc = NULL;
 struct thresh_by_dst *threshbydst = NULL;
 
+struct after_by_src *afterbysrc = NULL;
+struct after_by_dst *afterbydst = NULL;
+
 uint64_t thresh_oldtime_src;
+uint64_t after_oldtime_src;
 
 char fip[MAXIP];
 
@@ -1040,7 +1049,7 @@ if ( rulestruct[b].threshold_type != 0 ) {
 
 	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
 	   thresh_log_flag = 1;
-	   sagan_log(config, 0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_dst);
+	   sagan_log(config, 0, "Threshold SID %s by destination IP address. [%s]", threshbysrc[i].sid, ip_dst);
 	   counters->threshold_total++;
 	   }
          }
@@ -1059,13 +1068,111 @@ if ( rulestruct[b].threshold_type != 0 ) {
         }
 }  /* End of thresholding */
 
+
+/*********************************************************/
+/* After - Similar to thresholding,  but the opposite    */
+/* direction - ie - alert _after_ X number of events     */
+/*********************************************************/
+
+if ( rulestruct[b].after_src_or_dst != 0 ) {
+     
+      after_log_flag=1;
+
+      t = time(NULL);
+      now=localtime(&t);
+      strftime(timet, sizeof(timet), "%s",  now);
+
+      /* After by source IP address */
+
+      if ( rulestruct[b].after_src_or_dst == 1 ) {
+         after_flag = 0;
+
+         for (i = 0; i < after_count_by_src; i++ ) {
+             if (!strcmp( afterbysrc[i].ipsrc, ip_src ) && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid )) {
+                after_flag=1;
+                afterbysrc[i].count++;
+                after_oldtime_src = atol(timet) - afterbysrc[i].utime;
+                afterbysrc[i].utime = atol(timet);
+                if ( after_oldtime_src > rulestruct[b].after_seconds ) {
+                   afterbysrc[i].count=1;
+                   afterbysrc[i].utime = atol(timet);
+                   after_log_flag=1;
+                   }
+
+                if ( rulestruct[b].after_count < afterbysrc[i].count )
+                        {
+                        after_log_flag = 0;
+                        sagan_log(config, 0, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+                        counters->after_total++;
+                        }
+
+            }
+          }
+	}
+
+
+         /* If not found,  add it to the array */
+
+         if ( after_flag == 0 ) {
+            afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
+            snprintf(afterbysrc[after_count_by_src].ipsrc, sizeof(afterbysrc[after_count_by_src].ipsrc), "%s", ip_src);
+            snprintf(afterbysrc[after_count_by_src].sid, sizeof(afterbysrc[after_count_by_src].sid), "%s", rulestruct[b].s_sid );
+            afterbysrc[after_count_by_src].count = 1;
+            afterbysrc[after_count_by_src].utime = atol(timet);
+            after_count_by_src++;
+            }
+
+      /* After by destination IP address */
+
+        if ( rulestruct[b].after_src_or_dst == 2 ) {
+            
+	    after_flag = 0;
+
+        /* Check array for matching src / sid */
+
+        for (i = 0; i < after_count_by_dst; i++ ) {
+                if (!strcmp( afterbydst[i].ipdst, ip_dst ) && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid )) {
+                   after_flag=1;
+                   afterbydst[i].count++;
+                   after_oldtime_src = atol(timet) - afterbydst[i].utime;
+                   afterbydst[i].utime = atol(timet);
+                      if ( after_oldtime_src > rulestruct[b].after_seconds ) {
+                         afterbydst[i].count=1;
+                         afterbydst[i].utime = atol(timet);
+                         after_log_flag=1;
+                         }
+
+        if ( rulestruct[b].after_count < afterbydst[i].count ) {
+           after_log_flag = 0;
+           sagan_log(config, 0, "After SID %s by destination IP address. [%s]", afterbysrc[i].sid, ip_dst);
+           counters->after_total++;
+           }
+         }
+       }
+
+        /* If not found,  add it to the array */
+
+        if ( after_flag == 0 ) {
+           afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
+           snprintf(afterbydst[after_count_by_dst].ipdst, sizeof(afterbydst[after_count_by_dst].ipdst), "%s", ip_dst);
+           snprintf(afterbydst[after_count_by_dst].sid, sizeof(afterbydst[after_count_by_dst].sid), "%s", rulestruct[b].s_sid );
+           afterbydst[after_count_by_dst].count = 1;
+           afterbydst[after_count_by_dst].utime = atol(timet);
+           after_count_by_dst++;
+           }
+        }
+
+} /* End of After */
+
 /****************************************************************************/
 /* Populate the SaganEvent array with the information needed.  This info    */
 /* will be passed to the threads.  No need to populate it _if_ we're in a   */
 /* threshold state.                                                         */
 /****************************************************************************/
 
-if ( thresh_log_flag == 0 ) { 
+/* Check for thesholding & "after" */
+
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
 threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;
@@ -1121,7 +1228,7 @@ SaganEvent[threadid].config    = 	config;
 
 /* If thresholding isn't happening,  send to output plugins */
 
-if ( thresh_log_flag == 0 ) { 
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
 sagan_alert( &SaganEvent[threadid] );	/* 
 
@@ -1129,8 +1236,8 @@ sagan_alert( &SaganEvent[threadid] );	/*
 
 #ifdef HAVE_LIBDNET
 if ( config->sagan_unified2_flag ) {
-if ( thresh_log_flag == 0 ) Sagan_Unified2( &SaganEvent[threadid] );
-if ( thresh_log_flag == 0 ) Sagan_Unified2LogPacketAlert( &SaganEvent[threadid] );
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2( &SaganEvent[threadid] );
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2LogPacketAlert( &SaganEvent[threadid] );
 }
 #endif
 
