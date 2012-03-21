@@ -6668,6 +6668,94 @@ fi
 
        #AC_CHECK_HEADER([ptree.h])
        #AC_CHECK_HEADER([lognorm.h])
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lestr" >&5
+$as_echo_n "checking for main in -lestr... " >&6; }
+if test "${ac_cv_lib_estr_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lestr  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_estr_main=yes
+else
+  ac_cv_lib_estr_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_estr_main" >&5
+$as_echo "$ac_cv_lib_estr_main" >&6; }
+if test "x$ac_cv_lib_estr_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBESTR 1
+_ACEOF
+
+  LIBS="-lestr $LIBS"
+
+else
+  as_fn_error "The libestr library cannot be found.
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. " "$LINENO" 5
+fi
+
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lee" >&5
+$as_echo_n "checking for main in -lee... " >&6; }
+if test "${ac_cv_lib_ee_main+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lee  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ee_main=yes
+else
+  ac_cv_lib_ee_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ee_main" >&5
+$as_echo "$ac_cv_lib_ee_main" >&6; }
+if test "x$ac_cv_lib_ee_main" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBEE 1
+_ACEOF
+
+  LIBS="-lee $LIBS"
+
+else
+  as_fn_error "The libee library cannot be found.
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. " "$LINENO" 5
+fi
+
        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -llognorm" >&5
 $as_echo_n "checking for main in -llognorm... " >&6; }
 if test "${ac_cv_lib_lognorm_main+set}" = set; then :

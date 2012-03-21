@@ -46,8 +46,14 @@
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
 
+/* Define to 1 if you have the `ee' library (-lee). */
+#define HAVE_LIBEE 1
+
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 #define HAVE_LIBESMTP 1
+
+/* Define to 1 if you have the `estr' library (-lestr). */
+#define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
 #define HAVE_LIBLOGNORM 1
