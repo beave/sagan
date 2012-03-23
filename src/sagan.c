@@ -974,101 +974,6 @@ if (uid != NULL ) {
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=config->sagan_host;
 if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=config->sagan_host;
 
-
-thresh_log_flag = 0;
-
-/*********************************************************/
-/* Thresh holding                                        */
-/*********************************************************/
-
-if ( rulestruct[b].threshold_type != 0 ) { 
-
-      t = time(NULL);
-      now=localtime(&t);
-      strftime(timet, sizeof(timet), "%s",  now);
-
-      /* Thresholding by source IP address */
-		      
-      if ( rulestruct[b].threshold_src_or_dst == 1 ) { 
-         thresh_flag = 0;
-	
-	 /* Check array for matching src / sid */
-
-	 for (i = 0; i < thresh_count_by_src; i++ ) { 
-	     if (!strcmp( threshbysrc[i].ipsrc, ip_src ) && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid )) { 
-	        thresh_flag=1;
-		threshbysrc[i].count++;
-		thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
-		threshbysrc[i].utime = atol(timet);
-		if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
-		   threshbysrc[i].count=1;
-		   threshbysrc[i].utime = atol(timet);
-		   thresh_log_flag=0;
-		   }
-
-		if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
-			{ 
-			thresh_log_flag = 1;
-			sagan_log(config, 0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
-			counters->threshold_total++;
-			}
-  			
-	     }
-	 }
-	
-	 /* If not found,  add it to the array */
-	
-	 if ( thresh_flag == 0 ) { 
-	    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-            snprintf(threshbysrc[thresh_count_by_src].ipsrc, sizeof(threshbysrc[thresh_count_by_src].ipsrc), "%s", ip_src);
-	    snprintf(threshbysrc[thresh_count_by_src].sid, sizeof(threshbysrc[thresh_count_by_src].sid), "%s", rulestruct[b].s_sid );
-	    threshbysrc[thresh_count_by_src].count = 1;
-	    threshbysrc[thresh_count_by_src].utime = atol(timet);
-	    thresh_count_by_src++;
-	    }
-	 }
-
-      /* Thresholding by destination IP address */
-
-	if ( rulestruct[b].threshold_src_or_dst == 2 ) {
-            thresh_flag = 0;
-       
-	/* Check array for matching src / sid */
-
-	for (i = 0; i < thresh_count_by_dst; i++ ) {
-		if (!strcmp( threshbydst[i].ipdst, ip_dst ) && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid )) {
-                   thresh_flag=1;
-                   threshbydst[i].count++;
-                   thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
-                   threshbydst[i].utime = atol(timet);
-                      if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
-                         threshbydst[i].count=1;
-                         threshbydst[i].utime = atol(timet);
-                         thresh_log_flag=0;
-                         }
-
-	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
-	   thresh_log_flag = 1;
-	   sagan_log(config, 0, "Threshold SID %s by destination IP address. [%s]", threshbysrc[i].sid, ip_dst);
-	   counters->threshold_total++;
-	   }
-         }
-       }
-
-	/* If not found,  add it to the array */
-
-	if ( thresh_flag == 0 ) {
-           threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-           snprintf(threshbydst[thresh_count_by_dst].ipdst, sizeof(threshbydst[thresh_count_by_dst].ipdst), "%s", ip_dst);
-           snprintf(threshbydst[thresh_count_by_dst].sid, sizeof(threshbydst[thresh_count_by_dst].sid), "%s", rulestruct[b].s_sid );
-           threshbydst[thresh_count_by_dst].count = 1;
-           threshbydst[thresh_count_by_dst].utime = atol(timet);
-           thresh_count_by_dst++;
-           }
-        }
-}  /* End of thresholding */
-
-
 /*********************************************************/
 /* After - Similar to thresholding,  but the opposite    */
 /* direction - ie - alert _after_ X number of events     */
@@ -1163,6 +1068,101 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
         }
 
 } /* End of After */
+
+
+thresh_log_flag = 0;
+
+/*********************************************************/
+/* Thresh holding                                        */
+/*********************************************************/
+
+if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) { 
+
+      t = time(NULL);
+      now=localtime(&t);
+      strftime(timet, sizeof(timet), "%s",  now);
+
+      /* Thresholding by source IP address */
+		      
+      if ( rulestruct[b].threshold_src_or_dst == 1 ) { 
+         thresh_flag = 0;
+	
+	 /* Check array for matching src / sid */
+
+	 for (i = 0; i < thresh_count_by_src; i++ ) { 
+	     if (!strcmp( threshbysrc[i].ipsrc, ip_src ) && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid )) { 
+	        thresh_flag=1;
+		threshbysrc[i].count++;
+		thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
+		threshbysrc[i].utime = atol(timet);
+		if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
+		   threshbysrc[i].count=1;
+		   threshbysrc[i].utime = atol(timet);
+		   thresh_log_flag=0;
+		   }
+
+		if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
+			{ 
+			thresh_log_flag = 1;
+			sagan_log(config, 0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+			counters->threshold_total++;
+			}
+  			
+	     }
+	 }
+	
+	 /* If not found,  add it to the array */
+	
+	 if ( thresh_flag == 0 ) { 
+	    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
+            snprintf(threshbysrc[thresh_count_by_src].ipsrc, sizeof(threshbysrc[thresh_count_by_src].ipsrc), "%s", ip_src);
+	    snprintf(threshbysrc[thresh_count_by_src].sid, sizeof(threshbysrc[thresh_count_by_src].sid), "%s", rulestruct[b].s_sid );
+	    threshbysrc[thresh_count_by_src].count = 1;
+	    threshbysrc[thresh_count_by_src].utime = atol(timet);
+	    thresh_count_by_src++;
+	    }
+	 }
+
+      /* Thresholding by destination IP address */
+
+	if ( rulestruct[b].threshold_src_or_dst == 2 ) {
+            thresh_flag = 0;
+       
+	/* Check array for matching src / sid */
+
+	for (i = 0; i < thresh_count_by_dst; i++ ) {
+		if (!strcmp( threshbydst[i].ipdst, ip_dst ) && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid )) {
+                   thresh_flag=1;
+                   threshbydst[i].count++;
+                   thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
+                   threshbydst[i].utime = atol(timet);
+                      if ( thresh_oldtime_src > rulestruct[b].threshold_seconds ) {
+                         threshbydst[i].count=1;
+                         threshbydst[i].utime = atol(timet);
+                         thresh_log_flag=0;
+                         }
+
+	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
+	   thresh_log_flag = 1;
+	   sagan_log(config, 0, "Threshold SID %s by destination IP address. [%s]", threshbysrc[i].sid, ip_dst);
+	   counters->threshold_total++;
+	   }
+         }
+       }
+
+	/* If not found,  add it to the array */
+
+	if ( thresh_flag == 0 ) {
+           threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
+           snprintf(threshbydst[thresh_count_by_dst].ipdst, sizeof(threshbydst[thresh_count_by_dst].ipdst), "%s", ip_dst);
+           snprintf(threshbydst[thresh_count_by_dst].sid, sizeof(threshbydst[thresh_count_by_dst].sid), "%s", rulestruct[b].s_sid );
+           threshbydst[thresh_count_by_dst].count = 1;
+           threshbydst[thresh_count_by_dst].utime = atol(timet);
+           thresh_count_by_dst++;
+           }
+        }
+}  /* End of thresholding */
+
 
 /****************************************************************************/
 /* Populate the SaganEvent array with the information needed.  This info    */
