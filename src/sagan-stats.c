@@ -60,8 +60,6 @@ seconds = atol(timet) - atol(config->sagan_startutime);
 
 if ( seconds != 0 ) total = counters->sagantotal / seconds; 
 
-sbool flag=0;
-
 	if ((isatty(1))) {
 
 		    sagan_log(config, 0, "--------------------------------------------------------------------------");

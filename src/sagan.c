@@ -169,16 +169,8 @@ pthread_attr_t key_thread_attr;
 pthread_attr_init(&key_thread_attr);
 pthread_attr_setdetachstate(&key_thread_attr,  PTHREAD_CREATE_DETACHED);
 
-/* External thread support */
-
-pthread_t threadext_id[MAX_THREADS];
-pthread_attr_t thread_ext_attr;
-pthread_attr_init(&thread_ext_attr);
-pthread_attr_setdetachstate(&thread_ext_attr,  PTHREAD_CREATE_DETACHED);
-
 struct sockaddr_in sa;
 char src_dns_lookup[20];
-int dns_cache_count=0;
 int  dns_flag=0;
 
 sbool fifoerr=0;

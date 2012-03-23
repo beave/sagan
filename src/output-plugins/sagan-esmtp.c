@@ -50,8 +50,6 @@ struct rule_struct *rulestruct;
 
 void sagan_esmtp_thread (SaganEvent *Event) { 
 
-pthread_mutex_t email_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 char tmpref[2048];
 char tmpemail[255];
 

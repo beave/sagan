@@ -394,8 +394,17 @@ char *sql_escape(_SaganConfig *, const char *, int );
 void sagan_db_thread( SaganEvent * );
 int  ip2bit( _SaganConfig *, char * );
 char *fasthex(char *, int);
+int db_connect( _SaganConfig * );
+int  get_sensor_id ( _SaganDebug *, _SaganConfig *);
+uint64_t get_cid ( _SaganDebug *,  _SaganConfig * );
 
 #endif
+
+#ifdef HAVE_LIBPRELUDE
+void PreludeInit( _SaganConfig *);
+void sagan_prelude( SaganEvent * );
+#endif
+
 
 
 #ifdef HAVE_LIBLOGNORM

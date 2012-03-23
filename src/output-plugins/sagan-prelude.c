@@ -176,8 +176,6 @@ int add_int_data( _SaganConfig *config, idmef_alert_t *alert, const char *meanin
 void sagan_prelude( SaganEvent *Event ) 
 {
 
-pthread_mutex_t prelude_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 int ret;
 
 int sid=0;

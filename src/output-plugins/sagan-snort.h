@@ -27,21 +27,9 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-int  db_connect( _SaganConfig * );
-
 char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
 
-//int  get_sensor_id ( _SaganDebug *, char *,  char *,  char *,  int , int  );
-
-int  get_sensor_id ( _SaganDebug *, _SaganConfig *);
-
-uint64_t get_cid ( _SaganDebug *,  _SaganConfig * );
-
 void record_last_cid ( _SaganDebug *, _SaganConfig *, _SaganCounters * );
-
-//int  get_sig_sid( _SaganDebug *, char *,  char *,
-//                  char *,  char *,
-//                  int         ,  int  );
 
 int  get_sig_sid( SaganEvent *); 
 
