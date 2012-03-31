@@ -99,6 +99,7 @@ struct _SaganCounters {
     int      ruletotal;
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+    uint64_t last_cid;
     uint64_t cid;            /* For passing CID with signal */
 #endif
 
@@ -397,6 +398,7 @@ char *fasthex(char *, int);
 int db_connect( _SaganConfig * );
 int  get_sensor_id ( _SaganDebug *, _SaganConfig *);
 uint64_t get_cid ( _SaganDebug *,  _SaganConfig * );
+char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
 
 #endif
 

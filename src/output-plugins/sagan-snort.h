@@ -27,7 +27,7 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
+//char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
 
 void record_last_cid ( _SaganDebug *, _SaganConfig *, _SaganCounters * );
 

@@ -468,7 +468,7 @@ void record_last_cid ( _SaganDebug *debug, _SaganConfig *config, _SaganCounters 
 char sqltmp[MAXSQL];
 char *sql;
 
-snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->cid, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
+snprintf(sqltmp, sizeof(sqltmp), "UPDATE sensor SET last_cid='%" PRIu64 "' where sid=%d and hostname='%s' and interface='%s' and filter='%s' and detail=%d", counters->cid - 1, config->sensor_id, config->sagan_hostname, config->sagan_interface, config->sagan_filter, config->sagan_detail);
 sql=sqltmp;
 db_query( debug, config, sql );
 
@@ -573,6 +573,10 @@ char ip_dsttmp[65];
 char time[30];
 char date[30];
 
+pthread_mutex_lock( &db_mutex );
+counters->cid++;
+pthread_mutex_unlock( &db_mutex );
+
 snprintf(message, sizeof(message), "%s", Event->message); 
 snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", Event->ip_src);
 snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", Event->ip_dst);
@@ -591,9 +595,9 @@ for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    query_reference( Event->debug, Event->config, rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
    }
 
-pthread_mutex_lock( &db_mutex );
-counters->cid++;
-pthread_mutex_unlock( &db_mutex );
+//pthread_mutex_lock( &db_mutex );
+//counters->cid++;
+//pthread_mutex_unlock( &db_mutex );
 
 }
 

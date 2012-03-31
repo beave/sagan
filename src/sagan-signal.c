@@ -94,7 +94,10 @@ void sig_handler( _SaganSigArgs *args ) {
 		  sagan_statistics(args->config);
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-		  if ( args->config->dbtype != 0 ) record_last_cid(args->debug, args->config, counters);
+
+		  /* last_cid != cid (has there been any alerts? */
+
+		  if ( args->config->dbtype != 0 && counters->last_cid != counters-> cid ) record_last_cid(args->debug, args->config, counters);
 #endif
 
 #ifdef HAVE_LIBPRELUDE

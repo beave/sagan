@@ -155,6 +155,12 @@ pthread_attr_setdetachstate(&thread_pcap_attr,  PTHREAD_CREATE_DETACHED);
 /* Various local variables						    */
 /****************************************************************************/
 
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+char *sqlout=NULL;
+char *sql=NULL;
+char sqltmp[MAXSQL];
+#endif
+
 /* Block all signals,  we create a signal handling thread */
 
 sigset_t signal_set;
@@ -472,10 +478,26 @@ db_connect(config);
 
 get_sensor_id( debug, config ); 
 sagan_log(config, 0, "Sensor ID            : %d", config->sensor_id);
-counters->cid = get_cid( debug, config ) + 1;
+counters->cid = get_cid( debug, config ) + 1; 
+
+snprintf(sqltmp, sizeof(sqltmp), "SELECT MAX(cid) FROM event WHERE sid=%d", config->sensor_id);
+sql=sqltmp;
+sqlout = db_query(debug,  config, sql);
 
 sagan_log(config, 0, "Next CID             : %" PRIu64 "", counters->cid);
 }
+
+/* Check the event table and compare sensor.last_cid with event_cid.  If there's a 
+ * mismatch,  we correct it  - Champ Clark 03/30/2012 */ 
+
+if ( atol(sqlout) != counters->cid ) {
+   sagan_log(config, 2, "Inconsistent cid information for sid=%d.  Recovering by rolling forward to cid=%d", config->sensor_id, atol(sqlout) );
+   counters->cid = atol(sqlout);
+   record_last_cid(debug, config, counters);
+   }
+
+counters->last_cid = counters->cid;	/* Use to determine if a change has happened in sagan_siganl.c */
+
 #endif
 
 #ifdef HAVE_LIBPRELUDE
