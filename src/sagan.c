@@ -485,7 +485,6 @@ sql=sqltmp;
 sqlout = db_query(debug,  config, sql);
 
 sagan_log(config, 0, "Next CID             : %" PRIu64 "", counters->cid);
-}
 
 /* Check the event table and compare sensor.last_cid with event_cid.  If there's a 
  * mismatch,  we correct it  - Champ Clark 03/30/2012 */ 
@@ -497,6 +496,7 @@ if ( atol(sqlout) != counters->cid ) {
    }
 
 counters->last_cid = counters->cid;	/* Use to determine if a change has happened in sagan_siganl.c */
+} 
 
 #endif
 
