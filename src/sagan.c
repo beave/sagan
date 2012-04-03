@@ -47,6 +47,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 
 #include "sagan.h"
 
