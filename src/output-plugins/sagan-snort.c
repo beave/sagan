@@ -69,7 +69,6 @@ struct rule_struct *rulestruct;
 
 pthread_mutex_t db_mutex;
 
-
 /********************************************/
 /* Connection to various types of databases */
 /********************************************/
@@ -159,8 +158,6 @@ char *re=NULL;		/* "return" point for row */
 int mysql_last_errno = 0; 
 int mysql_reconnect_count = 0;
 
-pthread_mutex_lock( &db_mutex );
-
 strlcpy(sqltmp, sql, sizeof(sqltmp));
 
 if ( debug->debugsql ) sagan_log(config, 0, "%s", sqltmp); 
@@ -186,7 +183,6 @@ while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) {
 
         sagan_log(config, 0, "[%s, line %d] MySQL Error [%u] \"%s\"\n[*] Offending SQL statement: %s\n", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql), sqltmp);
 	
-	pthread_mutex_unlock( &db_mutex );	/* Prevent deadlock! */
 	return(0);
 	}
    
@@ -208,7 +204,6 @@ if ( res != NULL ) {
  }
 
 mysql_free_result(res);
-pthread_mutex_unlock( &db_mutex );
 return(re);
 }
 #else
@@ -239,7 +234,6 @@ if ( PQntuples(result) != 0 ) {
     }
 
 PQclear(result);
-pthread_mutex_unlock( &db_mutex);
 return(re);
 
 }
@@ -451,10 +445,8 @@ void insert_payload ( SaganEvent *Event,  char *t_hex_data ) {
 char sqltmp[MAXSQL]; 
 char *sql;
 
-pthread_mutex_lock( &db_mutex );
 snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO data(sid, cid, data_payload) VALUES ('%d', '%" PRIu64 "', '%s')", Event->config->sensor_id, counters->cid, t_hex_data);
 sql=sqltmp;
-pthread_mutex_unlock( &db_mutex );
 db_query( Event->debug, Event->config, sql );
 
 }
@@ -573,9 +565,13 @@ char ip_dsttmp[65];
 char time[30];
 char date[30];
 
+/* We do the mutex_lock(db_mutex) here to avoid a race condition.  It was
+ * possible for two threads to have the same cid,  leading to dup entries
+ * in the SQL database  - Champ Clark III 04/03/2012
+ */
+
 pthread_mutex_lock( &db_mutex );
 counters->cid++;
-pthread_mutex_unlock( &db_mutex );
 
 snprintf(message, sizeof(message), "%s", Event->message); 
 snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", Event->ip_src);
@@ -595,9 +591,7 @@ for (i = 0; i < rulestruct[Event->found].ref_count; i++ ) {
    query_reference( Event->debug, Event->config, rulestruct[Event->found].s_reference[i], rulestruct[Event->found].s_sid, sig_sid, i );
    }
 
-//pthread_mutex_lock( &db_mutex );
-//counters->cid++;
-//pthread_mutex_unlock( &db_mutex );
+pthread_mutex_unlock( &db_mutex );
 
 }
 
