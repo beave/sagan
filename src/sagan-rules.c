@@ -458,8 +458,6 @@ remspaces(rulesplit);
 
 	if (!strcmp(rulesplit, "fwsam" )) { 
 
-		printf("%s\n", rulesplit);
-
 		/* Set some defaults - needs better error checking! */
 
 		rulestruct[counters->rulecount].fwsam_src_or_dst=1;	/* by src */
