@@ -225,7 +225,7 @@
 #define PACKAGE_NAME "sagan"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Sagan 0.2.1-git"
+#define PACKAGE_STRING "Sagan 0.2.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "sagan"
@@ -234,7 +234,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.2.1-git"
+#define PACKAGE_VERSION "0.2.1"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -258,7 +258,7 @@
 /* #undef TM_IN_SYS_TIME */
 
 /* Version number of package */
-#define VERSION "0.2.1-git"
+#define VERSION "0.2.1"
 
 /* With Snortsam */
 #define WITH_SNORTSAM 1
