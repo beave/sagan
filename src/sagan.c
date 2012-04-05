@@ -68,8 +68,7 @@
 #define OVECCOUNT 30
 
 struct _SaganCounters *counters;
-
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 struct class_struct *classstruct;
 
 sbool daemonize=0;
@@ -120,8 +119,8 @@ int option_index = 0;
 
 /* Passing Sagan events to output plugins */
 
-struct Sagan_Event *SaganEvent = NULL;
-SaganEvent = malloc(MAX_THREADS * sizeof(struct Sagan_Event));
+struct _Sagan_Event *SaganEvent = NULL;
+SaganEvent = malloc(MAX_THREADS * sizeof(struct _Sagan_Event));
 
 /***************************************************************************/
 /* pthread for the output plugins                                          */
@@ -1281,6 +1280,8 @@ if ( pthread_create ( &output_id[threadid], &thread_output_attr, (void *)sagan_o
 
 /****************************************************************************/
 /* Log Processors that might take valuable CPU time (Geo IP, etc)           */
+/* Not sure if this section will remain here or not.  We might end up with  */
+/* "processors" and "preprocessors" - Champ Clark III 04/04/2012            */
 /****************************************************************************/
 
 if ( config->processor_thread_flag ) { 

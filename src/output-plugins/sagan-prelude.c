@@ -46,8 +46,6 @@
 
 #include "sagan-prelude.h"
 
-struct _SaganCounters *counters;
-
 #define ANALYZER_CLASS "Log Analyzer"
 #define ANALYZER_MODEL "Sagan"
 #define ANALYZER_MANUFACTURER "http://sagan.quadrantsec.com"
@@ -57,7 +55,7 @@ struct _SaganCounters *counters;
 
 prelude_client_t *preludeclient;
 
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 
 /* Init the Prelude sub system. */
 
@@ -173,7 +171,7 @@ int add_int_data( _SaganConfig *config, idmef_alert_t *alert, const char *meanin
 /* sagan_prelude() - This is the sub/thread called from the main process    */
 /****************************************************************************/
 
-void sagan_prelude( SaganEvent *Event ) 
+void sagan_prelude( _SaganEvent *Event ) 
 {
 
 int ret;

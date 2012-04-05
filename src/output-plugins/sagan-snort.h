@@ -27,18 +27,16 @@
 
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
-//char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
-
 void record_last_cid ( _SaganDebug *, _SaganConfig *, _SaganCounters * );
 
-int  get_sig_sid( SaganEvent *); 
+int  get_sig_sid( _SaganEvent *); 
 
-void insert_event ( SaganEvent *, int, char *,  char * );
+void insert_event (_SaganEvent *, int, char *,  char * );
 
-void insert_hdr ( SaganEvent *,  char *, char * );
+void insert_hdr (_SaganEvent *,  char *, char * );
 
 
-void insert_payload( SaganEvent *, char *); 
+void insert_payload(_SaganEvent *, char *); 
 
 void query_reference ( _SaganDebug *, _SaganConfig *, char *, char *, int, int );
 

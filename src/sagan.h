@@ -87,8 +87,7 @@ struct _SaganCounters {
     uint64_t sagan_log_drop;
     uint64_t dns_cache_count;
     uint64_t dns_miss_count;
-
-
+    uint64_t fwsam_count;
 
     int	     thread_output_counter; 
     int	     thread_processor_counter;
@@ -237,16 +236,16 @@ char *parse_ip_simple( char * );
 int   parse_port_simple(_SaganConfig *, char * );
 
 /* Reference structure */
-typedef struct ref_struct ref_struct;
-struct ref_struct {
+typedef struct _Ref_Struct _Ref_Struct;
+struct _Ref_Struct {
 unsigned s_size_ref;
 char s_refid[512];
 char s_refurl[2048];
 };
 
 /* Classification strucure */
-typedef struct class_struct class_struct;
-struct class_struct {
+typedef struct _Class_Struct _Class_Struct;
+struct _Class_Struct {
 unsigned s_size_class;
 char s_shortname[512];
 char s_desc[512];
@@ -254,8 +253,8 @@ int  s_priority;
 };
 
 /* Rule structure */
-typedef struct rule_struct rule_struct;
-struct rule_struct {
+typedef struct _Rule_Struct _Rule_Struct;
+struct _Rule_Struct {
 unsigned s_size_rule;
 char s_msg[512];
 
@@ -302,12 +301,11 @@ unsigned long  fwsam_seconds;
 
 };
 
-typedef struct Sagan_Event 
+typedef struct _Sagan_Event 
 {
 
         _SaganDebug *debug;
         _SaganConfig *config;
-	_SaganCounters *counters;
 
         char *ip_src;
         char *ip_dst;
@@ -338,7 +336,7 @@ typedef struct Sagan_Event
         char *program;
         char *message;          /* msg + sysmsg? */
 
-} SaganEvent;
+} _SaganEvent;
 
 
 /* Thresholding structure by source */
@@ -392,7 +390,7 @@ char sid[512];
 #define MYSQL_PORT      3306
 
 char *sql_escape(_SaganConfig *, const char *, int );
-void sagan_db_thread( SaganEvent * );
+void sagan_db_thread( _SaganEvent * );
 int  ip2bit( _SaganConfig *, char * );
 char *fasthex(char *, int);
 int db_connect( _SaganConfig * );
@@ -404,7 +402,7 @@ char *db_query ( _SaganDebug *, _SaganConfig *,  char * );
 
 #ifdef HAVE_LIBPRELUDE
 void PreludeInit( _SaganConfig *);
-void sagan_prelude( SaganEvent * );
+void sagan_prelude( _SaganEvent * );
 #endif
 
 
@@ -437,7 +435,7 @@ char filepath[MAXPATH];
 #define MAX_EMAILSIZE   15360		/* Largest e-mail that can be sent */
 
 const char *esmtp_cb (void **, int *, void *);
-void sagan_esmtp_thread( SaganEvent * );
+void sagan_esmtp_thread( _SaganEvent * );
 
 #endif
 
@@ -463,8 +461,8 @@ typedef struct _SaganSigArgs _SaganSigArgs;
 void plog_handler( _SaganSigArgs * );
 #endif
 
-void sagan_alert( SaganEvent * );
-void sagan_ext_thread( SaganEvent * );
+void sagan_alert( _SaganEvent * );
+void sagan_ext_thread( _SaganEvent * );
 
 void load_config( _SaganDebug *, _SaganConfig * );
 void sig_handler( _SaganSigArgs * );
@@ -479,7 +477,7 @@ void key_handler( _SaganConfig * );
 void sagan_droppriv( _SaganConfig *, const char *);
 char *dns_lookup( _SaganConfig *, char *);
 
-void sagan_output( SaganEvent * );
-void sagan_processor( SaganEvent * );
+void sagan_output( _SaganEvent * );
+void sagan_processor( _SaganEvent * );
 
-void sagan_fwsam( SaganEvent * );
+void sagan_fwsam( _SaganEvent * );

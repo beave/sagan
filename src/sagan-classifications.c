@@ -49,8 +49,7 @@
 #include "sagan.h"
 
 struct _SaganCounters *counters;
-
-struct class_struct *classstruct;
+struct _Class_Struct *classstruct;
 
 void load_classifications( _SaganDebug *debug, _SaganConfig *config, const char *ruleset )  { 
 
@@ -81,7 +80,7 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
      continue;
      } else { 
      /* Allocate memory for classifications,  but not comments */
-     classstruct = (class_struct *) realloc(classstruct, (counters->classcount+1) * sizeof(class_struct));
+     classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
      }
 
      firststring = strtok_r(classbuf, ":", &saveptr);

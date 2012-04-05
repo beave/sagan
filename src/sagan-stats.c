@@ -74,7 +74,6 @@ if ( seconds != 0 ) total = counters->sagantotal / seconds;
 
 		    if (config->syslog_src_lookup) sagan_log(config, 0, "DNS Cache Statistics -  Cached: %" PRIu64 " Missed: %" PRIu64 " (%.3f%%)" , counters->dns_cache_count, counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
 
-	
 		    if ( seconds < 60 || seconds == 0 ) { 
 		    sagan_log(config, 0, "Average Events Per-Second: %lu [%lu of 60 seconds. Calculating...]", total, seconds);
 		    } else { 

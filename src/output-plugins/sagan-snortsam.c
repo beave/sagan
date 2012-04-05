@@ -88,17 +88,14 @@
 #define FWSAM_NETWAIT	1000
 #define FWSAM_NETHOLD 	6000
 
-// Counter stuff might be cool
-
-struct rule_struct *rulestruct;
-
+struct _Rule_Struct *rulestruct;
 
 unsigned long blockip[NUM_HOSTS +1],blockpeer[NUM_HOSTS +1],blockduration=0,blocksid=0;
 unsigned short blockport=0,blockproto=0,blocklog=FWSAM_LOG_NONE,blockhow=FWSAM_HOW_INOUT,blockmode=FWSAM_STATUS_BLOCK,checkout=TRUE;
 
 pthread_mutex_t fwsam_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void sagan_fwsam( SaganEvent *Event ) {
+void sagan_fwsam( _SaganEvent *Event ) {
 
 pthread_mutex_lock(&fwsam_mutex);
 

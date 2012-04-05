@@ -45,8 +45,8 @@
 
 #define ERRORRET return SAFEMEM_ERROR;
 
-void Sagan_Unified2( SaganEvent * );
-void Sagan_Unified2LogPacketAlert( SaganEvent * );
+void Sagan_Unified2( _SaganEvent * );
+void Sagan_Unified2LogPacketAlert( _SaganEvent * );
 void Unified2InitFile( _SaganConfig * );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc( _SaganConfig *, unsigned long);

@@ -41,10 +41,9 @@
 
 #include "version.h"
 
-struct _SaganCounters *counters;
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 
-void sagan_ext_thread ( SaganEvent *Event ) {
+void sagan_ext_thread ( _SaganEvent *Event ) {
 
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 

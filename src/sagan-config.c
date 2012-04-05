@@ -65,7 +65,7 @@ struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
 #endif
 
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 struct _SaganCounters *counters;
 
 void load_config( _SaganDebug *debug, _SaganConfig *config  ) { 
@@ -99,7 +99,7 @@ config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
 /* Start loading configuration */
 
-rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(rule_struct));
+rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 
 /* Gather information for the master configuration file */
 

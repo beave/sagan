@@ -50,9 +50,8 @@ sbool endian;
 
 uint64_t unified_event_id;
 
-struct rule_struct *rulestruct;
-struct class_struct *classstruct;
-
+struct _Rule_Struct *rulestruct;
+struct _Class_Struct *classstruct;
 struct _SaganCounters *counters;
 
 static void Unified2Write( _SaganConfig *, uint8_t *, uint32_t);
@@ -108,7 +107,7 @@ void Unified2InitFile( _SaganConfig *config  )
 /* Sagan_Unified2 - Write the Unified2 event        */
 /****************************************************/
 
-void Sagan_Unified2( SaganEvent *Event )
+void Sagan_Unified2( _SaganEvent *Event )
 { 
 
 
@@ -125,7 +124,7 @@ alertdata.event_microsecond = htonl(0);	                			// Not recording to t
 alertdata.signature_id = htonl(atoi(rulestruct[Event->found].s_sid));		// Rule triggered (sid #)
 alertdata.signature_revision = htonl(atoi(rulestruct[Event->found].s_rev));	// Rule Revision
 
-/* Seach for the classification type. */
+/* Search for the classification type. */
 
 /* There's probably a better way to do this - Champ Clark III - 02/17/2011 */
 
@@ -178,7 +177,7 @@ Unified2Write(Event->config, write_pkt_buffer, write_len);
 /* file for reading by Barnyard2, etc.                                       */
 /*****************************************************************************/
 
-void Sagan_Unified2LogPacketAlert( SaganEvent *Event )
+void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
 {
 
 Serial_Unified2_Header hdr;

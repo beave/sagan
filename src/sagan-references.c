@@ -49,8 +49,8 @@
 
 struct _SaganCounters *counters;
 
-extern struct ref_struct *refstruct;
-extern struct rule_struct *rulestruct;
+struct _Ref_Struct *refstruct;
+struct _Rule_Struct *rulestruct;
 
 void load_reference( _SaganDebug *debug,  _SaganConfig *config, const char *ruleset )  { 
 
@@ -77,7 +77,7 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      continue;
      } else {
      /* Allocate memory for references,  not comments */
-     refstruct = (ref_struct *) realloc(refstruct, (counters->refcount+1) * sizeof(ref_struct));
+     refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
      }
 
      firststring = strtok_r(refbuf, ":", &saveptr);

@@ -54,8 +54,8 @@ struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
 #endif
 
-struct rule_struct *rulestruct;
-struct class_struct *classstruct;
+struct _Rule_Struct *rulestruct;
+struct _Class_Struct *classstruct;
 
 void load_rules( _SaganDebug *debug, _SaganConfig *config, const char *ruleset ) { 
 
@@ -132,7 +132,7 @@ while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
         continue;
         } else { 
 	/* Allocate memory for rules, but not comments */
-	rulestruct = (rule_struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(rule_struct));
+	rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 	}
 
 remrt(rulebuf);

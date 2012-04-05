@@ -38,10 +38,9 @@
 
 #include "version.h"
 
-struct rule_struct *rulestruct;
-struct ref_struct *refstruct;
+struct _Rule_Struct *rulestruct;
 
-void sagan_alert( SaganEvent *Event ) { 
+void sagan_alert( _SaganEvent *Event ) { 
 
 char tmpref[2048]="";
 

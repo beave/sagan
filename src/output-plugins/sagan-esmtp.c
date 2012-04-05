@@ -44,11 +44,9 @@
 #include "sagan-esmtp.h"
 #include "version.h"
 
-struct _SaganCounters *counters;
+struct _Rule_Struct *rulestruct;
 
-struct rule_struct *rulestruct;
-
-void sagan_esmtp_thread (SaganEvent *Event) { 
+void sagan_esmtp_thread (_SaganEvent *Event) { 
 
 char tmpref[2048];
 char tmpemail[255];

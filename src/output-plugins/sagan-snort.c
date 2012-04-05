@@ -64,8 +64,7 @@ char pgconnect[2048];
 #endif
 
 struct _SaganCounters *counters;
-
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t db_mutex;
 
@@ -189,9 +188,9 @@ while ( mysql_real_query(mysql, sqltmp,  strlen(sqltmp)) != 0 ) {
    }
 
 
-if ( mysql_reconnect_count != 0 ) { 			/* If there's a reconnect_count,  we must of lost connection */
+if ( mysql_reconnect_count != 0 ) { 				/* If there's a reconnect_count,  we must of lost connection */
    sagan_log(config, 0, "MySQL connection re-established!"); 	/* Log it */
-   mysql_reconnect_count=0;				/* Reset the counter */
+   mysql_reconnect_count=0;					/* Reset the counter */
    }
 
 res = mysql_use_result(mysql);
@@ -311,7 +310,7 @@ return(t_cid);
 /* Get signature ID.  If on doesn't exsist,  put one in. */
 /*********************************************************/
 
-int get_sig_sid ( SaganEvent *Event ) {
+int get_sig_sid ( _SaganEvent *Event ) {
 
 
 char sqltmp[MAXSQL];
@@ -377,7 +376,7 @@ return(t_sig_id);
 /* Insert into event table */
 /***************************/
 
-void insert_event ( SaganEvent *Event, int sig_sid, char *date,  char *time ) { 
+void insert_event ( _SaganEvent *Event, int sig_sid, char *date,  char *time ) { 
 
 char sqltmp[MAXSQL];
 char *sql;
@@ -393,7 +392,7 @@ db_query( Event->debug, Event->config, sql );
 /* Insert data into iphdr and tcphdr - most of this is bogus as we're not really TCP/IP */
 /****************************************************************************************/
 
-void insert_hdr ( SaganEvent *Event,  char *ipsrc, char *ipdst )  {
+void insert_hdr ( _SaganEvent *Event,  char *ipsrc, char *ipdst )  {
 
 char sqltmp[MAXSQL];
 char *sql;
@@ -440,7 +439,7 @@ db_query( Event->debug, Event->config, sql );
 /* Insert into payload table */
 /*****************************/
 
-void insert_payload ( SaganEvent *Event,  char *t_hex_data ) { 
+void insert_payload ( _SaganEvent *Event,  char *t_hex_data ) { 
 
 char sqltmp[MAXSQL]; 
 char *sql;
@@ -552,7 +551,7 @@ if ( sqlout == NULL )  {
 /* Snort specific thread code                                              */
 /***************************************************************************/
 
-void sagan_db_thread( SaganEvent *Event ) {
+void sagan_db_thread( _SaganEvent *Event ) {
 
 int sig_sid;
 int i;

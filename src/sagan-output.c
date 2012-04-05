@@ -32,9 +32,9 @@
 #include "sagan.h"
 
 struct _SaganCounters *counters;
-struct rule_struct *rulestruct;
+struct _Rule_Struct *rulestruct;
 
-void sagan_output( SaganEvent *Event )
+void sagan_output( _SaganEvent *Event )
 {
 
 pthread_mutex_t counters_mutex = PTHREAD_MUTEX_INITIALIZER;

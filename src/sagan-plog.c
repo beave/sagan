@@ -21,8 +21,7 @@
 
    --
 
-   Permission to implement the plog functionality was obtain by Champ Clark
-III from Marcus J. Ranum on Jan. 6th, 2011. 
+   Permission to implement the plog functionality was obtain by Champ Clark III from Marcus J. Ranum on Jan. 6th, 2011. 
 
 */
 

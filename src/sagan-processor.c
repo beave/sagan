@@ -34,7 +34,7 @@
 
 struct _SaganCounters *counters;
 
-void sagan_processor( SaganEvent *Event )
+void sagan_processor( _SaganEvent *Event )
 {
 
 pthread_mutex_t counters_mutex = PTHREAD_MUTEX_INITIALIZER;
