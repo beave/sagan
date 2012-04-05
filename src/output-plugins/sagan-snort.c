@@ -107,7 +107,7 @@ mysql_options(mysql,MYSQL_READ_DEFAULT_GROUP,config->dbname);
 
 mysql_options(mysql,MYSQL_OPT_RECONNECT, &reconnect);
 
-if (!mysql_real_connect(mysql, dbh, dbu, dbp, dbn, MYSQL_PORT, NULL, 0)) {
+if (!mysql_real_connect(mysql, dbh, dbu, dbp, dbn, config->dbport, NULL, 0)) {
      sagan_log(config, 1, "[%s, line %d] MySQL Error %u: \"%s\"", __FILE__,  __LINE__, mysql_errno(mysql), mysql_error(mysql));
      }
 

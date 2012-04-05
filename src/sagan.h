@@ -222,6 +222,7 @@ struct _SaganConfig {
     char         dbpassword[MAXPASS];
     char         dbname[50]; 
     char         dbhost[50];
+    unsigned int dbport;
 #endif
 
     sbool        sagan_fwsam_flag;
