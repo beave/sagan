@@ -430,6 +430,10 @@ if (!strcmp(sagan_var, "unified2:")) {
 		   snprintf(config->dbhost, sizeof(config->dbhost), "%s", ptmp);
 		   }
 
+		if (!strcmp(ptmp, "port")) {
+		   config->dbport = atoi(ptmp);
+		   }
+
 	      ptmp = strtok_r(NULL, "=", &tok);
 
 
