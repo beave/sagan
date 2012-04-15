@@ -375,18 +375,15 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 
 	   case 'F':
 	   config->sagan_fifo_flag=1;
-	   strncpy(config->sagan_fifo,optarg,sizeof(config->sagan_fifo) - 1);               //      strlcpy
-           config->sagan_fifo[sizeof(config->sagan_fifo)-1] = '\0';
+	   strlcpy(config->sagan_fifo,optarg,sizeof(config->sagan_fifo) - 1); 
 	   break;
 
 	   case 'f':
-	   strncpy(config->sagan_config,optarg,sizeof(config->sagan_config) - 1);		//	strlcpy
-	   config->sagan_config[sizeof(config->sagan_config)-1] = '\0';
+	   strlcpy(config->sagan_config,optarg,sizeof(config->sagan_config) - 1);
 	   break;
 
 	   case 'l':
-	   strncpy(config->sagan_log_filepath,optarg,sizeof(config->sagan_log_filepath) - 1);
-	   config->sagan_log_filepath[sizeof(config->sagan_log_filepath)-1] = '\0';
+	   strlcpy(config->sagan_log_filepath,optarg,sizeof(config->sagan_log_filepath) - 1);
 	   break;
 	   
 
