@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH SAGAN 8 "Feburary 1, 2012"
+.TH SAGAN 8 "April 15, 2012"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -62,6 +62,9 @@ Chroots the Sagan process to the specified directory
 .TP
 .B \-f, \-\-config [file]
 Sagan configuration file to load
+.TP
+.B \-F, \-\-file [file]
+Sagan FIFO over ride.  This forces Sagan to read from a FILE rather than a FIFO.  The FILE needs to be in the Sagan format!
 .TP
 .B \-l, \-\-log [file]
 Set log file locaton and name.

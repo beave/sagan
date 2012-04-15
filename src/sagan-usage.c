@@ -63,6 +63,8 @@ fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).
 fprintf(stderr, "-u, --user [username]\tRun as user (defaults to 'sagan').\n");
 fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
 fprintf(stderr, "-f, --config [file]\tSagan configuration file to load.\n");
+fprintf(stderr, "-F, --file [file]\tFIFO over ride.  This reads a file in rather than reading\n");
+fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
 fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
 
 #ifdef HAVE_LIBPQ

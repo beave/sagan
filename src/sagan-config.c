@@ -448,10 +448,14 @@ if (!strcmp(sagan_var, "unified2:")) {
      if (!strcmp(sagan_option, "var")) {
          sagan_var = strtok_r(NULL, " ", &tok);
 
+	if (config->sagan_fifo_flag == 0 ) { 		/* File overides FIFO settings */
+
         if (!strcmp(sagan_var, "FIFO" )) {
 	   snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", strtok_r(NULL, " ", &tok));
            config->sagan_fifo[strlen(config->sagan_fifo)-1] = '\0'; 
 	   }
+	
+	}
 
         if (!strcmp(sagan_var, "RULE_PATH" )) {
 	   snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", strtok_r(NULL, " ", &tok));

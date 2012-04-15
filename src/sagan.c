@@ -108,6 +108,7 @@ const struct option long_options[] = {
         { "chroot",       required_argument,    NULL,   'c' },
         { "config",       required_argument,    NULL,   'f' },
         { "log",          required_argument,    NULL,   'l' },
+	{ "file",	  required_argument,    NULL,   'F' }, 
         {0, 0, 0, 0}
 
 };
@@ -372,6 +373,12 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   sagan_chroot(runas,optarg);
 	   break;
 
+	   case 'F':
+	   config->sagan_fifo_flag=1;
+	   strncpy(config->sagan_fifo,optarg,sizeof(config->sagan_fifo) - 1);               //      strlcpy
+           config->sagan_fifo[sizeof(config->sagan_fifo)-1] = '\0';
+	   break;
+
 	   case 'f':
 	   strncpy(config->sagan_config,optarg,sizeof(config->sagan_config) - 1);		//	strlcpy
 	   config->sagan_config[sizeof(config->sagan_config)-1] = '\0';
@@ -577,11 +584,19 @@ if (pthread_create( &key_thread, NULL, (void *)key_handler, config )) { ;
 
 checklockfile(config);
 
+if ( config->sagan_fifo_flag == 0 ) { 
 sagan_log(config, 0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
+} else { 
+sagan_log(config, 0, "Attempting to open syslog FILE (%s).", config->sagan_fifo);
+}
 
 if ( fd == 0 ) fd = open(config->sagan_fifo, O_RDONLY);
 
+if ( config->sagan_fifo_flag == 0 ) { 
 sagan_log(config, 0, "Successfully opened FIFO (%s).", config->sagan_fifo);
+} else { 
+sagan_log(config, 0, "Successfully opened FILE (%s) and processing events.....", config->sagan_fifo);
+}
 
 while(1) { 
 
@@ -601,9 +616,28 @@ while(1) {
 		 * previous error state. */
 
 		if (i == 0 && fifoerr == 0 ) { 
+		   if ( config->sagan_fifo_flag == 0 )  {
 		   sagan_log(config, 0, "FIFO closed (writer exited). Will start processing when writer resumes.");
 		   fifoerr=1;
-		   }
+		   
+		   } else { 
+
+		/* If we're not running with a true FIFO,  we've reached the end of the file and have to handle 
+		 * things a bit different.  */
+
+		   close(fd);
+
+		   sagan_statistics(config);
+		   sagan_log(config, 2, "Waiting 60 seconds for output threads to catch up.  You can hit Control-C");
+		   sagan_log(config, 2, "if you're confident they have completed there task! You can hit enter to");
+		   sagan_log(config, 2, "monitor thread progress....... [sleeping]");
+		   sleep(60); 		/* Wait for output threads to catch up */
+		   sagan_log(config, 0, "Processing of %s is complete.  Exiting.", config->sagan_fifo);
+		   if ( config->dbtype ) record_last_cid(debug, config, counters)	/* For direct SQL logging */;
+		   removelockfile(config);
+		   exit(0);
+		     }
+		   }   
 
 		/* If previous state was error,  now we see data,
 		 * then the write is back online. */
@@ -678,7 +712,7 @@ while(1) {
                    if ( !fifoerr ) sagan_log(config, 0, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
                    }
 	       }
-
+	
 		/* We know check the rest of the values */
 
 		syslog_facility=strtok_r(NULL, "|", &tok);
