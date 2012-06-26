@@ -342,6 +342,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
               if (strstr(optarg, "syslog")) debug->debugsyslog=1;
               if (strstr(optarg, "load")) debug->debugload=1;
 	      if (strstr(optarg, "fwsam")) debug->debugfwsam=1;
+	      if (strstr(optarg, "external")) debug->debugexternal=1;
 
 #ifdef HAVE_LIBLOGNORM
 	      if (strstr(optarg, "normalize" )) debug->debugnormalize=1;

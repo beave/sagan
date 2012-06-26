@@ -114,6 +114,7 @@ struct _SaganDebug {
     sbool debugsyslog;
     sbool debugload;
     sbool debugfwsam;
+    sbool debugexternal;
 
 #ifdef HAVE_LIBLOGNORM
     sbool debugnormalize;

@@ -56,6 +56,8 @@ char tmpref[2048];
 int ret;
 char tmp[6];
 
+if ( Event->debug->debugexternal ) sagan_log(Event->config, 0, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+
 if ( Event->config->sagan_exttype == 1 ) { 
    
    /* Parsable */
@@ -130,6 +132,8 @@ if (( pid = fork()) == 0 ) {
    buf[n] = 0;
 
    waitpid(pid, NULL, 0);
+   
+   if ( Event->debug->debugexternal == 1 ) sagan_log(Event->config, 0, "[%s, line %d] Executed %s", __FILE__, __LINE__, Event->config->sagan_extern);
 
 }
 

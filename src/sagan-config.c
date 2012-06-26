@@ -260,12 +260,15 @@ if (!strcmp(sagan_option, "normalize:")) {
 #endif
 
 if (!strcmp(sagan_option, "output")) {
-             sagan_var = strtok_r(NULL," ", &tok);
+     
+     config->output_thread_flag = 1;
+
+     sagan_var = strtok_r(NULL," ", &tok);
 
      if (!strcmp(sagan_var, "external:")) {
+        config->sagan_ext_flag=1;
         snprintf(config->sagan_extern, sizeof(config->sagan_extern), "%s", strtok_r(NULL, " ", &tok));
         if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
-	config->sagan_ext_flag=1;
         }
 
 
@@ -321,7 +324,6 @@ if (!strcmp(sagan_var, "unified2:")) {
 #ifdef HAVE_LIBPRELUDE
 	
 	if (!strcmp(sagan_var, "prelude:")) { 
-	   config->output_thread_flag = 1; 
 	   ptmp = sagan_var; 
 
 	   while (ptmp != NULL ) { 
@@ -342,7 +344,6 @@ if (!strcmp(sagan_var, "unified2:")) {
 #ifdef HAVE_LIBESMTP
 
 	if (!strcmp(sagan_var, "email:")) { 
-	   config->output_thread_flag = 1;
 	   ptmp = sagan_var;
 
 	   while (ptmp != NULL ) { 
@@ -371,7 +372,6 @@ if (!strcmp(sagan_var, "unified2:")) {
 	/* output type (database, etc) */
 
 	if (!strcmp(sagan_var, "database:")) {
-	   config->output_thread_flag = 1;
 	   sagan_var = strtok_r(NULL, ",", &tok);
 	
 	   /* Type (only "log" is used right now */
