@@ -10,4 +10,5 @@ ossec-sagan.pl	- This utility takes a series of OSSEC rules, and generates
 		  a series of compatible SAGAN rules.  This was written 
 		  by Michael Iverson. [OSSEC to Sagan conversion utility]
 
-
+rsyslog		- Configuration to send rsyslog data to Sagan. Place this
+		  file in /etc/rsyslog.d
