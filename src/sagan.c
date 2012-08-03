@@ -521,12 +521,10 @@ PreludeInit(config);
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
 if ( config->sagan_unified2_flag ) { 
-
 sagan_log(config, 0, "");
 sagan_log(config, 0, "Unified2 file: %s", config->unified2_filepath);
 sagan_log(config, 0, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
 Unified2InitFile( config );
-
 }
 
 #endif
@@ -853,12 +851,7 @@ if (debug->debugsyslog) sagan_log(config, 0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslo
 
 		   /* If case insensitive */
 		   if ( rulestruct[b].s_nocase == 1 ) {
-		      snprintf(syslog_msg_origtmp,  sizeof(syslog_msg_origtmp), "%s", syslog_msg);
-		      syslog_msg_case=syslog_msg_origtmp;
-		      s_content_case=rulestruct[b].s_content[z];
-		      toupperc(syslog_msg_case);
-		      toupperc(s_content_case); 
-		      if (strstr(syslog_msg_case, s_content_case )) pcrematch++;
+		      if (strcasestr(syslog_msg_case, s_content_case )) pcrematch++;
 		      } else { 
 
 		   /* If case sensitive */

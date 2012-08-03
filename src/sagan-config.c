@@ -279,7 +279,7 @@ if (!strcmp(sagan_var, "alert_fwsam:")) {
        }
 #endif
 
-#if !defined(HAVE_DNET_H) || !defined(HAVE_DUMBNET_H)
+#if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
 if (!strcmp(sagan_var, "unified2:")) { 
    sagan_log(config, 0,"\"libdnet\" support not found.  This is needed for unified2."); 
    sagan_log(config, 1, "Re-compile with libdnet support or disable in the sagan.conf.");
