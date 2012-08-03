@@ -30,7 +30,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
 #include <stdio.h>
 #include <stdint.h>
@@ -39,8 +39,14 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include <dnet.h>
 #include <unistd.h>
+
+#ifdef HAVE_DUMBNET_H
+#include <dumbnet.h>
+#else
+#include <dnet.h>
+#endif
+
 
 #include "sagan.h"
 

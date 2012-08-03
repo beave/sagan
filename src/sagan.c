@@ -61,7 +61,7 @@
 #include <lognorm.h>
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/sagan-unified2.h"
 #endif
 
@@ -518,7 +518,7 @@ PreludeInit(config);
 
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
 if ( config->sagan_unified2_flag ) { 
 
@@ -631,7 +631,10 @@ while(1) {
 		   sagan_log(config, 2, "monitor thread progress....... [sleeping]");
 		   sleep(60); 		/* Wait for output threads to catch up */
 		   sagan_log(config, 0, "Processing of %s is complete.  Exiting.", config->sagan_fifo);
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 		   if ( config->dbtype ) record_last_cid(debug, config, counters)	/* For direct SQL logging */;
+#endif
 		   removelockfile(config);
 		   exit(0);
 		     }
@@ -1281,7 +1284,7 @@ sagan_alert( &SaganEvent[threadid] );	/*
 
 /* Log to unified2 output (if enabled and have libdnet). */
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 if ( config->sagan_unified2_flag ) {
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2( &SaganEvent[threadid] );
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2LogPacketAlert( &SaganEvent[threadid] );

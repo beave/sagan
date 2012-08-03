@@ -16,6 +16,12 @@
 /* Define to 1 if you have the <ctype.h> header file. */
 #define HAVE_CTYPE_H 1
 
+/* Define to 1 if you have the <dnet.h> header file. */
+#define HAVE_DNET_H 1
+
+/* Define to 1 if you have the <dumbnet.h> header file. */
+/* #undef HAVE_DUMBNET_H */
+
 /* Define to 1 if you have the `dup2' function. */
 #define HAVE_DUP2 1
 
@@ -45,6 +51,9 @@
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
+
+/* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
+/* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `ee' library (-lee). */
 #define HAVE_LIBEE 1

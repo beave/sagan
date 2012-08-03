@@ -283,12 +283,32 @@ the --disable-libpcap flag. ))
 
 if test "$LIBDNET" = "yes"; then
        AC_MSG_RESULT([------- libdnet support is enabled -------])
-       AC_CHECK_HEADER([dnet.h])
-       AC_CHECK_LIB(dnet, main,,AC_MSG_ERROR(The libdnet library cannot be found.
-This library is used for Sagan's Unified2 output support.  Please see
-https://wiki.quadrantsec.com/bin/view/Main/Unified2Output for more information. 
-To disable this feature use the --disable-libdnet flag. ))
-       fi
+
+AC_CHECK_HEADERS(dnet.h,,DNET_H="no")
+AC_CHECK_HEADERS(dumbnet.h,,DUMBNET_H="no")
+
+if test "x$DNET_H" = "xno" -a "x$DUMBNET_H" = "xno"; then
+    echo
+    echo "The libdnet headers cannot be found.  This library is used for Sagan's"
+    echo "Unified2 output support.  Please see:" 
+    echo "https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
+    echo "To disable this feature use the --disable-libdnet flag."
+    exit
+fi
+
+AC_CHECK_LIB(dnet, eth_set,,[DNET="no"])
+AC_CHECK_LIB(dumbnet, eth_set,,[DUMBNET="no"])
+
+if test "x$DNET" = "xno" -a "x$DUMBNET" = "xno"; then
+    echo
+    echo "The libdnet headers cannot be found.  This library is used for Sagan's" 
+    echo "Unified2 output support.  Please see:"
+    echo "https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
+    echo "To disable this feature use the --disable-libdnet flag."
+    exit
+fi
+
+fi
 
 if test "$SNORTSAM" = "yes"; then
         AC_MSG_RESULT([------- Snortsam support is enabled -------])

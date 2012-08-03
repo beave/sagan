@@ -52,7 +52,7 @@ sbool sagan_prelude_flag;
 prelude_client_t *preludeclient;
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/sagan-unified2.h"
 sbool sagan_unified2_flag;
 #endif
@@ -113,7 +113,7 @@ prelude_deinit();
 
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 if ( sagan_unified2_flag ) Unified2CleanExit(args->config); 
 #endif
 

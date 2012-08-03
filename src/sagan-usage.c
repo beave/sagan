@@ -91,7 +91,7 @@ fprintf(stderr, "* liblognorm (log normalization) support is included\n");
 fprintf(stderr, "* PLOG (syslog sniffer) support is included\n");
 #endif
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 fprintf(stderr, "* libdnet (for unified2) support is included\n");
 #endif
 
