@@ -288,6 +288,8 @@ int ip_proto;
 sbool s_find_port;
 sbool s_find_ip; 
 sbool normalize;
+sbool content_not[MAX_CONTENT];	/* content: ! "something" */
+
 int drop;			// inline DROP for ext.
 
 int threshold_type;		// 1 = limit,  2 = thresh,

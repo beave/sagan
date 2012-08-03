@@ -277,7 +277,6 @@ memset(tmpbuf,0,128);
 char ipbuf_src[128];
 char ipbuf_dst[128];
 
-char *syslog_msg_case;
 char *s_content_case;
 
 char *runas=RUNAS;
@@ -851,11 +850,24 @@ if (debug->debugsyslog) sagan_log(config, 0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslo
 
 		   /* If case insensitive */
 		   if ( rulestruct[b].s_nocase == 1 ) {
-		      if (strcasestr(syslog_msg_case, s_content_case )) pcrematch++;
+
+		      if (rulestruct[b].content_not[z] != 1 && strcasestr(syslog_msg, rulestruct[b].s_content[z])) 
+		         {
+			 pcrematch++;
+			 } else { 
+			 /* for content: ! */
+			 if ( rulestruct[b].content_not[z] == 1 && !strcasestr(syslog_msg, rulestruct[b].s_content[z])) pcrematch++;
+			 }
 		      } else { 
 
 		   /* If case sensitive */
-		   if (strstr(syslog_msg, rulestruct[b].s_content[z] )) pcrematch++;
+		   if ( rulestruct[b].content_not[z] != 1 && strstr(syslog_msg, rulestruct[b].s_content[z] )) 
+		      { 
+		      pcrematch++;
+		      } else { 
+		      /* for content: ! */
+		      if ( rulestruct[b].content_not[z] == 1 && !strstr(syslog_msg, rulestruct[b].s_content[z])) pcrematch++;
+		      }
 		   }
 		  }
 		 }

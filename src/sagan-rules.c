@@ -76,6 +76,8 @@ char *saveptrrule1;
 char *saveptrrule2;
 char *saveptrrule3;
 char *tmptoken;
+char *not;
+char *savenot;
 
 char *tok_tmp;
 char *tmptok_tmp;
@@ -368,6 +370,12 @@ remspaces(rulesplit);
 		arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) sagan_log(config, 1, "The \"content\" appears to be incomplete");
+
+		/* For content: ! "something" */
+
+		not = strtok_r(arg, "\"", &savenot);
+		if (strstr(not, "!")) rulestruct[counters->rulecount].content_not[content_count] = 1;
+
 		snprintf(rulestruct[counters->rulecount].s_content[content_count], sizeof(rulestruct[counters->rulecount].s_content[content_count]), "%s", tmp2);
 		content_count++;
 		rulestruct[counters->rulecount].content_count=content_count;

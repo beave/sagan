@@ -71,7 +71,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `mysqlclient_r' library (-lmysqlclient_r). */
-#define HAVE_LIBMYSQLCLIENT_R 1
+/* #undef HAVE_LIBMYSQLCLIENT_R */
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 #define HAVE_LIBPCAP 1
