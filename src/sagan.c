@@ -1029,6 +1029,8 @@ if (uid != NULL ) {
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=config->sagan_host;
 if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=config->sagan_host;
 
+after_log_flag=0; 
+
 /*********************************************************/
 /* After - Similar to thresholding,  but the opposite    */
 /* direction - ie - alert _after_ X number of events     */
