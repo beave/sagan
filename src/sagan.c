@@ -281,7 +281,7 @@ char *s_content_case;
 char *runas=RUNAS;
 
 int i;
-FILE *fd;
+int fd=0;
 int b;
 int z;
 int match=0;
@@ -584,10 +584,7 @@ sagan_log(config, 0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo)
 sagan_log(config, 0, "Attempting to open syslog FILE (%s).", config->sagan_fifo);
 }
 
-if ((fd = fopen(config->sagan_fifo, "r" )) == NULL) { 
-   sagan_log(config, 1, "Error.  Cannot open %s FIFO", config->sagan_fifo);
-   } 
-
+if ( fd == 0 ) fd = open(config->sagan_fifo, O_RDONLY);
 
 if ( config->sagan_fifo_flag == 0 ) { 
 sagan_log(config, 0, "Successfully opened FIFO (%s).", config->sagan_fifo);
@@ -595,14 +592,68 @@ sagan_log(config, 0, "Successfully opened FIFO (%s).", config->sagan_fifo);
 sagan_log(config, 0, "Successfully opened FILE (%s) and processing events.....", config->sagan_fifo);
 }
 
-
 while(1) { 
 
-	while(!feof(fd)) { 
+                if(fd < 0) {
+		        removelockfile(config);
+			sagan_log(config, 1, "[%s, line %d] Error opening in FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
+                        }
 
-		if (fgets(syslogstring, 10240, fd) == NULL) { 
-		sagan_log(config, 0, "Hmm, error reading FIFO\n"); 
-		}
+                i = read(fd, syslogstring, MAX_SYSLOGMSG);
+                
+		 if(i < 0) {
+  	                removelockfile(config);
+                        sagan_log(config, 1, "[%s, line %d] Error reading FIFO! %s (Errno: %d)", __FILE__, __LINE__, config->sagan_fifo, errno);
+                        }
+
+		/* Error on reading (FIFO writer left) and we have no 
+		 * previous error state. */
+
+		if (i == 0 && fifoerr == 0 ) { 
+		   if ( config->sagan_fifo_flag == 0 )  {
+		   sagan_log(config, 0, "FIFO closed (writer exited). Will start processing when writer resumes.");
+		   fifoerr=1;
+		   
+		   } else { 
+
+		/* If we're not running with a true FIFO,  we've reached the end of the file and have to handle 
+		 * things a bit different.  */
+
+		   close(fd);
+
+		   sagan_statistics(config);
+		   sagan_log(config, 2, "Waiting 60 seconds for output threads to catch up.  You can hit Control-C");
+		   sagan_log(config, 2, "if you're confident they have completed there task! You can hit enter to");
+		   sagan_log(config, 2, "monitor thread progress....... [sleeping]");
+		   sleep(60); 		/* Wait for output threads to catch up */
+		   sagan_log(config, 0, "Processing of %s is complete.  Exiting.", config->sagan_fifo);
+
+#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
+		   if ( config->dbtype ) record_last_cid(debug, config, counters)	/* For direct SQL logging */;
+#endif
+		   removelockfile(config);
+		   exit(0);
+		     }
+		   }   
+
+		/* If previous state was error,  now we see data,
+		 * then the write is back online. */
+
+		if ( fifoerr == 1 && i == 1 )  { 
+		   sagan_log(config, 0,"FIFO writer detected, resuming...");
+		   fifoerr=0;  /* Rest error state */
+		   }
+
+		/* FIFO will return null and eat CPU.  We sleep to avoid
+		 * this until the FIFO writer comes back online */
+
+		if ( fifoerr == 1 ) sleep(1);  
+
+//                snprintf(syslogtmp, sizeof(syslogtmp), "%c", c);
+//                strncat(syslogstring, syslogtmp, 1); 
+
+		//if ( c == '\n' || c == '\r' ) 
+                //{
 
 		counters->sagantotal++;
 		syslog_host = strtok_r(syslogstring, "|", &tok);
@@ -1302,17 +1353,7 @@ rc=0;
 } /* End for for loop */
 
 //syslogstring[0]='\0';		/* Reset values */
-
-}
-/* Hit EOF on FIFO, syslog daemon could be resetting */
-sagan_log(config, 0, "EOF on FIFO recieved.  Waiting for deamon to re-open FIFO"); 
-fclose(fd); 
-
-if ((fd = fopen(config->sagan_fifo, "r" )) == NULL) {
-   sagan_log(config, 1, "Error.  Cannot re-open %s FIFO", config->sagan_fifo);
-   }
-
-sagan_log(config, 0, "FIFO re-opened");
+//}
 
 } /* End of while(1) */
 
