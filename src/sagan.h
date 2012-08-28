@@ -202,7 +202,7 @@ struct _SaganConfig {
 
 /* libdnet - Used for unified2 support */
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
     char         unified2_filepath[MAXPATH];
     uint32_t     unified2_timestamp;
     FILE         *unified2_stream;
