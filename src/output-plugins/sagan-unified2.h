@@ -24,7 +24,7 @@
 
 /* sagan-unified2.h  */
 
-#ifdef HAVE_LIBDNET
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
 #include <stdint.h>
 #include <stdio.h>
