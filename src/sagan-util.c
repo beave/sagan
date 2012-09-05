@@ -138,14 +138,7 @@ char *fasthex(char *xdata, int length)
     return(retbuf);
 }
 
-/* Removes quotes from msg, pcre, etc */
-
-char  *remquotes(char *s) {
-       char *s1, *s2;
-       for(s1 = s2 = s;*s1;*s1++ = *s2++ )
-       while( *s2 == '"' )s2++;
-       return s;
-}
+/* Remove new-lines */
 
 char  *remrt(char *s) {
        char *s1, *s2;
@@ -153,7 +146,6 @@ char  *remrt(char *s) {
        while( *s2 == '\n' )s2++;
       return s;
 }
-
 
 /* Removes spaces from certain rule fields, etc */
 
@@ -164,6 +156,8 @@ char *remspaces(char *s) {
        return s;
 }
 
+/* Shift a string to all uppercase */ 
+
 char *toupperc(char* const s) {
         char* cur = s;
           while (*cur) {
@@ -171,6 +165,15 @@ char *toupperc(char* const s) {
           ++cur;
           }
   return s;
+}
+
+/* SQL strip.  */
+
+char *sql_strip(char *s) {
+       char *s1, *s2;
+       for(s1 = s2 = s;*s1;*s1++ = *s2++ )
+       while( *s2 == '<' || *s2 == '>' || *s2 == '&' || *s2 == '%' )s2++;
+       return s;
 }
 
 

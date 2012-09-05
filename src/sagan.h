@@ -59,7 +59,7 @@ void load_normalize( void );
 void sagan_chroot( const char *, const char * );
 char *remrt(char *);
 char *remspaces(char *);
-char *remquotes(char *);
+char *sql_strip(char *);
 char *betweenquotes( char * );
 char *reflookup( int, int );
 double CalcPct(uint64_t, uint64_t);
