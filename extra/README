@@ -1,0 +1,14 @@
+These are "extra" resources that can be used with Sagan. 
+
+sagan-gtk	- Displays a GTK/X11 "popup" window of a Sagan alert.  [External 
+		  plugin for Sagan]
+
+sagan-notify	- Uses the libnotify X11/GTK function to create a temporary 
+		  "popup" message. [External Plugin for Sagan]
+
+ossec-sagan.pl	- This utility takes a series of OSSEC rules, and generates
+		  a series of compatible SAGAN rules.  This was written 
+		  by Michael Iverson. [OSSEC to Sagan conversion utility]
+
+rsyslog		- Configuration to send rsyslog data to Sagan. Place this
+		  file in /etc/rsyslog.d

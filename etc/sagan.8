@@ -1,0 +1,77 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH SAGAN 8 "April 15, 2012"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+sagan \- Real-time System & Event Log Monitoring System
+.SH SYNOPSIS
+.B sagan
+.RI [ options ]
+.br
+.SH DESCRIPTION
+This manual page documents briefly the
+.B sagan
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBsagan\fP is a multi-threaded, real time system- and event-log monitoring
+system, but with a twist. Sagan uses a "Snort" like rule set for
+detecting malicious events happening on your network and/or computer
+systems.
+.br
+If Sagan detects a potentially bad event, that event can be stored to a
+Snort database (MySQL/PostgreSQL), send it to a SIEM tool like Prelude,
+or send an email.
+.br
+Sagan is meant to be used in a "centralized" logging environment, but
+will work fine as part of a standalone Host IDS system for workstations.
+.SH OPTIONS
+These programs follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+A summary of options is included below.
+.TP
+.B \-h, \-\-help
+Show summary of options.
+.TP
+.B \-d, \-\-debug [option]
+Enable debugging. Options are syslog, load, fwsam, sql, smtp, normalize and plog
+.TP
+.B \-D, \-\-daemon
+Make process a daemon (fork to the background)
+.TP
+.B \-u, \-\-user [username]
+Run as user (defaults to 'sagan')
+.TP
+.B \-c, \-\-chroot [directory]
+Chroots the Sagan process to the specified directory
+.TP
+.B \-f, \-\-config [file]
+Sagan configuration file to load
+.TP
+.B \-F, \-\-file [file]
+Sagan FIFO over ride.  This forces Sagan to read from a FILE rather than a FIFO.  The FILE needs to be in the Sagan format!
+.TP
+.B \-l, \-\-log [file]
+Set log file locaton and name.
+.SH AUTHOR
+Sagan was written by Champ Clark III <cclark@quadrantsec.com>
+.PP
+This manual page was written by Pierre Chifflier <pollux@debian.org>,
+for the Debian project (and may be used by others).
+
+
