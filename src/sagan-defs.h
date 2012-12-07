@@ -59,7 +59,7 @@
 #define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */
 
 #define MAX_PCRE	5		/* Max PCRE within a rule */
-#define MAX_CONTENT	5		/* Max 'content' within a rule */
+#define MAX_CONTENT	10		/* Max 'content' within a rule */
 #define MAX_REFERENCE	10		/* Max references within a rule */
 
 #define MAXUSER         32
