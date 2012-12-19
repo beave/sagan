@@ -31,7 +31,8 @@ output-plugins/sagan-twofish.c \
 output-plugins/sagan-snortsam.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
-processors/sagan-websense.c
+processors/sagan-websense.c \
+processors/sagan-blacklist.c
 
 
 install-data-local:

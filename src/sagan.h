@@ -200,6 +200,10 @@ struct _SaganConfig {
     int         pp_sagan_track_clients;
     sbool	sagan_track_clients_flag; 
 
+    sbool       blacklist_flag;
+    char	blacklist_file[MAXPATH];
+    int		blacklist_parse_depth;
+
 /* libesmtp/SMTP support */
     
 #ifdef HAVE_LIBESMTP

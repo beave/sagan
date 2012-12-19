@@ -406,6 +406,13 @@ if ( config->sagan_track_clients_flag) {
 if ( config->pp_sagan_track_clients ) Sagan_Log(0, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
 }
 
+if ( config->blacklist_flag) { 
+Sagan_Log(0, "");
+Sagan_Log(0, "Blacklist Processor loaded [%s]", config->blacklist_file); 
+Sagan_Log(0, "Blacklist loaded XX entries");
+Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
+}
+
 #ifdef WITH_WEBSENSE
 if ( config->websense_flag ) { 
 

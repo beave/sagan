@@ -275,6 +275,29 @@ if (!strcmp(sagan_option, "processor")) {
 		}
 
 
+	if (!strcmp(sagan_var, "blacklist:")) { 
+	   
+	   config->blacklist_flag=1;
+
+	   ptmp = sagan_var;
+
+	   while (ptmp != NULL ) {
+
+	     if (!strcmp(ptmp, "parse_depth")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+	        config->blacklist_parse_depth = atoi(ptmp);
+	        }
+
+             if (!strcmp(ptmp, "blacklist")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+		snprintf(config->blacklist_file, sizeof(config->blacklist_file), "%s", remrt(ptmp)); 
+		}
+             
+	     ptmp = strtok_r(NULL, "=", &tok);
+	     
+	     }		               
+	   }
+
 #ifdef WITH_WEBSENSE
 
         if (!strcmp(sagan_var, "websense:")) {
