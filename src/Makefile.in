@@ -57,7 +57,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
-	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
+	sagan-send-alert.$(OBJEXT) parse-ip.$(OBJEXT) \
+	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
 	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
@@ -196,6 +197,7 @@ sagan-output.c \
 sagan-processor.c \
 sagan-gen-msg.c \
 sagan-liblognorm.c \
+sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \
@@ -309,6 +311,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-references.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-rules.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-send-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-signal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-snort.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-snortsam.Po@am__quote@

@@ -46,11 +46,13 @@
 
 char *parse_ip( char *syslogmessage, int pos ) {
 
-int result, i, b;
+int result_space, result_nonspace, i, b;
+
 int flag=0;
 int current_pos=0; 
-int  current_len=0;
-int  previous_len=0;
+int current_len=0;
+int previous_len=0;
+int notfound=0;
 
 char ctmp[2] = { 0 };
 char lastgood[16] = { 0 };
@@ -65,49 +67,64 @@ struct sockaddr_in sa;
 
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage); 
 
-//ptmp = strtok_r(syslogmessage, " ", &tok);
 ptmp = strtok_r(tmpmsg, " ", &tok);
 
 while (ptmp != NULL ) {
 
 	if (strstr(ptmp, ".")) {
 
-	   result = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
+	   result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
 
 	   /* If we already have a good IP,  return it.  We can sometimes skips
 	    * the next steps */
 
-	   if ( result != 0 && strcmp(ptmp, "127.0.0.1")) {   
+	   if ( result_space != 0 && strcmp(ptmp, "127.0.0.1")) {   
+	      
 	      current_pos++; 
+
 	      if ( current_pos == pos ) { 
 	         return(ptmp); 
-	      }
+	      } 
+	   } else { 
+	   notfound = 1; 
 	   }
 
 	   /* Start tearing apart the substring */
 
+           if ( notfound == 1 ) { 
+
 	   for (b=0; b < strlen(ptmp); b++) {
 	       for (i = b; i < strlen(ptmp); i++) {
 
+/*
 	           if ( current_pos == pos ) {
 		      if (!strcmp(lastgood, "127.0.0.1")) return("0");
 		      retbuf=lastgood;
 		      return(retbuf); 
 		      }
-
+*/
 		   snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
 		   strlcat(msg, ctmp, sizeof(msg));
 
-		   result = inet_pton(AF_INET, msg,  &(sa.sin_addr));
+		   result_nonspace = inet_pton(AF_INET, msg,  &(sa.sin_addr));
 
-		   if ( result != 0 ) {
+		   if ( result_nonspace != 0 ) {
 		      strlcpy(lastgood, msg, sizeof(lastgood));
 		      flag=1; 
 		      }
 
-		   if ( flag == 1 && result == 0 ) { 
-		      flag=0; 
-		      current_pos++; 
+		   if ( flag == 1 && result_nonspace == 0 ) { 
+
+//		      flag=0; 
+		      current_pos++;
+
+		      if ( current_pos == pos ) { 
+		         if (!strcmp(lastgood, "127.0.0.1")) return("0");
+			 retbuf=lastgood;
+			 return(retbuf);
+			 }
+
+		      flag = 0; 
 		      i=i+strlen(lastgood);
 		      b=b+strlen(lastgood);
 		      break;
@@ -115,6 +132,8 @@ while (ptmp != NULL ) {
 		   }
   	       strlcpy(msg, "", sizeof(msg)); 
 	       }
+	       }
+	       notfound = 0; 
 	 }
 	 ptmp = strtok_r(NULL, " ", &tok);
      }

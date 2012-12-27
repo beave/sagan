@@ -37,6 +37,8 @@
 
 #include "sagan.h"
 
+int Sagan_Blacklist ( _SaganProcSyslog * );
+
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _SaganConfig *config;
 
@@ -97,10 +99,10 @@ for (;;) {
 	}
 #endif
 
+	if (config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
 	if (config->sagan_track_clients_flag) sagan_track_clients(SaganProcSyslog_LOCAL);
 	}
 
 free(SaganProcSyslog_LOCAL);
 }
-
 

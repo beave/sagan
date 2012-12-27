@@ -209,10 +209,10 @@ wiredevlog( _SaganConfig *config )
 	 * Right now,  the syslog server must use SOCK_DGRAM */ 
 
         if((outf = socket(AF_UNIX,SOCK_DGRAM,0)) < 0)
-                return(1);
+                return(TRUE);
         if(connect(outf,&s,sizeof(s)))
-                return(1);
-        return(0);
+                return(TRUE);
+        return(FALSE);
 }
 
 #endif

@@ -265,9 +265,9 @@ return(ip);
 int isnumeric (char *str) {
 
 if(strlen(str) == strspn(str, "0123456789")) {
-	return(1);
+	return(TRUE);
 	 } else {
-	return(0);
+	return(FALSE);
 	}
 }
 

@@ -57,7 +57,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
-	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
+	sagan-send-alert.$(OBJEXT) parse-ip.$(OBJEXT) \
+	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
 	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
@@ -196,6 +197,7 @@ sagan-output.c \
 sagan-processor.c \
 sagan-gen-msg.c \
 sagan-liblognorm.c \
+sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \
@@ -309,6 +311,7 @@ include ./$(DEPDIR)/sagan-plog.Po
 include ./$(DEPDIR)/sagan-processor.Po
 include ./$(DEPDIR)/sagan-references.Po
 include ./$(DEPDIR)/sagan-rules.Po
+include ./$(DEPDIR)/sagan-send-alert.Po
 include ./$(DEPDIR)/sagan-signal.Po
 include ./$(DEPDIR)/sagan-snort.Po
 include ./$(DEPDIR)/sagan-snortsam.Po

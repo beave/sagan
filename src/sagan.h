@@ -102,6 +102,8 @@ struct _SaganCounters {
 
     int      genmapcount;
 
+    int	     blacklist_count;
+
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
     uint64_t last_cid;
     uint64_t cid;            /* For passing CID with signal */
@@ -274,11 +276,6 @@ struct _SaganConfig {
 
 };
 
-
-/* Parsers */
-
-char *parse_ip( char *, int );
-int   parse_port( char * );
 
 /* Reference structure */
 typedef struct _Ref_Struct _Ref_Struct;
@@ -541,6 +538,11 @@ typedef struct _SaganSigArgs _SaganSigArgs;
 void plog_handler( _SaganSigArgs * );
 #endif
 
+struct _SaganParseIP {
+        char ipaddr[16];
+	};
+
+
 void Sagan_Alert( _SaganEvent * );
 void sagan_ext_thread( _SaganEvent * );
 
@@ -560,3 +562,10 @@ void Sagan_Output( _SaganEvent * );
 void Sagan_Processor ( void );
 void sagan_fwsam( _SaganEvent * );
 sbool is_rfc1918 ( char * );
+
+/* Parsers */
+
+char *parse_ip( char *, int );
+int   parse_port( char * );
+
+
