@@ -368,11 +368,12 @@ sigargs->daemonize = daemonize;
    after this thread is started */
 
 if ( config->plog_flag ) { 
+  
+rc = pthread_create( &pcap_thread, NULL, (void *)plog_handler, sigargs ); 
 
-if ( pthread_create( &pcap_thread, NULL, (void *)plog_handler, sigargs )) {
-
+if ( rc != 0 ) {
         Remove_Lock_File();
-        Sagan_Log(1, "[%s, line %d] Error creating libpcap handler thread.", __FILE__, __LINE__);
+        Sagan_Log(1, "[%s, line %d] Error creating libpcap handler thread [error: %d].", __FILE__, __LINE__, rc);
         }
 
 sleep(1); 	/* Sleep to avoid race between main() and plog thread 
@@ -506,9 +507,11 @@ if (pid == 0) {} else { exit(0); }
 /* Create the signal handlers thread _after_ the fork() so it can properly 
  * handly signals - Champ Clark III - 06/13/2011 */
 
-if ( pthread_create( &sig_thread, NULL, (void *)Sig_Handler, sigargs )) {
+rc = pthread_create( &sig_thread, NULL, (void *)Sig_Handler, sigargs ); 
+
+if ( rc != 0  ) {
         Remove_Lock_File();
-        Sagan_Log(1, "[%s, line %d] Error creating signal handler thread.", __FILE__, __LINE__);
+        Sagan_Log(1, "[%s, line %d] Error creating signal handler thread. [error: %d]", __FILE__, __LINE__, rc);
         }
 
 
@@ -516,9 +519,11 @@ if ( pthread_create( &sig_thread, NULL, (void *)Sig_Handler, sigargs )) {
 
 if (!daemonize) { 
 
-if (pthread_create( &key_thread, NULL, (void *)key_handler, config )) { ;
+rc = pthread_create( &key_thread, NULL, (void *)key_handler, config ); 
+
+if ( rc != 0 ) { 
 	Remove_Lock_File();
-	Sagan_Log(1, "[%s, line %d] Error creating key_handler thread.", __FILE__, __LINE__);
+	Sagan_Log(1, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
 	}
 
 }
@@ -534,9 +539,11 @@ Sagan_Log(0, "Spawning %d Processors Threads.", config->max_processor_threads);
 
 for (i = 0; i < config->max_processor_threads; i++) {
 
-     if (  pthread_create ( &processor_id[i], &thread_processor_attr, (void *)Sagan_Processor, NULL )) { 
+     rc = pthread_create ( &processor_id[i], &thread_processor_attr, (void *)Sagan_Processor, NULL ); 
+
+     if ( rc != 0 ) { 
          Remove_Lock_File();
-         Sagan_Log(1, "Could not pthread_create() for I/O processors [Error code: %d]", rc);                            
+         Sagan_Log(1, "Could not pthread_create() for I/O processors [error: %d]", rc);                            
         }
      }
 
