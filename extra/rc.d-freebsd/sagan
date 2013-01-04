@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# PROVIDE: sagan
+# REQUIRE: DAEMON
+# BEFORE: LOGIN
+# KEYWORD: shutdown
+
+# Add the following lines to /etc/rc.conf to enable sagan:
+# sagan_enable (bool):		Set to YES to enable sagan
+# 				Default: NO
+# sagan_flags (str):		Extra flags passed to sagan
+#				Default: -D
+# sagan_user (str):    Run Sagan as this user
+#       Default: sagan
+# sagan_conf (str):		sagan configuration file
+#				Default: /usr/local/etc/sagan/sagan.conf
+
+. /etc/rc.subr
+
+name="sagan"
+rcvar=sagan_enable
+extra_commands=reload
+
+command="/usr/local/sbin/sagan"
+
+load_rc_config $name
+
+[ -z "$sagan_enable" ]    && sagan_enable="NO"
+[ -z "$sagan_conf" ]      && sagan_conf="/usr/local/etc/sagan.conf"
+[ -z "$sagan_user" ]      && sagan_user="sagan"
+[ -z "$sagan_flags" ]     && sagan_flags="-D -u $sagan_user"
+                          
+[ -n "$sagan_conf" ]      && sagan_flags="$sagan_flags -f $sagan_conf"
+
+pidfile="/var/run/sagan/sagan.pid"
+
+run_rc_command "$1"
+
+
