@@ -95,6 +95,8 @@ struct _SaganCounters {
     int	     thread_output_counter; 
     int	     thread_processor_counter;
 
+    int      var_count; 
+
     int	     classcount;
     int      rulecount;
     int	     refcount;
@@ -538,9 +540,11 @@ typedef struct _SaganSigArgs _SaganSigArgs;
 void plog_handler( _SaganSigArgs * );
 #endif
 
-struct _SaganParseIP {
-        char ipaddr[16];
-	};
+typedef struct _SaganVar _SaganVar;
+struct _SaganVar {
+     char var_name[64];
+     char var_value[64];
+};
 
 
 void Sagan_Alert( _SaganEvent * );
@@ -561,6 +565,8 @@ char *DNS_Lookup( char * );
 void Sagan_Output( _SaganEvent * );
 void Sagan_Processor ( void );
 void sagan_fwsam( _SaganEvent * );
+char *Sagan_Var_To_Value(char *);
+
 sbool is_rfc1918 ( char * );
 
 /* Parsers */

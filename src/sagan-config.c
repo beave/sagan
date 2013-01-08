@@ -69,6 +69,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
+struct _SaganVar *var; 
 
 void Load_Config( void ) { 
 
@@ -83,7 +84,8 @@ char tmpbuf[CONFBUF];
 char tmpstring[CONFBUF];
 
 char *sagan_option=NULL;
-char *sagan_var=NULL;
+char *sagan_var1=NULL;
+char *sagan_var2=NULL;
 char *ptmp=NULL;
 
 char *tok=NULL;
@@ -95,6 +97,10 @@ int i,check;
 snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
 snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
 snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
+snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", FIFO); 
+snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", RULE_PATH);
+
+
 config->sagan_proto = 17;		/* Default to UDP */
 config->max_output_threads = MAX_OUTPUT_THREADS;
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
@@ -120,13 +126,13 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
      if (!strcmp(remrt(sagan_option), "max_output_threads")) { 
-	 sagan_var = strtok_r(NULL, " ", &tok);
-         config->max_output_threads = atol(sagan_var);
+	 sagan_var1 = strtok_r(NULL, " ", &tok);
+         config->max_output_threads = atol(sagan_var1);
 	 }
 
      if (!strcmp(remrt(sagan_option), "max_processor_threads")) {
-         sagan_var = strtok_r(NULL, " ", &tok);
-         config->max_processor_threads = atol(sagan_var);
+         sagan_var1 = strtok_r(NULL, " ", &tok);
+         config->max_processor_threads = atol(sagan_var1);
          }
 
      if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
@@ -146,8 +152,8 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
         }
 
      if (!strcmp(sagan_option, "sagan_port")) {
-         sagan_var = strtok_r(NULL, " ", &tok);
-	 config->sagan_port = atoi(sagan_var);
+         sagan_var1 = strtok_r(NULL, " ", &tok);
+	 config->sagan_port = atoi(sagan_var1);
          }
 
 #ifndef HAVE_LIBESMTP
@@ -158,16 +164,16 @@ if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priorit
 #ifdef HAVE_LIBESMTP
 
    if (!strcmp(sagan_option, "send-to")) { 
-      sagan_var = strtok_r(NULL, " ", &tok);
-      snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", sagan_var);
+      sagan_var1 = strtok_r(NULL, " ", &tok);
+      snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", sagan_var1);
       remrt(config->sagan_esmtp_to);
       config->sagan_esmtp_flag=1;
       config->sagan_sendto_flag=1;
       }
 
    if (!strcmp(sagan_option, "min_email_priority")) {
-       sagan_var = strtok_r(NULL, " ", &tok);
-       config->min_email_priority = atoi(sagan_var);
+       sagan_var1 = strtok_r(NULL, " ", &tok);
+       config->min_email_priority = atoi(sagan_var1);
        }
 
 #endif
@@ -192,8 +198,8 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
        }
 
     if (!strcmp(sagan_option, "plog_port")) {
-       sagan_var = strtok_r(NULL, " ", &tok); 
-       config->plog_port = atoi(sagan_var);
+       sagan_var1 = strtok_r(NULL, " ", &tok); 
+       config->plog_port = atoi(sagan_var1);
        config->plog_flag = 1;
        }
 
@@ -202,8 +208,8 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 
      if (!strcmp(sagan_option, "sagan_proto")) { 
-        sagan_var = strtok_r(NULL, " ", &tok);
-	config->sagan_proto = atoi(sagan_var);
+        sagan_var1 = strtok_r(NULL, " ", &tok);
+	config->sagan_proto = atoi(sagan_var1);
 	}
      
      if (!strcmp(sagan_option, "sagan_hostname")) { 
@@ -222,8 +228,8 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
 	}
     
      if (!strcmp(sagan_option, "sagan_detail")) {  
-         sagan_var = strtok_r(NULL, " ", &tok);
-         config->sagan_detail = atoi(sagan_var);
+         sagan_var1 = strtok_r(NULL, " ", &tok);
+         config->sagan_detail = atoi(sagan_var1);
 	 }
 
 #endif
@@ -246,40 +252,42 @@ if (!strcmp(sagan_option, "normalize:")) {
 if (!strcmp(sagan_option, "normalize:")) {
 	liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
 	
-	sagan_var = strtok_r(NULL, ",", &tok);
-	remspaces(sagan_var);
-	snprintf(liblognormstruct[liblognorm_count].type, sizeof(liblognormstruct[liblognorm_count].type), "%s", sagan_var);
+	sagan_var1 = strtok_r(NULL, ",", &tok);
+	remspaces(sagan_var1);
+	snprintf(liblognormstruct[liblognorm_count].type, sizeof(liblognormstruct[liblognorm_count].type), "%s", sagan_var1);
 
 	snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, ",", &tok));
 	remspaces(tmpstring);
 	tmpstring[strlen(tmpstring)-1] = '\0';
-	strlcpy(normfile, sagan_replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(normfile));
-	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
 
+        strlcpy(normfile, Sagan_Var_To_Value(tmpstring), sizeof(normfile));
+        remspaces(normfile);
+
+	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
 	liblognorm_count++;
 }
 
 #endif
 
 if (!strcmp(sagan_option, "processor")) {
-        sagan_var = strtok_r(NULL," ", &tok);
+        sagan_var1 = strtok_r(NULL," ", &tok);
 
-        if (!strcmp(sagan_var, "sagan-track-clients:")) {
-            sagan_var = strtok_r(NULL," ", &tok);
+        if (!strcmp(sagan_var1, "sagan-track-clients:")) {
+            sagan_var1 = strtok_r(NULL," ", &tok);
 
-                if (!strcmp(sagan_var, "client_timeout")) {
-                   sagan_var = strtok_r(NULL," ", &tok);
-                   config->pp_sagan_track_clients = atoi(sagan_var);
+                if (!strcmp(sagan_var1, "client_timeout")) {
+                   sagan_var1 = strtok_r(NULL," ", &tok);
+                   config->pp_sagan_track_clients = atoi(sagan_var1);
                    config->sagan_track_clients_flag = 1;
                    }
 		}
 
 
-	if (!strcmp(sagan_var, "blacklist:")) { 
+	if (!strcmp(sagan_var1, "blacklist:")) { 
 	   
 	   config->blacklist_flag=1;
 
-	   ptmp = sagan_var;
+	   ptmp = sagan_var1;
 
 	   while (ptmp != NULL ) {
 
@@ -300,11 +308,11 @@ if (!strcmp(sagan_option, "processor")) {
 
 #ifdef WITH_WEBSENSE
 
-        if (!strcmp(sagan_var, "websense:")) {
+        if (!strcmp(sagan_var1, "websense:")) {
 
 	   config->websense_flag=1;
 
-           ptmp = sagan_var;
+           ptmp = sagan_var1;
 
            while (ptmp != NULL ) {
 
@@ -355,9 +363,9 @@ if (!strcmp(sagan_option, "output")) {
      
      config->output_thread_flag = 1;
 
-     sagan_var = strtok_r(NULL," ", &tok);
+     sagan_var1 = strtok_r(NULL," ", &tok);
 
-     if (!strcmp(sagan_var, "external:")) {
+     if (!strcmp(sagan_var1, "external:")) {
         config->sagan_ext_flag=1;
         snprintf(config->sagan_extern, sizeof(config->sagan_extern), "%s", strtok_r(NULL, " ", &tok));
         if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
@@ -365,14 +373,14 @@ if (!strcmp(sagan_option, "output")) {
 
 
 #ifdef WITH_SNORTSAM
-if (!strcmp(sagan_var, "alert_fwsam:")) { 
+if (!strcmp(sagan_var1, "alert_fwsam:")) { 
        snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", remrt(strtok_r(NULL, " ", &tok)));
        config->sagan_fwsam_flag=1; 
        }
 #endif
 
 #if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
-if (!strcmp(sagan_var, "unified2:")) { 
+if (!strcmp(sagan_var1, "unified2:")) { 
    Sagan_Log(0,"\"libdnet\" support not found.  This is needed for unified2."); 
    Sagan_Log(1, "Re-compile with libdnet support or disable in the sagan.conf.");
    }
@@ -380,11 +388,11 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-if (!strcmp(sagan_var, "unified2:")) { 
+if (!strcmp(sagan_var1, "unified2:")) { 
   
   	   config->sagan_unified2_flag = 1;
 	   
-	   ptmp = sagan_var; 
+	   ptmp = sagan_var1; 
 	   remrt(ptmp);
 
 	   while (ptmp != NULL ) {
@@ -410,8 +418,8 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 #ifdef HAVE_LIBESMTP
 
-	if (!strcmp(sagan_var, "email:")) { 
-	   ptmp = sagan_var;
+	if (!strcmp(sagan_var1, "email:")) { 
+	   ptmp = sagan_var1;
 
 	   while (ptmp != NULL ) { 
 
@@ -438,28 +446,28 @@ if (!strcmp(sagan_var, "unified2:")) {
 
 	/* output type (database, etc) */
 
-	if (!strcmp(sagan_var, "database:")) {
-	   sagan_var = strtok_r(NULL, ",", &tok);
+	if (!strcmp(sagan_var1, "database:")) {
+	   sagan_var1 = strtok_r(NULL, ",", &tok);
 	
 	   /* Type (only "log" is used right now */
 
-	   if (!strcmp(sagan_var, "log")) { 
-	      sagan_var = strtok_r(NULL, ",", &tok); 
+	   if (!strcmp(sagan_var1, "log")) { 
+	      sagan_var1 = strtok_r(NULL, ",", &tok); 
 	      }
 
 	      /* MySQL/PostgreSQL/Oracle/etc */
 
-	      remspaces(sagan_var);
+	      remspaces(sagan_var1);
 
 
-	      if (!strcmp(sagan_var, "mysql" )) { 
+	      if (!strcmp(sagan_var1, "mysql" )) { 
 #ifndef HAVE_LIBMYSQLCLIENT_R
    	         Sagan_Log(1,"MySQL support not found. Re-compile with MySQL support or disable in the sagan.conf.");
 #endif
 	         config->dbtype=1; 
 	         }
 
-	      if (!strcmp(sagan_var, "postgresql" )) { 
+	      if (!strcmp(sagan_var1, "postgresql" )) { 
 #ifndef HAVE_LIBPQ
 		 Sagan_Log(1,"PostgreSQL support not found. Re-compile with PostgreSQL support or disable in the sagan.conf.");
 #endif
@@ -467,10 +475,10 @@ if (!strcmp(sagan_var, "unified2:")) {
 		 }
 
 
-	      sagan_var = strtok_r(NULL, ",", &tok);
-	      remrt(sagan_var);					/* rm NL */
+	      sagan_var1 = strtok_r(NULL, ",", &tok);
+	      remrt(sagan_var1);					/* rm NL */
 	      
-	      strlcpy(tmpbuf, sagan_var, sizeof(tmpbuf));
+	      strlcpy(tmpbuf, sagan_var1, sizeof(tmpbuf));
 
 	      ptmp = strtok_r(tmpbuf, "=", &tok);
 
@@ -509,40 +517,24 @@ if (!strcmp(sagan_var, "unified2:")) {
 	   }
 #endif      
    }
-       
-     /* "var" */
+     
+     /* var */
 
-     if (!strcmp(sagan_option, "var")) {
-         sagan_var = strtok_r(NULL, " ", &tok);
-
-	if (config->sagan_fifo_flag == 0 ) { 		/* File overides FIFO settings */
-
-        if (!strcmp(sagan_var, "FIFO" )) {
-	   snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", strtok_r(NULL, " ", &tok));
-           config->sagan_fifo[strlen(config->sagan_fifo)-1] = '\0'; 
-	   }
+     if (!strcmp(sagan_option, "var")) { 
+        sagan_var1 = strtok_r(NULL, " ", &tok);
+	var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
+	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name), "$%s", sagan_var1);
+	sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
+	snprintf(var[counters->var_count].var_value, sizeof(var[counters->var_count].var_value), "%s", remrt(sagan_var2));
+	counters->var_count++;
 	
-	}
+	/* Required var's - all others are optional */ 
 
-        if (!strcmp(sagan_var, "RULE_PATH" )) {
-	   snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", strtok_r(NULL, " ", &tok));
-	   config->sagan_rule_path[strlen(config->sagan_rule_path)-1] = '\0';
-	   }
+	if (!strcmp(sagan_var1, "FIFO")) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", sagan_var2);
+	if (!strcmp(sagan_var1, "LOCKFILE" )) snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", sagan_var2);
+	if (!strcmp(sagan_var1, "ALERTLOG" )) snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", sagan_var2);
+	if (!strcmp(sagan_var1, "SAGANLOGPATH" )) snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", sagan_var2);
 
-        if (!strcmp(sagan_var, "LOCKFILE" )) {
-	   snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", strtok_r(NULL, " ", &tok));
-           config->sagan_lockfile[strlen(config->sagan_lockfile)-1] = '\0'; 
-	   }
-
-        if (!strcmp(sagan_var, "ALERTLOG" )) {
-           snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", strtok_r(NULL, " ", &tok));
-           config->sagan_alert_filepath[strlen(config->sagan_alert_filepath)-1] = '\0'; 
-	   }
-	
-	if (!strcmp(sagan_var, "SAGANLOGPATH" )) {
-           snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", strtok_r(NULL, " ", &tok));
-           config->sagan_log_path[strlen(config->sagan_log_path)-1] = '\0';
-           }
 	}
 
 /* "include */
@@ -553,7 +545,8 @@ if (!strcmp(sagan_var, "unified2:")) {
 
          tmpstring[strlen(tmpstring)-1] = '\0';
 	
-         strlcpy(ruleset, sagan_replace_str(tmpstring, "$RULE_PATH", config->sagan_rule_path), sizeof(ruleset));
+	 strlcpy(ruleset, Sagan_Var_To_Value(tmpstring), sizeof(ruleset)); 
+	 remspaces(ruleset);
 
 	 filename=sagan_getfilename(ruleset);   /* Get the file name to figure out "what" we're loading */
 

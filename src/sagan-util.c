@@ -56,6 +56,9 @@ MYSQL    *mysql;
 #include "version.h"
 
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
+struct _SaganVar *var; 
+
 sbool daemonize;
 
 
@@ -475,5 +478,39 @@ if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    // 172.16/31.X.
 
 return(FALSE);
 
+}
+
+char *Sagan_Var_To_Value(char *instring) {
+
+char *ptmp = NULL;
+char *tok = NULL;
+char *retbuf = NULL;
+char tmp[256] = { 0 };
+char tmp2[256] = { 0 };
+char tmp3[254] = { 0 };
+char tmp_result[256] = { 0 };
+char *tmpbuf = NULL;
+int i=0;
+
+snprintf(tmp, sizeof(tmp), "%s", instring);
+tmpbuf = tmp;
+
+for (i=0; i<counters->var_count; i++) {
+
+    ptmp = strtok_r(tmp, " ", &tok);
+
+        while (ptmp != NULL ) {
+             strlcpy(tmp2, sagan_replace_str(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
+             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
+             strlcat(tmp_result, tmp3, sizeof(tmp_result));
+             ptmp = strtok_r(NULL, " ", &tok);
+             }
+
+snprintf(tmp, sizeof(tmp), "%s", tmp_result);
+tmpbuf = tmp;
+strlcpy(tmp_result, "", sizeof(tmp_result));
+}
+
+return(tmpbuf);
 }
 

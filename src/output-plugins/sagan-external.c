@@ -99,7 +99,7 @@ if ( pipe(out) < 0 ) {
 
 if (( pid = fork()) == 0 ) { 
 
-   /* Causes problems wiht alert.log */
+   /* Causes problems with alert.log */
    pthread_mutex_lock( &ext_mutex );
    close(0);
    close(1);
