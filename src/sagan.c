@@ -458,9 +458,9 @@ Sagan_Log(0, "Next CID             : %" PRIu64 "", counters->cid);
 /* Check the event table and compare sensor.last_cid with event_cid.  If there's a 
  * mismatch,  we correct it  - Champ Clark 03/30/2012 */ 
 
-if ( atol(sqlout) != counters->cid ) {
+if ( strtoull(sqlout, NULL, 10) != counters->cid ) {
    Sagan_Log(2, "Inconsistent cid information for sid=%d.  Recovering by rolling forward to cid=%d", config->sensor_id, atol(sqlout) );
-   counters->cid = atol(sqlout);
+   counters->cid = strtoull(sqlout, NULL, 10); 
    record_last_cid(debug, config, counters);
    }
 
@@ -579,9 +579,9 @@ while(fd != NULL) {
 	   Sagan_Log(0, "FIFO writer has restarted. Processing events."); 
 	   fifoerr=0; 
 	   }
-	        
 
-		counters->sagantotal++;
+		counters->sagantotal++;			
+
 		syslog_host = strtok_r(syslogstring, "|", &tok);
 
 		/* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
@@ -635,7 +635,9 @@ while(fd != NULL) {
                    Sagan_Log(2, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
                    }
 	       }
-	
+
+//	        if ( config->home_any == 1) { 
+
 		/* We know check the rest of the values */
 
 		syslog_facility=strtok_r(NULL, "|", &tok);
@@ -726,6 +728,9 @@ while(fd != NULL) {
 if (debug->debugthreads) Sagan_Log(0, "Current \"proc_msgslot\": %d", proc_msgslot); 
 if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
+//} else { 
+//printf("IGNORE\n");
+//}
 } /* while(fgets) 
 
 /* fgets() has returned a error,  likely due to the FIFO writer leaving */ 
@@ -738,6 +743,7 @@ if ( fifoerr == 0 )
    }
 
 } /* while(fd != NULL)  */
+
 
 fclose(fd); 			/* ???? */
 

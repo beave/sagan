@@ -297,7 +297,7 @@ sqlout = db_query(sql);
 if ( sqlout == NULL ) { 
    t_cid = 0; 		/* Returned NULL,  no CID found */
    } else { 
-   t_cid = atol(sqlout);
+   t_cid = strtoull(sqlout, NULL, 10);
    }
 
 return(t_cid);

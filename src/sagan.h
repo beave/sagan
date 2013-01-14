@@ -197,6 +197,9 @@ struct _SaganConfig {
     int		 daemonize;
     int          sagan_proto;
 
+    sbool	 home_any;			/* 0 == no, 1 == yes */
+    sbool	 external_any;		
+
     sbool	 endian;
 
 /* Processors */
@@ -545,7 +548,10 @@ struct _SaganVar {
      char var_name[64];
      char var_value[64];
 };
-
+typedef struct _SaganHomeNet _SaganHomeNet;
+struct _SaganHomeNet {
+     char network[130];
+};
 
 void Sagan_Alert( _SaganEvent * );
 void sagan_ext_thread( _SaganEvent * );

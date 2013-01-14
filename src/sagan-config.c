@@ -105,6 +105,10 @@ config->sagan_proto = 17;		/* Default to UDP */
 config->max_output_threads = MAX_OUTPUT_THREADS;
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
+config->home_any = 0; 
+config->external_any = 0; 
+
+
 /* Start loading configuration */
 
 rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
@@ -127,12 +131,12 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
      if (!strcmp(remrt(sagan_option), "max_output_threads")) { 
 	 sagan_var1 = strtok_r(NULL, " ", &tok);
-         config->max_output_threads = atol(sagan_var1);
+         config->max_output_threads = strtoull(sagan_var1, NULL, 10);
 	 }
 
      if (!strcmp(remrt(sagan_option), "max_processor_threads")) {
          sagan_var1 = strtok_r(NULL, " ", &tok);
-         config->max_processor_threads = atol(sagan_var1);
+         config->max_processor_threads = strtoull(sagan_var1, NULL, 10);
          }
 
      if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
@@ -335,7 +339,7 @@ if (!strcmp(sagan_option, "processor")) {
 	
              if (!strcmp(ptmp, "max_cache")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-		config->websense_max_cache = atol(ptmp);
+		config->websense_max_cache = strtoull(ptmp, NULL, 10);
                 }
 
 	     if (!strcmp(ptmp, "cache_timeout")) { 
@@ -534,7 +538,15 @@ if (!strcmp(sagan_var1, "unified2:")) {
 	if (!strcmp(sagan_var1, "LOCKFILE" )) snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", sagan_var2);
 	if (!strcmp(sagan_var1, "ALERTLOG" )) snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", sagan_var2);
 	if (!strcmp(sagan_var1, "SAGANLOGPATH" )) snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", sagan_var2);
+/*
+	if (!strcmp(sagan_var1, "HOME_NET" )) { 
+	   if (strcasestr(sagan_var2, "any" )) config->home_any = 1; 
+	   }
 
+	if (!strcmp(sagan_var1, "EXTERNAL_NET" )) {
+	   if (strcasestr(sagan_var2, "any" )) config->external_any = 1;
+	   }
+*/	
 	}
 
 /* "include */
