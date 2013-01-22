@@ -530,7 +530,7 @@ void sagan_esmtp_thread( _SaganEvent * );
 /****************************************************************************/
 
 typedef struct _SaganSigArgs _SaganSigArgs;
-	struct _SaganSigArgs {
+struct _SaganSigArgs {
         int daemonize;
         uint64_t cid;
         };

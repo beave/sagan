@@ -519,7 +519,7 @@ if ( rc != 0  ) {
 
 if (!daemonize) { 
 
-rc = pthread_create( &key_thread, NULL, (void *)key_handler, config ); 
+rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL ); 
 
 if ( rc != 0 ) { 
 	Remove_Lock_File();

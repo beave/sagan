@@ -59,25 +59,25 @@
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `ee' library (-lee). */
-#define HAVE_LIBEE 1
+/* #undef HAVE_LIBEE */
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 /* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
-#define HAVE_LIBESTR 1
+/* #undef HAVE_LIBESTR */
 
 /* Define to 1 if you have the `json' library (-ljson). */
 /* #undef HAVE_LIBJSON */
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
-#define HAVE_LIBLOGNORM 1
+/* #undef HAVE_LIBLOGNORM */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `mysqlclient_r' library (-lmysqlclient_r). */
-#define HAVE_LIBMYSQLCLIENT_R 1
+/* #undef HAVE_LIBMYSQLCLIENT_R */
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 #define HAVE_LIBPCAP 1
@@ -167,10 +167,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlcat' function. */
-/* #undef HAVE_STRLCAT */
+#define HAVE_STRLCAT 1
 
 /* Define to 1 if you have the `strlcpy' function. */
-/* #undef HAVE_STRLCPY */
+#define HAVE_STRLCPY 1
 
 /* Define to 1 if you have the `strlen' function. */
 #define HAVE_STRLEN 1
@@ -225,7 +225,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "sagan"
