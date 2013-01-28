@@ -50,8 +50,6 @@ int result_space, result_nonspace, i, b;
 
 int flag=0;
 int current_pos=0; 
-int current_len=0;
-int previous_len=0;
 int notfound=0;
 
 char ctmp[2] = { 0 };

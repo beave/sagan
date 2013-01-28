@@ -463,7 +463,6 @@ void showerror(void);
 void getout(int ret);
 char *inettoa(unsigned long ip);
 void logmessage(unsigned int level,char *logmsg,char *module,unsigned long ip);
-void remspace(char *str);
 unsigned long parseduration(char *p);
 unsigned long getip(char *ipstr);
 char *gethstname(unsigned long ip);

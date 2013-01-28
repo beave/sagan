@@ -35,7 +35,7 @@
 
 #include "version.h"
 
-void sagan_usage(void)
+void Usage(void)
 {
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
@@ -95,4 +95,5 @@ fprintf(stderr, "* PLOG (syslog sniffer) support is included\n");
 fprintf(stderr, "* libdnet (for unified2) support is included\n");
 #endif
 
+fprintf(stderr, "* Compiled on %s at %s\n", __DATE__, __TIME__);
 }

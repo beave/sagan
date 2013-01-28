@@ -146,67 +146,30 @@ char *facility;
 char *syspri;
 char *level;
 char *tag;
-char *syslog_message=NULL;
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
 
 
 char tmpbuf[128];
-char ipbuf_src[128];
-char ipbuf_dst[128];
 char s_msg[1024];
 
 
 char f_src_ip[MAXIP];
 char f_dst_ip[MAXIP];
 
-char *syslog_host=NULL;
-//char  syslog_hosttmp[MAX_MSGSLOT][MAXHOST];
-
-char *syslog_facility=NULL;
-//char syslog_facilitytmp[MAX_MSGSLOT][MAXFACILITY];
-
-char *syslog_priority=NULL;
-
-char *syslog_level=NULL;
-//char syslog_leveltmp[MAX_MSGSLOT][MAXLEVEL];
-
-char *syslog_tag=NULL;
-//char syslog_tagtmp[MAX_MSGSLOT][MAXTAG];
-
-char *syslog_date=NULL;
-//char syslog_datetmp[MAX_MSGSLOT][MAXDATE];
-
-char *syslog_time=NULL;
-//char syslog_timetmp[MAX_MSGSLOT][MAXTIME];
-
-char *syslog_program=NULL;
-//char syslog_programtmp[MAX_MSGSLOT][MAXPROGRAM];
-
-char *syslog_msg=NULL;
-//char syslog_msg_origtmp[MAX_SYSLOGMSG];
-
 time_t t;
-struct tm *now, *run;
+struct tm *now;
 char  timet[20];
 
 uint64_t thresh_oldtime_src;
 uint64_t after_oldtime_src;
 
-//int  thresh_count_by_src=0;
-//int  thresh_count_by_dst=0;
 sbool thresh_flag=0;
 sbool thresh_log_flag=0;
 
-char sysmsg[MAX_MSGSLOT][MAX_SYSLOGMSG];
-
 char ip_srctmp[MAXIP];
 char ip_dsttmp[MAXIP];
-
-char s_msgtmp[MAX_MSGSLOT][1024];
-int src_porttmp[MAX_MSGSLOT];
-int dst_porttmp[MAX_MSGSLOT];
 
 
 		/* Search for matches */
@@ -405,12 +368,12 @@ if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
 if (username != NULL ) {
-    snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", sql_strip(username));
+    snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", SQL_Strip(username));
     strlcat(s_msg, tmpbuf, sizeof(s_msg));
     }
 
 if (uid != NULL ) { 
-   snprintf(tmpbuf, sizeof(tmpbuf), " [uid: %s]", sql_strip(uid));
+   snprintf(tmpbuf, sizeof(tmpbuf), " [uid: %s]", SQL_Strip(uid));
    strlcat(s_msg, tmpbuf, sizeof(s_msg));
    }
 
@@ -692,47 +655,8 @@ if ( threadid >= MAX_THREADS ) threadid=0;
  * var[msgslot] information. - Champ Clark 02/02/2011
  */
 
-//snprintf(sysmsg[msgslot], sizeof(sysmsg[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_message);
-//snprintf(syslog_timetmp[msgslot], sizeof(syslog_timetmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_time);
-//snprintf(syslog_datetmp[msgslot], sizeof(syslog_datetmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_date);
-//snprintf(syslog_leveltmp[msgslot], sizeof(syslog_leveltmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_level);
-//snprintf(syslog_tagtmp[msgslot], sizeof(syslog_tagtmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_tag);
-//snprintf(syslog_facilitytmp[msgslot], sizeof(syslog_facilitytmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_facility);
-//snprintf(syslog_programtmp[msgslot], sizeof(syslog_programtmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_program);
 snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", ip_src);
 snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", ip_dst);
-//snprintf(syslog_hosttmp[msgslot], sizeof(syslog_hosttmp[msgslot]), "%s", SaganProcCPUSyslog_LOCAL->syslog_host);
-//snprintf(s_msgtmp[msgslot], sizeof(s_msgtmp[msgslot]), "%s", s_msg);
-//src_porttmp[msgslot] = src_port; 
-//dst_porttmp[msgslot] = dst_port;
-
-/*
-SaganEvent[threadid].ip_src    =       ip_srctmp[msgslot];
-SaganEvent[threadid].ip_dst    =       ip_dsttmp[msgslot];
-SaganEvent[threadid].dst_port  =       dst_porttmp[msgslot];
-SaganEvent[threadid].src_port  =       src_porttmp[msgslot];
-SaganEvent[threadid].found     =       b;
-
-SaganEvent[threadid].sid       =       rulestruct[b].s_sid;
-SaganEvent[threadid].rev       =       rulestruct[b].s_rev;
-SaganEvent[threadid].class     =       rulestruct[b].s_classtype;
-SaganEvent[threadid].pri       =       rulestruct[b].s_pri;
-SaganEvent[threadid].ip_proto  =       rulestruct[b].ip_proto;
-
-
-SaganEvent[threadid].program   =       syslog_programtmp[msgslot];
-SaganEvent[threadid].message   =       sysmsg[msgslot];
-SaganEvent[threadid].time      =       syslog_timetmp[msgslot];
-SaganEvent[threadid].date      =       syslog_datetmp[msgslot];
-SaganEvent[threadid].f_msg     =       s_msgtmp[msgslot]; 
-SaganEvent[threadid].facility  =       syslog_facilitytmp[msgslot];
-SaganEvent[threadid].priority  =       syslog_leveltmp[msgslot];
-SaganEvent[threadid].tag       =       syslog_tagtmp[msgslot];
-SaganEvent[threadid].host      =       syslog_hosttmp[msgslot];
-SaganEvent[threadid].event_time_sec = 	time(NULL);
-
-SaganEvent[threadid].generatorid =       1;              /* Rule based alerts are always 1 */
-//SaganEvent[threadid].alertid     =       1;
 
 SaganEvent = malloc(sizeof(struct _Sagan_Event));
 memset(SaganEvent, 0, sizeof(_SaganEvent));
@@ -834,5 +758,6 @@ rc=0;
 } /* End for for loop */
 
 
+return(0);
 } 
 

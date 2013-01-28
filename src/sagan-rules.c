@@ -109,7 +109,6 @@ sbool pcreflag=0;
 int pcreoptions=0;
 
 int i=0;
-int a=0;
 
 int forward=0;
 int reverse=0;
@@ -140,7 +139,7 @@ while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
 	rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 	}
 
-remrt(rulebuf);
+Remove_Return(rulebuf);
 
 /* Parse forward for the first '(' */
 
@@ -228,7 +227,7 @@ tokenrule = strtok_r(rulestring, ";", &saveptrrule1);
 while ( tokenrule != NULL ) {
 
 rulesplit = strtok_r(tokenrule, ":", &saveptrrule2);
-remspaces(rulesplit);
+Remove_Spaces(rulesplit);
 
 	/* single flag options.  (nocase, find_port, etc) */
 
@@ -262,13 +261,13 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"rev\" appears to be incomplete");
-		snprintf(rulestruct[counters->rulecount].s_rev, sizeof(rulestruct[counters->rulecount].s_rev), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_rev, sizeof(rulestruct[counters->rulecount].s_rev), "%s", Remove_Spaces(arg));
 		}
 
 	if (!strcmp(rulesplit, "classtype" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"classtype\" appears to be incomplete");
-		snprintf(rulestruct[counters->rulecount].s_classtype, sizeof(rulestruct[counters->rulecount].s_classtype), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_classtype, sizeof(rulestruct[counters->rulecount].s_classtype), "%s", Remove_Spaces(arg));
 
 		for(i=0; i < counters->classcount; i++) {
 			if (!strcmp(classstruct[i].s_shortname, rulestruct[counters->rulecount].s_classtype)) {
@@ -280,13 +279,13 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "program" )) { 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"program\" appears to be incomplete");
-		snprintf(rulestruct[counters->rulecount].s_program, sizeof(rulestruct[counters->rulecount].s_program), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_program, sizeof(rulestruct[counters->rulecount].s_program), "%s", Remove_Spaces(arg));
 		}
 
 	if (!strcmp(rulesplit, "reference" )) {
 	 	arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"reference\" appears to be incomplete");
-		snprintf(rulestruct[counters->rulecount].s_reference[ref_count], sizeof(rulestruct[counters->rulecount].s_reference[ref_count]), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_reference[ref_count], sizeof(rulestruct[counters->rulecount].s_reference[ref_count]), "%s", Remove_Spaces(arg));
 		rulestruct[counters->rulecount].ref_count=ref_count;
 		ref_count++;
 		}
@@ -294,32 +293,32 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "sid" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"sid\" appears to be incomplete");
-		snprintf(rulestruct[counters->rulecount].s_sid, sizeof(rulestruct[counters->rulecount].s_sid), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].s_sid, sizeof(rulestruct[counters->rulecount].s_sid), "%s", Remove_Spaces(arg));
 		}
 	
         if (!strcmp(rulesplit, "tag" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) Sagan_Log(1, "The \"tag\" appears to be incomplete");
-                snprintf(rulestruct[counters->rulecount].s_tag, sizeof(rulestruct[counters->rulecount].s_tag), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_tag, sizeof(rulestruct[counters->rulecount].s_tag), "%s", Remove_Spaces(arg));
                 }
 
         if (!strcmp(rulesplit, "facility" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) Sagan_Log(1, "The \"facility\" appears to be incomplete");
-                snprintf(rulestruct[counters->rulecount].s_facility, sizeof(rulestruct[counters->rulecount].s_facility), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_facility, sizeof(rulestruct[counters->rulecount].s_facility), "%s", Remove_Spaces(arg));
                 }
 
         if (!strcmp(rulesplit, "level" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) Sagan_Log(1, "The \"level\" appears to be incomplete");
-                snprintf(rulestruct[counters->rulecount].s_level, sizeof(rulestruct[counters->rulecount].s_level), "%s", remspaces(arg));
+                snprintf(rulestruct[counters->rulecount].s_level, sizeof(rulestruct[counters->rulecount].s_level), "%s", Remove_Spaces(arg));
                 }
 
 
         if (!strcmp(rulesplit, "pri" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 if (arg == NULL ) Sagan_Log(1, "The \"priority\" appears to be incomplete");
-		remspaces(arg);
+		Remove_Spaces(arg);
 		rulestruct[counters->rulecount].s_pri = atoi(arg);
                 }
 
@@ -329,7 +328,7 @@ remspaces(rulesplit);
 		arg = strtok_r(NULL, " ", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"email\" appears to be incomplete");
 	        if (!strcmp(config->sagan_esmtp_server, "" )) Sagan_Log(1, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s", __FILE__, __LINE__, linecount, ruleset, config->sagan_config);
-		snprintf(rulestruct[counters->rulecount].email, sizeof(rulestruct[counters->rulecount].email), "%s", remspaces(arg));
+		snprintf(rulestruct[counters->rulecount].email, sizeof(rulestruct[counters->rulecount].email), "%s", Remove_Spaces(arg));
 		rulestruct[counters->rulecount].email_flag=1; 
 		config->sagan_esmtp_flag=1;
 		}
@@ -341,7 +340,7 @@ remspaces(rulesplit);
 		rulestruct[counters->rulecount].normalize = 1; 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"normalize\" appears to be incomplete");
-		remspaces(arg);
+		Remove_Spaces(arg);
 
 		/* Search for a normalize rule that fits the rule set's spec */
 
@@ -372,7 +371,7 @@ remspaces(rulesplit);
 
         if (!strcmp(rulesplit, "msg" )) {
                 arg = strtok_r(NULL, ";", &saveptrrule2);
-		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) Sagan_Log(1, "The \"msg\" appears to be incomplete");
                 snprintf(rulestruct[counters->rulecount].s_msg, sizeof(rulestruct[counters->rulecount].s_msg), "%s", tmp2);
                 }
@@ -380,7 +379,7 @@ remspaces(rulesplit);
 	if (!strcmp(rulesplit, "content" )) { 
 		if ( content_count > MAX_CONTENT ) Sagan_Log(1, "There is to many \"content\" types in the rule");
 		arg = strtok_r(NULL, ";", &saveptrrule2);
-		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 		if (tmp2 == NULL ) Sagan_Log(1, "The \"content\" appears to be incomplete");
 
 		/* For content: ! "something" */
@@ -399,7 +398,7 @@ remspaces(rulesplit);
         if (!strcmp(rulesplit, "pcre" )) {
                 if ( pcre_count > MAX_PCRE ) Sagan_Log(1, "There is to many \"pcre\" types in the rule");
 		arg = strtok_r(NULL, ";", &saveptrrule2);
-		strlcpy(tmp2, betweenquotes(arg), sizeof(tmp2));
+		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
                 if (tmp2 == NULL ) Sagan_Log(1, "The \"pcre\" appears to be incomplete");
 
 		pcreflag=0;

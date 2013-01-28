@@ -158,7 +158,6 @@ char *syslog_program=NULL;
 char *syslog_msg=NULL;
 
 char syslogstring[MAX_SYSLOGMSG];
-char sysmsg[MAX_MSGSLOT][MAX_SYSLOGMSG]; 
 
 char c;
 char *tok;
@@ -169,7 +168,7 @@ char *runas=RUNAS;
 int i;
 
 time_t t;
-struct tm *now, *run;
+struct tm *run;
 
 sbool debugflag=0; 
 
@@ -213,7 +212,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   if (c == -1) break;
 
            case 'h':
-	   sagan_usage();
+	   Usage();
 	   exit(0);
 	   break;
 	   
@@ -298,7 +297,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   break;
 
 	   case 'c':
-	   sagan_chroot(runas,optarg);
+	   Chroot(runas,optarg);
 	   break;
 
 	   case 'F':
@@ -317,7 +316,7 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 
 	  default:
           fprintf(stderr, "Invalid argument! See below for command line switches.\n");
-          sagan_usage();
+          Usage();
 	  exit(0);
 	  break;
   	  }
@@ -441,7 +440,7 @@ Sagan_Log(0, "");
 #if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
 if ( config->dbtype ) { 
 
-config->endian = checkendian();
+config->endian = Check_Endian();
 
 db_connect();
 
@@ -487,7 +486,7 @@ Sagan_Log(0, "");
 Sagan_Log(0, " ,-._,-. 	-*> Sagan! <*-");
 Sagan_Log(0, " \\/)\"(\\/	Version %s", VERSION);
 Sagan_Log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-Sagan_Log(0, "  /   \\/)	Copyright (C) 2009-2012 Quadrant Information Security, et al.");
+Sagan_Log(0, "  /   \\/)	Copyright (C) 2009-2013 Quadrant Information Security, et al.");
 Sagan_Log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
 Sagan_Log(0, "  oo-oo     Sagan is processing events.....");
 Sagan_Log(0, "");
@@ -728,10 +727,7 @@ while(fd != NULL) {
 if (debug->debugthreads) Sagan_Log(0, "Current \"proc_msgslot\": %d", proc_msgslot); 
 if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
-//} else { 
-//printf("IGNORE\n");
-//}
-} /* while(fgets) 
+} /* while(fgets) */
 
 /* fgets() has returned a error,  likely due to the FIFO writer leaving */ 
 

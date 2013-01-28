@@ -53,9 +53,6 @@ struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
 SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
 memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-int i = 0;
-int rc = 0;
-
 //#ifdef WITH_WEBSENSE
 //curl_global_init(CURL_GLOBAL_ALL);
 //#endif

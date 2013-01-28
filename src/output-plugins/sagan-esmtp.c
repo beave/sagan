@@ -57,7 +57,7 @@ char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
 
-snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
+snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
 /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
  

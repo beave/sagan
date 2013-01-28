@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+
 #include "sagan.h"
 #include "sagan-blacklist.h"
 #include "sagan-liblognorm.h"
@@ -88,7 +89,7 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
      if ( iprange == NULL ) Sagan_Log(1, "[%s, line %d] Invalid range in %s file", __FILE__, __LINE__, config->blacklist_file);
      if ( mask == 0 ) Sagan_Log(1, "[%s, line %d] Invalid mask in %s file", __FILE__, __LINE__, config->blacklist_file);
 
-     /* Record lower and upper range based on the /CIDR.  We then use ip2bit(ipaddr) to determine
+     /* Record lower and upper range based on the /CIDR.  We then use IP2Bit(ipaddr) to determine
       * if it's within the blacklist range. 
       *
       * Idea came from "ashitpro"
@@ -96,7 +97,7 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
       *
       */
      
-     SaganBlacklist[counters->blacklist_count].u32_lower = ip2bit(iprange);
+     SaganBlacklist[counters->blacklist_count].u32_lower = IP2Bit(iprange);
      SaganBlacklist[counters->blacklist_count].u32_higher = SaganBlacklist[counters->blacklist_count].u32_lower + (pow(2,32-mask)-1); 
      counters->blacklist_count++;
      }
@@ -130,14 +131,14 @@ free(SaganNormalizeLiblognorm);
 #endif
 
 if ( ip_src != NULL ) { 
-   u32_ipaddr = ip2bit(ip_src);
+   u32_ipaddr = IP2Bit(ip_src);
    if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
       Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, ip_src, SaganProcSyslog_LOCAL->syslog_host, 17);
       }
 }
 
 if ( ip_dst != NULL ) {
-   u32_ipaddr = ip2bit(ip_dst);
+   u32_ipaddr = IP2Bit(ip_dst);
    if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
       Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, SaganProcSyslog_LOCAL->syslog_host, ip_dst, 17);
       }
@@ -151,7 +152,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 
        if (strcmp(ipaddr, "0")) {
 
-          u32_ipaddr = ip2bit(ipaddr);
+          u32_ipaddr = IP2Bit(ipaddr);
 
 	   for (b=0; b < counters->blacklist_count; b++) { 
 
@@ -177,6 +178,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 	}
     }
  
+return(0);
 }
 
 void Sagan_Blacklist_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, char *ip_src, char*ip_dst, int proto  ) {

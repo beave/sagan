@@ -68,7 +68,7 @@ port = config->sagan_port;
 
 char tmpmsg[MAX_SYSLOGMSG];
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
+To_UpperC(tmpmsg);
 
 /* See if the work " port" is in the string */
 
@@ -86,12 +86,12 @@ if ( strstr(tmpmsg, " PORT ")) {
          tmpport = strtok_r(NULL, " ", &saveptr1);
          if (tmpport == NULL) break;
          /* if it's a number, set it.  If not,  default */
-         if (isnumeric(tmpport)) {
+         if (Is_Numeric(tmpport)) {
              port=atoi(tmpport);
              } else {
              /* drop last char.  Sometimes port ends in port "#." */
              tmpport[strlen(tmpport) - 1] = '\0';
-             if (isnumeric(tmpport)) port=atoi(tmpport);
+             if (Is_Numeric(tmpport)) port=atoi(tmpport);
              }
 
          }
@@ -99,7 +99,7 @@ if ( strstr(tmpmsg, " PORT ")) {
 }
 
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
+To_UpperC(tmpmsg);
 
 if ( strstr(tmpmsg, ":")) {
 
@@ -115,19 +115,19 @@ if ( strstr(tmpmsg, ":")) {
       if ( result != 0 ) {
          /* IP:PORT */
          portstring = strtok_r(NULL, ":", &saveptr1);
-         if (isnumeric(portstring)) {
+         if (Is_Numeric(portstring)) {
              port=atoi(portstring);
              } else {
              /* IP:PORT string or IP::PORT */
              token = strtok_r(portstring, " ", &saveptr1);
-             if (isnumeric(token)) port=atoi(portstring);
+             if (Is_Numeric(token)) port=atoi(portstring);
              }
          }
    }
 }
 
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-toupperc(tmpmsg);
+To_UpperC(tmpmsg);
 
 if ( strstr(tmpmsg, "#")) {
 
@@ -143,16 +143,16 @@ if ( strstr(tmpmsg, "#")) {
       if ( result != 0 ) {
          /* IP#PORT */
          portstring = strtok_r(NULL, "#", &saveptr1);
-         if (isnumeric(portstring)) {
+         if (Is_Numeric(portstring)) {
              port=atoi(portstring);
              } else {
              /* IP:PORT string or IP##PORT */
              token = strtok_r(portstring, " ", &saveptr1);
-             if (isnumeric(token)) {
+             if (Is_Numeric(token)) {
                 port=atoi(token);
                 } else {
                 token[strlen(token) - 1] = '\0';
-                if (isnumeric(token)) port=atoi(token);
+                if (Is_Numeric(token)) port=atoi(token);
                 }
              }
          }

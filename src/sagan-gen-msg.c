@@ -36,8 +36,10 @@
 
 struct _SaganCounters *counters;
 struct _Sagan_Processor_Generator *generator; 
+struct _SaganConfig *config;
+struct  _SaganDebug *debug;
 
-void load_gen_map( _SaganDebug *debug, _SaganConfig *config, const char *genmap ) {
+void Load_Gen_Map( const char *genmap ) {
 
 FILE *genmapfile;
 char genbuf[1024];
@@ -69,11 +71,9 @@ while(fgets(genbuf, 1024, genmapfile) != NULL) {
      generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
      }
 
-// DEBUG = remrt??? 
-//
-gen1 = remrt(strtok_r(genbuf, "|", &saveptr));
-gen2 = remrt(strtok_r(NULL, "|", &saveptr));
-gen3 = strtok_r(NULL, "|", &saveptr);
+gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
+gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 
 if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(1, "%s is incorrect or not correctly formated", genmap);
 

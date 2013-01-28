@@ -47,9 +47,7 @@
 #include <dnet.h>
 #endif
 
-
 #include "sagan.h"
-
 #include "sagan-unified2.h"
 
 sbool endian;
@@ -143,8 +141,8 @@ alertdata.priority_id = htonl(Event->pri);					//P riority
 alertdata.protocol = Event->ip_proto;					// Protocol
 alertdata.generator_id = htonl(Event->generatorid); 				// From gen-msg.map
 
-alertdata.ip_source = htonl(ip2bit(Event->ip_src));
-alertdata.ip_destination = htonl(ip2bit(Event->ip_dst));
+alertdata.ip_source = htonl(IP2Bit(Event->ip_src));
+alertdata.ip_destination = htonl(IP2Bit(Event->ip_dst));
 
 alertdata.sport_itype = htons(Event->src_port);
 alertdata.dport_icode = htons(Event->dst_port);
@@ -314,8 +312,8 @@ ip->ip_ttl = IP_TTL_MAX;
 ip->ip_p = Event->ip_proto;		 		// Protocol
 ip->ip_sum = 0;
 
-ip->ip_src = htonl(ip2bit(Event->ip_src));
-ip->ip_dst = htonl(ip2bit(Event->ip_dst));
+ip->ip_src = htonl(IP2Bit(Event->ip_src));
+ip->ip_dst = htonl(IP2Bit(Event->ip_dst));
 
 p_iphdr = iphdr_buf + IP_HDR_LEN;
 len_iphdr = p_iphdr - iphdr_buf;

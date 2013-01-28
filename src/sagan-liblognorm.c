@@ -27,6 +27,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef HAVE_LIBLOGNORM
+
 #include <stdio.h>
 #include <sys/stat.h>
 #include <stdlib.h>
@@ -183,3 +185,4 @@ pthread_mutex_unlock(&liblognorm_mutex);
 return(SaganNormalizeLiblognorm);
 }
 
+#endif

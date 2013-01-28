@@ -65,7 +65,7 @@ if ( config->sagan_exttype == 1 ) {
    
    /* Parsable */
 
-  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 1 ));
+  snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 1 ));
 
 if ( Event->drop == 1 ) { 
    snprintf(tmp, sizeof(tmp), "True");
@@ -79,7 +79,7 @@ if ( Event->drop == 1 ) {
 
   /* Alert like */
 
-  snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
+  snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
   snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
   }

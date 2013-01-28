@@ -30,6 +30,7 @@
 #include <pthread.h>
 
 #include "sagan.h"
+#include "output-plugins/sagan-unified2.h"
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;

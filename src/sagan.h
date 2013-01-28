@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2012 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2012 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2013 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2013 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -46,27 +46,19 @@ int strlcpy(char *, const char *,  size_t );
 int strlcat(char *, const char *, size_t );
 #endif
 
-int isnumeric (char *);
-char *toupperc(char* const );
-void sagan_error(const char *, ...);
-char *gettimestamp( void );
-void sagan_error( const char *, ... );
-char *findipinmsg ( char * );
-void closesagan( int );
-int  checkendian( void );
-void sagan_usage( void );
-void load_normalize( void );
-void sagan_chroot( const char *, const char * );
-char *remrt(char *);
-char *remspaces(char *);
-char *sql_strip(char *);
-char *betweenquotes( char * );
-char *reflookup( int, int );
+int    Is_Numeric (char *);
+char   *To_UpperC(char* const );
+int	Check_Endian( void ); 
+void    Usage( void );
+void    Chroot( const char *, const char * );
+char   *Remove_Return(char *);
+char   *Remove_Spaces(char *);
+char   *SQL_Strip(char *);
+char   *Between_Quotes( char * );
+char   *Reference_Lookup( int, int );
 double CalcPct(uint64_t, uint64_t);
-char *sagan_replace_str(char *, char *, char *);
-char *sagan_getfilename(char *);
-
-char *referencelookup( int );
+char   *Replace_String(char *, char *, char *);
+char   *Get_Filename(char *);
 
 typedef struct _SaganDNSCache _SaganDNSCache;
 struct _SaganDNSCache { 
@@ -187,7 +179,7 @@ struct _SaganConfig {
 
     int 	 max_processor_threads;
 
-    sbool	 processor_thread_flag;
+//    sbool	 processor_thread_flag;
 
     int		 sagan_port;
     int		 sagan_exttype;
@@ -477,7 +469,7 @@ char sid[512];
 
 char *sql_escape(const char *, int );
 void sagan_db_thread( _SaganEvent * );
-int  ip2bit( char * );
+int  IP2Bit( char * );
 char *fasthex(char *, int);
 int db_connect( void );
 int  get_sensor_id ( void );
@@ -572,6 +564,9 @@ void Sagan_Output( _SaganEvent * );
 void Sagan_Processor ( void );
 void sagan_fwsam( _SaganEvent * );
 char *Sagan_Var_To_Value(char *);
+int  Sagan_Blacklist_Load ( void );
+void Load_Gen_Map( const char * );
+void Sagan_Alert_File( _SaganEvent * );
 
 sbool is_rfc1918 ( char * );
 

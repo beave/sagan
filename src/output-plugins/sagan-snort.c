@@ -396,7 +396,7 @@ int ipproto = rulestruct[Event->found].ip_proto;
 
 /* 4 == IPv4 */
 
-snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", config->sensor_id, counters->cid, ip2bit(ipsrc ), ip2bit(ipdst), ipproto );
+snprintf(sqltmp, sizeof(sqltmp), "INSERT INTO iphdr VALUES ( '%d', '%" PRIu64 "', '%u', '%u', '4', '0', '0', '0', '0', '0', '0', '0', '%d', '0' )", config->sensor_id, counters->cid, IP2Bit(ipsrc ), IP2Bit(ipdst), ipproto );
 
 sql=sqltmp;
 db_query(sql);

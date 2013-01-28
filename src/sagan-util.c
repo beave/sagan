@@ -69,7 +69,7 @@ sbool daemonize;
  * it initalized                                                             *
  *****************************************************************************/
 
-void sagan_chroot(const char *username, const char *chrootdir ) { 
+void Chroot(const char *username, const char *chrootdir ) { 
 
 struct passwd *pw = NULL;
 
@@ -145,7 +145,7 @@ char *fasthex(char *xdata, int length)
 
 /* Remove new-lines */
 
-char  *remrt(char *s) {
+char  *Remove_Return(char *s) {
        char *s1, *s2;
        for(s1 = s2 = s;*s1;*s1++ = *s2++ )
        while( *s2 == '\n' )s2++;
@@ -154,7 +154,7 @@ char  *remrt(char *s) {
 
 /* Removes spaces from certain rule fields, etc */
 
-char *remspaces(char *s) {
+char *Remove_Spaces(char *s) {
        char *s1, *s2;
        for(s1 = s2 = s;*s1;*s1++ = *s2++ )
        while( *s2 == ' ')s2++;
@@ -163,7 +163,7 @@ char *remspaces(char *s) {
 
 /* Shift a string to all uppercase */ 
 
-char *toupperc(char* const s) {
+char *To_UpperC(char* const s) {
         char* cur = s;
           while (*cur) {
           *cur = toupper(*cur);
@@ -174,7 +174,7 @@ char *toupperc(char* const s) {
 
 /* SQL strip.  */
 
-char *sql_strip(char *s) {
+char *SQL_Strip(char *s) {
        char *s1, *s2;
        for(s1 = s2 = s;*s1;*s1++ = *s2++ )
        while ( *s2 == '<'  || 
@@ -228,7 +228,7 @@ void Sagan_Log (int type, const char *format,... ) {
      if ( type == 1 ) exit(1);
 }
 
-int checkendian() {
+int Check_Endian() {
    int i = 1;
    char *p = (char *) &i;
         if (p[0] == 1) // Lowest address contains the least significant byte
@@ -244,7 +244,7 @@ int checkendian() {
  * snort supports DB IPv6.
  */
 
-int ip2bit (char *ipaddr ) { 
+int IP2Bit (char *ipaddr ) { 
 
 struct sockaddr_in ipv4;
 uint32_t ip;
@@ -265,7 +265,7 @@ if ( config->endian == 0 ) {
 return(ip);
 }
 
-int isnumeric (char *str) {
+int Is_Numeric (char *str) {
 
 if(strlen(str) == strspn(str, "0123456789")) {
 	return(TRUE);
@@ -332,7 +332,7 @@ if ( from == 0 ) {
 /* Grab's information between "quotes" and returns it.  Use for things like
  * parsing msg: and pcre */
 
-char *betweenquotes(char *instring)
+char *Between_Quotes(char *instring)
 {
 sbool flag=0;
 int i;
@@ -426,7 +426,7 @@ char *DNS_Lookup( char *host )
 
 /* String replacement function.  Used for things like $RULE_PATH */
 
-char *sagan_replace_str(char *str, char *orig, char *rep)
+char *Replace_String(char *str, char *orig, char *rep)
 {
 
   static char buffer[4096];
@@ -443,7 +443,7 @@ char *sagan_replace_str(char *str, char *orig, char *rep)
 
 /* Get the filename from a path */
 
-char *sagan_getfilename(char *file) {
+char *Get_Filename(char *file) {
 
     char *pfile;
     pfile = file + strlen(file);
@@ -470,7 +470,7 @@ sbool is_rfc1918 ( char *ipaddr ) {
 
 uint32_t ipint=0;
 
-ipint = ip2bit(ipaddr);
+ipint = IP2Bit(ipaddr);
 
 if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	 // 10.X.X.X
 if ( ipint > 3232235520 && ipint < 3232301055 ) return(TRUE);    // 192.168.X.X 
@@ -484,7 +484,6 @@ char *Sagan_Var_To_Value(char *instring) {
 
 char *ptmp = NULL;
 char *tok = NULL;
-char *retbuf = NULL;
 char tmp[256] = { 0 };
 char tmp2[256] = { 0 };
 char tmp3[254] = { 0 };
@@ -500,7 +499,7 @@ for (i=0; i<counters->var_count; i++) {
     ptmp = strtok_r(tmp, " ", &tok);
 
         while (ptmp != NULL ) {
-             strlcpy(tmp2, sagan_replace_str(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
+             strlcpy(tmp2, Replace_String(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
              snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
              strlcat(tmp_result, tmp3, sizeof(tmp_result));
              ptmp = strtok_r(NULL, " ", &tok);

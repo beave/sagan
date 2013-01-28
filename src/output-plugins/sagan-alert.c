@@ -58,7 +58,7 @@ printf("Message: %s\n", Event->message); fflush(stdout);
 */
 
 if ( Event->found != 0 ) {
-	snprintf(tmpref, sizeof(tmpref), "%s", reflookup( Event->found, 0 ));
+	snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 	if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);
 	}
 

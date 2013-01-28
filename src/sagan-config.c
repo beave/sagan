@@ -75,8 +75,6 @@ void Load_Config( void ) {
 
 FILE *sagancfg; 
 
-char normfile[MAXPATH];
-
 char *filename;
 char ruleset[MAXPATH];
 
@@ -129,22 +127,22 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
-     if (!strcmp(remrt(sagan_option), "max_output_threads")) { 
+     if (!strcmp(Remove_Return(sagan_option), "max_output_threads")) { 
 	 sagan_var1 = strtok_r(NULL, " ", &tok);
          config->max_output_threads = strtoull(sagan_var1, NULL, 10);
 	 }
 
-     if (!strcmp(remrt(sagan_option), "max_processor_threads")) {
+     if (!strcmp(Remove_Return(sagan_option), "max_processor_threads")) {
          sagan_var1 = strtok_r(NULL, " ", &tok);
          config->max_processor_threads = strtoull(sagan_var1, NULL, 10);
          }
 
-     if (!strcmp(remrt(sagan_option), "disable_dns_warnings")) { 
+     if (!strcmp(Remove_Return(sagan_option), "disable_dns_warnings")) { 
          Sagan_Log(0, "Supressing DNS warnings");
          config->disable_dns_warnings = 1;
 	 }
 
-     if (!strcmp(remrt(sagan_option), "syslog_src_lookup")) { 
+     if (!strcmp(Remove_Return(sagan_option), "syslog_src_lookup")) { 
          Sagan_Log(0, "DNS lookup of source address supplied by syslog daemon");
 	 config->syslog_src_lookup = 1; 
 	 }
@@ -170,7 +168,7 @@ if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priorit
    if (!strcmp(sagan_option, "send-to")) { 
       sagan_var1 = strtok_r(NULL, " ", &tok);
       snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", sagan_var1);
-      remrt(config->sagan_esmtp_to);
+      Remove_Return(config->sagan_esmtp_to);
       config->sagan_esmtp_flag=1;
       config->sagan_sendto_flag=1;
       }
@@ -257,15 +255,15 @@ if (!strcmp(sagan_option, "normalize:")) {
 	liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
 	
 	sagan_var1 = strtok_r(NULL, ",", &tok);
-	remspaces(sagan_var1);
+	Remove_Spaces(sagan_var1);
 	snprintf(liblognormstruct[liblognorm_count].type, sizeof(liblognormstruct[liblognorm_count].type), "%s", sagan_var1);
 
 	snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, ",", &tok));
-	remspaces(tmpstring);
+	Remove_Spaces(tmpstring);
 	tmpstring[strlen(tmpstring)-1] = '\0';
 
         strlcpy(normfile, Sagan_Var_To_Value(tmpstring), sizeof(normfile));
-        remspaces(normfile);
+        Remove_Spaces(normfile);
 
 	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
 	liblognorm_count++;
@@ -302,7 +300,7 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "blacklist")) { 
 	        ptmp = strtok_r(NULL, " ", &tok);
-		snprintf(config->blacklist_file, sizeof(config->blacklist_file), "%s", remrt(ptmp)); 
+		snprintf(config->blacklist_file, sizeof(config->blacklist_file), "%s", Remove_Return(ptmp)); 
 		}
              
 	     ptmp = strtok_r(NULL, "=", &tok);
@@ -328,13 +326,13 @@ if (!strcmp(sagan_option, "processor")) {
              if (!strcmp(ptmp, "auth")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->websense_auth, sizeof(config->websense_auth), "%s", ptmp);
-                remrt(config->websense_auth);
+                Remove_Return(config->websense_auth);
                 }
 
              if (!strcmp(ptmp, "url")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->websense_url, sizeof(config->websense_url), "%s", ptmp);
-                remrt(config->websense_url);
+                Remove_Return(config->websense_url);
                 }
 	
              if (!strcmp(ptmp, "max_cache")) {
@@ -350,7 +348,7 @@ if (!strcmp(sagan_option, "processor")) {
              if (!strcmp(ptmp, "ignore_list")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->websense_ignore_list, sizeof(config->websense_ignore_list), "%s", ptmp);
-                remrt(config->websense_ignore_list);
+                Remove_Return(config->websense_ignore_list);
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);
@@ -378,7 +376,7 @@ if (!strcmp(sagan_option, "output")) {
 
 #ifdef WITH_SNORTSAM
 if (!strcmp(sagan_var1, "alert_fwsam:")) { 
-       snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", remrt(strtok_r(NULL, " ", &tok)));
+       snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", Remove_Return(strtok_r(NULL, " ", &tok)));
        config->sagan_fwsam_flag=1; 
        }
 #endif
@@ -397,7 +395,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
   	   config->sagan_unified2_flag = 1;
 	   
 	   ptmp = sagan_var1; 
-	   remrt(ptmp);
+	   Remove_Return(ptmp);
 
 	   while (ptmp != NULL ) {
 	     
@@ -430,13 +428,13 @@ if (!strcmp(sagan_var1, "unified2:")) {
              if (!strcmp(ptmp, "from")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->sagan_esmtp_from, sizeof(config->sagan_esmtp_from), "%s", ptmp);
-		remrt(config->sagan_esmtp_from);
+		Remove_Return(config->sagan_esmtp_from);
                 }
 
              if (!strcmp(ptmp, "smtpserver")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->sagan_esmtp_server, sizeof(config->sagan_esmtp_server), "%s", ptmp);
-		remrt(config->sagan_esmtp_server);
+		Remove_Return(config->sagan_esmtp_server);
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);    
@@ -461,7 +459,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
 	      /* MySQL/PostgreSQL/Oracle/etc */
 
-	      remspaces(sagan_var1);
+	      Remove_Spaces(sagan_var1);
 
 
 	      if (!strcmp(sagan_var1, "mysql" )) { 
@@ -480,14 +478,14 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
 
 	      sagan_var1 = strtok_r(NULL, ",", &tok);
-	      remrt(sagan_var1);					/* rm NL */
+	      Remove_Return(sagan_var1);					/* rm NL */
 	      
 	      strlcpy(tmpbuf, sagan_var1, sizeof(tmpbuf));
 
 	      ptmp = strtok_r(tmpbuf, "=", &tok);
 
 	      while (ptmp != NULL) { 
-	        remspaces(ptmp); 
+	        Remove_Spaces(ptmp); 
 
 	        if (!strcmp(ptmp, "user")) { 
 		   ptmp = strtok_r(NULL, " ", &tok);
@@ -529,7 +527,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 	var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
 	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name), "$%s", sagan_var1);
 	sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-	snprintf(var[counters->var_count].var_value, sizeof(var[counters->var_count].var_value), "%s", remrt(sagan_var2));
+	snprintf(var[counters->var_count].var_value, sizeof(var[counters->var_count].var_value), "%s", Remove_Return(sagan_var2));
 	counters->var_count++;
 	
 	/* Required var's - all others are optional */ 
@@ -558,13 +556,13 @@ if (!strcmp(sagan_var1, "unified2:")) {
          tmpstring[strlen(tmpstring)-1] = '\0';
 	
 	 strlcpy(ruleset, Sagan_Var_To_Value(tmpstring), sizeof(ruleset)); 
-	 remspaces(ruleset);
+	 Remove_Spaces(ruleset);
 
-	 filename=sagan_getfilename(ruleset);   /* Get the file name to figure out "what" we're loading */
+	 filename=Get_Filename(ruleset);   /* Get the file name to figure out "what" we're loading */
 
          if (!strcmp(filename, "classification.config")) Load_Classifications(ruleset);
          if (!strcmp(filename, "reference.config")) Load_Reference(ruleset);
-         if (!strcmp(filename, "gen-msg.map")) load_gen_map(debug, config, ruleset);
+         if (!strcmp(filename, "gen-msg.map")) Load_Gen_Map(ruleset);
 
 	 /* It's not a classifcations file or reference,  so it must be a ruleset */
 

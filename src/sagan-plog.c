@@ -129,8 +129,6 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
         int                     len;
         char                    *l;
 
-	_SaganSigArgs *args = (_SaganSigArgs *) pass_args;
-
         /* crack the ethernet header */
         eh = (struct ether_header *)pkt;
         if(ntohs(eh->ether_type) != ETHERTYPE_IP)

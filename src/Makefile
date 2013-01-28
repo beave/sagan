@@ -87,7 +87,7 @@ AUTOMAKE = ${SHELL} /Users/champclark/code/sagan/missing --run automake-1.11
 AWK = awk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -g -O2 -Wall
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo

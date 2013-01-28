@@ -89,7 +89,7 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
      tmptoken = strtok_r(NULL, ":" , &saveptr);
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
-     remspaces(laststring);
+     Remove_Spaces(laststring);
      snprintf(classstruct[counters->classcount].s_shortname, sizeof(classstruct[counters->classcount].s_shortname), "%s", laststring);
 
      laststring = strtok_r(NULL, ",", &saveptr);

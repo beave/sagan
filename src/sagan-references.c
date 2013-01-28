@@ -111,7 +111,7 @@ Sagan_Log(0, "%d references loaded.", counters->refcount);
 // 0 == alert
 // 1 == parsable.
 
-char *reflookup( int rulemem, int type ) { 
+char *Reference_Lookup( int rulemem, int type ) { 
 
 int i=0;
 int b=0;
