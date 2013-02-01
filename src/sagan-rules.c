@@ -109,6 +109,7 @@ sbool pcreflag=0;
 int pcreoptions=0;
 
 int i=0;
+int a=0;
 
 int forward=0;
 int reverse=0;

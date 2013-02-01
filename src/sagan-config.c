@@ -77,6 +77,7 @@ FILE *sagancfg;
 
 char *filename;
 char ruleset[MAXPATH];
+char normfile[MAXPATH];
 
 char tmpbuf[CONFBUF];
 char tmpstring[CONFBUF];
