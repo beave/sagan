@@ -682,7 +682,7 @@ while(fd != NULL) {
                    Sagan_Log(2, "Sagan received a malformed 'program'");
 		   }
 
-		syslog_msg=strtok_r(NULL, "|", &tok);
+		syslog_msg=strtok_r(NULL, "", &tok);		/* In case the message has | in it,  we delimit on "" */
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
                    Sagan_Log(2, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
@@ -730,6 +730,9 @@ if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
 } /* while(fgets) */
 
 /* fgets() has returned a error,  likely due to the FIFO writer leaving */ 
+
+/* DEBUG : set a kill flag and join */
+/* RMEOVE LOCK */
 
 if ( fifoerr == 0 ) {
    if ( config->sagan_fifo_flag != 0 ) { 
