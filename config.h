@@ -59,19 +59,19 @@
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `ee' library (-lee). */
-/* #undef HAVE_LIBEE */
+#define HAVE_LIBEE 1
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 /* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
-/* #undef HAVE_LIBESTR */
+#define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `json' library (-ljson). */
 /* #undef HAVE_LIBJSON */
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
-/* #undef HAVE_LIBLOGNORM */
+#define HAVE_LIBLOGNORM 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -167,10 +167,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlcat' function. */
-#define HAVE_STRLCAT 1
+/* #undef HAVE_STRLCAT */
 
 /* Define to 1 if you have the `strlcpy' function. */
-#define HAVE_STRLCPY 1
+/* #undef HAVE_STRLCPY */
 
 /* Define to 1 if you have the `strlen' function. */
 #define HAVE_STRLEN 1
@@ -225,7 +225,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
+#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
 
 /* Name of package */
 #define PACKAGE "sagan"

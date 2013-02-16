@@ -731,12 +731,19 @@ if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
 
 /* fgets() has returned a error,  likely due to the FIFO writer leaving */ 
 
-if ( fifoerr == 0 ) 
-   {
-   Sagan_Log(0, "FIFO writer closed.  Waiting for FIFO write to restart...."); 
-   fifoerr=1; 			/* Set flag so our wile(fgets) knows */ 
-   sleep(1); 			/* So we don't eat 100% CPU */
-   }
+if ( fifoerr == 0 ) {
+   if ( config->sagan_fifo_flag != 0 ) { 
+      Sagan_Log(0, "EOF reached. Waiting for threads to catch up");
+      sleep(5);
+      fclose(fd); 
+      Sagan_Log(0, "Exiting.");		/* DEBUG: Rejoin threads */
+      exit(0);
+  } else { 
+      Sagan_Log(0, "FIFO writer closed.  Waiting for FIFO write to restart...."); 
+      fifoerr=1; 			/* Set flag so our wile(fgets) knows */ 
+       sleep(1); 			/* So we don't eat 100% CPU */
+  }
+  }
 
 } /* while(fd != NULL)  */
 

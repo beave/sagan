@@ -96,7 +96,7 @@ int i,check;
 snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
 snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
 snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
-snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", FIFO); 
+if ( config->sagan_fifo_flag != 1 ) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", FIFO); 
 snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", RULE_PATH);
 
 
@@ -533,7 +533,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 	
 	/* Required var's - all others are optional */ 
 
-	if (!strcmp(sagan_var1, "FIFO")) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", sagan_var2);
+	if (!strcmp(sagan_var1, "FIFO") && config->sagan_fifo_flag != 1) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", sagan_var2);
 	if (!strcmp(sagan_var1, "LOCKFILE" )) snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", sagan_var2);
 	if (!strcmp(sagan_var1, "ALERTLOG" )) snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", sagan_var2);
 	if (!strcmp(sagan_var1, "SAGANLOGPATH" )) snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", sagan_var2);
