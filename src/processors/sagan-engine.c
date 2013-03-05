@@ -367,16 +367,6 @@ if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;
 
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
-if (username != NULL ) {
-    snprintf(tmpbuf, sizeof(tmpbuf), " [%s]", SQL_Strip(username));
-    strlcat(s_msg, tmpbuf, sizeof(s_msg));
-    }
-
-if (uid != NULL ) { 
-   snprintf(tmpbuf, sizeof(tmpbuf), " [uid: %s]", SQL_Strip(uid));
-   strlcat(s_msg, tmpbuf, sizeof(s_msg));
-   }
-
 /* We don't want 127.0.0.1,  so remap it to something more useful */
 
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=config->sagan_host;

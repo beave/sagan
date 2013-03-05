@@ -51,11 +51,6 @@ int liblognorm_count;
 sbool sagan_unified2_flag;
 #endif
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-#include "output-plugins/sagan-snort.h"
-#endif
-
-
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
@@ -89,13 +84,6 @@ void Sig_Handler( _SaganSigArgs *args ) {
 
                   Sagan_Log(0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
 		  sagan_statistics();
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-		  /* last_cid != cid (has there been any alerts? */
-
-		  if ( config->dbtype != 0 && counters->last_cid != counters-> cid ) record_last_cid();
-#endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 if ( sagan_unified2_flag ) Unified2CleanExit(config); 

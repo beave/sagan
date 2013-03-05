@@ -59,11 +59,11 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-send-alert.$(OBJEXT) parse-ip.$(OBJEXT) \
 	parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
-	sagan-snort.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
-	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
-	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
-	sagan-engine.$(OBJEXT) sagan-track-clients.$(OBJEXT) \
-	sagan-websense.$(OBJEXT) sagan-blacklist.$(OBJEXT)
+	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
+	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
+	sagan-snortsam.$(OBJEXT) sagan-engine.$(OBJEXT) \
+	sagan-track-clients.$(OBJEXT) sagan-websense.$(OBJEXT) \
+	sagan-blacklist.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -201,7 +201,6 @@ sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \
-output-plugins/sagan-snort.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
 output-plugins/sagan-unified2.c \
@@ -313,7 +312,6 @@ include ./$(DEPDIR)/sagan-references.Po
 include ./$(DEPDIR)/sagan-rules.Po
 include ./$(DEPDIR)/sagan-send-alert.Po
 include ./$(DEPDIR)/sagan-signal.Po
-include ./$(DEPDIR)/sagan-snort.Po
 include ./$(DEPDIR)/sagan-snortsam.Po
 include ./$(DEPDIR)/sagan-stats.Po
 include ./$(DEPDIR)/sagan-strlcat.Po
@@ -381,20 +379,6 @@ sagan-alert.obj: output-plugins/sagan-alert.c
 #	source='output-plugins/sagan-alert.c' object='sagan-alert.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-alert.obj `if test -f 'output-plugins/sagan-alert.c'; then $(CYGPATH_W) 'output-plugins/sagan-alert.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-alert.c'; fi`
-
-sagan-snort.o: output-plugins/sagan-snort.c
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snort.o -MD -MP -MF $(DEPDIR)/sagan-snort.Tpo -c -o sagan-snort.o `test -f 'output-plugins/sagan-snort.c' || echo '$(srcdir)/'`output-plugins/sagan-snort.c
-	$(am__mv) $(DEPDIR)/sagan-snort.Tpo $(DEPDIR)/sagan-snort.Po
-#	source='output-plugins/sagan-snort.c' object='sagan-snort.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snort.o `test -f 'output-plugins/sagan-snort.c' || echo '$(srcdir)/'`output-plugins/sagan-snort.c
-
-sagan-snort.obj: output-plugins/sagan-snort.c
-	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snort.obj -MD -MP -MF $(DEPDIR)/sagan-snort.Tpo -c -o sagan-snort.obj `if test -f 'output-plugins/sagan-snort.c'; then $(CYGPATH_W) 'output-plugins/sagan-snort.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snort.c'; fi`
-	$(am__mv) $(DEPDIR)/sagan-snort.Tpo $(DEPDIR)/sagan-snort.Po
-#	source='output-plugins/sagan-snort.c' object='sagan-snort.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snort.obj `if test -f 'output-plugins/sagan-snort.c'; then $(CYGPATH_W) 'output-plugins/sagan-snort.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snort.c'; fi`
 
 sagan-esmtp.o: output-plugins/sagan-esmtp.c
 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-esmtp.o -MD -MP -MF $(DEPDIR)/sagan-esmtp.Tpo -c -o sagan-esmtp.o `test -f 'output-plugins/sagan-esmtp.c' || echo '$(srcdir)/'`output-plugins/sagan-esmtp.c

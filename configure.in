@@ -12,12 +12,6 @@ VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\
 
 AC_C_BIGENDIAN(AC_SUBST([ENDIAN],[big]),AC_SUBST([ENDIAN],[little]))
 
-AC_ARG_ENABLE(mysql,
-  [  --disable-mysql         Enable MySQL support.],
-  [ MYSQL="$enableval"],
-  [ MYSQL="no" ]
-)
-
 AC_ARG_ENABLE(snortsam,
   [  --disable-snortsam      Disable Snortsam support.],
   [ SNORTSAM="$enableval"],
@@ -29,46 +23,6 @@ AC_ARG_ENABLE(websense,
   [ WEBSENSE="$enableval"],
   [ WEBSENSE="no" ]
 )
-
-AC_ARG_WITH(mysql_includes,
-        [  --with-mysql-includes=DIR    MySQL include directory],
-        [with_mysql_includes="$withval"],[with_mysql_includes="no"])
-
-AC_ARG_WITH(mysql_libraries,
-        [  --with-mysql-libraries=DIR   MySQL library directory],
-        [with_mysql_libraries="$withval"],[with_mysql_libraries="no"])
-
-if test "x$with_mysql_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_mysql_includes}"
-   fi
-
-if test "x$with_mysql_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_mysql_libraries}"
-fi
-
-
-AC_ARG_ENABLE(postgresql,
-  [  --enable-postgresql     Enable PostgreSQL support.],
-  [ POSTGRES="$enableval"],
-  [ POSTGRES="no" ]
-)
-
-AC_ARG_WITH(postgresql_includes,
-        [  --with-postgresql-includes=DIR    PostgreSQL include directory],
-        [with_postgresql_includes="$withval"],[with_postgresql_includes="no"])
-
-AC_ARG_WITH(postgresql_libraries,
-        [  --with-postgresql-libraries=DIR   PostgreSQL library directory],
-        [with_postgresql_libraries="$withval"],[with_postgresql_libraries="no"])
-
-if test "x$with_postgresql_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_postgresql_includes}"
-   fi
-
-if test "x$with_postgresql_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_postgresql_libraries}"
-fi
-
 
 AC_ARG_ENABLE(esmtp,
   [  --enable-esmtp	  Enable libesmtp support.],
@@ -197,21 +151,6 @@ AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat
 AC_CHECK_LIB(pcre, main,,AC_MSG_ERROR(Sagan needs PCRE installed.  Please see http://www.pcre.org.))
 AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
-
-if test "$MYSQL" = "yes"; then
-	AC_MSG_RESULT([------- MySQL support is enabled -------])
-	AC_CHECK_HEADER([mysql/mysql.h])
-	AC_CHECK_HEADER([mysql/errmsg.h])
-	AC_CHECK_LIB(mysqlclient_r, main,,AC_MSG_ERROR(The MySQL library libmysqlclient_r is missing!
-If you're not interested in MySQL support use the --disable-mysql flag.))
-	fi
-
-if test "$POSTGRES" = "yes"; then
-       AC_MSG_RESULT([------- PostgreSQL support is enabled -------])
-       AC_CHECK_HEADER([libpq-fe.h])
-       AC_CHECK_LIB(pq, main,,AC_MSG_ERROR(The PostgreSQL library cannot be found.
-If you're not interested in PostgreSQL support use the --disable-postgresql flag.))
-       fi
 
 if test "$ESMTP" = "yes"; then
        AC_MSG_RESULT([------- libesmtp support is enabled -------])

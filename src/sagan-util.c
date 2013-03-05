@@ -28,11 +28,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#ifdef HAVE_LIBMYSQLCLIENT_R
-#include <mysql/mysql.h>
-MYSQL    *mysql;
-#endif
-
 #include <stdio.h>
 #include <pwd.h>
 #include <grp.h>
@@ -172,7 +167,9 @@ char *To_UpperC(char* const s) {
   return s;
 }
 
-/* SQL strip.  */
+/* SQL strip. 
+
+no longer needed,  but might be useful in the future? 
 
 char *SQL_Strip(char *s) {
        char *s1, *s2;
@@ -202,7 +199,7 @@ char *SQL_Strip(char *s) {
 	       ) s2++;
        return s;
 }
-
+*/
 
 void Sagan_Log (int type, const char *format,... ) {
 
@@ -273,61 +270,6 @@ if(strlen(str) == strspn(str, "0123456789")) {
 	return(FALSE);
 	}
 }
-
-/* Escape SQL.   This was taken from Prelude.  */
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-char *sql_escape(const char *string, int from )
-{
-        size_t len;
-        char *escaped=NULL;
-	char *escapedre=NULL;
-	char tmpescaped[MAX_SYSLOGMSG];
-
-
-        if ( ! string )
-                return strdup("NULL");
-        /*
-         * MySQL documentation say :
-         * The string pointed to by from must be length bytes long. You must
-         * allocate the to buffer to be at least length*2+1 bytes long. (In the
-         * worse case, each character may need to be encoded as using two bytes,
-         * and you need room for the terminating null byte.)
-         */
-        len = strlen(string);
-
-        escaped = malloc(len * 2 + 3);
-        
-	if (! escaped) {
-                Sagan_Log(1, "[%s, line %d] Memory exhausted.", __FILE__, __LINE__ );
-                return NULL;
-        }
-
-        escaped[0] = '\'';
-
-/* Snort */
-if ( from == 0 ) { 
-#ifdef HAVE_LIBMYSQLCLIENT_R
-#if MYSQL_VERSION_ID >= 32200
-        len = mysql_real_escape_string(mysql, escaped + 1, string, len);
-#else
-        len = mysql_escape_string(escaped + 1, string, len);
-#endif
-#endif
-
-        escaped[len + 1] = '\'';
-        escaped[len + 2] = '\0';
-}
-
-	/* Temp. copy value,  and free(escaped) to prevent mem. leak */
-
-	snprintf(tmpescaped, sizeof(tmpescaped), "%s", escaped);
-	escapedre=tmpescaped;
-	free(escaped);
-
-	return(escapedre);
-}
-#endif
 
 /* Grab's information between "quotes" and returns it.  Use for things like
  * parsing msg: and pcre */

@@ -41,10 +41,6 @@ fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]---------------------
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
 fprintf(stderr, "-d, --debug [type]\tTypes: syslog, load, fwsam, external, threads");
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-fprintf(stderr, ", sql");
-#endif
-
 #ifdef HAVE_LIBESMTP
 fprintf(stderr, ", smtp");
 #endif
@@ -70,14 +66,6 @@ fprintf(stderr, "-f, --config [file]\tSagan configuration file to load.\n");
 fprintf(stderr, "-F, --file [file]\tFIFO over ride.  This reads a file in rather than reading\n");
 fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
 fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
-
-#ifdef HAVE_LIBPQ
-fprintf(stderr, "* PostgreSQL support is included\n");
-#endif
-
-#ifdef HAVE_LIBMYSQLCLIENT_R
-fprintf(stderr, "* MySQL support is included\n");
-#endif
 
 #ifdef HAVE_LIBESMTP
 fprintf(stderr, "* libesmtp (SMTP) support is included\n");

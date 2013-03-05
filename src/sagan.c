@@ -121,12 +121,6 @@ pthread_attr_setdetachstate(&thread_pcap_attr,  PTHREAD_CREATE_DETACHED);
 /* Various local variables						    */
 /****************************************************************************/
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-char *sqlout=NULL;
-char *sql=NULL;
-char sqltmp[MAXSQL];
-#endif
-
 /* Block all signals,  we create a signal handling thread */
 
 sigset_t signal_set;
@@ -250,13 +244,6 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 		 }
 #endif
               
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-	      if (strstr(optarg, "sql")) { 
-	         debug->debugsql=1;
-		 debugflag=1; 
-		 }
-#endif
-
 #ifdef HAVE_LIBESMTP
 	      if (strstr(optarg, "smtp")) {
 	          debug->debugesmtp=1;
@@ -435,38 +422,6 @@ Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_
 #endif
 
 Sagan_Log(0, "");
-
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-if ( config->dbtype ) { 
-
-config->endian = Check_Endian();
-
-db_connect();
-
-get_sensor_id(); 
-Sagan_Log(0, "Sensor ID            : %d", config->sensor_id);
-counters->cid = get_cid() + 1; 
-
-snprintf(sqltmp, sizeof(sqltmp), "SELECT MAX(cid) FROM event WHERE sid=%d", config->sensor_id);
-sql=sqltmp;
-sqlout = db_query(sql);
-
-Sagan_Log(0, "Next CID             : %" PRIu64 "", counters->cid);
-
-/* Check the event table and compare sensor.last_cid with event_cid.  If there's a 
- * mismatch,  we correct it  - Champ Clark 03/30/2012 */ 
-
-if ( strtoull(sqlout, NULL, 10) != counters->cid ) {
-   Sagan_Log(2, "Inconsistent cid information for sid=%d.  Recovering by rolling forward to cid=%d", config->sensor_id, atol(sqlout) );
-   counters->cid = strtoull(sqlout, NULL, 10); 
-   record_last_cid(debug, config, counters);
-   }
-
-counters->last_cid = counters->cid;	/* Use to determine if a change has happened in sagan_siganl.c */
-} 
-
-#endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 

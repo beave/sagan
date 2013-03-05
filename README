@@ -11,10 +11,10 @@ Sourcefire "Snort" IDS engine. This was intentionally done to maintain
 compatibility with rule management software (oinkmaster/pulledpork/etc)
 and allows Sagan to correlate log events with your Snort IDS/IPS 
 system. Since Sagan can write to Snort IDS/IPS databases via 
-unified2/barnyard2 or direct SQL access, it is compatible with all 
-Snort "consoles". For example, Sagan is compatible with Snorby 
-[http://www.snorby.org], Sguil [http://sguil.sourceforge.net], BASE, 
- and the Prelude IDS framework! (to name a few).
+unified2/barnyard2, it is compatible with all Snort "consoles". 
+For example, Sagan is compatible with Snorby [http://www.snorby.org],
+Sguil [http://sguil.sourceforge.net], BASE, and the Prelude IDS 
+framework! (to name a few).
 
 Sagan supports many different output formats,  log normalization 
 (via liblognorm),  script execution on event and automatic firewall

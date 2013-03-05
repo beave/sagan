@@ -53,7 +53,6 @@ void    Usage( void );
 void    Chroot( const char *, const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);
-char   *SQL_Strip(char *);
 char   *Between_Quotes( char * );
 char   *Reference_Lookup( int, int );
 double CalcPct(uint64_t, uint64_t);
@@ -98,11 +97,6 @@ struct _SaganCounters {
 
     int	     blacklist_count;
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-    uint64_t last_cid;
-    uint64_t cid;            /* For passing CID with signal */
-#endif
-
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
 #endif
@@ -114,7 +108,6 @@ struct _SaganCounters {
     uint64_t websense_ignore_hit;			/* Ignores from our ignore list */
     uint64_t websense_total; 
     int websense_ignore_list_count;			
-
 #endif
 
 
@@ -131,10 +124,6 @@ struct _SaganDebug {
 
 #ifdef HAVE_LIBLOGNORM
     sbool debugnormalize;
-#endif
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-    sbool debugsql;
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -242,20 +231,7 @@ struct _SaganConfig {
     sbool	 sagan_unified2_flag;
 #endif
 
-/* MySQL/PostgreSQL support for Snort DB */
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-    int		 dbtype;
-    int          sagan_detail;
-    int		 sensor_id;
-    char	 sagan_hostname[MAXHOST];
-    char	 sagan_filter[50];
-    char         dbuser[MAXUSER];
-    char         dbpassword[MAXPASS];
-    char         dbname[50]; 
-    char         dbhost[50];
-    unsigned int dbport;
-#endif
+/* Websense Threatseeker */
 
 #ifdef WITH_WEBSENSE
     sbool	 websense_flag;
@@ -456,34 +432,6 @@ int  count;
 uint64_t utime;
 char sid[512];
 };
-
-/****************************************************************************/
-/* MySQL & PostgreSQL support.  Support for Snort databases                 */
-/****************************************************************************/
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-#define MAXDBNAME       32
-#define MAXSQL          4096
-#define MYSQL_PORT      3306
-
-char *sql_escape(const char *, int );
-void sagan_db_thread( _SaganEvent * );
-int  IP2Bit( char * );
-char *fasthex(char *, int);
-int db_connect( void );
-int  get_sensor_id ( void );
-uint64_t get_cid ( void );
-char *db_query ( char * );
-
-#endif
-
-#ifdef HAVE_LIBPRELUDE
-void PreludeInit( void );
-void sagan_prelude( _SaganEvent * );
-#endif
-
-
 
 #ifdef HAVE_LIBLOGNORM
 /* liblognorm struct */

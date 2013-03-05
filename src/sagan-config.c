@@ -208,35 +208,6 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
 
 #endif
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-     if (!strcmp(sagan_option, "sagan_proto")) { 
-        sagan_var1 = strtok_r(NULL, " ", &tok);
-	config->sagan_proto = atoi(sagan_var1);
-	}
-     
-     if (!strcmp(sagan_option, "sagan_hostname")) { 
-        snprintf(config->sagan_hostname, sizeof(config->sagan_hostname)-1, "%s", strtok_r(NULL, " ", &tok));
-	config->sagan_hostname[strlen(config->sagan_hostname)-1] = '\0';
-	}
-
-     if (!strcmp(sagan_option, "sagan_interface")) { 
-        snprintf(config->sagan_interface, sizeof(config->sagan_interface)-1, "%s", strtok_r(NULL, " ", &tok)); 
-	config->sagan_interface[strlen(config->sagan_interface)-1] = '\0';
-	}
-
-     if (!strcmp(sagan_option, "sagan_filter")) { 
-        snprintf(config->sagan_filter, sizeof(config->sagan_filter)-1, "%s", strtok_r(NULL, " ", &tok)); 
-	config->sagan_filter[strlen(config->sagan_filter)-1] = '\0';
-	}
-    
-     if (!strcmp(sagan_option, "sagan_detail")) {  
-         sagan_var1 = strtok_r(NULL, " ", &tok);
-         config->sagan_detail = atoi(sagan_var1);
-	 }
-
-#endif
-
 #ifndef HAVE_LIBLOGNORM
 if (!strcmp(sagan_option, "normalize:")) {
    Sagan_Log(0, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
@@ -443,83 +414,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
 	}
 #endif
-
-
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-
-	/* output type (database, etc) */
-
-	if (!strcmp(sagan_var1, "database:")) {
-	   sagan_var1 = strtok_r(NULL, ",", &tok);
-	
-	   /* Type (only "log" is used right now */
-
-	   if (!strcmp(sagan_var1, "log")) { 
-	      sagan_var1 = strtok_r(NULL, ",", &tok); 
-	      }
-
-	      /* MySQL/PostgreSQL/Oracle/etc */
-
-	      Remove_Spaces(sagan_var1);
-
-
-	      if (!strcmp(sagan_var1, "mysql" )) { 
-#ifndef HAVE_LIBMYSQLCLIENT_R
-   	         Sagan_Log(1,"MySQL support not found. Re-compile with MySQL support or disable in the sagan.conf.");
-#endif
-	         config->dbtype=1; 
-	         }
-
-	      if (!strcmp(sagan_var1, "postgresql" )) { 
-#ifndef HAVE_LIBPQ
-		 Sagan_Log(1,"PostgreSQL support not found. Re-compile with PostgreSQL support or disable in the sagan.conf.");
-#endif
-		 config->dbtype=2; 
-		 }
-
-
-	      sagan_var1 = strtok_r(NULL, ",", &tok);
-	      Remove_Return(sagan_var1);					/* rm NL */
-	      
-	      strlcpy(tmpbuf, sagan_var1, sizeof(tmpbuf));
-
-	      ptmp = strtok_r(tmpbuf, "=", &tok);
-
-	      while (ptmp != NULL) { 
-	        Remove_Spaces(ptmp); 
-
-	        if (!strcmp(ptmp, "user")) { 
-		   ptmp = strtok_r(NULL, " ", &tok);
-		   snprintf(config->dbuser, sizeof(config->dbuser), "%s", ptmp);
-		   }
-
-                if (!strcmp(ptmp , "password")) {
-		   ptmp = strtok_r(NULL, " ", &tok);
-		   snprintf(config->dbpassword, sizeof(config->dbpassword), "%s", ptmp);
-                   }
-
-		if (!strcmp(ptmp, "dbname")) { 
-		   ptmp = strtok_r(NULL, " ", &tok);
-		   snprintf(config->dbname, sizeof(config->dbname), "%s", ptmp);
-		   }
-
-		if (!strcmp(ptmp, "host")) { 
-		   ptmp = strtok_r(NULL, " ", &tok);
-		   snprintf(config->dbhost, sizeof(config->dbhost), "%s", ptmp);
-		   }
-
-		if (!strcmp(ptmp, "port")) {
-		   config->dbport = atoi(ptmp);
-		   }
-
-	      ptmp = strtok_r(NULL, "=", &tok);
-
-
-	     }
-	   
-	   }
-#endif      
-   }
+}
      
      /* var */
 

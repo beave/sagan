@@ -58,10 +58,6 @@ if ( nonthread_alert_lock == 0 ) {
    }
 #endif
 
-#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-   if ( config->dbtype != 0 ) sagan_db_thread( Event );
-#endif
-
    nonthread_alert_lock = 0; 
    pthread_mutex_unlock(&SaganOutputNonThreadMutex);
 }
@@ -77,15 +73,6 @@ if ( nonthread_alert_lock == 0 ) {
 #ifdef WITH_SNORTSAM
 if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) sagan_fwsam( Event );
 #endif
-
-
-/****************************************************************************/
-/* Snort DB/SQL support                                                     */
-/****************************************************************************/
-
-//#if defined(HAVE_LIBMYSQLCLIENT_R) || defined(HAVE_LIBPQ)
-//if ( config->dbtype != 0 ) sagan_db_thread( Event );
-//#endif
 
 /****************************************************************************/
 /* SMTP/Email support (libesmtp)                                            */
