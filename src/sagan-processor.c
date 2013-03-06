@@ -43,6 +43,8 @@ struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _SaganConfig *config;
 
 int proc_msgslot; 
+int i; 
+int rc; 
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
