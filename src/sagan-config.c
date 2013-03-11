@@ -107,7 +107,6 @@ config->max_processor_threads = MAX_PROCESSOR_THREADS;
 config->home_any = 0; 
 config->external_any = 0; 
 
-
 /* Start loading configuration */
 
 rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
@@ -242,6 +241,16 @@ if (!strcmp(sagan_option, "normalize:")) {
 }
 
 #endif
+
+if (!strcmp(sagan_option, "drop_list:")) { 
+   sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok)); 
+
+   if ( sagan_var1 == NULL )  
+      Sagan_Log(1, "[%s, line %d] No \"drop file\" specified in the sagan.conf file!", __FILE__, __LINE__);
+
+   config->sagan_droplist_flag = 1; 
+   snprintf(config->sagan_droplistfile, sizeof(config->sagan_droplistfile)-1, "%s", sagan_var1);
+   }
 
 if (!strcmp(sagan_option, "processor")) {
         sagan_var1 = strtok_r(NULL," ", &tok);

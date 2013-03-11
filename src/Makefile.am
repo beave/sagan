@@ -21,6 +21,7 @@ sagan-processor.c \
 sagan-gen-msg.c \
 sagan-liblognorm.c \
 sagan-send-alert.c \
+sagan-ignore-list.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \

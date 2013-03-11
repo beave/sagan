@@ -79,6 +79,7 @@ struct _SaganCounters {
     uint64_t dns_cache_count;
     uint64_t dns_miss_count;
     uint64_t fwsam_count;
+    uint64_t ignore_count;
 
     uint64_t track_clients_client_count;                /* sagan-track-clients processor */
     uint64_t track_clients_down; 
@@ -96,6 +97,7 @@ struct _SaganCounters {
     int      genmapcount;
 
     int	     blacklist_count;
+    int	     droplist_count;
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
@@ -162,6 +164,9 @@ struct _SaganConfig {
     char         sagan_host[MAXHOST];
     char         sagan_extern[MAXPATH];
     char	 sagan_startutime[20]; 			/* Records utime at startup */
+
+    char	 sagan_droplistfile[MAXPATH];		/* Log lines to "ignore" */
+    sbool	 sagan_droplist_flag; 
     
     uint64_t     max_output_threads;
     sbool	 output_thread_flag;
@@ -493,6 +498,11 @@ struct _SaganHomeNet {
      char network[130];
 };
 
+typedef struct _Sagan_Droplist _Sagan_Droplist;
+struct _Sagan_Droplist {
+char ignore_string[256]; 
+};
+
 void Sagan_Alert( _SaganEvent * );
 void sagan_ext_thread( _SaganEvent * );
 
@@ -515,6 +525,7 @@ char *Sagan_Var_To_Value(char *);
 int  Sagan_Blacklist_Load ( void );
 void Load_Gen_Map( const char * );
 void Sagan_Alert_File( _SaganEvent * );
+void Load_Ignore_List ( void );
 
 sbool is_rfc1918 ( char * );
 

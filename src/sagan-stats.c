@@ -83,6 +83,11 @@ Sagan_Log(0, " (|| ||)   Threshold                : %" PRIu64 " (%.3f%%)", count
 Sagan_Log(0, "  oo-oo    After                    : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
 Sagan_Log(0, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
 
+if (config->sagan_droplist_flag) {
+Sagan_Log(0, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->sagantotal) );
+}
+
+
 
 if ( seconds >= 60 && seconds <= 3600) Sagan_Log(0, "           Runtime                  : %u minutes", seconds / 60);
 if ( seconds < 60 ) Sagan_Log(0, "           Runtime                  : %u seconds", seconds);

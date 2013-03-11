@@ -160,6 +160,7 @@ int rc=0;
 char *runas=RUNAS;
 
 int i;
+//sbool ignore_flag=0;
 
 time_t t;
 struct tm *run;
@@ -435,7 +436,12 @@ Unified2InitFile( config );
 #endif
 
 
-Sagan_Log(0, "");
+if ( config->sagan_droplist_flag ) { 
+Load_Ignore_List(); 
+Sagan_Log(0, ""); 
+Sagan_Log(0, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
+}
+
 
 Sagan_Log(0, "");
 Sagan_Log(0, " ,-._,-. 	-*> Sagan! <*-");
@@ -656,28 +662,28 @@ while(fd != NULL) {
                if ( strcspn ( syslog_msg, "\n" ) < strlen(syslog_msg) ) 
                   syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
 
-	       if ( proc_msgslot < config->max_processor_threads ) {
+	          if ( proc_msgslot < config->max_processor_threads ) {
 
-	       pthread_mutex_lock(&SaganProcWorkMutex);
+	          pthread_mutex_lock(&SaganProcWorkMutex);
 
-	       snprintf(SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host), "%s", syslog_host);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility), "%s", syslog_facility);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority), "%s", syslog_priority);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level), "%s", syslog_level);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag), "%s", syslog_tag);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date), "%s", syslog_date);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time), "%s", syslog_time);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program), "%s", syslog_program);
-               snprintf(SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog[proc_msgslot].syslog_message), "%s", syslog_msg);
+	          snprintf(SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host), "%s", syslog_host);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility), "%s", syslog_facility);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority), "%s", syslog_priority);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level), "%s", syslog_level);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag), "%s", syslog_tag);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date), "%s", syslog_date);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time), "%s", syslog_time);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program), "%s", syslog_program);
+                  snprintf(SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog[proc_msgslot].syslog_message), "%s", syslog_msg);
 
-	       proc_msgslot++;
+	          proc_msgslot++;
 
-               pthread_cond_signal(&SaganProcDoWork);
-               pthread_mutex_unlock(&SaganProcWorkMutex);
-	       } else { 
-	       Sagan_Log(2, "[%s, line %d] Out of worker threads!", __FILE__, __LINE__);
-	       counters->sagan_log_drop++;
-	       }
+                  pthread_cond_signal(&SaganProcDoWork);
+                  pthread_mutex_unlock(&SaganProcWorkMutex);
+	          } else { 
+	          Sagan_Log(2, "[%s, line %d] Out of worker threads!", __FILE__, __LINE__);
+	          counters->sagan_log_drop++;
+	          }
 
 if (debug->debugthreads) Sagan_Log(0, "Current \"proc_msgslot\": %d", proc_msgslot); 
 if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);

@@ -27,7 +27,7 @@
 *  
 */
 
-#define PROCESSOR_NAME "sagan_track_clients"
+#define PROCESSOR_NAME "Sagan_Track_Clients"
 #define PROCESSOR_FACILITY "daemon"
 #define PROCESSOR_PRIORITY "warning"
 #define PROCESSOR_PRI 1

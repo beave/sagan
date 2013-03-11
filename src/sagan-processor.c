@@ -37,6 +37,9 @@
 
 #include "sagan.h"
 
+struct _Sagan_Droplist *SaganDroplist;
+struct _SaganCounters *counters;
+
 int Sagan_Blacklist ( _SaganProcSyslog * );
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
@@ -45,6 +48,7 @@ struct _SaganConfig *config;
 int proc_msgslot; 
 int i; 
 int rc; 
+sbool ignore_flag=0;
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
@@ -66,7 +70,21 @@ for (;;) {
 	while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
 
 	proc_msgslot--;
-	
+
+	/* Do we need to "ignore" this inbound log message? Used to save CPU */
+
+        if ( config->sagan_droplist_flag ) {
+
+        ignore_flag=0;
+
+        for (i = 0; i < counters->droplist_count; i++) {
+            if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganDroplist[i].ignore_string)) {
+               counters->ignore_count++;
+               ignore_flag=1;
+               }
+          }
+        }
+
 	memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
 	snprintf(SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host), "%s", SaganProcSyslog[proc_msgslot].syslog_host);
@@ -80,6 +98,8 @@ for (;;) {
 	snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "%s", SaganProcSyslog[proc_msgslot].syslog_message);
         
 	pthread_mutex_unlock(&SaganProcWorkMutex);
+
+	if ( ignore_flag == 0 ) { 
 
         Sagan_Engine(SaganProcSyslog_LOCAL);
 
@@ -101,6 +121,7 @@ for (;;) {
 	if (config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
 	if (config->sagan_track_clients_flag) sagan_track_clients(SaganProcSyslog_LOCAL);
 	}
+     }
 
 free(SaganProcSyslog_LOCAL);
 }
