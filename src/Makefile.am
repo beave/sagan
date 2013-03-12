@@ -33,7 +33,8 @@ output-plugins/sagan-snortsam.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
-processors/sagan-blacklist.c
+processors/sagan-blacklist.c \
+processors/sagan-search.c
 
 
 install-data-local:

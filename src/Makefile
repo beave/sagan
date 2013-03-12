@@ -63,7 +63,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
 	sagan-snortsam.$(OBJEXT) sagan-engine.$(OBJEXT) \
 	sagan-track-clients.$(OBJEXT) sagan-websense.$(OBJEXT) \
-	sagan-blacklist.$(OBJEXT)
+	sagan-blacklist.$(OBJEXT) sagan-search.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -210,7 +210,8 @@ output-plugins/sagan-snortsam.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
-processors/sagan-blacklist.c
+processors/sagan-blacklist.c \
+processors/sagan-search.c
 
 all: all-am
 
@@ -312,6 +313,7 @@ include ./$(DEPDIR)/sagan-plog.Po
 include ./$(DEPDIR)/sagan-processor.Po
 include ./$(DEPDIR)/sagan-references.Po
 include ./$(DEPDIR)/sagan-rules.Po
+include ./$(DEPDIR)/sagan-search.Po
 include ./$(DEPDIR)/sagan-send-alert.Po
 include ./$(DEPDIR)/sagan-signal.Po
 include ./$(DEPDIR)/sagan-snortsam.Po
@@ -507,6 +509,20 @@ sagan-blacklist.obj: processors/sagan-blacklist.c
 #	source='processors/sagan-blacklist.c' object='sagan-blacklist.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
+
+sagan-search.o: processors/sagan-search.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-search.o -MD -MP -MF $(DEPDIR)/sagan-search.Tpo -c -o sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
+	$(am__mv) $(DEPDIR)/sagan-search.Tpo $(DEPDIR)/sagan-search.Po
+#	source='processors/sagan-search.c' object='sagan-search.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
+
+sagan-search.obj: processors/sagan-search.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-search.obj -MD -MP -MF $(DEPDIR)/sagan-search.Tpo -c -o sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
+	$(am__mv) $(DEPDIR)/sagan-search.Tpo $(DEPDIR)/sagan-search.Po
+#	source='processors/sagan-search.c' object='sagan-search.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

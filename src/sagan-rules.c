@@ -111,6 +111,8 @@ int pcreoptions=0;
 int i=0;
 int a=0;
 
+int rc=0;
+
 int forward=0;
 int reverse=0;
 
@@ -141,6 +143,29 @@ while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
 	}
 
 Remove_Return(rulebuf);
+
+/****************************************/
+/* Some really basic rule sanity checks */
+/****************************************/
+
+if (!strchr(rulebuf, ';') || !strchr(rulebuf, ':') ||
+    !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) Sagan_Log(1, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
+
+if (!strstr(rulebuf, "sid:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
+if (!strstr(rulebuf, "rev:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
+if (!strstr(rulebuf, "msg:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
+
+rc=0;
+if (!strstr(rulebuf, "alert")) rc++; 
+if (!strstr(rulebuf, "drop")) rc++; 
+if ( rc == 2 ) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
+
+rc=0;
+if (!strstr(rulebuf, "tcp")) rc++;
+if (!strstr(rulebuf, "udp")) rc++;
+if (!strstr(rulebuf, "icmp")) rc++;
+if (!strstr(rulebuf, "syslog")) rc++;
+if ( rc == 4 ) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
 
 /* Parse forward for the first '(' */
 
