@@ -62,7 +62,7 @@ chown sagan:sagan /var/run/sagan.fifo
 %dir /var/run/sagan
 
 %changelog
-* Thu Mar 22 2013 Stas Alekseev - 0.3.0git20130322-1
+* Fri Mar 22 2013 Stas Alekseev - 0.3.0git20130322-1
 - Updated to build with the latest version from GIT.
 
 * Thu Mar 21 2013 Stas Alekseev - 0.2.3-1
