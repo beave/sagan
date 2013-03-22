@@ -1,11 +1,11 @@
 Name:		sagan
-Version:	0.2.3
+Version:	0.3.0git20130322
 Release:	1%{?dist}
 Summary:	Sagan is a multi-threaded, real time system and event log monitoring system, but with a twist.
 
 License:	GPLv2
 URL:		http://sagan.quadrantsec.com/
-Source0:	http://sagan.quadrantsec.com/download/sagan-0.2.3.tar.gz
+Source0:	http://sagan.quadrantsec.com/download/sagan-%{version}.tar.gz
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
 BuildRequires:	pcre-devel libesmtp-devel libpcap-devel libdnet-devel liblognorm-devel
@@ -21,7 +21,7 @@ Sagan is a high performance, real-time log analysis & correlation engine. It use
 
 
 %build
-%configure --disable-prelude --enable-esmtp --disable-mysql --disable-postgresql
+%configure --enable-esmtp
 make %{?_smp_mflags}
 
 
@@ -62,6 +62,9 @@ chown sagan:sagan /var/run/sagan.fifo
 %dir /var/run/sagan
 
 %changelog
+* Thu Mar 22 2013 Stas Alekseev - 0.3.0git20130322-1
+- Updated to build with the latest version from GIT.
+
 * Thu Mar 21 2013 Stas Alekseev - 0.2.3-1
 - Initial package.
 
