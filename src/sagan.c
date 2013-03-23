@@ -402,6 +402,26 @@ Sagan_Log(0, "Blacklist loaded %d entries", counters->blacklist_count);
 Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
 }
 
+if ( config->search_nocase_flag) {
+
+Sagan_Search_Load( 1 );
+
+Sagan_Log(0, "");
+Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
+Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
+}
+
+if ( config->search_nocase_flag) {
+
+Sagan_Search_Load( 2 );
+
+Sagan_Log(0, "");
+Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
+Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
+}
+
+
+
 #ifdef WITH_WEBSENSE
 if ( config->websense_flag ) { 
 

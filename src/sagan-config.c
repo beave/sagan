@@ -104,8 +104,8 @@ config->sagan_proto = 17;		/* Default to UDP */
 config->max_output_threads = MAX_OUTPUT_THREADS;
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
-config->home_any = 0; 
-config->external_any = 0; 
+//config->home_any = 0; 
+//config->external_any = 0; 
 
 /* Start loading configuration */
 
@@ -288,6 +288,46 @@ if (!strcmp(sagan_option, "processor")) {
 	     
 	     }		               
 	   }
+
+	
+	if (!strcmp(sagan_var1, "search_nocase:")) { 
+
+	   config->search_nocase_flag=1;
+
+	   ptmp = sagan_var1; 
+
+           while (ptmp != NULL ) {
+
+             if (!strcmp(ptmp, "searchlist")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                snprintf(config->search_nocase_file, sizeof(config->search_nocase_file), "%s", Remove_Return(ptmp));
+                }
+
+             ptmp = strtok_r(NULL, "=", &tok);
+
+             }
+           }
+
+        if (!strcmp(sagan_var1, "search_case:")) {
+
+           config->search_case_flag=1;
+
+           ptmp = sagan_var1;
+
+           while (ptmp != NULL ) {
+
+             if (!strcmp(ptmp, "searchlist")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                snprintf(config->search_case_file, sizeof(config->search_case_file), "%s", Remove_Return(ptmp));
+                }
+
+             ptmp = strtok_r(NULL, "=", &tok);
+
+             }
+           }
+
+
+
 
 #ifdef WITH_WEBSENSE
 

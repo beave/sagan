@@ -420,7 +420,7 @@ if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    // 172.16/31.X.
 
 /* Invalid IP addresses */
 
-if ( ipint > 16777216 ) return(TRUE); 				 // Larger than 1.0.0.0
+if ( ipint < 16777216 ) return(FALSE); 				 // Larger than 1.0.0.0
 
 return(FALSE);
 

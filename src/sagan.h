@@ -98,6 +98,8 @@ struct _SaganCounters {
 
     int	     blacklist_count;
     int	     droplist_count;
+    int	     search_nocase_count;
+    int	     search_case_count;
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
@@ -196,6 +198,14 @@ struct _SaganConfig {
     sbool       blacklist_flag;
     char	blacklist_file[MAXPATH];
     int		blacklist_parse_depth;
+
+    sbool	search_nocase_flag;
+    char	search_nocase_file[MAXPATH];
+    int		search_nocase_parse_depth;
+
+    sbool       search_case_flag;
+    char        search_case_file[MAXPATH];
+    int         search_case_parse_depth;
 
 /* libesmtp/SMTP support */
     
@@ -523,6 +533,7 @@ void Sagan_Processor ( void );
 void sagan_fwsam( _SaganEvent * );
 char *Sagan_Var_To_Value(char *);
 int  Sagan_Blacklist_Load ( void );
+int  Sagan_Searchlist_Load ( int ); 
 void Load_Gen_Map( const char * );
 void Sagan_Alert_File( _SaganEvent * );
 void Load_Ignore_List ( void );

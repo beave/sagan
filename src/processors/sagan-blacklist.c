@@ -18,12 +18,12 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-track-clients.c 
+/* sagan-blacklist.c 
 *
-* Simple pre-processors that keeps track of reporting syslog clients/agents.
-* This is based off the IP address the clients,  not based on normalization.
-* If a client/agent hasn't sent a syslog/event message in X minutes,  then 
-* generate an alert.
+* This searches log lines for IP addresses/networks that are loaded
+* from a "blacklist" file.  For example,  you might search log lines for
+* known bad IP/Networks.  This processor uses the CIDR format: 
+* 192.168.1.1/32 (single ip) or 192.168.1.0./24.
 *  
 */
 
