@@ -53,6 +53,7 @@
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 struct _SaganVar *var; 
+struct _Sagan_Processor_Generator *generator;
 
 sbool daemonize;
 
@@ -426,6 +427,11 @@ return(FALSE);
 
 }
 
+/****************************************************************************/
+/* Sagan_Var_To_Value - Changes a variable in a configuration file (for     */
+/* example - $RULE_PATH into it's true value.                               */
+/****************************************************************************/
+
 char *Sagan_Var_To_Value(char *instring) {
 
 char *ptmp = NULL;
@@ -459,3 +465,21 @@ strlcpy(tmp_result, "", sizeof(tmp_result));
 return(tmpbuf);
 }
 
+/****************************************************************************/
+/* Sagan_Generator_Lookup - Looks up the "generator" ID (see the            */
+/* "gen-msg.map") of a processor				            */
+/****************************************************************************/
+
+char *Sagan_Generator_Lookup(int processor_id, int alert_id) { 
+
+int z=0; 
+char tmp[64];
+char *msg=NULL;
+
+
+for (z=0; z<counters->genmapcount; z++) { 
+if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
+}
+
+return(msg);
+}

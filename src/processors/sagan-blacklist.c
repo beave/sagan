@@ -188,10 +188,8 @@ char tmp[64] = { 0 };
         SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
         memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
 
-	snprintf(tmp, sizeof(tmp), "%s : Log contains blacklisted IP address", BLACKLIST_PROCESSOR_NAME);
-//        SaganProcessorEvent->f_msg = generator_msg;
-	SaganProcessorEvent->f_msg = tmp;	
-        SaganProcessorEvent->message = SaganProcSyslog_LOCAL->syslog_message;
+	SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(BLACKLIST_PROCESSOR_GENERATOR_ID, 1);
+        SaganProcessorEvent->message 	     =	     SaganProcSyslog_LOCAL->syslog_message;
 
         SaganProcessorEvent->program         =       BLACKLIST_PROCESSOR_NAME;
         SaganProcessorEvent->facility        =       BLACKLIST_PROCESSOR_FACILITY;

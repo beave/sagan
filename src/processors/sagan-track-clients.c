@@ -40,7 +40,6 @@
 #include "sagan-track-clients.h"
 
 struct _Sagan_Track_Clients *SaganTrackClients;
-struct _Sagan_Processor_Generator *generator;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
@@ -140,13 +139,7 @@ struct _Sagan_Event *SaganProcessorEvent = NULL;
 SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
 memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
 
-int z=0; 
-char tmp[64];
-
-for (z=0; z<counters->genmapcount; z++) { 
-if ( generator[z].generatorid == PROCESSOR_GENERATOR_ID && generator[z].alertid == alertid) msg=generator[z].generator_msg;
-}
-
+char tmp[64] = { 0 };
 
 SaganProcessorEvent->program		=       PROCESSOR_NAME;
 SaganProcessorEvent->facility		=       PROCESSOR_FACILITY;
@@ -170,7 +163,8 @@ SaganProcessorEvent->sid		=	tmp;
 SaganProcessorEvent->message		=       SaganProcSyslog_LOCAL->syslog_message;
 SaganProcessorEvent->time		=       SaganProcSyslog_LOCAL->syslog_time;
 SaganProcessorEvent->date		=       SaganProcSyslog_LOCAL->syslog_date;
-SaganProcessorEvent->f_msg		=       msg;
+
+SaganProcessorEvent->f_msg		= 	Sagan_Generator_Lookup(PROCESSOR_GENERATOR_ID, alertid);
 SaganProcessorEvent->ip_proto		=	config->sagan_proto;
 
 SaganProcessorEvent->event_time_sec	=       time(NULL);

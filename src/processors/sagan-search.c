@@ -38,7 +38,6 @@
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
-struct _Sagan_Processor_Generator *generator;
 
 struct _Sagan_Nocase_Searchlist *SaganNocaseSearchlist;
 struct _Sagan_Case_Searchlist *SaganCaseSearchlist;
@@ -121,19 +120,12 @@ void Sagan_Search_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, int aler
 char tmp[64] = { 0 };
 char *msg=NULL; 
 
-int z=0; 
-
-for (z=0; z<counters->genmapcount; z++) {
-if ( generator[z].generatorid == SEARCH_PROCESSOR_GENERATOR_ID && generator[z].alertid == alertid) msg=generator[z].generator_msg;
-}
-
-
         struct _Sagan_Event *SaganProcessorEvent = NULL;
         SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
         memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
 
-        SaganProcessorEvent->f_msg = msg;
-        SaganProcessorEvent->message = SaganProcSyslog_LOCAL->syslog_message;
+	SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(SEARCH_PROCESSOR_GENERATOR_ID, alertid);
+        SaganProcessorEvent->message         = 	     SaganProcSyslog_LOCAL->syslog_message;
 
         SaganProcessorEvent->program         =       SEARCH_PROCESSOR_NAME;
         SaganProcessorEvent->facility        =       SEARCH_PROCESSOR_FACILITY;

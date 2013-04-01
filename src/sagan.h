@@ -537,6 +537,7 @@ int  Sagan_Searchlist_Load ( int );
 void Load_Gen_Map( const char * );
 void Sagan_Alert_File( _SaganEvent * );
 void Load_Ignore_List ( void );
+char *Sagan_Generator_Lookup( int, int );
 
 sbool is_rfc1918 ( char * );
 
