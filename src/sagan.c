@@ -381,7 +381,6 @@ Remove_Lock_File();
 Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-Sagan_Log(0, "Max Output Thread        : %" PRIu64 "", config->max_output_threads);
 Sagan_Log(0, "Max Processor Threads    : %" PRIu64 "", config->max_processor_threads);
 
 Sagan_Log(0, "");

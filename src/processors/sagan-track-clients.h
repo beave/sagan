@@ -45,5 +45,3 @@ sbool   status;
 
 
 int sagan_track_clients ( _SaganProcSyslog * );
-//void sagan_track_clients_send_alert ( char *, int  );
-void sagan_track_clients_send_alert ( _SaganProcSyslog *, int);

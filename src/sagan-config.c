@@ -101,7 +101,7 @@ snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", RULE_PA
 
 
 config->sagan_proto = 17;		/* Default to UDP */
-config->max_output_threads = MAX_OUTPUT_THREADS;
+//config->max_output_threads = MAX_OUTPUT_THREADS;
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
 //config->home_any = 0; 
@@ -126,11 +126,6 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      if (tmpbuf[0] == 32 ) continue;
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
-
-     if (!strcmp(Remove_Return(sagan_option), "max_output_threads")) { 
-	 sagan_var1 = strtok_r(NULL, " ", &tok);
-         config->max_output_threads = strtoull(sagan_var1, NULL, 10);
-	 }
 
      if (!strcmp(Remove_Return(sagan_option), "max_processor_threads")) {
          sagan_var1 = strtok_r(NULL, " ", &tok);
@@ -390,6 +385,7 @@ if (!strcmp(sagan_option, "output")) {
 
      if (!strcmp(sagan_var1, "external:")) {
         config->sagan_ext_flag=1;
+	config->sagan_external_output_flag=1;
         snprintf(config->sagan_extern, sizeof(config->sagan_extern), "%s", strtok_r(NULL, " ", &tok));
         if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
         }
@@ -399,6 +395,7 @@ if (!strcmp(sagan_option, "output")) {
 if (!strcmp(sagan_var1, "alert_fwsam:")) { 
        snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", Remove_Return(strtok_r(NULL, " ", &tok)));
        config->sagan_fwsam_flag=1; 
+       config->sagan_external_output_flag=1;
        }
 #endif
 
@@ -442,6 +439,8 @@ if (!strcmp(sagan_var1, "unified2:")) {
 #ifdef HAVE_LIBESMTP
 
 	if (!strcmp(sagan_var1, "email:")) { 
+
+	   config->sagan_external_output_flag=1;
 	   ptmp = sagan_var1;
 
 	   while (ptmp != NULL ) { 

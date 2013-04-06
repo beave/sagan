@@ -19,6 +19,4 @@ char search[512];
 };
 
 int Sagan_Search ( _SaganProcSyslog *, int );
-void Sagan_Search_Send_Alert ( _SaganProcSyslog *, int );
-
 

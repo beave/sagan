@@ -94,12 +94,28 @@ int Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
 
 int i; 
 
+struct _Sagan_Processor_Info *processor_info = NULL;
+processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+
+processor_info->processor_name          =       SEARCH_PROCESSOR_NAME;
+processor_info->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
+processor_info->processor_name          =       SEARCH_PROCESSOR_NAME;
+processor_info->processor_facility      =       SEARCH_PROCESSOR_FACILITY;
+processor_info->processor_priority      =       SEARCH_PROCESSOR_PRIORITY;
+processor_info->processor_pri           =       SEARCH_PROCESSOR_PRI;
+processor_info->processor_class         =       SEARCH_PROCESSOR_CLASS;
+processor_info->processor_tag           =       SEARCH_PROCESSOR_TAG;
+processor_info->processor_rev           =       SEARCH_PROCESSOR_REV;
+
+
 if ( type == 1 ) {
 
 for (i=0; i<counters->search_nocase_count; i++) { 
 
 if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].search )) { 
-   Sagan_Search_Send_Alert(SaganProcSyslog_LOCAL, 1);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
+
    }
  }
 } else { 
@@ -107,54 +123,10 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
 for (i=0; i<counters->search_case_count; i++) {
 
 if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search )) {
-   Sagan_Search_Send_Alert(SaganProcSyslog_LOCAL, 2);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 2);
    }
  }
 }
 
 }
-
-
-void Sagan_Search_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, int alertid ) { 
-
-char tmp[64] = { 0 };
-char *msg=NULL; 
-
-        struct _Sagan_Event *SaganProcessorEvent = NULL;
-        SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
-        memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
-
-	SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(SEARCH_PROCESSOR_GENERATOR_ID, alertid);
-        SaganProcessorEvent->message         = 	     SaganProcSyslog_LOCAL->syslog_message;
-
-        SaganProcessorEvent->program         =       SEARCH_PROCESSOR_NAME;
-        SaganProcessorEvent->facility        =       SEARCH_PROCESSOR_FACILITY;
-        SaganProcessorEvent->priority        =       SEARCH_PROCESSOR_PRIORITY;
-
-        SaganProcessorEvent->pri             =       SEARCH_PROCESSOR_PRI;
-        SaganProcessorEvent->class           =       SEARCH_PROCESSOR_CLASS;
-        SaganProcessorEvent->tag             =       SEARCH_PROCESSOR_TAG;
-        SaganProcessorEvent->rev             =       SEARCH_PROCESSOR_REV;
-
-	SaganProcessorEvent->ip_src	     =	     SaganProcSyslog_LOCAL->syslog_host;
-	SaganProcessorEvent->ip_dst          =       SaganProcSyslog_LOCAL->syslog_host;
-
-        SaganProcessorEvent->dst_port        =       config->sagan_port; 
-        SaganProcessorEvent->src_port        =       config->sagan_port;
-        SaganProcessorEvent->found           =       0;
-
-        snprintf(tmp, sizeof(tmp), "1");
-        SaganProcessorEvent->sid             =       tmp;
-        SaganProcessorEvent->time            =       SaganProcSyslog_LOCAL->syslog_time;
-        SaganProcessorEvent->date            =       SaganProcSyslog_LOCAL->syslog_date;
-        SaganProcessorEvent->ip_proto        =       config->sagan_proto;
-
-        SaganProcessorEvent->event_time_sec  =          time(NULL);
-
-        SaganProcessorEvent->generatorid     =       SEARCH_PROCESSOR_GENERATOR_ID;
-
-        Sagan_Output ( SaganProcessorEvent );
-        free(SaganProcessorEvent);
-}
-
 

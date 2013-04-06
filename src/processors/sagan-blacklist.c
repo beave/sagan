@@ -120,6 +120,20 @@ uint32_t u32_ipaddr;
 char *ip_src = NULL;
 char *ip_dst = NULL;
 
+struct _Sagan_Processor_Info *processor_info = NULL;
+processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+
+processor_info->processor_name          =       BLACKLIST_PROCESSOR_NAME;
+processor_info->processor_generator_id  =       BLACKLIST_PROCESSOR_GENERATOR_ID;
+processor_info->processor_name          =       BLACKLIST_PROCESSOR_NAME;
+processor_info->processor_facility      =       BLACKLIST_PROCESSOR_FACILITY;
+processor_info->processor_priority      =       BLACKLIST_PROCESSOR_PRIORITY;
+processor_info->processor_pri           =       BLACKLIST_PROCESSOR_PRI;
+processor_info->processor_class         =       BLACKLIST_PROCESSOR_CLASS;
+processor_info->processor_tag           =       BLACKLIST_PROCESSOR_TAG;
+processor_info->processor_rev           =       BLACKLIST_PROCESSOR_REV;
+
 #ifdef HAVE_LIBLOGNORM
 SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
@@ -133,14 +147,14 @@ free(SaganNormalizeLiblognorm);
 if ( ip_src != NULL ) { 
    u32_ipaddr = IP2Bit(ip_src);
    if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
-      Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, ip_src, SaganProcSyslog_LOCAL->syslog_host, 17);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
       }
 }
 
 if ( ip_dst != NULL ) {
    u32_ipaddr = IP2Bit(ip_dst);
    if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
-      Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, SaganProcSyslog_LOCAL->syslog_host, ip_dst, 17);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, ip_dst, config->sagan_proto, 1);
       }
 }
 
@@ -163,10 +177,13 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 	          if ( i%2 == 0 ) 
 		     {
 		     ipaddrptr = ipaddr;
-		     Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, SaganProcSyslog_LOCAL->syslog_host, ipaddrptr, 17);
+		     //Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, SaganProcSyslog_LOCAL->syslog_host, ipaddrptr, 17);
+		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
+
 		     } else { 
 		     ipaddrptr = ipaddr;
-		     Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, 17);
+		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
+		     //Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, 17);
 		     }
 		  }
 	   }
@@ -181,42 +198,4 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 return(0);
 }
 
-void Sagan_Blacklist_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, char *ip_src, char*ip_dst, int proto  ) {
-char tmp[64] = { 0 };
-
-        struct _Sagan_Event *SaganProcessorEvent = NULL;
-        SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
-        memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
-
-	SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(BLACKLIST_PROCESSOR_GENERATOR_ID, 1);
-        SaganProcessorEvent->message 	     =	     SaganProcSyslog_LOCAL->syslog_message;
-
-        SaganProcessorEvent->program         =       BLACKLIST_PROCESSOR_NAME;
-        SaganProcessorEvent->facility        =       BLACKLIST_PROCESSOR_FACILITY;
-        SaganProcessorEvent->priority        =       BLACKLIST_PROCESSOR_PRIORITY;
-
-        SaganProcessorEvent->pri             =       BLACKLIST_PROCESSOR_PRI;
-        SaganProcessorEvent->class           =       BLACKLIST_PROCESSOR_CLASS;
-        SaganProcessorEvent->tag             =       BLACKLIST_PROCESSOR_TAG;
-        SaganProcessorEvent->rev             =       BLACKLIST_PROCESSOR_REV;
-
-        SaganProcessorEvent->ip_src          =       ip_src;
-        SaganProcessorEvent->ip_dst          =       ip_dst;
-        SaganProcessorEvent->dst_port        =       config->sagan_port;
-        SaganProcessorEvent->src_port        =       config->sagan_port;
-        SaganProcessorEvent->found           =       0;
-
-        snprintf(tmp, sizeof(tmp), "1");
-        SaganProcessorEvent->sid             =       tmp;
-        SaganProcessorEvent->time            =       SaganProcSyslog_LOCAL->syslog_time;
-        SaganProcessorEvent->date            =       SaganProcSyslog_LOCAL->syslog_date;
-        SaganProcessorEvent->ip_proto        =       proto;
-
-        SaganProcessorEvent->event_time_sec  =          time(NULL);
-
-        SaganProcessorEvent->generatorid     =       BLACKLIST_PROCESSOR_GENERATOR_ID;
-
-        Sagan_Output ( SaganProcessorEvent );
-        free(SaganProcessorEvent);
-}
 

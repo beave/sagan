@@ -170,12 +170,12 @@ struct _SaganConfig {
     char	 sagan_droplistfile[MAXPATH];		/* Log lines to "ignore" */
     sbool	 sagan_droplist_flag; 
     
-    uint64_t     max_output_threads;
+//    uint64_t     max_output_threads;
     sbool	 output_thread_flag;
 
     int 	 max_processor_threads;
 
-//    sbool	 processor_thread_flag;
+    sbool	 sagan_external_output_flag;		/* For things like external, email, fwsam */
 
     int		 sagan_port;
     int		 sagan_exttype;
@@ -509,9 +509,23 @@ struct _SaganHomeNet {
 };
 
 typedef struct _Sagan_Droplist _Sagan_Droplist;
-struct _Sagan_Droplist {
-char ignore_string[256]; 
+	struct _Sagan_Droplist {
+	char ignore_string[256]; 
 };
+
+typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
+struct _Sagan_Processor_Info {
+
+	char *processor_name;
+	char *processor_facility; 
+	char *processor_priority;	/* Syslog priority */
+	int   processor_pri;		/* Sagan priority */
+	char *processor_class;
+	char *processor_tag; 
+	char *processor_rev;
+	int   processor_generator_id;
+};
+
 
 void Sagan_Alert( _SaganEvent * );
 void sagan_ext_thread( _SaganEvent * );

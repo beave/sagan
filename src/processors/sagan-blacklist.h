@@ -11,8 +11,6 @@
 
 int Sagan_Blacklist ( _SaganProcSyslog * );
 
-void Sagan_Blacklist_Send_Alert ( _SaganProcSyslog *, char *, char *, int );
-
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist {
 

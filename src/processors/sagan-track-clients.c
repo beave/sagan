@@ -50,8 +50,7 @@ struct _Sagan_Proc_Syslog *SaganProcSyslog;
 int proc_cpu_msgslot;
 
 
-int sagan_track_clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
-{
+int sagan_track_clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL ) {
 
 int alertid;
 
@@ -67,6 +66,21 @@ long utimetmp;
 t = time(NULL);
 now=localtime(&t);
 strftime(timet, sizeof(timet), "%s",  now);
+
+/* Maybe Move ? */
+struct _Sagan_Processor_Info *processor_info = NULL;
+processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+
+processor_info->processor_name		=	PROCESSOR_NAME;
+processor_info->processor_generator_id	=	PROCESSOR_GENERATOR_ID;
+processor_info->processor_name		=	PROCESSOR_NAME;
+processor_info->processor_facility	=	PROCESSOR_FACILITY;
+processor_info->processor_priority	=	PROCESSOR_PRIORITY;
+processor_info->processor_pri		=	PROCESSOR_PRI;
+processor_info->processor_class		=	PROCESSOR_CLASS;
+processor_info->processor_tag		=	PROCESSOR_TAG;
+processor_info->processor_rev		=	PROCESSOR_REV;
 
 for (i=0; i<counters->track_clients_client_count; i++) { 
 
@@ -85,7 +99,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 	   alertid=101;
 	   SaganTrackClients[i].status = 0;
-	   sagan_track_clients_send_alert(SaganProcSyslog_LOCAL, alertid);
+	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid);
 	   }
 
 	pthread_mutex_unlock(&SaganProcTrackClientsMutex);
@@ -99,8 +113,6 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 	   counters->track_clients_down++; 
 
-//	   printf("%d > %d\n", SaganTrackClients[i].utime - atol(timet), config->pp_sagan_track_clients * 60);
-	   
 	   Sagan_Log(2, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, SaganTrackClients[i].host, config->pp_sagan_track_clients);
    	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", SaganTrackClients[i].host, config->pp_sagan_track_clients);
 
@@ -110,7 +122,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 	   SaganTrackClients[i].status = 1;
 	   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
-	   sagan_track_clients_send_alert(SaganProcSyslog_LOCAL, alertid);
+	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid);
 	   }
 
 }
@@ -131,47 +143,3 @@ if ( tracking_flag == 0) {
 return(0);
 }
 
-void sagan_track_clients_send_alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, int alertid  ) {
-
-char *msg;
-
-struct _Sagan_Event *SaganProcessorEvent = NULL;
-SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
-memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
-
-char tmp[64] = { 0 };
-
-SaganProcessorEvent->program		=       PROCESSOR_NAME;
-SaganProcessorEvent->facility		=       PROCESSOR_FACILITY;
-SaganProcessorEvent->priority 		=       PROCESSOR_PRIORITY;
-
-SaganProcessorEvent->pri     		=       PROCESSOR_PRI;
-SaganProcessorEvent->class           	=       PROCESSOR_CLASS;
-SaganProcessorEvent->tag             	=       PROCESSOR_TAG;
-SaganProcessorEvent->rev             	=       PROCESSOR_REV;
-SaganProcessorEvent->generatorid    	=	PROCESSOR_GENERATOR_ID;
-
-
-SaganProcessorEvent->ip_src		=       SaganProcSyslog_LOCAL->syslog_host;
-SaganProcessorEvent->ip_dst		=       config->sagan_host; 
-SaganProcessorEvent->dst_port		=       config->sagan_port;
-SaganProcessorEvent->src_port		=       config->sagan_port;
-SaganProcessorEvent->found		=	0;
-
-snprintf(tmp, sizeof(tmp), "%d", alertid);
-SaganProcessorEvent->sid		=	tmp;
-SaganProcessorEvent->message		=       SaganProcSyslog_LOCAL->syslog_message;
-SaganProcessorEvent->time		=       SaganProcSyslog_LOCAL->syslog_time;
-SaganProcessorEvent->date		=       SaganProcSyslog_LOCAL->syslog_date;
-
-SaganProcessorEvent->f_msg		= 	Sagan_Generator_Lookup(PROCESSOR_GENERATOR_ID, alertid);
-SaganProcessorEvent->ip_proto		=	config->sagan_proto;
-
-SaganProcessorEvent->event_time_sec	=       time(NULL);
-SaganProcessorEvent->found		= 	0;
-
-counters->thread_output_counter++;
-
-Sagan_Output ( SaganProcessorEvent );
-
-}

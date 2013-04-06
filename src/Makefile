@@ -57,7 +57,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
-	sagan-send-alert.$(OBJEXT) sagan-ignore-list.$(OBJEXT) \
+	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
 	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
 	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
 	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
@@ -197,8 +197,8 @@ sagan-output.c \
 sagan-processor.c \
 sagan-gen-msg.c \
 sagan-liblognorm.c \
-sagan-send-alert.c \
 sagan-ignore-list.c \
+sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 output-plugins/sagan-alert.c \

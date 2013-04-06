@@ -70,7 +70,7 @@ char tmpmsg[MAX_SYSLOGMSG];
 snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
 To_UpperC(tmpmsg);
 
-/* See if the work " port" is in the string */
+/* See if the word " port" is in the string */
 
 if ( strstr(tmpmsg, " PORT ")) {
 

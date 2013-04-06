@@ -690,56 +690,11 @@ SaganEvent->generatorid =       1;              /* Rule based alerts are always 
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-//sagan_non_threaded( SaganEvent );
 Sagan_Output( SaganEvent );
-
 free(SaganEvent);
 
-
-//sagan_non_threaded(SaganEvent);
-
-//sagan_alert( &SaganEvent[threadid] );	/* 
-
-/* Log to unified2 output (if enabled and have libdnet). */
-
-/*
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-if ( config->sagan_unified2_flag ) {
-if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2( &SaganEvent[threadid] );
-if ( thresh_log_flag == 0 && after_log_flag == 0 ) Sagan_Unified2LogPacketAlert( &SaganEvent[threadid] );
-}
-#endif
-*/
-
-//free(SaganEvent);
-//free(SaganNormalizeLiblognorm);
-
-/****************************************************************************/
-/* Output Plugin Threads - This is for output plugins like SQL/etc that     */
-/* might cause some I/O blocking                                            */
-/****************************************************************************/
-
-//if ( config->output_thread_flag )  {
-
-//if (  counters->thread_output_counter < config->max_output_threads ) {
-
- //       counters->thread_output_counter++;
-
-//if ( pthread_create ( &output_id, &thread_output_attr, (void *)sagan_output, &SaganEvent ) ) {
-//	removelockfile();
-//        Sagan_Log(1, "[%s, line %d] Error creating output-plugin thread", __FILE__, __LINE__);
-//	} 
-//} else { 
-//	counters->sagan_output_drop++;
-//	Sagan_Log(0, "[%s, line %d] sagan_output(): Out of threads\n", __FILE__, __LINE__);
-//  }
-//}
-
-
   } /* End of threshold */
- // free(SaganEvent);
  } /* End of match */
-
 } /* End of pcre match */
 
 match=0;  /* Reset match! */
