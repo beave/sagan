@@ -30,6 +30,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#define _GNU_SOURCE             /* for strcasestr() */
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -78,52 +80,18 @@ int  thresh_count_by_dst=0;
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
 
-
-/*
-#ifdef HAVE_LIBLOGNORM
-#include <liblognorm.h>
-#include <ptree.h>
-#include <lognorm.h>
-
-struct stat fileinfo;
-struct liblognorm_struct *liblognormstruct;
-struct liblognorm_toload_struct *liblognormtoloadstruct;
-int liblognorm_count;
-
-static ln_ctx ctx;
-static ee_ctx eectx;
-
-es_str_t *str;
-es_str_t *propName;
-
-struct ee_event *lnevent;
-struct ee_field *field;
-char *cstr;
-#endif
-*/
-
-//int proc_msgslot;
-
 int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 {
 
 struct _Sagan_Event *SaganEvent = NULL;
-//SaganEvent = malloc(sizeof(struct _Sagan_Event));
-//memset(SaganEvent, 0, sizeof(_SaganEvent));
 
 #ifdef HAVE_LIBLOGNORM
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
-//SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-//memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 #endif
 
 sbool after_log_flag=0;
 sbool after_flag=0;
-//int  after_count_by_src=0;
-//int  after_count_by_dst=0;
 
-
-//int  msgslot=0;
 int   threadid=0;
 int i=0;
 int b=0; 

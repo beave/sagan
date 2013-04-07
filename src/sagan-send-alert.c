@@ -10,10 +10,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int , int );
-
 void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, int proto, int alertid ) {
-
 
 char tmp[64] = { 0 };
 

@@ -49,7 +49,7 @@
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>
-static ln_ctx ctx;
+//static ln_ctx ctx;
 int liblognorm_count;
 #endif
 

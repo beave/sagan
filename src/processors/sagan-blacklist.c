@@ -146,14 +146,15 @@ free(SaganNormalizeLiblognorm);
 
 if ( ip_src != NULL ) { 
    u32_ipaddr = IP2Bit(ip_src);
-   if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
+   //if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
+   if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
       }
 }
 
 if ( ip_dst != NULL ) {
    u32_ipaddr = IP2Bit(ip_dst);
-   if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
+   if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, ip_dst, config->sagan_proto, 1);
       }
 }
@@ -172,7 +173,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 
 	       /* The || catches /32 masks */
 
-	       if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) { 
+	       if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) { 
 
 	          if ( i%2 == 0 ) 
 		     {

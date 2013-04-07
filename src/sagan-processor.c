@@ -31,11 +31,12 @@
 #include <pthread.h>
 #include <string.h>
 
-//#ifdef WITH_WEBSENSE
-//#include <curl/curl.h>
-//#endif
-
 #include "sagan.h"
+
+#include "processors/sagan-engine.h"
+#include "processors/sagan-search.h"
+#include "processors/sagan-track-clients.h"
+#include "processors/sagan-blacklist.h"
 
 struct _Sagan_Droplist *SaganDroplist;
 struct _SaganCounters *counters;

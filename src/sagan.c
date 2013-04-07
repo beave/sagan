@@ -52,6 +52,10 @@
 #include "sagan.h"
 #include "version.h"
 
+#include "processors/sagan-engine.h"
+#include "processors/sagan-search.h"
+#include "processors/sagan-blacklist.h"
+
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 #endif

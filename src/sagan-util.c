@@ -473,9 +473,7 @@ return(tmpbuf);
 char *Sagan_Generator_Lookup(int processor_id, int alert_id) { 
 
 int z=0; 
-char tmp[64];
 char *msg=NULL;
-
 
 for (z=0; z<counters->genmapcount; z++) { 
 if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;

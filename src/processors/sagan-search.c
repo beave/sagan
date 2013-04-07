@@ -29,6 +29,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#define _GNU_SOURCE		/* for strcasestr() */
+
 #include <stdio.h>
 #include <string.h>
 
@@ -90,7 +92,7 @@ return(0);
 }
 
 
-int Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
+void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
 
 int i; 
 

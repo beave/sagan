@@ -77,10 +77,10 @@ char *arg;
 char *saveptrnet;
 char *saveptrrule1;
 char *saveptrrule2;
-char *saveptrrule3;
+char *saveptrrule3=NULL;
 char *tmptoken;
 char *not;
-char *savenot;
+char *savenot=NULL;
 
 char *tok_tmp;
 char *tmptok_tmp;

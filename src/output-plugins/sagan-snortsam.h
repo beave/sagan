@@ -515,7 +515,7 @@ void sig_usr2_flagger(int i);
 #endif  /* __SNORTSAM_H__ */
 
 
-int FWsamBlock(char *, _SaganConfig *);
+int FWsamBlock(char *);
 
 /* Typedefs */
 
@@ -539,5 +539,7 @@ typedef struct _FWsamstation            /* structure of a mgmt station */
 }       FWsamStation;
 
 void FWsamNewStationKey(FWsamStation *,FWsamPacket *);
-void FWsamCheckOut(FWsamStation *, _SaganConfig *);
+void FWsamCheckOut(FWsamStation *);
+int FWsamCheckIn(FWsamStation *);
+
 

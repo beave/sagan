@@ -86,8 +86,6 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm(char *syslog_msg)
 {
 
-// If in a thread,  do a mutex?  if not then normal?
-//
 pthread_mutex_t liblognorm_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_lock(&liblognorm_mutex);
 
@@ -101,14 +99,6 @@ char *cstr=NULL;
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
 SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
-char *ip_src = NULL;
-char *ip_dst = NULL;
-int src_port;
-int dst_port;
-
-char *username = NULL;
-char *uid = NULL;
 
 char ipbuf_src[128];
 char ipbuf_dst[128];

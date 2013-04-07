@@ -114,13 +114,13 @@ if ( rulestruct[Event->found].fwsam_src_or_dst == 1 ){
 	blockip[1]=0;
 	}
 
-retval|=FWsamBlock(config->sagan_fwsam_info,config);
+retval|=FWsamBlock(config->sagan_fwsam_info);
 
 pthread_mutex_unlock(&fwsam_mutex);
 
 }
 
-int FWsamBlock(char *arg, _SaganConfig *config)
+int FWsamBlock(char *arg)
 {
 
 char str[512],*p,*encbuf,*decbuf,*samport,*sampass,*samhost;
@@ -206,7 +206,7 @@ strlcpy(str,arg, sizeof(str));
         station.persistentsocket=TRUE;
         station.packetversion=FWSAM_PACKETVERSION_PERSISTENT_CONN;
 
-        if(FWsamCheckIn(&station, debug, config))
+        if(FWsamCheckIn(&station))
         {       error=FALSE;
 
                 do
@@ -460,7 +460,7 @@ strlcpy(str,arg, sizeof(str));
 
                 if(!error)
                 {       if(checkout)
-                                FWsamCheckOut(&station,config);
+                                FWsamCheckOut(&station);
                         else
                         {       closesocket(station.stationsocket);
                                 station.persistentsocket=FALSE;
@@ -473,10 +473,11 @@ strlcpy(str,arg, sizeof(str));
 }
 
 
-int FWsamCheckIn(FWsamStation *station, _SaganConfig *config )
-{       int i,len,stationok=FALSE,again;
-        FWsamPacket sampacket;
-        char *encbuf,*decbuf;
+int FWsamCheckIn(FWsamStation *station) {
+
+int i,len,stationok=FALSE,again;
+FWsamPacket sampacket;
+char *encbuf,*decbuf;
 
         do
         {       
@@ -659,7 +660,7 @@ char *inettoa(unsigned long ip)
 /*  FWsamCheckOut will be called when samtool exists. It de-registeres this tool 
  *  from the list of sensor that the SnortSam agent keeps. 
 */
-void FWsamCheckOut(FWsamStation *station, _SaganConfig *config)
+void FWsamCheckOut(FWsamStation *station)
 {       FWsamPacket sampacket;
         int i,len;
         char *encbuf,*decbuf;
