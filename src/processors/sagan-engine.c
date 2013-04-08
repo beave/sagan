@@ -102,6 +102,7 @@ int rc=0;
 int ovector[PCRE_OVECCOUNT];
 int  src_port;
 int  dst_port;
+int  proto;
 
 char *ptmp;
 char *tok2;
@@ -325,7 +326,14 @@ if ( rulestruct[b].s_find_port == 1 ) {
     } else {
    src_port = config->sagan_port;
    }
+
+if ( rulestruct[b].s_find_proto == 1 ) {
+   proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
+    } else {
+   proto = rulestruct[b].ip_proto;
+   }
 }
+
 
 if ( ip_src == NULL ) ip_src=SaganProcSyslog_LOCAL->syslog_host;
 if ( ip_dst == NULL ) ip_dst=SaganProcSyslog_LOCAL->syslog_host;
@@ -630,7 +638,7 @@ SaganEvent->sid       =       rulestruct[b].s_sid;
 SaganEvent->rev       =       rulestruct[b].s_rev;
 SaganEvent->class     =       rulestruct[b].s_classtype;
 SaganEvent->pri       =       rulestruct[b].s_pri;
-SaganEvent->ip_proto  =       rulestruct[b].ip_proto;
+SaganEvent->ip_proto  =       proto;
 
 
 SaganEvent->program   =       SaganProcSyslog_LOCAL->syslog_program;

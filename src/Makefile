@@ -58,12 +58,13 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
-	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) sagan-alert.$(OBJEXT) \
-	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
-	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
-	sagan-snortsam.$(OBJEXT) sagan-engine.$(OBJEXT) \
-	sagan-track-clients.$(OBJEXT) sagan-websense.$(OBJEXT) \
-	sagan-blacklist.$(OBJEXT) sagan-search.$(OBJEXT)
+	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
+	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
+	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
+	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
+	sagan-engine.$(OBJEXT) sagan-track-clients.$(OBJEXT) \
+	sagan-websense.$(OBJEXT) sagan-blacklist.$(OBJEXT) \
+	sagan-search.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)
@@ -201,6 +202,7 @@ sagan-ignore-list.c \
 sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
+parsers/parse-proto.c \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
@@ -296,6 +298,7 @@ distclean-compile:
 
 include ./$(DEPDIR)/parse-ip.Po
 include ./$(DEPDIR)/parse-port.Po
+include ./$(DEPDIR)/parse-proto.Po
 include ./$(DEPDIR)/sagan-alert.Po
 include ./$(DEPDIR)/sagan-blacklist.Po
 include ./$(DEPDIR)/sagan-classifications.Po
@@ -369,6 +372,20 @@ parse-port.obj: parsers/parse-port.c
 #	source='parsers/parse-port.c' object='parse-port.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
+
+parse-proto.o: parsers/parse-proto.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-proto.o -MD -MP -MF $(DEPDIR)/parse-proto.Tpo -c -o parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
+	$(am__mv) $(DEPDIR)/parse-proto.Tpo $(DEPDIR)/parse-proto.Po
+#	source='parsers/parse-proto.c' object='parse-proto.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
+
+parse-proto.obj: parsers/parse-proto.c
+	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-proto.obj -MD -MP -MF $(DEPDIR)/parse-proto.Tpo -c -o parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
+	$(am__mv) $(DEPDIR)/parse-proto.Tpo $(DEPDIR)/parse-proto.Po
+#	source='parsers/parse-proto.c' object='parse-proto.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
 
 sagan-alert.o: output-plugins/sagan-alert.c
 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-alert.o -MD -MP -MF $(DEPDIR)/sagan-alert.Tpo -c -o sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c

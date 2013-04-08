@@ -313,6 +313,7 @@ int ref_count;
 int dst_port;
 int ip_proto;
 sbool s_find_port;
+sbool s_find_proto;
 
 sbool s_find_src_ip; 
 int   s_find_src_pos; 

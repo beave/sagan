@@ -268,6 +268,11 @@ Remove_Spaces(rulesplit);
                rulestruct[counters->rulecount].s_find_port = 1;
                }
 
+	if (!strcmp(rulesplit, "parse_proto")) { 
+	       strtok_r(NULL, ":", &saveptrrule2);
+	       rulestruct[counters->rulecount].s_find_proto = 1;
+	       }
+
         if (!strcmp(rulesplit, "parse_src_ip")) {
                arg = strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[counters->rulecount].s_find_src_ip = 1;

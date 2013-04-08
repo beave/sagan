@@ -24,6 +24,7 @@ sagan-ignore-list.c \
 sagan-send-alert.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
+parsers/parse-proto.c \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
