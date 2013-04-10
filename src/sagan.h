@@ -311,6 +311,7 @@ int pcre_count;
 int content_count;
 int ref_count;
 int dst_port;
+int src_port;
 int ip_proto;
 sbool s_find_port;
 sbool s_find_proto;

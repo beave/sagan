@@ -217,6 +217,7 @@ void Sagan_Log (int type, const char *format,... ) {
 
    if ( type == 1 ) chr="E";
    if ( type == 2 ) chr="W"; 
+   if ( type == 3 ) chr="D"; 
 
      vsnprintf(buf, sizeof(buf), format, ap);
      fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);

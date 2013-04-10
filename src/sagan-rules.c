@@ -69,6 +69,7 @@ FILE *rulesfile;
 
 char *rulestring;
 char *netstring; 
+char *nettmp;
 
 char *tokenrule;
 char *tokennet;
@@ -120,6 +121,7 @@ int reverse=0;
 
 int ip_proto=0;
 int dst_port=0;
+int src_port=0;
 
 #ifdef HAVE_LIBLOGNORM
 sbool liblognorm_flag=0;
@@ -209,6 +211,7 @@ rulestring = rulestr;
 /****************************************************************************/
 
 tokennet = strtok_r(netstring, " ", &saveptrnet);
+
 while ( tokennet != NULL ) {
 
    if ( netcount == 0 ) { 
@@ -230,15 +233,31 @@ while ( tokennet != NULL ) {
 
       rulestruct[counters->rulecount].ip_proto = ip_proto;
 
+   /* Source Port */
+   if ( netcount == 3 ) {
+
+      src_port = config->sagan_port;                            /* Set to default */
+
+      if (strcmp(nettmp, "any")) src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
+      if (Is_Numeric(nettmp)) src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+      rulestruct[counters->rulecount].src_port = src_port;      /* Set for the rule */
+      }
+
    /* Destination Port */
    if ( netcount == 6 ) { 
-      dst_port = config->sagan_port;
-      if (strcmp(tokennet, "any")) dst_port = atoi(tokennet); 
+      
+      dst_port = config->sagan_port;				/* Set to default */
+
+      if (strcmp(nettmp, "any")) dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
+      if (Is_Numeric(nettmp)) dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+      rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
       }
       
-      rulestruct[counters->rulecount].dst_port = dst_port; 
 
-   tokennet = strtok_r(NULL, " ", &saveptrnet);
+    tokennet = strtok_r(NULL, " ", &saveptrnet);
+    nettmp = Sagan_Var_To_Value(tokennet); 
+    Remove_Spaces(nettmp);
+
    netcount++;
 }
 
@@ -487,7 +506,7 @@ Remove_Spaces(rulesplit);
 		      
                       if ( pcreflag == 0 ) Sagan_Log(1, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
 
-		      /* We store the compiled/study results.  This saves use some CPU tmpe during searching - Champ Clark III - 02/01/2011 */
+		      /* We store the compiled/study results.  This saves us some CPU time during searching - Champ Clark III - 02/01/2011 */
 		      
 		      rulestruct[counters->rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
 		      rulestruct[counters->rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[counters->rulecount].re_pcre[pcre_count], pcreoptions, &error);
@@ -612,25 +631,26 @@ tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 
 if ( debug->debugload ) { 
 
-Sagan_Log(0, "---[Rule %s]------------------------------------------------------\n", rulestruct[counters->rulecount].s_sid);
+Sagan_Log(3, "---[Rule %s]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
 
-Sagan_Log(0, "= sid: %s", rulestruct[counters->rulecount].s_sid);
-Sagan_Log(0, "= rev: %s", rulestruct[counters->rulecount].s_rev);
-Sagan_Log(0, "= msg: %s", rulestruct[counters->rulecount].s_msg);
-Sagan_Log(0, "= pri: %d", rulestruct[counters->rulecount].s_pri);
-Sagan_Log(0, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
-Sagan_Log(0, "= drop: %d", rulestruct[counters->rulecount].drop);
+Sagan_Log(3, "= sid: %s", rulestruct[counters->rulecount].s_sid);
+Sagan_Log(3, "= rev: %s", rulestruct[counters->rulecount].s_rev);
+Sagan_Log(3, "= msg: %s", rulestruct[counters->rulecount].s_msg);
+Sagan_Log(3, "= pri: %d", rulestruct[counters->rulecount].s_pri);
+Sagan_Log(3, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
+Sagan_Log(3, "= drop: %d", rulestruct[counters->rulecount].drop);
+Sagan_Log(3, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
 
-if ( rulestruct[counters->rulecount].s_nocase != 0 )    Sagan_Log(0, "= nocase");
-if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(0, "= parse_src_ip");
-if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(0, "= parse_port");
+if ( rulestruct[counters->rulecount].s_nocase != 0 )    Sagan_Log(3, "= nocase");
+if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(3, "= parse_src_ip");
+if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(3, "= parse_port");
 
 for (i=0; i<content_count; i++) {
-    Sagan_Log(0, "= [%d] content: %s", i, rulestruct[counters->rulecount].s_content[i]);
+    Sagan_Log(3, "= [%d] content: \"%s\"", i, rulestruct[counters->rulecount].s_content[i]);
     }
 
 for (i=0; i<ref_count; i++) {
-    Sagan_Log(0, "= [%d] reference: %s", i,  rulestruct[counters->rulecount].s_reference[i]);
+    Sagan_Log(3, "= [%d] reference: \"%s\"", i,  rulestruct[counters->rulecount].s_reference[i]);
     }
 }
 
