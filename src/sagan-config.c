@@ -101,7 +101,6 @@ snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", RULE_PA
 
 
 config->sagan_proto = 17;		/* Default to UDP */
-//config->max_output_threads = MAX_OUTPUT_THREADS;
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
 //config->home_any = 0; 
