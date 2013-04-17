@@ -62,8 +62,10 @@ snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
  
 if ( rulestruct[Event->found].email_flag )  { 
+   Sagan_Log(0, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
    snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
    } else { 
+   Sagan_Log(0, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
    if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
    }
 
@@ -75,13 +77,14 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"To: %s\r\n"
 	"Subject: [Sagan] %s\r\n"
 	"\r\n\n"
-	"[**] [%s] %s [**]\n"
+	"[**] [%lu:%s] %s [**]\n"
 	"[Classification: %s] [Priority: %d]\n"
 	"%s %s %s:%d -> %s:%d %s %s\n"
 	"Syslog message: %s\r\n%s\n\r",
 	config->sagan_esmtp_from,
 	tmpemail, 
 	Event->f_msg,
+	Event->generatorid,
 	Event->sid, 
 	Event->f_msg,
 	Event->class,
@@ -138,7 +141,7 @@ if(!smtp_set_reverse_path (message, config->sagan_esmtp_from)) {
 	Sagan_Log(0, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
 	goto failure;
 }
-if((recipient = smtp_add_recipient (message, config->sagan_esmtp_to)) == NULL) {
+if((recipient = smtp_add_recipient (message, tmpemail)) == NULL) {
 	Sagan_Log(0, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
 	goto failure;
 }
