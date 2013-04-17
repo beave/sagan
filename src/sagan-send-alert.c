@@ -37,7 +37,8 @@ char tmp[64] = { 0 };
         SaganProcessorEvent->found           =       0;
 
 
-        snprintf(tmp, sizeof(tmp), "1");
+        snprintf(tmp, sizeof(tmp), "%d", alertid);
+
         SaganProcessorEvent->sid             =       tmp;
         SaganProcessorEvent->time            =       SaganProcSyslog_LOCAL->syslog_time;
         SaganProcessorEvent->date            =       SaganProcSyslog_LOCAL->syslog_date;
