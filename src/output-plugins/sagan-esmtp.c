@@ -62,10 +62,10 @@ snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
  
 if ( rulestruct[Event->found].email_flag )  { 
-   Sagan_Log(0, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
+   if ( debug->debugesmtp ) Sagan_Log(0, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
    snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
    } else { 
-   Sagan_Log(0, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
+   if ( debug->debugesmtp ) Sagan_Log(0, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
    if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
    }
 
