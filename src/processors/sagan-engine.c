@@ -102,7 +102,7 @@ int rc=0;
 int ovector[PCRE_OVECCOUNT];
 int  src_port;
 int  dst_port;
-int  proto;
+int  proto=0;
 
 char *ptmp;
 char *tok2;

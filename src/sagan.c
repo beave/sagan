@@ -386,7 +386,6 @@ Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_a
 }
 
 Sagan_Log(0, "Max Processor Threads    : %" PRIu64 "", config->max_processor_threads);
-
 Sagan_Log(0, "");
 
 /* Processor information */ 
@@ -398,7 +397,6 @@ if ( config->pp_sagan_track_clients ) Sagan_Log(0, "Client Tracking Processor: %
 if ( config->blacklist_flag) { 
 
 Sagan_Blacklist_Load(); 
-
 Sagan_Log(0, "");
 Sagan_Log(0, "Blacklist Processor loaded [%s]", config->blacklist_file); 
 Sagan_Log(0, "Blacklist loaded %d entries", counters->blacklist_count);
@@ -408,7 +406,6 @@ Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
 if ( config->search_nocase_flag) {
 
 Sagan_Search_Load( 1 );
-
 Sagan_Log(0, "");
 Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
 Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
@@ -417,25 +414,24 @@ Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count)
 if ( config->search_nocase_flag) {
 
 Sagan_Search_Load( 2 );
-
 Sagan_Log(0, "");
 Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
 Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
 }
 
 if ( config->sagan_external_output_flag ) { 
-
 Sagan_Log(0, "");
 Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
 }
 
+#ifdef HAVE_LIBESMTP
 if ( config->sagan_esmtp_flag ) { 
-
 Sagan_Log(0, ""); 
 if ( config->min_email_priority ) Sagan_Log(0, "E-mail on priority %d or higher.", config->min_email_priority);
 Sagan_Log(0, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
 Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
 }
+#endif
 
 #ifdef WITH_WEBSENSE
 if ( config->websense_flag ) { 

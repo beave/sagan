@@ -69,7 +69,7 @@ FILE *rulesfile;
 
 char *rulestring;
 char *netstring; 
-char *nettmp;
+char *nettmp = NULL;
 
 char *tokenrule;
 char *tokennet;

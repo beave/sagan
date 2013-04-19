@@ -563,5 +563,6 @@ sbool is_rfc1918 ( char * );
 
 char *parse_ip( char *, int );
 int   parse_port( char * );
+int   parse_proto( char * );
 
 
