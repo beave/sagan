@@ -73,7 +73,7 @@ if ( Event->drop == 1 ) {
    snprintf(tmp, sizeof(tmp), "False");
    }
 
-   snprintf(data, sizeof(data), "\nID:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->sid, Event->f_msg, Event->class, tmp, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
+   snprintf(data, sizeof(data), "\nID:%lu:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, tmp, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
    
   } else { 
 
@@ -81,7 +81,7 @@ if ( Event->drop == 1 ) {
 
   snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
-  snprintf(data, sizeof(data), "[**] [%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
+  snprintf(data, sizeof(data), "[**] [%lu:%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
   }
 
 

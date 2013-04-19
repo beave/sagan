@@ -423,7 +423,19 @@ Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
 Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
 }
 
+if ( config->sagan_external_output_flag ) { 
 
+Sagan_Log(0, "");
+Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
+}
+
+if ( config->sagan_esmtp_flag ) { 
+
+Sagan_Log(0, ""); 
+if ( config->min_email_priority ) Sagan_Log(0, "E-mail on priority %d or higher.", config->min_email_priority);
+Sagan_Log(0, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
+Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
+}
 
 #ifdef WITH_WEBSENSE
 if ( config->websense_flag ) { 

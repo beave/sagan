@@ -394,7 +394,6 @@ if (!strcmp(sagan_option, "output")) {
 if (!strcmp(sagan_var1, "alert_fwsam:")) { 
        snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", Remove_Return(strtok_r(NULL, " ", &tok)));
        config->sagan_fwsam_flag=1; 
-       config->sagan_external_output_flag=1;
        }
 #endif
 
@@ -439,7 +438,6 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
 	if (!strcmp(sagan_var1, "email:")) { 
 
-	   config->sagan_external_output_flag=1;
 	   ptmp = sagan_var1;
 
 	   while (ptmp != NULL ) { 
