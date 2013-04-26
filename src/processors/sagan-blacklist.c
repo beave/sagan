@@ -117,8 +117,12 @@ char ipaddr[16] = { 0 };
 char *ipaddrptr=NULL;
 
 uint32_t u32_ipaddr;
+uint32_t u32_tmpip;
+
+
 char *ip_src = NULL;
 char *ip_dst = NULL;
+char *ip_tmp = NULL;
 
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
@@ -144,18 +148,24 @@ ip_dst = SaganNormalizeLiblognorm->ip_dst;
 free(SaganNormalizeLiblognorm);
 #endif
 
+/* If the IP is 127.0.0.1, we use config->sagan_host */
+
+ip_tmp = SaganProcSyslog_LOCAL->syslog_host; 
+u32_tmpip = IP2Bit(SaganProcSyslog_LOCAL->syslog_host); 
+if ( u32_tmpip == 2130706433 ) ip_tmp = config->sagan_host;
+
 if ( ip_src != NULL ) { 
    u32_ipaddr = IP2Bit(ip_src);
    //if ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher || u32_ipaddr == SaganBlacklist[b].u32_lower ) {
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
-      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_tmp, config->sagan_proto, 1);
       }
 }
 
 if ( ip_dst != NULL ) {
    u32_ipaddr = IP2Bit(ip_dst);
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
-      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, ip_dst, config->sagan_proto, 1);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_tmp, ip_dst, config->sagan_proto, 1);
       }
 }
 
@@ -178,13 +188,11 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 	          if ( i%2 == 0 ) 
 		     {
 		     ipaddrptr = ipaddr;
-		     //Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, SaganProcSyslog_LOCAL->syslog_host, ipaddrptr, 17);
-		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
+		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, ip_tmp, config->sagan_proto, 1);
 
 		     } else { 
 		     ipaddrptr = ipaddr;
-		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
-		     //Sagan_Blacklist_Send_Alert(SaganProcSyslog_LOCAL, ipaddrptr, SaganProcSyslog_LOCAL->syslog_host, 17);
+		     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ipaddrptr, ip_tmp, config->sagan_proto, 1);
 		     }
 		  }
 	   }

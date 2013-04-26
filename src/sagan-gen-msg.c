@@ -80,7 +80,7 @@ if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(1, "%s is incorrec
 generator[counters->genmapcount].generatorid=atoi(gen1);
 generator[counters->genmapcount].alertid=atoi(gen2);
 snprintf(generator[counters->genmapcount].generator_msg, sizeof(generator[counters->genmapcount].generator_msg), "%s", gen3);
-generator[counters->genmapcount].generator_msg[strlen(generator[counters->genmapcount].generator_msg)-1] = '\0';
+Remove_Return(generator[counters->genmapcount].generator_msg);
 
 counters->genmapcount++; 
 }

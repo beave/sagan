@@ -96,6 +96,9 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
 
 int i; 
 
+uint32_t u32_tmpip;
+char *ip_tmp = NULL;
+
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
 memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
@@ -110,6 +113,11 @@ processor_info->processor_class         =       SEARCH_PROCESSOR_CLASS;
 processor_info->processor_tag           =       SEARCH_PROCESSOR_TAG;
 processor_info->processor_rev           =       SEARCH_PROCESSOR_REV;
 
+/* If the IP is 127.0.0.1, we use config->sagan_host */
+
+ip_tmp = SaganProcSyslog_LOCAL->syslog_host;
+u32_tmpip = IP2Bit(SaganProcSyslog_LOCAL->syslog_host);
+if ( u32_tmpip == 2130706433 ) ip_tmp = config->sagan_host;
 
 if ( type == 1 ) {
 

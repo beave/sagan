@@ -419,6 +419,7 @@ ipint = IP2Bit(ipaddr);
 if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	 // 10.X.X.X
 if ( ipint > 3232235520 && ipint < 3232301055 ) return(TRUE);    // 192.168.X.X 
 if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    // 172.16/31.X.X
+if ( ipint == 2130706433 ) return(TRUE);			 // 127.0.0.1
 
 /* Invalid IP addresses */
 
