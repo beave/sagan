@@ -736,12 +736,11 @@ if ( fifoerr == 0 ) {
   } else { 
       Sagan_Log(0, "FIFO writer closed.  Waiting for FIFO write to restart...."); 
       fifoerr=1; 			/* Set flag so our wile(fgets) knows */ 
-       sleep(1); 			/* So we don't eat 100% CPU */
   }
-  }
-
+}
+sleep(1);		/* So we don't eat 100% CPU */
+  
 } /* while(fd != NULL)  */
-
 
 fclose(fd); 			/* ???? */
 
