@@ -80,7 +80,7 @@ while(fgets(searchbuf, 1024, search) != NULL) {
      snprintf(SaganNocaseSearchlist[counters->search_nocase_count].search, sizeof(SaganNocaseSearchlist[counters->search_nocase_count].search), "%s", Remove_Return(searchbuf)); 
      counters->search_nocase_count++;
      } else { 
-     SaganCaseSearchlist = (_Sagan_Case_Searchlist *) realloc(SaganCaseSearchlist, (counters->search_nocase_count+1) * sizeof(_Sagan_Case_Searchlist));
+     SaganCaseSearchlist = (_Sagan_Case_Searchlist *) realloc(SaganCaseSearchlist, (counters->search_case_count+1) * sizeof(_Sagan_Case_Searchlist));
      snprintf(SaganCaseSearchlist[counters->search_case_count].search, sizeof(SaganCaseSearchlist[counters->search_case_count].search), "%s", Remove_Return(searchbuf));
      counters->search_case_count++;
      }

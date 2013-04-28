@@ -411,7 +411,7 @@ Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file
 Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
 }
 
-if ( config->search_nocase_flag) {
+if ( config->search_case_flag) {
 
 Sagan_Search_Load( 2 );
 Sagan_Log(0, "");
