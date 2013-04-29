@@ -80,9 +80,14 @@ struct _SaganCounters {
     uint64_t dns_miss_count;
     uint64_t fwsam_count;
     uint64_t ignore_count;
+    uint64_t blacklist_count;
 
     uint64_t track_clients_client_count;                /* sagan-track-clients processor */
     uint64_t track_clients_down; 
+
+    uint64_t blacklist_hit_count;
+    uint64_t search_nocase_hit_count;
+    uint64_t search_case_hit_count;
 
     int	     thread_output_counter; 
     int	     thread_processor_counter;
@@ -96,7 +101,6 @@ struct _SaganCounters {
 
     int      genmapcount;
 
-    int	     blacklist_count;
     int	     droplist_count;
     int	     search_nocase_count;
     int	     search_case_count;
@@ -114,6 +118,10 @@ struct _SaganCounters {
     int websense_ignore_list_count;			
 #endif
 
+#ifdef HAVE_LIBESMTP
+    uint64_t esmtp_count_success;
+    uint64_t esmtp_count_failed;
+#endif
 
 };   
 

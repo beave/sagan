@@ -64,8 +64,6 @@ if ( nonthread_alert_lock == 0 ) {
 
 /* Are any "External" output formats enabled? */
 
-if ( config->sagan_external_output_flag ) { 
-
 /****************************************************************************/
 /* Snortsam Support	                                                    */
 /****************************************************************************/
@@ -89,7 +87,6 @@ if ( config->sagan_esmtp_flag ) sagan_esmtp_thread( Event );
 /****************************************************************************/
 
 if ( config->sagan_ext_flag ) sagan_ext_thread( Event );
- 
- }
+
 } 
 

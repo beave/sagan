@@ -47,6 +47,7 @@
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
 
 void sagan_esmtp_thread (_SaganEvent *Event) { 
 
@@ -60,7 +61,7 @@ int r = 0;
 snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
 /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
- 
+
 if ( rulestruct[Event->found].email_flag )  { 
    if ( debug->debugesmtp ) Sagan_Log(0, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
    snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
@@ -119,30 +120,37 @@ sigaction (SIGPIPE, &sa, NULL);
 
 if((session = smtp_create_session ()) == NULL) {
 	Sagan_Log(0, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if((message = smtp_add_message (session)) == NULL) {
 	Sagan_Log(1, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if(!smtp_set_server (session, config->sagan_esmtp_server)) {
 	Sagan_Log(0, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if((r = fixlf(config, tmpb, tmpa)) <= 0) {
 	Sagan_Log(0, "[%s, line %d] Cannot fixlf.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if(!smtp_set_message_str (message, tmpb)) {
 	Sagan_Log(0, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if(!smtp_set_reverse_path (message, config->sagan_esmtp_from)) {
 	Sagan_Log(0, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 if((recipient = smtp_add_recipient (message, tmpemail)) == NULL) {
 	Sagan_Log(0, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
+	counters->esmtp_count_failed++;
 	goto failure;
 }
 
@@ -155,12 +163,14 @@ if (!smtp_start_session (session)) {
     */
 
 	Sagan_Log(0, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
+	counters->esmtp_count_failed++;
 
    } else {
 
    /* SMTP sent successful */
 
 	status = smtp_message_transfer_status (message);
+	counters->esmtp_count_success++;
 
 	if ( debug->debugesmtp ) Sagan_Log(0, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
@@ -169,7 +179,6 @@ if (!smtp_start_session (session)) {
 failure:
 if(session != NULL)
 	smtp_destroy_session (session);
-
 }
 
 int

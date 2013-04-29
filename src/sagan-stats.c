@@ -108,6 +108,22 @@ Sagan_Log(0, "          -[ Sagan Processor Statistics ]-");
 Sagan_Log(0, "");
 Sagan_Log(0, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop, CalcPct(counters->sagan_processor_drop, counters->sagantotal) );
 
+if (config->blacklist_flag) { 
+Sagan_Log(0, "           Blacklist Hits           : %" PRIu64 " (%.3f%%)", counters->blacklist_hit_count, CalcPct(counters->blacklist_hit_count, counters->sagantotal) );
+}
+
+if ( config->search_case_flag) {
+Sagan_Log(0, "           Search Hits              : %" PRIu64 " (%.3f%%)", counters->search_case_hit_count, CalcPct(counters->search_case_hit_count, counters->sagantotal) );
+}
+
+if ( config->search_nocase_flag) {
+Sagan_Log(0, "           Search Hits [nocase]     : %" PRIu64 " (%.3f%%)", counters->search_nocase_hit_count, CalcPct(counters->search_nocase_hit_count, counters->sagantotal) );
+}
+
+if (config->sagan_track_clients_flag) {
+Sagan_Log(0, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 , counters->track_clients_client_count, counters->track_clients_down);
+}
+
 
 if (config->output_thread_flag) { 
 Sagan_Log(0, "");
@@ -116,20 +132,19 @@ Sagan_Log(0, "");
 Sagan_Log(0,"           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
 }
 
+#ifdef HAVE_LIBESMTP
+if ( config->sagan_esmtp_flag ) {
+Sagan_Log(0, "           Email Success/Failed     : %" PRIu64 " / %" PRIu64 "" , counters->esmtp_count_success, counters->esmtp_count_failed);
+}
+#endif
+
+
 if (config->syslog_src_lookup) { 
 Sagan_Log(0, ""); 
 Sagan_Log(0, "          -[ Sagan DNS Cache Statistics ]-");
 Sagan_Log(0, "");
 Sagan_Log(0, "           Cached                   : %" PRIu64 "", counters->dns_cache_count); 
 Sagan_Log(0, "           Missed                   : %" PRIu64 " (%.3f%%)", counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count)); 
-}
-
-if (config->sagan_track_clients_flag) { 
-Sagan_Log(0, "");
-Sagan_Log(0, "          -[ Sagan Client Tracking Processor ]-"); 
-Sagan_Log(0, "");
-Sagan_Log(0, "           Tracking                 : %" PRIu64 "", counters->track_clients_client_count);
-Sagan_Log(0, "           Down                     : %" PRIu64 "", counters->track_clients_down);
 }
 
 #ifdef WITH_WEBSENSE

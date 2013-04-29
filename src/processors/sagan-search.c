@@ -124,6 +124,7 @@ if ( type == 1 ) {
 for (i=0; i<counters->search_nocase_count; i++) { 
 
 if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].search )) { 
+   counters->search_nocase_hit_count++;
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1);
 
    }
@@ -133,6 +134,7 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
 for (i=0; i<counters->search_case_count; i++) {
 
 if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search )) {
+   counters->search_case_hit_count++;
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 2);
    }
  }
