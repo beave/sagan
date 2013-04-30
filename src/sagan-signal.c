@@ -33,6 +33,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "version.h"
 
