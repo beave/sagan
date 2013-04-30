@@ -21,8 +21,8 @@ install-data-local:
 	@echo ""
 	@echo "------------------------------------------------------------------------------"
 	@echo "Sagan has been installed! You still need to do a few more things before your"
-	@echo "up and running. See https://wiki.quadrantsec.com/bin/view/Main/SaganHOWTO for"
-	@echo "more information."
+	@echo "up and running.  For more information, see:"
+	@echo "https://wiki.quadrantsec.com/twiki/bin/view/Main/SaganInstall"
 	@echo "------------------------------------------------------------------------------"
 	@echo ""
 
