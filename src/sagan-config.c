@@ -236,7 +236,7 @@ if (!strcmp(sagan_option, "normalize:")) {
 
 #endif
 
-if (!strcmp(sagan_option, "drop_list:")) { 
+if (!strcmp(sagan_option, "ignore_list:")) { 
    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok)); 
 
    if ( sagan_var1 == NULL )  
