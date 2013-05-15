@@ -178,8 +178,6 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 		     counters->websense_postive_hit=0;
 		     memset(SaganWebsenseIgnoreList, 0, sizeof(_Sagan_Websense_Ignore_List));
 		     memset(SaganWebsenseQueue, 0, sizeof(_Sagan_Websense_Queue));
-
-		     SaganWebsenseCache = malloc(config->websense_max_cache * sizeof(struct _Sagan_Websense_Cache));
 		     memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
 
 		     config->websense_last_time = atol(config->sagan_startutime);
