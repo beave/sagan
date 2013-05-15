@@ -73,8 +73,8 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
 #ifdef WITH_WEBSENSE
+#include <curl/curl.h>
 #include "processors/sagan-websense.h"
-struct _Sagan_Websense_Cache *SaganWebsenseCache;
 #endif
 
 sbool daemonize=0;
@@ -434,24 +434,23 @@ Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
 #endif
 
 #ifdef WITH_WEBSENSE
-if ( config->websense_flag ) { 
+if ( config->websense_flag ) {
 
-SaganWebsenseCache = malloc(config->websense_max_cache * sizeof(struct _Sagan_Websense_Cache)); 
-memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
-
-config->websense_last_time = atol(config->sagan_startutime); 
-
-Sagan_Websense_Ignore_List(); 
+curl_global_init(CURL_GLOBAL_ALL);
+config->websense_last_time = atol(config->sagan_startutime);
+Sagan_Websense_Init();
+Sagan_Websense_Ignore_List();
 
 Sagan_Log(0, "");
 Sagan_Log(0, "Websense URL: %s", config->websense_url);
 Sagan_Log(0, "Websense Auth: %s", config->websense_auth);
 Sagan_Log(0, "Websense Parse Depth: %d", config->websense_parse_depth);
 Sagan_Log(0, "Websense Max Cache: %d", config->websense_max_cache);
-Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60); 
-Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_count); 
+Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
+Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_count);
 }
 #endif
+
 
 Sagan_Log(0, "");
 
