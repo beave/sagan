@@ -244,9 +244,7 @@ char ip_dsttmp[MAXIP];
 		
 		   rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], SaganProcSyslog_LOCAL->syslog_message, (int)strlen(SaganProcSyslog_LOCAL->syslog_message), 0, 0, ovector, PCRE_OVECCOUNT);
 
-                if ( rc == 1 ) {
-                   pcrematch++;
-                   }
+                   if ( rc == 1 ) pcrematch++;
 
                    }  /* End of pcre if */
                 }
