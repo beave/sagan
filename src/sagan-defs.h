@@ -58,8 +58,8 @@
 #define MAX_THREADS     4096            /* Max system threads */
 #define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */
 
-#define MAX_PCRE	5		/* Max PCRE within a rule */
-#define MAX_CONTENT	10		/* Max 'content' within a rule */
+#define MAX_PCRE	10		/* Max PCRE within a rule */
+#define MAX_CONTENT	25		/* Max 'content' within a rule */
 #define MAX_REFERENCE	10		/* Max references within a rule */
 #define MAX_PARSE_IP	10		/* Max IP to collect form log line via parse.c */
 
