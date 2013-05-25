@@ -86,6 +86,6 @@ counters->genmapcount++;
 }
 
 fclose(genmapfile);
-Sagan_Log(0, "%d generator loaded.", counters->genmapcount);
+Sagan_Log(0, "%d generators loaded.", counters->genmapcount);
 }
 
