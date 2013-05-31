@@ -18,5 +18,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#define SAGAN_PROCESSOR_NAME "Sagan_Engine"
+#define SAGAN_PROCESSOR_FACILITY "daemon"
+#define SAGAN_PROCESSOR_PRIORITY "warning"
+#define SAGAN_PROCESSOR_PRI 1
+#define SAGAN_PROCESSOR_CLASS "Sagan_Engine"
+#define SAGAN_PROCESSOR_REV "1"
+#define SAGAN_PROCESSOR_TAG NULL
+#define SAGAN_PROCESSOR_GENERATOR_ID 1
+
 int Sagan_Engine ( _SaganProcSyslog * );
 

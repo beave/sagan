@@ -159,7 +159,7 @@ hdr.type = htonl(UNIFIED2_IDS_EVENT);
 if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
                write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
    {
-      Sagan_Log(0, "Failed to copy Serial_Unified2_Header\n");
+      Sagan_Log(1, "[%s, line %d] Failed to copy Serial_Unified2_Header", __FILE__, __LINE__);
       return;
    }
 
@@ -167,7 +167,7 @@ if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header),
                &alertdata, sizeof(Serial_Unified2IDSEvent_legacy),
                write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
   {
-      Sagan_Log(0, "Failed to copy Serial_Unified2IDSEvent_legacy\n");
+      Sagan_Log(1, "[%s, line %d] Failed to copy Serial_Unified2IDSEvent_legacy", __FILE__, __LINE__);
       return;
   }
 
@@ -242,6 +242,11 @@ memcpy(&eth->eth_dst, &addr.addr_eth, ETH_ADDR_LEN);
 
 p_eth = eth_buf + ETH_HDR_LEN;
 len_eth = p_eth - eth_buf;
+
+if ( Event->ip_proto == 0 ) { 
+   Sagan_Log(2, "[%s, line %d] Protocol set to 0! NOT logging to unfied2!", __FILE__, __LINE__); 
+   return;
+   }
 
 /* Type == UDP */
 
@@ -344,7 +349,7 @@ hdr.type = htonl(UNIFIED2_PACKET);
 if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
                write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
    {
-      Sagan_Log(0, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
+      Sagan_Log(1, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
       return;
    }
 
@@ -352,7 +357,7 @@ if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header),
                &logheader, sizeof(Serial_Unified2Packet) - 4,
                 write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
    {
-      Sagan_Log(0, "[%s, line %d] Failed to copy Serial_Unified2Packet.", __FILE__, __LINE__ ); 
+      Sagan_Log(1, "[%s, line %d] Failed to copy Serial_Unified2Packet.", __FILE__, __LINE__ ); 
       return;
    }
 
@@ -380,7 +385,7 @@ if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header) +
                packet_data, pkt_length,
                write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
    {
-   Sagan_Log(0, "[%s, line %d] Failed to copy pseudo packet data.", __FILE__, __LINE__);
+   Sagan_Log(1, "[%s, line %d] Failed to copy pseudo packet data.", __FILE__, __LINE__);
    return;
    }
 

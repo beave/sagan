@@ -73,17 +73,18 @@ struct thresh_by_dst *threshbydst = NULL;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
-//uint64_t thresh_oldtime_src;
-//uint64_t after_oldtime_src;
-
-
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
 
 int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 {
 
-struct _Sagan_Event *SaganEvent = NULL;
+struct _Sagan_Processor_Info *processor_info = NULL;
+
+int processor_info_src_port = 0;
+int processor_info_dst_port = 0;
+int processor_info_proto = 0;
+int processor_info_alertid = 0;
 
 #ifdef HAVE_LIBLOGNORM
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
@@ -102,7 +103,6 @@ int rc=0;
 int ovector[PCRE_OVECCOUNT];
 int  src_port;
 int  dst_port;
-int  proto=0;
 
 char *ptmp;
 char *tok2;
@@ -140,6 +140,7 @@ sbool thresh_log_flag=0;
 char ip_srctmp[MAXIP];
 char ip_dsttmp[MAXIP];
 
+int proto = config->sagan_proto;		/* Set proto to default */
 
 		/* Search for matches */
 
@@ -619,40 +620,22 @@ if ( threadid >= MAX_THREADS ) threadid=0;
  * var[msgslot] information. - Champ Clark 02/02/2011
  */
 
-snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", ip_src);
-snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", ip_dst);
+processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
 
-SaganEvent = malloc(sizeof(struct _Sagan_Event));
-memset(SaganEvent, 0, sizeof(_SaganEvent));
+processor_info->processor_name          =       s_msg;
+processor_info->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+processor_info->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+processor_info->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+processor_info->processor_pri           =       rulestruct[b].s_pri;
+processor_info->processor_class         =       rulestruct[b].s_classtype;
+processor_info->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+processor_info->processor_rev           =       rulestruct[b].s_rev;
 
-
-SaganEvent->ip_src    =       ip_src;
-SaganEvent->ip_dst    =       ip_dst;
-SaganEvent->dst_port  =       dst_port;
-SaganEvent->src_port  =       src_port;
-SaganEvent->found     =       b;
-
-SaganEvent->sid       =       rulestruct[b].s_sid;
-SaganEvent->rev       =       rulestruct[b].s_rev;
-SaganEvent->class     =       rulestruct[b].s_classtype;
-SaganEvent->pri       =       rulestruct[b].s_pri;
-SaganEvent->ip_proto  =       proto;
-
-
-SaganEvent->program   =       SaganProcSyslog_LOCAL->syslog_program;
-SaganEvent->message   =       SaganProcSyslog_LOCAL->syslog_message;
-SaganEvent->time      =       SaganProcSyslog_LOCAL->syslog_time;
-SaganEvent->date      =       SaganProcSyslog_LOCAL->syslog_date;
-SaganEvent->f_msg     =       s_msg;
-SaganEvent->facility  =       SaganProcSyslog_LOCAL->syslog_facility;
-SaganEvent->priority  =       SaganProcSyslog_LOCAL->syslog_level;
-SaganEvent->tag       =       SaganProcSyslog_LOCAL->syslog_tag;
-SaganEvent->host      =       SaganProcSyslog_LOCAL->syslog_host;
-SaganEvent->event_time_sec =   time(NULL);
-
-SaganEvent->generatorid =       1;              /* Rule based alerts are always 1 */
-
-
+processor_info_dst_port                 =       dst_port;
+processor_info_src_port                 =       src_port;
+processor_info_proto                    =       proto;
+processor_info_alertid                  =       atoi(rulestruct[b].s_sid);
 }
 
 /***************************************************************************/
@@ -664,8 +647,8 @@ SaganEvent->generatorid =       1;              /* Rule based alerts are always 
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-Sagan_Output( SaganEvent );
-free(SaganEvent);
+Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, processor_info_proto, processor_info_alertid, processor_info_src_port, processor_info_dst_port );
+free(processor_info);
 
   } /* End of threshold */
  } /* End of match */
