@@ -164,7 +164,6 @@ int rc=0;
 char *runas=RUNAS;
 
 int i;
-//sbool ignore_flag=0;
 
 time_t t;
 struct tm *run;
