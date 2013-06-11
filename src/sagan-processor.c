@@ -49,7 +49,6 @@ struct _SaganConfig *config;
 int proc_msgslot; 
 int i; 
 int rc; 
-sbool ignore_flag=0;
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
@@ -60,9 +59,7 @@ struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
 SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
 memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-//#ifdef WITH_WEBSENSE
-//curl_global_init(CURL_GLOBAL_ALL);
-//#endif
+sbool ignore_flag=0;
 
 for (;;) { 
 
@@ -72,6 +69,8 @@ for (;;) {
 
 	proc_msgslot--;
 
+	pthread_mutex_unlock(&SaganProcWorkMutex);
+
 	/* Do we need to "ignore" this inbound log message? Used to save CPU */
 
         if ( config->sagan_droplist_flag ) {
@@ -80,27 +79,29 @@ for (;;) {
 
         for (i = 0; i < counters->droplist_count; i++) {
             if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganDroplist[i].ignore_string)) {
+	       
+	       pthread_mutex_lock(&SaganProcWorkMutex);
                counters->ignore_count++;
-               ignore_flag=1;
+	       pthread_mutex_unlock(&SaganProcWorkMutex);
+               
+	       ignore_flag=1;
                }
-          }
+            }
         }
 
-	memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
-
-	snprintf(SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host), "%s", SaganProcSyslog[proc_msgslot].syslog_host);
-	snprintf(SaganProcSyslog_LOCAL->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility), "%s", SaganProcSyslog[proc_msgslot].syslog_facility);
-	snprintf(SaganProcSyslog_LOCAL->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority), "%s", SaganProcSyslog[proc_msgslot].syslog_priority);
-	snprintf(SaganProcSyslog_LOCAL->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level), "%s", SaganProcSyslog[proc_msgslot].syslog_level);
-	snprintf(SaganProcSyslog_LOCAL->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag), "%s", SaganProcSyslog[proc_msgslot].syslog_tag);
-	snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", SaganProcSyslog[proc_msgslot].syslog_date);
-	snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", SaganProcSyslog[proc_msgslot].syslog_time);
-	snprintf(SaganProcSyslog_LOCAL->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program), "%s", SaganProcSyslog[proc_msgslot].syslog_program);
-	snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "%s", SaganProcSyslog[proc_msgslot].syslog_message);
-        
-	pthread_mutex_unlock(&SaganProcWorkMutex);
-
 	if ( ignore_flag == 0 ) { 
+
+        memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
+
+        snprintf(SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host), "%s", SaganProcSyslog[proc_msgslot].syslog_host);
+        snprintf(SaganProcSyslog_LOCAL->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility), "%s", SaganProcSyslog[proc_msgslot].syslog_facility);
+        snprintf(SaganProcSyslog_LOCAL->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority), "%s", SaganProcSyslog[proc_msgslot].syslog_priority);
+        snprintf(SaganProcSyslog_LOCAL->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level), "%s", SaganProcSyslog[proc_msgslot].syslog_level);
+        snprintf(SaganProcSyslog_LOCAL->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag), "%s", SaganProcSyslog[proc_msgslot].syslog_tag);
+        snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", SaganProcSyslog[proc_msgslot].syslog_date);
+        snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", SaganProcSyslog[proc_msgslot].syslog_time);
+        snprintf(SaganProcSyslog_LOCAL->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program), "%s", SaganProcSyslog[proc_msgslot].syslog_program);
+        snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "%s", SaganProcSyslog[proc_msgslot].syslog_message);
 
         Sagan_Engine(SaganProcSyslog_LOCAL);
 
