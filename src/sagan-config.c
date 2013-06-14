@@ -240,7 +240,7 @@ if (!strcmp(sagan_option, "ignore_list:")) {
    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok)); 
 
    if ( sagan_var1 == NULL )  
-      Sagan_Log(1, "[%s, line %d] No \"drop file\" specified in the sagan.conf file!", __FILE__, __LINE__);
+      Sagan_Log(1, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
 
    config->sagan_droplist_flag = 1; 
    snprintf(config->sagan_droplistfile, sizeof(config->sagan_droplistfile)-1, "%s", sagan_var1);
@@ -292,11 +292,26 @@ if (!strcmp(sagan_option, "processor")) {
 
            while (ptmp != NULL ) {
 
+             if (!strcmp(ptmp, "parse_src")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_nocase_parse_src = atoi(ptmp);
+                }
+
+             if (!strcmp(ptmp, "parse_dst")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_nocase_parse_dst = atoi(ptmp);
+                }
+
+            if (!strcmp(ptmp, "parse_proto")) {
+	        ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
+                }
+
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->search_nocase_file, sizeof(config->search_nocase_file), "%s", Remove_Return(ptmp));
                 }
-
+             
              ptmp = strtok_r(NULL, "=", &tok);
 
              }
@@ -310,13 +325,31 @@ if (!strcmp(sagan_option, "processor")) {
 
            while (ptmp != NULL ) {
 
+             if (!strcmp(ptmp, "parse_src")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_case_parse_src = atoi(ptmp);
+                }
+
+             if (!strcmp(ptmp, "parse_dst")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_case_parse_dst = atoi(ptmp);
+                }
+
+            if (!strcmp(ptmp, "parse_proto")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
+                }
+
+             if (!strcmp(ptmp, "parse_proto")) {
+ 		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
+                }
+
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->search_case_file, sizeof(config->search_case_file), "%s", Remove_Return(ptmp));
                 }
 
              ptmp = strtok_r(NULL, "=", &tok);
-
              }
            }
 

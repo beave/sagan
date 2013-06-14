@@ -636,7 +636,9 @@ processor_info_dst_port                 =       dst_port;
 processor_info_src_port                 =       src_port;
 processor_info_proto                    =       proto;
 processor_info_alertid                  =       atoi(rulestruct[b].s_sid);
+
 }
+
 
 /***************************************************************************/
 /* Output plugins that cannot be threaded and require little I/O (almost   */

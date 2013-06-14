@@ -252,7 +252,7 @@ uint32_t ip;
 /* Champ Clark III - 01/18/2011 */
 
 if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-Sagan_Log(0, "Warning: inet_pton() error,  but continuing...");
+Sagan_Log(0, "Warning: inet_pton() error,  but continuing...", ipaddr);
 }
 
 if ( config->endian == 0 ) {

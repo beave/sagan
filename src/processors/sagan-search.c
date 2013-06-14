@@ -58,12 +58,7 @@ if ( type == 1 ) {
    }
 
 if (( search = fopen(tmpfile, "r" )) == NULL ) {
-   Sagan_Log(2, "[%s, line %d] No search list to load (%s)", __FILE__, __LINE__, config->search_nocase_file);
-
-   if ( type == 1 ) config->search_nocase_flag=0;
-    else config->search_case_flag=0;
-
-   return(0);
+   Sagan_Log(1, "[%s, line %d] No search list to load (%s)", __FILE__, __LINE__, config->search_nocase_file);
    }
 
 while(fgets(searchbuf, 1024, search) != NULL) {
@@ -96,8 +91,12 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
 
 int i; 
 
-uint32_t u32_tmpip;
-char *ip_tmp = NULL;
+char f_src_ip[64] = { 0 }; 
+char f_dst_ip[64] = { 0 };
+
+char *ip_src = NULL;
+char *ip_dst = NULL;
+int   proto = 0; 
 
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
@@ -115,17 +114,31 @@ processor_info->processor_rev           =       SEARCH_PROCESSOR_REV;
 
 /* If the IP is 127.0.0.1, we use config->sagan_host */
 
-ip_tmp = SaganProcSyslog_LOCAL->syslog_host;
-u32_tmpip = IP2Bit(SaganProcSyslog_LOCAL->syslog_host);
-if ( u32_tmpip == 2130706433 ) ip_tmp = config->sagan_host;
+ip_src = SaganProcSyslog_LOCAL->syslog_host;
+ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+proto = config->sagan_proto; 
 
 if ( type == 1 ) {
 
 for (i=0; i<counters->search_nocase_count; i++) { 
 
 if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].search )) { 
+   
    counters->search_nocase_hit_count++;
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
+
+   if ( config->search_nocase_parse_src ) { 
+   snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
+   if (strcmp(f_src_ip,"0")) ip_src = f_src_ip;
+   }
+
+   if ( config->search_nocase_parse_dst ) {
+   snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
+   if (strcmp(f_dst_ip,"0")) ip_dst = f_dst_ip;
+   }
+
+   if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
+     
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, proto, 1, config->sagan_port, config->sagan_port);
 
    }
  }
@@ -134,8 +147,22 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
 for (i=0; i<counters->search_case_count; i++) {
 
 if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search )) {
+
    counters->search_case_hit_count++;
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_host, config->sagan_proto, 2, config->sagan_port, config->sagan_port);
+
+   if ( config->search_case_parse_src ) {
+   snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
+   if (strcmp(f_src_ip,"0")) ip_src = f_src_ip;
+   }
+
+   if ( config->search_case_parse_dst ) {
+   snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
+   if (strcmp(f_dst_ip,"0")) ip_dst = f_dst_ip;
+   }
+
+   if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
+
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, config->sagan_proto, 2, config->sagan_port, config->sagan_port);
    }
  }
 }
