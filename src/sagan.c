@@ -98,6 +98,7 @@ const struct option long_options[] = {
         { "daemon",       no_argument,          NULL,   'D' },
         { "user",         required_argument,    NULL,   'U' },
         { "chroot",       required_argument,    NULL,   'c' },
+	{ "credits",	  no_argument,		NULL,	'C' }, 
         { "config",       required_argument,    NULL,   'f' },
         { "log",          required_argument,    NULL,   'l' },
 	{ "file",	  required_argument,    NULL,   'F' }, 
@@ -106,7 +107,7 @@ const struct option long_options[] = {
 };
 
 static const char *short_options =
-"l:f:u:d:c:pDh";
+"l:f:u:d:c:pDhC";
 
 int option_index = 0;
 
@@ -210,7 +211,12 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   if (c == -1) break;
 
            case 'h':
-	   Usage();
+	   Sagan_Usage();
+	   exit(0);
+	   break;
+
+	   case 'C':
+	   Sagan_Credits(); 
 	   exit(0);
 	   break;
 	   
@@ -304,10 +310,9 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	   strlcpy(config->sagan_log_filepath,optarg,sizeof(config->sagan_log_filepath) - 1);
 	   break;
 	   
-
 	  default:
           fprintf(stderr, "Invalid argument! See below for command line switches.\n");
-          Usage();
+          Sagan_Usage();
 	  exit(0);
 	  break;
   	  }

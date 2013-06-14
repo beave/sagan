@@ -50,6 +50,7 @@ int    Is_Numeric (char *);
 char   *To_UpperC(char* const );
 int	Check_Endian( void ); 
 void    Usage( void );
+void 	Sagan_Credits( void );
 void    Chroot( const char *, const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);

@@ -32,13 +32,13 @@
 #include <stdio.h>
 
 #include "sagan.h"
-
 #include "version.h"
 
-void Usage(void)
+void Sagan_Usage(void)
 {
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
+fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
 fprintf(stderr, "-d, --debug [type]\tTypes: syslog, load, fwsam, external, threads");
 
 #ifdef HAVE_LIBESMTP

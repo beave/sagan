@@ -75,7 +75,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
-	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
+	sagan-credits.$(OBJEXT) parse-ip.$(OBJEXT) \
+	parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
 	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
 	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
@@ -222,6 +223,7 @@ sagan-gen-msg.c \
 sagan-liblognorm.c \
 sagan-ignore-list.c \
 sagan-send-alert.c \
+sagan-credits.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
@@ -328,6 +330,7 @@ include ./$(DEPDIR)/sagan-alert.Po
 include ./$(DEPDIR)/sagan-blacklist.Po
 include ./$(DEPDIR)/sagan-classifications.Po
 include ./$(DEPDIR)/sagan-config.Po
+include ./$(DEPDIR)/sagan-credits.Po
 include ./$(DEPDIR)/sagan-engine.Po
 include ./$(DEPDIR)/sagan-esmtp.Po
 include ./$(DEPDIR)/sagan-external.Po
