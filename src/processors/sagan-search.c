@@ -131,17 +131,15 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
    counters->search_nocase_hit_count++;
 
 #ifdef HAVE_LIBLOGNORM
-
+if ( config->search_nocase_lognorm) {
    SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
    memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
    ip_src = SaganNormalizeLiblognorm->ip_src;
    ip_dst = SaganNormalizeLiblognorm->ip_dst;
    src_port = SaganNormalizeLiblognorm->src_port;
    dst_port = SaganNormalizeLiblognorm->dst_port;
-
    free(SaganNormalizeLiblognorm);
-
+}
 #endif
 
    if ( src_port == 0 ) src_port = config->sagan_port;
@@ -181,24 +179,22 @@ if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search 
    counters->search_case_hit_count++;
 
 #ifdef HAVE_LIBLOGNORM
-
+if ( config->search_case_lognorm) { 
    SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
    memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
    ip_src = SaganNormalizeLiblognorm->ip_src;
    ip_dst = SaganNormalizeLiblognorm->ip_dst;
    src_port = SaganNormalizeLiblognorm->src_port;
    dst_port = SaganNormalizeLiblognorm->dst_port;
-
    free(SaganNormalizeLiblognorm);
-
+   }
 #endif
 
    if ( src_port == 0 ) src_port = config->sagan_port;
    if ( dst_port == 0 ) dst_port = config->sagan_port;
 
    if ( config->search_case_parse_src ) {
-      snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
+      snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_case_parse_src));
          if (strcmp(f_src_ip,"0")) { 
 	    ip_src = f_src_ip;
 	    } else { 
@@ -207,7 +203,7 @@ if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search 
    }
 
    if ( config->search_case_parse_dst ) {
-      snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
+      snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_case_parse_dst));
          if (strcmp(f_dst_ip,"0")) { 
 	    ip_dst = f_dst_ip; 
 	    } else { 
