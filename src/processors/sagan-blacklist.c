@@ -63,9 +63,7 @@ char blacklistbuf[1024] = { 0 };
 counters->blacklist_count=0;
 
 if (( blacklist = fopen(config->blacklist_file, "r" )) == NULL ) {
-   Sagan_Log(2, "[%s, line %d] No blacklist ignore list to load (%s)", __FILE__, __LINE__, config->blacklist_file);
-   config->blacklist_flag=0;
-   return(0);
+   Sagan_Log(1, "[%s, line %d] Could not load blacklist file! (%s)", __FILE__, __LINE__, config->blacklist_file);
    }
 
 while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
@@ -124,6 +122,9 @@ char *ip_src = NULL;
 char *ip_dst = NULL;
 char *ip_tmp = NULL;
 
+int   src_port = 0;
+int   dst_port = 0;
+
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
 memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
@@ -139,13 +140,16 @@ processor_info->processor_tag           =       BLACKLIST_PROCESSOR_TAG;
 processor_info->processor_rev           =       BLACKLIST_PROCESSOR_REV;
 
 #ifdef HAVE_LIBLOGNORM
+if (config->blacklist_lognorm)  { 
 SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
 SaganNormalizeLiblognorm = sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 ip_src = SaganNormalizeLiblognorm->ip_src;
 ip_dst = SaganNormalizeLiblognorm->ip_dst;
+src_port = SaganNormalizeLiblognorm->src_port;
+dst_port = SaganNormalizeLiblognorm->dst_port;
 free(SaganNormalizeLiblognorm);
+}
 #endif
 
 /* If the IP is 127.0.0.1, we use config->sagan_host */

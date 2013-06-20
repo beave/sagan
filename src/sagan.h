@@ -207,6 +207,10 @@ struct _SaganConfig {
     sbool       blacklist_flag;
     char	blacklist_file[MAXPATH];
     int		blacklist_parse_depth;
+    int		blacklist_parse_src;
+    int		blacklist_parse_dst;
+    sbool	blacklist_parse_proto;
+    sbool	blacklist_lognorm;
 
     sbool	search_nocase_flag;
     char	search_nocase_file[MAXPATH];

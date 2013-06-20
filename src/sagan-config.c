@@ -277,7 +277,27 @@ if (!strcmp(sagan_option, "processor")) {
 	        ptmp = strtok_r(NULL, " ", &tok);
 		snprintf(config->blacklist_file, sizeof(config->blacklist_file), "%s", Remove_Return(ptmp)); 
 		}
-             
+
+             if (!strcmp(ptmp, "parse_src")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->blacklist_parse_src = atoi(ptmp);
+                }
+
+             if (!strcmp(ptmp, "parse_dst")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->blacklist_parse_dst = atoi(ptmp);
+                }
+
+            if (!strcmp(ptmp, "parse_proto")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_parse_proto = 1;
+                }
+
+             if (!strcmp(ptmp, "lognorm")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_lognorm = 1;
+                }
+
 	     ptmp = strtok_r(NULL, "=", &tok);
 	     
 	     }		               
