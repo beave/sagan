@@ -304,13 +304,18 @@ if (!strcmp(sagan_option, "processor")) {
 
             if (!strcmp(ptmp, "parse_proto")) {
 	        ptmp = strtok_r(NULL, " ", &tok);
-                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_parse_proto = 1;
                 }
 
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->search_nocase_file, sizeof(config->search_nocase_file), "%s", Remove_Return(ptmp));
                 }
+
+	     if (!strcmp(ptmp, "lognorm")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_lognorm = 1; 
+		}
              
              ptmp = strtok_r(NULL, "=", &tok);
 
@@ -347,6 +352,11 @@ if (!strcmp(sagan_option, "processor")) {
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->search_case_file, sizeof(config->search_case_file), "%s", Remove_Return(ptmp));
+                }
+
+             if (!strcmp(ptmp, "lognorm")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_lognorm = 1;
                 }
 
              ptmp = strtok_r(NULL, "=", &tok);

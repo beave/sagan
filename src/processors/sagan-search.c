@@ -96,11 +96,18 @@ char f_dst_ip[64] = { 0 };
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
+
+int   src_port = 0; 
+int   dst_port = 0;
 int   proto = 0; 
 
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
 memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+
+#ifdef HAVE_LIBLOGNORM
+struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
+#endif
 
 processor_info->processor_name          =       SEARCH_PROCESSOR_NAME;
 processor_info->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
@@ -112,11 +119,8 @@ processor_info->processor_class         =       SEARCH_PROCESSOR_CLASS;
 processor_info->processor_tag           =       SEARCH_PROCESSOR_TAG;
 processor_info->processor_rev           =       SEARCH_PROCESSOR_REV;
 
-/* If the IP is 127.0.0.1, we use config->sagan_host */
-
-ip_src = SaganProcSyslog_LOCAL->syslog_host;
-ip_dst = SaganProcSyslog_LOCAL->syslog_host;
 proto = config->sagan_proto; 
+
 
 if ( type == 1 ) {
 
@@ -126,19 +130,45 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
    
    counters->search_nocase_hit_count++;
 
-   if ( config->search_nocase_parse_src ) { 
-   snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
-   if (strcmp(f_src_ip,"0")) ip_src = f_src_ip;
+#ifdef HAVE_LIBLOGNORM
+
+   SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+   memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+
+   ip_src = SaganNormalizeLiblognorm->ip_src;
+   ip_dst = SaganNormalizeLiblognorm->ip_dst;
+   src_port = SaganNormalizeLiblognorm->src_port;
+   dst_port = SaganNormalizeLiblognorm->dst_port;
+
+   free(SaganNormalizeLiblognorm);
+
+#endif
+
+   if ( src_port == 0 ) src_port = config->sagan_port;
+   if ( dst_port == 0 ) dst_port = config->sagan_port;
+
+
+   if ( config->search_nocase_parse_src && ip_src == NULL ) { 
+      snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
+         if (strcmp(f_src_ip,"0")) { 
+	    ip_src = f_src_ip;
+	    } else { 
+	    ip_src = SaganProcSyslog_LOCAL->syslog_host;
+	    }
    }
 
-   if ( config->search_nocase_parse_dst ) {
-   snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
-   if (strcmp(f_dst_ip,"0")) ip_dst = f_dst_ip;
+   if ( config->search_nocase_parse_dst && ip_dst == NULL ) {
+       snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
+          if (strcmp(f_dst_ip,"0")) { 
+	     ip_dst = f_dst_ip;
+	     } else { 
+	     ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+	     }
    }
 
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
      
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, proto, 1, config->sagan_port, config->sagan_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, proto, 1, src_port, dst_port);
 
    }
  }
@@ -150,19 +180,44 @@ if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search 
 
    counters->search_case_hit_count++;
 
+#ifdef HAVE_LIBLOGNORM
+
+   SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+   memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+
+   ip_src = SaganNormalizeLiblognorm->ip_src;
+   ip_dst = SaganNormalizeLiblognorm->ip_dst;
+   src_port = SaganNormalizeLiblognorm->src_port;
+   dst_port = SaganNormalizeLiblognorm->dst_port;
+
+   free(SaganNormalizeLiblognorm);
+
+#endif
+
+   if ( src_port == 0 ) src_port = config->sagan_port;
+   if ( dst_port == 0 ) dst_port = config->sagan_port;
+
    if ( config->search_case_parse_src ) {
-   snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
-   if (strcmp(f_src_ip,"0")) ip_src = f_src_ip;
+      snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src));
+         if (strcmp(f_src_ip,"0")) { 
+	    ip_src = f_src_ip;
+	    } else { 
+	    ip_src = SaganProcSyslog_LOCAL->syslog_host;
+	    }
    }
 
    if ( config->search_case_parse_dst ) {
-   snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
-   if (strcmp(f_dst_ip,"0")) ip_dst = f_dst_ip;
+      snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst));
+         if (strcmp(f_dst_ip,"0")) { 
+	    ip_dst = f_dst_ip; 
+	    } else { 
+	    ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+	    }
    }
 
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
 
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, config->sagan_proto, 2, config->sagan_port, config->sagan_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
    }
  }
 }
