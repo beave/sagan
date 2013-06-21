@@ -272,6 +272,7 @@ struct _SaganConfig {
 
 #ifdef WITH_WEBSENSE
     sbool	 websense_flag;
+    char	 websense_device_id[64];
     char	 websense_url[256]; 
     char	 websense_auth[64];
     char	 websense_ignore_list[64];

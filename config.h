@@ -50,7 +50,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `curl' library (-lcurl). */
-/* #undef HAVE_LIBCURL */
+#define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
@@ -68,7 +68,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `json' library (-ljson). */
-/* #undef HAVE_LIBJSON */
+#define HAVE_LIBJSON 1
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
 #define HAVE_LIBLOGNORM 1
@@ -270,7 +270,7 @@
 #define WITH_SNORTSAM 1
 
 /* With Websense Threatseeker */
-/* #undef WITH_WEBSENSE */
+#define WITH_WEBSENSE 1
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

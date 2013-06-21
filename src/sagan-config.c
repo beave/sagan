@@ -391,6 +391,7 @@ if (!strcmp(sagan_option, "processor")) {
         if (!strcmp(sagan_var1, "websense:")) {
 
 	   config->websense_flag=1;
+	   snprintf(config->websense_device_id, sizeof(config->websense_device_id), "NO_DEVICE_ID");
 
            ptmp = sagan_var1;
 
@@ -427,6 +428,12 @@ if (!strcmp(sagan_option, "processor")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->websense_ignore_list, sizeof(config->websense_ignore_list), "%s", ptmp);
                 Remove_Return(config->websense_ignore_list);
+                }
+
+            if (!strcmp(ptmp, "device_id")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                snprintf(config->websense_device_id, sizeof(config->websense_device_id), "%s", ptmp);
+                Remove_Return(config->websense_device_id);
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);

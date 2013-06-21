@@ -443,6 +443,7 @@ Sagan_Websense_Ignore_List();
 Sagan_Log(0, "");
 Sagan_Log(0, "Websense URL: %s", config->websense_url);
 Sagan_Log(0, "Websense Auth: %s", config->websense_auth);
+Sagan_Log(0, "Websense Device ID: %s", config->websense_device_id);
 Sagan_Log(0, "Websense Parse Depth: %d", config->websense_parse_depth);
 Sagan_Log(0, "Websense Max Cache: %d", config->websense_max_cache);
 Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
