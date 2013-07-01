@@ -360,11 +360,6 @@ if (!strcmp(sagan_option, "processor")) {
                 config->search_case_parse_dst = atoi(ptmp);
                 }
 
-            if (!strcmp(ptmp, "parse_proto")) {
-                ptmp = strtok_r(NULL, " ", &tok);
-                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
-                }
-
              if (!strcmp(ptmp, "parse_proto")) {
  		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
                 }
@@ -434,6 +429,26 @@ if (!strcmp(sagan_option, "processor")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 snprintf(config->websense_device_id, sizeof(config->websense_device_id), "%s", ptmp);
                 Remove_Return(config->websense_device_id);
+                }
+
+             if (!strcmp(ptmp, "parse_src")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->websense_parse_src = atoi(ptmp);
+                }
+
+             if (!strcmp(ptmp, "parse_dst")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->websense_parse_dst = atoi(ptmp);
+                }
+
+            if (!strcmp(ptmp, "parse_proto")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_parse_proto = 1;
+                }
+
+            if (!strcmp(ptmp, "lognorm")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_lognorm = 1;
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);

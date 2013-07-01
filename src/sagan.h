@@ -280,6 +280,10 @@ struct _SaganConfig {
     int		 websense_timeout;
     uint64_t	 websense_max_cache;
     uint64_t	 websense_last_time;			/* For cache cleaning */
+    sbool	 websense_lognorm; 
+    sbool	 websense_parse_proto;
+    int		 websense_parse_src; 
+    int		 websense_parse_dst;
 #endif
 
     sbool        sagan_fwsam_flag;
