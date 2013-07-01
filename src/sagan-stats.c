@@ -156,6 +156,7 @@ Sagan_Log(0, "");
 Sagan_Log(0, "          Entries in cache          : %" PRIu64 " (%.3f%%)", counters->websense_cache_count, CalcPct(counters->websense_cache_count, config->websense_max_cache));
 Sagan_Log(0, "          Hits from cache           : %" PRIu64 "", counters->websense_cache_hit); // FIX NO % 
 Sagan_Log(0, "          Ignored                   : %" PRIu64 "", counters->websense_ignore_hit);
+Sagan_Log(0, "          Errors                    : %" PRIu64 "", counters->websense_error_count);
 Sagan_Log(0, "          Websense hits in logs     : %" PRIu64 "", counters->websense_postive_hit);
 Sagan_Log(0, "          Queries per/second        : %lu", websense_total);
 		    

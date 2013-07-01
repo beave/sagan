@@ -451,6 +451,11 @@ Sagan_Log(0, "Websense Max Cache: %d", config->websense_max_cache);
 Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
 Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_count);
 }
+
+if ( config->websense_lognorm ) Sagan_Log(0, "Websense Liblognorm: Enabled"); 
+if ( config->websense_parse_src ) Sagan_Log(0, "Websense Parse Source Depth: %d", config->websense_parse_src);
+if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth: %d", config->websense_parse_src);
+
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)

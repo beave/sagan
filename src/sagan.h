@@ -116,6 +116,7 @@ struct _SaganCounters {
     uint64_t websense_postive_hit;
     uint64_t websense_ignore_hit;			/* Ignores from our ignore list */
     uint64_t websense_total; 
+    uint64_t websense_error_count;
     int websense_ignore_list_count;			
 #endif
 

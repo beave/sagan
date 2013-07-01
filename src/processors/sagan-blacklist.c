@@ -200,13 +200,12 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  counters->blacklist_hit_count++;
 
 		  if ( config->blacklist_parse_src ) { 
-		 
 		  ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_src);
+		  if ( ip_src == NULL) ip_src = config->sagan_host; 
 		  snprintf(ip_src_tmp, sizeof(ip_src_tmp), "%s", ip_src);
 		  }
 
 		  if ( config->blacklist_parse_dst ) { 
-		 
 		  ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst);
 		  if ( ip_dst == NULL ) ip_dst = config->sagan_host; 
 		  snprintf(ip_dst_tmp, sizeof(ip_dst_tmp), "%s", ip_dst); 
