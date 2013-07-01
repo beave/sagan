@@ -75,8 +75,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
-	sagan-credits.$(OBJEXT) parse-ip.$(OBJEXT) \
-	parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
+	sagan-credits.$(OBJEXT) sagan-protocol-map.$(OBJEXT) \
+	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
 	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
 	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
@@ -131,7 +131,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -ljson -lcurl -ldnet -lpcap -llognorm -lee -lestr -lm -lpthread -lpcre 
+LIBS = -ldnet -lpcap -llognorm -lee -lestr -lm -lpthread -lpcre 
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/champ/code/sagan/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
@@ -224,6 +224,7 @@ sagan-liblognorm.c \
 sagan-ignore-list.c \
 sagan-send-alert.c \
 sagan-credits.c \
+sagan-protocol-map.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
@@ -342,6 +343,7 @@ include ./$(DEPDIR)/sagan-lockfile.Po
 include ./$(DEPDIR)/sagan-output.Po
 include ./$(DEPDIR)/sagan-plog.Po
 include ./$(DEPDIR)/sagan-processor.Po
+include ./$(DEPDIR)/sagan-protocol-map.Po
 include ./$(DEPDIR)/sagan-references.Po
 include ./$(DEPDIR)/sagan-rules.Po
 include ./$(DEPDIR)/sagan-search.Po

@@ -101,6 +101,9 @@ struct _SaganCounters {
     int      ruletotal;
 
     int      genmapcount;
+    int	     mapcount;
+    int      mapcount_message;
+    int      mapcount_program;
 
     int	     droplist_count;
     int	     search_nocase_count;
@@ -429,6 +432,26 @@ typedef struct _Sagan_Event
 
 } _SaganEvent;
 
+/* Storage for protocol.map (message search) */
+
+typedef struct _Sagan_Protocol_Map_Message _Sagan_Protocol_Map_Message;
+struct _Sagan_Protocol_Map_Message {
+int type;
+int proto; 
+int nocase; 
+char search[512]; 
+};
+
+/* Storage for protocol.map (program search) */
+
+typedef struct _Sagan_Protocol_Map_Program _Sagan_Protocol_Map_Program;
+struct _Sagan_Protocol_Map_Program {
+int type;
+int proto;
+int nocase;
+char program[64];
+};
+
 /* Storage for sagan-gen-msg.map */
 
 typedef struct _Sagan_Processor_Generator _Sagan_Processor_Generator;
@@ -584,6 +607,7 @@ void Load_Ignore_List ( void );
 char *Sagan_Generator_Lookup( int, int );
 void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int, int, int, int );
 int IP2Bit (char *ipaddr );
+void Load_Protocol_Map( const char * ); 
 
 sbool is_rfc1918 ( char * );
 

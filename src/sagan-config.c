@@ -589,10 +589,11 @@ if (!strcmp(sagan_var1, "unified2:")) {
          if (!strcmp(filename, "classification.config")) Load_Classifications(ruleset);
          if (!strcmp(filename, "reference.config")) Load_Reference(ruleset);
          if (!strcmp(filename, "gen-msg.map")) Load_Gen_Map(ruleset);
+	 if (!strcmp(filename, "protocol.map")) Load_Protocol_Map(ruleset);
 
 	 /* It's not a classifcations file or reference,  so it must be a ruleset */
 
-         if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map"))  {
+         if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map") && strcmp(filename, "protocol.map"))  {
                    
 		   Load_Rules(ruleset);
           }

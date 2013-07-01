@@ -37,7 +37,7 @@
 struct _SaganCounters *counters;
 struct _Sagan_Processor_Generator *generator; 
 struct _SaganConfig *config;
-struct  _SaganDebug *debug;
+struct _SaganDebug *debug;
 
 void Load_Gen_Map( const char *genmap ) {
 
@@ -57,7 +57,7 @@ Sagan_Log(0, "Loading gen-msg.map file. [%s]", genmap);
 counters->genmapcount=0;
 
 if (( genmapfile = fopen(genmap, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, genmap);
+   Sagan_Log(1, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
    }
 
 while(fgets(genbuf, 1024, genmapfile) != NULL) {

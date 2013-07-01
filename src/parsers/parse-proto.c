@@ -36,12 +36,26 @@
 #include "version.h"
 
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
+struct _Sagan_Protocol_Map_Message *map_message;
+struct _Sagan_Protocol_Map_Program *map_program;
 
-int parse_proto( char * msg )  { 
 
-if ( strcasestr(msg, " tcp ")   || strcasestr(msg, " tcp,")) return(6);
-if (strcasestr(msg, " udp " )   || strcasestr(msg, " udp,")) return(17);
-if (strcasestr(msg, " icmp " )  || strcasestr(msg, " icmp,")) return(1);
+int parse_proto( char *msg )  { 
+
+int i; 
+
+for (i = 0; i < counters->mapcount_message; i++) {
+
+    if ( map_message[i].nocase == 1 ) { 
+       if (!strcasestr(msg, map_message[i].search)) return(map_message[i].proto); 
+       } else { 
+       if (!strstr(msg, map_message[i].search)) return(map_message[i].proto);
+       }
+}
+//if ( strcasestr(msg, " tcp ")   || strcasestr(msg, " tcp,")) return(6);
+//if (strcasestr(msg, " udp " )   || strcasestr(msg, " udp,")) return(17);
+//if (strcasestr(msg, " icmp " )  || strcasestr(msg, " icmp,")) return(1);
 
 return(config->sagan_proto);
 }

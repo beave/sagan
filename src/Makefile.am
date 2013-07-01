@@ -23,6 +23,7 @@ sagan-liblognorm.c \
 sagan-ignore-list.c \
 sagan-send-alert.c \
 sagan-credits.c \
+sagan-protocol-map.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
