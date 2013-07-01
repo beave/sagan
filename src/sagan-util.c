@@ -57,7 +57,6 @@ struct _Sagan_Processor_Generator *generator;
 
 sbool daemonize;
 
-
 /*****************************************************************************
  * This force Sagan to chroot.                                               *
  *                                                                           *
@@ -243,7 +242,7 @@ int Check_Endian() {
  * snort supports DB IPv6.
  */
 
-int IP2Bit (char *ipaddr ) { 
+int IP2Bit (char *ipaddr) { 
 
 struct sockaddr_in ipv4;
 uint32_t ip;
@@ -252,7 +251,7 @@ uint32_t ip;
 /* Champ Clark III - 01/18/2011 */
 
 if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-Sagan_Log(0, "Warning: inet_pton() error,  but continuing...", ipaddr);
+Sagan_Log(0, "Warning: Got a inet_pton() error for %s,  but continuing...", ipaddr);
 }
 
 if ( config->endian == 0 ) {

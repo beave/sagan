@@ -408,12 +408,14 @@ Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
 
 if ( config->search_nocase_flag) {
 Sagan_Search_Load( 1 );
+Sagan_Log(0, "");
 Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
 Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
 }
 
 if ( config->search_case_flag) {
 Sagan_Search_Load( 2 );
+Sagan_Log(0, "");
 Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
 Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
 }
@@ -450,9 +452,6 @@ Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 6
 Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_count);
 }
 #endif
-
-
-Sagan_Log(0, "");
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 

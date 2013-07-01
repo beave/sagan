@@ -294,29 +294,11 @@ if ( rulestruct[b].normalize == 0 ) {
 
  /* parse_src_ip: {position} */
 
- if ( rulestruct[b].s_find_src_ip == 1 ) {
-
-   snprintf(f_src_ip, sizeof(f_src_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos));
-
-   if (strcmp(f_src_ip,"0")) {
-    	  ip_src = f_src_ip; 
-             } else {
-      	  ip_src = NULL; 
-        }
-  }
+ if ( rulestruct[b].s_find_src_ip == 1 ) ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos); 
 
  /* parse_dst_ip: {postion} */
 
- if ( rulestruct[b].s_find_dst_ip == 1 ) {
-
-   snprintf(f_dst_ip, sizeof(f_dst_ip), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos));
-
-   if (strcmp(f_dst_ip,"0")) {
-          ip_dst = f_dst_ip;
-             } else {
-          ip_dst = NULL; 
-        }
-  }
+ if ( rulestruct[b].s_find_dst_ip == 1 ) ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos); 
 
 /* parse_port */
 
@@ -331,8 +313,8 @@ if ( rulestruct[b].s_find_proto == 1 ) {
     } else {
    proto = rulestruct[b].ip_proto;
    }
-}
 
+}
 
 if ( ip_src == NULL ) ip_src=SaganProcSyslog_LOCAL->syslog_host;
 if ( ip_dst == NULL ) ip_dst=SaganProcSyslog_LOCAL->syslog_host;

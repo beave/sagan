@@ -94,13 +94,6 @@ while (ptmp != NULL ) {
 	   for (b=0; b < strlen(ptmp); b++) {
 	       for (i = b; i < strlen(ptmp); i++) {
 
-/*
-	           if ( current_pos == pos ) {
-		      if (!strcmp(lastgood, "127.0.0.1")) return("0");
-		      retbuf=lastgood;
-		      return(retbuf); 
-		      }
-*/
 		   snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
 		   strlcat(msg, ctmp, sizeof(msg));
 
@@ -113,11 +106,10 @@ while (ptmp != NULL ) {
 
 		   if ( flag == 1 && result_nonspace == 0 ) { 
 
-//		      flag=0; 
 		      current_pos++;
 
 		      if ( current_pos == pos ) { 
-		         if (!strcmp(lastgood, "127.0.0.1")) return("0");
+		         if (!strcmp(lastgood, "127.0.0.1")) return(NULL);
 			 retbuf=lastgood;
 			 return(retbuf);
 			 }
@@ -136,6 +128,6 @@ while (ptmp != NULL ) {
 	 ptmp = strtok_r(NULL, " ", &tok);
      }
 
-return("0");
+return(NULL);
 }
 
