@@ -214,6 +214,7 @@ struct _SaganConfig {
     int		blacklist_parse_src;
     int		blacklist_parse_dst;
     sbool	blacklist_parse_proto;
+    sbool	blacklist_parse_proto_program;
     sbool	blacklist_lognorm;
 
     sbool	search_nocase_flag;
@@ -222,6 +223,7 @@ struct _SaganConfig {
     int		search_nocase_parse_src; 
     int		search_nocase_parse_dst;
     sbool	search_nocase_parse_proto;
+    sbool	search_nocase_parse_proto_program; 
     sbool	search_nocase_lognorm;
 
     sbool       search_case_flag;
@@ -230,6 +232,7 @@ struct _SaganConfig {
     int         search_case_parse_src;
     int         search_case_parse_dst;
     sbool	search_case_parse_proto;
+    sbool	search_case_parse_proto_program;
     sbool	search_case_lognorm;
 
 
@@ -286,6 +289,7 @@ struct _SaganConfig {
     uint64_t	 websense_last_time;			/* For cache cleaning */
     sbool	 websense_lognorm; 
     sbool	 websense_parse_proto;
+    sbool	 websense_parse_proto_program;
     int		 websense_parse_src; 
     int		 websense_parse_dst;
 #endif
@@ -616,5 +620,6 @@ sbool is_rfc1918 ( char * );
 char *parse_ip( char *, int );
 int   parse_port( char * );
 int   parse_proto( char * );
+int   parse_proto_program (char *); 
 
 

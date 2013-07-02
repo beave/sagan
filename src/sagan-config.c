@@ -293,6 +293,11 @@ if (!strcmp(sagan_option, "processor")) {
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_parse_proto = 1;
                 }
 
+             if (!strcmp(ptmp, "parse_proto_program")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_parse_proto_program = 1;
+                }
+
              if (!strcmp(ptmp, "lognorm")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_lognorm = 1;
@@ -322,10 +327,15 @@ if (!strcmp(sagan_option, "processor")) {
                 config->search_nocase_parse_dst = atoi(ptmp);
                 }
 
-            if (!strcmp(ptmp, "parse_proto")) {
+             if (!strcmp(ptmp, "parse_proto")) {
 	        ptmp = strtok_r(NULL, " ", &tok);
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_parse_proto = 1;
                 }
+
+	     if (!strcmp(ptmp, "parse_proto_program")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_parse_proto_program = 1;
+		}
 
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
@@ -361,7 +371,13 @@ if (!strcmp(sagan_option, "processor")) {
                 }
 
              if (!strcmp(ptmp, "parse_proto")) {
+                ptmp = strtok_r(NULL, " ", &tok);
  		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto = 1;
+                }
+
+             if (!strcmp(ptmp, "parse_proto_program")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_parse_proto_program = 1;
                 }
 
              if (!strcmp(ptmp, "searchlist")) {
@@ -444,6 +460,11 @@ if (!strcmp(sagan_option, "processor")) {
             if (!strcmp(ptmp, "parse_proto")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_parse_proto = 1;
+                }
+
+             if (!strcmp(ptmp, "parse_proto_program")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_parse_proto_program = 1;
                 }
 
             if (!strcmp(ptmp, "lognorm")) {
