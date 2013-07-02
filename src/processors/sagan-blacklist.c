@@ -160,7 +160,7 @@ if ( ip_src != NULL ) {
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       counters->blacklist_hit_count++;
       if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
-      if ( config->blacklist_parse_proto_program ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_program);
+      if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
       }
    }
@@ -173,7 +173,7 @@ if ( ip_dst != NULL ) {
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       counters->blacklist_hit_count++;
       if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
-      if ( config->blacklist_parse_proto_program ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_program);
+      if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_tmp, ip_dst, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
       }
    }
@@ -214,7 +214,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  }
 		  
 		  if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
-		  if ( config->blacklist_parse_proto_program ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_program);
+		  if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 
 		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
 		  }

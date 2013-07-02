@@ -294,6 +294,11 @@ Remove_Spaces(rulesplit);
 	       rulestruct[counters->rulecount].s_find_proto = 1;
 	       }
 
+        if (!strcmp(rulesplit, "parse_proto_program")) {
+               strtok_r(NULL, ":", &saveptrrule2);
+               rulestruct[counters->rulecount].s_find_proto_program = 1;
+               }
+
         if (!strcmp(rulesplit, "parse_src_ip")) {
                arg = strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[counters->rulecount].s_find_src_ip = 1;

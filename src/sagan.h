@@ -350,6 +350,7 @@ int src_port;
 int ip_proto;
 sbool s_find_port;
 sbool s_find_proto;
+sbool s_find_proto_program; 
 
 sbool s_find_src_ip; 
 int   s_find_src_pos; 
