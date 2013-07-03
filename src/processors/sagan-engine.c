@@ -288,6 +288,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
 			}
 
 #endif
+
 /* Normalization always over rides parse_src_ip/parse_port */ 
 
 if ( rulestruct[b].normalize == 0 ) {
@@ -307,13 +308,20 @@ if ( rulestruct[b].s_find_port == 1 ) {
     } else {
    src_port = config->sagan_port;
    }
+}
 
-if ( rulestruct[b].s_find_proto == 1 ) {
+if ( rulestruct[b].s_find_proto == 1 ) { 
    proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
-    } else {
+   } else { 
    proto = rulestruct[b].ip_proto;
-   }
+}
 
+/* parse_proto_program comes after because it over rides parse_proto */
+
+if ( rulestruct[b].s_find_proto_program == 1 ) { 
+   proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+   } else {
+   proto = rulestruct[b].ip_proto;
 }
 
 if ( ip_src == NULL ) ip_src=SaganProcSyslog_LOCAL->syslog_host;
@@ -328,6 +336,9 @@ snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
 if (!strcmp(ip_src, "127.0.0.1" )) ip_src=config->sagan_host;
 if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=config->sagan_host;
+
+snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", ip_src);
+snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", ip_dst);
 
 after_log_flag=0; 
 
@@ -631,7 +642,7 @@ processor_info_alertid                  =       atoi(rulestruct[b].s_sid);
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, processor_info_proto, processor_info_alertid, processor_info_src_port, processor_info_dst_port );
+Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_srctmp, ip_dsttmp, processor_info_proto, processor_info_alertid, processor_info_src_port, processor_info_dst_port );
 free(processor_info);
 
   } /* End of threshold */

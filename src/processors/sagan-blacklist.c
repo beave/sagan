@@ -78,9 +78,15 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
      /* Allocate memory for references,  not comments */
      SaganBlacklist = (_Sagan_Blacklist *) realloc(SaganBlacklist, (counters->blacklist_count+1) * sizeof(_Sagan_Blacklist));
 
+     Remove_Return(blacklistbuf);
      iprange = strtok_r(blacklistbuf, "/", &tok);
      tmpmask = strtok_r(NULL, "/", &tok);
+
+     if ( tmpmask == NULL ) { 
+     mask = 32;
+     } else { 
      mask = atoi(tmpmask); 
+     }
 
      /* Should do better error checking? */
 
