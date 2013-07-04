@@ -215,7 +215,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 
 		  if ( config->blacklist_parse_dst ) { 
 		  ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst);
-		  if ( ip_dst == NULL ) ip_dst = config->sagan_host; 
+		  if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host; 
 		  snprintf(ip_dst_tmp, sizeof(ip_dst_tmp), "%s", ip_dst); 
 		  }
 		  
