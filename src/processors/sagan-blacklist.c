@@ -55,6 +55,7 @@ FILE *blacklist;
 char *tok=NULL;
 char *tmpmask=NULL;
 int mask=0;
+char tmp[1024] = { 0 };
 
 char *iprange=NULL;
 
@@ -79,11 +80,19 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
      SaganBlacklist = (_Sagan_Blacklist *) realloc(SaganBlacklist, (counters->blacklist_count+1) * sizeof(_Sagan_Blacklist));
 
      Remove_Return(blacklistbuf);
+
+     iprange = NULL; 
+     tmpmask = NULL; 
+
      iprange = strtok_r(blacklistbuf, "/", &tok);
      tmpmask = strtok_r(NULL, "/", &tok);
 
      if ( tmpmask == NULL ) { 
-     mask = 32;
+     /* If there is no CIDR,  then assume it's a /32 */
+     snprintf(tmp, sizeof(tmp), "%s\0", iprange);
+//     tmp[strlen(tmp)] = '\0';
+     iprange = tmp; 
+     mask = 32; 
      } else { 
      mask = atoi(tmpmask); 
      }
@@ -100,7 +109,7 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
       * http://bytes.com/topic/c/answers/765104-determining-whether-given-ip-exist-cidr-ip-range
       *
       */
-     
+
      SaganBlacklist[counters->blacklist_count].u32_lower = IP2Bit(iprange);
      SaganBlacklist[counters->blacklist_count].u32_higher = SaganBlacklist[counters->blacklist_count].u32_lower + (pow(2,32-mask)-1); 
      counters->blacklist_count++;
