@@ -28,4 +28,4 @@
 #define SAGAN_PROCESSOR_GENERATOR_ID 1
 
 int Sagan_Engine ( _SaganProcSyslog * );
-
+void Sagan_Engine_Init ( void ); 

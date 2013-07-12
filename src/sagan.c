@@ -328,6 +328,7 @@ if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL)
 
 
 Load_Config();
+Sagan_Engine_Init();
 
 #ifdef HAVE_LIBLOGNORM
 sagan_liblognorm_load();

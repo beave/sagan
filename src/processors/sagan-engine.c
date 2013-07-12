@@ -43,6 +43,8 @@
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
+struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
+pthread_mutex_t Lognorm_Mutex;
 #endif
 
 struct _SaganCounters *counters;
@@ -76,19 +78,31 @@ int  thresh_count_by_dst=0;
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
 
+struct _Sagan_Processor_Info *processor_info_engine = NULL;
+
+void Sagan_Engine_Init ( void ) { 
+
+SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+
+processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
+
+}
+
 int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 {
 
-struct _Sagan_Processor_Info *processor_info = NULL;
+//struct _Sagan_Processor_Info *processor_info = NULL;
 
-int processor_info_src_port = 0;
-int processor_info_dst_port = 0;
-int processor_info_proto = 0;
-int processor_info_alertid = 0;
+int processor_info_engine_src_port = 0;
+int processor_info_engine_dst_port = 0;
+int processor_info_engine_proto = 0;
+int processor_info_engine_alertid = 0;
 
-#ifdef HAVE_LIBLOGNORM
-struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
-#endif
+//#ifdef HAVE_LIBLOGNORM
+//struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
+//#endif
 
 sbool after_log_flag=0;
 sbool after_flag=0;
@@ -273,18 +287,19 @@ int proto = config->sagan_proto;		/* Set proto to default */
 #ifdef HAVE_LIBLOGNORM
 		   if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 ) {
 		        
-			SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-			memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+//			SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+//			memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
-			SaganNormalizeLiblognorm = sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
+			pthread_mutex_lock(&Lognorm_Mutex);
+			sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 			ip_src = SaganNormalizeLiblognorm->ip_src; 
 			ip_dst = SaganNormalizeLiblognorm->ip_dst;
 			src_port = SaganNormalizeLiblognorm->src_port;
 			dst_port = SaganNormalizeLiblognorm->dst_port;
 			username = SaganNormalizeLiblognorm->username;
 			uid = SaganNormalizeLiblognorm->uid;
-
-			free(SaganNormalizeLiblognorm);
+			pthread_mutex_unlock(&Lognorm_Mutex);
+			
 			}
 
 #endif
@@ -613,22 +628,22 @@ if ( threadid >= MAX_THREADS ) threadid=0;
  * var[msgslot] information. - Champ Clark 02/02/2011
  */
 
-processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
-memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+//processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
+//memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
-processor_info->processor_name          =       s_msg;
-processor_info->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-processor_info->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-processor_info->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-processor_info->processor_pri           =       rulestruct[b].s_pri;
-processor_info->processor_class         =       rulestruct[b].s_classtype;
-processor_info->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-processor_info->processor_rev           =       rulestruct[b].s_rev;
+processor_info_engine->processor_name          =       s_msg;
+processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-processor_info_dst_port                 =       dst_port;
-processor_info_src_port                 =       src_port;
-processor_info_proto                    =       proto;
-processor_info_alertid                  =       atoi(rulestruct[b].s_sid);
+processor_info_engine_dst_port                 =       dst_port;
+processor_info_engine_src_port                 =       src_port;
+processor_info_engine_proto                    =       proto;
+processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
 }
 
@@ -642,8 +657,8 @@ processor_info_alertid                  =       atoi(rulestruct[b].s_sid);
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_srctmp, ip_dsttmp, processor_info_proto, processor_info_alertid, processor_info_src_port, processor_info_dst_port );
-free(processor_info);
+Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_srctmp, ip_dsttmp, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
+//free(processor_info);
 
   } /* End of threshold */
  } /* End of match */

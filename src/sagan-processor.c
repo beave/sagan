@@ -125,8 +125,9 @@ for (;;) {
 	if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2); 
 	if ( config->sagan_track_clients_flag) sagan_track_clients(SaganProcSyslog_LOCAL);
 	}
+
      }
 
-free(SaganProcSyslog_LOCAL);
+free(SaganProcSyslog_LOCAL);		/* Should never make it here */
 }
 

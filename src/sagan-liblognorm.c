@@ -45,6 +45,10 @@
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
+struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
+
+pthread_mutex_t Lognorm_Mutex = PTHREAD_MUTEX_INITIALIZER;
+
 /************************************************************************
  * liblognorm GLOBALS
  ************************************************************************/
@@ -70,6 +74,9 @@ void sagan_liblognorm_load(void) {
 
 int i;
 
+SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+
 if((ctx = ln_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
 if((eectx = ee_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
 
@@ -83,11 +90,11 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 
 }
 
-struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm(char *syslog_msg)
+//struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm(char *syslog_msg)
+void sagan_normalize_liblognorm(char *syslog_msg)
 {
 
-pthread_mutex_t liblognorm_mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_lock(&liblognorm_mutex);
+//pthread_mutex_lock(&Lognorm_Mutex);
 
 es_str_t *str = NULL;
 es_str_t *propName = NULL;
@@ -96,9 +103,9 @@ struct ee_field *field = NULL;
 char *cstr=NULL;
 
 
-struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
-SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+//struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
+//SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+//memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
 char ipbuf_src[128];
 char ipbuf_dst[128];
@@ -165,14 +172,18 @@ char ipbuf_dst[128];
                            SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
 
                            }
-
-                        free(cstr);
-                        ee_deleteEvent(lnevent);
-                        lnevent = NULL;
 			}
+                        free(cstr);
+			free(propName);
+                        //ee_deleteEvent(lnevent);
+			free(lnevent);
+			free(field);
+                        lnevent = NULL;
+//			}
 
-pthread_mutex_unlock(&liblognorm_mutex);
-return(SaganNormalizeLiblognorm);
+
+//pthread_mutex_unlock(&Lognorm_Mutex);
+//return(SaganNormalizeLiblognorm);
 }
 
 #endif

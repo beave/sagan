@@ -17,4 +17,5 @@ char *uid;
 
 
 void sagan_liblognorm_load( void );
-struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm( char *);
+//struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm( char *);
+void sagan_normalize_liblognorm( char *);
