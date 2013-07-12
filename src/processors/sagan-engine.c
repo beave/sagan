@@ -120,8 +120,8 @@ int  dst_port;
 
 char *ptmp;
 char *tok2;
-char *username = NULL;
-char *uid = NULL;
+//char *username = NULL;
+//char *uid = NULL;
 
 char *content;
 char *program;
@@ -281,8 +281,8 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		   ip_dst=NULL;
 		   dst_port=0;
 		   src_port=0;
-		   username=NULL;
-		   uid=NULL;
+//		   username=NULL;
+//		   uid=NULL;
 
 #ifdef HAVE_LIBLOGNORM
 		   if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 ) {
@@ -296,8 +296,8 @@ int proto = config->sagan_proto;		/* Set proto to default */
 			ip_dst = SaganNormalizeLiblognorm->ip_dst;
 			src_port = SaganNormalizeLiblognorm->src_port;
 			dst_port = SaganNormalizeLiblognorm->dst_port;
-			username = SaganNormalizeLiblognorm->username;
-			uid = SaganNormalizeLiblognorm->uid;
+//			username = SaganNormalizeLiblognorm->username;
+//			uid = SaganNormalizeLiblognorm->uid;
 			pthread_mutex_unlock(&Lognorm_Mutex);
 			
 			}
