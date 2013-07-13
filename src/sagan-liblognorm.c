@@ -115,7 +115,8 @@ char ipbuf_dst[128];
 
                       ln_normalize(ctx, str, &lnevent);
                         if(lnevent != NULL) {
-                        es_emptyStr(str);
+                       
+			es_emptyStr(str);
                         ee_fmtEventToRFC5424(lnevent, &str);
                         cstr = es_str2cstr(str, NULL);
                         
@@ -177,11 +178,11 @@ char ipbuf_dst[128];
                            }
 			}
                         free(cstr);
-			free(propName);
-                        //ee_deleteEvent(lnevent);
-			free(lnevent);
 			free(field);
-                        lnevent = NULL;
+			es_deleteStr(str);
+			es_deleteStr(propName);
+                        ee_deleteEvent(lnevent);
+//                        lnevent = NULL;
 //			}
 
 
