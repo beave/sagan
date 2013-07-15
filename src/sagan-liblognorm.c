@@ -178,6 +178,7 @@ ln_normalize(ctx, str, &lnevent);
 		}
 
 free(cstr);
+free(field);
 es_deleteStr(str);
 ee_deleteEvent(lnevent);
 }
