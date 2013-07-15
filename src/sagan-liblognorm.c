@@ -90,7 +90,6 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 
 }
 
-//struct _SaganNormalizeLiblognorm *sagan_normalize_liblognorm(char *syslog_msg)
 void sagan_normalize_liblognorm(char *syslog_msg)
 {
 
@@ -121,7 +120,7 @@ ln_normalize(ctx, str, &lnevent);
 			}
 
 		es_deleteStr(propName);
-
+	
 		propName = es_newStrFromBuf("dst-ip", 6);
 
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
@@ -178,6 +177,7 @@ ln_normalize(ctx, str, &lnevent);
 		es_deleteStr(propName);
 		}
 
+free(cstr);
 es_deleteStr(str);
 ee_deleteEvent(lnevent);
 }
