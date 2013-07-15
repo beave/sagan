@@ -106,10 +106,12 @@ ln_normalize(ctx, str, &lnevent);
 
 	if(lnevent != NULL) {
                        
-		es_emptyStr(str);
+//		es_emptyStr(str);
 		ee_fmtEventToRFC5424(lnevent, &str);
-		cstr = es_str2cstr(str, NULL);
+//		cstr = es_str2cstr(str, NULL);
+		
 
+/*
 		if ( debug->debugnormalize ) Sagan_Log(0, "Normalize output: %s", cstr);
 
                 propName = es_newStrFromBuf("src-ip", 6);
@@ -144,6 +146,7 @@ ln_normalize(ctx, str, &lnevent);
 			SaganNormalizeLiblognorm->dst_port = atoi(cstr);
 			}
 		es_deleteStr(propName);
+*/
 	
 /*
 		propName = es_newStrFromBuf("username", 8);
@@ -161,6 +164,7 @@ ln_normalize(ctx, str, &lnevent);
 		es_deleteStr(propName);
 */
 
+/*
 		propName = es_newStrFromBuf("src-host", 8);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
 			str = ee_getFieldValueAsStr(field, 0);
@@ -175,7 +179,9 @@ ln_normalize(ctx, str, &lnevent);
 			SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
 			}
 		es_deleteStr(propName);
+*/
 		}
+
 
 free(cstr);
 free(field);
