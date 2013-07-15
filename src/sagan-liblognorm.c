@@ -94,100 +94,92 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 void sagan_normalize_liblognorm(char *syslog_msg)
 {
 
-//pthread_mutex_lock(&Lognorm_Mutex);
-
 es_str_t *str = NULL;
 es_str_t *propName = NULL;
 struct ee_event *lnevent = NULL;
 struct ee_field *field = NULL;
 char *cstr=NULL;
+char ipbuf_src[128] = { 0 }; 
+char ipbuf_dst[128] = { 0 }; 
 
+str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
+ln_normalize(ctx, str, &lnevent);
 
-//struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
-//SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-//memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
-char ipbuf_src[128];
-char ipbuf_dst[128];
-
-
-                      str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
-
-                      ln_normalize(ctx, str, &lnevent);
-                        if(lnevent != NULL) {
+	if(lnevent != NULL) {
                        
-			es_emptyStr(str);
-                        ee_fmtEventToRFC5424(lnevent, &str);
-                        cstr = es_str2cstr(str, NULL);
-                        
-                        if ( debug->debugnormalize ) Sagan_Log(0, "Normalize output: %s", cstr);
+		es_emptyStr(str);
+		ee_fmtEventToRFC5424(lnevent, &str);
+		cstr = es_str2cstr(str, NULL);
 
-                        propName = es_newStrFromBuf("src-ip", 6);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-			   SaganNormalizeLiblognorm->ip_src = es_str2cstr(str, NULL);
-                           }
+		if ( debug->debugnormalize ) Sagan_Log(0, "Normalize output: %s", cstr);
 
-                        propName = es_newStrFromBuf("dst-ip", 6);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-			   SaganNormalizeLiblognorm->ip_dst = es_str2cstr(str, NULL);
-                           }
+                propName = es_newStrFromBuf("src-ip", 6);
 
-                        propName = es_newStrFromBuf("src-port", 8);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           cstr = es_str2cstr(str, NULL);
-                           SaganNormalizeLiblognorm->src_port = atoi(cstr);
-                           }
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			SaganNormalizeLiblognorm->ip_src = es_str2cstr(str, NULL);
+			}
 
-                        propName = es_newStrFromBuf("dst-port", 8);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           cstr = es_str2cstr(str, NULL);
-                           SaganNormalizeLiblognorm->dst_port = atoi(cstr);
-                           }
+		es_deleteStr(propName);
 
+		propName = es_newStrFromBuf("dst-ip", 6);
+
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			SaganNormalizeLiblognorm->ip_dst = es_str2cstr(str, NULL);
+			}
+		es_deleteStr(propName);
+
+		propName = es_newStrFromBuf("src-port", 8);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			cstr = es_str2cstr(str, NULL);
+			SaganNormalizeLiblognorm->src_port = atoi(cstr);
+			}
+		es_deleteStr(propName);
+
+		propName = es_newStrFromBuf("dst-port", 8);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			cstr = es_str2cstr(str, NULL);
+			SaganNormalizeLiblognorm->dst_port = atoi(cstr);
+			}
+		es_deleteStr(propName);
+	
 /*
-                        propName = es_newStrFromBuf("username", 8);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           SaganNormalizeLiblognorm->username = es_str2cstr(str, NULL);
-                           }
+		propName = es_newStrFromBuf("username", 8);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			SaganNormalizeLiblognorm->username = es_str2cstr(str, NULL);
+			}
+		es_deleteStr(propName);
 
-                        propName = es_newStrFromBuf("uid", 3);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           SaganNormalizeLiblognorm->uid = es_str2cstr(str, NULL);
-                           }
+		propName = es_newStrFromBuf("uid", 3);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			SaganNormalizeLiblognorm->uid = es_str2cstr(str, NULL);
+			}
+		es_deleteStr(propName);
 */
 
-                        propName = es_newStrFromBuf("src-host", 8);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           snprintf(ipbuf_src, sizeof(ipbuf_src), "%s", DNS_Lookup(es_str2cstr(str, NULL)));
-                           SaganNormalizeLiblognorm->ip_src=ipbuf_src;
-                           }
-                       
-		       propName = es_newStrFromBuf("dst-host", 8);
-                        if((field = ee_getEventField(lnevent, propName)) != NULL) {
-                           str = ee_getFieldValueAsStr(field, 0);
-                           snprintf(ipbuf_dst, sizeof(ipbuf_dst), "%s", DNS_Lookup(es_str2cstr(str, NULL)));
-                           SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
-
-                           }
+		propName = es_newStrFromBuf("src-host", 8);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			str = ee_getFieldValueAsStr(field, 0);
+			strlcpy(ipbuf_src, DNS_Lookup(es_str2cstr(str, NULL)), sizeof(ipbuf_src));
+			SaganNormalizeLiblognorm->ip_src=ipbuf_src;
 			}
-                        free(cstr);
-			free(field);
-			es_deleteStr(str);
-			es_deleteStr(propName);
-                        ee_deleteEvent(lnevent);
-//                        lnevent = NULL;
-//			}
+		es_deleteStr(propName);
 
+		propName = es_newStrFromBuf("dst-host", 8);
+		if((field = ee_getEventField(lnevent, propName)) != NULL) {
+			strlcpy(ipbuf_dst, DNS_Lookup(es_str2cstr(str, NULL)), sizeof(ipbuf_dst)); 
+			SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
+			}
+		es_deleteStr(propName);
+		}
 
-//pthread_mutex_unlock(&Lognorm_Mutex);
-//return(SaganNormalizeLiblognorm);
+es_deleteStr(str);
+ee_deleteEvent(lnevent);
 }
 
 #endif
