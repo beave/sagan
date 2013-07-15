@@ -90,6 +90,12 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 
 }
 
+/***********************************************************************
+ * sagan_normalize_liblognom
+ *
+ * Locates interesting log data via Rainer's liblognorm library
+ ***********************************************************************/
+
 void sagan_normalize_liblognorm(char *syslog_msg)
 {
 
@@ -98,20 +104,18 @@ es_str_t *propName = NULL;
 struct ee_event *lnevent = NULL;
 struct ee_field *field = NULL;
 char *cstr=NULL;
-char ipbuf_src[128] = { 0 }; 
-char ipbuf_dst[128] = { 0 }; 
+char ipbuf_src[64] = { 0 }; 
+char ipbuf_dst[64] = { 0 }; 
 
 str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
 ln_normalize(ctx, str, &lnevent);
 
 	if(lnevent != NULL) {
                        
-//		es_emptyStr(str);
+		es_deleteStr(str);
 		ee_fmtEventToRFC5424(lnevent, &str);
-//		cstr = es_str2cstr(str, NULL);
-		
+		cstr = es_str2cstr(str, NULL);
 
-/*
 		if ( debug->debugnormalize ) Sagan_Log(0, "Normalize output: %s", cstr);
 
                 propName = es_newStrFromBuf("src-ip", 6);
@@ -146,9 +150,10 @@ ln_normalize(ctx, str, &lnevent);
 			SaganNormalizeLiblognorm->dst_port = atoi(cstr);
 			}
 		es_deleteStr(propName);
-*/
+
 	
-/*
+/*		No currently used with unified2 - 07/15/2013 - Champ Clark 
+ 
 		propName = es_newStrFromBuf("username", 8);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
 			str = ee_getFieldValueAsStr(field, 0);
@@ -164,7 +169,6 @@ ln_normalize(ctx, str, &lnevent);
 		es_deleteStr(propName);
 */
 
-/*
 		propName = es_newStrFromBuf("src-host", 8);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
 			str = ee_getFieldValueAsStr(field, 0);
@@ -179,13 +183,11 @@ ln_normalize(ctx, str, &lnevent);
 			SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
 			}
 		es_deleteStr(propName);
-*/
 		}
-
 
 free(cstr);
 free(field);
-es_deleteStr(str);
+es_deleteStr(str);		/* Yes, this is suppose to be here */
 ee_deleteEvent(lnevent);
 }
 
