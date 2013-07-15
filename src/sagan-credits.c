@@ -37,6 +37,9 @@ fprintf(stderr, "\n--[Sagan version %s | Credits]-------------------------------
 fprintf(stderr, "Champ Clark III (cclark@quadrantsec.com)\tLead developer\n");
 fprintf(stderr, "Robert Nunley (rnunley@quadrantsec.com)\t\tRules/Ideas\n");
 fprintf(stderr, "\"DrForbin\"\t\t\t\t\tPatches/testing/bugfixes\n");
+fprintf(stderr, "Rainer Gerhards\t\t\t\t\tRsyslog/Liblognorm author\n");
+fprintf(stderr, "Bruce M. Wink (bwink@quadrantsec.com)\t\tIdeas\n");
+
 
 }
 

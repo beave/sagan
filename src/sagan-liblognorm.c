@@ -152,7 +152,7 @@ ln_normalize(ctx, str, &lnevent);
 		es_deleteStr(propName);
 
 	
-/*		No currently used with unified2 - 07/15/2013 - Champ Clark 
+/*		Not currently used with unified2 - 07/15/2013 - Champ Clark 
  
 		propName = es_newStrFromBuf("username", 8);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {

@@ -390,8 +390,7 @@ Remove_Lock_File();
 Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-Sagan_Log(0, "Max Processor Threads    : %" PRIu64 "", config->max_processor_threads);
-Sagan_Log(0, "");
+//Sagan_Log(0, "Max Processor Threads    : %" PRIu64 "", config->max_processor_threads);
 
 /* Processor information */ 
 
@@ -405,6 +404,28 @@ Sagan_Log(0, "");
 Sagan_Log(0, "Blacklist Processor loaded [%s]", config->blacklist_file); 
 Sagan_Log(0, "Blacklist loaded %d entries", counters->blacklist_count);
 Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
+
+if (config->blacklist_lognorm) { 
+Sagan_Log(0, "Blacklist Liblognorm: Enabled"); 
+} else { 
+Sagan_Log(0, "Blacklist Liblognorm: Disabled");
+}
+
+if (config->blacklist_parse_proto) { 
+Sagan_Log(0, "Blacklist Parse_Protocol: Enabled");
+} else { 
+Sagan_Log(0, "Blacklist Parse Protocol: Disabled");
+}
+
+if (config->blacklist_parse_proto_program) { 
+Sagan_Log(0, "Blacklist Parse Protocol via Program: Enabled");
+} else { 
+Sagan_Log(0, "Blacklist Parse Protocol via Program: Disabled");
+}
+
+if (config->blacklist_parse_src) Sagan_Log(0, "Blacklist Default Source Position: %d", config->blacklist_parse_src); 
+if (config->blacklist_parse_dst) Sagan_Log(0, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst); 
+
 }
 
 if ( config->search_nocase_flag) {
