@@ -43,7 +43,17 @@ struct _SaganConfig *config;
 
 struct _Sagan_Nocase_Searchlist *SaganNocaseSearchlist;
 struct _Sagan_Case_Searchlist *SaganCaseSearchlist;
+struct _Sagan_Processor_Info *processor_info_search = NULL;
 
+#ifdef HAVE_LIBLOGNORM
+struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
+pthread_mutex_t Lognorm_Mutex;
+#endif
+
+/****************************************************************************
+ * Sagan_Search_Load - Initializes processor info and loads the search 
+ * file into memory
+ ****************************************************************************/
 
 int Sagan_Search_Load ( int type ) {
 
@@ -51,9 +61,24 @@ FILE *search;
 char searchbuf[1024] = { 0 };
 char tmpfile[MAXPATH];
 
-if ( type == 1 ) { 
+/* Init processor info */
+
+processor_info_search = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info_search, 0, sizeof(_Sagan_Processor_Info));
+
+processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
+processor_info_search->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
+processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
+processor_info_search->processor_facility      =       SEARCH_PROCESSOR_FACILITY;
+processor_info_search->processor_priority      =       SEARCH_PROCESSOR_PRIORITY;
+processor_info_search->processor_pri           =       SEARCH_PROCESSOR_PRI;
+processor_info_search->processor_class         =       SEARCH_PROCESSOR_CLASS;
+processor_info_search->processor_tag           =       SEARCH_PROCESSOR_TAG;
+processor_info_search->processor_rev           =       SEARCH_PROCESSOR_REV;
+
+if ( type == 1 ) {
    snprintf(tmpfile, sizeof(tmpfile), "%s", config->search_nocase_file); 
-   } else { 
+   } else {
    snprintf(tmpfile, sizeof(tmpfile), "%s", config->search_case_file);
    }
 
@@ -86,6 +111,10 @@ while(fgets(searchbuf, 1024, search) != NULL) {
 return(0);
 }
 
+/*****************************************************************************
+ * Sagan_Search - Searches a syslog_message for words, phrases, etc.  from
+ * the Sagan_Search_Load
+ *****************************************************************************/
 
 void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type ) {
 
@@ -97,24 +126,6 @@ char *ip_dst = NULL;
 int   src_port = 0; 
 int   dst_port = 0;
 int   proto = 0; 
-
-struct _Sagan_Processor_Info *processor_info = NULL;
-processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
-memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
-
-#ifdef HAVE_LIBLOGNORM
-struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
-#endif
-
-processor_info->processor_name          =       SEARCH_PROCESSOR_NAME;
-processor_info->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
-processor_info->processor_name          =       SEARCH_PROCESSOR_NAME;
-processor_info->processor_facility      =       SEARCH_PROCESSOR_FACILITY;
-processor_info->processor_priority      =       SEARCH_PROCESSOR_PRIORITY;
-processor_info->processor_pri           =       SEARCH_PROCESSOR_PRI;
-processor_info->processor_class         =       SEARCH_PROCESSOR_CLASS;
-processor_info->processor_tag           =       SEARCH_PROCESSOR_TAG;
-processor_info->processor_rev           =       SEARCH_PROCESSOR_REV;
 
 proto = config->sagan_proto; 
 
@@ -129,13 +140,12 @@ if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].s
 
 #ifdef HAVE_LIBLOGNORM
 if ( config->search_nocase_lognorm) {
-   SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-   memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+   pthread_mutex_lock(&Lognorm_Mutex);
    ip_src = SaganNormalizeLiblognorm->ip_src;
    ip_dst = SaganNormalizeLiblognorm->ip_dst;
    src_port = SaganNormalizeLiblognorm->src_port;
    dst_port = SaganNormalizeLiblognorm->dst_port;
-   free(SaganNormalizeLiblognorm);
+   pthread_mutex_unlock(&Lognorm_Mutex);
 }
 #endif
 
@@ -157,7 +167,7 @@ if ( config->search_nocase_lognorm) {
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_nocase_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, proto, 1, src_port, dst_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port);
 
    }
  }
@@ -171,13 +181,12 @@ if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search 
 
 #ifdef HAVE_LIBLOGNORM
 if ( config->search_case_lognorm) { 
-   SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-   memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+   pthread_mutex_lock(&Lognorm_Mutex);
    ip_src = SaganNormalizeLiblognorm->ip_src;
    ip_dst = SaganNormalizeLiblognorm->ip_dst;
    src_port = SaganNormalizeLiblognorm->src_port;
    dst_port = SaganNormalizeLiblognorm->dst_port;
-   free(SaganNormalizeLiblognorm);
+   pthread_mutex_unlock(&Lognorm_Mutex);
    }
 #endif
 
@@ -199,7 +208,7 @@ if ( config->search_case_lognorm) {
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_case_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
    }
   }
  }

@@ -312,6 +312,7 @@ if (!strcmp(sagan_option, "processor")) {
 	if (!strcmp(sagan_var1, "search_nocase:")) { 
 
 	   config->search_nocase_flag=1;
+	   config->search_nocase_parse_depth=2;		/* default */
 
 	   ptmp = sagan_var1; 
 
@@ -346,6 +347,11 @@ if (!strcmp(sagan_option, "processor")) {
 	        ptmp = strtok_r(NULL, " ", &tok);
 		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_lognorm = 1; 
 		}
+	
+	     if (!strcmp(ptmp, "parse_depth")) { 
+	        ptmp = strtok_r(NULL, " ", &tok);
+		config->search_nocase_parse_depth = atoi(ptmp); 
+		}
              
              ptmp = strtok_r(NULL, "=", &tok);
 
@@ -355,6 +361,7 @@ if (!strcmp(sagan_option, "processor")) {
         if (!strcmp(sagan_var1, "search_case:")) {
 
            config->search_case_flag=1;
+	   config->search_case_parse_depth=2;
 
            ptmp = sagan_var1;
 
@@ -390,18 +397,21 @@ if (!strcmp(sagan_option, "processor")) {
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_lognorm = 1;
                 }
 
+             if (!strcmp(ptmp, "parse_depth")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_case_parse_depth = atoi(ptmp);
+                }
+
              ptmp = strtok_r(NULL, "=", &tok);
              }
            }
-
-
-
 
 #ifdef WITH_WEBSENSE
 
         if (!strcmp(sagan_var1, "websense:")) {
 
 	   config->websense_flag=1;
+	   config->websense_parse_depth=2;		/* default */
 	   snprintf(config->websense_device_id, sizeof(config->websense_device_id), "NO_DEVICE_ID");
 
            ptmp = sagan_var1;

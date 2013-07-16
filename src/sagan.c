@@ -390,13 +390,17 @@ Remove_Lock_File();
 Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
-//Sagan_Log(0, "Max Processor Threads    : %" PRIu64 "", config->max_processor_threads);
+/****************************************************************************
+ * Display processor information as we load
+ ****************************************************************************/
 
-/* Processor information */ 
+/* Sagan_Track_Clients processor ********************************************/
 
 if ( config->sagan_track_clients_flag) {
 if ( config->pp_sagan_track_clients ) Sagan_Log(0, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
 }
+
+/* Sagan Blacklist IP processor *********************************************/
 
 if ( config->blacklist_flag) { 
 Sagan_Blacklist_Load(); 
@@ -428,33 +432,70 @@ if (config->blacklist_parse_dst) Sagan_Log(0, "Blacklist Default Destination Pos
 
 }
 
+/* Sagan Search [nocase ****************************************************/
+
 if ( config->search_nocase_flag) {
 Sagan_Search_Load( 1 );
 Sagan_Log(0, "");
 Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
 Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
+Sagan_Log(0, "Search [nocase] Parse Depth: %d", config->search_nocase_parse_depth);
+
+if (config->search_nocase_lognorm) {
+Sagan_Log(0, "Search [nocase] Liblognorm: Enabled"); 
+} else {
+Sagan_Log(0, "Search [nocase] Liblognorm: Disabled"); 
 }
+
+if (config->search_nocase_parse_proto) { 
+Sagan_Log(0, "Search [nocase] Parse Protocol: Enabled"); 
+} else { 
+Sagan_Log(0, "Search [nocase] Parse Protocol: Disabled");
+}
+
+if (config->search_nocase_parse_proto_program) { 
+Sagan_Log(0, "Search [nocase] Parse Protocol via Program: Enabled"); 
+} else { 
+Sagan_Log(0, "Search [nocase] Parse Protocol via Program: Disabled"); 
+}
+
+if (config->search_nocase_parse_src) Sagan_Log(0, "Search [nocase] Default Source Position: %d", config->search_nocase_parse_src);
+if (config->search_nocase_parse_dst) Sagan_Log(0, "Search [nocase] Default Destination Position: %d", config->search_nocase_parse_dst);
+}
+
+/* Sagan Search ************************************************************/
 
 if ( config->search_case_flag) {
 Sagan_Search_Load( 2 );
 Sagan_Log(0, "");
 Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
 Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
+Sagan_Log(0, "Search [nocase] Parse Depth: %d", config->search_case_parse_depth);
+
+if (config->search_case_lognorm) {
+Sagan_Log(0, "Search Liblognorm: Enabled");
+} else {
+Sagan_Log(0, "Search Liblognorm: Disabled");
 }
 
-if ( config->sagan_external_output_flag ) { 
-Sagan_Log(0, "");
-Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
+if (config->search_case_parse_proto) {
+Sagan_Log(0, "Search Parse Protocol: Enabled");
+} else {
+Sagan_Log(0, "Search Parse Protocol: Disabled");
 }
 
-#ifdef HAVE_LIBESMTP
-if ( config->sagan_esmtp_flag ) { 
-Sagan_Log(0, ""); 
-if ( config->min_email_priority ) Sagan_Log(0, "E-mail on priority %d or higher.", config->min_email_priority);
-Sagan_Log(0, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
-Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
+if (config->search_case_parse_proto_program) {
+Sagan_Log(0, "Search Parse Protocol via Program: Enabled");
+} else {
+Sagan_Log(0, "Search Parse Protocol via Program: Disabled");
 }
-#endif
+
+if (config->search_case_parse_src) Sagan_Log(0, "Search Default Source Position: %d", config->search_case_parse_src);
+if (config->search_case_parse_dst) Sagan_Log(0, "Search Default Destination Position: %d", config->search_case_parse_dst);
+
+}
+
+/* Sagan Websense processor ************************************************/
 
 #ifdef WITH_WEBSENSE
 if ( config->websense_flag ) {
@@ -471,7 +512,8 @@ Sagan_Log(0, "Websense Device ID: %s", config->websense_device_id);
 Sagan_Log(0, "Websense Parse Depth: %d", config->websense_parse_depth);
 Sagan_Log(0, "Websense Max Cache: %d", config->websense_max_cache);
 Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
-Sagan_Log(0, "Websense ignore list entires: %d", counters->websense_ignore_list_count);
+Sagan_Log(0, "Websense Ignore List File: %s", config->websense_ignore_list);
+Sagan_Log(0, "Websense Ignore List ektires: %d", counters->websense_ignore_list_count);
 }
 
 if ( config->websense_lognorm ) Sagan_Log(0, "Websense Liblognorm: Enabled"); 
@@ -479,6 +521,28 @@ if ( config->websense_parse_src ) Sagan_Log(0, "Websense Parse Source Depth: %d"
 if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth: %d", config->websense_parse_src);
 
 #endif
+
+/***************************************************************************
+ * Output plugins
+ ***************************************************************************/
+
+/* SMTP ********************************************************************/
+
+#ifdef HAVE_LIBESMTP
+if ( config->sagan_esmtp_flag ) { 
+Sagan_Log(0, "");
+if ( config->min_email_priority ) Sagan_Log(0, "E-mail on priority %d or higher.", config->min_email_priority);
+Sagan_Log(0, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
+Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
+}
+#endif
+
+if ( config->sagan_external_output_flag ) { 
+Sagan_Log(0, "");
+Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
+}
+
+/* Unified2 ****************************************************************/
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
@@ -491,6 +555,11 @@ Unified2InitFile( config );
 
 #endif
 
+/***************************************************************************
+ * Non-Processor/Output option
+ ***************************************************************************/
+
+/* What to "ignore" ********************************************************/
 
 if ( config->sagan_droplist_flag ) { 
 Load_Ignore_List(); 
@@ -498,6 +567,9 @@ Sagan_Log(0, "");
 Sagan_Log(0, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
 }
 
+/***************************************************************************
+ * Continue with normal startup! 
+ ***************************************************************************/
 
 Sagan_Log(0, "");
 Sagan_Log(0, " ,-._,-. 	-*> Sagan! <*-");

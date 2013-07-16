@@ -159,9 +159,6 @@ proto = config->sagan_proto;
 #ifdef HAVE_LIBLOGNORM
 if (config->blacklist_lognorm)  { 
 
-//SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-//memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
 pthread_mutex_lock(&Lognorm_Mutex);
 
 sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
@@ -170,7 +167,6 @@ ip_src = SaganNormalizeLiblognorm->ip_src;
 ip_dst = SaganNormalizeLiblognorm->ip_dst;
 src_port = SaganNormalizeLiblognorm->src_port;
 dst_port = SaganNormalizeLiblognorm->dst_port;
-//free(SaganNormalizeLiblognorm);
 
 pthread_mutex_unlock(&Lognorm_Mutex);
 
