@@ -154,8 +154,6 @@ int   src_port = 0;
 int   dst_port = 0;
 int   proto = 0; 
 
-proto = config->sagan_proto;
-
 #ifdef HAVE_LIBLOGNORM
 if (config->blacklist_lognorm)  { 
 
@@ -176,8 +174,11 @@ if ( ip_src != NULL ) {
    for (b=0; b < counters->blacklist_count; b++) {
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       counters->blacklist_hit_count++;
+
       if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
       if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+      if ( proto == 0 ) proto = config->sagan_proto; 
+
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
       }
    }
@@ -189,8 +190,11 @@ if ( ip_dst != NULL ) {
    for (b=0; b < counters->blacklist_count; b++) {
    if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
       counters->blacklist_hit_count++;
+
       if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
       if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+      if ( proto == 0 ) proto = config->sagan_proto;
+
       Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_tmp, ip_dst, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
       }
    }
@@ -232,6 +236,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  
 		  if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
 		  if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+		  if ( proto == 0 ) proto = config->sagan_proto; 
 
 		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
 		  }

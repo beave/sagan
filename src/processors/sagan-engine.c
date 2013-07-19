@@ -339,11 +339,13 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
    proto = rulestruct[b].ip_proto;
 }
 
+
 if ( ip_src == NULL ) ip_src=SaganProcSyslog_LOCAL->syslog_host;
 if ( ip_dst == NULL ) ip_dst=SaganProcSyslog_LOCAL->syslog_host;
 
 if ( src_port == 0 ) src_port=config->sagan_port;
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
+if ( proto == 0 ) proto = config->sagan_proto;
 
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 

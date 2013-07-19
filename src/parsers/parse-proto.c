@@ -58,7 +58,7 @@ for (i = 0; i < counters->mapcount_message; i++) {
        if (strstr(msg, map_message[i].search)) return(map_message[i].proto);
        }
    }
-return(config->sagan_proto);
+return(0);
 }
 
 /****************************************************************************
@@ -78,5 +78,5 @@ for (i = 0; i < counters->mapcount_program; i++) {
        if (strstr(program, map_program[i].program)) return(map_program[i].proto);
        }
    }
-return(config->sagan_proto); 
+return(0); 
 }

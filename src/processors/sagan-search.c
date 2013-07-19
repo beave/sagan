@@ -127,9 +127,6 @@ int   src_port = 0;
 int   dst_port = 0;
 int   proto = 0; 
 
-proto = config->sagan_proto; 
-
-
 if ( type == 1 ) {
 
 for (i=0; i<counters->search_nocase_count; i++) { 
@@ -166,6 +163,7 @@ if ( config->search_nocase_lognorm) {
 
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_nocase_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+   if ( proto == 0 ) proto = config->sagan_proto; 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port);
 
@@ -207,6 +205,7 @@ if ( config->search_case_lognorm) {
 
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_case_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+   if ( proto == 0 ) proto = config->sagan_proto; 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
    }
