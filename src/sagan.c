@@ -518,7 +518,7 @@ Sagan_Log(0, "Websense Ignore List ektires: %d", counters->websense_ignore_list_
 
 if ( config->websense_lognorm ) Sagan_Log(0, "Websense Liblognorm: Enabled"); 
 if ( config->websense_parse_src ) Sagan_Log(0, "Websense Parse Source Depth: %d", config->websense_parse_src);
-if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth: %d", config->websense_parse_src);
+if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth: %d", config->websense_parse_dst);
 
 #endif
 

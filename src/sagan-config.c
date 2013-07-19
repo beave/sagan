@@ -348,11 +348,6 @@ if (!strcmp(sagan_option, "processor")) {
 		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_lognorm = 1; 
 		}
 	
-	     if (!strcmp(ptmp, "parse_depth")) { 
-	        ptmp = strtok_r(NULL, " ", &tok);
-		config->search_nocase_parse_depth = atoi(ptmp); 
-		}
-             
              ptmp = strtok_r(NULL, "=", &tok);
 
              }
@@ -395,11 +390,6 @@ if (!strcmp(sagan_option, "processor")) {
              if (!strcmp(ptmp, "lognorm")) {
                 ptmp = strtok_r(NULL, " ", &tok);
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_lognorm = 1;
-                }
-
-             if (!strcmp(ptmp, "parse_depth")) {
-                ptmp = strtok_r(NULL, " ", &tok);
-                config->search_case_parse_depth = atoi(ptmp);
                 }
 
              ptmp = strtok_r(NULL, "=", &tok);
