@@ -158,9 +158,7 @@ int   proto = 0;
 if (config->blacklist_lognorm)  { 
 
 pthread_mutex_lock(&Lognorm_Mutex);
-
 sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
-
 ip_src = SaganNormalizeLiblognorm->ip_src;
 ip_dst = SaganNormalizeLiblognorm->ip_dst;
 src_port = SaganNormalizeLiblognorm->src_port;
