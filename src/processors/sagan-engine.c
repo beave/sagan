@@ -51,6 +51,7 @@ struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
+struct _Sagan_Flowbits *flowbits;
 
 
 pthread_mutex_t AfterMutexSrc=PTHREAD_MUTEX_INITIALIZER;
@@ -349,13 +350,10 @@ if ( proto == 0 ) proto = config->sagan_proto;
 
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
 
-/* We don't want 127.0.0.1,  so remap it to something more useful */
+/* DEBUG - 127.0.0.1 was here */
 
-if (!strcmp(ip_src, "127.0.0.1" )) ip_src=config->sagan_host;
-if (!strcmp(ip_dst, "127.0.0.1" )) ip_dst=config->sagan_host;
-
-snprintf(ip_srctmp, sizeof(ip_srctmp), "%s", ip_src);
-snprintf(ip_dsttmp, sizeof(ip_dsttmp), "%s", ip_dst);
+strlcpy(ip_srctmp, ip_src, sizeof(ip_srctmp));
+strlcpy(ip_dsttmp, ip_dst, sizeof(ip_dsttmp));
 
 after_log_flag=0; 
 
@@ -611,29 +609,38 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 
 
 /****************************************************************************/
+/* Flowbit
+/****************************************************************************/
+
+if ( rulestruct[b].flowbit_flag ) { 
+
+   if ( rulestruct[b].flowbit_flag == 1 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 1; 
+   if ( rulestruct[b].flowbit_flag == 2 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 0;
+
+   for (i=0; i<counters->flowbit_count; i++) { 
+       printf("%d Flowbit: %s, state: %d\n", i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
+   }
+}
+
+/****************************************************************************/
 /* Populate the SaganEvent array with the information needed.  This info    */
 /* will be passed to the threads.  No need to populate it _if_ we're in a   */
 /* threshold state.                                                         */
 /****************************************************************************/
 
+
 /* Check for thesholding & "after" */
 
-if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
+if ( thresh_log_flag == 0 && after_log_flag == 0 && rulestruct[b].flowbit_noalert == 0 ) { 
 
 threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;
-
-//msgslot++;
-//if ( msgslot >= MAX_MSGSLOT ) msgslot=0;
 
 /* We can't use the pointers from our syslog data.  If two (or more) event's
  * fire at the same time,  the two alerts will have corrupted information 
  * (due to threading).   So we populate the SaganEvent[threadid] with the
  * var[msgslot] information. - Champ Clark 02/02/2011
  */
-
-//processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
-//memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
 processor_info_engine->processor_name          =       s_msg;
 processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
@@ -649,20 +656,7 @@ processor_info_engine_src_port                 =       src_port;
 processor_info_engine_proto                    =       proto;
 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-}
-
-
-/***************************************************************************/
-/* Output plugins that cannot be threaded and require little I/O (almost   */
-/* no I/O blocking) - IE - unified2/ASCII alerts                           */
-/***************************************************************************/
-
-/* If thresholding isn't happening,  send to output plugins */
-
-if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
-
 Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_srctmp, ip_dsttmp, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
-//free(processor_info);
 
   } /* End of threshold */
  } /* End of match */

@@ -109,6 +109,8 @@ struct _SaganCounters {
     int	     search_nocase_count;
     int	     search_case_count;
 
+    int	     flowbit_count;
+
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
 #endif
@@ -362,6 +364,9 @@ int   s_find_src_pos;
 sbool s_find_dst_ip;
 int   s_find_dst_pos;
 
+int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset  */
+sbool flowbit_noalert;
+int   flowbit_memory_position;
 
 sbool normalize;
 sbool content_not[MAX_CONTENT];	/* content: ! "something" */
@@ -382,6 +387,12 @@ unsigned long  fwsam_seconds;
 
 };
 
+typedef struct _Sagan_Flowbits _Sagan_Flowbits;
+
+struct _Sagan_Flowbits {
+	char flowbit_name[128];
+	int  flowbit_state;
+};
 
 typedef struct _Sagan_Proc_Syslog
 {

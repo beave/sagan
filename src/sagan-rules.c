@@ -58,7 +58,7 @@ int liblognorm_count;
 
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
-
+struct _Sagan_Flowbits *flowbits;
 
 void Load_Rules( const char *ruleset ) { 
 
@@ -314,6 +314,49 @@ Remove_Spaces(rulesplit);
                }
 
 	/* Non-quoted information (sid, reference, etc) */
+
+	if (!strcmp(rulesplit, "flowbits")) { 
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		tmptoken = strtok_r(arg, ",", &saveptrrule2);
+
+		if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1; 
+
+		/* SET */
+
+		if (!strcmp(tmptoken, "set")) { 
+		tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		flowbits = (_Sagan_Flowbits *) realloc(flowbits, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbits));
+		strlcpy(flowbits[counters->flowbit_count].flowbit_name, tmptoken, sizeof(flowbits[counters->flowbit_count].flowbit_name));
+		flowbits[counters->flowbit_count].flowbit_state=0;
+		rulestruct[counters->rulecount].flowbit_flag=1;
+		rulestruct[counters->rulecount].flowbit_memory_position = counters->flowbit_count;
+		counters->flowbit_count++;
+		}
+
+		/* UNSET */
+
+		if (!strcmp(tmptoken, "unset")) { 
+		tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		for (i = 0; i<counters->flowbit_count; i++) { 
+		    if (!strcmp(tmptoken, flowbits[i].flowbit_name)) { 
+		       rulestruct[counters->rulecount].flowbit_memory_position = i;
+		       }
+		    }
+		rulestruct[counters->rulecount].flowbit_flag=2;
+		}
+
+		/* ISSET */
+
+                if (!strcmp(tmptoken, "isset")) {
+                tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                for (i = 0; i<counters->flowbit_count; i++) {
+                    if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
+                       rulestruct[counters->rulecount].flowbit_memory_position = i;
+                       }
+                    }
+                rulestruct[counters->rulecount].flowbit_flag=3;
+                }
+	}
 
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);

@@ -103,7 +103,6 @@ const struct option long_options[] = {
         { "log",          required_argument,    NULL,   'l' },
 	{ "file",	  required_argument,    NULL,   'F' }, 
         {0, 0, 0, 0}
-
 };
 
 static const char *short_options =
@@ -349,6 +348,7 @@ pthread_attr_init(&thread_processor_attr);
 pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
 
 Sagan_Log(0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
+Sagan_Log(0, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_count);
 Sagan_Log(0, "Sagan version %s is firing up!", VERSION);
 
 /* We go ahead and assign values to SaganSigArgs (struct sig_thread_args).  This
