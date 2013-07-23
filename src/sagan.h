@@ -216,6 +216,7 @@ struct _SaganConfig {
     sbool	blacklist_parse_proto;
     sbool	blacklist_parse_proto_program;
     sbool	blacklist_lognorm;
+    int		blacklist_priority;
 
     sbool	search_nocase_flag;
     char	search_nocase_file[MAXPATH];
@@ -225,6 +226,7 @@ struct _SaganConfig {
     sbool	search_nocase_parse_proto;
     sbool	search_nocase_parse_proto_program; 
     sbool	search_nocase_lognorm;
+    int		search_nocase_priority;
 
     sbool       search_case_flag;
     char        search_case_file[MAXPATH];
@@ -234,6 +236,7 @@ struct _SaganConfig {
     sbool	search_case_parse_proto;
     sbool	search_case_parse_proto_program;
     sbool	search_case_lognorm;
+    int		search_case_priority;
 
 
 /* libesmtp/SMTP support */
@@ -292,6 +295,7 @@ struct _SaganConfig {
     sbool	 websense_parse_proto_program;
     int		 websense_parse_src; 
     int		 websense_parse_dst;
+    int		 websense_priority;
 #endif
 
     sbool        sagan_fwsam_flag;

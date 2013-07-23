@@ -52,8 +52,16 @@
 #endif
 
 #include "version.h"
-
 #include "sagan.h"
+
+/* Processors */
+
+#include "processors/sagan-blacklist.h"
+#include "processors/sagan-search.h"
+
+#ifdef WITH_WEBSENSE
+#include "processors/sagan-websense.c"
+#endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/sagan-unified2.h"
@@ -246,6 +254,10 @@ if (!strcmp(sagan_option, "ignore_list:")) {
    snprintf(config->sagan_droplistfile, sizeof(config->sagan_droplistfile)-1, "%s", sagan_var1);
    }
 
+/****************************************************************************
+ * Processors 
+ ****************************************************************************/
+
 if (!strcmp(sagan_option, "processor")) {
         sagan_var1 = strtok_r(NULL," ", &tok);
 
@@ -264,6 +276,13 @@ if (!strcmp(sagan_option, "processor")) {
 	   
 	   config->blacklist_flag=1;
 
+	   /* Set defaults */
+
+	   config->blacklist_priority = BLACKLIST_PROCESSOR_PRI; /* Set default */
+	   config->blacklist_parse_depth = 2;
+	   config->blacklist_parse_src = 1; 
+	   config->blacklist_parse_dst = 2;
+	  
 	   ptmp = sagan_var1;
 
 	   while (ptmp != NULL ) {
@@ -303,16 +322,23 @@ if (!strcmp(sagan_option, "processor")) {
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->blacklist_lognorm = 1;
                 }
 
+            if (!strcmp(ptmp, "priority")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+		config->blacklist_priority=atoi(ptmp);
+                }
+
 	     ptmp = strtok_r(NULL, "=", &tok);
 	     
 	     }		               
-	   }
-
+	}
 	
 	if (!strcmp(sagan_var1, "search_nocase:")) { 
 
+	   /* Set defaults */
+
 	   config->search_nocase_flag=1;
-	   config->search_nocase_parse_depth=2;		/* default */
+	   config->search_nocase_parse_depth=2;		
+	   config->search_nocase_priority=SEARCH_PROCESSOR_PRI; 
 
 	   ptmp = sagan_var1; 
 
@@ -347,7 +373,12 @@ if (!strcmp(sagan_option, "processor")) {
 	        ptmp = strtok_r(NULL, " ", &tok);
 		if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_nocase_lognorm = 1; 
 		}
-	
+
+           if (!strcmp(ptmp, "priority")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_nocase_priority=atoi(ptmp);
+                }
+
              ptmp = strtok_r(NULL, "=", &tok);
 
              }
@@ -357,6 +388,8 @@ if (!strcmp(sagan_option, "processor")) {
 
            config->search_case_flag=1;
 	   config->search_case_parse_depth=2;
+	   config->search_case_parse_src = 1;
+	   config->search_case_parse_src = 2;
 
            ptmp = sagan_var1;
 
@@ -392,6 +425,11 @@ if (!strcmp(sagan_option, "processor")) {
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->search_case_lognorm = 1;
                 }
 
+           if (!strcmp(ptmp, "priority")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->search_case_priority=atoi(ptmp);
+                }
+
              ptmp = strtok_r(NULL, "=", &tok);
              }
            }
@@ -401,8 +439,14 @@ if (!strcmp(sagan_option, "processor")) {
         if (!strcmp(sagan_var1, "websense:")) {
 
 	   config->websense_flag=1;
+
+	   /* Set defaults */
+
 	   config->websense_parse_depth=2;		/* default */
-	   snprintf(config->websense_device_id, sizeof(config->websense_device_id), "NO_DEVICE_ID");
+	   strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
+	   config->websense_parse_src = 1;
+	   config->websense_parse_dst = 2; 
+	   config->websense_priority = WEBSENSE_PROCESSOR_PRI;
 
            ptmp = sagan_var1;
 
@@ -472,6 +516,11 @@ if (!strcmp(sagan_option, "processor")) {
                 if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_lognorm = 1;
                 }
 
+           if (!strcmp(ptmp, "priority")) {
+                ptmp = strtok_r(NULL, " ", &tok);
+                config->websense_priority=atoi(ptmp);
+                }
+
           ptmp = strtok_r(NULL, "=", &tok);
           }
 
@@ -481,6 +530,10 @@ if (!strcmp(sagan_option, "processor")) {
 
 #endif
 }
+
+/****************************************************************************
+ * Output formats 
+ ****************************************************************************/
 
 if (!strcmp(sagan_option, "output")) {
      
