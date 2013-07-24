@@ -60,7 +60,7 @@
 #include "processors/sagan-search.h"
 
 #ifdef WITH_WEBSENSE
-#include "processors/sagan-websense.c"
+#include "processors/sagan-websense.h"
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
