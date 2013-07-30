@@ -164,8 +164,47 @@ ip_dst = SaganNormalizeLiblognorm->ip_dst;
 src_port = SaganNormalizeLiblognorm->src_port;
 dst_port = SaganNormalizeLiblognorm->dst_port;
 
+printf("ip_src: %s, ip_dst: %s, src_port: %d, dst_port: %d\n", ip_src, ip_dst, src_port, dst_port);
+
 pthread_mutex_unlock(&Lognorm_Mutex);
 
+ if ( ip_src != NULL || ip_dst != NULL ) { 
+
+   if ( ip_src != NULL ) { 
+      u32_ipaddr = IP2Bit(ip_src); 
+      
+      for (b=0; b < counters->blacklist_count; b++) {
+
+	  if ( ( u32_ipaddr > SaganBlacklist[b].u32_lower && u32_ipaddr < SaganBlacklist[b].u32_higher ) || ( u32_ipaddr == SaganBlacklist[b].u32_lower ) ) {
+
+	        counters->blacklist_hit_count++;  
+
+		if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
+		if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
+		if ( proto == 0 ) proto = config->sagan_proto; 
+		if ( ip_dst == NULL ) ip_dst = config->sagan_host;
+		if ( src_port == 0 ) src_port = config->sagan_port;
+		if ( dst_port == 0 ) dst_port = config->sagan_port;
+
+	        Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_dst, config->sagan_proto, 1, src_port, dst_port);
+		}
+	}
+ }
+}
+
+/*
+
+
+if ip_src != NULL { 
+  check ip_src for blacklist if so set flag
+  if ip_dst != null,  check for blacklist if so set flag
+  }
+
+if flag set { 
+   if ip_dst == NULL then ip_dst = config->sagan_host;
+
+
+/*
 if ( ip_src != NULL ) { 
    u32_ipaddr = IP2Bit(ip_src);
 
@@ -183,6 +222,7 @@ if ( ip_src != NULL ) {
 }
 
 if ( ip_dst != NULL ) {
+   
    u32_ipaddr = IP2Bit(ip_dst);
 
    for (b=0; b < counters->blacklist_count; b++) {
@@ -198,7 +238,9 @@ if ( ip_dst != NULL ) {
    }
 }
 
-if ( config->blacklist_lognorm && ip_src != NULL || ip_dst != NULL ) return(0); 		/* No need to parse_ip() */
+
+//if ( config->blacklist_lognorm && ip_src != NULL || ip_dst != NULL ) return(0); 		/* No need to parse_ip() */
+
 }
 #endif 
 
@@ -231,7 +273,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host; 
 		  strlcpy(ip_dst_tmp, ip_dst, sizeof(ip_dst_tmp));
 		  }
-		  
+		 
 		  if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
 		  if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 		  if ( proto == 0 ) proto = config->sagan_proto; 

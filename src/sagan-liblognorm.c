@@ -123,6 +123,7 @@ ln_normalize(ctx, str, &lnevent);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
 			str = ee_getFieldValueAsStr(field, 0);
 			SaganNormalizeLiblognorm->ip_src = es_str2cstr(str, NULL);
+			if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_src=config->sagan_host;
 			}
 
 		es_deleteStr(propName);
@@ -132,6 +133,7 @@ ln_normalize(ctx, str, &lnevent);
 		if((field = ee_getEventField(lnevent, propName)) != NULL) {
 			str = ee_getFieldValueAsStr(field, 0);
 			SaganNormalizeLiblognorm->ip_dst = es_str2cstr(str, NULL);
+			if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_dst=config->sagan_host;
 			}
 		es_deleteStr(propName);
 

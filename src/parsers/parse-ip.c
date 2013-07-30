@@ -41,8 +41,9 @@
 
 #include "sagan-defs.h"
 #include "sagan.h"
-
 #include "version.h"
+
+struct _SaganConfig *config;
 
 char *parse_ip( char *syslogmessage, int pos ) {
 
@@ -109,7 +110,7 @@ while (ptmp != NULL ) {
 		      current_pos++;
 
 		      if ( current_pos == pos ) { 
-		         if (!strcmp(lastgood, "127.0.0.1")) return(NULL);
+		         if (!strcmp(lastgood, "127.0.0.1")) return(config->sagan_host);
 			 retbuf=lastgood;
 			 return(retbuf);
 			 }
@@ -128,6 +129,6 @@ while (ptmp != NULL ) {
 	 ptmp = strtok_r(NULL, " ", &tok);
      }
 
-return(NULL);
+return(config->sagan_host);
 }
 

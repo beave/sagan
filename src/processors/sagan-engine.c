@@ -378,6 +378,8 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
          after_flag = 0;
 
          for (i = 0; i < after_count_by_src; i++ ) {
+	     printf("|%s|%s|\n", afterbysrc[i].ipsrc, ip_src); 
+
              if (!strcmp( afterbysrc[i].ipsrc, ip_src ) && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid )) {
 
                 after_flag=1;
