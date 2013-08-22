@@ -81,6 +81,11 @@ void plog_handler(_SaganSigArgs *args )
 	Sagan_Log(0, "Interface: %s", iface); 
 	Sagan_Log(0, "UDP port to monitor: %d", config->plog_port);
 	Sagan_Log(0, "Log device: %s", config->plog_logdev);
+
+	if ( config->plog_promiscuous ) { 
+	Sagan_Log(0, "Promiscuous is enabled."); 
+	}
+	
 	Sagan_Log(0, "");
 	
         if(iface == (char *)0) {
@@ -88,7 +93,7 @@ void plog_handler(_SaganSigArgs *args )
 			Sagan_Log(1, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
         }
 
-        bp = pcap_open_live(iface,4096,0,0,eb);
+        bp = pcap_open_live(iface,4096,config->plog_promiscuous,0,eb);
         if(bp == (pcap_t *)0) 
 	  Sagan_Log(1, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
 

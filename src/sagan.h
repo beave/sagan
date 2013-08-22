@@ -266,6 +266,7 @@ struct _SaganConfig {
     char	plog_logdev[50];
     int		plog_port;
     sbool	plog_flag;
+    int		plog_promiscuous;
 #endif
 
 /* libdnet - Used for unified2 support */

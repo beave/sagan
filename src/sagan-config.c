@@ -207,6 +207,11 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
        config->plog_flag = 1;
        }
 
+    if (!strcmp(sagan_option, "plog_promiscuous")) {
+       config->plog_promiscuous = 1;
+       config->plog_flag = 1;
+       }
+
 #endif
 
 #ifndef HAVE_LIBLOGNORM
