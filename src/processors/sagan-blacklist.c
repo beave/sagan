@@ -164,8 +164,6 @@ ip_dst = SaganNormalizeLiblognorm->ip_dst;
 src_port = SaganNormalizeLiblognorm->src_port;
 dst_port = SaganNormalizeLiblognorm->dst_port;
 
-printf("ip_src: %s, ip_dst: %s, src_port: %d, dst_port: %d\n", ip_src, ip_dst, src_port, dst_port);
-
 pthread_mutex_unlock(&Lognorm_Mutex);
 
  if ( ip_src != NULL || ip_dst != NULL ) { 
