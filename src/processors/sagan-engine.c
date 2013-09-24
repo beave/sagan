@@ -131,13 +131,14 @@ char *syspri;
 char *level;
 char *tag;
 
-char *ip_src = NULL;
-char *ip_dst = NULL;
+char ip_src[MAXIP] = { 0 };
+sbool ip_src_flag = 0; 
 
+char ip_dst[MAXIP] = { 0 }; 
+sbool ip_dst_flag = 0; 
 
 char tmpbuf[128];
 char s_msg[1024];
-
 
 char f_src_ip[MAXIP];
 char f_dst_ip[MAXIP];
@@ -151,9 +152,6 @@ uint64_t after_oldtime_src;
 
 sbool thresh_flag=0;
 sbool thresh_log_flag=0;
-
-char ip_srctmp[MAXIP];
-char ip_dsttmp[MAXIP];
 
 int proto = config->sagan_proto;		/* Set proto to default */
 
@@ -278,8 +276,9 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		   counters->saganfound++;
 		   pthread_mutex_unlock(&CounterMutex);
 
-		   ip_src=NULL;
-		   ip_dst=NULL;
+		   ip_src_flag = 0; 
+		   ip_dst_flag = 0; 
+		   
 		   dst_port=0;
 		   src_port=0;
 //		   username=NULL;
@@ -288,13 +287,10 @@ int proto = config->sagan_proto;		/* Set proto to default */
 #ifdef HAVE_LIBLOGNORM
 		   if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 ) {
 		        
-//			SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-//			memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
 			pthread_mutex_lock(&Lognorm_Mutex);
 			sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
-			ip_src = SaganNormalizeLiblognorm->ip_src; 
-			ip_dst = SaganNormalizeLiblognorm->ip_dst;
+			snprintf(ip_src, sizeof(ip_src), "%s", SaganNormalizeLiblognorm->ip_src);
+			snprintf(ip_dst, sizeof(ip_dst), "%s", SaganNormalizeLiblognorm->ip_dst);
 			src_port = SaganNormalizeLiblognorm->src_port;
 			dst_port = SaganNormalizeLiblognorm->dst_port;
 //			username = SaganNormalizeLiblognorm->username;
@@ -311,11 +307,17 @@ if ( rulestruct[b].normalize == 0 ) {
 
  /* parse_src_ip: {position} */
 
- if ( rulestruct[b].s_find_src_ip == 1 ) ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos); 
+ if ( rulestruct[b].s_find_src_ip == 1 ) { 
+    snprintf(ip_src, sizeof(ip_src), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos)); 
+    ip_src_flag = 1; 
+    }
 
  /* parse_dst_ip: {postion} */
 
- if ( rulestruct[b].s_find_dst_ip == 1 ) ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos); 
+ if ( rulestruct[b].s_find_dst_ip == 1 ) { 
+    snprintf(ip_dst, sizeof(ip_dst), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos)); 
+    ip_dst_flag = 1; 
+    }
 
 /* parse_port */
 
@@ -341,19 +343,14 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
 }
 
 
-if ( ip_src == NULL ) ip_src=SaganProcSyslog_LOCAL->syslog_host;
-if ( ip_dst == NULL ) ip_dst=SaganProcSyslog_LOCAL->syslog_host;
+if ( ip_src_flag == 0 ) snprintf(ip_src, sizeof(ip_src), "%s", SaganProcSyslog_LOCAL->syslog_host);
+if ( ip_dst_flag == 0 ) snprintf(ip_dst, sizeof(ip_dst), "%s", SaganProcSyslog_LOCAL->syslog_host);
 
 if ( src_port == 0 ) src_port=config->sagan_port;
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
 if ( proto == 0 ) proto = config->sagan_proto;
 
 snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
-
-/* DEBUG - 127.0.0.1 was here */
-
-strlcpy(ip_srctmp, ip_src, sizeof(ip_srctmp));
-strlcpy(ip_dsttmp, ip_dst, sizeof(ip_dsttmp));
 
 after_log_flag=0; 
 
@@ -656,7 +653,7 @@ processor_info_engine_src_port                 =       src_port;
 processor_info_engine_proto                    =       proto;
 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_srctmp, ip_dsttmp, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
+Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
 
   } /* End of threshold */
  } /* End of match */
