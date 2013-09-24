@@ -289,8 +289,17 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		        
 			pthread_mutex_lock(&Lognorm_Mutex);
 			sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
-			snprintf(ip_src, sizeof(ip_src), "%s", SaganNormalizeLiblognorm->ip_src);
-			snprintf(ip_dst, sizeof(ip_dst), "%s", SaganNormalizeLiblognorm->ip_dst);
+
+			if ( SaganNormalizeLiblognorm->ip_src != NULL ) { 
+			   snprintf(ip_src, sizeof(ip_src), "%s", SaganNormalizeLiblognorm->ip_src);
+			   ip_src_flag = 1;
+			}
+
+			if ( SaganNormalizeLiblognorm->ip_dst != NULL ) { 
+			   snprintf(ip_dst, sizeof(ip_dst), "%s", SaganNormalizeLiblognorm->ip_dst);
+			   ip_dst_flag = 1;
+			}
+
 			src_port = SaganNormalizeLiblognorm->src_port;
 			dst_port = SaganNormalizeLiblognorm->dst_port;
 //			username = SaganNormalizeLiblognorm->username;
@@ -341,7 +350,6 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
    } else {
    proto = rulestruct[b].ip_proto;
 }
-
 
 if ( ip_src_flag == 0 ) snprintf(ip_src, sizeof(ip_src), "%s", SaganProcSyslog_LOCAL->syslog_host);
 if ( ip_dst_flag == 0 ) snprintf(ip_dst, sizeof(ip_dst), "%s", SaganProcSyslog_LOCAL->syslog_host);
