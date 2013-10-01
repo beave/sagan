@@ -94,7 +94,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 	if ( SaganTrackClients[i].status == 1 ) { 
 	   
 	   Sagan_Log(2, "[Processor: %s] Logs being received from %s again.",  PROCESSOR_NAME, SaganTrackClients[i].host);
-	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "The IP address %s was previous reported as being down or not receiving logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
+	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not receiving logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
 	   counters->track_clients_down--; 
 
 	   alertid=101;
@@ -114,7 +114,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 	   counters->track_clients_down++; 
 
 	   Sagan_Log(2, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, SaganTrackClients[i].host, config->pp_sagan_track_clients);
-   	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", SaganTrackClients[i].host, config->pp_sagan_track_clients);
+   	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", SaganTrackClients[i].host, config->pp_sagan_track_clients);
 
 	   alertid=100;
 
@@ -132,7 +132,7 @@ if ( tracking_flag == 0) {
    pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
    SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
-   snprintf(SaganTrackClients[counters->track_clients_client_count].host, sizeof(SaganTrackClients[counters->track_clients_client_count].host), "%s", SaganProcSyslog_LOCAL->syslog_host);
+   strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host)); 
    SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
    SaganTrackClients[counters->track_clients_client_count].status = 0;
    counters->track_clients_client_count++;

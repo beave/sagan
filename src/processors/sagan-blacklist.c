@@ -245,7 +245,7 @@ if ( ip_dst != NULL ) {
 for (i=1; i < config->blacklist_parse_depth+1; i++) { 
 
       ipaddr_found = parse_ip(SaganProcSyslog_LOCAL->syslog_message, i); 
-      snprintf(ip_tmp, sizeof(ip_tmp), "%s", ipaddr_found);
+      strlcpy(ip_tmp, ipaddr_found,  sizeof(ip_tmp)); 
 
        if ( ipaddr_found != NULL ) { 
 

@@ -77,9 +77,9 @@ processor_info_search->processor_tag           =       SEARCH_PROCESSOR_TAG;
 processor_info_search->processor_rev           =       SEARCH_PROCESSOR_REV;
 
 if ( type == 1 ) {
-   snprintf(tmpfile, sizeof(tmpfile), "%s", config->search_nocase_file); 
+   strlcpy(tmpfile, config->search_nocase_file, sizeof(tmpfile));
    } else {
-   snprintf(tmpfile, sizeof(tmpfile), "%s", config->search_case_file);
+   strlcpy(tmpfile, config->search_case_file,  sizeof(tmpfile)); 
    }
 
 if (( search = fopen(tmpfile, "r" )) == NULL ) {
@@ -97,11 +97,11 @@ while(fgets(searchbuf, 1024, search) != NULL) {
 
      if ( type == 1) { 
      SaganNocaseSearchlist = (_Sagan_Nocase_Searchlist *) realloc(SaganNocaseSearchlist, (counters->search_nocase_count+1) * sizeof(_Sagan_Nocase_Searchlist));
-     snprintf(SaganNocaseSearchlist[counters->search_nocase_count].search, sizeof(SaganNocaseSearchlist[counters->search_nocase_count].search), "%s", Remove_Return(searchbuf)); 
+     strlcpy(SaganNocaseSearchlist[counters->search_nocase_count].search, Remove_Return(searchbuf), sizeof(SaganNocaseSearchlist[counters->search_nocase_count].search));
      counters->search_nocase_count++;
      } else { 
      SaganCaseSearchlist = (_Sagan_Case_Searchlist *) realloc(SaganCaseSearchlist, (counters->search_case_count+1) * sizeof(_Sagan_Case_Searchlist));
-     snprintf(SaganCaseSearchlist[counters->search_case_count].search, sizeof(SaganCaseSearchlist[counters->search_case_count].search), "%s", Remove_Return(searchbuf));
+     strlcpy(SaganCaseSearchlist[counters->search_case_count].search, Remove_Return(searchbuf),  sizeof(SaganCaseSearchlist[counters->search_case_count].search)); 
      counters->search_case_count++;
      }
 
