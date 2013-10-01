@@ -351,12 +351,19 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
    proto = rulestruct[b].ip_proto;
 }
 
+
 if ( ip_src_flag == 0 ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src)); 
 if ( ip_dst_flag == 0 ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst)); 
 
 if ( src_port == 0 ) src_port=config->sagan_port;
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
 if ( proto == 0 ) proto = config->sagan_proto;
+
+/* If the "source" is 127.0.0.1,  it's not useful.  Replace with config->sagan_host 
+ * (defined by user in sagan.conf */
+
+if (!strcmp(ip_src, "127.0.0.1")) strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
+if (!strcmp(ip_dst, "127.0.0.1")) strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
 
 strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg)); 
 
