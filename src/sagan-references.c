@@ -86,10 +86,10 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      tmptoken = strtok_r(NULL, " " , &saveptr);
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
-     snprintf(refstruct[counters->refcount].s_refid, sizeof(refstruct[counters->refcount].s_refid), "%s", laststring);
+     strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
      
      laststring = strtok_r(NULL, ",", &saveptr);
-     snprintf(refstruct[counters->refcount].s_refurl, sizeof(refstruct[counters->refcount].s_refurl), "%s", laststring);
+     strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl)); 
      refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
 
     if (debug->debugload) Sagan_Log(0, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
@@ -151,8 +151,8 @@ for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
     for ( b=0; b < counters->refcount; b++) {
 
         if (!strcmp(refstruct[b].s_refid,  reftype)) {
-	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2), "[Xref => %s%s]",  refstruct[b].s_refurl, url);
-	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2), "Reference:%s%s\n", refstruct[b].s_refurl, url);
+	   if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2)-1, "[Xref => %s%s]",  refstruct[b].s_refurl, url);
+	   if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2)-1, "Reference:%s%s\n", refstruct[b].s_refurl, url);
 	   strlcat(reftmp,  refinfo2,  sizeof(reftmp));
            }
         } 

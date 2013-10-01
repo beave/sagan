@@ -101,12 +101,11 @@ int i,check;
 
 /* Set some system defaults */
 
-snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", ALERTLOG);
-snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", LOCKFILE);
-snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", SAGANLOGPATH);
-if ( config->sagan_fifo_flag != 1 ) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", FIFO); 
-snprintf(config->sagan_rule_path, sizeof(config->sagan_rule_path), "%s", RULE_PATH);
-
+strlcpy(config->sagan_alert_filepath, ALERTLOG, sizeof(config->sagan_alert_filepath)); 
+strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile)); 
+strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path)); 
+if ( config->sagan_fifo_flag != 1 ) strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo)); 
+strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path)); 
 
 config->sagan_proto = 17;		/* Default to UDP */
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
@@ -150,10 +149,8 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 	 }
 
 
-     if (!strcmp(sagan_option, "sagan_host")) {
-        snprintf(config->sagan_host, sizeof(config->sagan_host)-1, "%s", strtok_r(NULL, " " , &tok));
-        config->sagan_host[strlen(config->sagan_host)-1] = '\0';
-        }
+     if (!strcmp(sagan_option, "sagan_host")) 
+     	strlcpy(config->sagan_host, Remove_Return(strtok_r(NULL, " " , &tok)), sizeof(config->sagan_host));
 
      if (!strcmp(sagan_option, "sagan_port")) {
          sagan_var1 = strtok_r(NULL, " ", &tok);
@@ -169,8 +166,7 @@ if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priorit
 
    if (!strcmp(sagan_option, "send-to")) { 
       sagan_var1 = strtok_r(NULL, " ", &tok);
-      snprintf(config->sagan_esmtp_to, sizeof(config->sagan_esmtp_to), "%s", sagan_var1);
-      Remove_Return(config->sagan_esmtp_to);
+      strlcpy(config->sagan_esmtp_to, Remove_Return(sagan_var1), sizeof(config->sagan_esmtp_to)); 
       config->sagan_esmtp_flag=1;
       config->sagan_sendto_flag=1;
       }
@@ -190,14 +186,12 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
 #ifdef HAVE_LIBPCAP
 
     if (!strcmp(sagan_option, "plog_interface")) { 
-       snprintf(config->plog_interface, sizeof(config->plog_interface)-1, "%s", strtok_r(NULL, " ", &tok));
-       config->plog_interface[strlen(config->plog_interface)-1] = '\0';
+       strlcpy(config->plog_interface, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->plog_interface)); 
        config->plog_flag=1;
        }
 
     if (!strcmp(sagan_option, "plog_logdev")) { 
-       snprintf(config->plog_logdev, sizeof(config->plog_logdev)-1, "%s", strtok_r(NULL, " ", &tok));
-       config->plog_logdev[strlen(config->plog_logdev)-1] = '\0';
+       strlcpy(config->plog_logdev, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->plog_logdev)); 
        config->plog_flag=1;
        }
 
@@ -234,16 +228,16 @@ if (!strcmp(sagan_option, "normalize:")) {
 	
 	sagan_var1 = strtok_r(NULL, ",", &tok);
 	Remove_Spaces(sagan_var1);
-	snprintf(liblognormstruct[liblognorm_count].type, sizeof(liblognormstruct[liblognorm_count].type), "%s", sagan_var1);
+	strlcpy(liblognormstruct[liblognorm_count].type, sagan_var1, sizeof(liblognormstruct[liblognorm_count].type)); 
 
-	snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, ",", &tok));
+	strlcpy(tmpstring, strtok_r(NULL, ",", &tok), sizeof(tmpstring)); 
 	Remove_Spaces(tmpstring);
-	tmpstring[strlen(tmpstring)-1] = '\0';
+	Remove_Return(tmpstring);
 
         strlcpy(normfile, Sagan_Var_To_Value(tmpstring), sizeof(normfile));
         Remove_Spaces(normfile);
 
-	snprintf(liblognormstruct[liblognorm_count].filepath, sizeof(liblognormstruct[liblognorm_count].filepath), "%s", normfile);
+	strlcpy(liblognormstruct[liblognorm_count].filepath, normfile, sizeof(liblognormstruct[liblognorm_count].filepath)); 
 	liblognorm_count++;
 }
 
@@ -256,7 +250,7 @@ if (!strcmp(sagan_option, "ignore_list:")) {
       Sagan_Log(1, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
 
    config->sagan_droplist_flag = 1; 
-   snprintf(config->sagan_droplistfile, sizeof(config->sagan_droplistfile)-1, "%s", sagan_var1);
+   strlcpy(config->sagan_droplistfile, sagan_var1, sizeof(config->sagan_droplistfile)); 
    }
 
 /****************************************************************************
@@ -299,7 +293,7 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "blacklist")) { 
 	        ptmp = strtok_r(NULL, " ", &tok);
-		snprintf(config->blacklist_file, sizeof(config->blacklist_file), "%s", Remove_Return(ptmp)); 
+		strlcpy(config->blacklist_file, Remove_Return(ptmp), sizeof(config->blacklist_file)); 
 		}
 
              if (!strcmp(ptmp, "parse_src")) {
@@ -371,7 +365,7 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->search_nocase_file, sizeof(config->search_nocase_file), "%s", Remove_Return(ptmp));
+		strlcpy(config->search_nocase_file, Remove_Return(ptmp), sizeof(config->search_nocase_file)); 
                 }
 
 	     if (!strcmp(ptmp, "lognorm")) { 
@@ -422,7 +416,7 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "searchlist")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->search_case_file, sizeof(config->search_case_file), "%s", Remove_Return(ptmp));
+		strlcpy(config->search_case_file, Remove_Return(ptmp), sizeof(config->search_case_file)); 
                 }
 
              if (!strcmp(ptmp, "lognorm")) {
@@ -464,14 +458,12 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "auth")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->websense_auth, sizeof(config->websense_auth), "%s", ptmp);
-                Remove_Return(config->websense_auth);
+		strlcpy(config->websense_auth, Remove_Return(ptmp), sizeof(config->websense_auth)); 
                 }
 
              if (!strcmp(ptmp, "url")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->websense_url, sizeof(config->websense_url), "%s", ptmp);
-                Remove_Return(config->websense_url);
+		strlcpy(config->websense_url, Remove_Return(ptmp), sizeof(config->websense_url)); 
                 }
 	
              if (!strcmp(ptmp, "max_cache")) {
@@ -486,14 +478,12 @@ if (!strcmp(sagan_option, "processor")) {
 
              if (!strcmp(ptmp, "ignore_list")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->websense_ignore_list, sizeof(config->websense_ignore_list), "%s", ptmp);
-                Remove_Return(config->websense_ignore_list);
+		strlcpy(config->websense_ignore_list, Remove_Return(ptmp), sizeof(config->websense_ignore_list)); 
                 }
 
             if (!strcmp(ptmp, "device_id")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->websense_device_id, sizeof(config->websense_device_id), "%s", ptmp);
-                Remove_Return(config->websense_device_id);
+		strlcpy(config->websense_device_id, Remove_Return(ptmp), sizeof(config->websense_device_id)); 
                 }
 
              if (!strcmp(ptmp, "parse_src")) {
@@ -549,14 +539,14 @@ if (!strcmp(sagan_option, "output")) {
      if (!strcmp(sagan_var1, "external:")) {
         config->sagan_ext_flag=1;
 	config->sagan_external_output_flag=1;
-        snprintf(config->sagan_extern, sizeof(config->sagan_extern), "%s", strtok_r(NULL, " ", &tok));
+	strlcpy(config->sagan_extern, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->sagan_extern)); 
         if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
         }
 
 
 #ifdef WITH_SNORTSAM
 if (!strcmp(sagan_var1, "alert_fwsam:")) { 
-       snprintf(config->sagan_fwsam_info, sizeof(config->sagan_fwsam_info), "%s", Remove_Return(strtok_r(NULL, " ", &tok)));
+       strlcpy(config->sagan_fwsam_info, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->sagan_fwsam_info)); 
        config->sagan_fwsam_flag=1; 
        }
 #endif
@@ -581,7 +571,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 	     
 	     if (!strcmp(ptmp, "filename")) { 
 	        ptmp = strtok_r(NULL, ",", &tok);
-	 	snprintf(config->unified2_filepath, sizeof(config->unified2_filepath), "%s/%s", config->sagan_log_path, ptmp);
+	 	snprintf(config->unified2_filepath, sizeof(config->unified2_filepath)-1, "%s/%s", config->sagan_log_path, ptmp);
 		}
 
 	     if (!strcmp(ptmp, "limit")) { 
@@ -608,14 +598,12 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
              if (!strcmp(ptmp, "from")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->sagan_esmtp_from, sizeof(config->sagan_esmtp_from), "%s", ptmp);
-		Remove_Return(config->sagan_esmtp_from);
+		strlcpy(config->sagan_esmtp_from, Remove_Return(ptmp), sizeof(config->sagan_esmtp_from)); 
                 }
 
              if (!strcmp(ptmp, "smtpserver")) {
                 ptmp = strtok_r(NULL, " ", &tok);
-                snprintf(config->sagan_esmtp_server, sizeof(config->sagan_esmtp_server), "%s", ptmp);
-		Remove_Return(config->sagan_esmtp_server);
+		strlcpy(config->sagan_esmtp_server, Remove_Return(ptmp), sizeof(config->sagan_esmtp_server)); 
                 }
 
           ptmp = strtok_r(NULL, "=", &tok);    
@@ -630,17 +618,19 @@ if (!strcmp(sagan_var1, "unified2:")) {
      if (!strcmp(sagan_option, "var")) { 
         sagan_var1 = strtok_r(NULL, " ", &tok);
 	var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
-	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name), "$%s", sagan_var1);
+	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1); 
 	sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-	snprintf(var[counters->var_count].var_value, sizeof(var[counters->var_count].var_value), "%s", Remove_Return(sagan_var2));
+	strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
 	counters->var_count++;
 	
 	/* Required var's - all others are optional */ 
+	
+	if (!strcmp(sagan_var1, "FIFO") && config->sagan_fifo_flag != 1) strlcpy(config->sagan_fifo, sagan_var2, sizeof(config->sagan_fifo)); 
+	if (!strcmp(sagan_var1, "LOCKFILE" )) strlcpy(config->sagan_lockfile, sagan_var2, sizeof(config->sagan_lockfile)); 
+	if (!strcmp(sagan_var1, "ALERTLOG" )) strlcpy(config->sagan_alert_filepath, sagan_var2, sizeof(config->sagan_alert_filepath)); 
+	if (!strcmp(sagan_var1, "SAGANLOGPATH" )) strlcpy(config->sagan_log_path, sagan_var2, sizeof(config->sagan_log_path)); 
 
-	if (!strcmp(sagan_var1, "FIFO") && config->sagan_fifo_flag != 1) snprintf(config->sagan_fifo, sizeof(config->sagan_fifo), "%s", sagan_var2);
-	if (!strcmp(sagan_var1, "LOCKFILE" )) snprintf(config->sagan_lockfile, sizeof(config->sagan_lockfile), "%s", sagan_var2);
-	if (!strcmp(sagan_var1, "ALERTLOG" )) snprintf(config->sagan_alert_filepath, sizeof(config->sagan_alert_filepath), "%s", sagan_var2);
-	if (!strcmp(sagan_var1, "SAGANLOGPATH" )) snprintf(config->sagan_log_path, sizeof(config->sagan_log_path), "%s", sagan_var2);
+
 /*
 	if (!strcmp(sagan_var1, "HOME_NET" )) { 
 	   if (strcasestr(sagan_var2, "any" )) config->home_any = 1; 
@@ -656,9 +646,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 
      if (!strcmp(sagan_option, "include" )) {
 
-         snprintf(tmpstring, sizeof(tmpstring), "%s", strtok_r(NULL, " ", &tok));
-
-         tmpstring[strlen(tmpstring)-1] = '\0';
+	 strlcpy(tmpstring, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(tmpstring)); 
 	
 	 strlcpy(ruleset, Sagan_Var_To_Value(tmpstring), sizeof(ruleset)); 
 	 Remove_Spaces(ruleset);

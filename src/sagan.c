@@ -195,12 +195,12 @@ t = time(NULL);
 run=localtime(&t);
 strftime(config->sagan_startutime, sizeof(config->sagan_startutime), "%s",  run);
 
-snprintf(config->sagan_config, sizeof(config->sagan_config), "%s", CONFIG_FILE_PATH);
+strlcpy(config->sagan_config, CONFIG_FILE_PATH, sizeof(config->sagan_config)); 
 
 /* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed 
    shortly - 06/03/2011 - Champ Clark III */
 
-snprintf(config->sagan_log_filepath, sizeof(config->sagan_log_filepath), "%s", SAGANLOG);
+strlcpy(config->sagan_log_filepath, SAGANLOG, sizeof(config->sagan_log_filepath)); 
 
 /* Get command line arg's */
 while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1) { 
@@ -692,12 +692,12 @@ while(fd != NULL) {
 		   if ( dns_flag == 0 ) { 
 
 		      /* Do a DNS lookup */
-		      snprintf(src_dns_lookup, sizeof(src_dns_lookup), "%s", DNS_Lookup(syslog_host));
+		      strlcpy(src_dns_lookup, DNS_Lookup(syslog_host), sizeof(src_dns_lookup)); 
 		    
 		      /* Invalid lookups get the config->sagan_host value */
 
 		      if (!strcmp(src_dns_lookup, "0" )) { 
-		         snprintf(src_dns_lookup, sizeof(src_dns_lookup), "%s", config->sagan_host);
+		         strlcpy(src_dns_lookup, config->sagan_host, sizeof(src_dns_lookup)); 
 		  	 counters->dns_miss_count++; 
 			 }
 
@@ -705,8 +705,8 @@ while(fd != NULL) {
                     /* Add entry to DNS Cache */
 
                     dnscache = (_SaganDNSCache *) realloc(dnscache, (counters->dns_cache_count+1) * sizeof(_SaganDNSCache));
-                    snprintf(dnscache[counters->dns_cache_count].hostname, sizeof(dnscache[counters->dns_cache_count].hostname), "%s", syslog_host);
-                    snprintf(dnscache[counters->dns_cache_count].src_ip, sizeof(dnscache[counters->dns_cache_count].src_ip), "%s",  src_dns_lookup);
+		    strlcpy(dnscache[counters->dns_cache_count].hostname, syslog_host, sizeof(dnscache[counters->dns_cache_count].hostname)); 
+		    strlcpy(dnscache[counters->dns_cache_count].src_ip, src_dns_lookup, sizeof(dnscache[counters->dns_cache_count].src_ip)); 
                     counters->dns_cache_count++; 
                     syslog_host = src_dns_lookup; 
 
@@ -794,15 +794,15 @@ while(fd != NULL) {
 
 	          pthread_mutex_lock(&SaganProcWorkMutex);
 
-	          snprintf(SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host), "%s", syslog_host);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility), "%s", syslog_facility);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority), "%s", syslog_priority);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level), "%s", syslog_level);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag), "%s", syslog_tag);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date), "%s", syslog_date);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time), "%s", syslog_time);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program), "%s", syslog_program);
-                  snprintf(SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog[proc_msgslot].syslog_message), "%s", syslog_msg);
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time)); 
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
+		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message)); 
 
 	          proc_msgslot++;
 

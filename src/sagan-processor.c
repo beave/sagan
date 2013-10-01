@@ -93,15 +93,15 @@ for (;;) {
 
         memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-        snprintf(SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host), "%s", SaganProcSyslog[proc_msgslot].syslog_host);
-        snprintf(SaganProcSyslog_LOCAL->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility), "%s", SaganProcSyslog[proc_msgslot].syslog_facility);
-        snprintf(SaganProcSyslog_LOCAL->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority), "%s", SaganProcSyslog[proc_msgslot].syslog_priority);
-        snprintf(SaganProcSyslog_LOCAL->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level), "%s", SaganProcSyslog[proc_msgslot].syslog_level);
-        snprintf(SaganProcSyslog_LOCAL->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag), "%s", SaganProcSyslog[proc_msgslot].syslog_tag);
-        snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", SaganProcSyslog[proc_msgslot].syslog_date);
-        snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", SaganProcSyslog[proc_msgslot].syslog_time);
-        snprintf(SaganProcSyslog_LOCAL->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program), "%s", SaganProcSyslog[proc_msgslot].syslog_program);
-        snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), "%s", SaganProcSyslog[proc_msgslot].syslog_message);
+	strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program)); 
+	strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)); 
 
         Sagan_Engine(SaganProcSyslog_LOCAL);
 

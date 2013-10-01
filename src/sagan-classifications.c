@@ -90,14 +90,13 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
      Remove_Spaces(laststring);
-     snprintf(classstruct[counters->classcount].s_shortname, sizeof(classstruct[counters->classcount].s_shortname), "%s", laststring);
+     strlcpy(classstruct[counters->classcount].s_shortname, laststring, sizeof(classstruct[counters->classcount].s_shortname)); 
 
      laststring = strtok_r(NULL, ",", &saveptr);
-     snprintf(classstruct[counters->classcount].s_desc, sizeof(classstruct[counters->classcount].s_desc), "%s", laststring);
+     strlcpy(classstruct[counters->classcount].s_desc, laststring, sizeof(classstruct[counters->classcount].s_desc)); 
 
      laststring = strtok_r(NULL, ",", &saveptr);
-     snprintf(tmpbuf2, sizeof(tmpbuf2), "%s", laststring);
-     tmpbuf2[strlen(tmpbuf2)-1] = '\0';
+     strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2)); 
      classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
      if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);

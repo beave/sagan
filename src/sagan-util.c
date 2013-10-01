@@ -444,7 +444,7 @@ char tmp_result[256] = { 0 };
 char *tmpbuf = NULL;
 int i=0;
 
-snprintf(tmp, sizeof(tmp), "%s", instring);
+snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
 tmpbuf = tmp;
 
 for (i=0; i<counters->var_count; i++) {
@@ -458,7 +458,8 @@ for (i=0; i<counters->var_count; i++) {
              ptmp = strtok_r(NULL, " ", &tok);
              }
 
-snprintf(tmp, sizeof(tmp), "%s", tmp_result);
+strlcpy(tmp, tmp_result, sizeof(tmp)); 
+//snprintf(tmp, sizeof(tmp), "%s", tmp_result);
 tmpbuf = tmp;
 strlcpy(tmp_result, "", sizeof(tmp_result));
 }

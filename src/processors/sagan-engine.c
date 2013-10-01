@@ -165,7 +165,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
                 match = 0; program=""; facility=""; syspri=""; level=""; tag=""; content="";
 
                 if ( strcmp(rulestruct[b].s_program, "" )) {
-                   snprintf(tmpbuf, sizeof(tmpbuf), "%s", rulestruct[b].s_program);
+		   strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf)); 
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
@@ -175,7 +175,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
                 }
 
                 if ( strcmp(rulestruct[b].s_facility, "" )) {
-                   snprintf(tmpbuf, sizeof(tmpbuf), "%s", rulestruct[b].s_facility);
+		   strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
@@ -185,7 +185,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
                 }
 
                 if ( strcmp(rulestruct[b].s_syspri, "" )) {
-                   snprintf(tmpbuf, sizeof(tmpbuf), "%s", rulestruct[b].s_syspri);
+		   strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf)); 
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
@@ -195,7 +195,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
                   }
 
                 if ( strcmp(rulestruct[b].s_level, "" )) {
-                   snprintf(tmpbuf, sizeof(tmpbuf), "%s", rulestruct[b].s_level);
+		   strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
@@ -205,7 +205,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
                    }
 
                 if ( strcmp(rulestruct[b].s_tag, "" )) {
-                   snprintf(tmpbuf, sizeof(tmpbuf), "%s", rulestruct[b].s_tag);
+		   strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf)); 
                    ptmp = strtok_r(tmpbuf, "|", &tok2);
                    match=1;
                    while ( ptmp != NULL ) {
@@ -291,12 +291,12 @@ int proto = config->sagan_proto;		/* Set proto to default */
 			sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
 			if ( SaganNormalizeLiblognorm->ip_src != NULL ) { 
-			   snprintf(ip_src, sizeof(ip_src), "%s", SaganNormalizeLiblognorm->ip_src);
+			   strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
 			   ip_src_flag = 1;
 			}
 
 			if ( SaganNormalizeLiblognorm->ip_dst != NULL ) { 
-			   snprintf(ip_dst, sizeof(ip_dst), "%s", SaganNormalizeLiblognorm->ip_dst);
+			   strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst)); 
 			   ip_dst_flag = 1;
 			}
 
@@ -317,14 +317,14 @@ if ( rulestruct[b].normalize == 0 ) {
  /* parse_src_ip: {position} */
 
  if ( rulestruct[b].s_find_src_ip == 1 ) { 
-    snprintf(ip_src, sizeof(ip_src), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos)); 
+    strlcpy(ip_src, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos), sizeof(ip_src));
     ip_src_flag = 1; 
     }
 
  /* parse_dst_ip: {postion} */
 
  if ( rulestruct[b].s_find_dst_ip == 1 ) { 
-    snprintf(ip_dst, sizeof(ip_dst), "%s", parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos)); 
+    strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos), sizeof(ip_dst)); 
     ip_dst_flag = 1; 
     }
 
@@ -351,14 +351,14 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
    proto = rulestruct[b].ip_proto;
 }
 
-if ( ip_src_flag == 0 ) snprintf(ip_src, sizeof(ip_src), "%s", SaganProcSyslog_LOCAL->syslog_host);
-if ( ip_dst_flag == 0 ) snprintf(ip_dst, sizeof(ip_dst), "%s", SaganProcSyslog_LOCAL->syslog_host);
+if ( ip_src_flag == 0 ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src)); 
+if ( ip_dst_flag == 0 ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst)); 
 
 if ( src_port == 0 ) src_port=config->sagan_port;
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  
 if ( proto == 0 ) proto = config->sagan_proto;
 
-snprintf(s_msg, sizeof(s_msg), "%s", rulestruct[b].s_msg);
+strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg)); 
 
 after_log_flag=0; 
 
@@ -423,8 +423,8 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
 	    pthread_mutex_lock(&AfterMutexSrc);
 
             afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
-            snprintf(afterbysrc[after_count_by_src].ipsrc, sizeof(afterbysrc[after_count_by_src].ipsrc), "%s", ip_src);
-            snprintf(afterbysrc[after_count_by_src].sid, sizeof(afterbysrc[after_count_by_src].sid), "%s", rulestruct[b].s_sid );
+	    strlcpy(afterbysrc[after_count_by_src].ipsrc, ip_src, sizeof(afterbysrc[after_count_by_src].ipsrc));
+	    strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid)); 
             afterbysrc[after_count_by_src].count = 1;
             afterbysrc[after_count_by_src].utime = atol(timet);
             after_count_by_src++;
@@ -475,8 +475,8 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
 	   pthread_mutex_lock(&AfterMutexDst);
 
            afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
-           snprintf(afterbydst[after_count_by_dst].ipdst, sizeof(afterbydst[after_count_by_dst].ipdst), "%s", ip_dst);
-           snprintf(afterbydst[after_count_by_dst].sid, sizeof(afterbydst[after_count_by_dst].sid), "%s", rulestruct[b].s_sid );
+	   strlcpy(afterbydst[after_count_by_dst].ipdst, ip_dst, sizeof(afterbydst[after_count_by_dst].ipdst)); 
+	   strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid)); 
            afterbydst[after_count_by_dst].count = 1;
            afterbydst[after_count_by_dst].utime = atol(timet);
            after_count_by_dst++;
@@ -547,8 +547,8 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 	    pthread_mutex_lock(&ThreshMutexSrc);
 
 	    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-            snprintf(threshbysrc[thresh_count_by_src].ipsrc, sizeof(threshbysrc[thresh_count_by_src].ipsrc), "%s", ip_src);
-	    snprintf(threshbysrc[thresh_count_by_src].sid, sizeof(threshbysrc[thresh_count_by_src].sid), "%s", rulestruct[b].s_sid );
+	    strlcpy(threshbysrc[thresh_count_by_src].ipsrc, ip_src, sizeof(threshbysrc[thresh_count_by_src].ipsrc)); 
+	    strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid)); 
 	    threshbysrc[thresh_count_by_src].count = 1;
 	    threshbysrc[thresh_count_by_src].utime = atol(timet);
 	    thresh_count_by_src++;
@@ -601,8 +601,8 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 	   pthread_mutex_lock(&ThreshMutexDst);
 
            threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-           snprintf(threshbydst[thresh_count_by_dst].ipdst, sizeof(threshbydst[thresh_count_by_dst].ipdst), "%s", ip_dst);
-           snprintf(threshbydst[thresh_count_by_dst].sid, sizeof(threshbydst[thresh_count_by_dst].sid), "%s", rulestruct[b].s_sid );
+	   strlcpy(threshbydst[thresh_count_by_dst].ipdst, ip_dst, sizeof(threshbydst[thresh_count_by_dst].ipdst)); 
+	   strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid)); 
            threshbydst[thresh_count_by_dst].count = 1;
            threshbydst[thresh_count_by_dst].utime = atol(timet);
            thresh_count_by_dst++;

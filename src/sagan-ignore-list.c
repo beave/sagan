@@ -66,7 +66,7 @@ while(fgets(droplistbuf, 1024, droplist) != NULL) {
 
      /* Allocate memory for references,  not comments */
      SaganDroplist = (_Sagan_Droplist *) realloc(SaganDroplist, (counters->droplist_count+1) * sizeof(_Sagan_Droplist));
-     snprintf(SaganDroplist[counters->droplist_count].ignore_string, sizeof(SaganDroplist[counters->droplist_count].ignore_string), "%s", Remove_Return(droplistbuf));
+     strlcpy(SaganDroplist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganDroplist[counters->droplist_count].ignore_string)); 
      counters->droplist_count++;
      }
     }
