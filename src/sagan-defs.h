@@ -80,9 +80,11 @@
 
 #define RUNAS		"sagan"
 
+#define PARSEIP_RETURN_STRING	0
+
 /* defaults if the user doesn't define */
 
-#define MAX_OUTPUT_THREADS         50
+#define MAX_OUTPUT_THREADS      50
 #define MAX_PROCESSOR_THREADS   50
 
 #ifndef TRUE

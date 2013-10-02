@@ -45,7 +45,7 @@
 
 struct _SaganConfig *config;
 
-char *parse_ip( char *syslogmessage, int pos ) {
+char *parse_ip( char *syslogmessage, int pos, sbool type ) {
 
 int result_space, result_nonspace, i, b;
 
@@ -129,6 +129,11 @@ while (ptmp != NULL ) {
 	 ptmp = strtok_r(NULL, " ", &tok);
      }
 
-return(config->sagan_host);
+if ( type == PARSEIP_RETURN_STRING) { 
+   return(config->sagan_host); 
+   } else { 
+   return(NULL);
+   }
+
 }
 

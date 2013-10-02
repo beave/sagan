@@ -151,13 +151,13 @@ if ( config->search_nocase_lognorm) {
 
    if ( config->search_nocase_parse_src && ip_src == NULL ) { 
 
-	ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src);
+	ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src, 1);
 	if ( ip_src == NULL ) ip_src = SaganProcSyslog_LOCAL->syslog_host;
    }
 
    if ( config->search_nocase_parse_dst && ip_dst == NULL ) {
 
-        ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst); 
+        ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst, 1); 
 	if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host;
    }
 
@@ -193,13 +193,13 @@ if ( config->search_case_lognorm) {
 
    if ( config->search_case_parse_src && ip_src == NULL) {
 
-        ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src);
+        ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_src, 1);
         if ( ip_src == NULL ) ip_src = SaganProcSyslog_LOCAL->syslog_host;
    }
 
    if ( config->search_case_parse_dst && ip_dst == NULL ) {
 
-        ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst);
+        ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->search_nocase_parse_dst, 1);
         if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host;
    }
 

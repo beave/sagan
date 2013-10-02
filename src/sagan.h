@@ -634,7 +634,7 @@ sbool is_rfc1918 ( char * );
 
 /* Parsers */
 
-char *parse_ip( char *, int );
+char *parse_ip( char *, int, sbool );
 int   parse_port( char * );
 int   parse_proto( char * );
 int   parse_proto_program (char *); 

@@ -317,14 +317,14 @@ if ( rulestruct[b].normalize == 0 ) {
  /* parse_src_ip: {position} */
 
  if ( rulestruct[b].s_find_src_ip == 1 ) { 
-    strlcpy(ip_src, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos), sizeof(ip_src));
+    strlcpy(ip_src, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos, 0), sizeof(ip_src));
     ip_src_flag = 1; 
     }
 
  /* parse_dst_ip: {postion} */
 
  if ( rulestruct[b].s_find_dst_ip == 1 ) { 
-    strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos), sizeof(ip_dst)); 
+    strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos, 0), sizeof(ip_dst)); 
     ip_dst_flag = 1; 
     }
 
@@ -388,7 +388,6 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
          after_flag = 0;
 
          for (i = 0; i < after_count_by_src; i++ ) {
-	     printf("|%s|%s|\n", afterbysrc[i].ipsrc, ip_src); 
 
              if (!strcmp( afterbysrc[i].ipsrc, ip_src ) && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid )) {
 

@@ -244,10 +244,12 @@ if ( ip_dst != NULL ) {
 
 for (i=1; i < config->blacklist_parse_depth+1; i++) { 
 
-      ipaddr_found = parse_ip(SaganProcSyslog_LOCAL->syslog_message, i); 
-      strlcpy(ip_tmp, ipaddr_found,  sizeof(ip_tmp)); 
+      ipaddr_found = parse_ip(SaganProcSyslog_LOCAL->syslog_message, i, 1); 
 
        if ( ipaddr_found != NULL ) { 
+
+       	  strlcpy(ip_tmp, ipaddr_found,  sizeof(ip_tmp));
+
 
           u32_ipaddr = IP2Bit(ip_tmp);
 
@@ -261,13 +263,13 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  counters->blacklist_hit_count++;
 
 		  if ( config->blacklist_parse_src ) { 
-		  ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_src);
+		  ip_src = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_src, 1);
 		  if ( ip_src == NULL) ip_src = config->sagan_host; 
 		  strlcpy(ip_src_tmp, ip_src, sizeof(ip_src_tmp));
 		  }
 
 		  if ( config->blacklist_parse_dst ) { 
-		  ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst);
+		  ip_dst = parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst, 1);
 		  if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host; 
 		  strlcpy(ip_dst_tmp, ip_dst, sizeof(ip_dst_tmp));
 		  }
@@ -275,7 +277,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
 		  if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 		  if ( proto == 0 ) proto = config->sagan_proto; 
-
+		  
 		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
 		  }
 	   }

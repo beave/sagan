@@ -24,7 +24,7 @@ char tmp[64] = { 0 };
         } else {
         SaganProcessorEvent->f_msg           =       processor_info->processor_name;
         }
-	
+
         SaganProcessorEvent->message         =       SaganProcSyslog_LOCAL->syslog_message;
         SaganProcessorEvent->program         =       processor_info->processor_name; 
         SaganProcessorEvent->facility        =       processor_info->processor_facility;
