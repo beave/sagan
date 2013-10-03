@@ -143,6 +143,9 @@ if ( config->search_nocase_lognorm) {
    src_port = SaganNormalizeLiblognorm->src_port;
    dst_port = SaganNormalizeLiblognorm->dst_port;
    pthread_mutex_unlock(&Lognorm_Mutex);
+
+   if ( ip_src == NULL ) ip_src = SaganProcSyslog_LOCAL->syslog_host;
+   if ( ip_dst == NULL ) ip_dst = SaganProcSyslog_LOCAL->syslog_host;
 }
 #endif
 
@@ -164,6 +167,8 @@ if ( config->search_nocase_lognorm) {
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_nocase_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
+   
+   Sagan_Log(0, "Found %s [nocase]", SaganNocaseSearchlist[i].search); 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port);
 
@@ -206,6 +211,9 @@ if ( config->search_case_lognorm) {
    if ( config->search_nocase_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
    if ( config->search_case_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
+ 
+
+   Sagan_Log(0, "Found %s", SaganCaseSearchlist[i].search); 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
    }

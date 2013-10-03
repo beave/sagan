@@ -191,8 +191,6 @@ pthread_mutex_unlock(&Lognorm_Mutex);
 }
 
 /*
-
-
 if ip_src != NULL { 
   check ip_src for blacklist if so set flag
   if ip_dst != null,  check for blacklist if so set flag
@@ -201,8 +199,8 @@ if ip_src != NULL {
 if flag set { 
    if ip_dst == NULL then ip_dst = config->sagan_host;
 
+*/
 
-/*
 if ( ip_src != NULL ) { 
    u32_ipaddr = IP2Bit(ip_src);
 
@@ -237,7 +235,7 @@ if ( ip_dst != NULL ) {
 }
 
 
-//if ( config->blacklist_lognorm && ip_src != NULL || ip_dst != NULL ) return(0); 		/* No need to parse_ip() */
+if ( config->blacklist_lognorm && ip_src != NULL || ip_dst != NULL ) return(0); 		/* No need to parse_ip() */
 
 }
 #endif 
@@ -277,6 +275,8 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  if ( config->blacklist_parse_proto ) proto = parse_proto(SaganProcSyslog_LOCAL->syslog_message);
 		  if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
 		  if ( proto == 0 ) proto = config->sagan_proto; 
+
+		  if ( strcmp(ip_src, ip_dst ) ) ip_src = SaganProcSyslog_LOCAL->syslog_host;
 		  
 		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
 		  }
