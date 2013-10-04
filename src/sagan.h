@@ -264,7 +264,7 @@ struct _SaganConfig {
 #ifdef HAVE_LIBPCAP
     char	plog_interface[50];
     char	plog_logdev[50];
-    int		plog_port;
+    char	plog_filter[256]; 
     sbool	plog_flag;
     int		plog_promiscuous;
 #endif

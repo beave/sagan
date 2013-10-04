@@ -79,7 +79,7 @@ void plog_handler(_SaganSigArgs *args )
 	Sagan_Log(0, "");
 	Sagan_Log(0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
 	Sagan_Log(0, "Interface: %s", iface); 
-	Sagan_Log(0, "UDP port to monitor: %d", config->plog_port);
+	Sagan_Log(0, "Packet filter: \"%s\"", config->plog_filter);
 	Sagan_Log(0, "Log device: %s", config->plog_logdev);
 
 	if ( config->plog_promiscuous ) { 
@@ -97,13 +97,9 @@ void plog_handler(_SaganSigArgs *args )
         if(bp == (pcap_t *)0) 
 	  Sagan_Log(1, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
 
-        /* compile and install our filter */
+	/* Apply user defined filter */
 
-	/* Port is configurable via int config->plog_port */ 
-
-	snprintf(filterstr, sizeof(filterstr), "udp port %d", config->plog_port);
-
-        if(pcap_compile(bp,&filtr,filterstr,1,0))
+        if(pcap_compile(bp,&filtr,config->plog_filter,1,0))
 	  Sagan_Log(1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
         
 	if(pcap_setfilter(bp,&filtr))

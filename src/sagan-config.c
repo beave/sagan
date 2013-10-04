@@ -88,6 +88,7 @@ char ruleset[MAXPATH];
 char normfile[MAXPATH];
 
 char tmpbuf[CONFBUF];
+char tmpbuf2[CONFBUF];
 char tmpstring[CONFBUF];
 
 char *sagan_option=NULL;
@@ -110,6 +111,13 @@ strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
 config->sagan_proto = 17;		/* Default to UDP */
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
+/* PLOG defaults */
+
+strlcpy(config->plog_interface, PLOG_INTERFACE, sizeof(config->plog_interface));
+strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
+strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev)); 
+
+
 //config->home_any = 0; 
 //config->external_any = 0; 
 
@@ -130,6 +138,8 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      if (tmpbuf[0] == ';') continue;
      if (tmpbuf[0] == 10 ) continue;
      if (tmpbuf[0] == 32 ) continue;
+
+     strlcpy(tmpbuf2, tmpbuf, sizeof(tmpbuf2));
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
@@ -195,9 +205,8 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
        config->plog_flag=1;
        }
 
-    if (!strcmp(sagan_option, "plog_port")) {
-       sagan_var1 = strtok_r(NULL, " ", &tok); 
-       config->plog_port = atoi(sagan_var1);
+    if (!strcmp(sagan_option, "plog_filter")) {
+       strlcpy(config->plog_filter, Remove_Return(Between_Quotes(tmpbuf2)), sizeof(config->plog_filter));
        config->plog_flag = 1;
        }
 

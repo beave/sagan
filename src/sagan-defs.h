@@ -80,6 +80,10 @@
 
 #define RUNAS		"sagan"
 
+#define PLOG_INTERFACE	"eth0"
+#define PLOG_FILTER	"port 514"
+#define PLOG_LOGDEV	"/dev/log"
+
 #define PARSEIP_RETURN_STRING	0
 
 /* defaults if the user doesn't define */
