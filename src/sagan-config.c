@@ -139,7 +139,7 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
      if (tmpbuf[0] == 10 ) continue;
      if (tmpbuf[0] == 32 ) continue;
 
-     strlcpy(tmpbuf2, tmpbuf, sizeof(tmpbuf2));
+     strlcpy(tmpbuf2, tmpbuf, sizeof(tmpbuf2));	/* Retain a copy of the entire line */
 
      sagan_option = strtok_r(tmpbuf, " ", &tok);
 
