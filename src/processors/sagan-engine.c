@@ -76,6 +76,8 @@ struct thresh_by_dst *threshbydst = NULL;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
+sbool flowbit_isset = 0; 
+
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
 
@@ -625,12 +627,24 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 
 if ( rulestruct[b].flowbit_flag ) { 
 
-   if ( rulestruct[b].flowbit_flag == 1 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 1; 
-   if ( rulestruct[b].flowbit_flag == 2 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 0;
+   if ( rulestruct[b].flowbit_flag == 3 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state ==1 ) { 
+      flowbit_isset = 1; 
+      if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
+      }
 
-   for (i=0; i<counters->flowbit_count; i++) { 
-       printf("%d Flowbit: %s, state: %d\n", i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
-   }
+   if ( rulestruct[b].flowbit_flag == 1 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 1; 
+   
+   if ( rulestruct[b].flowbit_flag == 2 ) { 
+      flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 0;
+      flowbit_isset = 0; 
+      }
+
+if ( debug->debugflowbit) { 
+
+   for (i=0; i<counters->flowbit_count; i++) {
+       Sagan_Log(0, "[%s, line %d] Flowbit memory position: %d | Flowbit name: %s | Flowbit state: %d", __FILE__, __LINE__,  i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
+       }
+    }
 }
 
 /****************************************************************************/
@@ -642,7 +656,13 @@ if ( rulestruct[b].flowbit_flag ) {
 
 /* Check for thesholding & "after" */
 
-if ( thresh_log_flag == 0 && after_log_flag == 0 && rulestruct[b].flowbit_noalert == 0 ) { 
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
+
+//if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_flag == 1 && flowbit_isset == 1) { 
+
+if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset); 
+
+if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0)) { 
 
 threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;
@@ -668,7 +688,8 @@ processor_info_engine_proto                    =       proto;
 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
 Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
-
+  
+   } /* Flowbit */
   } /* End of threshold */
  } /* End of match */
 } /* End of pcre match */

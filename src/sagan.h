@@ -140,6 +140,7 @@ struct _SaganDebug {
     sbool debugfwsam;
     sbool debugexternal;
     sbool debugthreads; 
+    sbool debugflowbit;
 
 #ifdef HAVE_LIBLOGNORM
     sbool debugnormalize;

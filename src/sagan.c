@@ -245,6 +245,11 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 	         debug->debugthreads=1;
 		 debugflag=1; 
 		 }
+	      
+	      if (strstr(optarg, "flowbit")) { 
+	         debug->debugflowbit=1;
+		 debugflag=1; 
+		 }
 
 #ifdef HAVE_LIBLOGNORM
 	      if (strstr(optarg, "normalize" )) {
