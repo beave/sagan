@@ -113,10 +113,11 @@ config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
 /* PLOG defaults */
 
+#ifdef HAVE_LIBPCAP
 strlcpy(config->plog_interface, PLOG_INTERFACE, sizeof(config->plog_interface));
 strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
 strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev)); 
-
+#endif
 
 //config->home_any = 0; 
 //config->external_any = 0; 
