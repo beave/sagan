@@ -226,7 +226,6 @@ if (!strcmp(sagan_option, "normalize:")) {
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-
 /*
  We load the location for liblognorm's 'rule base/samples'.  We don't want to 
  load them quiet yet.  We only want to load samples we need,  so we do the
@@ -251,6 +250,22 @@ if (!strcmp(sagan_option, "normalize:")) {
 	liblognorm_count++;
 }
 
+#endif
+
+#ifndef HAVE_LIBGEOIP
+if (!strcmp(sagan_option, "country_database")) {
+   Sagan_Log(0, "WARNING: Sagan was not compiled with Maxmind \"GeoIP\" support!");
+   Sagan_Log(0, "WARNING: Sagan will continue,  but _without_ GeoIP enabled!");
+   }
+#endif
+
+#ifdef HAVE_LIBGEOIP
+if (!strcmp(sagan_option, "country_database:")) {
+   sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
+   strlcpy(config->geoip_country_file, sagan_var1, sizeof(config->geoip_country_file)); 
+   Sagan_Log(0, "Loading GeoIP database. [%s]", config->geoip_country_file);
+   Sagan_Open_GeoIP_Database(); 
+   }
 #endif
 
 if (!strcmp(sagan_option, "ignore_list:")) { 

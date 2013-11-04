@@ -24,6 +24,7 @@ sagan-ignore-list.c \
 sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
+sagan-geoip.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \

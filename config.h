@@ -67,6 +67,9 @@
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1
 
+/* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
+#define HAVE_LIBGEOIP 1
+
 /* Define to 1 if you have the `json' library (-ljson). */
 /* #undef HAVE_LIBJSON */
 
@@ -77,7 +80,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
-#define HAVE_LIBPCAP 1
+/* #undef HAVE_LIBPCAP */
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #define HAVE_LIBPCRE 1

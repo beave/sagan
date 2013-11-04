@@ -33,10 +33,15 @@
 #include <stdint.h> 
 #include <pcre.h>
 #include <time.h>
+
+#ifdef HAVE_LIBGEOIP
+#include <GeoIP.h>
+#endif
+
 #include "sagan-defs.h"
 
-
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
+
 
 #ifndef HAVE_STRLCPY
 int strlcpy(char *, const char *,  size_t );
@@ -241,6 +246,8 @@ struct _SaganConfig {
     sbool	search_case_lognorm;
     int		search_case_priority;
 
+    sbool        sagan_fwsam_flag;
+    char         sagan_fwsam_info[1024];
 
 /* libesmtp/SMTP support */
     
@@ -302,8 +309,14 @@ struct _SaganConfig {
     int		 websense_priority;
 #endif
 
-    sbool        sagan_fwsam_flag;
-    char 	 sagan_fwsam_info[1024];
+/* For Maxmind GeoIP address lookup */
+
+#ifdef HAVE_LIBGEOIP
+  
+   GeoIP *geoip;
+   char	geoip_country_file[256];
+
+#endif
 
 };
 
@@ -386,6 +399,14 @@ int after_seconds;
 
 int fwsam_src_or_dst;		// 1 == src,  2 == dst
 unsigned long  fwsam_seconds;		
+
+#ifdef HAVE_LIBGEOIP
+
+sbool geoip_flag; 
+int   geoip_type;		/* 0 == none, 1 == isnot, 2 == is */
+char  geoip_country_codes[512];
+
+#endif
 
 };
 

@@ -358,6 +358,29 @@ Remove_Spaces(rulesplit);
                 }
 	}
 
+#ifdef HAVE_LIBGEOIP
+
+	if (!strcmp(rulesplit, "country_code")) { 
+		arg = strtok_r(NULL, ":", &saveptrrule2);
+		tmptoken = strtok_r(arg, " ", &saveptrrule2);
+
+		printf("%s\n", tmptoken);
+		if (!strcmp(tmptoken, "isnot")) {
+			printf("got isnot\n"); 
+		}
+
+		if (!strcmp(tmptoken, "is")) { 
+			printf("*got is\n");
+		}
+
+		tmptoken = Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2));		/* Grab country codes */
+		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
+		printf("%s\n", rulestruct[counters->rulecount].geoip_country_codes);
+		
+
+	}
+
+#endif
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"rev\" appears to be incomplete at line %d in %s", linecount, ruleset);
