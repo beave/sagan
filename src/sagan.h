@@ -403,8 +403,9 @@ unsigned long  fwsam_seconds;
 #ifdef HAVE_LIBGEOIP
 
 sbool geoip_flag; 
-int   geoip_type;		/* 0 == none, 1 == isnot, 2 == is */
+int   geoip_type;		/* 1 == isnot, 2 == is */
 char  geoip_country_codes[512];
+int   geoip_src_or_dst;		// 1 == src, 2 == dst
 
 #endif
 

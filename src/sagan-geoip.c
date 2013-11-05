@@ -40,21 +40,42 @@
 
 
 struct _SaganConfig *config;
+struct _Rule_Struct *rulestruct;
 
 void Sagan_Open_GeoIP_Database( void ) { 
 	
-	config->geoip = NULL; 
+config->geoip = NULL; 
 
-	/* May want to provide option for GEOIP_STANDARD, GEOIP_MEMORY_CACHE,
-	 * GEOIP_CHECK_CACHE, GEOIP_INDEX_CACHE and GEOIP_MMAP_CACHE? */
+/* May want to provide option for GEOIP_STANDARD, GEOIP_MEMORY_CACHE,
+ * GEOIP_CHECK_CACHE, GEOIP_INDEX_CACHE and GEOIP_MMAP_CACHE? */
 
-	config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
+config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 
-	if ( config->geoip == NULL ) Sagan_Log(1, "[%s, line %d] Cannot open GeoIP datbase : %s", __FILE__, __LINE__, config->geoip_country_file);
+if ( config->geoip == NULL ) Sagan_Log(1, "[%s, line %d] Cannot open GeoIP datbase : %s", __FILE__, __LINE__, config->geoip_country_file);
 
 }
 
+int Sagan_GeoIP_Lookup_Country( char *ipaddr, int rule_position )  { 
 
+int flags = 0; 
+char *ptmp = NULL;
+char *tok = NULL; 
+
+const char *str = NULL;
+
+str = GeoIP_country_code_by_addr(config->geoip, ipaddr);
+
+if ( str == NULL ) return(0); 		/* GeoIP of the IP address not found */
+
+ptmp = strtok_r(rulestruct[rule_position].geoip_country_codes, ",", &tok);
+
+while (ptmp != NULL ) {
+	if (!strcmp(ptmp, str)) return(1);	/* GeoIP was found / there was a hit */
+	ptmp = strtok_r(NULL, ",", &tok);
+	}
+
+return(0);
+}
 
 
 #endif

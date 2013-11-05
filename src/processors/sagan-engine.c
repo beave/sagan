@@ -77,6 +77,8 @@ int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
 sbool flowbit_isset = 0; 
+sbool geoip_isset = 0; 
+int   geoip_return = 0;
 
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
@@ -648,6 +650,47 @@ if ( debug->debugflowbit) {
 }
 
 /****************************************************************************/
+/* Country code
+/****************************************************************************/
+
+#ifdef HAVE_LIBGEOIP
+
+if ( rulestruct[b].geoip_flag ) { 
+
+   geoip_isset = 0; 
+   
+   if ( rulestruct[b].geoip_src_or_dst == 1 ) { 
+        geoip_return = Sagan_GeoIP_Lookup_Country(ip_src, b); 
+        } else { 
+        geoip_return = Sagan_GeoIP_Lookup_Country(ip_dst, b);
+   }
+
+	/* If country IS NOT {my value} return 1 */
+
+       	if ( rulestruct[b].geoip_type == 1 ) {  		/* isnot */
+
+	    if ( geoip_return == 1 ) { 
+               geoip_isset = 0; 
+               } else { 
+               geoip_isset = 1; 
+            }
+        }
+
+	/* If country IS {my value} return 1 */
+
+        if ( rulestruct[b].geoip_type == 2 ) {           /* is */
+
+            if ( geoip_return == 1 ) {
+               geoip_isset = 1;
+               } else {
+               geoip_isset = 0;
+            }
+        }
+}
+
+#endif
+
+/****************************************************************************/
 /* Populate the SaganEvent array with the information needed.  This info    */
 /* will be passed to the threads.  No need to populate it _if_ we're in a   */
 /* threshold state.                                                         */
@@ -658,11 +701,13 @@ if ( debug->debugflowbit) {
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-//if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_flag == 1 && flowbit_isset == 1) { 
-
 if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset); 
 
 if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0)) { 
+
+#ifdef HAVE_LIBGEOIP
+if ( rulestruct[b].geoip_flag == 0 || geoip_isset == 1 ) { 
+#endif
 
 threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;
@@ -688,7 +733,11 @@ processor_info_engine_proto                    =       proto;
 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
 Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
-  
+
+#ifdef HAVE_LIBGEOIP 
+    } /* GeoIP */ 
+#endif
+
    } /* Flowbit */
   } /* End of threshold */
  } /* End of match */

@@ -364,23 +364,32 @@ Remove_Spaces(rulesplit);
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		tmptoken = strtok_r(arg, " ", &saveptrrule2);
 
-		printf("%s\n", tmptoken);
-		if (!strcmp(tmptoken, "isnot")) {
-			printf("got isnot\n"); 
-		}
-
-		if (!strcmp(tmptoken, "is")) { 
-			printf("*got is\n");
-		}
-
-		tmptoken = Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2));		/* Grab country codes */
-		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
-		printf("%s\n", rulestruct[counters->rulecount].geoip_country_codes);
+		if (strcmp(tmptoken, "track")) 
+		   Sagan_Log(1, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
 		
+		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
+		if (strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst")) 
+		   Sagan_Log(1, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
+
+		if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip_src_or_dst = 1; 
+		if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip_src_or_dst = 2; 
+
+		tmptoken = Remove_Spaces(strtok_r(NULL, " ", &saveptrrule2));
+
+		if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot")) 
+		   Sagan_Log(1, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
+
+		if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1; 
+		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
+
+		tmptoken = Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2));           /* Grab country codes */
+		
+		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
+		rulestruct[counters->rulecount].geoip_flag = 1; 
 	}
-
 #endif
+
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(1, "The \"rev\" appears to be incomplete at line %d in %s", linecount, ruleset);
