@@ -365,12 +365,12 @@ Remove_Spaces(rulesplit);
 		tmptoken = strtok_r(arg, " ", &saveptrrule2);
 
 		if (strcmp(tmptoken, "track")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
+		   Sagan_Log(1, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 		
 		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
 		if (strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
+		   Sagan_Log(1, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
 		if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip_src_or_dst = 1; 
 		if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip_src_or_dst = 2; 
@@ -378,7 +378,7 @@ Remove_Spaces(rulesplit);
 		tmptoken = Remove_Spaces(strtok_r(NULL, " ", &saveptrrule2));
 
 		if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, counters->rulecount, ruleset);
+		   Sagan_Log(1, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
 		if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1; 
 		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
@@ -388,6 +388,13 @@ Remove_Spaces(rulesplit);
 		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
 		rulestruct[counters->rulecount].geoip_flag = 1; 
 	}
+#endif
+
+#ifndef HAVE_LIBGEOIP
+	if (!strcmp(rulesplit, "country_code")) { 
+	   Sagan_Log(2, "** WARNING: Rule %d of %s has country code tracking but Sagan lacks GeoIP support!", linecount, ruleset);
+	   Sagan_Log(2, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!"); 
+	   }
 #endif
 
 	if (!strcmp(rulesplit, "rev" )) {

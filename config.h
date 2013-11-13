@@ -17,10 +17,10 @@
 #define HAVE_CTYPE_H 1
 
 /* Define to 1 if you have the <dnet.h> header file. */
-/* #undef HAVE_DNET_H */
+#define HAVE_DNET_H 1
 
 /* Define to 1 if you have the <dumbnet.h> header file. */
-#define HAVE_DUMBNET_H 1
+/* #undef HAVE_DUMBNET_H */
 
 /* Define to 1 if you have the `dup2' function. */
 #define HAVE_DUP2 1
@@ -53,10 +53,10 @@
 /* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
-/* #undef HAVE_LIBDNET */
+#define HAVE_LIBDNET 1
 
 /* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
-#define HAVE_LIBDUMBNET 1
+/* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `ee' library (-lee). */
 #define HAVE_LIBEE 1
@@ -68,7 +68,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-#define HAVE_LIBGEOIP 1
+/* #undef HAVE_LIBGEOIP */
 
 /* Define to 1 if you have the `json' library (-ljson). */
 /* #undef HAVE_LIBJSON */
