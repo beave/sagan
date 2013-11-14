@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "sagan.h"
 #include "sagan-search.h"

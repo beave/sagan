@@ -47,6 +47,11 @@ struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
 pthread_mutex_t Lognorm_Mutex;
 #endif
 
+#ifdef HAVE_LIBGEOIP
+#include <sagan-geoip.h>
+#endif
+
+
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
@@ -124,13 +129,6 @@ char *tok2;
 //char *username = NULL;
 //char *uid = NULL;
 
-char *content;
-char *program;
-char *facility;
-char *syspri;
-char *level;
-char *tag;
-
 char ip_src[MAXIP] = { 0 };
 sbool ip_src_flag = 0; 
 
@@ -139,9 +137,6 @@ sbool ip_dst_flag = 0;
 
 char tmpbuf[128];
 char s_msg[1024];
-
-char f_src_ip[MAXIP];
-char f_dst_ip[MAXIP];
 
 time_t t;
 struct tm *now;
@@ -162,7 +157,7 @@ int proto = config->sagan_proto;		/* Set proto to default */
 
 		for(b=0; b < counters->rulecount; b++) {
 
-                match = 0; program=""; facility=""; syspri=""; level=""; tag=""; content="";
+                match = 0;
 
                 if ( strcmp(rulestruct[b].s_program, "" )) {
 		   strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf)); 
@@ -619,9 +614,9 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 }  /* End of thresholding */
 
 
-/****************************************************************************/
-/* Flowbit
-/****************************************************************************/
+/****************************************************************************
+ * Flowbit
+ ****************************************************************************/
 
 if ( rulestruct[b].flowbit_flag ) { 
 
@@ -669,9 +664,9 @@ if ( debug->debugflowbit) {
     }
 }
 
-/****************************************************************************/
-/* Country code
-/****************************************************************************/
+/****************************************************************************
+ * Country code
+ ****************************************************************************/
 
 #ifdef HAVE_LIBGEOIP
 

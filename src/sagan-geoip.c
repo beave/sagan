@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <GeoIP.h>
 #include "sagan.h"
+#include "sagan-geoip.h"
 
 
 struct _SaganConfig *config;
@@ -57,7 +58,6 @@ if ( config->geoip == NULL ) Sagan_Log(1, "[%s, line %d] Cannot open GeoIP datba
 
 int Sagan_GeoIP_Lookup_Country( char *ipaddr, int rule_position )  { 
 
-int flags = 0; 
 char *ptmp = NULL;
 char *tok = NULL; 
 

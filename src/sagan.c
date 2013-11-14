@@ -628,7 +628,7 @@ if ( rc != 0 ) {
 
 checklockfile();
 
-Sagan_Log(0, "Spawning %d Processors Threads.", config->max_processor_threads);
+Sagan_Log(0, "Spawning %d Processor Threads.", config->max_processor_threads);
 
 for (i = 0; i < config->max_processor_threads; i++) {
 

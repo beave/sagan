@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <pthread.h>
 
 #include "sagan.h"
 #include "sagan-blacklist.h"
@@ -142,7 +143,6 @@ char *ipaddr_found=NULL;
 char *ipaddrptr=NULL;
 
 uint32_t u32_ipaddr;
-uint32_t u32_tmpip;
 
 char *ip_src = NULL;
 char *ip_dst = NULL;
@@ -235,7 +235,7 @@ if ( ip_dst != NULL ) {
 }
 
 
-if ( config->blacklist_lognorm && ip_src != NULL || ip_dst != NULL ) return(0); 		/* No need to parse_ip() */
+if ( config->blacklist_lognorm && (ip_src != NULL || ip_dst != NULL )) return(0); 		/* No need to parse_ip() */
 
 }
 #endif 

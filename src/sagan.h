@@ -654,6 +654,7 @@ char *Sagan_Generator_Lookup( int, int );
 void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int, int, int, int );
 int IP2Bit (char *ipaddr );
 void Load_Protocol_Map( const char * ); 
+void Sagan_Usage( void ); 
 
 sbool is_rfc1918 ( char * );
 
