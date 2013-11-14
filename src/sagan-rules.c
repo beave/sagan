@@ -383,7 +383,9 @@ Remove_Spaces(rulesplit);
 		if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1; 
 		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
 
-		tmptoken = Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2));           /* Grab country codes */
+		tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2)));           /* Grab country codes */
+
+		printf("%s\n", tmptoken); 
 		
 		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
 		rulestruct[counters->rulecount].geoip_flag = 1; 
@@ -392,7 +394,7 @@ Remove_Spaces(rulesplit);
 
 #ifndef HAVE_LIBGEOIP
 	if (!strcmp(rulesplit, "country_code")) { 
-	   Sagan_Log(2, "** WARNING: Rule %d of %s has country code tracking but Sagan lacks GeoIP support!", linecount, ruleset);
+	   Sagan_Log(2, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset);
 	   Sagan_Log(2, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!"); 
 	   }
 #endif
