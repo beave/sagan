@@ -382,6 +382,7 @@ int   s_find_dst_pos;
 int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset  */
 sbool flowbit_noalert;
 int   flowbit_memory_position;
+int   flowbit_timeout;			/* How long a flowbit is to stay alive (seconds) */
 
 sbool normalize;
 sbool content_not[MAX_CONTENT];	/* content: ! "something" */
@@ -416,6 +417,7 @@ typedef struct _Sagan_Flowbits _Sagan_Flowbits;
 struct _Sagan_Flowbits {
 	char flowbit_name[128];
 	int  flowbit_state;
+	uint64_t flowbit_expire;
 };
 
 typedef struct _Sagan_Proc_Syslog

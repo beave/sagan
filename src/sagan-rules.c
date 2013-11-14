@@ -317,16 +317,23 @@ Remove_Spaces(rulesplit);
 
 	if (!strcmp(rulesplit, "flowbits")) { 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
-		tmptoken = strtok_r(arg, ",", &saveptrrule2);
+		tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
+
+		if (strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset")) { 
+		   Sagan_Log(1, "Expect 'noalert', 'set', 'unset' or 'isset' but got '%s' at line %d in %s", tmptoken, linecount, ruleset); 
+		   }
 
 		if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1; 
 
 		/* SET */
 
 		if (!strcmp(tmptoken, "set")) { 
-		tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 		flowbits = (_Sagan_Flowbits *) realloc(flowbits, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbits));
 		strlcpy(flowbits[counters->flowbit_count].flowbit_name, tmptoken, sizeof(flowbits[counters->flowbit_count].flowbit_name));
+
+		rulestruct[counters->rulecount].flowbit_timeout = atoi(strtok_r(NULL, ",", &saveptrrule2)); 
+
 		flowbits[counters->flowbit_count].flowbit_state=0;
 		rulestruct[counters->rulecount].flowbit_flag=1;
 		rulestruct[counters->rulecount].flowbit_memory_position = counters->flowbit_count;
@@ -336,7 +343,7 @@ Remove_Spaces(rulesplit);
 		/* UNSET */
 
 		if (!strcmp(tmptoken, "unset")) { 
-		tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 		for (i = 0; i<counters->flowbit_count; i++) { 
 		    if (!strcmp(tmptoken, flowbits[i].flowbit_name)) { 
 		       rulestruct[counters->rulecount].flowbit_memory_position = i;
@@ -348,7 +355,7 @@ Remove_Spaces(rulesplit);
 		/* ISSET */
 
                 if (!strcmp(tmptoken, "isset")) {
-                tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
                 for (i = 0; i<counters->flowbit_count; i++) {
                     if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
@@ -384,8 +391,6 @@ Remove_Spaces(rulesplit);
 		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
 
 		tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2)));           /* Grab country codes */
-
-		printf("%s\n", tmptoken); 
 		
 		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
 		rulestruct[counters->rulecount].geoip_flag = 1; 

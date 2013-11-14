@@ -629,19 +629,43 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 
 if ( rulestruct[b].flowbit_flag ) { 
 
+      t = time(NULL);
+      now=localtime(&t);
+      strftime(timet, sizeof(timet), "%s",  now);
+
+   /* Clean up expired flowbits */
+
+   for (i=0; i<counters->flowbit_count; i++) {
+       if (  flowbits[i].flowbit_state == 1 && atol(timet) >= flowbits[i].flowbit_expire ) { 
+          if (debug->debugflowbit) Sagan_Log(0, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbits[i].flowbit_name);
+          flowbits[i].flowbit_state = 0; 
+	  }
+   }
+
+   /* Flowbit "isset" */
+
    if ( rulestruct[b].flowbit_flag == 3 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state ==1 ) { 
       flowbit_isset = 1; 
       if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
       }
 
-   if ( rulestruct[b].flowbit_flag == 1 ) flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 1; 
-   
+   /* Flowbit "set" */
+
+   if ( rulestruct[b].flowbit_flag == 1 ) {
+      flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 1; 
+      flowbits[rulestruct[b].flowbit_memory_position].flowbit_expire = atol(timet) + rulestruct[b].flowbit_timeout;
+      }
+  
+   /* Flowbit "unset" */
+
    if ( rulestruct[b].flowbit_flag == 2 ) { 
       flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 0;
       flowbit_isset = 0; 
       }
 
 if ( debug->debugflowbit) { 
+   
+   Sagan_Log(0, "[%s, line %d] -- All flowbits and values ---------------", __FILE__, __LINE__);
 
    for (i=0; i<counters->flowbit_count; i++) {
        Sagan_Log(0, "[%s, line %d] Flowbit memory position: %d | Flowbit name: %s | Flowbit state: %d", __FILE__, __LINE__,  i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
