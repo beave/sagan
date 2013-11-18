@@ -799,7 +799,6 @@ while(fd != NULL) {
 
 	          pthread_mutex_lock(&SaganProcWorkMutex);
 
-/*
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host)); 
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority)); 
@@ -809,8 +808,8 @@ while(fd != NULL) {
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time)); 
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
 		  strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message)); 
-*/
 
+/*
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host)-1, "%s", syslog_host);
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility)-1, "%s", syslog_facility);
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority)-1, "%s", syslog_priority);
@@ -820,6 +819,7 @@ while(fd != NULL) {
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time)-1, "%s", syslog_time);
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program)-1, "%s", syslog_program);
                   snprintf(SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog[proc_msgslot].syslog_message)-1, "%s", syslog_msg);
+*/
 
 	          proc_msgslot++;
 
