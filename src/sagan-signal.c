@@ -38,6 +38,7 @@
 #include "version.h"
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-track-clients.h"
@@ -50,7 +51,6 @@
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>
-//static ln_ctx ctx;
 int liblognorm_count;
 #endif
 
@@ -98,7 +98,7 @@ void Sig_Handler( _SaganSigArgs *args ) {
 		  case SIGSEGV:
 		  case SIGABRT:
 
-                  Sagan_Log(0, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+                  Sagan_Log(S_NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
 		  sagan_statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
@@ -117,7 +117,7 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 
                  case SIGHUP:
                    pthread_mutex_lock(&sig_mutex);
-   		   Sagan_Log(0, "[Reloading Sagan version %s.]-------", VERSION);
+   		   Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
 		   /* Reset counters */
 		   counters->refcount=0; 
@@ -138,21 +138,21 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 		     counters->blacklist_count=0;
 		     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
 		     Sagan_Blacklist_Load();
-		     Sagan_Log(0, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
+		     Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
 		     }
 
 		  if (config->search_nocase_flag) {
                      counters->search_nocase_count=0;
 		     memset(SaganNocaseSearchlist, 0, sizeof(_Sagan_Nocase_Searchlist));
 		     Sagan_Search_Load(1);
-		     Sagan_Log(0, "Reloaded Search [nocase]. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count); 
+		     Sagan_Log(S_NORMAL, "Reloaded Search [nocase]. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count); 
 		     }
 
 		  if (config->search_case_flag) {
 		     counters->search_case_count=0;
 		     memset(SaganCaseSearchlist, 0, sizeof(_Sagan_Case_Searchlist));
 		     Sagan_Search_Load(2);
-		     Sagan_Log(0, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
+		     Sagan_Log(S_NORMAL, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
 		     }
 
 
@@ -160,7 +160,7 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 		     counters->track_clients_client_count = 0;
 		     counters->track_clients_down = 0; 
 		     memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
-		     Sagan_Log(0, "Reset Sagan Track Client.");
+		     Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
 		     }
 
 /*		  DNS Cache *not currently global* DEBUG 
@@ -182,13 +182,13 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 
 		     config->websense_last_time = atol(config->sagan_startutime);
  		     Sagan_Websense_Ignore_List();
-		     Sagan_Log(0, "Reset Websense Processor.");
+		     Sagan_Log(S_NORMAL, "Reset Websense Processor.");
 		     }
 #endif
 
                   pthread_mutex_unlock(&sig_mutex);
 		  
-		  Sagan_Log(0, "Configuration reloaded.");
+		  Sagan_Log(S_NORMAL, "Configuration reloaded.");
                   break;
 
 		/* Signals to ignore */
@@ -201,7 +201,7 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 		break;
 
 		default:
-		Sagan_Log(0, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
+		Sagan_Log(S_NORMAL, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
                 }
         }
 }

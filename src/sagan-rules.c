@@ -45,6 +45,7 @@
 #include "version.h"
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
@@ -123,15 +124,17 @@ int ip_proto=0;
 int dst_port=0;
 int src_port=0;
 
+sbool flowbit_has_been_set = 0;
+
 #ifdef HAVE_LIBLOGNORM
 sbool liblognorm_flag=0;
 #endif
 
 if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
    }
 
-Sagan_Log(0, "Loading %s rule file", ruleset);
+Sagan_Log(S_NORMAL, "Loading %s rule file", ruleset);
 
 while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
 		   
@@ -151,23 +154,23 @@ Remove_Return(rulebuf);
 /****************************************/
 
 if (!strchr(rulebuf, ';') || !strchr(rulebuf, ':') ||
-    !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) Sagan_Log(1, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
+    !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
 
-if (!strstr(rulebuf, "sid:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
-if (!strstr(rulebuf, "rev:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
-if (!strstr(rulebuf, "msg:")) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
+if (!strstr(rulebuf, "sid:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
+if (!strstr(rulebuf, "rev:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
+if (!strstr(rulebuf, "msg:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
 
 rc=0;
 if (!strstr(rulebuf, "alert")) rc++; 
 if (!strstr(rulebuf, "drop")) rc++; 
-if ( rc == 2 ) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
+if ( rc == 2 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
 
 rc=0;
 if (!strstr(rulebuf, "tcp")) rc++;
 if (!strstr(rulebuf, "udp")) rc++;
 if (!strstr(rulebuf, "icmp")) rc++;
 if (!strstr(rulebuf, "syslog")) rc++;
-if ( rc == 4 ) Sagan_Log(1, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
+if ( rc == 4 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
 
 /* Parse forward for the first '(' */
 
@@ -240,7 +243,7 @@ while ( tokennet != NULL ) {
 
       if (strcmp(nettmp, "any")) src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
       if (Is_Numeric(nettmp)) src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
-      if ( src_port == 0 ) Sagan_Log(1, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+      if ( src_port == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset);
       rulestruct[counters->rulecount].src_port = src_port;      /* Set for the rule */
       }
 
@@ -251,7 +254,7 @@ while ( tokennet != NULL ) {
 
       if (strcmp(nettmp, "any")) dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
       if (Is_Numeric(nettmp)) dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
-      if ( dst_port == 0 ) Sagan_Log(1, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+      if ( dst_port == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset);
       rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
       }
       
@@ -302,14 +305,14 @@ Remove_Spaces(rulesplit);
         if (!strcmp(rulesplit, "parse_src_ip")) {
                arg = strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[counters->rulecount].s_find_src_ip = 1;
-	       if ( arg == NULL ) Sagan_Log(1, "The \"parse_src_ip\" appears to be incomplete at line %d in %s", linecount, ruleset); 
+	       if ( arg == NULL ) Sagan_Log(S_ERROR, "The \"parse_src_ip\" appears to be incomplete at line %d in %s", linecount, ruleset); 
 	       rulestruct[counters->rulecount].s_find_src_pos = atoi(arg); 
                }
 
         if (!strcmp(rulesplit, "parse_dst_ip")) {
                arg = strtok_r(NULL, ":", &saveptrrule2);
                rulestruct[counters->rulecount].s_find_dst_ip = 1;
-               if ( arg == NULL ) Sagan_Log(1, "The \"parse_dst_ip\" appears to be incomplete at line %d in %s", linecount, ruleset);
+               if ( arg == NULL ) Sagan_Log(S_ERROR, "The \"parse_dst_ip\" appears to be incomplete at line %d in %s", linecount, ruleset);
                rulestruct[counters->rulecount].s_find_dst_pos = atoi(arg);
                }
 
@@ -320,7 +323,7 @@ Remove_Spaces(rulesplit);
 		tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
 		if (strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset")) { 
-		   Sagan_Log(1, "Expect 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", tmptoken, linecount, ruleset); 
+		   Sagan_Log(S_ERROR, "Expect 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", tmptoken, linecount, ruleset); 
 		   }
 
 		if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1; 
@@ -342,6 +345,8 @@ Remove_Spaces(rulesplit);
 
 		/* UNSET */
 
+		flowbit_has_been_set = 0;
+
 		if (!strcmp(tmptoken, "unset")) { 
 		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 		for (i = 0; i<counters->flowbit_count; i++) { 
@@ -349,6 +354,7 @@ Remove_Spaces(rulesplit);
 		       rulestruct[counters->rulecount].flowbit_memory_position = i;
 		       }
 		    }
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
 		rulestruct[counters->rulecount].flowbit_flag=2;
 		}
 
@@ -361,6 +367,7 @@ Remove_Spaces(rulesplit);
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
                        }
                     }
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=3;
                 }
 
@@ -371,12 +378,12 @@ Remove_Spaces(rulesplit);
                 for (i = 0; i<counters->flowbit_count; i++) {
                     if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
+		       flowbit_has_been_set = 1; 
                        }
                     }
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=4;
                 }
-
-
 	}
 
 #ifdef HAVE_LIBGEOIP
@@ -386,12 +393,12 @@ Remove_Spaces(rulesplit);
 		tmptoken = strtok_r(arg, " ", &saveptrrule2);
 
 		if (strcmp(tmptoken, "track")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+		   Sagan_Log(S_ERROR, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 		
 		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
 		if (strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+		   Sagan_Log(S_ERROR, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
 		if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip_src_or_dst = 1; 
 		if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip_src_or_dst = 2; 
@@ -399,7 +406,7 @@ Remove_Spaces(rulesplit);
 		tmptoken = Remove_Spaces(strtok_r(NULL, " ", &saveptrrule2));
 
 		if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot")) 
-		   Sagan_Log(1, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+		   Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
 		if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1; 
 		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
@@ -413,20 +420,20 @@ Remove_Spaces(rulesplit);
 
 #ifndef HAVE_LIBGEOIP
 	if (!strcmp(rulesplit, "country_code")) { 
-	   Sagan_Log(2, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset);
-	   Sagan_Log(2, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!"); 
+	   Sagan_Log(S_WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset);
+	   Sagan_Log(S_WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!"); 
 	   }
 #endif
 
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"rev\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"rev\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_rev, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_rev)); 
 		}
 
 	if (!strcmp(rulesplit, "classtype" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"classtype\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"classtype\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_classtype, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_classtype)); 
 
 		for(i=0; i < counters->classcount; i++) {
@@ -438,13 +445,13 @@ Remove_Spaces(rulesplit);
 	
 	if (!strcmp(rulesplit, "program" )) { 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"program\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"program\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_program, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_program)); 
 		}
 
 	if (!strcmp(rulesplit, "reference" )) {
 	 	arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"reference\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"reference\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_reference[ref_count], Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_reference[ref_count])); 
 		rulestruct[counters->rulecount].ref_count=ref_count;
 		ref_count++;
@@ -452,32 +459,32 @@ Remove_Spaces(rulesplit);
 
 	if (!strcmp(rulesplit, "sid" )) { 
 	        arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"sid\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"sid\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_sid, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_sid)); 
 		}
 	
         if (!strcmp(rulesplit, "tag" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                if (arg == NULL ) Sagan_Log(1, "The \"tag\" appears to be incomplete at line %d in %s", linecount, ruleset);
+                if (arg == NULL ) Sagan_Log(S_ERROR, "The \"tag\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_tag, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_tag)); 
                 }
 
         if (!strcmp(rulesplit, "facility" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                if (arg == NULL ) Sagan_Log(1, "The \"facility\" appears to be incomplete at line %d in %s", linecount, ruleset);
+                if (arg == NULL ) Sagan_Log(S_ERROR, "The \"facility\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_facility, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_facility)); 
                 }
 
         if (!strcmp(rulesplit, "level" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                if (arg == NULL ) Sagan_Log(1, "The \"level\" appears to be incomplete at line %d in %s", linecount, ruleset);
+                if (arg == NULL ) Sagan_Log(S_ERROR, "The \"level\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_level, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_level)); 
                 }
 
 
         if (!strcmp(rulesplit, "pri" )) {
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                if (arg == NULL ) Sagan_Log(1, "The \"priority\" appears to be incomplete at line %d in %s", linecount, ruleset);
+                if (arg == NULL ) Sagan_Log(S_ERROR, "The \"priority\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		Remove_Spaces(arg);
 		rulestruct[counters->rulecount].s_pri = atoi(arg);
                 }
@@ -486,8 +493,8 @@ Remove_Spaces(rulesplit);
 	
 	if (!strcmp(rulesplit, "email" )) { 
 		arg = strtok_r(NULL, " ", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"email\" appears to be incomplete at line %d in %s", linecount, ruleset);
-	        if (!strcmp(config->sagan_esmtp_server, "" )) Sagan_Log(1, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s", __FILE__, __LINE__, linecount, ruleset, config->sagan_config);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"email\" appears to be incomplete at line %d in %s", linecount, ruleset);
+	        if (!strcmp(config->sagan_esmtp_server, "" )) Sagan_Log(S_ERROR, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s", __FILE__, __LINE__, linecount, ruleset, config->sagan_config);
 		strlcpy(rulestruct[counters->rulecount].email, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].email)); 
 		rulestruct[counters->rulecount].email_flag=1; 
 		config->sagan_esmtp_flag=1;
@@ -499,7 +506,7 @@ Remove_Spaces(rulesplit);
 	if (!strcmp(rulesplit, "normalize" )) { 
 		rulestruct[counters->rulecount].normalize = 1; 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
-		if (arg == NULL ) Sagan_Log(1, "The \"normalize\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"normalize\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		Remove_Spaces(arg);
 
 		/* Search for a normalize rule that fits the rule set's spec */
@@ -532,15 +539,15 @@ Remove_Spaces(rulesplit);
         if (!strcmp(rulesplit, "msg" )) {
                 arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
-		if (tmp2 == NULL ) Sagan_Log(1, "The \"msg\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (tmp2 == NULL ) Sagan_Log(S_ERROR, "The \"msg\" appears to be incomplete at line %d in %s", linecount, ruleset);
 		strlcpy(rulestruct[counters->rulecount].s_msg, tmp2, sizeof(rulestruct[counters->rulecount].s_msg)); 
                 }
 
 	if (!strcmp(rulesplit, "content" )) { 
-		if ( content_count > MAX_CONTENT ) Sagan_Log(1, "There is to many \"content\" types in the rule at line %d in %s", linecount, ruleset);
+		if ( content_count > MAX_CONTENT ) Sagan_Log(S_ERROR, "There is to many \"content\" types in the rule at line %d in %s", linecount, ruleset);
 		arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
-		if (tmp2 == NULL ) Sagan_Log(1, "The \"content\" appears to be incomplete at line %d in %s", linecount, ruleset);
+		if (tmp2 == NULL ) Sagan_Log(S_ERROR, "The \"content\" appears to be incomplete at line %d in %s", linecount, ruleset);
 
 		/* For content: ! "something" */
 
@@ -556,10 +563,10 @@ Remove_Spaces(rulesplit);
 	/* PCRE needs a little extra "work" */
 
         if (!strcmp(rulesplit, "pcre" )) {
-                if ( pcre_count > MAX_PCRE ) Sagan_Log(1, "There is to many \"pcre\" types in the rule at line %d in %s", linecount, ruleset);
+                if ( pcre_count > MAX_PCRE ) Sagan_Log(S_ERROR, "There is to many \"pcre\" types in the rule at line %d in %s", linecount, ruleset);
 		arg = strtok_r(NULL, ";", &saveptrrule2);
 		strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
-                if (tmp2 == NULL ) Sagan_Log(1, "The \"pcre\" appears to be incomplete at line %d in %s", linecount, ruleset);
+                if (tmp2 == NULL ) Sagan_Log(S_ERROR, "The \"pcre\" appears to be incomplete at line %d in %s", linecount, ruleset);
 
 		pcreflag=0;
 		strlcpy(pcrerule, "", sizeof(pcrerule));
@@ -614,7 +621,7 @@ Remove_Spaces(rulesplit);
 			}
 		    }
 		      
-                      if ( pcreflag == 0 ) Sagan_Log(1, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                      if ( pcreflag == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
 
 		      /* We store the compiled/study results.  This saves us some CPU time during searching - Champ Clark III - 02/01/2011 */
 		      
@@ -623,7 +630,7 @@ Remove_Spaces(rulesplit);
 		      
 	                if (  rulestruct[counters->rulecount].re_pcre[pcre_count]  == NULL ) {
        		         Remove_Lock_File();
-                 	 Sagan_Log(1, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
+                 	 Sagan_Log(S_ERROR, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
                 	}
 
 		      pcre_count++;
@@ -741,26 +748,26 @@ tokenrule = strtok_r(NULL, ";", &saveptrrule1);
 
 if ( debug->debugload ) { 
 
-Sagan_Log(3, "---[Rule %s]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
+Sagan_Log(S_DEBUG, "---[Rule %s]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
 
-Sagan_Log(3, "= sid: %s", rulestruct[counters->rulecount].s_sid);
-Sagan_Log(3, "= rev: %s", rulestruct[counters->rulecount].s_rev);
-Sagan_Log(3, "= msg: %s", rulestruct[counters->rulecount].s_msg);
-Sagan_Log(3, "= pri: %d", rulestruct[counters->rulecount].s_pri);
-Sagan_Log(3, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
-Sagan_Log(3, "= drop: %d", rulestruct[counters->rulecount].drop);
-Sagan_Log(3, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
+Sagan_Log(S_DEBUG, "= sid: %s", rulestruct[counters->rulecount].s_sid);
+Sagan_Log(S_DEBUG, "= rev: %s", rulestruct[counters->rulecount].s_rev);
+Sagan_Log(S_DEBUG, "= msg: %s", rulestruct[counters->rulecount].s_msg);
+Sagan_Log(S_DEBUG, "= pri: %d", rulestruct[counters->rulecount].s_pri);
+Sagan_Log(S_DEBUG, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
+Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
+Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
 
-if ( rulestruct[counters->rulecount].s_nocase != 0 )    Sagan_Log(3, "= nocase");
-if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(3, "= parse_src_ip");
-if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(3, "= parse_port");
+if ( rulestruct[counters->rulecount].s_nocase != 0 )    Sagan_Log(S_DEBUG, "= nocase");
+if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(S_DEBUG, "= parse_src_ip");
+if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(S_DEBUG, "= parse_port");
 
 for (i=0; i<content_count; i++) {
-    Sagan_Log(3, "= [%d] content: \"%s\"", i, rulestruct[counters->rulecount].s_content[i]);
+    Sagan_Log(S_DEBUG, "= [%d] content: \"%s\"", i, rulestruct[counters->rulecount].s_content[i]);
     }
 
 for (i=0; i<ref_count; i++) {
-    Sagan_Log(3, "= [%d] reference: \"%s\"", i,  rulestruct[counters->rulecount].s_reference[i]);
+    Sagan_Log(S_DEBUG, "= [%d] reference: \"%s\"", i,  rulestruct[counters->rulecount].s_reference[i]);
     }
 }
 

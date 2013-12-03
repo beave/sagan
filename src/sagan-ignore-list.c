@@ -32,6 +32,7 @@
 #include <string.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _Sagan_Droplist *SaganDroplist;
 struct _SaganCounters *counters;
@@ -51,7 +52,7 @@ char droplistbuf[1024] = { 0 };
 if ( config->sagan_droplist_flag ) {
 
 if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
+   Sagan_Log(S_ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
    config->sagan_droplist_flag=0;
    }
 

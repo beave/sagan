@@ -84,6 +84,12 @@
 #define PLOG_FILTER	"port 514"
 #define PLOG_LOGDEV	"/dev/log"
 
+#define S_NORMAL	0
+#define S_ERROR		1
+#define S_WARN		2
+#define S_DEBUG		3
+
+
 #define PARSEIP_RETURN_STRING	0
 
 /* defaults if the user doesn't define */

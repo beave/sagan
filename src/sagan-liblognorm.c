@@ -41,6 +41,7 @@
 #include <lognorm.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "sagan-liblognorm.h"
 
 struct _SaganConfig *config;
@@ -78,14 +79,13 @@ int i;
 SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
-if((ctx = ln_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
-//if((eectx = ee_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
+if((ctx = ln_initCtx()) == NULL) Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
 
 //ln_setEECtx(ctx, eectx);
 
 for (i=0; i < counters->liblognormtoload_count; i++) {
-	Sagan_Log(0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
-	if (stat(liblognormtoloadstruct[i].filepath, &liblognorm_fileinfo)) Sagan_Log(1, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
+	Sagan_Log(S_NORMAL, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
+	if (stat(liblognormtoloadstruct[i].filepath, &liblognorm_fileinfo)) Sagan_Log(S_ERROR, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
 	ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
 	}
 
@@ -97,8 +97,7 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
  * Locates interesting log data via Rainer's liblognorm library
  ***********************************************************************/
 
-void sagan_normalize_liblognorm(char *syslog_msg)
-{
+void sagan_normalize_liblognorm(char *syslog_msg) {
 
 char buf[10*1024];
 const char *cstr;
@@ -111,7 +110,7 @@ const char *dst_host;
 char ipbuf_src[64] = { 0 }; 
 char ipbuf_dst[64] = { 0 }; 
 
-char *tmp;
+const char *tmp;
 
 struct json_object *json = NULL;
 
@@ -166,21 +165,21 @@ if (SaganNormalizeLiblognorm->ip_dst != NULL ) {
 	}
 
 if ( debug->debugnormalize ) { 
-     Sagan_Log(0, "Liblognorm DEBUG output:");
-     Sagan_Log(0, "---------------------------------------------------");
-     Sagan_Log(0, "Log message to normalize: %s", syslog_msg); 
-     Sagan_Log(0, "Parsed: %s", cstr);
-     Sagan_Log(0, "Source IP: %s", SaganNormalizeLiblognorm->ip_src); 
-     Sagan_Log(0, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
-     Sagan_Log(0, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
-     Sagan_Log(0, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
-     Sagan_Log(0, "Username: %s", SaganNormalizeLiblognorm->username);
-     Sagan_Log(0, ""); 
+     Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
+     Sagan_Log(S_DEBUG, "---------------------------------------------------");
+     Sagan_Log(S_DEBUG, "Log message to normalize: %s", syslog_msg); 
+     Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
+     Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src); 
+     Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
+     Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
+     Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
+     Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
+     Sagan_Log(S_DEBUG, ""); 
      }
 
 
 //free(cstr);
-//json_object_put(json);
+json_object_put(json);
 //free(json);
 
 }

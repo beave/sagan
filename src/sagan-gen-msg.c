@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganCounters *counters;
 struct _Sagan_Processor_Generator *generator; 
@@ -52,12 +53,12 @@ char *gen3=NULL;
 
 //char *firsttoken=NULL;
 
-Sagan_Log(0, "Loading gen-msg.map file. [%s]", genmap);
+Sagan_Log(S_NORMAL, "Loading gen-msg.map file. [%s]", genmap);
 
 counters->genmapcount=0;
 
 if (( genmapfile = fopen(genmap, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
    }
 
 while(fgets(genbuf, 1024, genmapfile) != NULL) {
@@ -75,7 +76,7 @@ gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
 gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 
-if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(1, "%s is incorrect or not correctly formated", genmap);
+if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
 
 generator[counters->genmapcount].generatorid=atoi(gen1);
 generator[counters->genmapcount].alertid=atoi(gen2);
@@ -85,6 +86,6 @@ counters->genmapcount++;
 }
 
 fclose(genmapfile);
-Sagan_Log(0, "%d generators loaded.", counters->genmapcount);
+Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
 }
 

@@ -82,6 +82,7 @@
 #include <pthread.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "sagan-snortsam.h"
 
 #define NUM_HOSTS 255
@@ -158,7 +159,7 @@ strlcpy(str,arg, sizeof(str));
         {       hoste=gethostbyname(samhost);
                 if(!hoste)
                 {       
-			Sagan_Log(0, "[%s, line %d] Unable to resolve host '%s', ignoring entry!" , __FILE__, __LINE__, samhost);
+			Sagan_Log(S_WARN, "[%s, line %d] Unable to resolve host '%s', ignoring entry!" , __FILE__, __LINE__, samhost);
 			return(1);
                 }
                 else
@@ -167,7 +168,7 @@ strlcpy(str,arg, sizeof(str));
         else
         {       samip=inet_addr(samhost);
                 if(!samip)
-                {       Sagan_Log(0, "[%s, line %d] Invalid host address '%s', ignoring entry!", __FILE__, __LINE__, samhost);
+                {       Sagan_Log(S_WARN, "[%s, line %d] Invalid host address '%s', ignoring entry!", __FILE__, __LINE__, samhost);
                         return(1);
                 }
         }
@@ -216,12 +217,12 @@ strlcpy(str,arg, sizeof(str));
                                 {       /* create a socket for the station */
                                         station.stationsocket=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
                                         if(station.stationsocket==INVALID_SOCKET) {
-						Sagan_Log(0, "[%s, line %d]  Invalid Socket error!", __FILE__, __LINE__ );
+						Sagan_Log(S_WARN, "[%s, line %d]  Invalid Socket error!", __FILE__, __LINE__ );
                                                 error=TRUE;
                                         }
                                         if(bind(station.stationsocket,(struct sockaddr *)&(station.localsocketaddr),sizeof(struct sockaddr)))
                                         {       
-						Sagan_Log(0, "[%s, line %d] Can not bind socket!", __FILE__, __LINE__);
+						Sagan_Log(S_WARN, "[%s, line %d] Can not bind socket!", __FILE__, __LINE__);
                                                 error=TRUE;
                                         }
                                 }
@@ -232,7 +233,7 @@ strlcpy(str,arg, sizeof(str));
                                         {       /* let's connect to the agent */
                                                 if(connect(station.stationsocket,(struct sockaddr *)&station.stationsocketaddr,sizeof(struct sockaddr)))
                                                 {       
-							Sagan_Log(0, "[%s, line %d] Could not send block to host %s.", __FILE__, __LINE__, inet_ntoa(station.stationip));	
+							Sagan_Log(S_WARN, "[%s, line %d] Could not send block to host %s.", __FILE__, __LINE__, inet_ntoa(station.stationip));	
                                                         closesocket(station.stationsocket);
                                                         error=TRUE;
                                                 }
@@ -240,7 +241,7 @@ strlcpy(str,arg, sizeof(str));
 
                                         if(!error)
                                         {       if( debug->debugfwsam )
-							Sagan_Log(0, "[FWsamBlock] Connected to host %s. %s IP %s", inet_ntoa(station.stationip),blockmode==FWSAM_STATUS_BLOCK?"Blocking":"Unblocking",inettoa(blockip[ipidx]));
+							Sagan_Log(S_DEBUG, "[FWsamBlock] Connected to host %s. %s IP %s", inet_ntoa(station.stationip),blockmode==FWSAM_STATUS_BLOCK?"Blocking":"Unblocking",inettoa(blockip[ipidx]));
 
                                                 /* now build the packet */
                                                 station.myseqno+=station.stationseqno; /* increase my seqno by adding agent seq no */
@@ -281,19 +282,19 @@ strlcpy(str,arg, sizeof(str));
                                                 sampacket.sig_id[3]=(char)(blocksid>>24);
 
                                                 if( debug->debugfwsam )
-                                                {       Sagan_Log(0, "[FWsamBlock] Sending %s",blockmode==FWSAM_STATUS_BLOCK?"BLOCK":"UNBLOCK");
-                                                        Sagan_Log(0, "[FWsamBlock] Snort SeqNo:  %x",station.myseqno);
-                                                        Sagan_Log(0, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
-                                                        Sagan_Log(0, "[FWsamBlock] Status     :  %i",blockmode);
-                                                        Sagan_Log(0, "[FWsamBlock] Version    :  %i",station.packetversion);
-                                                        Sagan_Log(0, "[FWsamBlock] Mode       :  %i",blocklog|blockhow|FWSAM_WHO_SRC);
-                                                        Sagan_Log(0, "[FWsamBlock] Duration   :  %li",blockduration);
-                                                        Sagan_Log(0, "[FWsamBlock] Protocol   :  %i",blockproto);
-                                                        Sagan_Log(0, "[FWsamBlock] Src IP     :  %s",inettoa(blockip[ipidx]));
-                                                        Sagan_Log(0, "[FWsamBlock] Src Port   :  %i",0);
-                                                        Sagan_Log(0, "[FWsamBlock] Dest IP    :  %s",inettoa(blockpeer[peeridx]));
-                                                        Sagan_Log(0, "[FWsamBlock] Dest Port  :  %i",blockport);
-                                                        Sagan_Log(0, "[FWsamBlock] Sig_ID     :  %lu",blocksid);
+                                                {       Sagan_Log(S_DEBUG, "[FWsamBlock] Sending %s",blockmode==FWSAM_STATUS_BLOCK?"BLOCK":"UNBLOCK");
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Snort SeqNo:  %x",station.myseqno);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Status     :  %i",blockmode);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Version    :  %i",station.packetversion);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Mode       :  %i",blocklog|blockhow|FWSAM_WHO_SRC);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Duration   :  %li",blockduration);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Protocol   :  %i",blockproto);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Src IP     :  %s",inettoa(blockip[ipidx]));
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Src Port   :  %i",0);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Dest IP    :  %s",inettoa(blockpeer[peeridx]));
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Dest Port  :  %i",blockport);
+                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Sig_ID     :  %lu",blocksid);
                                                 }
 
                                                 encbuf=TwoFishAlloc(sizeof(FWsamPacket),FALSE,FALSE,station.stationfish); /* get the encryption buffer */
@@ -301,7 +302,7 @@ strlcpy(str,arg, sizeof(str));
 
                                                 if(send(station.stationsocket,encbuf,len,0)!=len) /* weird...could not send */
                                                 {
-							Sagan_Log(0, "[%s, line %d] Could not send to host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));	
+							Sagan_Log(S_WARN, "[%s, line %d] Could not send to host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));	
                                                         closesocket(station.stationsocket);
                                                        error=TRUE;
                                                 }
@@ -317,7 +318,7 @@ strlcpy(str,arg, sizeof(str));
                                                         if(!i) /* id we timed out (i was one, then dec'ed)... */
                                                         {
 							
-								Sagan_Log(0, "[%s, line %d] Did not receive response from host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip) );
+								Sagan_Log(S_WARN, "[%s, line %d] Did not receive response from host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip) );
                                                                 closesocket(station.stationsocket);
                                                                 error=TRUE;
                                                         }
@@ -331,7 +332,7 @@ strlcpy(str,arg, sizeof(str));
                                                                         station.stationfish=TwoFishInit(station.stationkey); /* re-initialize the TwoFish with the intial key */
                                                                         len=TwoFishDecrypt(encbuf,(char **)&decbuf,sizeof(FWsamPacket)+TwoFish_BLOCK_SIZE,FALSE,station.stationfish); /* try again to decrypt */
                                                                         if ( debug->debugfwsam )
-                                                                                Sagan_Log(0, "FWsamCheckOut] Had to use initial key!");
+                                                                                Sagan_Log(S_DEBUG, "FWsamCheckOut] Had to use initial key!");
                                                                 }
                                                                 if(len==sizeof(FWsamPacket)) /* valid decryption */
                                                                 {       if(sampacket.version==station.packetversion)/* master speaks my language */
@@ -341,14 +342,14 @@ strlcpy(str,arg, sizeof(str));
                                                                                         station.lastcontact=(unsigned long)time(NULL); /* set the last contact time (not used yet) */
                                                                                         if ( debug->debugfwsam )
                                                                                         {
-                                                                                                Sagan_Log(0, "[FWsamBlock] Received %s",sampacket.status==FWSAM_STATUS_OK?"OK":
+                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Received %s",sampacket.status==FWSAM_STATUS_OK?"OK":
                                                                                                                                                                                   sampacket.status==FWSAM_STATUS_NEWKEY?"NEWKEY":
                                                                                                                                                                               sampacket.status==FWSAM_STATUS_RESYNC?"RESYNC":
                                                                                                                                                                               sampacket.status==FWSAM_STATUS_HOLD?"HOLD":"ERROR");
-                                                                                                Sagan_Log(0, "[FWsamBlock] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
-                                                                                                Sagan_Log(0, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
-                                                                                                Sagan_Log(0, "[FWsamBlock] Status     :  %i",sampacket.status);
-                                                                                                Sagan_Log(0, "[FWsamBlock] Version    :  %i",sampacket.version);
+                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
+                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
+                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Status     :  %i",sampacket.status);
+                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Version    :  %i",sampacket.version);
                                                                                         }
 
                                                                                         if(sampacket.status==FWSAM_STATUS_HOLD)
@@ -361,7 +362,7 @@ strlcpy(str,arg, sizeof(str));
                                                                                                 if(!i) /* id we timed out (i was one, then dec'ed)... */
                                                                                                 {       
 												
-													Sagan_Log(0, "[%s, line %d] Did not receive response from host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip) );
+													Sagan_Log(S_WARN, "[%s, line %d] Did not receive response from host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip) );
                                                                                                         error=TRUE;
                                                                                                         sampacket.status=FWSAM_STATUS_ERROR;
                                                                                                 }
@@ -375,33 +376,33 @@ strlcpy(str,arg, sizeof(str));
                                                                                                                 station.stationfish=TwoFishInit(station.stationkey); /* re-initialize the TwoFish with the intial key */
                                                                                                                 len=TwoFishDecrypt(encbuf,(char **)&decbuf,sizeof(FWsamPacket)+TwoFish_BLOCK_SIZE,FALSE,station.stationfish); /* try again to decrypt */
                                                                                                                 if ( debug->debugfwsam )
-                                                                                                                        Sagan_Log(0, "[FWsamBlock] Had to use initial key again!");
+                                                                                                                        Sagan_Log(S_DEBUG, "[FWsamBlock] Had to use initial key again!");
                                                                                                         }
                                                                                                         if( debug->debugfwsam )
                                                                                                         {       
 													
-														Sagan_Log(0, "[FWsamBlock] Received %s", sampacket.status==FWSAM_STATUS_OK?"OK": sampacket.status==FWSAM_STATUS_NEWKEY?"NEWKEY": sampacket.status==FWSAM_STATUS_RESYNC?"RESYNC": sampacket.status==FWSAM_STATUS_HOLD?"HOLD":"ERROR");
-                                                                                                                Sagan_Log(0, "[FWsamBlock] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
-                                                                                                                Sagan_Log(0, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
-                                                                                                                Sagan_Log(0, "[FWsamBlock] Status     :  %i",sampacket.status);
-                                                                                                                Sagan_Log(0, "[FWsamBlock] Version    :  %i",sampacket.version);
+														Sagan_Log(S_DEBUG, "[FWsamBlock] Received %s", sampacket.status==FWSAM_STATUS_OK?"OK": sampacket.status==FWSAM_STATUS_NEWKEY?"NEWKEY": sampacket.status==FWSAM_STATUS_RESYNC?"RESYNC": sampacket.status==FWSAM_STATUS_HOLD?"HOLD":"ERROR");
+                                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
+                                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Mgmt SeqNo :  %x",station.stationseqno);
+                                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Status     :  %i",sampacket.status);
+                                                                                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Version    :  %i",sampacket.version);
                                                                                                         }
                                                                                                         if(len!=sizeof(FWsamPacket)) /* invalid decryption */
                                                                                                         {       
 												
-														Sagan_Log(0, "[%s, line %d] Password mismatch! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+														Sagan_Log(S_WARN, "[%s, line %d] Password mismatch! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
                                                                                                                 error=TRUE;
                                                                                                                 sampacket.status=FWSAM_STATUS_ERROR;
                                                                                                         }
                                                                                                         else if(sampacket.version!=station.packetversion) /* invalid protocol version */
                                                                                                         {       
-														Sagan_Log(0, "[%s, line %d] Protocol version error! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+														Sagan_Log(S_WARN, "[%s, line %d] Protocol version error! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
                                                                                                                 error=TRUE;
                                                                                                                 sampacket.status=FWSAM_STATUS_ERROR;
                                                                                                         }
                                                                                                         else if(sampacket.status!=FWSAM_STATUS_OK && sampacket.status!=FWSAM_STATUS_NEWKEY && sampacket.status!=FWSAM_STATUS_RESYNC)
                                                                                                         {       
-														Sagan_Log(0, "[%s, line %d] Funky handshake error! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+														Sagan_Log(S_WARN, "[%s, line %d] Funky handshake error! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
                                                                                                                 error=TRUE;
                                                                                                                 sampacket.status=FWSAM_STATUS_ERROR;
                                                                                                         }
@@ -415,7 +416,7 @@ strlcpy(str,arg, sizeof(str));
                                                                                         {
                                                                                                 FWsamNewStationKey(&station,&sampacket); /* generate new TwoFish keys */
                                                                                                 if( debug->debugfwsam )
-													Sagan_Log(0, "[%s, line %d] Generated new encryption key.... " , __FILE__, __LINE__);
+													Sagan_Log(S_NORMAL, "[%s, line %d] Generated new encryption key.... " , __FILE__, __LINE__);
                                                                                         }
                                                                                         if(!station.persistentsocket)
                                                                                                 closesocket(station.stationsocket);
@@ -423,11 +424,11 @@ strlcpy(str,arg, sizeof(str));
                                                                                 else if(sampacket.status==FWSAM_STATUS_ERROR) /* if SnortSam reports an error on second try, */
                                                                                 {       closesocket(station.stationsocket);                               /* something is messed up and ... */
                                                                                         error=TRUE;
-											Sagan_Log(0, "[%s, line %d] Undetermined error right after CheckIn! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+											Sagan_Log(S_WARN, "[%s, line %d] Undetermined error right after CheckIn! Ignoring host %s" , __FILE__, __LINE__, inet_ntoa(station.stationip));
                                                                                 }
                                                                                 else /* an unknown status means trouble... */
                                                                                 {       
-											Sagan_Log(0, "[%s, line %d] Funky handshake error! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));	
+											Sagan_Log(S_WARN, "[%s, line %d] Funky handshake error! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));	
                                                                                         closesocket(station.stationsocket);
                                                                                         error=TRUE;
                                                                                 }
@@ -435,14 +436,14 @@ strlcpy(str,arg, sizeof(str));
                                                                         else   /* if the SnortSam agent uses a different packet version, we have no choice but to ignore it. */
                                                                         {       
 
-										Sagan_Log(0, "[%s, line %d] Protocol version errror! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+										Sagan_Log(S_WARN, "[%s, line %d] Protocol version errror! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));
                                                                                 closesocket(station.stationsocket);
                                                                                 error=TRUE;
                                                                         }
                                                                 }
                                                                 else /* if the intial key failed to decrypt as well, the keys are not configured the same, and we ignore that SnortSam station. */
                                                                 {       
-									Sagan_Log(0, "[%s, line %d] Password mismatch! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));
+									Sagan_Log(S_WARN, "[%s, line %d] Password mismatch! Ignoring host %s!" , __FILE__, __LINE__, inet_ntoa(station.stationip));
 
                                                                         closesocket(station.stationsocket);
                                                                         error=TRUE;
@@ -485,24 +486,24 @@ char *encbuf,*decbuf;
                 station->stationsocket=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
                 if(station->stationsocket==INVALID_SOCKET)
                 {       
-			Sagan_Log(0, "[%s, line %d] Invalid Socket errror!" , __FILE__, __LINE__);
+			Sagan_Log(S_WARN, "[%s, line %d] Invalid Socket errror!" , __FILE__, __LINE__);
                         return FALSE;
                 }
                 if(bind(station->stationsocket,(struct sockaddr *)&(station->localsocketaddr),sizeof(struct sockaddr)))
                 {       
-			Sagan_Log(0, "[%s, line %d] Can not bind to socket!" , __FILE__, __LINE__);
+			Sagan_Log(S_WARN, "[%s, line %d] Can not bind to socket!" , __FILE__, __LINE__);
                         return FALSE;
                 }
 
                 /* let's connect to the agent */
                 if(connect(station->stationsocket,(struct sockaddr *)&station->stationsocketaddr,sizeof(struct sockaddr)))
                 {       
-			Sagan_Log(0, "[%s, line %d] Could not connect to host %s", __FILE__, __LINE__, inet_ntoa(station->stationip));
+			Sagan_Log(S_WARN, "[%s, line %d] Could not connect to host %s", __FILE__, __LINE__, inet_ntoa(station->stationip));
                         return FALSE;
                 }
                 else
                 {       if ( debug->debugfwsam )
-				Sagan_Log(0, "[FWsamCheckIn] Connected to host %s", inet_ntoa(station->stationip));
+				Sagan_Log(S_WARN, "[FWsamCheckIn] Connected to host %s", inet_ntoa(station->stationip));
                         
 			/* now build the packet */
                         sampacket.endiancheck=1;
@@ -513,16 +514,16 @@ char *encbuf,*decbuf;
                         memcpy(sampacket.duration,station->mykeymod,4);  /* we'll send SnortSam our key modifier in the duration slot */
                                                                                                    /* (the checkin packet is just the plain initial key) */
                         if ( debug->debugfwsam )
-                        {       Sagan_Log(0, "[FWsamCheckIn] Sending CHECKIN");
-                                Sagan_Log(0, "[FWsamCheckIn] Snort SeqNo:  %x",station->myseqno);
-                                Sagan_Log(0, "[FWsamCheckIn] Mode       :  %i",sampacket.status);
-                                Sagan_Log(0, "[FWsamCheckIn] Version    :  %i",sampacket.version);
+                        {       Sagan_Log(S_DEBUG, "[FWsamCheckIn] Sending CHECKIN");
+                                Sagan_Log(S_DEBUG, "[FWsamCheckIn] Snort SeqNo:  %x",station->myseqno);
+                                Sagan_Log(S_DEBUG, "[FWsamCheckIn] Mode       :  %i",sampacket.status);
+                                Sagan_Log(S_DEBUG, "[FWsamCheckIn] Version    :  %i",sampacket.version);
                         }
 
                         encbuf=TwoFishAlloc(sizeof(FWsamPacket),FALSE,FALSE,station->stationfish); /* get buffer for encryption */
                         len=TwoFishEncrypt((char *)&sampacket,(char **)&encbuf,sizeof(FWsamPacket),FALSE,station->stationfish); /* encrypt with initial key */
                         if(send(station->stationsocket,encbuf,len,0)!=len) /* weird...could not send */
-				Sagan_Log(0, "Could not send to host %s", inet_ntoa(station->stationip));
+				Sagan_Log(S_WARN, "Could not send to host %s", inet_ntoa(station->stationip));
                         else
                         {       i=FWSAM_NETWAIT;
                                 ioctlsocket(station->stationsocket,FIONBIO,&i); /* set non blocking and wait for  */
@@ -532,21 +533,21 @@ char *encbuf,*decbuf;
                                                 i=0;
                                 }
                                 if(!i) /* time up? */
-					Sagan_Log(0, "Dis not receive response from host %s", inet_ntoa(station->stationip));
+					Sagan_Log(S_WARN, "Did not receive response from host %s", inet_ntoa(station->stationip));
                                 else
                                 {       decbuf=(char *)&sampacket; /* got status packet */
                                         len=TwoFishDecrypt(encbuf,(char **)&decbuf,sizeof(FWsamPacket)+TwoFish_BLOCK_SIZE,FALSE,station->stationfish); /* try to decrypt with initial key */
                                         if(len==sizeof(FWsamPacket)) /* valid decryption */
                                         {       if ( debug->debugfwsam )
                                                 {
-                                                        Sagan_Log(0, "[FWsamCheckIn] Received %s",sampacket.status==FWSAM_STATUS_OK?"OK":
+                                                        Sagan_Log(S_DEBUG, "[FWsamCheckIn] Received %s",sampacket.status==FWSAM_STATUS_OK?"OK":
                                                                                                                                            sampacket.status==FWSAM_STATUS_NEWKEY?"NEWKEY":
                                                                                                                                            sampacket.status==FWSAM_STATUS_RESYNC?"RESYNC":
                                                                                                                                            sampacket.status==FWSAM_STATUS_HOLD?"HOLD":"ERROR");
-                                                        Sagan_Log(0, "[FWsamCheckIn] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
-                                                        Sagan_Log(0, "[FWsamCheckIn] Mgmt SeqNo :  %x",sampacket.fwseqno[0]|(sampacket.fwseqno[1]<<8));
-                                                        Sagan_Log(0, "[FWsamCheckIn] Status     :  %i",sampacket.status);
-                                                        Sagan_Log(0, "[FWsamCheckIn] Version    :  %i",sampacket.version);
+                                                        Sagan_Log(S_DEBUG, "[FWsamCheckIn] Snort SeqNo:  %x",sampacket.snortseqno[0]|(sampacket.snortseqno[1]<<8));
+                                                        Sagan_Log(S_DEBUG, "[FWsamCheckIn] Mgmt SeqNo :  %x",sampacket.fwseqno[0]|(sampacket.fwseqno[1]<<8));
+                                                        Sagan_Log(S_DEBUG, "[FWsamCheckIn] Status     :  %i",sampacket.status);
+                                                        Sagan_Log(S_DEBUG, "[FWsamCheckIn] Version    :  %i",sampacket.version);
                                                 }
 
                                                 if(sampacket.version==FWSAM_PACKETVERSION_PERSISTENT_CONN || sampacket.version==FWSAM_PACKETVERSION) /* master speaks my language */
@@ -562,28 +563,28 @@ char *encbuf,*decbuf;
                                                                 {       memcpy(station->fwkeymod,sampacket.duration,4); /* note the key modifier */
                                                                         FWsamNewStationKey(station,&sampacket); /* and generate new TwoFish keys (with key modifiers) */
                                                                         if ( debug->debugfwsam )
-										Sagan_Log(0, "[FWsamCheckIn] Generated new encryption key.....");
+										Sagan_Log(S_DEBUG, "[FWsamCheckIn] Generated new encryption key.....");
                                                                 }
                                                         }
                                                         else if(sampacket.status==FWSAM_STATUS_ERROR && sampacket.version==FWSAM_PACKETVERSION)
                                                         {       if(station->persistentsocket)
                                                                 {      
-									Sagan_Log(0, "[%s, line %d] Host %s doesn't support packet version %i for persistent connections. Trying packet version %i!" , __FILE__, __LINE__, inet_ntoa(station->stationip),FWSAM_PACKETVERSION_PERSISTENT_CONN,FWSAM_PACKETVERSION);
+									Sagan_Log(S_WARN, "[%s, line %d] Host %s doesn't support packet version %i for persistent connections. Trying packet version %i!" , __FILE__, __LINE__, inet_ntoa(station->stationip),FWSAM_PACKETVERSION_PERSISTENT_CONN,FWSAM_PACKETVERSION);
                                                                         station->persistentsocket=FALSE;
                                                                         station->packetversion=FWSAM_PACKETVERSION;
                                                                         again=TRUE;
                                                                 }
                                                                 else	
-									Sagan_Log(0, "[%s, line %d] Protocol version mismatch! Ignoring host %s", __FILE__, __LINE__, inet_ntoa(station->stationip));
+									Sagan_Log(S_WARN, "[%s, line %d] Protocol version mismatch! Ignoring host %s", __FILE__, __LINE__, inet_ntoa(station->stationip));
                                                         }
                                                         else /* weird, got a strange status back */
-                                                                Sagan_Log(0, "[%s, line %d] Funky handshake error! Ignoring host %s!", __FILE__, __LINE__, inet_ntoa(station->stationip));
+                                                                Sagan_Log(S_WARN, "[%s, line %d] Funky handshake error! Ignoring host %s!", __FILE__, __LINE__, inet_ntoa(station->stationip));
                                                 }
                                                 else /* packet version does not match */
-                                                        Sagan_Log(0, "[%s, line %d] Potocol version error! Ignoring host %s!", __FILE__, __LINE__, inet_ntoa(station->stationip));
+                                                        Sagan_Log(S_WARN, "[%s, line %d] Potocol version error! Ignoring host %s!", __FILE__, __LINE__, inet_ntoa(station->stationip));
                                         }
                                         else /* key does not match */
-                                                Sagan_Log(0, "[%s, line %d] Password mismatch! Ignoring host %s!",__FILE__, __LINE__, inet_ntoa(station->stationip));
+                                                Sagan_Log(S_WARN, "[%s, line %d] Password mismatch! Ignoring host %s!",__FILE__, __LINE__, inet_ntoa(station->stationip));
                                 }
                         }
                         free(encbuf); /* release TwoFishAlloc'ed buffer */
@@ -670,12 +671,12 @@ void FWsamCheckOut(FWsamStation *station)
         {       station->stationsocket=socket(PF_INET,SOCK_STREAM,IPPROTO_TCP);
                 if(station->stationsocket==INVALID_SOCKET)
                 {       
-			Sagan_Log(0, "[%s, line %d] Invalid socket error!" , __FILE__, __LINE__);	
+			Sagan_Log(S_WARN, "[%s, line %d] Invalid socket error!" , __FILE__, __LINE__);	
                         return;
                 }
                 if(bind(station->stationsocket,(struct sockaddr *)&(station->localsocketaddr),sizeof(struct sockaddr)))
                 {       
-			Sagan_Log(0, "[%s, line %d] Can not bind socket!" , __FILE__, __LINE__);
+			Sagan_Log(S_WARN, "[%s, line %d] Can not bind socket!" , __FILE__, __LINE__);
                         return;
                 }
                 /* let's connect to the agent */
@@ -685,7 +686,7 @@ void FWsamCheckOut(FWsamStation *station)
                 i=TRUE;
         if(i)
         {       if( debug->debugfwsam )
-			Sagan_Log(0, "[FWsamCheckOut] Disconnecting from host %s",inet_ntoa(station->stationip));
+			Sagan_Log(S_DEBUG, "[FWsamCheckOut] Disconnecting from host %s",inet_ntoa(station->stationip));
 
                 /* now build the packet */
                 station->myseqno+=station->stationseqno; /* increase my seqno */
@@ -699,10 +700,10 @@ void FWsamCheckOut(FWsamStation *station)
 
                 if( debug->debugfwsam )
                 {       
-			Sagan_Log(0, "[FWsamCheckOut] Sending CHECKOUT");
-                        Sagan_Log(0, "[FWsamCheckOut] Snort SeqNo:  %x",station->myseqno);
-                        Sagan_Log(0, "[FWsamCheckOut] Mgmt SeqNo :  %x",station->stationseqno);
-                        Sagan_Log(0, "[FWsamCheckOut] Status     :  %i",sampacket.status);
+			Sagan_Log(S_DEBUG, "[FWsamCheckOut] Sending CHECKOUT");
+                        Sagan_Log(S_DEBUG, "[FWsamCheckOut] Snort SeqNo:  %x",station->myseqno);
+                        Sagan_Log(S_DEBUG, "[FWsamCheckOut] Mgmt SeqNo :  %x",station->stationseqno);
+                        Sagan_Log(S_DEBUG, "[FWsamCheckOut] Status     :  %i",sampacket.status);
                 }
 
                 encbuf=TwoFishAlloc(sizeof(FWsamPacket),FALSE,FALSE,station->stationfish); /* get encryption buffer */
@@ -725,20 +726,20 @@ void FWsamCheckOut(FWsamStation *station)
                                         station->stationfish=TwoFishInit(station->stationkey); /* re-initialze TwoFish with initial key */
                                         len=TwoFishDecrypt(encbuf,(char **)&decbuf,sizeof(FWsamPacket)+TwoFish_BLOCK_SIZE,FALSE,station->stationfish); /* and try to decrypt again */
                                         if( debug->debugfwsam )
-						Sagan_Log(0, "[FWsamCheckOut] Had to use initial key!");
+						Sagan_Log(S_DEBUG, "[FWsamCheckOut] Had to use initial key!");
                                 }
                                 if(len==sizeof(FWsamPacket)) /* valid decryption */
                                 {       if(sampacket.version!=station->packetversion) /* but don't really care since we are on the way out */
-                                                Sagan_Log(0, "[%s, line %d] Protocol version error!", __FILE__, __LINE__ );
+                                                Sagan_Log(S_WARN, "[%s, line %d] Protocol version error!", __FILE__, __LINE__ );
                                 }
                                 else
-					Sagan_Log(0, "[%s, line %d] Password mismatch!", __FILE__, __LINE__); 
+					Sagan_Log(S_WARN, "[%s, line %d] Password mismatch!", __FILE__, __LINE__); 
                         }
                 }
                 free(encbuf); /* release TwoFishAlloc'ed buffer */
         }
         else
-		Sagan_Log(0, "[%s, line %d] Could not connect to host %s for CheckOut", __FILE__, __LINE__, inet_ntoa(station->stationip)); 
+		Sagan_Log(S_WARN, "[%s, line %d] Could not connect to host %s for CheckOut", __FILE__, __LINE__, inet_ntoa(station->stationip)); 
 
         closesocket(station->stationsocket);
         station->persistentsocket=FALSE;

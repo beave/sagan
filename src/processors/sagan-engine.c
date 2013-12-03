@@ -406,7 +406,7 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
                 if ( rulestruct[b].after_count < afterbysrc[i].count )
                         {
                         after_log_flag = 0;
-                        Sagan_Log(0, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+                        Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
 
 			pthread_mutex_lock(&CounterMutex);
                         counters->after_total++;
@@ -461,7 +461,7 @@ if ( rulestruct[b].after_src_or_dst != 0 ) {
 
         if ( rulestruct[b].after_count < afterbydst[i].count ) {
            after_log_flag = 0;
-           Sagan_Log(0, "After SID %s by destination IP address. [%s]", afterbysrc[i].sid, ip_dst);
+           Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbysrc[i].sid, ip_dst);
 
 	   pthread_mutex_lock(&CounterMutex);
            counters->after_total++;
@@ -532,7 +532,7 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 		if ( rulestruct[b].threshold_count < threshbysrc[i].count ) 
 			{ 
 			thresh_log_flag = 1;
-			Sagan_Log(0, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+			Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
 
 			pthread_mutex_lock(&CounterMutex);
 			counters->threshold_total++;
@@ -587,7 +587,7 @@ if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0) {
 
 	if ( rulestruct[b].threshold_count < threshbydst[i].count ) {
 	   thresh_log_flag = 1;
-	   Sagan_Log(0, "Threshold SID %s by destination IP address. [%s]", threshbysrc[i].sid, ip_dst);
+	   Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbysrc[i].sid, ip_dst);
 
 	   pthread_mutex_lock(&CounterMutex);
 	   counters->threshold_total++;
@@ -631,7 +631,7 @@ if ( rulestruct[b].flowbit_flag ) {
 
    for (i=0; i<counters->flowbit_count; i++) {
        if (  flowbits[i].flowbit_state == 1 && atol(timet) >= flowbits[i].flowbit_expire ) { 
-          if (debug->debugflowbit) Sagan_Log(0, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbits[i].flowbit_name);
+          if (debug->debugflowbit) Sagan_Log(S_DEBUG, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbits[i].flowbit_name);
           flowbits[i].flowbit_state = 0; 
 	  }
    }
@@ -640,7 +640,7 @@ if ( rulestruct[b].flowbit_flag ) {
 
    if ( rulestruct[b].flowbit_flag == 3 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state == 1 ) { 
       flowbit_isset = 1; 
-      if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
+      if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
       }
 
    /* Flowbit "set" */
@@ -661,16 +661,16 @@ if ( rulestruct[b].flowbit_flag ) {
 
    if ( rulestruct[b].flowbit_flag == 4 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state == 0 ) {
       flowbit_isset = 1; 
-      if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" ISNOTSET",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
+      if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit \"%s\" ISNOTSET",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
       }
 
 
 if ( debug->debugflowbit) { 
    
-   Sagan_Log(0, "[%s, line %d] -- All flowbits and values ---------------", __FILE__, __LINE__);
+   Sagan_Log(S_DEBUG, "[%s, line %d] -- All flowbits and values ---------------", __FILE__, __LINE__);
 
    for (i=0; i<counters->flowbit_count; i++) {
-       Sagan_Log(0, "[%s, line %d] Flowbit memory position: %d | Flowbit name: %s | Flowbit state: %d", __FILE__, __LINE__,  i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
+       Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit memory position: %d | Flowbit name: %s | Flowbit state: %d", __FILE__, __LINE__,  i, flowbits[i].flowbit_name, flowbits[i].flowbit_state);
        }
     }
 }
@@ -727,7 +727,7 @@ if ( rulestruct[b].geoip_flag ) {
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
 
-if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset); 
+if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset); 
 
 if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0)) { 
 

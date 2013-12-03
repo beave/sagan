@@ -47,6 +47,7 @@
 #include "version.h"
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganCounters *counters;
 struct _Class_Struct *classstruct;
@@ -66,10 +67,10 @@ char *laststring=NULL;
 char tmpbuf2[5];
 int  linecount=0;
 
-Sagan_Log(0, "Loading classifications.conf file. [%s]", ruleset);
+Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
 
          if (( classfile = fopen(ruleset, "r" )) == NULL ) {
-             Sagan_Log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
+             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
              }
 
 while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
@@ -99,15 +100,15 @@ while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
      strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2)); 
      classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
-     if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(1, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+     if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-     if (debug->debugload) Sagan_Log(0, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
+     if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
 		      
      counters->classcount++;
 
 } 
 fclose(classfile);
 
-Sagan_Log(0, "%d classifications loaded", counters->classcount);
+Sagan_Log(S_NORMAL, "%d classifications loaded", counters->classcount);
 
 }

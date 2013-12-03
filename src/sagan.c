@@ -50,6 +50,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "version.h"
 
 #include "processors/sagan-engine.h"
@@ -352,9 +353,9 @@ pthread_attr_t thread_processor_attr;
 pthread_attr_init(&thread_processor_attr);
 pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
 
-Sagan_Log(0, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-Sagan_Log(0, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_count);
-Sagan_Log(0, "Sagan version %s is firing up!", VERSION);
+Sagan_Log(S_NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
+Sagan_Log(S_NORMAL, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_count);
+Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
 
 /* We go ahead and assign values to SaganSigArgs (struct sig_thread_args).  This
  * struct is always used by the sig_handler thread,  and sometimes used by the
@@ -374,7 +375,7 @@ rc = pthread_create( &pcap_thread, NULL, (void *)plog_handler, sigargs );
 
 if ( rc != 0 ) {
         Remove_Lock_File();
-        Sagan_Log(1, "[%s, line %d] Error creating libpcap handler thread [error: %d].", __FILE__, __LINE__, rc);
+        Sagan_Log(S_ERROR, "[%s, line %d] Error creating libpcap handler thread [error: %d].", __FILE__, __LINE__, rc);
         }
 
 sleep(1); 	/* Sleep to avoid race between main() and plog thread 
@@ -386,13 +387,13 @@ sleep(1); 	/* Sleep to avoid race between main() and plog thread
 #endif
 
 sagan_droppriv(runas);		/* Become the Sagan user */
-Sagan_Log(0, "---------------------------------------------------------------------------");
+Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
 
 /* Open sagan alert file */
 
 if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
 Remove_Lock_File();
-Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
+Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
 }
 
 /****************************************************************************
@@ -402,38 +403,38 @@ Sagan_Log(1, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_a
 /* Sagan_Track_Clients processor ********************************************/
 
 if ( config->sagan_track_clients_flag) {
-if ( config->pp_sagan_track_clients ) Sagan_Log(0, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
+if ( config->pp_sagan_track_clients ) Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
 }
 
 /* Sagan Blacklist IP processor *********************************************/
 
 if ( config->blacklist_flag) { 
 Sagan_Blacklist_Load(); 
-Sagan_Log(0, "");
-Sagan_Log(0, "Blacklist Processor loaded [%s]", config->blacklist_file); 
-Sagan_Log(0, "Blacklist loaded %d entries", counters->blacklist_count);
-Sagan_Log(0, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "Blacklist Processor loaded [%s]", config->blacklist_file); 
+Sagan_Log(S_NORMAL, "Blacklist loaded %d entries", counters->blacklist_count);
+Sagan_Log(S_NORMAL, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
 
 if (config->blacklist_lognorm) { 
-Sagan_Log(0, "Blacklist Liblognorm: Enabled"); 
+Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Enabled"); 
 } else { 
-Sagan_Log(0, "Blacklist Liblognorm: Disabled");
+Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Disabled");
 }
 
 if (config->blacklist_parse_proto) { 
-Sagan_Log(0, "Blacklist Parse_Protocol: Enabled");
+Sagan_Log(S_NORMAL, "Blacklist Parse_Protocol: Enabled");
 } else { 
-Sagan_Log(0, "Blacklist Parse Protocol: Disabled");
+Sagan_Log(S_NORMAL, "Blacklist Parse Protocol: Disabled");
 }
 
 if (config->blacklist_parse_proto_program) { 
-Sagan_Log(0, "Blacklist Parse Protocol via Program: Enabled");
+Sagan_Log(S_NORMAL, "Blacklist Parse Protocol via Program: Enabled");
 } else { 
-Sagan_Log(0, "Blacklist Parse Protocol via Program: Disabled");
+Sagan_Log(S_NORMAL, "Blacklist Parse Protocol via Program: Disabled");
 }
 
-if (config->blacklist_parse_src) Sagan_Log(0, "Blacklist Default Source Position: %d", config->blacklist_parse_src); 
-if (config->blacklist_parse_dst) Sagan_Log(0, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst); 
+if (config->blacklist_parse_src) Sagan_Log(S_NORMAL, "Blacklist Default Source Position: %d", config->blacklist_parse_src); 
+if (config->blacklist_parse_dst) Sagan_Log(S_NORMAL, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst); 
 
 }
 
@@ -441,62 +442,62 @@ if (config->blacklist_parse_dst) Sagan_Log(0, "Blacklist Default Destination Pos
 
 if ( config->search_nocase_flag) {
 Sagan_Search_Load( 1 );
-Sagan_Log(0, "");
-Sagan_Log(0, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
-Sagan_Log(0, "Search [nocase] loaded %d entries", counters->search_nocase_count);
-Sagan_Log(0, "Search [nocase] Parse Depth: %d", config->search_nocase_parse_depth);
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
+Sagan_Log(S_NORMAL, "Search [nocase] loaded %d entries", counters->search_nocase_count);
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_nocase_parse_depth);
 
 if (config->search_nocase_lognorm) {
-Sagan_Log(0, "Search [nocase] Liblognorm: Enabled"); 
+Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Enabled"); 
 } else {
-Sagan_Log(0, "Search [nocase] Liblognorm: Disabled"); 
+Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Disabled"); 
 }
 
 if (config->search_nocase_parse_proto) { 
-Sagan_Log(0, "Search [nocase] Parse Protocol: Enabled"); 
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol: Enabled"); 
 } else { 
-Sagan_Log(0, "Search [nocase] Parse Protocol: Disabled");
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol: Disabled");
 }
 
 if (config->search_nocase_parse_proto_program) { 
-Sagan_Log(0, "Search [nocase] Parse Protocol via Program: Enabled"); 
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol via Program: Enabled"); 
 } else { 
-Sagan_Log(0, "Search [nocase] Parse Protocol via Program: Disabled"); 
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol via Program: Disabled"); 
 }
 
-if (config->search_nocase_parse_src) Sagan_Log(0, "Search [nocase] Default Source Position: %d", config->search_nocase_parse_src);
-if (config->search_nocase_parse_dst) Sagan_Log(0, "Search [nocase] Default Destination Position: %d", config->search_nocase_parse_dst);
+if (config->search_nocase_parse_src) Sagan_Log(S_NORMAL, "Search [nocase] Default Source Position: %d", config->search_nocase_parse_src);
+if (config->search_nocase_parse_dst) Sagan_Log(S_NORMAL, "Search [nocase] Default Destination Position: %d", config->search_nocase_parse_dst);
 }
 
 /* Sagan Search ************************************************************/
 
 if ( config->search_case_flag) {
 Sagan_Search_Load( 2 );
-Sagan_Log(0, "");
-Sagan_Log(0, "Search Processor loaded [%s]", config->search_case_file);
-Sagan_Log(0, "Search loaded %d entries", counters->search_case_count);
-Sagan_Log(0, "Search [nocase] Parse Depth: %d", config->search_case_parse_depth);
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "Search Processor loaded [%s]", config->search_case_file);
+Sagan_Log(S_NORMAL, "Search loaded %d entries", counters->search_case_count);
+Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_case_parse_depth);
 
 if (config->search_case_lognorm) {
-Sagan_Log(0, "Search Liblognorm: Enabled");
+Sagan_Log(S_NORMAL, "Search Liblognorm: Enabled");
 } else {
-Sagan_Log(0, "Search Liblognorm: Disabled");
+Sagan_Log(S_NORMAL, "Search Liblognorm: Disabled");
 }
 
 if (config->search_case_parse_proto) {
-Sagan_Log(0, "Search Parse Protocol: Enabled");
+Sagan_Log(S_NORMAL, "Search Parse Protocol: Enabled");
 } else {
-Sagan_Log(0, "Search Parse Protocol: Disabled");
+Sagan_Log(S_NORMAL, "Search Parse Protocol: Disabled");
 }
 
 if (config->search_case_parse_proto_program) {
-Sagan_Log(0, "Search Parse Protocol via Program: Enabled");
+Sagan_Log(S_NORMAL, "Search Parse Protocol via Program: Enabled");
 } else {
-Sagan_Log(0, "Search Parse Protocol via Program: Disabled");
+Sagan_Log(S_NORMAL, "Search Parse Protocol via Program: Disabled");
 }
 
-if (config->search_case_parse_src) Sagan_Log(0, "Search Default Source Position: %d", config->search_case_parse_src);
-if (config->search_case_parse_dst) Sagan_Log(0, "Search Default Destination Position: %d", config->search_case_parse_dst);
+if (config->search_case_parse_src) Sagan_Log(S_NORMAL, "Search Default Source Position: %d", config->search_case_parse_src);
+if (config->search_case_parse_dst) Sagan_Log(S_NORMAL, "Search Default Destination Position: %d", config->search_case_parse_dst);
 
 }
 
@@ -510,20 +511,20 @@ config->websense_last_time = atol(config->sagan_startutime);
 Sagan_Websense_Init();
 Sagan_Websense_Ignore_List();
 
-Sagan_Log(0, "");
-Sagan_Log(0, "Websense URL: %s", config->websense_url);
-Sagan_Log(0, "Websense Auth: %s", config->websense_auth);
-Sagan_Log(0, "Websense Device ID: %s", config->websense_device_id);
-Sagan_Log(0, "Websense Parse Depth: %d", config->websense_parse_depth);
-Sagan_Log(0, "Websense Max Cache: %d", config->websense_max_cache);
-Sagan_Log(0, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
-Sagan_Log(0, "Websense Ignore List File: %s", config->websense_ignore_list);
-Sagan_Log(0, "Websense Ignore List ektires: %d", counters->websense_ignore_list_count);
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "Websense URL: %s", config->websense_url);
+Sagan_Log(S_NORMAL, "Websense Auth: %s", config->websense_auth);
+Sagan_Log(S_NORMAL, "Websense Device ID: %s", config->websense_device_id);
+Sagan_Log(S_NORMAL, "Websense Parse Depth: %d", config->websense_parse_depth);
+Sagan_Log(S_NORMAL, "Websense Max Cache: %d", config->websense_max_cache);
+Sagan_Log(S_NORMAL, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
+Sagan_Log(S_NORMAL, "Websense Ignore List File: %s", config->websense_ignore_list);
+Sagan_Log(S_NORMAL, "Websense Ignore List ektires: %d", counters->websense_ignore_list_count);
 }
 
-if ( config->websense_lognorm ) Sagan_Log(0, "Websense Liblognorm: Enabled"); 
-if ( config->websense_parse_src ) Sagan_Log(0, "Websense Parse Source Depth: %d", config->websense_parse_src);
-if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth: %d", config->websense_parse_dst);
+if ( config->websense_lognorm ) Sagan_Log(S_NORMAL, "Websense Liblognorm: Enabled"); 
+if ( config->websense_parse_src ) Sagan_Log(S_NORMAL, "Websense Parse Source Depth: %d", config->websense_parse_src);
+if ( config->websense_parse_dst ) Sagan_Log(S_NORMAL, "Websense Parse Destination Depth: %d", config->websense_parse_dst);
 
 #endif
 
@@ -535,16 +536,16 @@ if ( config->websense_parse_dst ) Sagan_Log(0, "Websense Parse Destination Depth
 
 #ifdef HAVE_LIBESMTP
 if ( config->sagan_esmtp_flag ) { 
-Sagan_Log(0, "");
-if ( config->min_email_priority ) Sagan_Log(0, "E-mail on priority %d or higher.", config->min_email_priority);
-Sagan_Log(0, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
-Sagan_Log(0, "SMTP server is set to: %s", config->sagan_esmtp_server);
+Sagan_Log(S_NORMAL, "");
+if ( config->min_email_priority ) Sagan_Log(S_NORMAL, "E-mail on priority %d or higher.", config->min_email_priority);
+Sagan_Log(S_NORMAL, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
+Sagan_Log(S_NORMAL, "SMTP server is set to: %s", config->sagan_esmtp_server);
 }
 #endif
 
 if ( config->sagan_external_output_flag ) { 
-Sagan_Log(0, "");
-Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "External program to be called: %s", config->sagan_extern);
 }
 
 /* Unified2 ****************************************************************/
@@ -552,9 +553,9 @@ Sagan_Log(0, "External program to be called: %s", config->sagan_extern);
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
 if ( config->sagan_unified2_flag ) { 
-Sagan_Log(0, "");
-Sagan_Log(0, "Unified2 file: %s", config->unified2_filepath);
-Sagan_Log(0, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, "Unified2 file: %s", config->unified2_filepath);
+Sagan_Log(S_NORMAL, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
 Unified2InitFile( config );
 }
 
@@ -568,28 +569,28 @@ Unified2InitFile( config );
 
 if ( config->sagan_droplist_flag ) { 
 Load_Ignore_List(); 
-Sagan_Log(0, ""); 
-Sagan_Log(0, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
+Sagan_Log(S_NORMAL, ""); 
+Sagan_Log(S_NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
 }
 
 /***************************************************************************
  * Continue with normal startup! 
  ***************************************************************************/
 
-Sagan_Log(0, "");
-Sagan_Log(0, " ,-._,-. 	-*> Sagan! <*-");
-Sagan_Log(0, " \\/)\"(\\/	Version %s", VERSION);
-Sagan_Log(0, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-Sagan_Log(0, "  /   \\/)	Copyright (C) 2009-2013 Quadrant Information Security, et al.");
-Sagan_Log(0, " (|| ||) 	Using PCRE version: %s", pcre_version());
-Sagan_Log(0, "  oo-oo     Sagan is processing events.....");
-Sagan_Log(0, "");
+Sagan_Log(S_NORMAL, "");
+Sagan_Log(S_NORMAL, " ,-._,-. 	-*> Sagan! <*-");
+Sagan_Log(S_NORMAL, " \\/)\"(\\/	Version %s", VERSION);
+Sagan_Log(S_NORMAL, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
+Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2013 Quadrant Information Security, et al.");
+Sagan_Log(S_NORMAL, " (|| ||) 	Using PCRE version: %s", pcre_version());
+Sagan_Log(S_NORMAL, "  oo-oo     Sagan is processing events.....");
+Sagan_Log(S_NORMAL, "");
 
 /* Become a daemon if requested */
 
 if ( daemonize )
 {
-Sagan_Log(0, "Becoming a daemon!");
+Sagan_Log(S_NORMAL, "Becoming a daemon!");
 
 pid_t pid = 0;
 setsid();
@@ -604,7 +605,7 @@ rc = pthread_create( &sig_thread, NULL, (void *)Sig_Handler, sigargs );
 
 if ( rc != 0  ) {
         Remove_Lock_File();
-        Sagan_Log(1, "[%s, line %d] Error creating signal handler thread. [error: %d]", __FILE__, __LINE__, rc);
+        Sagan_Log(S_ERROR, "[%s, line %d] Error creating signal handler thread. [error: %d]", __FILE__, __LINE__, rc);
         }
 
 
@@ -616,7 +617,7 @@ rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL );
 
 if ( rc != 0 ) { 
 	Remove_Lock_File();
-	Sagan_Log(1, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
+	Sagan_Log(S_ERROR, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
 	}
 
 }
@@ -628,7 +629,7 @@ if ( rc != 0 ) {
 
 checklockfile();
 
-Sagan_Log(0, "Spawning %d Processor Threads.", config->max_processor_threads);
+Sagan_Log(S_NORMAL, "Spawning %d Processor Threads.", config->max_processor_threads);
 
 for (i = 0; i < config->max_processor_threads; i++) {
 
@@ -636,16 +637,16 @@ for (i = 0; i < config->max_processor_threads; i++) {
 
      if ( rc != 0 ) { 
          Remove_Lock_File();
-         Sagan_Log(1, "Could not pthread_create() for I/O processors [error: %d]", rc);                            
+         Sagan_Log(S_ERROR, "Could not pthread_create() for I/O processors [error: %d]", rc);                            
         }
      }
 
-Sagan_Log(0, "");
+Sagan_Log(S_NORMAL, "");
 
 if ( config->sagan_fifo_flag == 0 ) { 
-Sagan_Log(0, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
+Sagan_Log(S_NORMAL, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
 } else { 
-Sagan_Log(0, "Attempting to open syslog FILE (%s).", config->sagan_fifo);
+Sagan_Log(S_NORMAL, "Attempting to open syslog FILE (%s).", config->sagan_fifo);
 }
 
 
@@ -656,9 +657,9 @@ FILE *fd;
 fd = fopen(config->sagan_fifo, "r");
 
       if ( config->sagan_fifo_flag == 0 ) { 
-      Sagan_Log(0, "Successfully opened FIFO (%s).", config->sagan_fifo);
+      Sagan_Log(S_NORMAL, "Successfully opened FIFO (%s).", config->sagan_fifo);
       } else { 
-      Sagan_Log(0, "Successfully opened FILE (%s) and processing events.....", config->sagan_fifo);
+      Sagan_Log(S_NORMAL, "Successfully opened FILE (%s) and processing events.....", config->sagan_fifo);
       }
 
 while(fd != NULL) { 
@@ -669,7 +670,7 @@ while(fd != NULL) {
 	/* If the FIFO was in a error state,  let user know the FIFO writer has resumed */
 
 	if ( fifoerr == 1 ) { 
-	   Sagan_Log(0, "FIFO writer has restarted. Processing events."); 
+	   Sagan_Log(S_NORMAL, "FIFO writer has restarted. Processing events."); 
 	   fifoerr=0; 
 	   }
 
@@ -725,7 +726,7 @@ while(fd != NULL) {
 
                 if (syslog_host == NULL || inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0  ) { 
                    syslog_host = config->sagan_host;
-                   Sagan_Log(2, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
                    }
 	       }
 
@@ -736,50 +737,50 @@ while(fd != NULL) {
 		syslog_facility=strtok_r(NULL, "|", &tok);
 		if ( syslog_facility == NULL ) { 
 		   syslog_facility = "SAGAN: FACILITY ERROR";
-		   Sagan_Log(2, "Sagan received a malformed 'facility'");
+		   Sagan_Log(S_WARN, "Sagan received a malformed 'facility'");
 		   }
 
                 syslog_priority=strtok_r(NULL, "|", &tok);
 		if ( syslog_priority == NULL ) { 
 		   syslog_priority = "SAGAN: PRIORITY ERROR";
-		   Sagan_Log(2, "Sagan received a malformed 'priority'");
+		   Sagan_Log(S_WARN, "Sagan received a malformed 'priority'");
 		   }
 
                 syslog_level=strtok_r(NULL, "|", &tok);
 		if ( syslog_level == NULL ) { 
 		   syslog_level = "SAGAN: LEVEL ERROR";
-		   Sagan_Log(2, "Sagan received a malformed 'level'");
+		   Sagan_Log(S_WARN, "Sagan received a malformed 'level'");
 		   }
 
                 syslog_tag=strtok_r(NULL, "|", &tok);
                 if ( syslog_tag == NULL ) {
                    syslog_tag = "SAGAN: TAG ERROR";
-                   Sagan_Log(2, "Sagan received a malformed 'tag'");
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'tag'");
                    }
 
                 syslog_date=strtok_r(NULL, "|", &tok);
                 if ( syslog_date == NULL ) {
                    syslog_date = "SAGAN: DATE ERROR";
-                   Sagan_Log(2, "Sagan received a malformed 'date'");
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'date'");
                    }
 
                 syslog_time=strtok_r(NULL, "|", &tok);
                 if ( syslog_time == NULL ) {
                    syslog_time = "SAGAN: TIME ERROR";
-                   Sagan_Log(2, "Sagan received a malformed 'time'");
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'time'");
                    }
 
 
                 syslog_program=strtok_r(NULL, "|", &tok);
                 if ( syslog_program == NULL ) {
                    syslog_program = "SAGAN: PROGRAM ERROR";
-                   Sagan_Log(2, "Sagan received a malformed 'program'");
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'program'");
 		   }
 
 		syslog_msg=strtok_r(NULL, "", &tok);		/* In case the message has | in it,  we delimit on "" */
                 if ( syslog_msg == NULL ) {
                    syslog_msg = "SAGAN: MESSAGE ERROR";
-                   Sagan_Log(2, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
+                   Sagan_Log(S_WARN, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
 
 
 		   /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,  
@@ -826,12 +827,12 @@ while(fd != NULL) {
                   pthread_cond_signal(&SaganProcDoWork);
                   pthread_mutex_unlock(&SaganProcWorkMutex);
 	          } else { 
-	          Sagan_Log(2, "[%s, line %d] Out of worker threads!", __FILE__, __LINE__);
+	          Sagan_Log(S_WARN, "[%s, line %d] Out of worker threads!", __FILE__, __LINE__);
 	          counters->sagan_log_drop++;
 	          }
 
-if (debug->debugthreads) Sagan_Log(0, "Current \"proc_msgslot\": %d", proc_msgslot); 
-if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
+if (debug->debugthreads) Sagan_Log(S_DEBUG, "Current \"proc_msgslot\": %d", proc_msgslot); 
+if (debug->debugsyslog) Sagan_Log(S_DEBUG, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
 } /* while(fgets) */
 
@@ -842,13 +843,13 @@ if (debug->debugsyslog) Sagan_Log(0, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, 
 
 if ( fifoerr == 0 ) {
    if ( config->sagan_fifo_flag != 0 ) { 
-      Sagan_Log(0, "EOF reached. Waiting for threads to catch up");
+      Sagan_Log(S_NORMAL, "EOF reached. Waiting for threads to catch up");
       sleep(5);
       fclose(fd); 
-      Sagan_Log(0, "Exiting.");		/* DEBUG: Rejoin threads */
+      Sagan_Log(S_NORMAL, "Exiting.");		/* DEBUG: Rejoin threads */
       exit(0);
   } else { 
-      Sagan_Log(0, "FIFO writer closed.  Waiting for FIFO write to restart...."); 
+      Sagan_Log(S_WARN, "FIFO writer closed.  Waiting for FIFO write to restart...."); 
       fifoerr=1; 			/* Set flag so our wile(fgets) knows */ 
   }
 }

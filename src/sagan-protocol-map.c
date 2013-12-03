@@ -33,6 +33,7 @@
 #include <string.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
@@ -52,13 +53,13 @@ char *map2=NULL;
 char *map3=NULL; 
 char *map4=NULL;
 
-Sagan_Log(0, "Loading protocol map file. [%s]", map);
+Sagan_Log(S_NORMAL, "Loading protocol map file. [%s]", map);
 
 counters->mapcount=0;
 
 
 if (( mapfile = fopen(map, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Cannot open protocol map file (%s)", __FILE__, __LINE__, map);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open protocol map file (%s)", __FILE__, __LINE__, map);
    }
 
 while(fgets(mapbuf, 1024, mapfile) != NULL) {
@@ -75,7 +76,7 @@ while(fgets(mapbuf, 1024, mapfile) != NULL) {
     map3 = Remove_Spaces(Remove_Return(strtok_r(NULL, "|", &saveptr)));
     map4 = Remove_Return(strtok_r(NULL, "|", &saveptr)); 
 
-    if ( map1 == NULL || map2 == NULL || map3 == NULL || map4 == NULL) Sagan_Log(1, "%s is incorrect or not correctly formated", map);
+    if ( map1 == NULL || map2 == NULL || map3 == NULL || map4 == NULL) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", map);
 
     if (!strcmp(map1, "message")) { 
    	map_message = (_Sagan_Protocol_Map_Message *) realloc(map_message, (counters->mapcount_message+1) * sizeof(_Sagan_Protocol_Map_Message));
@@ -99,7 +100,7 @@ counters->mapcount++;
 }
 
 fclose(mapfile);
-Sagan_Log(0, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount, counters->mapcount_message, counters->mapcount_program);
+Sagan_Log(S_NORMAL, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount, counters->mapcount_message, counters->mapcount_program);
 
 }
 

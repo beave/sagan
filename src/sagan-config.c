@@ -150,12 +150,12 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
          }
 
      if (!strcmp(Remove_Return(sagan_option), "disable_dns_warnings")) { 
-         Sagan_Log(0, "Supressing DNS warnings");
+         Sagan_Log(S_NORMAL, "Supressing DNS warnings");
          config->disable_dns_warnings = 1;
 	 }
 
      if (!strcmp(Remove_Return(sagan_option), "syslog_src_lookup")) { 
-         Sagan_Log(0, "DNS lookup of source address supplied by syslog daemon");
+         Sagan_Log(S_NORMAL, "DNS lookup of source address supplied by syslog daemon");
 	 config->syslog_src_lookup = 1; 
 	 }
 
@@ -170,7 +170,7 @@ while(fgets(tmpbuf, sizeof(tmpbuf), sagancfg) != NULL) {
 
 #ifndef HAVE_LIBESMTP
 if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priority")) 
-   Sagan_Log(1, "\"libesmtp\" support not found. Re-compile with ESMTP support or disable in the sagan.conf.");
+   Sagan_Log(S_ERROR, "\"libesmtp\" support not found. Re-compile with ESMTP support or disable in the sagan.conf.");
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -191,7 +191,7 @@ if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priorit
 
 #ifndef HAVE_LIBPCAP
 if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logdev") || !strcmp(sagan_option, "plog_port")) 
-   Sagan_Log(1, "\"libpcap\" support not found. Re-compile with PCAP support or disable in the sagan.conf.");
+   Sagan_Log(S_ERROR, "\"libpcap\" support not found. Re-compile with PCAP support or disable in the sagan.conf.");
 #endif
 
 #ifdef HAVE_LIBPCAP
@@ -220,8 +220,8 @@ if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logde
 
 #ifndef HAVE_LIBLOGNORM
 if (!strcmp(sagan_option, "normalize:")) {
-   Sagan_Log(0, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
-   Sagan_Log(0, "WARNING: Sagan will continue,  but _without_ liblognorm!");
+   Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
+   Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ liblognorm!");
    }
 #endif
 
@@ -254,8 +254,8 @@ if (!strcmp(sagan_option, "normalize:")) {
 
 #ifndef HAVE_LIBGEOIP
 if (!strcmp(sagan_option, "country_database")) {
-   Sagan_Log(0, "WARNING: Sagan was not compiled with Maxmind \"GeoIP\" support!");
-   Sagan_Log(0, "WARNING: Sagan will continue,  but _without_ GeoIP enabled!");
+   Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with Maxmind \"GeoIP\" support!");
+   Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ GeoIP enabled!");
    }
 #endif
 
@@ -263,7 +263,7 @@ if (!strcmp(sagan_option, "country_database")) {
 if (!strcmp(sagan_option, "country_database:")) {
    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
    strlcpy(config->geoip_country_file, sagan_var1, sizeof(config->geoip_country_file)); 
-   Sagan_Log(0, "Loading GeoIP database. [%s]", config->geoip_country_file);
+   Sagan_Log(S_NORMAL, "Loading GeoIP database. [%s]", config->geoip_country_file);
    Sagan_Open_GeoIP_Database(); 
    }
 #endif
@@ -272,7 +272,7 @@ if (!strcmp(sagan_option, "ignore_list:")) {
    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok)); 
 
    if ( sagan_var1 == NULL )  
-      Sagan_Log(1, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
+      Sagan_Log(S_ERROR, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
 
    config->sagan_droplist_flag = 1; 
    strlcpy(config->sagan_droplistfile, sagan_var1, sizeof(config->sagan_droplistfile)); 
@@ -578,8 +578,8 @@ if (!strcmp(sagan_var1, "alert_fwsam:")) {
 
 #if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
 if (!strcmp(sagan_var1, "unified2:")) { 
-   Sagan_Log(0,"\"libdnet\" support not found.  This is needed for unified2."); 
-   Sagan_Log(1, "Re-compile with libdnet support or disable in the sagan.conf.");
+   Sagan_Log(S_WARN,"\"libdnet\" support not found.  This is needed for unified2."); 
+   Sagan_Log(S_WARN, "Re-compile with libdnet support or disable in the sagan.conf.");
    }
 #endif
 
@@ -699,7 +699,7 @@ fclose(sagancfg);
 for (i = 0; i < counters->rulecount; i++) {
    for ( check = i+1; check < counters->rulecount; check ++) {
        if (!strcmp (rulestruct[check].s_sid, rulestruct[i].s_sid ))
-            Sagan_Log(1, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
+            Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
        }
    }
 
@@ -707,13 +707,13 @@ for (i = 0; i < counters->rulecount; i++) {
 
 #ifdef HAVE_LIBESMTP
 
-if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) Sagan_Log(1, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
-if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) Sagan_Log(1, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
+if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
 
 #endif 
 
-if (!strcmp(config->sagan_fifo, "")) Sagan_Log(1, "No FIFO option found which is required! Aborting!");
-if (!strcmp(config->sagan_host, "" )) Sagan_Log(1, "The 'sagan_host' option was not found and is required.");
-if ( config->sagan_port == 0 ) Sagan_Log(1, "The 'sagan_port' option was not set and is required.");
+if (!strcmp(config->sagan_fifo, "")) Sagan_Log(S_ERROR, "No FIFO option found which is required! Aborting!");
+if (!strcmp(config->sagan_host, "" )) Sagan_Log(S_ERROR, "The 'sagan_host' option was not found and is required.");
+if ( config->sagan_port == 0 ) Sagan_Log(S_ERROR, "The 'sagan_port' option was not set and is required.");
 
 }

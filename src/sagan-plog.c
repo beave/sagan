@@ -49,6 +49,7 @@
 #include <arpa/inet.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
@@ -76,39 +77,39 @@ void plog_handler(_SaganSigArgs *args )
 
 	iface = config->plog_interface;
 
-	Sagan_Log(0, "");
-	Sagan_Log(0, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
-	Sagan_Log(0, "Interface: %s", iface); 
-	Sagan_Log(0, "Packet filter: \"%s\"", config->plog_filter);
-	Sagan_Log(0, "Log device: %s", config->plog_logdev);
+	Sagan_Log(S_NORMAL, "");
+	Sagan_Log(S_NORMAL, "Initalizing Sagan syslog sniffer thread (PLOG)"); 
+	Sagan_Log(S_NORMAL, "Interface: %s", iface); 
+	Sagan_Log(S_NORMAL, "Packet filter: \"%s\"", config->plog_filter);
+	Sagan_Log(S_NORMAL, "Log device: %s", config->plog_logdev);
 
 	if ( config->plog_promiscuous ) { 
-	Sagan_Log(0, "Promiscuous is enabled."); 
+	Sagan_Log(S_NORMAL, "Promiscuous is enabled."); 
 	}
 	
-	Sagan_Log(0, "");
+	Sagan_Log(S_NORMAL, "");
 	
         if(iface == (char *)0) {
                 if((iface = pcap_lookupdev(eb)) == (char *)0)
-			Sagan_Log(1, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
+			Sagan_Log(S_ERROR, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
         }
 
         bp = pcap_open_live(iface,4096,config->plog_promiscuous,0,eb);
         if(bp == (pcap_t *)0) 
-	  Sagan_Log(1, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
+	  Sagan_Log(S_ERROR, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
 
 	/* Apply user defined filter */
 
         if(pcap_compile(bp,&filtr,config->plog_filter,1,0))
-	  Sagan_Log(1, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
+	  Sagan_Log(S_ERROR, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
         
 	if(pcap_setfilter(bp,&filtr))
-	  Sagan_Log(1, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
+	  Sagan_Log(S_ERROR, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
 
         /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
         if(wiredevlog(config)) {
 	  Remove_Lock_File();
-	  Sagan_Log(1, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
+	  Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
 	}
 	
         /* endless loop */
@@ -188,11 +189,11 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 
         /* send it! */
         if(send(outf,l,len,0) < 0) 
-	  Sagan_Log(1, "[%s, line %d] Send error", __FILE__, __LINE__);
+	  Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
         
 	return;
 bad:
-	  Sagan_Log(0, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
+	  Sagan_Log(S_WARN, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
 
 }
 

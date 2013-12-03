@@ -46,6 +46,7 @@
 #include "version.h"
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
@@ -65,10 +66,10 @@ char *tmptoken=NULL;
 char *laststring=NULL;
 
 
-Sagan_Log(0, "Loading references.conf file. [%s]" , ruleset);
+Sagan_Log(S_NORMAL, "Loading references.conf file. [%s]" , ruleset);
 
 if (( reffile = fopen(ruleset, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
    }
 						             
 while(fgets(refbuf, 1024, reffile) != NULL) {
@@ -92,13 +93,13 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl)); 
      refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
 
-    if (debug->debugload) Sagan_Log(0, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
+    if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
 		      
      counters->refcount++;
 
 } 
 fclose(reffile);
-Sagan_Log(0, "%d references loaded.", counters->refcount);
+Sagan_Log(S_NORMAL, "%d references loaded.", counters->refcount);
 }
 
 

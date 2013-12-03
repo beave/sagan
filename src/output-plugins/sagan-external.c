@@ -38,6 +38,7 @@
 #include <string.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 #include "version.h"
 
@@ -59,7 +60,7 @@ char tmpref[2048];
 int ret;
 char tmp[6];
 
-if ( debug->debugexternal ) Sagan_Log(0, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
 
 if ( config->sagan_exttype == 1 ) { 
    
@@ -87,13 +88,13 @@ if ( Event->drop == 1 ) {
 
 if ( pipe(in) < 0 ) {
    Remove_Lock_File();
-   Sagan_Log(1, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
    }
 
 
 if ( pipe(out) < 0 ) {
    Remove_Lock_File();
-   Sagan_Log(1, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
    }
 
 
@@ -115,7 +116,7 @@ if (( pid = fork()) == 0 ) {
 
    ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
    Remove_Lock_File();
-   Sagan_Log(0, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
+   Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
    } 
 
    pthread_mutex_lock( &ext_mutex );
@@ -136,7 +137,7 @@ if (( pid = fork()) == 0 ) {
 
    waitpid(pid, NULL, 0);
    
-   if ( debug->debugexternal == 1 ) Sagan_Log(0, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+   if ( debug->debugexternal == 1 ) Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
 
 }
 

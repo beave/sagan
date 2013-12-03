@@ -50,13 +50,6 @@ fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d]\n", Eve
 fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
 fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 
-/*
-printf("\n[**] [%lu:%s] %s [**]\n", Event->generatorid, Event->sid, Event->f_msg); fflush(stdout);
-printf("[Classification: %s] [Priority: %d]\n", Event->class, Event->pri ); fflush(stdout);
-printf("%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority); fflush(stdout);
-printf("Message: %s\n", Event->message); fflush(stdout);
-*/
-
 if ( Event->found != 0 ) {
 	snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 	if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);

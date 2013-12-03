@@ -36,6 +36,7 @@
 #include <pthread.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "sagan-search.h"
 #include "sagan-liblognorm.h"
 
@@ -84,7 +85,7 @@ if ( type == 1 ) {
    }
 
 if (( search = fopen(tmpfile, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] No search list to load (%s)", __FILE__, __LINE__, config->search_nocase_file);
+   Sagan_Log(S_ERROR, "[%s, line %d] No search list to load (%s)", __FILE__, __LINE__, config->search_nocase_file);
    }
 
 while(fgets(searchbuf, 1024, search) != NULL) {
@@ -169,7 +170,7 @@ if ( config->search_nocase_lognorm) {
    if ( config->search_nocase_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
    
-   Sagan_Log(0, "Found %s [nocase]", SaganNocaseSearchlist[i].search); 
+   Sagan_Log(S_NORMAL, "Found %s [nocase]", SaganNocaseSearchlist[i].search); 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port);
 
@@ -213,8 +214,7 @@ if ( config->search_case_lognorm) {
    if ( config->search_case_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
  
-
-   Sagan_Log(0, "Found %s", SaganCaseSearchlist[i].search); 
+   Sagan_Log(S_NORMAL, "Found %s", SaganCaseSearchlist[i].search); 
 
    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
    }

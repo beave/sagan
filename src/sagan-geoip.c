@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <GeoIP.h>
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "sagan-geoip.h"
 
 
@@ -52,7 +53,7 @@ config->geoip = NULL;
 
 config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 
-if ( config->geoip == NULL ) Sagan_Log(1, "[%s, line %d] Cannot open GeoIP datbase : %s", __FILE__, __LINE__, config->geoip_country_file);
+if ( config->geoip == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open GeoIP datbase : %s", __FILE__, __LINE__, config->geoip_country_file);
 
 }
 

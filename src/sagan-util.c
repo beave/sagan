@@ -47,6 +47,7 @@
 #include <sys/stat.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 
 #include "version.h"
 
@@ -91,23 +92,23 @@ void sagan_droppriv(const char *username)
 
         pw = getpwnam(username);
 
-	if (!pw) Sagan_Log(1, "Couldn't locate user '%s'. Aborting...", username);
+	if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", username);
         
 	if ( getuid() == 0 ) {
-	Sagan_Log(0, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+	Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 	ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
-	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(1, "Cannot open %s FIFO!", config->sagan_fifo);
+	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO!",  __FILE__, __LINE__, config->sagan_fifo);
 
-		if ( ret < 0 ) Sagan_Log(1, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+		if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
 
                 if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-		    Sagan_Log(1, "Could not drop privileges to uid: %lu gid: %lu!", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+		    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 	       } 
 	       
 	       } else { 
-	       Sagan_Log(0, "Not dropping privileges.  Already running as a non-privileged user");
+	       Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
 	       }
 }
 
@@ -251,7 +252,7 @@ uint32_t ip;
 /* Champ Clark III - 01/18/2011 */
 
 if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-Sagan_Log(0, "Warning: Got a inet_pton() error for \"%s\" but continuing...", Remove_Return(ipaddr));
+Sagan_Log(S_WARN, "Warning: Got a inet_pton() error for \"%s\" but continuing...", Remove_Return(ipaddr));
 }
 
 if ( config->endian == 0 ) {
@@ -336,11 +337,11 @@ char *DNS_Lookup( char *host )
     void *addr;
 
        if ( config->disable_dns_warnings == 0 ) { 
-       Sagan_Log(2, "--------------------------------------------------------------------------");
-       Sagan_Log(2, "Sagan DNS lookup need for %s.", host); 
-       Sagan_Log(2, "This can affect performance.  Please see:" );
-       Sagan_Log(2, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-       Sagan_Log(2, "--------------------------------------------------------------------------");
+       Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+       Sagan_Log(S_WARN, "Sagan DNS lookup need for %s.", host); 
+       Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
+       Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+       Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
        }
 
        memset(&hints, 0, sizeof hints);
@@ -348,7 +349,7 @@ char *DNS_Lookup( char *host )
        hints.ai_socktype = SOCK_STREAM;
 
     if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
-	Sagan_Log(2, "%s: %s", gai_strerror(status), host);
+	Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
         return "0";
     }
 

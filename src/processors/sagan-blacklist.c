@@ -37,6 +37,7 @@
 #include <pthread.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "sagan-blacklist.h"
 #include "sagan-liblognorm.h"
 
@@ -79,7 +80,7 @@ processor_info_blacklist->processor_rev           =       BLACKLIST_PROCESSOR_RE
 counters->blacklist_count=0;
 
 if (( blacklist = fopen(config->blacklist_file, "r" )) == NULL ) {
-   Sagan_Log(1, "[%s, line %d] Could not load blacklist file! (%s)", __FILE__, __LINE__, config->blacklist_file);
+   Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s)", __FILE__, __LINE__, config->blacklist_file);
    }
 
 while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
@@ -113,8 +114,8 @@ while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
 
      /* Should do better error checking? */
 
-     if ( iprange == NULL ) Sagan_Log(1, "[%s, line %d] Invalid range in %s file", __FILE__, __LINE__, config->blacklist_file);
-     if ( mask == 0 ) Sagan_Log(1, "[%s, line %d] Invalid mask in %s file", __FILE__, __LINE__, config->blacklist_file);
+     if ( iprange == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] Invalid range in %s file", __FILE__, __LINE__, config->blacklist_file);
+     if ( mask == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Invalid mask in %s file", __FILE__, __LINE__, config->blacklist_file);
 
      /* Record lower and upper range based on the /CIDR.  We then use IP2Bit(ipaddr) to determine
       * if it's within the blacklist range. 
