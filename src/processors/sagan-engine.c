@@ -82,6 +82,7 @@ int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
 sbool flowbit_isset = 0; 
+
 sbool geoip_isset = 0; 
 int   geoip_return = 0;
 
@@ -624,6 +625,8 @@ if ( rulestruct[b].flowbit_flag ) {
       now=localtime(&t);
       strftime(timet, sizeof(timet), "%s",  now);
 
+      flowbit_isset = 0; 
+
    /* Clean up expired flowbits */
 
    for (i=0; i<counters->flowbit_count; i++) {
@@ -635,7 +638,7 @@ if ( rulestruct[b].flowbit_flag ) {
 
    /* Flowbit "isset" */
 
-   if ( rulestruct[b].flowbit_flag == 3 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state ==1 ) { 
+   if ( rulestruct[b].flowbit_flag == 3 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state == 1 ) { 
       flowbit_isset = 1; 
       if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
       }
@@ -653,6 +656,14 @@ if ( rulestruct[b].flowbit_flag ) {
       flowbits[rulestruct[b].flowbit_memory_position].flowbit_state = 0;
       flowbit_isset = 0; 
       }
+
+  /* Flowbit "isnotset" */
+
+   if ( rulestruct[b].flowbit_flag == 4 && flowbits[rulestruct[b].flowbit_memory_position].flowbit_state == 0 ) {
+      flowbit_isset = 1; 
+      if ( debug->debugflowbit ) Sagan_Log(0, "[%s, line %d] Flowbit \"%s\" ISNOTSET",  __FILE__, __LINE__, flowbits[rulestruct[b].flowbit_memory_position].flowbit_name);
+      }
+
 
 if ( debug->debugflowbit) { 
    

@@ -319,8 +319,8 @@ Remove_Spaces(rulesplit);
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
-		if (strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset")) { 
-		   Sagan_Log(1, "Expect 'noalert', 'set', 'unset' or 'isset' but got '%s' at line %d in %s", tmptoken, linecount, ruleset); 
+		if (strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset")) { 
+		   Sagan_Log(1, "Expect 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", tmptoken, linecount, ruleset); 
 		   }
 
 		if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1; 
@@ -363,6 +363,20 @@ Remove_Spaces(rulesplit);
                     }
                 rulestruct[counters->rulecount].flowbit_flag=3;
                 }
+
+                /* ISNOTSET */
+
+                if (!strcmp(tmptoken, "isnotset")) {
+                tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+                for (i = 0; i<counters->flowbit_count; i++) {
+                    if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
+                       rulestruct[counters->rulecount].flowbit_memory_position = i;
+                       }
+                    }
+                rulestruct[counters->rulecount].flowbit_flag=4;
+                }
+
+
 	}
 
 #ifdef HAVE_LIBGEOIP

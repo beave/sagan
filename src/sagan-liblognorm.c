@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <string.h>
 #include <pthread.h>
 
 
@@ -58,7 +59,7 @@ struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
 
 static ln_ctx ctx;
-static ee_ctx eectx;
+//static ee_ctx eectx;
 
 
 struct _SaganCounters *counters;
@@ -78,9 +79,9 @@ SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
 if((ctx = ln_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
-if((eectx = ee_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
+//if((eectx = ee_initCtx()) == NULL) Sagan_Log(1, "[%s, line %d] Cannot initialize libee context.", __FILE__, __LINE__);
 
-ln_setEECtx(ctx, eectx);
+//ln_setEECtx(ctx, eectx);
 
 for (i=0; i < counters->liblognormtoload_count; i++) {
 	Sagan_Log(0, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
@@ -99,98 +100,89 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
 void sagan_normalize_liblognorm(char *syslog_msg)
 {
 
-es_str_t *str = NULL;
-es_str_t *propName = NULL;
-struct ee_event *lnevent = NULL;
-struct ee_field *field = NULL;
-char *cstr=NULL;
+char buf[10*1024];
+const char *cstr;
+const char *username;
+const char *src_ip;
+
+const char *src_host;
+const char *dst_host;
+
 char ipbuf_src[64] = { 0 }; 
 char ipbuf_dst[64] = { 0 }; 
 
-str = es_newStrFromCStr(syslog_msg, strlen(syslog_msg ));
-ln_normalize(ctx, str, &lnevent);
+char *tmp;
 
-	if(lnevent != NULL) {
-                       
-		es_deleteStr(str);
-		ee_fmtEventToRFC5424(lnevent, &str);
-		cstr = es_str2cstr(str, NULL);
+struct json_object *json = NULL;
 
-		if ( debug->debugnormalize ) Sagan_Log(0, "Normalize output: %s", cstr);
+snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
-                propName = es_newStrFromBuf("src-ip", 6);
+//printf("to normlize: %s\n", syslog_msg);
+ln_normalize(ctx, buf, strlen(buf), &json);
 
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			SaganNormalizeLiblognorm->ip_src = es_str2cstr(str, NULL);
-			if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_src=config->sagan_host;
-			}
+cstr = (char*)json_object_to_json_string(json);
 
-		es_deleteStr(propName);
-	
-		propName = es_newStrFromBuf("dst-ip", 6);
+SaganNormalizeLiblognorm->ip_src = json_object_get_string(json_object_object_get(json, "src-ip"));
+SaganNormalizeLiblognorm->ip_dst = json_object_get_string(json_object_object_get(json, "dst-ip"));
+SaganNormalizeLiblognorm->username = json_object_get_string(json_object_object_get(json, "username"));
 
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			SaganNormalizeLiblognorm->ip_dst = es_str2cstr(str, NULL);
-			if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_dst=config->sagan_host;
-			}
-		es_deleteStr(propName);
+/*
+src_host = json_object_get_string(json_object_object_get(json, "src-host"));
 
-		propName = es_newStrFromBuf("src-port", 8);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			cstr = es_str2cstr(str, NULL);
-			SaganNormalizeLiblognorm->src_port = atoi(cstr);
-			}
-		es_deleteStr(propName);
+/* If a src/dst host is found,  do a reverse lookup */
 
-		propName = es_newStrFromBuf("dst-port", 8);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			cstr = es_str2cstr(str, NULL);
-			SaganNormalizeLiblognorm->dst_port = atoi(cstr);
-			}
-		es_deleteStr(propName);
+if ( src_host != NULL ) { 
+	strlcpy(ipbuf_src, DNS_Lookup(src_host), sizeof(ipbuf_src));
+	SaganNormalizeLiblognorm->ip_src=ipbuf_src;
+	}
 
-	
-/*		Not currently used with unified2 - 07/15/2013 - Champ Clark 
- 
-		propName = es_newStrFromBuf("username", 8);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			SaganNormalizeLiblognorm->username = es_str2cstr(str, NULL);
-			}
-		es_deleteStr(propName);
+dst_host = json_object_get_string(json_object_object_get(json, "dst-host"));
 
-		propName = es_newStrFromBuf("uid", 3);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			SaganNormalizeLiblognorm->uid = es_str2cstr(str, NULL);
-			}
-		es_deleteStr(propName);
-*/
+if ( dst_host != NULL ) {
+        strlcpy(ipbuf_dst, DNS_Lookup(dst_host), sizeof(ipbuf_dst));
+        SaganNormalizeLiblognorm->ip_src=ipbuf_dst;
+        }
 
-		propName = es_newStrFromBuf("src-host", 8);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			str = ee_getFieldValueAsStr(field, 0);
-			strlcpy(ipbuf_src, DNS_Lookup(es_str2cstr(str, NULL)), sizeof(ipbuf_src));
-			SaganNormalizeLiblognorm->ip_src=ipbuf_src;
-			}
-		es_deleteStr(propName);
+/* Get port information */
 
-		propName = es_newStrFromBuf("dst-host", 8);
-		if((field = ee_getEventField(lnevent, propName)) != NULL) {
-			strlcpy(ipbuf_dst, DNS_Lookup(es_str2cstr(str, NULL)), sizeof(ipbuf_dst)); 
-			SaganNormalizeLiblognorm->ip_dst=ipbuf_dst;
-			}
-		es_deleteStr(propName);
-		}
+tmp = json_object_get_string(json_object_object_get(json, "src-port")); 
 
-free(cstr);
-free(field);
-es_deleteStr(str);		/* Yes, this is suppose to be here */
-ee_deleteEvent(lnevent);
+if ( tmp != NULL ) 
+	SaganNormalizeLiblognorm->src_port = atoi(tmp); 
+
+tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
+
+if ( tmp != NULL ) { 
+	SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+	}
+
+
+if (SaganNormalizeLiblognorm->ip_src != NULL ) {
+	if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_src=config->sagan_host;
+	}
+
+if (SaganNormalizeLiblognorm->ip_dst != NULL ) { 
+	if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" )) SaganNormalizeLiblognorm->ip_dst=config->sagan_host;
+	}
+
+if ( debug->debugnormalize ) { 
+     Sagan_Log(0, "Liblognorm DEBUG output:");
+     Sagan_Log(0, "---------------------------------------------------");
+     Sagan_Log(0, "Log message to normalize: %s", syslog_msg); 
+     Sagan_Log(0, "Parsed: %s", cstr);
+     Sagan_Log(0, "Source IP: %s", SaganNormalizeLiblognorm->ip_src); 
+     Sagan_Log(0, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
+     Sagan_Log(0, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
+     Sagan_Log(0, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
+     Sagan_Log(0, "Username: %s", SaganNormalizeLiblognorm->username);
+     Sagan_Log(0, ""); 
+     }
+
+
+//free(cstr);
+//json_object_put(json);
+//free(json);
+
 }
 
 #endif

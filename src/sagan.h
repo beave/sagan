@@ -379,7 +379,7 @@ int   s_find_src_pos;
 sbool s_find_dst_ip;
 int   s_find_dst_pos;
 
-int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset  */
+int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset, 4 == isnotset */
 sbool flowbit_noalert;
 int   flowbit_memory_position;
 int   flowbit_timeout;			/* How long a flowbit is to stay alive (seconds) */
