@@ -60,6 +60,7 @@ void    Chroot( const char *, const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
+char   *Between_Pipes( char * );
 char   *Reference_Lookup( int, int );
 double CalcPct(uint64_t, uint64_t);
 char   *Replace_String(char *, char *, char *);

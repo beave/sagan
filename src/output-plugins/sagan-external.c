@@ -133,6 +133,7 @@ if (( pid = fork()) == 0 ) {
    pthread_mutex_unlock( &ext_mutex );
 
    n = read(out[0], buf, sizeof(buf));
+   close(out[0]);
    buf[n] = 0;
 
    waitpid(pid, NULL, 0);

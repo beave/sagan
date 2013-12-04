@@ -100,6 +100,7 @@ memset(rulestr, 0, RULEBUF);
 char rulebuf[RULEBUF];
 char pcrerule[RULEBUF];
 char tmp2[512];
+char tmp3[512];
 char tmp[2];
 
 int linecount=0;
