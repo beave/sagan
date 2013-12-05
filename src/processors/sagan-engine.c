@@ -284,17 +284,18 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		   if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 ) {
 		        
 			pthread_mutex_lock(&Lognorm_Mutex);
+
 			sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
-			if ( SaganNormalizeLiblognorm->ip_src != NULL ) { 
+			if (SaganNormalizeLiblognorm->ip_src[0] != '0') { 
 			   strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
 			   ip_src_flag = 1;
 			}
 
-			if ( SaganNormalizeLiblognorm->ip_dst != NULL ) { 
+			if (SaganNormalizeLiblognorm->ip_dst[0] != '0' ) { 
 			   strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst)); 
 			   ip_dst_flag = 1;
-			}
+			   }
 
 			src_port = SaganNormalizeLiblognorm->src_port;
 			dst_port = SaganNormalizeLiblognorm->dst_port;

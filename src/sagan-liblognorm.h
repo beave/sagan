@@ -1,16 +1,16 @@
-
+#include "sagan-defs.h"
 
 #ifdef HAVE_LIBLOGNORM
 typedef struct _SaganNormalizeLiblognorm
 {
-const char *ip_src;
-const char *ip_dst;
+char ip_src[MAXIP];
+char ip_dst[MAXIP];
 
 int  src_port;
 int  dst_port;
 
-const char *username;
-const char *uid;
+//const char username[256];
+//const char uid[10];
 
 } _SaganNormalizeLiblognorm;
 #endif
