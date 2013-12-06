@@ -141,7 +141,6 @@ int i=0;
 int b=0; 
 
 char ipaddr_found[MAXIP] = { 0 }; 
-//char *ipaddrptr=NULL;
 
 uint32_t u32_ipaddr;
 
@@ -245,7 +244,7 @@ if ( config->blacklist_lognorm && (ip_src_flag != 0 || ip_dst_flag != 0 )) retur
 
 for (i=1; i < config->blacklist_parse_depth+1; i++) { 
 
-      strlcpy(ipaddr_found, parse_ip(SaganProcSyslog_LOCAL->syslog_message, i, 0), sizeof(ipaddr_found)); 
+      strlcpy(ipaddr_found, parse_ip(SaganProcSyslog_LOCAL->syslog_message, i), sizeof(ipaddr_found)); 
 
        if ( ipaddr_found[0] != '0' ) { 
 
@@ -260,15 +259,13 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 		  counters->blacklist_hit_count++;
 
 		  if ( config->blacklist_parse_src ) { 
-		  strlcpy(ip_src, parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_src, 1), sizeof(ip_src));
+		  strlcpy(ip_src, parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_src), sizeof(ip_src));
 		  if ( ip_src[0] == '0') strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
 		  strlcpy(ip_src_tmp, ip_src, sizeof(ip_src_tmp));
 		  }
 
 		  if ( config->blacklist_parse_dst ) { 
-		  strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst, 1), sizeof(ip_dst));
-
-		  strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst, 1), sizeof(ip_dst));
+		  strlcpy(ip_dst, parse_ip(SaganProcSyslog_LOCAL->syslog_message, config->blacklist_parse_dst), sizeof(ip_dst));
 		  if ( ip_dst[0] != '0' ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst)); 
 		  strlcpy(ip_dst_tmp, ip_dst, sizeof(ip_dst_tmp));
 		  }
