@@ -129,11 +129,6 @@ while (ptmp != NULL ) {
 	 ptmp = strtok_r(NULL, " ", &tok);
      }
 
-if ( type == PARSEIP_RETURN_STRING) { 
-   return(config->sagan_host); 
-   } else { 
-   return(NULL);
-   }
-
+   return("0");
 }
 
