@@ -35,10 +35,15 @@
 #include <string.h>
 #include <pthread.h>
 
-
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>
+
+#if defined(HAVE_JSON_JSON_H) 
+#  include <json/json.h> 
+#else 
+#  include <json.h> 
+#endif 
 
 #include "sagan.h"
 #include "sagan-defs.h"
