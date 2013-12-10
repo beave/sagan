@@ -252,6 +252,13 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 		 debugflag=1; 
 		 }
 
+#ifdef HAVE_LIBGEOIP
+              if (strstr(optarg, "geoip")) {
+                 debug->debuggeoip=1;
+                 debugflag=1;
+                 }
+#endif 
+	     
 #ifdef HAVE_LIBLOGNORM
 	      if (strstr(optarg, "normalize" )) {
 	         debug->debugnormalize=1;

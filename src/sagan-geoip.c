@@ -43,6 +43,7 @@
 
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
+struct _SaganDebug *debug;
 
 void Sagan_Open_GeoIP_Database( void ) { 
 	
@@ -59,21 +60,38 @@ if ( config->geoip == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open GeoIP
 
 int Sagan_GeoIP_Lookup_Country( char *ipaddr, int rule_position )  { 
 
+
 char *ptmp = NULL;
 char *tok = NULL; 
-
+char tmp[512] = { 0 }; 
 const char *str = NULL;
 
 str = GeoIP_country_code_by_addr(config->geoip, ipaddr);
+strlcpy(tmp, rulestruct[rule_position].geoip_country_codes, sizeof(tmp)); 
 
-if ( str == NULL ) return(0); 		/* GeoIP of the IP address not found */
+if ( str == NULL ) { 
+	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "Country code for %s not found in GeoIP DB", ipaddr); 
+	return(0); 		/* GeoIP of the IP address not found */
+	}
 
-ptmp = strtok_r(rulestruct[rule_position].geoip_country_codes, ",", &tok);
+if (debug->debuggeoip) {
+        Sagan_Log(S_DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
+        Sagan_Log(S_DEBUG, "Country Codes    : %s", rulestruct[rule_position].geoip_country_codes);
+	Sagan_Log(S_DEBUG, "Found in GeoIP DB: %s", str);
+        }
+
+ptmp = strtok_r(tmp, ",", &tok);
 
 while (ptmp != NULL ) {
-	if (!strcmp(ptmp, str)) return(1);	/* GeoIP was found / there was a hit */
+	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP rule string parsing %s|%s", ptmp, str);
+	if (!strcmp(ptmp, str)) {
+		if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Found [%s]", str);
+		return(1);	/* GeoIP was found / there was a hit */
+		}
 	ptmp = strtok_r(NULL, ",", &tok);
 	}
+
+if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Not found"); 
 
 return(0);
 }

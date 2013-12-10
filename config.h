@@ -1,5 +1,5 @@
 /* config.h.  Generated from config.h.in by configure.  */
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
@@ -74,7 +74,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-/* #undef HAVE_LIBGEOIP */
+#define HAVE_LIBGEOIP 1
 
 /* Define to 1 if you have the `json' library (-ljson). */
 #define HAVE_LIBJSON 1

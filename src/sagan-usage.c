@@ -57,6 +57,10 @@ fprintf(stderr, ", plog");
 fprintf(stderr, ", websense");
 #endif
 
+#ifdef HAVE_LIBGEOIP
+fprintf(stderr, ", geoip"); 
+#endif
+
 fprintf(stderr, ".\n");
 
 fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");

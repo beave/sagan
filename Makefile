@@ -57,7 +57,7 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure AUTHORS COPYING ChangeLog INSTALL NEWS \
 	TODO config.guess config.sub depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -156,7 +156,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -ldnet -ljson -llognorm -lee -lestr -lm -lpthread -lpcre 
+LIBS = -ldnet -ljson -llognorm -lee -lestr -lGeoIP -lm -lpthread -lpcre 
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/champ/code/sagan/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p

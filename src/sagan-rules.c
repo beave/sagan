@@ -416,7 +416,8 @@ Remove_Spaces(rulesplit);
 		if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1; 
 		if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
 
-		tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2)));           /* Grab country codes */
+		tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab country codes */
+		Remove_Spaces(tmptoken);
 		
 		strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
 		rulestruct[counters->rulecount].geoip_flag = 1; 

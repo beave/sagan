@@ -89,7 +89,6 @@
 #define S_WARN		2
 #define S_DEBUG		3
 
-
 #define PARSEIP_RETURN_STRING	0
 
 /* defaults if the user doesn't define */

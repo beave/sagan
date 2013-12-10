@@ -148,6 +148,10 @@ struct _SaganDebug {
     sbool debugthreads; 
     sbool debugflowbit;
 
+#ifdef HAVE_LIBGEOIP
+    sbool debuggeoip;
+#endif
+
 #ifdef HAVE_LIBLOGNORM
     sbool debugnormalize;
 #endif

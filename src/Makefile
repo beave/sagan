@@ -56,7 +56,7 @@ bin_PROGRAMS = sagan$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -131,7 +131,7 @@ INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -ldnet -ljson -llognorm -lee -lestr -lm -lpthread -lpcre 
+LIBS = -ldnet -ljson -llognorm -lee -lestr -lGeoIP -lm -lpthread -lpcre 
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/champ/code/sagan/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
