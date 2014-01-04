@@ -349,8 +349,8 @@ if ( rulestruct[b].s_find_proto_program == 1 ) {
 }
 
 
-if ( ip_src_flag == 0 ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src)); 
-if ( ip_dst_flag == 0 ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst)); 
+if ( ip_src_flag == 0 || ip_src[0] == '0' ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
+if ( ip_dst_flag == 0 || ip_dst[0] == '0' ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
 
 if ( src_port == 0 ) src_port=config->sagan_port;
 if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;  

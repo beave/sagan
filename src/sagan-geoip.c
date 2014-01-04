@@ -76,7 +76,7 @@ sbool rfc_return = 0;
 /* is_rfc1918() This likely burns less CPU than GeoIP lookup! */
 
 if (is_rfc1918(ipaddr)) { 
-	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "IP address %s is RFC1918,  skipping GeoIP lookup.", ipaddr); 
+	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "IP address %s is RFC1918, skipping GeoIP lookup.", ipaddr); 
 	return(2);
 	}
 
