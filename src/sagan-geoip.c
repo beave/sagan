@@ -44,6 +44,7 @@
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
+struct _SaganCounters *counters;
 
 void Sagan_Open_GeoIP_Database( void ) { 
 	
@@ -59,7 +60,6 @@ if ( config->geoip == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open GeoIP
 }
 
 int Sagan_GeoIP_Lookup_Country( char *ipaddr, int rule_position )  { 
-
 
 char *ptmp = NULL;
 char *tok = NULL; 

@@ -40,10 +40,13 @@
 
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
+struct _SaganCounters *counters;
 
 void Sagan_Alert_File( _SaganEvent *Event ) { 
 
-char tmpref[2048]="";
+char tmpref[2048] = { 0 }; 
+
+counters->alert_total++; 
 
 fprintf(config->sagan_alert_stream, "\n[**] [%lu:%s] %s [**]\n", Event->generatorid, Event->sid, Event->f_msg);
 fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d]\n", Event->class, Event->pri );

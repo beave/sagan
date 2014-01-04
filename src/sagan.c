@@ -709,7 +709,7 @@ while(fd != NULL) {
 		    
 		      /* Invalid lookups get the config->sagan_host value */
 
-		      if (!strcmp(src_dns_lookup, "0" )) { 
+		      if (src_dns_lookup[0] == '0' ) { 
 		         strlcpy(src_dns_lookup, config->sagan_host, sizeof(src_dns_lookup)); 
 		  	 counters->dns_miss_count++; 
 			 }

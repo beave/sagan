@@ -702,6 +702,7 @@ if ( geoip_return != 2 )  {
                geoip_isset = 0; 
                } else { 
                geoip_isset = 1; 
+	       counters->geoip_hit++;
             }
         }
 
@@ -711,6 +712,7 @@ if ( geoip_return != 2 )  {
 
             if ( geoip_return == 1 ) {
                geoip_isset = 1;
+	       counters->geoip_hit++;
                } else {
                geoip_isset = 0;
             }

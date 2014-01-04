@@ -88,6 +88,7 @@ struct _SaganCounters {
     uint64_t fwsam_count;
     uint64_t ignore_count;
     uint64_t blacklist_count;
+    uint64_t alert_total;
 
     uint64_t track_clients_client_count;                /* sagan-track-clients processor */
     uint64_t track_clients_down; 
@@ -119,6 +120,10 @@ struct _SaganCounters {
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
+#endif
+
+#ifdef HAVE_LIBGEOIP
+   uint64_t geoip_hit;				/* GeoIP hit count */
 #endif
 
 #ifdef WITH_WEBSENSE

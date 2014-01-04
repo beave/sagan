@@ -80,14 +80,18 @@ Sagan_Log(S_NORMAL, " ,-._,-.  -[ Sagan Version %s - Engine Statistics ]-", VERS
 Sagan_Log(S_NORMAL, " \\/)\"(\\/"); 
 Sagan_Log(S_NORMAL, "  (_o_)    Events processed         : %" PRIu64 "", counters->sagantotal);
 Sagan_Log(S_NORMAL, "  /   \\/)  Signatures matched       : %" PRIu64 " (%.3f%%)", counters->saganfound, CalcPct(counters->saganfound, counters->sagantotal ) );
-Sagan_Log(S_NORMAL, " (|| ||)   Threshold                : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
+Sagan_Log(S_NORMAL, " (|| ||)   Alerts                   : %" PRIu64 " (%.3f%%)",  counters->alert_total, CalcPct( counters->alert_total, counters->sagantotal) );
 Sagan_Log(S_NORMAL, "  oo-oo    After                    : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
+Sagan_Log(S_NORMAL, "           Threshold                : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
 Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
 
 if (config->sagan_droplist_flag) {
 Sagan_Log(S_NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->sagantotal) );
 }
 
+#ifdef HAVE_LIBGEOIP
+Sagan_Log(S_NORMAL, "           GeoIP Hits:              : %" PRIu64 " (%.3f%%)", counters->geoip_hit, CalcPct( counters->geoip_hit, counters->sagantotal) );
+#endif
 
 
 if ( seconds >= 60 && seconds <= 3600) Sagan_Log(S_NORMAL, "           Runtime                  : %u minutes", seconds / 60);
