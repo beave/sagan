@@ -684,11 +684,15 @@ if ( debug->debugflowbit) {
 
 if ( rulestruct[b].geoip_flag ) { 
 
+   geoip_isset = 0; 		/* Reset,  so we dont use previous value */
+
    if ( rulestruct[b].geoip_src_or_dst == 1 ) { 
         geoip_return = Sagan_GeoIP_Lookup_Country(ip_src, b); 
         } else { 
         geoip_return = Sagan_GeoIP_Lookup_Country(ip_dst, b);
    }
+
+if ( geoip_return != 2 )  { 
 
 	/* If country IS NOT {my value} return 1 */
 
@@ -711,6 +715,7 @@ if ( rulestruct[b].geoip_flag ) {
                geoip_isset = 0;
             }
         }
+   }
 }
 
 #endif

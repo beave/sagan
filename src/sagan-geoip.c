@@ -65,13 +65,27 @@ char *ptmp = NULL;
 char *tok = NULL; 
 char tmp[512] = { 0 }; 
 const char *str = NULL;
+sbool rfc_return = 0; 
+
+/* Return codes  
+ * 0 == GeoIP was found for ipaddr,  but wasn't in user defined home countries 
+ * 1 == GeoIP was found and was found in user defined counties
+ * 2 == GeoIP wasn't located at all,  or the address was RFC1918
+ */
+
+/* is_rfc1918() This likely burns less CPU than GeoIP lookup! */
+
+if (is_rfc1918(ipaddr)) { 
+	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "IP address %s is RFC1918,  skipping GeoIP lookup.", ipaddr); 
+	return(2);
+	}
 
 str = GeoIP_country_code_by_addr(config->geoip, ipaddr);
 strlcpy(tmp, rulestruct[rule_position].geoip_country_codes, sizeof(tmp)); 
 
 if ( str == NULL ) { 
 	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "Country code for %s not found in GeoIP DB", ipaddr); 
-	return(0); 		/* GeoIP of the IP address not found */
+	return(2); 		/* GeoIP of the IP address not found */
 	}
 
 if (debug->debuggeoip) {
@@ -85,13 +99,13 @@ ptmp = strtok_r(tmp, ",", &tok);
 while (ptmp != NULL ) {
 	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP rule string parsing %s|%s", ptmp, str);
 	if (!strcmp(ptmp, str)) {
-		if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Found [%s]", str);
+		if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Found in user defined values [%s].", str);
 		return(1);	/* GeoIP was found / there was a hit */
 		}
 	ptmp = strtok_r(NULL, ",", &tok);
 	}
 
-if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Not found"); 
+if (debug->debuggeoip) Sagan_Log(S_DEBUG, "GeoIP Status: Not found in user defined values."); 
 
 return(0);
 }
