@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2013 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2013 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2014 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2014 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -588,7 +588,7 @@ Sagan_Log(S_NORMAL, "");
 Sagan_Log(S_NORMAL, " ,-._,-. 	-*> Sagan! <*-");
 Sagan_Log(S_NORMAL, " \\/)\"(\\/	Version %s", VERSION);
 Sagan_Log(S_NORMAL, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2013 Quadrant Information Security, et al.");
+Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2014 Quadrant Information Security, et al.");
 Sagan_Log(S_NORMAL, " (|| ||) 	Using PCRE version: %s", pcre_version());
 Sagan_Log(S_NORMAL, "  oo-oo     Sagan is processing events.....");
 Sagan_Log(S_NORMAL, "");

@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2013 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2013 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2014 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2014 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -129,7 +129,7 @@ int ip_proto=0;
 int dst_port=0;
 int src_port=0;
 
-sbool flowbit_has_been_set = 0;
+//sbool flowbit_has_been_set = 0;
 
 #ifdef HAVE_LIBLOGNORM
 sbool liblognorm_flag=0;
@@ -350,7 +350,7 @@ Remove_Spaces(rulesplit);
 
 		/* UNSET */
 
-		flowbit_has_been_set = 0;
+		//flowbit_has_been_set = 0;
 
 		if (!strcmp(tmptoken, "unset")) { 
 		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
@@ -359,7 +359,7 @@ Remove_Spaces(rulesplit);
 		       rulestruct[counters->rulecount].flowbit_memory_position = i;
 		       }
 		    }
-		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
 		rulestruct[counters->rulecount].flowbit_flag=2;
 		}
 
@@ -372,7 +372,7 @@ Remove_Spaces(rulesplit);
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
                        }
                     }
-		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=3;
                 }
 
@@ -383,10 +383,10 @@ Remove_Spaces(rulesplit);
                 for (i = 0; i<counters->flowbit_count; i++) {
                     if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
-		       flowbit_has_been_set = 1; 
+//		       flowbit_has_been_set = 1; 
                        }
                     }
-		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=4;
                 }
 	}
