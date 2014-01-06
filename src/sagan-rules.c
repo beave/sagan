@@ -129,7 +129,7 @@ int ip_proto=0;
 int dst_port=0;
 int src_port=0;
 
-//sbool flowbit_has_been_set = 0;
+sbool flowbit_has_been_set = 0;
 
 #ifdef HAVE_LIBLOGNORM
 sbool liblognorm_flag=0;
@@ -350,43 +350,52 @@ Remove_Spaces(rulesplit);
 
 		/* UNSET */
 
-		//flowbit_has_been_set = 0;
-
 		if (!strcmp(tmptoken, "unset")) { 
+		
 		tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+		flowbit_has_been_set = 0;
+
 		for (i = 0; i<counters->flowbit_count; i++) { 
 		    if (!strcmp(tmptoken, flowbits[i].flowbit_name)) { 
 		       rulestruct[counters->rulecount].flowbit_memory_position = i;
+		       flowbit_has_been_set = 1; 
 		       }
 		    }
-//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
 		rulestruct[counters->rulecount].flowbit_flag=2;
 		}
 
 		/* ISSET */
 
                 if (!strcmp(tmptoken, "isset")) {
+
                 tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+		flowbit_has_been_set = 0;
+
                 for (i = 0; i<counters->flowbit_count; i++) {
                     if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
+		       flowbit_has_been_set = 1;
                        }
                     }
-//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=3;
                 }
 
                 /* ISNOTSET */
 
                 if (!strcmp(tmptoken, "isnotset")) {
+
                 tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+		flowbit_has_been_set = 0;
+
                 for (i = 0; i<counters->flowbit_count; i++) {
                     if (!strcmp(tmptoken, flowbits[i].flowbit_name)) {
                        rulestruct[counters->rulecount].flowbit_memory_position = i;
-//		       flowbit_has_been_set = 1; 
+		       flowbit_has_been_set = 1; 
                        }
                     }
-//		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+		if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 rulestruct[counters->rulecount].flowbit_flag=4;
                 }
 	}

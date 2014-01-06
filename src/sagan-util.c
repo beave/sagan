@@ -168,40 +168,6 @@ char *To_UpperC(char* const s) {
   return s;
 }
 
-/* SQL strip. 
-
-no longer needed,  but might be useful in the future? 
-
-char *SQL_Strip(char *s) {
-       char *s1, *s2;
-       for(s1 = s2 = s;*s1;*s1++ = *s2++ )
-       while ( *s2 == '<'  || 
-               *s2 == '>'  || 
-	       *s2 == '&'  || 
-	       *s2 == '%'  || 
-	       *s2 == ';'  || 
-	       *s2 == '"'  || 
-	       *s2 == '\'' || 
-	       *s2 == '/'  || 
-	       *s2 == '#'  || 
-	       *s2 == '`'  || 
-	       *s2 == '|'  ||
-	       *s2 == ','  || 
-	       *s2 == '@'  || 
-	       *s2 == '$'  || 
-	       *s2 == '^'  ||
-	       *s2 == '['  || 
-	       *s2 == ']'  || 
-	       *s2 == '('  || 
-	       *s2 == ')'  || 
-	       *s2 == '='  || 
-	       *s2 == '\r' || 
-	       *s2 == '\n' 
-	       ) s2++;
-       return s;
-}
-*/
-
 void Sagan_Log (int type, const char *format,... ) {
 
    char buf[1024];
