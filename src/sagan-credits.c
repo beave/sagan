@@ -20,7 +20,7 @@
 
 /* sagan-credit.c 
  *
- * A please to give credit where credit is due 
+ * Give credit where credit is due 
  *
  */
 
