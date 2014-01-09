@@ -452,3 +452,22 @@ if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_i
 
 return(msg);
 }
+
+/****************************************************************************/
+/* Sagan_Validate_HEX - Makes sure a string is valid hex.                   */
+/****************************************************************************/
+
+int Sagan_Validate_HEX (const char *string) {
+
+    const char *curr = string;
+    while (*curr != 0)
+    {
+        if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9')) {
+            ++curr;
+        } else {
+            return(FALSE);
+        }
+    }
+    return(TRUE);
+}
+

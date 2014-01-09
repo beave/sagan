@@ -589,6 +589,9 @@ Remove_Spaces(rulesplit);
 				if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
 				
 				snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]); 	/* Copy the hex value - ie 3a, 1B, etc */
+
+				if (!Sagan_Validate_HEX(final_content_tmp)) Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+					
 				sscanf(final_content_tmp, "%x", &x); 							/* Convert hex to dec */
 				snprintf(tmp, sizeof(tmp), "%c", x); 							/* Convert dec to ASCII */
 				strncat(final_content, tmp, 1); 							/* Append value */
