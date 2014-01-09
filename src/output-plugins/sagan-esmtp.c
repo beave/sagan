@@ -50,7 +50,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void sagan_esmtp_thread (_SaganEvent *Event) { 
+int sagan_esmtp_thread (_SaganEvent *Event) { 
 
 char tmpref[2048];
 char tmpemail[255];
@@ -59,15 +59,27 @@ char tmpa[MAX_EMAILSIZE];
 char tmpb[MAX_EMAILSIZE];
 int r = 0;
 
+
+/* If the events doesnt have enought priority,  short circuit here.  If the 
+ * config->min_email_priority == 0,  then e-mail everything */
+
+if ( config->min_email_priority != 0 ) { 
+
+if ( Event->pri > config->min_email_priority ) {
+	if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "Event priority (%d) is not < min_email_priority (%d)", Event->pri, config->min_email_priority);
+	return(0);
+	}
+}
+
 snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
 /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
 
 if ( rulestruct[Event->found].email_flag )  { 
-   if ( debug->debugesmtp ) Sagan_Log(S_NORMAL, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
+   if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
    snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
    } else { 
-   if ( debug->debugesmtp ) Sagan_Log(S_NORMAL, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
+   if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
    if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
    }
 
@@ -180,6 +192,7 @@ if (!smtp_start_session (session)) {
 failure:
 if(session != NULL)
 	smtp_destroy_session (session);
+	return(0);
 }
 
 int

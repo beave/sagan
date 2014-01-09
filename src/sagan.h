@@ -585,7 +585,7 @@ char filepath[MAXPATH];
 #define MAX_EMAILSIZE   15360		/* Largest e-mail that can be sent */
 
 const char *esmtp_cb (void **, int *, void *);
-void sagan_esmtp_thread( _SaganEvent * );
+int sagan_esmtp_thread( _SaganEvent * );
 
 #endif
 
