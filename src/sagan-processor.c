@@ -53,6 +53,8 @@ int rc;
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
 
+pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
+
 void Sagan_Processor ( void ) {
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
@@ -69,9 +71,7 @@ for (;;) {
 
 	proc_msgslot--;
 
-	pthread_mutex_unlock(&SaganProcWorkMutex);
-
-	/* Do we need to "ignore" this inbound log message? Used to save CPU */
+	/* Check for general "drop" items.  We do this first so we can save CPU later */
 
         if ( config->sagan_droplist_flag ) {
 
@@ -80,20 +80,18 @@ for (;;) {
         for (i = 0; i < counters->droplist_count; i++) {
             if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganDroplist[i].ignore_string)) {
 	       
-	       pthread_mutex_lock(&SaganProcWorkMutex);
+	       pthread_mutex_lock(&SaganIgnoreCounter);
                counters->ignore_count++;
-	       pthread_mutex_unlock(&SaganProcWorkMutex);
+	       pthread_mutex_unlock(&SaganIgnoreCounter);
                
 	       ignore_flag=1;
                }
             }
         }
 
+	/* If we aren't ignoring the line,  then we copy the array passed */
+
 	if ( ignore_flag == 0 ) { 
-
-        memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
-
-	pthread_mutex_lock(&SaganProcWorkMutex);
 
 	strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host)); 
 	strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility)); 
@@ -105,14 +103,20 @@ for (;;) {
 	strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program)); 
 	strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)); 
 
+	} // End if if (ignore_Flag)
+
+	/* Unlock the mutex,  since we now have the data (or not) local */
+
 	pthread_mutex_unlock(&SaganProcWorkMutex);
+
+	/* If we're in a ignore state,  then we can bypass the processors */
+
+	if ( ignore_flag == 0 ) { 
 
         Sagan_Engine(SaganProcSyslog_LOCAL);
 
-	/* If i == even then ip src 
-	 * If i == odd then ip dst */
-
 #ifdef WITH_WEBSENSE
+
 	if ( config->websense_flag ) { 
            for (i=1; i < config->websense_parse_depth+1; i++) {
 
@@ -128,8 +132,8 @@ for (;;) {
 	if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);
 	if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2); 
 	if ( config->sagan_track_clients_flag) sagan_track_clients(SaganProcSyslog_LOCAL);
-	}
 
+	} // End if if (ignore_Flag)
      }
 
 free(SaganProcSyslog_LOCAL);		/* Should never make it here */
