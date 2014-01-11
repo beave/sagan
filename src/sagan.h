@@ -664,6 +664,7 @@ char *Sagan_Generator_Lookup( int, int );
 void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int, int, int, int );
 uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
+int Sagan_Blacklist ( _SaganProcSyslog * );
 
 void Load_Protocol_Map( const char * ); 
 void Sagan_Usage( void ); 
