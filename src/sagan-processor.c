@@ -93,7 +93,7 @@ for (;;) {
 
 			for (i = 0; i < counters->droplist_count; i++) {
 
-				if (strstr(SaganProcSyslog[proc_msgslot].syslog_message, SaganDroplist[i].ignore_string)) {
+				if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganDroplist[i].ignore_string)) {
 	       
 					pthread_mutex_lock(&SaganIgnoreCounter);
 					counters->ignore_count++;
