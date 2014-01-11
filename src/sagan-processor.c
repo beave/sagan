@@ -20,7 +20,7 @@
  
 /* sagan-processor.c 
 * 
-* This becomes a threaded operation.  This handles all CPU intensive output plugins
+* This becomes a threaded operation.  This handles all CPU intensive processes.
 */
 
 #ifdef HAVE_CONFIG_H
