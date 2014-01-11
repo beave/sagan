@@ -38,6 +38,10 @@
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-blacklist.h"
 
+#ifdef WITH_WEBSENSE
+#include "processors/sagan-websense.h"
+#endif
+
 struct _Sagan_Droplist *SaganDroplist;
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
