@@ -59,6 +59,10 @@ int liblognorm_count;
 sbool sagan_unified2_flag;
 #endif
 
+#ifdef HAVE_LIBGEOIP
+#include <GeoIP.h>
+#endif
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
@@ -184,6 +188,11 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
  		     Sagan_Websense_Ignore_List();
 		     Sagan_Log(S_NORMAL, "Reset Websense Processor.");
 		     }
+#endif
+
+#ifdef HAVE_LIBGEOIP
+		  Sagan_Log(S_NORMAL, "Reloading GeoIP data."); 
+		  config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 #endif
 
                   pthread_mutex_unlock(&sig_mutex);
