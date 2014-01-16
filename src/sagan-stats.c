@@ -91,6 +91,8 @@ Sagan_Log(S_NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)"
 
 #ifdef HAVE_LIBGEOIP
 Sagan_Log(S_NORMAL, "           GeoIP Hits:              : %" PRIu64 " (%.3f%%)", counters->geoip_hit, CalcPct( counters->geoip_hit, counters->sagantotal) );
+Sagan_Log(S_NORMAL, "           GeoIP Lookups:           : %" PRIu64 "", counters->geoip_lookup); 
+Sagan_Log(S_NORMAL, "           GeoIP Misses             : %" PRIu64 "", counters->geoip_miss);
 #endif
 
 

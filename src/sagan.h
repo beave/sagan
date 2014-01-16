@@ -124,6 +124,8 @@ struct _SaganCounters {
 
 #ifdef HAVE_LIBGEOIP
    uint64_t geoip_hit;				/* GeoIP hit count */
+   uint64_t geoip_lookup;			/* Total lookups */
+   uint64_t geoip_miss;				/* Misses (country not found)
 #endif
 
 #ifdef WITH_WEBSENSE
@@ -415,7 +417,7 @@ unsigned long  fwsam_seconds;
 
 sbool geoip_flag; 
 int   geoip_type;		/* 1 == isnot, 2 == is */
-char  geoip_country_codes[512];
+char  geoip_country_codes[1024];
 int   geoip_src_or_dst;		// 1 == src, 2 == dst
 
 #endif

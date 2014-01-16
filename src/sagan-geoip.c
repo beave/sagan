@@ -36,6 +36,7 @@
 
 #include <stdio.h>
 #include <GeoIP.h>
+#include <pthread.h>
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-geoip.h"
@@ -45,6 +46,8 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
+
+pthread_mutex_t SaganGeoIPMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Sagan_Open_GeoIP_Database( void ) { 
 	
@@ -85,8 +88,15 @@ strlcpy(tmp, rulestruct[rule_position].geoip_country_codes, sizeof(tmp));
 
 if ( str == NULL ) { 
 	if (debug->debuggeoip) Sagan_Log(S_DEBUG, "Country code for %s not found in GeoIP DB", ipaddr); 
+	pthread_mutex_lock(&SaganGeoIPMutex);
+	counters->geoip_miss++;
+	pthread_mutex_unlock(&SaganGeoIPMutex);
 	return(2); 		/* GeoIP of the IP address not found */
 	}
+
+pthread_mutex_lock(&SaganGeoIPMutex);
+counters->geoip_lookup++; 
+pthread_mutex_unlock(&SaganGeoIPMutex);
 
 if (debug->debuggeoip) {
         Sagan_Log(S_DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
