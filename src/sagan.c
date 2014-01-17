@@ -252,6 +252,11 @@ while ((c = getopt_long(argc, argv, short_options, long_options, &option_index))
 		 debugflag=1; 
 		 }
 
+	      if (strstr(optarg, "engine")) { 
+	         debug->debugengine=1;
+		 debugflag=1;
+		 }
+
 #ifdef HAVE_LIBGEOIP
               if (strstr(optarg, "geoip")) {
                  debug->debuggeoip=1;
@@ -827,7 +832,16 @@ while(fd != NULL) {
 	          }
 
 if (debug->debugthreads) Sagan_Log(S_DEBUG, "Current \"proc_msgslot\": %d", proc_msgslot); 
-if (debug->debugsyslog) Sagan_Log(S_DEBUG, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
+
+if (debug->debugsyslog) {
+
+Sagan_Log(S_DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
+Sagan_Log(S_DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, syslog_host, syslog_program, syslog_facility, syslog_priority, syslog_level, syslog_tag);
+Sagan_Log(S_DEBUG, "[%s, line %d] Raw message: %s", Remove_Return(syslog_msg)); 
+
+}
+
+//Sagan_Log(S_DEBUG, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
 } /* while(fgets) */
 

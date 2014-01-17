@@ -154,6 +154,7 @@ struct _SaganDebug {
     sbool debugexternal;
     sbool debugthreads; 
     sbool debugflowbit;
+    sbool debugengine; 
 
 #ifdef HAVE_LIBGEOIP
     sbool debuggeoip;

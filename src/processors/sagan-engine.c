@@ -728,7 +728,6 @@ if ( geoip_return != 2 )  {
 /* threshold state.                                                         */
 /****************************************************************************/
 
-
 /* Check for thesholding & "after" */
 
 if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
@@ -740,6 +739,15 @@ if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].fl
 #ifdef HAVE_LIBGEOIP
 if ( rulestruct[b].geoip_flag == 0 || geoip_isset == 1 ) { 
 #endif
+
+if ( debug->debugengine ) { 
+
+Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d | GeoIP flag: %d | GeoIP status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_isset, rulestruct[b].geoip_flag, geoip_isset);
+Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+
+}
 
 threadid++;
 if ( threadid >= MAX_THREADS ) threadid=0;

@@ -39,7 +39,7 @@ void Sagan_Usage(void)
 fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
 fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
 fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
-fprintf(stderr, "-d, --debug [type]\tTypes: syslog, load, fwsam, external, threads, flowbit\n\t\t\t");
+fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,\n\t\t\tflowbit");
 
 #ifdef HAVE_LIBESMTP
 fprintf(stderr, ", smtp");
@@ -72,20 +72,24 @@ fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
 fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
 
 #ifdef HAVE_LIBESMTP
-fprintf(stderr, "* libesmtp (SMTP) support is included\n");
+fprintf(stderr, "* libesmtp (SMTP) support is included.\n");
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-fprintf(stderr, "* liblognorm (log normalization) support is included\n");
+fprintf(stderr, "* liblognorm (log normalization) support is included.\n");
 #endif
 
 #ifdef HAVE_LIBPCAP
-fprintf(stderr, "* PLOG (syslog sniffer) support is included\n");
+fprintf(stderr, "* PLOG (syslog sniffer) support is included.\n");
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-fprintf(stderr, "* libdnet (for unified2) support is included\n");
+fprintf(stderr, "* libdnet (for unified2) support is included.\n");
 #endif
 
-fprintf(stderr, "* Compiled on %s at %s\n", __DATE__, __TIME__);
+#ifdef HAVE_LIBGEOIP
+fprintf(stderr, "* libGeoIP support is included.\n");
+#endif
+
+fprintf(stderr, "* Compiled on %s at %s.\n", __DATE__, __TIME__);
 }
