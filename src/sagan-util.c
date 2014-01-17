@@ -428,7 +428,6 @@ for (i=0; i<counters->var_count; i++) {
              }
 
 strlcpy(tmp, tmp_result, sizeof(tmp)); 
-//snprintf(tmp, sizeof(tmp), "%s", tmp_result);
 tmpbuf = tmp;
 strlcpy(tmp_result, "", sizeof(tmp_result));
 }
@@ -469,5 +468,25 @@ int Sagan_Validate_HEX (const char *string) {
         }
     }
     return(TRUE);
+}
+
+/****************************************************************************/
+/* Sagan_Check_Var - Checks to make sure a "var" is present in memory       */
+/****************************************************************************/
+
+int Sagan_Check_Var(const char *string) { 
+
+int i; 
+int flag = 0; 
+
+for (i=0; i<counters->var_count; i++) {
+
+	if (!strcmp(string, var[i].var_name)) {
+		flag = 1; 
+		break;
+		}
+	}
+
+return(flag);
 }
 

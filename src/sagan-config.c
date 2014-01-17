@@ -265,6 +265,7 @@ if (!strcmp(sagan_option, "country_database:")) {
    strlcpy(config->geoip_country_file, sagan_var1, sizeof(config->geoip_country_file)); 
    Sagan_Log(S_NORMAL, "Loading GeoIP database. [%s]", config->geoip_country_file);
    Sagan_Open_GeoIP_Database(); 
+   config->have_geoip = 1; 
    }
 #endif
 
@@ -715,5 +716,13 @@ if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) Sagan_Lo
 if (!strcmp(config->sagan_fifo, "")) Sagan_Log(S_ERROR, "No FIFO option found which is required! Aborting!");
 if (!strcmp(config->sagan_host, "" )) Sagan_Log(S_ERROR, "The 'sagan_host' option was not found and is required.");
 if ( config->sagan_port == 0 ) Sagan_Log(S_ERROR, "The 'sagan_port' option was not set and is required.");
+
+#ifdef HAVE_LIBGEOIP
+if ( config->have_geoip )  {
+	if ( Sagan_Check_Var("$HOME_COUNTRY") == 0 ) { 
+		Sagan_Log(S_ERROR, "[%s, line %d] GeoIP is in use,  but $HOME_COUNTRY was never set in your configuration. Abort.", __FILE__, __LINE__); 
+	}
+}
+#endif
 
 }

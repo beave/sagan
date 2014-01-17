@@ -403,6 +403,11 @@ Remove_Spaces(rulesplit);
 #ifdef HAVE_LIBGEOIP
 
 	if (!strcmp(rulesplit, "country_code")) { 
+
+		/* Have the requirements for GeoIP been loaded (Maxmind DB, etc) */
+		
+		if (!config->have_geoip) Sagan_Log(S_ERROR, "[%s, line %d] Rule %s at line %d has GeoIP option,  but Sagan configuration lacks GeoIP!", __FILE__, __LINE__, ruleset, linecount);
+
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		tmptoken = strtok_r(arg, " ", &saveptrrule2);
 

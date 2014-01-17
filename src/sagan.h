@@ -327,6 +327,7 @@ struct _SaganConfig {
   
    GeoIP *geoip;
    char	geoip_country_file[256];
+   sbool have_geoip; 
 
 #endif
 
