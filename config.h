@@ -74,7 +74,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-#define HAVE_LIBGEOIP 1
+/* #undef HAVE_LIBGEOIP */
 
 /* Define to 1 if you have the `json' library (-ljson). */
 #define HAVE_LIBJSON 1
