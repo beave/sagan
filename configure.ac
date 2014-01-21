@@ -4,6 +4,7 @@
 AC_INIT
 AC_CONFIG_SRCDIR([src])
 AC_CANONICAL_SYSTEM
+AC_GNU_SOURCE
 
 
 #VERSION=`cat $srcdir/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
@@ -207,7 +208,7 @@ use the --disable-lognorm flag. ))
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. ))
-       AC_CHECK_LIB(json, main,, [ AC_CHECK_LIB(json-c, main,,AC_MSG_ERROR(The json library cannot be found.
+       AC_CHECK_LIB(json, json_object_put,, [ AC_CHECK_LIB(json-c, json_object_put,,AC_MSG_ERROR(The json library cannot be found.
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag.)) ],)
@@ -263,11 +264,10 @@ if test "$WEBSENSE" = "yes"; then
 This library is used for Sagan's / Websense Threatseeker  support.  Please see
 https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
 To disable this feature use the --disable-websense flag. ))
-        AC_DEFINE(WITH_WEBSENSE, 1, With Websense Threatseeker)
-        AC_CHECK_LIB(json, main,,AC_MSG_ERROR(The libjson (json-c)  library cannot be found.
+	AC_CHECK_LIB(json, json_object_put,, [ AC_CHECK_LIB(json-c, json_object_put,,AC_MSG_ERROR(The json library cannot be found.
 This library is used for Sagan's / Websense Threatseeker  support.  Please see
 https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
-To disable this feature use the --disable-websense flag. ))
+To disable this feature use the --disable-websense flag.)) ],)
         AC_DEFINE(WITH_WEBSENSE, 1, With Websense Threatseeker)
         AC_CHECK_HEADER([curl/curl.h])
         AC_CHECK_HEADER([json/json.h])

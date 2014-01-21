@@ -29,7 +29,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#define _GNU_SOURCE		/* for strcasestr() */
+//#define _GNU_SOURCE		/* for strcasestr() */
 
 #include <stdio.h>
 #include <string.h>
