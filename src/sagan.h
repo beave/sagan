@@ -125,7 +125,7 @@ struct _SaganCounters {
 #ifdef HAVE_LIBGEOIP
    uint64_t geoip_hit;				/* GeoIP hit count */
    uint64_t geoip_lookup;			/* Total lookups */
-   uint64_t geoip_miss;				/* Misses (country not found)
+   uint64_t geoip_miss;				/* Misses (country not found) */
 #endif
 
 #ifdef WITH_WEBSENSE
