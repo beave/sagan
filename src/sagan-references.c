@@ -65,6 +65,8 @@ char *firststring=NULL;
 char *tmptoken=NULL;
 char *laststring=NULL;
 
+int linecount=0; 
+
 
 Sagan_Log(S_NORMAL, "Loading references.conf file. [%s]" , ruleset);
 
@@ -73,6 +75,8 @@ if (( reffile = fopen(ruleset, "r" )) == NULL ) {
    }
 						             
 while(fgets(refbuf, 1024, reffile) != NULL) {
+
+     linecount++;
 
      /* Skip comments and blank linkes */
  
@@ -87,9 +91,15 @@ while(fgets(refbuf, 1024, reffile) != NULL) {
      tmptoken = strtok_r(NULL, " " , &saveptr);
 
      laststring = strtok_r(tmptoken, ",", &saveptr);
+
+     if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+
      strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
      
      laststring = strtok_r(NULL, ",", &saveptr);
+
+     if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+
      strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl)); 
      refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
 
