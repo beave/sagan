@@ -17,8 +17,9 @@ Sguil [http://sguil.sourceforge.net], BASE, and the Prelude IDS
 framework! (to name a few).
 
 Sagan supports many different output formats,  log normalization 
-(via liblognorm),  script execution on event and automatic firewall
-support via "Snortsam" (see http://www.snortsam.net).  
+(via liblognorm),  GeoIP detection, script execution on event and
+automatic firewall support via "Snortsam" 
+(see http://www.snortsam.net).  
 
 For more information, please visit the Sagan web site: 
 http://sagan.quadrantsec.com. 
