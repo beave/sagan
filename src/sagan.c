@@ -427,11 +427,20 @@ Sagan_Log(S_NORMAL, "Blacklist Processor loaded [%s]", config->blacklist_file);
 Sagan_Log(S_NORMAL, "Blacklist loaded %d entries", counters->blacklist_count);
 Sagan_Log(S_NORMAL, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
 
+#ifdef HAVE_LIBLOGNORM
 if (config->blacklist_lognorm) { 
 Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Enabled"); 
 } else { 
 Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Disabled");
 }
+#endif
+
+#ifndef HAVE_LIBLOGNORM
+if (config->blacklist_lognorm) {
+Sagan_Log(S_WARN, "Blacklist Liblognorm: Disabled ((lacks compiled in support!)");
+config->blacklist_lognorm=0;
+}
+#endif
 
 if (config->blacklist_parse_proto) { 
 Sagan_Log(S_NORMAL, "Blacklist Parse_Protocol: Enabled");
