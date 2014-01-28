@@ -194,8 +194,10 @@ If you're not interested in libesmtp support use the --disable-esmtp flag.))
 if test "$LOGNORM" = "yes"; then
        AC_MSG_RESULT([------- liblognorm support is enabled -------])
        AC_CHECK_HEADER([liblognorm.h])
-       AC_CHECK_HEADERS([json/json.h json.h], [break], [AC_MSG_ERROR([json-c headers not found or not usable])]) 
-
+       AC_CHECK_HEADERS([json/json.h json.h], [break], [AC_MSG_ERROR([json-c headers not found or not usable.
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag.])]) 
        AC_CHECK_LIB(estr, main,,AC_MSG_ERROR(The libestr library cannot be found.
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
