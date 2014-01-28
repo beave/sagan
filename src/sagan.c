@@ -837,7 +837,7 @@ if (debug->debugsyslog) {
 
 Sagan_Log(S_DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
 Sagan_Log(S_DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, syslog_host, syslog_program, syslog_facility, syslog_priority, syslog_level, syslog_tag);
-Sagan_Log(S_DEBUG, "[%s, line %d] Raw message: %s", Remove_Return(syslog_msg)); 
+Sagan_Log(S_DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__, Remove_Return(syslog_msg)); 
 
 }
 
