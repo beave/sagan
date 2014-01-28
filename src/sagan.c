@@ -459,11 +459,20 @@ Sagan_Log(S_NORMAL, "Search [nocase] Processor loaded [%s]", config->search_noca
 Sagan_Log(S_NORMAL, "Search [nocase] loaded %d entries", counters->search_nocase_count);
 Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_nocase_parse_depth);
 
+#ifdef HAVE_LIBLOGNORM
 if (config->search_nocase_lognorm) {
 Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Enabled"); 
 } else {
 Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Disabled"); 
 }
+#endif 
+
+#ifndef HAVE_LIBLOGNORM
+if (config->search_nocase_lognorm) {
+	Sagan_Log(S_WARN, "Search [nocase] Liblognorm: Disabled (lacks compiled in support!)"); 
+	config->search_nocase_lognorm = 0; 
+	}
+#endif
 
 if (config->search_nocase_parse_proto) { 
 Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol: Enabled"); 
@@ -490,11 +499,20 @@ Sagan_Log(S_NORMAL, "Search Processor loaded [%s]", config->search_case_file);
 Sagan_Log(S_NORMAL, "Search loaded %d entries", counters->search_case_count);
 Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_case_parse_depth);
 
+#ifdef HAVE_LIBLOGNORM
 if (config->search_case_lognorm) {
 Sagan_Log(S_NORMAL, "Search Liblognorm: Enabled");
 } else {
 Sagan_Log(S_NORMAL, "Search Liblognorm: Disabled");
 }
+#endif
+
+#ifndef HAVE_LIBLOGNORM
+if (config->search_case_lognorm) {
+        Sagan_Log(S_WARN, "Search Liblognorm: Disabled (lacks compiled in support!)");
+        config->search_case_lognorm = 0;
+        }
+#endif
 
 if (config->search_case_parse_proto) {
 Sagan_Log(S_NORMAL, "Search Parse Protocol: Enabled");
