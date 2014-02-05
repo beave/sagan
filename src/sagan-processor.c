@@ -100,10 +100,12 @@ for (;;) {
 					pthread_mutex_unlock(&SaganIgnoreCounter);
                
 					ignore_flag=1;
-					break;
+					goto outside_loop;	/* Stop processing from ignore list */
                			}
 			}
 	}
+
+	outside_loop:
 
 	/* If we're in a ignore state,  then we can bypass the processors */
 

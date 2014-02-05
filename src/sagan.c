@@ -558,7 +558,7 @@ Sagan_Log(S_NORMAL, "Websense Parse Depth: %d", config->websense_parse_depth);
 Sagan_Log(S_NORMAL, "Websense Max Cache: %d", config->websense_max_cache);
 Sagan_Log(S_NORMAL, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
 Sagan_Log(S_NORMAL, "Websense Ignore List File: %s", config->websense_ignore_list);
-Sagan_Log(S_NORMAL, "Websense Ignore List ektires: %d", counters->websense_ignore_list_count);
+Sagan_Log(S_NORMAL, "Websense Ignore List entries: %d", counters->websense_ignore_list_count);
 }
 
 if ( config->websense_lognorm ) Sagan_Log(S_NORMAL, "Websense Liblognorm: Enabled"); 
