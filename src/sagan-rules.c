@@ -445,6 +445,23 @@ Remove_Spaces(rulesplit);
 	   }
 #endif
 
+	if (!strcmp(rulesplit, "windows_domain")) { 
+
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+                tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
+
+                if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot"))
+                   Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'windows_domain' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+
+                if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].windows_domain_type = 1;
+                if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].windows_domain_type = 2;
+
+		tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2)));
+
+		strlcpy(rulestruct[counters->rulecount].windows_domains, tmptoken, sizeof(rulestruct[counters->rulecount].windows_domains));
+		rulestruct[counters->rulecount].windows_domain_flag = 1;
+		}
+
 	if (!strcmp(rulesplit, "rev" )) {
 		arg = strtok_r(NULL, ":", &saveptrrule2);
 		if (arg == NULL ) Sagan_Log(S_ERROR, "The \"rev\" appears to be incomplete at line %d in %s", linecount, ruleset);

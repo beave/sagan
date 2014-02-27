@@ -401,26 +401,30 @@ int   flowbit_timeout;			/* How long a flowbit is to stay alive (seconds) */
 sbool normalize;
 sbool content_not[MAX_CONTENT];	/* content: ! "something" */
 
-int drop;			// inline DROP for ext.
+int drop;			/* inline DROP for ext. */
 
-int threshold_type;		// 1 = limit,  2 = thresh,
-int threshold_src_or_dst;	// 1 ==  src,  2 == dst
+int threshold_type;		/* 1 = limit,  2 = thresh */
+int threshold_src_or_dst;	/* 1 ==  src,  2 == dst */
 int threshold_count;		
 int threshold_seconds;
 
-int after_src_or_dst;       // 1 ==  src,  2 == dst
+int after_src_or_dst;		/* 1 ==  src,  2 == dst */
 int after_count;
 int after_seconds;
 
-int fwsam_src_or_dst;		// 1 == src,  2 == dst
+int fwsam_src_or_dst;		/* 1 == src,  2 == dst */
 unsigned long  fwsam_seconds;		
+
+sbool windows_domain_flag;
+int windows_domain_type;	/* 1 == isnot, 2 == is */
+char windows_domains[1024];
 
 #ifdef HAVE_LIBGEOIP
 
 sbool geoip_flag; 
 int   geoip_type;		/* 1 == isnot, 2 == is */
 char  geoip_country_codes[1024];
-int   geoip_src_or_dst;		// 1 == src, 2 == dst
+int   geoip_src_or_dst;		/* 1 == src, 2 == dst */
 
 #endif
 
@@ -669,6 +673,7 @@ void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, cha
 uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
+int Sagan_Windows_Domain_Search(char *, int );
 
 void Load_Protocol_Map( const char * ); 
 void Sagan_Usage( void ); 

@@ -35,6 +35,7 @@
 #ifdef HAVE_LIBGEOIP
 
 #include <stdio.h>
+#include <string.h>
 #include <GeoIP.h>
 #include <pthread.h>
 #include "sagan.h"

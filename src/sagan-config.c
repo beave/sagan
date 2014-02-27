@@ -647,6 +647,7 @@ if (!strcmp(sagan_var1, "unified2:")) {
 	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1); 
 	sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
 	strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+
 	counters->var_count++;
 	
 	/* Required var's - all others are optional */ 

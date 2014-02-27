@@ -25,6 +25,7 @@ sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
 sagan-geoip.c \
+sagan-windows-domain.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \

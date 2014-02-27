@@ -76,13 +76,14 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
 	sagan-credits.$(OBJEXT) sagan-protocol-map.$(OBJEXT) \
-	sagan-geoip.$(OBJEXT) parse-ip.$(OBJEXT) parse-port.$(OBJEXT) \
-	parse-proto.$(OBJEXT) sagan-alert.$(OBJEXT) \
-	sagan-esmtp.$(OBJEXT) sagan-external.$(OBJEXT) \
-	sagan-unified2.$(OBJEXT) sagan-twofish.$(OBJEXT) \
-	sagan-snortsam.$(OBJEXT) sagan-engine.$(OBJEXT) \
-	sagan-track-clients.$(OBJEXT) sagan-websense.$(OBJEXT) \
-	sagan-blacklist.$(OBJEXT) sagan-search.$(OBJEXT)
+	sagan-geoip.$(OBJEXT) sagan-windows-domain.$(OBJEXT) \
+	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
+	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
+	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
+	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
+	sagan-engine.$(OBJEXT) sagan-track-clients.$(OBJEXT) \
+	sagan-websense.$(OBJEXT) sagan-blacklist.$(OBJEXT) \
+	sagan-search.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 sagan_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
@@ -226,6 +227,7 @@ sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
 sagan-geoip.c \
+sagan-windows-domain.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
@@ -361,6 +363,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-usage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-websense.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-windows-domain.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan.Po@am__quote@
 
 .c.o:
