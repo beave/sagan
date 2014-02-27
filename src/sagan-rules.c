@@ -455,8 +455,9 @@ Remove_Spaces(rulesplit);
 
                 if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].windows_domain_type = 1;
                 if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].windows_domain_type = 2;
-
-		tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ";", &saveptrrule2)));
+		
+                tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab Domains */
+                Remove_Spaces(tmptoken);
 
 		strlcpy(rulestruct[counters->rulecount].windows_domains, tmptoken, sizeof(rulestruct[counters->rulecount].windows_domains));
 		rulestruct[counters->rulecount].windows_domain_flag = 1;

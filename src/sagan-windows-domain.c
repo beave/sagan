@@ -57,11 +57,11 @@ while (ptmp != NULL ) {
 	/* Search for "Domain: %s " in log message.  The space is intensional */
 
 	snprintf(tmp_search, sizeof(tmp_search), "Domain: %s ", ptmp); 
-	if (strcasestr(syslog_msg, tmp_search)) return(1); 
+	if (strcasestr(syslog_msg, tmp_search)) return(TRUE); 
 	ptmp = strtok_r(NULL, ",", &tok);
 
 	}
 
-return(0);
+return(FALSE);
 }
 
