@@ -272,10 +272,6 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		
 		   if ( match == 0 ) { 
 		   
-//		   pthread_mutex_lock(&CounterMutex);
-//		   counters->saganfound++;
-//		   pthread_mutex_unlock(&CounterMutex);
-
 		   ip_src_flag = 0; 
 		   ip_dst_flag = 0; 
 		   
@@ -752,10 +748,6 @@ if ( rulestruct[b].windows_domain_flag ) {
 /* threshold state.                                                         */
 /****************************************************************************/
 
-/* Check for thesholding & "after" */
-
-if ( thresh_log_flag == 0 && after_log_flag == 0 ) { 
-
 if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset); 
 
 if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0)) { 
@@ -769,6 +761,11 @@ if ( rulestruct[b].geoip_flag == 0 || geoip_isset == 1 ) {
 pthread_mutex_lock(&CounterMutex);
 counters->saganfound++;
 pthread_mutex_unlock(&CounterMutex);
+
+/* Check for thesholding & "after" */
+
+if ( thresh_log_flag == 0 && after_log_flag == 0 ) {
+
 
 if ( debug->debugengine ) { 
 
@@ -804,12 +801,12 @@ processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid)
 
 Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
 
-#ifdef HAVE_LIBGEOIP 
-    } /* GeoIP */ 
+     } /* Threshold / After */
+#ifdef HAVE_LIBGEOIP
+    } /* GeoIP */
 #endif
-    } /* Windows Domains */
-   } /* Flowbit */
-  } /* End of threshold */
+   } /* Windows Domain */
+  } /* Flowbit */
  } /* End of match */
 } /* End of pcre match */
 
