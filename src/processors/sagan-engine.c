@@ -272,9 +272,9 @@ int proto = config->sagan_proto;		/* Set proto to default */
 		
 		   if ( match == 0 ) { 
 		   
-		   pthread_mutex_lock(&CounterMutex);
-		   counters->saganfound++;
-		   pthread_mutex_unlock(&CounterMutex);
+//		   pthread_mutex_lock(&CounterMutex);
+//		   counters->saganfound++;
+//		   pthread_mutex_unlock(&CounterMutex);
 
 		   ip_src_flag = 0; 
 		   ip_dst_flag = 0; 
@@ -765,6 +765,10 @@ if ( rulestruct[b].windows_domain_flag == 0 || windows_domain_trigger == 1) {
 #ifdef HAVE_LIBGEOIP
 if ( rulestruct[b].geoip_flag == 0 || geoip_isset == 1 ) { 
 #endif
+
+pthread_mutex_lock(&CounterMutex);
+counters->saganfound++;
+pthread_mutex_unlock(&CounterMutex);
 
 if ( debug->debugengine ) { 
 
