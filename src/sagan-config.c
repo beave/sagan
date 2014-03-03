@@ -94,9 +94,11 @@ char tmpstring[CONFBUF];
 char *sagan_option=NULL;
 char *sagan_var1=NULL;
 char *sagan_var2=NULL;
+char *sagan_var3=NULL;
 char *ptmp=NULL;
 
 char *tok=NULL;
+char *tok2=NULL;
 
 int i,check;
 
@@ -645,8 +647,36 @@ if (!strcmp(sagan_var1, "unified2:")) {
         sagan_var1 = strtok_r(NULL, " ", &tok);
 	var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
 	snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1); 
-	sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-	strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+
+
+	/* Test for multiple values via [ ] or signle value */
+
+	if (strstr(tmpbuf2, "[") && !strstr(tmpbuf2, "]") || !strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]")) {
+		Sagan_Log(S_ERROR, "[%s, line %d] A 'var' in the sagan.conf file contains mismatched [ ]!", __FILE__, __LINE__);
+		}
+
+	/* Multiple values */
+
+	if (strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]")) { 
+
+		sagan_var2 = strtok_r(NULL, "[", &tok);
+		sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
+
+		Remove_Spaces(sagan_var3);
+		Remove_Return(sagan_var3);
+
+		strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
+
+
+		} else { 
+
+		/* Single value */
+
+		sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
+		strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+
+		}
+
 
 	counters->var_count++;
 	
