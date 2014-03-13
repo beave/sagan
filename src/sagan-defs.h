@@ -84,6 +84,9 @@
 #define PLOG_FILTER	"port 514"
 #define PLOG_LOGDEV	"/dev/log"
 
+#define TRACK_TIME	360
+#define TRACK_CACHE	"/var/run/sagan/sagan.cache"
+
 #define S_NORMAL	0
 #define S_ERROR		1
 #define S_WARN		2

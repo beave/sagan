@@ -56,6 +56,7 @@
 #include "processors/sagan-engine.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-blacklist.h"
+#include "processors/sagan-track-clients.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -416,6 +417,7 @@ Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->s
 
 if ( config->sagan_track_clients_flag) {
 if ( config->pp_sagan_track_clients ) Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
+Sagan_Load_Tracking_Cache();
 }
 
 /* Sagan Blacklist IP processor *********************************************/
@@ -437,7 +439,7 @@ Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Disabled");
 
 #ifndef HAVE_LIBLOGNORM
 if (config->blacklist_lognorm) {
-Sagan_Log(S_WARN, "Blacklist Liblognorm: Disabled ((lacks compiled in support!)");
+Sagan_Log(S_WARN, "Blacklist Liblognorm: Disabled (lacks compiled in support!)");
 config->blacklist_lognorm=0;
 }
 #endif

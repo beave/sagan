@@ -44,4 +44,5 @@ sbool   status;
 };
 
 
-int sagan_track_clients ( _SaganProcSyslog * );
+int Sagan_Track_Clients ( _SaganProcSyslog * );
+void Sagan_Load_Tracking_Cache ( void );

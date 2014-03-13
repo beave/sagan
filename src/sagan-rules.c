@@ -100,12 +100,14 @@ memset(rulestr, 0, RULEBUF);
 char rulebuf[RULEBUF];
 char pcrerule[RULEBUF];
 char tmp2[512];
-char tmp3[3];
 char tmp[2];
 int pipe_flag = 0;
 char final_content[512] = { 0 }; 
 char final_content_tmp[512] = { 0 }; 
 int  x;
+
+char alert_time_tmp1[10]; 
+char alert_time_tmp2[3]; 
 
 int linecount=0;
 int netcount=0;
@@ -758,15 +760,124 @@ Remove_Spaces(rulesplit);
 		}
 	
 
+/* Time based alerting */ 
+
+	if (!strcmp(rulesplit, "alert_time")) { 
+
+		rulestruct[counters->rulecount].alert_time_flag = 1; 
+
+                tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+		strlcpy(tmp2, Sagan_Var_To_Value(tok_tmp), sizeof(tmp2)); 
+
+                tmptoken = strtok_r(tmp2, ",", &saveptrrule2);
+
+			 while( tmptoken != NULL ) {
+			 
+			 if (strstr(tmptoken, "days")) { 
+		   	    tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+			    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+			    Remove_Spaces(tmptok_tmp); 
+
+			    if (strlen(tmptok_tmp) > 7 ) { 
+                               Sagan_Log(S_ERROR, "[%s, line %d] To many days in 'alert_time' in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+             		    }
+
+			    strlcpy(rulestruct[counters->rulecount].alert_days, tmptok_tmp, sizeof(rulestruct[counters->rulecount].alert_days));
+
+			    for (i=0; i<strlen(rulestruct[counters->rulecount].alert_days); i++) {
+				snprintf(tmp, sizeof(tmp), "%c", rulestruct[counters->rulecount].alert_days[i]); 
+				if (!Is_Numeric(tmp)) { 
+  				   Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  rulestruct[counters->rulecount].alert_days[i], ruleset, linecount);
+				}
+			    }
+
+
+			    }
+
+			if (strstr(tmptoken, "hours")) {
+
+			    tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+			    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+			    Remove_Spaces(tmptok_tmp);
+
+			    if ( strlen(tmptok_tmp) > 9 || strlen(tmptok_tmp) < 9 ) { 
+				Sagan_Log(S_ERROR, "[%s, line %d] Improper 'alert_time' format in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+			    }
+
+			    snprintf(alert_time_tmp1, sizeof(alert_time_tmp1), "%s", tmptok_tmp); 
+
+			    /* Start hour */ 
+			    snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]); 
+			    rulestruct[counters->rulecount].alert_start_hour = atoi(alert_time_tmp2); 
+
+			    if (!Is_Numeric(alert_time_tmp2)) { 
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start hour is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+			    
+			    if ( rulestruct[counters->rulecount].alert_start_hour > 23 ) { 
+				Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start hour is greater than 23 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+				}
+
+			    /* Start minute */
+			    snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
+			    rulestruct[counters->rulecount].alert_start_minute = atoi(alert_time_tmp2);
+
+                            if (!Is_Numeric(alert_time_tmp2)) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start minute is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+			     if ( rulestruct[counters->rulecount].alert_start_minute > 59 ) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start minute is greater than 59 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+			    /* End hour */ 
+			    snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[5], alert_time_tmp1[6]);
+                            rulestruct[counters->rulecount].alert_end_hour = atoi(alert_time_tmp2);
+
+                            if (!Is_Numeric(alert_time_tmp2)) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end hour is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+		    	    if ( rulestruct[counters->rulecount].alert_end_hour > 23 ) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end hour is greater than 23 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }			    
+
+
+			    /* End minute */
+	                    snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[7], alert_time_tmp1[8]);
+                            rulestruct[counters->rulecount].alert_end_minute = atoi(alert_time_tmp2);
+
+                            if (!Is_Numeric(alert_time_tmp2)) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end minute is not nermeric in  %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+			    
+			    if ( rulestruct[counters->rulecount].alert_end_minute > 59 ) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end minute is greater than 59 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                }
+                            
+//			    if (rulestruct[counters->rulecount].alert_start_hour > rulestruct[counters->rulecount].alert_end_hour) { 
+//					printf("Direction\n");
+//				} 
+
+			    printf("%lu %lu\n", rulestruct[counters->rulecount].alert_start_hour, rulestruct[counters->rulecount].alert_end_hour); 
+			    }
+
+			tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+			}
+			 	
+
+	}
 
 
 /* Thresholding */
 
 	if (!strcmp(rulesplit, "threshold" )) {
+
 		tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
                 tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
 
                       while( tmptoken != NULL ) {
+
                       if (strstr(tmptoken, "type")) {
                             if (strstr(tmptoken, "limit")) rulestruct[counters->rulecount].threshold_type = 1;
                             if (strstr(tmptoken, "threshold")) rulestruct[counters->rulecount].threshold_type = 2;

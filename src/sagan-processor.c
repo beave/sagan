@@ -130,7 +130,7 @@ for (;;) {
 		if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
 		if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);
 		if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2); 
-		if ( config->sagan_track_clients_flag) sagan_track_clients(SaganProcSyslog_LOCAL);
+		if ( config->sagan_track_clients_flag) Sagan_Track_Clients(SaganProcSyslog_LOCAL);
 
 		} // End if if (ignore_Flag)
   } //  for (;;)

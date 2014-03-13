@@ -286,18 +286,40 @@ if (!strcmp(sagan_option, "ignore_list:")) {
  ****************************************************************************/
 
 if (!strcmp(sagan_option, "processor")) {
+
         sagan_var1 = strtok_r(NULL," ", &tok);
 
+	/******* Client tracker *******/
+
         if (!strcmp(sagan_var1, "sagan-track-clients:")) {
-            sagan_var1 = strtok_r(NULL," ", &tok);
 
-                if (!strcmp(sagan_var1, "client_timeout")) {
-                   sagan_var1 = strtok_r(NULL," ", &tok);
-                   config->pp_sagan_track_clients = atoi(sagan_var1);
-                   config->sagan_track_clients_flag = 1;
-                   }
+	/* Set defaults */
+
+        config->pp_sagan_track_clients = TRACK_TIME; 		
+	strlcpy(config->sagan_track_client_host_cache, TRACK_CACHE, sizeof(config->sagan_track_client_host_cache)); 
+
+	config->sagan_track_clients_flag = 1;
+
+	ptmp = sagan_var1; 
+
+	while (ptmp != NULL) { 
+		
+		   if (!strcmp(ptmp, "client_timeout")) {
+			ptmp = strtok_r(NULL," ", &tok);
+			config->pp_sagan_track_clients = atoi(ptmp);
+			}
+
+		   if (!strcmp(ptmp, "host_cache")) { 
+			ptmp = strtok_r(NULL," ", &tok);
+			strlcpy(config->sagan_track_client_host_cache, Remove_Return(ptmp), sizeof(config->sagan_track_client_host_cache)); 
+			}
+		
+		    ptmp = strtok_r(NULL, "=", &tok);	
 		}
+	}
 
+
+	/******* Backlist *******/
 
 	if (!strcmp(sagan_var1, "blacklist:")) { 
 	   
@@ -312,7 +334,7 @@ if (!strcmp(sagan_option, "processor")) {
 	  
 	   ptmp = sagan_var1;
 
-	   while (ptmp != NULL ) {
+	   while (ptmp != NULL) {
 
 	     if (!strcmp(ptmp, "parse_depth")) { 
 	        ptmp = strtok_r(NULL, " ", &tok);
@@ -358,6 +380,8 @@ if (!strcmp(sagan_option, "processor")) {
 	     
 	     }		               
 	}
+
+	/******* Search "Nocase" *******/
 	
 	if (!strcmp(sagan_var1, "search_nocase:")) { 
 
@@ -411,6 +435,8 @@ if (!strcmp(sagan_option, "processor")) {
              }
            }
 
+	/******* Search "case" *******/
+
         if (!strcmp(sagan_var1, "search_case:")) {
 
            config->search_case_flag=1;
@@ -462,6 +488,8 @@ if (!strcmp(sagan_option, "processor")) {
            }
 
 #ifdef WITH_WEBSENSE
+
+	/******* Websense *******/
 
         if (!strcmp(sagan_var1, "websense:")) {
 

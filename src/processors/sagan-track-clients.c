@@ -42,19 +42,71 @@
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
-struct _SaganDebug *debug;
 
 pthread_mutex_t SaganProcTrackClientsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 int proc_cpu_msgslot;
 
+void Sagan_Load_Tracking_Cache ( void ) { 
 
-int sagan_track_clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL ) {
+char track_buf[1024] = { 0 }; 
+
+char  timet[20] = { 0 }; 
+time_t t;
+struct tm *now;
+
+sbool client_track_flag = 0; 
+
+t = time(NULL);
+now=localtime(&t);
+strftime(timet, sizeof(timet), "%s",  now);
+
+if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "r" )) == NULL ) {
+   Sagan_Log(S_WARN, "Client Tracking cache not found, creating %s.", config->sagan_track_client_host_cache);
+   client_track_flag = 1; 
+   }
+
+
+if (client_track_flag == 0 ) { 
+	while(fgets(track_buf, 1024, config->sagan_track_client_file) != NULL) {
+
+		/* Skip comments and blank linkes */
+
+		if (track_buf[0] == '#' || track_buf[0] == 10 || track_buf[0] == ';' || track_buf[0] == 32) {
+		continue;
+		} else {
+		/* Allocate memory for references,  not comments */
+
+		pthread_mutex_lock(&SaganProcTrackClientsMutex);
+
+		SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
+		strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
+		SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
+		SaganTrackClients[counters->track_clients_client_count].status = 0;
+		counters->track_clients_client_count++;
+		pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+		}
+	}
+   Sagan_Log(S_NORMAL, "Client Tracking loaded %d host(s) to track", counters->track_clients_client_count);
+}
+
+if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "a" )) == NULL ) {
+   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open client tracking cache file for writing (%s)", __FILE__, __LINE__, config->sagan_track_client_host_cache);
+   }
+
+if (client_track_flag == 1 ) { 
+   fprintf(config->sagan_track_client_file, "# This file is automatically created by Sagan\n");
+   }
+
+}
+
+
+int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL ) {
 
 int alertid;
 
-char  timet[20];
+char  timet[20] = { 0 };
 time_t t;
 struct tm *now;
 
@@ -67,7 +119,6 @@ t = time(NULL);
 now=localtime(&t);
 strftime(timet, sizeof(timet), "%s",  now);
 
-/* Maybe Move ? */
 struct _Sagan_Processor_Info *processor_info = NULL;
 processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
 memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
@@ -84,12 +135,13 @@ processor_info->processor_rev		=	PROCESSOR_REV;
 
 for (i=0; i<counters->track_clients_client_count; i++) { 
 
-
     if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, SaganTrackClients[i].host)) { 
 
     	pthread_mutex_lock(&SaganProcTrackClientsMutex); 
 
         SaganTrackClients[i].utime = atol(timet);
+
+	/* Logs being received */
 
 	if ( SaganTrackClients[i].status == 1 ) { 
 	   
@@ -108,7 +160,8 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 	utimetmp = SaganTrackClients[i].utime ; 
 
-	//if ( atol(timet) - SaganTrackClients[i].utime >  config->pp_sagan_track_clients * 60 && SaganTrackClients[i].status == 0 ) { 
+	/* Logs stop being received */
+	
 	if ( atol(timet) - utimetmp >  config->pp_sagan_track_clients * 60 && SaganTrackClients[i].status == 0 ) {
 
 	   counters->track_clients_down++; 
@@ -135,6 +188,7 @@ if ( tracking_flag == 0) {
    strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host)); 
    SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
    SaganTrackClients[counters->track_clients_client_count].status = 0;
+   fprintf(config->sagan_track_client_file, "%s\n", SaganTrackClients[counters->track_clients_client_count].host);
    counters->track_clients_client_count++;
    pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 

@@ -164,6 +164,8 @@ if ( sagan_unified2_flag ) Unified2CleanExit(config);
 		     counters->track_clients_client_count = 0;
 		     counters->track_clients_down = 0; 
 		     memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
+		     fclose(config->sagan_track_client_file);
+		     Sagan_Load_Tracking_Cache();
 		     Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
 		     }
 
