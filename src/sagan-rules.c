@@ -782,13 +782,16 @@ Remove_Spaces(rulesplit);
                                Sagan_Log(S_ERROR, "[%s, line %d] To many days in 'alert_time' in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
              		    }
 
-			    strlcpy(rulestruct[counters->rulecount].alert_days, tmptok_tmp, sizeof(rulestruct[counters->rulecount].alert_days));
+			    strlcpy(alert_time_tmp1, tmptok_tmp, sizeof(alert_time_tmp1)); 
 
-			    for (i=0; i<strlen(rulestruct[counters->rulecount].alert_days); i++) {
-				snprintf(tmp, sizeof(tmp), "%c", rulestruct[counters->rulecount].alert_days[i]); 
+			    for (i=0; i<strlen(alert_time_tmp1); i++) {
+				snprintf(tmp, sizeof(tmp), "%c", alert_time_tmp1[i]); 
 				if (!Is_Numeric(tmp)) { 
-  				   Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  rulestruct[counters->rulecount].alert_days[i], ruleset, linecount);
+  				   Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp1[i], ruleset, linecount);
 				}
+
+//			    if ( atoi(alert_time_tmp1[i] == 0 ) rulestruct[counters->rulecount].alert_date = rulestruct[counters->rulecount].alert_date + MON;
+
 			    }
 
 
@@ -855,11 +858,6 @@ Remove_Spaces(rulesplit);
                                 Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end minute is greater than 59 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
                                 }
                             
-//			    if (rulestruct[counters->rulecount].alert_start_hour > rulestruct[counters->rulecount].alert_end_hour) { 
-//					printf("Direction\n");
-//				} 
-
-			    printf("%lu %lu\n", rulestruct[counters->rulecount].alert_start_hour, rulestruct[counters->rulecount].alert_end_hour); 
 			    }
 
 			tmptoken = strtok_r(NULL, ",", &saveptrrule2);

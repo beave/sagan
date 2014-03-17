@@ -420,12 +420,11 @@ int windows_domain_type;	/* 1 == isnot, 2 == is */
 char windows_domains[1024];
 
 sbool alert_time_flag; 
-char alert_days[9];
+int  alert_days;
 int  alert_start_hour; 
 int  alert_start_minute; 
 int  alert_end_hour; 
 int  alert_end_minute; 
-int  alert_hour_direction;
 
 #ifdef HAVE_LIBGEOIP
 
@@ -683,6 +682,7 @@ int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
 int Sagan_Windows_Domain_Search(char *, int );
 int Sagan_Check_Time(int); 
+int Sagan_Check_Day(int); 
 
 void Load_Protocol_Map( const char * ); 
 void Sagan_Usage( void ); 

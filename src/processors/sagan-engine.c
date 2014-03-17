@@ -80,7 +80,6 @@ int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
 sbool flowbit_isset = 0; 
-
 sbool geoip_isset = 0; 
 
 #ifdef HAVE_LIBGEOIP

@@ -107,3 +107,13 @@
 # define FALSE 0
 #endif
 
+/* Days */
+
+#define MONDAY		1
+#define TUESDAY		2
+#define WEDSDAY		4
+#define THURSDAY	8
+#define FRIDAY		16
+#define SATURDAY	32
+#define SUNDAY		64
+

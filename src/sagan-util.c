@@ -490,3 +490,20 @@ for (i=0; i<counters->var_count; i++) {
 return(flag);
 }
 
+/****************************************************************************/
+/* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
+/****************************************************************************/
+
+int Sagan_Check_Day(int day) { 
+
+if ( day - SUN >= 0 ) return(TRUE); 
+if ( day - SAT >= 0 ) return(TRUE);
+if ( day - FRI >= 0 ) return(TRUE);
+if ( day - THU >= 0 ) return(TRUE);
+if ( day - WED >= 0 ) return(TRUE); 
+if ( day - TUE >= 0 ) return(TRUE);
+if ( day - MON >= 0 ) return(TRUE);
+
+return(FALSE); /* This should never happen! */
+
+}
