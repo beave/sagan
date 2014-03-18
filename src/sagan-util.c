@@ -494,15 +494,15 @@ return(flag);
 /* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
 /****************************************************************************/
 
-int Sagan_Check_Day(int day) { 
+int Sagan_Check_Mask(int number) { 
 
-if ( day - SUNDAY >= 0 ) return(TRUE); 
-if ( day - SATURDAY >= 0 ) return(TRUE);
-if ( day - FRIDAY >= 0 ) return(TRUE);
-if ( day - THURSDAY >= 0 ) return(TRUE);
-if ( day - WEDNESDAY >= 0 ) return(TRUE); 
-if ( day - TUESDAY >= 0 ) return(TRUE);
-if ( day - MONDAY >= 0 ) return(TRUE);
+if ( number - MASK_64 >= 0 ) return(TRUE); 
+if ( number - MASK_32 >= 0 ) return(TRUE);
+if ( number - MASK_16 >= 0 ) return(TRUE);
+if ( number - MASK_8 >= 0 ) return(TRUE);
+if ( number - MASK_4 >= 0 ) return(TRUE); 
+if ( number - MASK_2 >= 0 ) return(TRUE);
+if ( number - MASK_1 >= 0 ) return(TRUE);
 
 return(FALSE); /* This should never happen! */
 

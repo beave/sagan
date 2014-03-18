@@ -131,6 +131,8 @@ int Sagan_Check_Time(rule_number) {
 	utime_end = (long) end_time_t;
 
 
+	if (Sagan_Check_Mask(rulestruct[rule_number].alert_days)) flag = 1; 
+		
 	/* Is the day a valid day to trigger? */
 	
 //	for (i=0; i<strlen(rulestruct[rule_number].alert_days); i++) {

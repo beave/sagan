@@ -682,7 +682,7 @@ int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
 int Sagan_Windows_Domain_Search(char *, int );
 int Sagan_Check_Time(int); 
-int Sagan_Check_Day(int); 
+int Sagan_Check_Mask(int); 
 
 void Load_Protocol_Map( const char * ); 
 void Sagan_Usage( void ); 
