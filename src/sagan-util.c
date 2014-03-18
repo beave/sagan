@@ -496,13 +496,13 @@ return(flag);
 
 int Sagan_Check_Day(int day) { 
 
-if ( day - SUN >= 0 ) return(TRUE); 
-if ( day - SAT >= 0 ) return(TRUE);
-if ( day - FRI >= 0 ) return(TRUE);
-if ( day - THU >= 0 ) return(TRUE);
-if ( day - WED >= 0 ) return(TRUE); 
-if ( day - TUE >= 0 ) return(TRUE);
-if ( day - MON >= 0 ) return(TRUE);
+if ( day - SUNDAY >= 0 ) return(TRUE); 
+if ( day - SATURDAY >= 0 ) return(TRUE);
+if ( day - FRIDAY >= 0 ) return(TRUE);
+if ( day - THURSDAY >= 0 ) return(TRUE);
+if ( day - WEDNESDAY >= 0 ) return(TRUE); 
+if ( day - TUESDAY >= 0 ) return(TRUE);
+if ( day - MONDAY >= 0 ) return(TRUE);
 
 return(FALSE); /* This should never happen! */
 
