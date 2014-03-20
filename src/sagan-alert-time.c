@@ -112,17 +112,19 @@ int Sagan_Check_Time(rule_number) {
 	/* mktime takes into account sagan_day = 32, 33, etc.  No need for conversion as 
 	   mktime will take care of it for us */
 
+
 	if ( rulestruct[rule_number].alert_start_hour > rulestruct[rule_number].alert_end_hour ) {
 		sagan_day_end = sagan_day +1;
 			} else {
 		sagan_day_end = sagan_day;
 	}
 
+
 	/* Construct end date/time */
 
 	t_end.tm_year = sagan_year-1900;
 	t_end.tm_mon = sagan_month;           // Month, 0 - jan
-	t_end.tm_mday = sagan_day_end;        // Day of the month
+	t_end.tm_mday = sagan_day_end;        // Day of the week
 	t_end.tm_hour = rulestruct[rule_number].alert_end_hour;
 	t_end.tm_min = rulestruct[rule_number].alert_end_minute;
 	t_end.tm_sec = 0;
@@ -130,21 +132,13 @@ int Sagan_Check_Time(rule_number) {
 	end_time_t = mktime(&t_end);
 	utime_end = (long) end_time_t;
 
-
-	if (Sagan_Check_Mask(rulestruct[rule_number].alert_days)) flag = 1; 
-		
-	/* Is the day a valid day to trigger? */
+	/* Is this a valid day to trigger? */ 
+	if (Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current)) { 
 	
-//	for (i=0; i<strlen(rulestruct[rule_number].alert_days); i++) {
-//		snprintf(tmp, sizeof(tmp), "%c", rulestruct[rule_number].alert_days[i]); 
-//		day = atoi(tmp); 
+		/* If day is valid,  check the time */
+		if ( utime_current >= utime_start && utime_current <= utime_end ) return(TRUE);
+	}
 
-//		if  ( day_current >= day && day_current <= day ) flag = 1; 
-//	}
-
-	/* If day is valid,  check the time */
-
-	if ( flag == 1 && utime_current >= utime_start && utime_current <= utime_end ) return(TRUE);
 
 return(FALSE);
 }

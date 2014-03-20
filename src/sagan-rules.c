@@ -790,13 +790,23 @@ Remove_Spaces(rulesplit);
   				   Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp1[i], ruleset, linecount);
 				}
 
-			    if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_1;	/* Monday */
-			    if ( atoi(tmp) == 1 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_2;	/* Tuesday */
-			    if ( atoi(tmp) == 2 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_4;	/* Wednesday */
-			    if ( atoi(tmp) == 3 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_8;	/* Thursday */
-			    if ( atoi(tmp) == 4 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_16;	/* Friday */
-			    if ( atoi(tmp) == 5 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_32; 	/* Saturday */
-			    if ( atoi(tmp) == 6 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MASK_64; 	/* Sunday */
+			    /*
+			    if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + SUNDAY;
+			    if ( atoi(tmp) == 1 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MONDAY;
+			    if ( atoi(tmp) == 2 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + TUESDAY;
+			    if ( atoi(tmp) == 3 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + WEDNESDAY;
+			    if ( atoi(tmp) == 4 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + THURSDAY;	
+			    if ( atoi(tmp) == 5 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + FRIDAY;
+			    if ( atoi(tmp) == 6 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + SATURDAY; 
+			    */
+
+			    if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days ^= SUNDAY; 
+			    if ( atoi(tmp) == 1 ) rulestruct[counters->rulecount].alert_days ^= MONDAY;
+			    if ( atoi(tmp) == 2 ) rulestruct[counters->rulecount].alert_days ^= TUESDAY;
+			    if ( atoi(tmp) == 3 ) rulestruct[counters->rulecount].alert_days ^= WEDNESDAY;
+			    if ( atoi(tmp) == 4 ) rulestruct[counters->rulecount].alert_days ^= THURSDAY;
+			    if ( atoi(tmp) == 5 ) rulestruct[counters->rulecount].alert_days ^= FRIDAY;
+			    if ( atoi(tmp) == 6 ) rulestruct[counters->rulecount].alert_days ^= SATURDAY;
 
 			    }
 

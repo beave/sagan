@@ -108,11 +108,11 @@
 #endif
 
 
-#define MASK_1		1
-#define MASK_2		2
-#define MASK_4		4
-#define MASK_8		8 
-#define MASK_16		16
-#define MASK_32		32
-#define MASK_64		64
+#define SUNDAY		1
+#define MONDAY		2
+#define TUESDAY		4
+#define WEDNESDAY	8 
+#define THURSDAY	16
+#define FRIDAY		32
+#define SATURDAY	64
 
