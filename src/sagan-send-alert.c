@@ -35,7 +35,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, int proto, int alertid, int src_port, int dst_port ) {
+void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, int proto, int alertid, int src_port, int dst_port, int pos ) {
 
 char tmp[64] = { 0 };
 
@@ -62,7 +62,7 @@ char tmp[64] = { 0 };
         SaganProcessorEvent->ip_dst          =       ip_dst;
         SaganProcessorEvent->dst_port        =       dst_port;
         SaganProcessorEvent->src_port        =       src_port;
-        SaganProcessorEvent->found           =       0;
+        SaganProcessorEvent->found           =       pos;
 
 
         snprintf(tmp, sizeof(tmp)-1, "%d", alertid);

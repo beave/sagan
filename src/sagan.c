@@ -573,8 +573,6 @@ if ( config->websense_parse_dst ) Sagan_Log(S_NORMAL, "Websense Parse Destinatio
  * Output plugins
  ***************************************************************************/
 
-/* SMTP ********************************************************************/
-
 #ifdef HAVE_LIBESMTP
 if ( config->sagan_esmtp_flag ) { 
 Sagan_Log(S_NORMAL, "");
@@ -582,6 +580,15 @@ if ( config->min_email_priority ) Sagan_Log(S_NORMAL, "E-mail on priority %d or 
 Sagan_Log(S_NORMAL, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
 Sagan_Log(S_NORMAL, "SMTP server is set to: %s", config->sagan_esmtp_server);
 }
+#endif
+
+#ifdef WITH_SNORTSAM
+
+if ( config->sagan_fwsam_flag ) { 
+Sagan_Log(S_NORMAL, ""); 
+Sagan_Log(S_NORMAL, "Snortsam output plug in enabled."); 
+}
+
 #endif
 
 if ( config->sagan_external_output_flag ) { 

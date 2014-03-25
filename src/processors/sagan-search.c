@@ -186,7 +186,7 @@ if (SaganNormalizeLiblognorm->ip_dst[0] != '0')
    if ( config->search_nocase_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
    
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, proto, 1, src_port, dst_port, 0);
 
    }
  }
@@ -244,7 +244,7 @@ if (SaganNormalizeLiblognorm->ip_dst[0] != '0')
    if ( config->search_case_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
    if ( proto == 0 ) proto = config->sagan_proto; 
  
-   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port);
+   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_search, ip_src, ip_dst, config->sagan_proto, 2, src_port, dst_port, 0);
    }
   }
  }

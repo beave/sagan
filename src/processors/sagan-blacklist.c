@@ -198,7 +198,7 @@ pthread_mutex_unlock(&Lognorm_Mutex);
 		if ( src_port == 0 ) src_port = config->sagan_port;
 		if ( dst_port == 0 ) dst_port = config->sagan_port;
 
-	        Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_dst, config->sagan_proto, 1, src_port, dst_port);
+	        Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_dst, config->sagan_proto, 1, src_port, dst_port, 0);
 		}
 	}
  }
@@ -215,7 +215,7 @@ if ( ip_src_flag != 0 ) {
       if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
       if ( proto == 0 ) proto = config->sagan_proto; 
 
-      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src, ip_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port, 0);
       }
    }
 }
@@ -232,7 +232,7 @@ if ( ip_dst_flag != 0 ) {
       if ( config->blacklist_parse_proto_program ) proto = parse_proto_program(SaganProcSyslog_LOCAL->syslog_program);
       if ( proto == 0 ) proto = config->sagan_proto;
 
-      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_tmp, ip_dst, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
+      Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_tmp, ip_dst, config->sagan_proto, 1, config->sagan_port, config->sagan_port, 0);
       }
     }
   }
@@ -276,7 +276,7 @@ for (i=1; i < config->blacklist_parse_depth+1; i++) {
 
 		  if ( strcmp(ip_src, ip_dst ) ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
 		  
-		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port);
+		  Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_blacklist, ip_src_tmp, ip_dst_tmp, config->sagan_proto, 1, config->sagan_port, config->sagan_port, 0);
 		  }
 	   }
 

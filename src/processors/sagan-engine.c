@@ -819,7 +819,7 @@ processor_info_engine_src_port                 =       src_port;
 processor_info_engine_proto                    =       proto;
 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port );
+Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
 
       } /* Threshold / After */
 #ifdef HAVE_LIBGEOIP

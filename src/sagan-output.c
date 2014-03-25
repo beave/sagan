@@ -71,7 +71,9 @@ if ( nonthread_alert_lock == 0 ) {
 /* If we have a snortsam server && the rule requires snortsam..... */
 
 #ifdef WITH_SNORTSAM
+
 if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) sagan_fwsam( Event );
+
 #endif
 
 /****************************************************************************/

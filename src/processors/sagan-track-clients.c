@@ -151,7 +151,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 	   alertid=101;
 	   SaganTrackClients[i].status = 0;
-	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port);
+	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
 	   }
 
 	pthread_mutex_unlock(&SaganProcTrackClientsMutex);
@@ -175,7 +175,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 	   SaganTrackClients[i].status = 1;
 	   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
-	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port);
+	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
 	   }
 
 }
