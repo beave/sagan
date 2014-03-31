@@ -89,7 +89,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"Content-Transfer-Encoding: 8bit\r\n"
 	"From: %s\r\n"
 	"To: %s\r\n"
-	"Subject: [Sagan] %s\r\n"
+	"Subject: %s%s\r\n"
 	"\r\n\n"
 	"[**] [%lu:%s] %s [**]\n"
 	"[Classification: %s] [Priority: %d]\n"
@@ -97,6 +97,7 @@ if ((r = snprintf(tmpa, sizeof(tmpa),
 	"Syslog message: %s\r\n%s\n\r",
 	config->sagan_esmtp_from,
 	tmpemail, 
+	config->sagan_email_subject,
 	Event->f_msg,
 	Event->generatorid,
 	Event->sid, 

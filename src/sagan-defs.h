@@ -94,6 +94,8 @@
 
 #define PARSEIP_RETURN_STRING	0
 
+#define DEFAULT_SMTP_SUBJECT 	"[Sagan]"
+
 /* defaults if the user doesn't define */
 
 #define MAX_OUTPUT_THREADS      50

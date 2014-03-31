@@ -110,6 +110,10 @@ strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
 if ( config->sagan_fifo_flag != 1 ) strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo)); 
 strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path)); 
 
+#ifndef HAVE_LIBESMTP
+strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject)); 
+#endif
+
 config->sagan_proto = 17;		/* Default to UDP */
 config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
@@ -188,6 +192,11 @@ if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priorit
        sagan_var1 = strtok_r(NULL, " ", &tok);
        config->min_email_priority = atoi(sagan_var1);
        }
+
+   if (!strcmp(sagan_option, "email_subject")) { 
+      sagan_var1 = strtok_r(NULL, " ", &tok);
+      strlcpy(config->sagan_email_subject, Remove_Return(Between_Quotes(tmpbuf2)), sizeof(config->sagan_email_subject)); 
+      }
 
 #endif
 

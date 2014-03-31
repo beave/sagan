@@ -271,6 +271,7 @@ struct _SaganConfig {
     char	sagan_esmtp_from[255];
     char	sagan_esmtp_server[255];
     sbool	sagan_esmtp_flag;
+    char	sagan_email_subject[64]; 
 #endif
 
 /* Prelude framework support */
