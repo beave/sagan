@@ -110,7 +110,7 @@ strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
 if ( config->sagan_fifo_flag != 1 ) strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo)); 
 strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path)); 
 
-#ifndef HAVE_LIBESMTP
+#ifdef HAVE_LIBESMTP
 strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject)); 
 #endif
 
