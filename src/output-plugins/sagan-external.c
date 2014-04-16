@@ -46,10 +46,10 @@ struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
+pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
+
 
 void sagan_ext_thread ( _SaganEvent *Event ) {
-
-pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 int in[2];
 int out[2];
