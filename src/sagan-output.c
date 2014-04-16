@@ -88,7 +88,9 @@ if ( config->sagan_esmtp_flag ) sagan_esmtp_thread( Event );
 /* External program support                                                 */
 /****************************************************************************/
 
+pthread_mutex_lock(&SaganOutputNonThreadMutex);
 if ( config->sagan_ext_flag ) sagan_ext_thread( Event );
+pthread_mutex_unlock(&SaganOutputNonThreadMutex);
 
 } 
 
