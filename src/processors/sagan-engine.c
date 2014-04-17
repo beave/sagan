@@ -95,8 +95,6 @@ int   alert_time_trigger = 0;
 pthread_t output_id[MAX_THREADS];
 pthread_attr_t thread_output_attr;
 
-struct _Sagan_Processor_Info *processor_info_engine = NULL;
-
 void Sagan_Engine_Init ( void ) { 
 
 #ifdef HAVE_LIBLOGNORM
@@ -104,13 +102,16 @@ SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 #endif
 
-processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
-memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
 }
 
 int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 {
+
+
+struct _Sagan_Processor_Info *processor_info_engine = NULL;
+processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
 int processor_info_engine_src_port = 0;
 int processor_info_engine_dst_port = 0;

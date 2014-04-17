@@ -46,7 +46,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
-//pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 void sagan_ext_thread ( _SaganEvent *Event ) {
@@ -101,7 +101,7 @@ if ( pipe(out) < 0 ) {
 if (( pid = fork()) == 0 ) { 
 
    /* Causes problems with alert.log */
-//   pthread_mutex_lock( &ext_mutex );
+   pthread_mutex_lock( &ext_mutex );
    close(0);
    close(1);
    close(2);
@@ -112,25 +112,25 @@ if (( pid = fork()) == 0 ) {
 
    close(in[1]);
    close(out[0]);
-//   pthread_mutex_unlock( &ext_mutex );
+   pthread_mutex_unlock( &ext_mutex );
 
    ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
    Remove_Lock_File();
    Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
    } 
 
-//   pthread_mutex_lock( &ext_mutex );
+   pthread_mutex_lock( &ext_mutex );
    close(in[0]);
    close(out[1]);
-//   pthread_mutex_unlock( &ext_mutex );
+   pthread_mutex_unlock( &ext_mutex );
 
    /* Write to child input */
 
 
    n = write(in[1], data, strlen(data));
-//   pthread_mutex_lock( &ext_mutex );
+   pthread_mutex_lock( &ext_mutex );
    close(in[1]);
-//   pthread_mutex_unlock( &ext_mutex );
+   pthread_mutex_unlock( &ext_mutex );
 
    n = read(out[0], buf, sizeof(buf));
    close(out[0]);
