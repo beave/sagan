@@ -46,8 +46,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
-struct _Sagan_Processor_Info *processor_info_blacklist = NULL;
-
 #ifdef HAVE_LIBLOGNORM
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
 pthread_mutex_t Lognorm_Mutex;
@@ -63,19 +61,6 @@ int mask=0;
 char tmp[1024] = { 0 };
 char *iprange=NULL;
 char blacklistbuf[1024] = { 0 };
-
-processor_info_blacklist = malloc(sizeof(struct _Sagan_Processor_Info));
-memset(processor_info_blacklist, 0, sizeof(_Sagan_Processor_Info));
-
-processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
-processor_info_blacklist->processor_generator_id  =       BLACKLIST_PROCESSOR_GENERATOR_ID;
-processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
-processor_info_blacklist->processor_facility      =       BLACKLIST_PROCESSOR_FACILITY;
-processor_info_blacklist->processor_priority      =       BLACKLIST_PROCESSOR_PRIORITY;
-processor_info_blacklist->processor_pri           =       BLACKLIST_PROCESSOR_PRI;
-processor_info_blacklist->processor_class         =       BLACKLIST_PROCESSOR_CLASS;
-processor_info_blacklist->processor_tag           =       BLACKLIST_PROCESSOR_TAG;
-processor_info_blacklist->processor_rev           =       BLACKLIST_PROCESSOR_REV;
 
 counters->blacklist_count=0;
 
@@ -157,6 +142,24 @@ char ip_tmp[64] = { 0 };
 int   src_port = 0;
 int   dst_port = 0;
 int   proto = 0; 
+
+struct _Sagan_Processor_Info *processor_info_blacklist = NULL;
+
+processor_info_blacklist = malloc(sizeof(struct _Sagan_Processor_Info));
+memset(processor_info_blacklist, 0, sizeof(_Sagan_Processor_Info));
+
+processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
+processor_info_blacklist->processor_generator_id  =       BLACKLIST_PROCESSOR_GENERATOR_ID;
+processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
+processor_info_blacklist->processor_facility      =       BLACKLIST_PROCESSOR_FACILITY;
+processor_info_blacklist->processor_priority      =       BLACKLIST_PROCESSOR_PRIORITY;
+processor_info_blacklist->processor_pri           =       BLACKLIST_PROCESSOR_PRI;
+processor_info_blacklist->processor_class         =       BLACKLIST_PROCESSOR_CLASS;
+processor_info_blacklist->processor_tag           =       BLACKLIST_PROCESSOR_TAG;
+processor_info_blacklist->processor_rev           =       BLACKLIST_PROCESSOR_REV;
+
+
+
 
 #ifdef HAVE_LIBLOGNORM
 if (config->blacklist_lognorm)  { 
