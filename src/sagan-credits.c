@@ -61,6 +61,7 @@ fprintf(stderr, "\"powertoaster\" (Github)\t\t\t\tBug reports & testing\n");
 fprintf(stderr, "James Lay\t\t\t\t\tRules\n");
 fprintf(stderr, "Brad Doctor\t\t\t\t\tRules\n");
 fprintf(stderr, "Sniffty Dugen\t\t\t\t\tRules\n");
+fprintf(stderr, "Iman Khosravi\t\t\t\t\tRules\n");
 
 }
 
