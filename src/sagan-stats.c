@@ -128,7 +128,7 @@ Sagan_Log(S_NORMAL, "           Search Hits [nocase]     : %" PRIu64 " (%.3f%%)"
 }
 
 if (config->sagan_track_clients_flag) {
-Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 , counters->track_clients_client_count, counters->track_clients_down);
+Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters->track_clients_client_count, counters->track_clients_down, config->pp_sagan_track_clients);
 }
 
 
