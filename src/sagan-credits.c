@@ -53,11 +53,12 @@ fprintf(stderr, "\"Alice Kaerast\" (kaerast - Github\t\trsyslog example in 'extr
 fprintf(stderr, "\"DigiAngel\" (Github)\t\t\t\t'content:!' idea\n");
 fprintf(stderr, "Robert Bridge (RobbieAB - Github)\t\t'flowbit' idea\n");
 fprintf(stderr, "Mathieu Parent (sathieu - Github)\t\tOld MySQL port fix\n");
-fprintf(stderr, "Pierre Chifflier (chifflier - Githib)\t\tPatches/testing/bug fixes\n");
-fprintf(stderr, "\"miverson\" (Github)\t\t\t\tOSSEC/Sagan converter/bug fixes\n");
+fprintf(stderr, "Pierre Chifflier (chifflier - Githib)\t\tPatches/bug fixes/man page\n");
+fprintf(stderr, "\"miverson\" (Github)\t\t\t\tOSSEC converter/bug fixes\n");
 fprintf(stderr, "\"ekse\" (Github)\t\t\t\t\tBug reports & testing\n");
 fprintf(stderr, "\"mtgxx\" (Github)\t\t\t\tBug reports & testing\n");
 fprintf(stderr, "\"powertoaster\" (Github)\t\t\t\tBug reports & testing\n");
+fprintf(stderr, "\"phajdan.jr\" (Gentoo)\t\t\t\tGentoo ebuild\n");
 fprintf(stderr, "James Lay\t\t\t\t\tRules\n");
 fprintf(stderr, "Brad Doctor\t\t\t\t\tRules\n");
 fprintf(stderr, "Sniffty Dugen\t\t\t\t\tRules\n");
