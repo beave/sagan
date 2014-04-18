@@ -51,7 +51,9 @@ int proc_msgslot; 		/* Comes from sagan.c */
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
+
 pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 
 void Sagan_Processor ( void ) {
 
@@ -130,7 +132,16 @@ for (;;) {
 		if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
 		if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);
 		if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2); 
-		if ( config->sagan_track_clients_flag) Sagan_Track_Clients(SaganProcSyslog_LOCAL);
+
+		if ( config->sagan_track_clients_flag) { 
+
+			/* Essentially becomes a signle threaded operation */
+
+			pthread_mutex_lock(&SaganClientTracker);
+			Sagan_Track_Clients(SaganProcSyslog_LOCAL);
+			pthread_mutex_unlock(&SaganClientTracker);
+
+			}
 
 		} // End if if (ignore_Flag)
   } //  for (;;)

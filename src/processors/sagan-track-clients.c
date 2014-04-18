@@ -43,7 +43,7 @@ struct _Sagan_Track_Clients *SaganTrackClients;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 
-pthread_mutex_t SaganProcTrackClientsMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t SaganProcTrackClientsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 int proc_cpu_msgslot;
@@ -78,14 +78,14 @@ if (client_track_flag == 0 ) {
 		} else {
 		/* Allocate memory for references,  not comments */
 
-		pthread_mutex_lock(&SaganProcTrackClientsMutex);
+//		pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
 		SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
 		strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
 		SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
 		SaganTrackClients[counters->track_clients_client_count].status = 0;
 		counters->track_clients_client_count++;
-		pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+//		pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 		}
 	}
    Sagan_Log(S_NORMAL, "Client Tracking loaded %d host(s) to track", counters->track_clients_client_count);
@@ -137,7 +137,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
     if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, SaganTrackClients[i].host)) { 
 
-    	pthread_mutex_lock(&SaganProcTrackClientsMutex); 
+//    	pthread_mutex_lock(&SaganProcTrackClientsMutex); 
 
         SaganTrackClients[i].utime = atol(timet);
 
@@ -154,7 +154,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
 	   }
 
-	pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+//	pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 	tracking_flag=1;
 	}
 
@@ -171,9 +171,9 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 	   alertid=100;
 
-	   pthread_mutex_lock(&SaganProcTrackClientsMutex);
+//	   pthread_mutex_lock(&SaganProcTrackClientsMutex);
 	   SaganTrackClients[i].status = 1;
-	   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+//	   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
 	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
 	   }
@@ -182,7 +182,7 @@ for (i=0; i<counters->track_clients_client_count; i++) {
 
 if ( tracking_flag == 0) { 
    
-   pthread_mutex_lock(&SaganProcTrackClientsMutex);
+//   pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
    SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
    strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host)); 
@@ -190,7 +190,7 @@ if ( tracking_flag == 0) {
    SaganTrackClients[counters->track_clients_client_count].status = 0;
    fprintf(config->sagan_track_client_file, "%s\n", SaganTrackClients[counters->track_clients_client_count].host);
    counters->track_clients_client_count++;
-   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+//   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
   }
 

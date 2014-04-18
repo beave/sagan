@@ -108,7 +108,6 @@ memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 {
 
-
 struct _Sagan_Processor_Info *processor_info_engine = NULL;
 processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
 memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
