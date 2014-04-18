@@ -18,13 +18,13 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-track-clients.c 
+/* sagan-track-clients.c
 *
 * Simple pre-processors that keeps track of reporting syslog clients/agents.
 * This is based off the IP address the clients,  not based on normalization.
-* If a client/agent hasn't sent a syslog/event message in X minutes,  then 
+* If a client/agent hasn't sent a syslog/event message in X minutes,  then
 * generate an alert.
-*  
+*
 */
 
 #define PROCESSOR_NAME "Sagan_Track_Clients"
@@ -37,10 +37,11 @@
 #define PROCESSOR_GENERATOR_ID 100
 
 typedef struct _Sagan_Track_Clients _Sagan_Track_Clients;
-struct _Sagan_Track_Clients  {
-char    host[64];
-uint64_t utime;
-sbool   status;
+struct _Sagan_Track_Clients
+{
+    char    host[64];
+    uint64_t utime;
+    sbool   status;
 };
 
 

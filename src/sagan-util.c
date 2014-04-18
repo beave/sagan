@@ -18,9 +18,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-util.c 
+/* sagan-util.c
  *
- * Various re-usable functions. 
+ * Various re-usable functions.
  *
  */
 
@@ -53,7 +53,7 @@
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
-struct _SaganVar *var; 
+struct _SaganVar *var;
 struct _Sagan_Processor_Generator *generator;
 
 sbool daemonize;
@@ -65,18 +65,20 @@ sbool daemonize;
  * it initalized                                                             *
  *****************************************************************************/
 
-void Chroot(const char *username, const char *chrootdir ) { 
+void Chroot(const char *username, const char *chrootdir )
+{
 
-struct passwd *pw = NULL;
+    struct passwd *pw = NULL;
 
-pw = getpwnam(username);
+    pw = getpwnam(username);
 
-printf("[*] Chroot to %s\n", chrootdir);
+    printf("[*] Chroot to %s\n", chrootdir);
 
-if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
-    fprintf(stderr, "[E] Could not chroot to '%s'.\n",  chrootdir);
-    exit(1);		/* sagan.log isn't open yet */
-   }
+    if (chroot(chrootdir) != 0 || chdir ("/") != 0)
+        {
+            fprintf(stderr, "[E] Could not chroot to '%s'.\n",  chrootdir);
+            exit(1);		/* sagan.log isn't open yet */
+        }
 }
 
 /************************************************
@@ -86,30 +88,34 @@ if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
 void sagan_droppriv(const char *username)
 {
 
-	struct stat fifocheck;
-        struct passwd *pw = NULL;
-	int ret;
+    struct stat fifocheck;
+    struct passwd *pw = NULL;
+    int ret;
 
-        pw = getpwnam(username);
+    pw = getpwnam(username);
 
-	if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", username);
-        
-	if ( getuid() == 0 ) {
-	Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
-	ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+    if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", username);
 
-	        if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO!",  __FILE__, __LINE__, config->sagan_fifo);
+    if ( getuid() == 0 )
+        {
+            Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
-		if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+            if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO!",  __FILE__, __LINE__, config->sagan_fifo);
 
-                if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
-                    setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-		    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
-	       } 
-	       
-	       } else { 
-	       Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
-	       }
+            if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+
+            if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
+                    setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+                }
+
+        }
+    else
+        {
+            Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
+        }
 }
 
 /***************************************************************/
@@ -130,114 +136,129 @@ char *fasthex(char *xdata, int length)
     ridx = retbuf;
 
     while(index < end)
-    {
-        *ridx++ = conv[((*index & 0xFF)>>4)];
-        *ridx++ = conv[((*index & 0xFF)&0x0F)];
-        index++;
-    }
+        {
+            *ridx++ = conv[((*index & 0xFF)>>4)];
+            *ridx++ = conv[((*index & 0xFF)&0x0F)];
+            index++;
+        }
 
     return(retbuf);
 }
 
 /* Remove new-lines */
 
-char  *Remove_Return(char *s) {
-       char *s1, *s2;
-       for(s1 = s2 = s;*s1;*s1++ = *s2++ )
-       while( *s2 == '\n' )s2++;
-      return s;
+char  *Remove_Return(char *s)
+{
+    char *s1, *s2;
+    for(s1 = s2 = s; *s1; *s1++ = *s2++ )
+        while( *s2 == '\n' )s2++;
+    return s;
 }
 
 /* Removes spaces from certain rule fields, etc */
 
-char *Remove_Spaces(char *s) {
-       char *s1, *s2;
-       for(s1 = s2 = s;*s1;*s1++ = *s2++ )
-       while( *s2 == ' ')s2++;
-       return s;
+char *Remove_Spaces(char *s)
+{
+    char *s1, *s2;
+    for(s1 = s2 = s; *s1; *s1++ = *s2++ )
+        while( *s2 == ' ')s2++;
+    return s;
 }
 
-/* Shift a string to all uppercase */ 
+/* Shift a string to all uppercase */
 
-char *To_UpperC(char* const s) {
-        char* cur = s;
-          while (*cur) {
-          *cur = toupper(*cur);
-          ++cur;
-          }
-  return s;
+char *To_UpperC(char* const s)
+{
+    char* cur = s;
+    while (*cur)
+        {
+            *cur = toupper(*cur);
+            ++cur;
+        }
+    return s;
 }
 
-void Sagan_Log (int type, const char *format,... ) {
+void Sagan_Log (int type, const char *format,... )
+{
 
-   char buf[1024];
-   va_list ap;
-   va_start(ap, format);
-   char *chr="*";
-   char curtime[64];
-   time_t t;
-   struct tm *now;
-   t = time(NULL);
-   now=localtime(&t);
-   strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
+    char buf[1024];
+    va_list ap;
+    va_start(ap, format);
+    char *chr="*";
+    char curtime[64];
+    time_t t;
+    struct tm *now;
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
-   if ( type == 1 ) chr="E";
-   if ( type == 2 ) chr="W"; 
-   if ( type == 3 ) chr="D"; 
+    if ( type == 1 ) chr="E";
+    if ( type == 2 ) chr="W";
+    if ( type == 3 ) chr="D";
 
-     vsnprintf(buf, sizeof(buf), format, ap);
-     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
-     fflush(config->sagan_log_stream);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
+    fflush(config->sagan_log_stream);
 
-     if ( daemonize == 0) printf("[%s] %s\n", chr, buf);
-     if ( type == 1 ) exit(1);
+    if ( daemonize == 0) printf("[%s] %s\n", chr, buf);
+    if ( type == 1 ) exit(1);
 }
 
-int Check_Endian() {
-   int i = 1;
-   char *p = (char *) &i;
-        if (p[0] == 1) // Lowest address contains the least significant byte
+int Check_Endian()
+{
+    int i = 1;
+    char *p = (char *) &i;
+    if (p[0] == 1) // Lowest address contains the least significant byte
         return 0; // Little endian
-        else
+    else
         return 1; // Big endian
 }
 
 
 /* Converts IP address.  For IPv4,  we convert the quad IP string to a 32 bit
  * value.  We return the unsigned long value as a pointer to a string because
- * that's the way IPv6 is done.  Basically,  we'll probably want IPv6 when 
+ * that's the way IPv6 is done.  Basically,  we'll probably want IPv6 when
  * snort supports DB IPv6.
  */
 
-uint32_t IP2Bit (char *ipaddr) { 
+uint32_t IP2Bit (char *ipaddr)
+{
 
-struct sockaddr_in ipv4;
-uint32_t ip;
+    struct sockaddr_in ipv4;
+    uint32_t ip;
 
-/* Change to AF_UNSPEC for future ipv6 */
-/* Champ Clark III - 01/18/2011 */
+    /* Change to AF_UNSPEC for future ipv6 */
+    /* Champ Clark III - 01/18/2011 */
 
-if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-Sagan_Log(S_WARN, "Warning: Got a inet_pton() error for \"%s\" but continuing...", ipaddr);
+    if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr))
+        {
+            Sagan_Log(S_WARN, "Warning: Got a inet_pton() error for \"%s\" but continuing...", ipaddr);
+        }
+
+    if ( config->endian == 0 )
+        {
+            ip = htonl(ipv4.sin_addr.s_addr);
+        }
+    else
+        {
+            ip = ipv4.sin_addr.s_addr;
+        }
+
+    return(ip);
+
 }
 
-if ( config->endian == 0 ) {
-   ip = htonl(ipv4.sin_addr.s_addr);
-   } else {
-   ip = ipv4.sin_addr.s_addr;
-   }
+int Is_Numeric (char *str)
+{
 
-return(ip);
-
-}
-
-int Is_Numeric (char *str) {
-
-if(strlen(str) == strspn(str, "0123456789")) {
-	return(TRUE);
-	 } else {
-	return(FALSE);
-	}
+    if(strlen(str) == strspn(str, "0123456789"))
+        {
+            return(TRUE);
+        }
+    else
+        {
+            return(FALSE);
+        }
 
 }
 
@@ -246,31 +267,33 @@ if(strlen(str) == strspn(str, "0123456789")) {
 
 char *Between_Quotes(char *instring)
 {
-sbool flag=0;
-int i;
-char tmp1[2];
+    sbool flag=0;
+    int i;
+    char tmp1[2];
 
-/* quick and dirty fix added by drforbin....this function really should be reworked 
-fix added to make tmp2 presistent (non-automatic) so once the function returns it is presistent */
+    /* quick and dirty fix added by drforbin....this function really should be reworked
+    fix added to make tmp2 presistent (non-automatic) so once the function returns it is presistent */
 
-static char tmp2[512];
-memset(tmp2,0,sizeof(tmp2));
-char *ret;
+    static char tmp2[512];
+    memset(tmp2,0,sizeof(tmp2));
+    char *ret;
 
-for ( i=0; i<strlen(instring); i++) { 
+    for ( i=0; i<strlen(instring); i++)
+        {
 
-if ( flag == 1 && instring[i] == '\"' ) flag = 0;
-if ( flag == 1 ) { 
-   snprintf(tmp1, sizeof(tmp1), "%c", instring[i]); 
-   strlcat(tmp2, tmp1, sizeof(tmp2));
-   }
+            if ( flag == 1 && instring[i] == '\"' ) flag = 0;
+            if ( flag == 1 )
+                {
+                    snprintf(tmp1, sizeof(tmp1), "%c", instring[i]);
+                    strlcat(tmp2, tmp1, sizeof(tmp2));
+                }
 
-if ( instring[i] == '\"' ) flag++;
+            if ( instring[i] == '\"' ) flag++;
 
-}
+        }
 
-ret=tmp2;
-return(ret);
+    ret=tmp2;
+    return(ret);
 }
 
 /* CalcPct (Taken from Snort) */
@@ -280,13 +303,13 @@ double CalcPct(uint64_t cnt, uint64_t total)
     double pct = 0.0;
 
     if (total == 0.0)
-    {
-        pct = (double)cnt;
-    }
+        {
+            pct = (double)cnt;
+        }
     else
-    {
-        pct = (double)cnt / (double)total;
-    }
+        {
+            pct = (double)cnt / (double)total;
+        }
 
     pct *= 100.0;
 
@@ -296,7 +319,7 @@ double CalcPct(uint64_t cnt, uint64_t total)
 /* DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely
  * based on Beej's showip.c */
 
-char *DNS_Lookup( char *host ) 
+char *DNS_Lookup( char *host )
 {
     struct addrinfo hints, *res; //,// *p;
     int status;
@@ -304,31 +327,36 @@ char *DNS_Lookup( char *host )
     char *ret;
     void *addr;
 
-       if ( config->disable_dns_warnings == 0 ) { 
-       Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-       Sagan_Log(S_WARN, "Sagan DNS lookup need for %s.", host); 
-       Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
-       Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-       Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-       }
+    if ( config->disable_dns_warnings == 0 )
+        {
+            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+            Sagan_Log(S_WARN, "Sagan DNS lookup need for %s.", host);
+            Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
+            Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+        }
 
-       memset(&hints, 0, sizeof hints);
-       hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
-       hints.ai_socktype = SOCK_STREAM;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC; // AF_INET or AF_INET6 to force version
+    hints.ai_socktype = SOCK_STREAM;
 
-    if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
-	Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
-        return "0";
-    }
+    if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0)
+        {
+            Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
+            return "0";
+        }
 
-        if (res->ai_family == AF_INET) { // IPv4
+    if (res->ai_family == AF_INET)   // IPv4
+        {
             struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
             addr = &(ipv4->sin_addr);
-        } else { // IPv6
+        }
+    else     // IPv6
+        {
             struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res->ai_addr;
             addr = &(ipv6->sin6_addr);
         }
-     
+
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     free(res);
     ret=ipstr;
@@ -341,34 +369,35 @@ char *DNS_Lookup( char *host )
 char *Replace_String(char *str, char *orig, char *rep)
 {
 
-  static char buffer[4096];
-  char *p;
+    static char buffer[4096];
+    char *p;
 
-  if(!(p = strstr(str, orig)))  return str;
+    if(!(p = strstr(str, orig)))  return str;
 
-  strlcpy(buffer, str, p-str); 
-  buffer[p-str] = '\0';
-  sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
-  return(buffer);
+    strlcpy(buffer, str, p-str);
+    buffer[p-str] = '\0';
+    sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+    return(buffer);
 }
 
 
 /* Get the filename from a path */
 
-char *Get_Filename(char *file) {
+char *Get_Filename(char *file)
+{
 
     char *pfile;
     pfile = file + strlen(file);
     for (; pfile > file; pfile--)
-    {
-        if ((*pfile == '\\') || (*pfile == '/'))	/* *nix/Windows */
         {
-            pfile++;
-            break;
+            if ((*pfile == '\\') || (*pfile == '/'))	/* *nix/Windows */
+                {
+                    pfile++;
+                    break;
+                }
         }
-    }
 
-return(pfile);
+    return(pfile);
 
 }
 
@@ -378,22 +407,23 @@ return(pfile);
 /* Checks to see if an ip address is RFC1918 or not                         */
 /****************************************************************************/
 
-sbool is_rfc1918 ( char *ipaddr ) {
+sbool is_rfc1918 ( char *ipaddr )
+{
 
-uint32_t ipint=0;
+    uint32_t ipint=0;
 
-ipint = IP2Bit(ipaddr);
+    ipint = IP2Bit(ipaddr);
 
-if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	 // 10.X.X.X
-if ( ipint > 3232235520 && ipint < 3232301055 ) return(TRUE);    // 192.168.X.X 
-if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    // 172.16/31.X.X
-if ( ipint == 2130706433 ) return(TRUE);			 // 127.0.0.1
+    if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	 // 10.X.X.X
+    if ( ipint > 3232235520 && ipint < 3232301055 ) return(TRUE);    // 192.168.X.X
+    if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    // 172.16/31.X.X
+    if ( ipint == 2130706433 ) return(TRUE);			 // 127.0.0.1
 
-/* Invalid IP addresses */
+    /* Invalid IP addresses */
 
-if ( ipint < 16777216 ) return(FALSE); 				 // Larger than 1.0.0.0
+    if ( ipint < 16777216 ) return(FALSE); 				 // Larger than 1.0.0.0
 
-return(FALSE);
+    return(FALSE);
 
 }
 
@@ -402,37 +432,40 @@ return(FALSE);
 /* example - $RULE_PATH into it's true value.                               */
 /****************************************************************************/
 
-char *Sagan_Var_To_Value(char *instring) {
+char *Sagan_Var_To_Value(char *instring)
+{
 
-char *ptmp = NULL;
-char *tok = NULL;
-char tmp[256] = { 0 };
-char tmp2[256] = { 0 };
-char tmp3[254] = { 0 };
-char tmp_result[256] = { 0 };
-char *tmpbuf = NULL;
-int i=0;
+    char *ptmp = NULL;
+    char *tok = NULL;
+    char tmp[256] = { 0 };
+    char tmp2[256] = { 0 };
+    char tmp3[254] = { 0 };
+    char tmp_result[256] = { 0 };
+    char *tmpbuf = NULL;
+    int i=0;
 
-snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
-tmpbuf = tmp;
+    snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
+    tmpbuf = tmp;
 
-for (i=0; i<counters->var_count; i++) {
+    for (i=0; i<counters->var_count; i++)
+        {
 
-    ptmp = strtok_r(tmp, " ", &tok);
+            ptmp = strtok_r(tmp, " ", &tok);
 
-        while (ptmp != NULL ) {
-             strlcpy(tmp2, Replace_String(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
-             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
-             strlcat(tmp_result, tmp3, sizeof(tmp_result));
-             ptmp = strtok_r(NULL, " ", &tok);
-             }
+            while (ptmp != NULL )
+                {
+                    strlcpy(tmp2, Replace_String(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
+                    snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
+                    strlcat(tmp_result, tmp3, sizeof(tmp_result));
+                    ptmp = strtok_r(NULL, " ", &tok);
+                }
 
-strlcpy(tmp, tmp_result, sizeof(tmp)); 
-tmpbuf = tmp;
-strlcpy(tmp_result, "", sizeof(tmp_result));
-}
+            strlcpy(tmp, tmp_result, sizeof(tmp));
+            tmpbuf = tmp;
+            strlcpy(tmp_result, "", sizeof(tmp_result));
+        }
 
-return(tmpbuf);
+    return(tmpbuf);
 }
 
 /****************************************************************************/
@@ -440,33 +473,39 @@ return(tmpbuf);
 /* "gen-msg.map") of a processor				            */
 /****************************************************************************/
 
-char *Sagan_Generator_Lookup(int processor_id, int alert_id) { 
+char *Sagan_Generator_Lookup(int processor_id, int alert_id)
+{
 
-int z=0; 
-char *msg=NULL;
+    int z=0;
+    char *msg=NULL;
 
-for (z=0; z<counters->genmapcount; z++) { 
-if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
-}
+    for (z=0; z<counters->genmapcount; z++)
+        {
+            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
+        }
 
-return(msg);
+    return(msg);
 }
 
 /****************************************************************************/
 /* Sagan_Validate_HEX - Makes sure a string is valid hex.                   */
 /****************************************************************************/
 
-int Sagan_Validate_HEX (const char *string) {
+int Sagan_Validate_HEX (const char *string)
+{
 
     const char *curr = string;
     while (*curr != 0)
-    {
-        if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9')) {
-            ++curr;
-        } else {
-            return(FALSE);
+        {
+            if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9'))
+                {
+                    ++curr;
+                }
+            else
+                {
+                    return(FALSE);
+                }
         }
-    }
     return(TRUE);
 }
 
@@ -474,56 +513,67 @@ int Sagan_Validate_HEX (const char *string) {
 /* Sagan_Check_Var - Checks to make sure a "var" is present in memory       */
 /****************************************************************************/
 
-int Sagan_Check_Var(const char *string) { 
+int Sagan_Check_Var(const char *string)
+{
 
-int i; 
-int flag = 0; 
+    int i;
+    int flag = 0;
 
-for (i=0; i<counters->var_count; i++) {
+    for (i=0; i<counters->var_count; i++)
+        {
 
-	if (!strcmp(string, var[i].var_name)) {
-		flag = 1; 
-		break;
-		}
-	}
+            if (!strcmp(string, var[i].var_name))
+                {
+                    flag = 1;
+                    break;
+                }
+        }
 
-return(flag);
+    return(flag);
 }
 
 /****************************************************************************/
 /* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
 /****************************************************************************/
 
-int Sagan_Check_Day(unsigned char day, int day_current) { 
+int Sagan_Check_Day(unsigned char day, int day_current)
+{
 
-	if ( day_current == 0 ) { 
-		if (( day & SUNDAY ) == SUNDAY ) return(TRUE); 
-	}
-
-        if ( day_current == 1 ) {
-                if (( day & MONDAY ) == MONDAY ) return(TRUE);
+    if ( day_current == 0 )
+        {
+            if (( day & SUNDAY ) == SUNDAY ) return(TRUE);
         }
 
-        if ( day_current == 2 ) {
-                if (( day & TUESDAY ) == TUESDAY ) return(TRUE);
-        }
-        
-	if ( day_current == 3 ) {
-                if (( day & WEDNESDAY ) == WEDNESDAY ) return(TRUE);
+    if ( day_current == 1 )
+        {
+            if (( day & MONDAY ) == MONDAY ) return(TRUE);
         }
 
-        if ( day_current == 4 ) {
-                if (( day & THURSDAY ) == THURSDAY ) return(TRUE);
+    if ( day_current == 2 )
+        {
+            if (( day & TUESDAY ) == TUESDAY ) return(TRUE);
         }
 
-        if ( day_current == 5 ) {
-                if (( day & FRIDAY ) == FRIDAY ) return(TRUE);
+    if ( day_current == 3 )
+        {
+            if (( day & WEDNESDAY ) == WEDNESDAY ) return(TRUE);
         }
 
-        if ( day_current == 6 ) {
-                if (( day & SATURDAY ) == SATURDAY ) return(TRUE);
+    if ( day_current == 4 )
+        {
+            if (( day & THURSDAY ) == THURSDAY ) return(TRUE);
         }
 
-return(FALSE); 
+    if ( day_current == 5 )
+        {
+            if (( day & FRIDAY ) == FRIDAY ) return(TRUE);
+        }
+
+    if ( day_current == 6 )
+        {
+            if (( day & SATURDAY ) == SATURDAY ) return(TRUE);
+        }
+
+    return(FALSE);
 
 }

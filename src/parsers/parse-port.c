@@ -22,7 +22,7 @@
  *
  * A simple method of finding a port in a syslog message.  An example message
  * might be "Invalid connection from 12.145.241.50 on port 22".  This code
- * would pull the port "22".   This is part of the "parse_port_simple" 
+ * would pull the port "22".   This is part of the "parse_port_simple"
  * Sagan rules flag.
  *
  */
@@ -51,114 +51,136 @@
 
 struct _SaganConfig *config;
 
-int parse_port (char *msg) {
+int parse_port (char *msg)
+{
 
-char *portstring=NULL;
-char *saveptr1=NULL;
-char *saveptr2=NULL;
-char *str=NULL;
-char *token=NULL;
-char *tmpport=NULL;
-int port;
-int i;
-struct sockaddr_in sa;
-int result;
+    char *portstring=NULL;
+    char *saveptr1=NULL;
+    char *saveptr2=NULL;
+    char *str=NULL;
+    char *token=NULL;
+    char *tmpport=NULL;
+    int port;
+    int i;
+    struct sockaddr_in sa;
+    int result;
 
-port = config->sagan_port;
+    port = config->sagan_port;
 
-char tmpmsg[MAX_SYSLOGMSG];
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-To_UpperC(tmpmsg);
+    char tmpmsg[MAX_SYSLOGMSG];
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
+    To_UpperC(tmpmsg);
 
-/* See if the word " port" is in the string */
+    /* See if the word " port" is in the string */
 
-if ( strstr(tmpmsg, " PORT ")) {
+    if ( strstr(tmpmsg, " PORT "))
+        {
 
-   portstring = strtok_r(tmpmsg, " ", &saveptr1);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  {
+            portstring = strtok_r(tmpmsg, " ", &saveptr1);
+            for ( i = 0, str = portstring; ; i++, str == NULL )
+                {
 
-      token = strtok_r(NULL, " ", &saveptr1);
-      if ( token == NULL ) break;
+                    token = strtok_r(NULL, " ", &saveptr1);
+                    if ( token == NULL ) break;
 
-      /* tokenize by " ",  grab string after "port".  */
+                    /* tokenize by " ",  grab string after "port".  */
 
-      if (!strcmp(token, "PORT")) {
-         tmpport = strtok_r(NULL, " ", &saveptr1);
-         if (tmpport == NULL) break;
-         /* if it's a number, set it.  If not,  default */
-         if (Is_Numeric(tmpport)) {
-             port=atoi(tmpport);
-             } else {
-             /* drop last char.  Sometimes port ends in port "#." */
-             tmpport[strlen(tmpport) - 1] = '\0';
-             if (Is_Numeric(tmpport)) port=atoi(tmpport);
-             }
+                    if (!strcmp(token, "PORT"))
+                        {
+                            tmpport = strtok_r(NULL, " ", &saveptr1);
+                            if (tmpport == NULL) break;
+                            /* if it's a number, set it.  If not,  default */
+                            if (Is_Numeric(tmpport))
+                                {
+                                    port=atoi(tmpport);
+                                }
+                            else
+                                {
+                                    /* drop last char.  Sometimes port ends in port "#." */
+                                    tmpport[strlen(tmpport) - 1] = '\0';
+                                    if (Is_Numeric(tmpport)) port=atoi(tmpport);
+                                }
 
-         }
-     }
-}
-
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-To_UpperC(tmpmsg);
-
-if ( strstr(tmpmsg, ":")) {
-
-   portstring = strtok_r(tmpmsg, ":", &saveptr1);
-   token = strtok_r(portstring, " ", &saveptr2);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  {
-   token = strtok_r(NULL, " ", &saveptr2);
-   if ( token == NULL ) break;
-
-   result = inet_pton(AF_INET, token,  &(sa.sin_addr));
-
-      /* Found IP,  get the port */
-      if ( result != 0 ) {
-         /* IP:PORT */
-         portstring = strtok_r(NULL, ":", &saveptr1);
-         if (Is_Numeric(portstring)) {
-             port=atoi(portstring);
-             } else {
-             /* IP:PORT string or IP::PORT */
-             token = strtok_r(portstring, " ", &saveptr1);
-             if (Is_Numeric(token)) port=atoi(portstring);
-             }
-         }
-   }
-}
-
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
-To_UpperC(tmpmsg);
-
-if ( strstr(tmpmsg, "#")) {
-
-   portstring = strtok_r(tmpmsg, "#", &saveptr1);
-   token = strtok_r(portstring, " ", &saveptr2);
-   for ( i = 0, str = portstring; ; i++, str == NULL )  {
-   token = strtok_r(NULL, " ", &saveptr2);
-   if ( token == NULL ) break;
-
-   result = inet_pton(AF_INET, token,  &(sa.sin_addr));
-
-      /* Found IP,  get the port */
-      if ( result != 0 ) {
-         /* IP#PORT */
-         portstring = strtok_r(NULL, "#", &saveptr1);
-         if (Is_Numeric(portstring)) {
-             port=atoi(portstring);
-             } else {
-             /* IP:PORT string or IP##PORT */
-             token = strtok_r(portstring, " ", &saveptr1);
-             if (Is_Numeric(token)) {
-                port=atoi(token);
-                } else {
-                token[strlen(token) - 1] = '\0';
-                if (Is_Numeric(token)) port=atoi(token);
+                        }
                 }
-             }
-         }
-   }
-}
+        }
 
-return(port);
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
+    To_UpperC(tmpmsg);
+
+    if ( strstr(tmpmsg, ":"))
+        {
+
+            portstring = strtok_r(tmpmsg, ":", &saveptr1);
+            token = strtok_r(portstring, " ", &saveptr2);
+            for ( i = 0, str = portstring; ; i++, str == NULL )
+                {
+                    token = strtok_r(NULL, " ", &saveptr2);
+                    if ( token == NULL ) break;
+
+                    result = inet_pton(AF_INET, token,  &(sa.sin_addr));
+
+                    /* Found IP,  get the port */
+                    if ( result != 0 )
+                        {
+                            /* IP:PORT */
+                            portstring = strtok_r(NULL, ":", &saveptr1);
+                            if (Is_Numeric(portstring))
+                                {
+                                    port=atoi(portstring);
+                                }
+                            else
+                                {
+                                    /* IP:PORT string or IP::PORT */
+                                    token = strtok_r(portstring, " ", &saveptr1);
+                                    if (Is_Numeric(token)) port=atoi(portstring);
+                                }
+                        }
+                }
+        }
+
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
+    To_UpperC(tmpmsg);
+
+    if ( strstr(tmpmsg, "#"))
+        {
+
+            portstring = strtok_r(tmpmsg, "#", &saveptr1);
+            token = strtok_r(portstring, " ", &saveptr2);
+            for ( i = 0, str = portstring; ; i++, str == NULL )
+                {
+                    token = strtok_r(NULL, " ", &saveptr2);
+                    if ( token == NULL ) break;
+
+                    result = inet_pton(AF_INET, token,  &(sa.sin_addr));
+
+                    /* Found IP,  get the port */
+                    if ( result != 0 )
+                        {
+                            /* IP#PORT */
+                            portstring = strtok_r(NULL, "#", &saveptr1);
+                            if (Is_Numeric(portstring))
+                                {
+                                    port=atoi(portstring);
+                                }
+                            else
+                                {
+                                    /* IP:PORT string or IP##PORT */
+                                    token = strtok_r(portstring, " ", &saveptr1);
+                                    if (Is_Numeric(token))
+                                        {
+                                            port=atoi(token);
+                                        }
+                                    else
+                                        {
+                                            token[strlen(token) - 1] = '\0';
+                                            if (Is_Numeric(token)) port=atoi(token);
+                                        }
+                                }
+                        }
+                }
+        }
+
+    return(port);
 }
 

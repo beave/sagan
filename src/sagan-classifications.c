@@ -19,8 +19,8 @@
 */
 
 /* sagan-classifications.c
- * 
- * Loads the classifications file into memory for future use.  
+ *
+ * Loads the classifications file into memory for future use.
  *
  */
 
@@ -54,64 +54,70 @@ struct _Class_Struct *classstruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
-void Load_Classifications( const char *ruleset )  { 
+void Load_Classifications( const char *ruleset )
+{
 
 
-FILE *classfile;
+    FILE *classfile;
 
-char classbuf[CLASSBUF];
-char *saveptr=NULL;
-char *firststring=NULL;
-char *tmptoken=NULL;
-char *laststring=NULL;
-char tmpbuf2[5];
-int  linecount=0;
+    char classbuf[CLASSBUF];
+    char *saveptr=NULL;
+    char *firststring=NULL;
+    char *tmptoken=NULL;
+    char *laststring=NULL;
+    char tmpbuf2[5];
+    int  linecount=0;
 
-Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
+    Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
 
-         if (( classfile = fopen(ruleset, "r" )) == NULL ) {
-             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
-             }
+    if (( classfile = fopen(ruleset, "r" )) == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
+        }
 
-while(fgets(classbuf, sizeof(classbuf), classfile) != NULL) {
+    while(fgets(classbuf, sizeof(classbuf), classfile) != NULL)
+        {
 
-     linecount++;
+            linecount++;
 
-     /* Skip comments and blank linkes */
- 
-     if (classbuf[0] == '#' || classbuf[0] == 10 || classbuf[0] == ';' || classbuf[0] == 32) { 
-     continue;
-     } else { 
-     /* Allocate memory for classifications,  but not comments */
-     classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
-     }
+            /* Skip comments and blank linkes */
 
-     firststring = strtok_r(classbuf, ":", &saveptr);
-     tmptoken = strtok_r(NULL, ":" , &saveptr);
+            if (classbuf[0] == '#' || classbuf[0] == 10 || classbuf[0] == ';' || classbuf[0] == 32)
+                {
+                    continue;
+                }
+            else
+                {
+                    /* Allocate memory for classifications,  but not comments */
+                    classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
+                }
 
-     laststring = strtok_r(tmptoken, ",", &saveptr);
-     if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
-     Remove_Spaces(laststring);
-     strlcpy(classstruct[counters->classcount].s_shortname, laststring, sizeof(classstruct[counters->classcount].s_shortname)); 
+            firststring = strtok_r(classbuf, ":", &saveptr);
+            tmptoken = strtok_r(NULL, ":" , &saveptr);
 
-     laststring = strtok_r(NULL, ",", &saveptr);
-     if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
-     strlcpy(classstruct[counters->classcount].s_desc, laststring, sizeof(classstruct[counters->classcount].s_desc)); 
+            laststring = strtok_r(tmptoken, ",", &saveptr);
+            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            Remove_Spaces(laststring);
+            strlcpy(classstruct[counters->classcount].s_shortname, laststring, sizeof(classstruct[counters->classcount].s_shortname));
 
-     laststring = strtok_r(NULL, ",", &saveptr);
-     if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
-     strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2)); 
-     classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
+            laststring = strtok_r(NULL, ",", &saveptr);
+            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            strlcpy(classstruct[counters->classcount].s_desc, laststring, sizeof(classstruct[counters->classcount].s_desc));
 
-     if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+            laststring = strtok_r(NULL, ",", &saveptr);
+            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2));
+            classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
-     if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
-		      
-     counters->classcount++;
+            if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-} 
-fclose(classfile);
+            if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
 
-Sagan_Log(S_NORMAL, "%d classifications loaded", counters->classcount);
+            counters->classcount++;
+
+        }
+    fclose(classfile);
+
+    Sagan_Log(S_NORMAL, "%d classifications loaded", counters->classcount);
 
 }

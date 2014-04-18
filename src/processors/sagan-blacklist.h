@@ -31,10 +31,11 @@
 int Sagan_Blacklist ( _SaganProcSyslog * );
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
-struct _Sagan_Blacklist {
+struct _Sagan_Blacklist
+{
 
-uint32_t u32_lower;
-uint32_t u32_higher;
+    uint32_t u32_lower;
+    uint32_t u32_higher;
 
 };
 

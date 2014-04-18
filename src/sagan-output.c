@@ -18,8 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-output.c 
-* 
+/* sagan-output.c
+*
 * This becomes a threaded operation.  This handles all I/O intensive output plugins
 */
 #ifdef HAVE_CONFIG_H
@@ -40,55 +40,58 @@ sbool nonthread_alert_lock=0;
 
 pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 
-void Sagan_Output( _SaganEvent *Event ) {
+void Sagan_Output( _SaganEvent *Event )
+{
 
-/* Single threaded operations */
+    /* Single threaded operations */
 
-if ( nonthread_alert_lock == 0 ) {
+    if ( nonthread_alert_lock == 0 )
+        {
 
-   pthread_mutex_lock(&SaganOutputNonThreadMutex);
-   nonthread_alert_lock = 1;
+            pthread_mutex_lock(&SaganOutputNonThreadMutex);
+            nonthread_alert_lock = 1;
 
-   Sagan_Alert_File(Event); 
+            Sagan_Alert_File(Event);
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-   if ( config->sagan_unified2_flag ) {
-   Sagan_Unified2( Event );
-   Sagan_Unified2LogPacketAlert( Event );
-   }
+            if ( config->sagan_unified2_flag )
+                {
+                    Sagan_Unified2( Event );
+                    Sagan_Unified2LogPacketAlert( Event );
+                }
 #endif
 
-   nonthread_alert_lock = 0; 
-   pthread_mutex_unlock(&SaganOutputNonThreadMutex);
-}
+            nonthread_alert_lock = 0;
+            pthread_mutex_unlock(&SaganOutputNonThreadMutex);
+        }
 
-/* Are any "External" output formats enabled? */
+    /* Are any "External" output formats enabled? */
 
-/****************************************************************************/
-/* Snortsam Support	                                                    */
-/****************************************************************************/
+    /****************************************************************************/
+    /* Snortsam Support	                                                    */
+    /****************************************************************************/
 
-/* If we have a snortsam server && the rule requires snortsam..... */
+    /* If we have a snortsam server && the rule requires snortsam..... */
 
 #ifdef WITH_SNORTSAM
 
-if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) sagan_fwsam( Event );
+    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) sagan_fwsam( Event );
 
 #endif
 
-/****************************************************************************/
-/* SMTP/Email support (libesmtp)                                            */
-/****************************************************************************/
+    /****************************************************************************/
+    /* SMTP/Email support (libesmtp)                                            */
+    /****************************************************************************/
 
 #ifdef HAVE_LIBESMTP
-if ( config->sagan_esmtp_flag ) sagan_esmtp_thread( Event ); 
+    if ( config->sagan_esmtp_flag ) sagan_esmtp_thread( Event );
 #endif
 
-/****************************************************************************/
-/* External program support                                                 */
-/****************************************************************************/
+    /****************************************************************************/
+    /* External program support                                                 */
+    /****************************************************************************/
 
-if ( config->sagan_ext_flag ) sagan_ext_thread( Event );
+    if ( config->sagan_ext_flag ) sagan_ext_thread( Event );
 
-} 
+}
 

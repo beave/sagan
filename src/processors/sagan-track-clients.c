@@ -18,13 +18,13 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-track-clients.c 
+/* sagan-track-clients.c
 *
 * Simple pre-processors that keeps track of reporting syslog clients/agents.
 * This is based off the IP address the clients,  not based on normalization.
-* If a client/agent hasn't sent a syslog/event message in X minutes,  then 
+* If a client/agent hasn't sent a syslog/event message in X minutes,  then
 * generate an alert.
-*  
+*
 */
 
 #ifdef HAVE_CONFIG_H
@@ -48,152 +48,167 @@ struct _SaganConfig *config;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 int proc_cpu_msgslot;
 
-void Sagan_Load_Tracking_Cache ( void ) { 
+void Sagan_Load_Tracking_Cache ( void )
+{
 
-char track_buf[1024] = { 0 }; 
+    char track_buf[1024] = { 0 };
 
-char  timet[20] = { 0 }; 
-time_t t;
-struct tm *now;
+    char  timet[20] = { 0 };
+    time_t t;
+    struct tm *now;
 
-sbool client_track_flag = 0; 
+    sbool client_track_flag = 0;
 
-t = time(NULL);
-now=localtime(&t);
-strftime(timet, sizeof(timet), "%s",  now);
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
 
-if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "r" )) == NULL ) {
-   Sagan_Log(S_WARN, "Client Tracking cache not found, creating %s.", config->sagan_track_client_host_cache);
-   client_track_flag = 1; 
-   }
+    if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "r" )) == NULL )
+        {
+            Sagan_Log(S_WARN, "Client Tracking cache not found, creating %s.", config->sagan_track_client_host_cache);
+            client_track_flag = 1;
+        }
 
 
-if (client_track_flag == 0 ) { 
-	while(fgets(track_buf, 1024, config->sagan_track_client_file) != NULL) {
+    if (client_track_flag == 0 )
+        {
+            while(fgets(track_buf, 1024, config->sagan_track_client_file) != NULL)
+                {
 
-		/* Skip comments and blank linkes */
+                    /* Skip comments and blank linkes */
 
-		if (track_buf[0] == '#' || track_buf[0] == 10 || track_buf[0] == ';' || track_buf[0] == 32) {
-		continue;
-		} else {
-		/* Allocate memory for references,  not comments */
+                    if (track_buf[0] == '#' || track_buf[0] == 10 || track_buf[0] == ';' || track_buf[0] == 32)
+                        {
+                            continue;
+                        }
+                    else
+                        {
+                            /* Allocate memory for references,  not comments */
 
 //		pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
-		SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
-		strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
-		SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
-		SaganTrackClients[counters->track_clients_client_count].status = 0;
-		counters->track_clients_client_count++;
+                            SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
+                            strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
+                            SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
+                            SaganTrackClients[counters->track_clients_client_count].status = 0;
+                            counters->track_clients_client_count++;
 //		pthread_mutex_unlock(&SaganProcTrackClientsMutex);
-		}
-	}
-   Sagan_Log(S_NORMAL, "Client Tracking loaded %d host(s) to track", counters->track_clients_client_count);
+                        }
+                }
+            Sagan_Log(S_NORMAL, "Client Tracking loaded %d host(s) to track", counters->track_clients_client_count);
+        }
+
+    if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "a" )) == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open client tracking cache file for writing (%s)", __FILE__, __LINE__, config->sagan_track_client_host_cache);
+        }
+
+    if (client_track_flag == 1 )
+        {
+            fprintf(config->sagan_track_client_file, "# This file is automatically created by Sagan\n");
+        }
+
 }
 
-if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "a" )) == NULL ) {
-   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open client tracking cache file for writing (%s)", __FILE__, __LINE__, config->sagan_track_client_host_cache);
-   }
 
-if (client_track_flag == 1 ) { 
-   fprintf(config->sagan_track_client_file, "# This file is automatically created by Sagan\n");
-   }
+int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
+{
 
-}
+    int alertid;
 
+    char  timet[20] = { 0 };
+    time_t t;
+    struct tm *now;
 
-int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL ) {
+    int i;
+    sbool tracking_flag=0;
 
-int alertid;
+    long utimetmp;
 
-char  timet[20] = { 0 };
-time_t t;
-struct tm *now;
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
 
-int i;
-sbool tracking_flag=0;
+    struct _Sagan_Processor_Info *processor_info = NULL;
+    processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
+    memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
 
-long utimetmp; 
+    processor_info->processor_name		=	PROCESSOR_NAME;
+    processor_info->processor_generator_id	=	PROCESSOR_GENERATOR_ID;
+    processor_info->processor_name		=	PROCESSOR_NAME;
+    processor_info->processor_facility	=	PROCESSOR_FACILITY;
+    processor_info->processor_priority	=	PROCESSOR_PRIORITY;
+    processor_info->processor_pri		=	PROCESSOR_PRI;
+    processor_info->processor_class		=	PROCESSOR_CLASS;
+    processor_info->processor_tag		=	PROCESSOR_TAG;
+    processor_info->processor_rev		=	PROCESSOR_REV;
 
-t = time(NULL);
-now=localtime(&t);
-strftime(timet, sizeof(timet), "%s",  now);
+    for (i=0; i<counters->track_clients_client_count; i++)
+        {
 
-struct _Sagan_Processor_Info *processor_info = NULL;
-processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
-memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
+            if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, SaganTrackClients[i].host))
+                {
 
-processor_info->processor_name		=	PROCESSOR_NAME;
-processor_info->processor_generator_id	=	PROCESSOR_GENERATOR_ID;
-processor_info->processor_name		=	PROCESSOR_NAME;
-processor_info->processor_facility	=	PROCESSOR_FACILITY;
-processor_info->processor_priority	=	PROCESSOR_PRIORITY;
-processor_info->processor_pri		=	PROCESSOR_PRI;
-processor_info->processor_class		=	PROCESSOR_CLASS;
-processor_info->processor_tag		=	PROCESSOR_TAG;
-processor_info->processor_rev		=	PROCESSOR_REV;
+//    	pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
-for (i=0; i<counters->track_clients_client_count; i++) { 
+                    SaganTrackClients[i].utime = atol(timet);
 
-    if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, SaganTrackClients[i].host)) { 
+                    /* Logs being received */
 
-//    	pthread_mutex_lock(&SaganProcTrackClientsMutex); 
+                    if ( SaganTrackClients[i].status == 1 )
+                        {
 
-        SaganTrackClients[i].utime = atol(timet);
+                            Sagan_Log(S_WARN, "[Processor: %s] Logs being received from %s again.",  PROCESSOR_NAME, SaganTrackClients[i].host);
+                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not receiving logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
+                            counters->track_clients_down--;
 
-	/* Logs being received */
-
-	if ( SaganTrackClients[i].status == 1 ) { 
-	   
-	   Sagan_Log(S_WARN, "[Processor: %s] Logs being received from %s again.",  PROCESSOR_NAME, SaganTrackClients[i].host);
-	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not receiving logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
-	   counters->track_clients_down--; 
-
-	   alertid=101;
-	   SaganTrackClients[i].status = 0;
-	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
-	   }
+                            alertid=101;
+                            SaganTrackClients[i].status = 0;
+                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                        }
 
 //	pthread_mutex_unlock(&SaganProcTrackClientsMutex);
-	tracking_flag=1;
-	}
+                    tracking_flag=1;
+                }
 
-	utimetmp = SaganTrackClients[i].utime ; 
+            utimetmp = SaganTrackClients[i].utime ;
 
-	/* Logs stop being received */
-	
-	if ( atol(timet) - utimetmp >  config->pp_sagan_track_clients * 60 && SaganTrackClients[i].status == 0 ) {
+            /* Logs stop being received */
 
-	   counters->track_clients_down++; 
+            if ( atol(timet) - utimetmp >  config->pp_sagan_track_clients * 60 && SaganTrackClients[i].status == 0 )
+                {
 
-	   Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, SaganTrackClients[i].host, config->pp_sagan_track_clients);
-   	   snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", SaganTrackClients[i].host, config->pp_sagan_track_clients);
+                    counters->track_clients_down++;
 
-	   alertid=100;
+                    Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, SaganTrackClients[i].host, config->pp_sagan_track_clients);
+                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", SaganTrackClients[i].host, config->pp_sagan_track_clients);
+
+                    alertid=100;
 
 //	   pthread_mutex_lock(&SaganProcTrackClientsMutex);
-	   SaganTrackClients[i].status = 1;
+                    SaganTrackClients[i].status = 1;
 //	   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
-	   Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
-	   }
+                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                }
 
-}
+        }
 
-if ( tracking_flag == 0) { 
-   
+    if ( tracking_flag == 0)
+        {
+
 //   pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
-   SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
-   strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host)); 
-   SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
-   SaganTrackClients[counters->track_clients_client_count].status = 0;
-   fprintf(config->sagan_track_client_file, "%s\n", SaganTrackClients[counters->track_clients_client_count].host);
-   counters->track_clients_client_count++;
+            SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
+            strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host));
+            SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
+            SaganTrackClients[counters->track_clients_client_count].status = 0;
+            fprintf(config->sagan_track_client_file, "%s\n", SaganTrackClients[counters->track_clients_client_count].host);
+            counters->track_clients_client_count++;
 //   pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
-  }
+        }
 
-return(0);
+    return(0);
 }
 

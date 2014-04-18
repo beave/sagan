@@ -78,141 +78,148 @@ struct _Sagan_Track_Clients *SaganTrackClients;
 struct _Sagan_Websense_Ignore_List *SaganWebsenseIgnoreList;
 struct _Sagan_Websense_Queue *SaganWebsenseQueue;
 struct _Sagan_Websense_Cache *SaganWebsenseCache;
-#endif 
+#endif
 
 pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void Sig_Handler( _SaganSigArgs *args ) {
+void Sig_Handler( _SaganSigArgs *args )
+{
 
-        sigset_t signal_set;
-        int sig;
+    sigset_t signal_set;
+    int sig;
 
-        for(;;) {
-                /* wait for any and all signals */
-                sigfillset( &signal_set );
-                sigwait( &signal_set, &sig );
+    for(;;)
+        {
+            /* wait for any and all signals */
+            sigfillset( &signal_set );
+            sigwait( &signal_set, &sig );
 
 
-                switch( sig )
+            switch( sig )
                 {
-		  /* exit */
-		  case SIGQUIT:
-		  case SIGINT:
-		  case SIGTERM:
-		  case SIGSEGV:
-		  case SIGABRT:
+                    /* exit */
+                case SIGQUIT:
+                case SIGINT:
+                case SIGTERM:
+                case SIGSEGV:
+                case SIGABRT:
 
-                  Sagan_Log(S_NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
-		  sagan_statistics();
+                    Sagan_Log(S_NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+                    sagan_statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-if ( sagan_unified2_flag ) Unified2CleanExit(config); 
+                    if ( sagan_unified2_flag ) Unified2CleanExit(config);
 #endif
 
-	        fflush(config->sagan_alert_stream);
-	        fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
+                    fflush(config->sagan_alert_stream);
+                    fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
 
-       		fflush(config->sagan_log_stream);               /* Close the sagan.log */
-        	fclose(config->sagan_log_stream);
+                    fflush(config->sagan_log_stream);               /* Close the sagan.log */
+                    fclose(config->sagan_log_stream);
 
-                Remove_Lock_File();
-                exit(0);
-                break;
+                    Remove_Lock_File();
+                    exit(0);
+                    break;
 
-                 case SIGHUP:
-                   pthread_mutex_lock(&sig_mutex);
-   		   Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
+                case SIGHUP:
+                    pthread_mutex_lock(&sig_mutex);
+                    Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
-		   /* Reset counters */
-		   counters->refcount=0; 
-		   counters->classcount=0;
-		   counters->rulecount=0; 
-		   counters->ruletotal=0;
-		   counters->genmapcount=0;
+                    /* Reset counters */
+                    counters->refcount=0;
+                    counters->classcount=0;
+                    counters->rulecount=0;
+                    counters->ruletotal=0;
+                    counters->genmapcount=0;
 
-		   memset(rulestruct, 0, sizeof(_Rule_Struct));
-		   memset(classstruct, 0, sizeof(_Class_Struct));
-		   memset(generator, 0, sizeof(_Sagan_Processor_Generator)); 
+                    memset(rulestruct, 0, sizeof(_Rule_Struct));
+                    memset(classstruct, 0, sizeof(_Class_Struct));
+                    memset(generator, 0, sizeof(_Sagan_Processor_Generator));
 
-		   /* Re-load primary configuration (rules/classifictions/etc) */
+                    /* Re-load primary configuration (rules/classifictions/etc) */
 
-		  Load_Config();
+                    Load_Config();
 
-		  if (config->blacklist_flag) {
-		     counters->blacklist_count=0;
-		     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
-		     Sagan_Blacklist_Load();
-		     Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
-		     }
+                    if (config->blacklist_flag)
+                        {
+                            counters->blacklist_count=0;
+                            memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
+                            Sagan_Blacklist_Load();
+                            Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
+                        }
 
-		  if (config->search_nocase_flag) {
-                     counters->search_nocase_count=0;
-		     memset(SaganNocaseSearchlist, 0, sizeof(_Sagan_Nocase_Searchlist));
-		     Sagan_Search_Load(1);
-		     Sagan_Log(S_NORMAL, "Reloaded Search [nocase]. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count); 
-		     }
+                    if (config->search_nocase_flag)
+                        {
+                            counters->search_nocase_count=0;
+                            memset(SaganNocaseSearchlist, 0, sizeof(_Sagan_Nocase_Searchlist));
+                            Sagan_Search_Load(1);
+                            Sagan_Log(S_NORMAL, "Reloaded Search [nocase]. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
+                        }
 
-		  if (config->search_case_flag) {
-		     counters->search_case_count=0;
-		     memset(SaganCaseSearchlist, 0, sizeof(_Sagan_Case_Searchlist));
-		     Sagan_Search_Load(2);
-		     Sagan_Log(S_NORMAL, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
-		     }
+                    if (config->search_case_flag)
+                        {
+                            counters->search_case_count=0;
+                            memset(SaganCaseSearchlist, 0, sizeof(_Sagan_Case_Searchlist));
+                            Sagan_Search_Load(2);
+                            Sagan_Log(S_NORMAL, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
+                        }
 
 
-		  if (config->sagan_track_clients_flag) { 
-		     counters->track_clients_client_count = 0;
-		     counters->track_clients_down = 0; 
-		     memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
-		     fclose(config->sagan_track_client_file);
-		     Sagan_Load_Tracking_Cache();
-		     Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
-		     }
+                    if (config->sagan_track_clients_flag)
+                        {
+                            counters->track_clients_client_count = 0;
+                            counters->track_clients_down = 0;
+                            memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
+                            fclose(config->sagan_track_client_file);
+                            Sagan_Load_Tracking_Cache();
+                            Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
+                        }
 
-/*		  DNS Cache *not currently global* DEBUG 
-		  if (config->syslog_src_lookup) { 
-		     counters->dns_cache_count=0;
-		     counters->dns_miss_count=0;
-		     }
-*/
+                    /*		  DNS Cache *not currently global* DEBUG
+                    		  if (config->syslog_src_lookup) {
+                    		     counters->dns_cache_count=0;
+                    		     counters->dns_miss_count=0;
+                    		     }
+                    */
 
 #ifdef WITH_WEBSENSE
-		  if ( config->websense_flag ) {
-		     counters->websense_cache_count=0;
-		     counters->websense_cache_hit=0;
-		     counters->websense_ignore_hit=0;
-		     counters->websense_postive_hit=0;
-		     memset(SaganWebsenseIgnoreList, 0, sizeof(_Sagan_Websense_Ignore_List));
-		     memset(SaganWebsenseQueue, 0, sizeof(_Sagan_Websense_Queue));
-		     memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
+                    if ( config->websense_flag )
+                        {
+                            counters->websense_cache_count=0;
+                            counters->websense_cache_hit=0;
+                            counters->websense_ignore_hit=0;
+                            counters->websense_postive_hit=0;
+                            memset(SaganWebsenseIgnoreList, 0, sizeof(_Sagan_Websense_Ignore_List));
+                            memset(SaganWebsenseQueue, 0, sizeof(_Sagan_Websense_Queue));
+                            memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
 
-		     config->websense_last_time = atol(config->sagan_startutime);
- 		     Sagan_Websense_Ignore_List();
-		     Sagan_Log(S_NORMAL, "Reset Websense Processor.");
-		     }
+                            config->websense_last_time = atol(config->sagan_startutime);
+                            Sagan_Websense_Ignore_List();
+                            Sagan_Log(S_NORMAL, "Reset Websense Processor.");
+                        }
 #endif
 
 #ifdef HAVE_LIBGEOIP
-		  Sagan_Log(S_NORMAL, "Reloading GeoIP data."); 
-		  config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
+                    Sagan_Log(S_NORMAL, "Reloading GeoIP data.");
+                    config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 #endif
 
-                  pthread_mutex_unlock(&sig_mutex);
-		  
-		  Sagan_Log(S_NORMAL, "Configuration reloaded.");
-                  break;
+                    pthread_mutex_unlock(&sig_mutex);
 
-		/* Signals to ignore */
-	        case 17:		/* Child process has exited. */	
-		case 28:		/* Terminal 'resize'/alarm. */
-		break;
+                    Sagan_Log(S_NORMAL, "Configuration reloaded.");
+                    break;
 
-		case SIGUSR1:
-		sagan_statistics(); 
-		break;
+                    /* Signals to ignore */
+                case 17:		/* Child process has exited. */
+                case 28:		/* Terminal 'resize'/alarm. */
+                    break;
 
-		default:
-		Sagan_Log(S_NORMAL, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
+                case SIGUSR1:
+                    sagan_statistics();
+                    break;
+
+                default:
+                    Sagan_Log(S_NORMAL, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
                 }
         }
 }

@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-liblognorm.c 
+/* sagan-liblognorm.c
  *
  * These functions deal with liblognorm / data normalization.
  */
@@ -39,11 +39,11 @@
 #include <ptree.h>
 #include <lognorm.h>
 
-#if defined(HAVE_JSON_JSON_H) 
-#  include <json/json.h> 
-#else 
-#  include <json.h> 
-#endif 
+#if defined(HAVE_JSON_JSON_H)
+#  include <json/json.h>
+#else
+#  include <json.h>
+#endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -71,28 +71,30 @@ static ln_ctx ctx;
 struct _SaganCounters *counters;
 
 
-/************************************************************************ 
- * sagan_liblognorm_load 
+/************************************************************************
+ * sagan_liblognorm_load
  *
  * Load in the normalization files into memory
  ************************************************************************/
 
-void sagan_liblognorm_load(void) {
+void sagan_liblognorm_load(void)
+{
 
-int i;
+    int i;
 
-SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
-memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+    SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+    memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
-if((ctx = ln_initCtx()) == NULL) Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
+    if((ctx = ln_initCtx()) == NULL) Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
 
 //ln_setEECtx(ctx, eectx);
 
-for (i=0; i < counters->liblognormtoload_count; i++) {
-	Sagan_Log(S_NORMAL, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
-	if (stat(liblognormtoloadstruct[i].filepath, &liblognorm_fileinfo)) Sagan_Log(S_ERROR, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
-	ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
-	}
+    for (i=0; i < counters->liblognormtoload_count; i++)
+        {
+            Sagan_Log(S_NORMAL, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
+            if (stat(liblognormtoloadstruct[i].filepath, &liblognorm_fileinfo)) Sagan_Log(S_ERROR, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
+            ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
+        }
 
 }
 
@@ -102,89 +104,93 @@ for (i=0; i < counters->liblognormtoload_count; i++) {
  * Locates interesting log data via Rainer's liblognorm library
  ***********************************************************************/
 
-void sagan_normalize_liblognorm(char *syslog_msg) {
+void sagan_normalize_liblognorm(char *syslog_msg)
+{
 
-char buf[10*1024] = { 0 };
-char tmp_host[254] = { 0 };
+    char buf[10*1024] = { 0 };
+    char tmp_host[254] = { 0 };
 
-const char *cstr = NULL;
-const char *tmp = NULL;
+    const char *cstr = NULL;
+    const char *tmp = NULL;
 
-struct json_object *json = NULL;
+    struct json_object *json = NULL;
 
-SaganNormalizeLiblognorm->ip_src[0] = '0';
-SaganNormalizeLiblognorm->ip_src[1] = '\0';
-SaganNormalizeLiblognorm->ip_dst[0] = '0'; 
-SaganNormalizeLiblognorm->ip_dst[1] = '\0';
+    SaganNormalizeLiblognorm->ip_src[0] = '0';
+    SaganNormalizeLiblognorm->ip_src[1] = '\0';
+    SaganNormalizeLiblognorm->ip_dst[0] = '0';
+    SaganNormalizeLiblognorm->ip_dst[1] = '\0';
 
-snprintf(buf, sizeof(buf),"%s", syslog_msg);
+    snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
-ln_normalize(ctx, buf, strlen(buf), &json);
-cstr = (char*)json_object_to_json_string(json);
+    ln_normalize(ctx, buf, strlen(buf), &json);
+    cstr = (char*)json_object_to_json_string(json);
 
-/* Get source address information */
+    /* Get source address information */
 
-tmp = json_object_get_string(json_object_object_get(json, "src-ip")); 
-if ( tmp != NULL) snprintf(SaganNormalizeLiblognorm->ip_src, sizeof(SaganNormalizeLiblognorm->ip_src), "%s", tmp); 
+    tmp = json_object_get_string(json_object_object_get(json, "src-ip"));
+    if ( tmp != NULL) snprintf(SaganNormalizeLiblognorm->ip_src, sizeof(SaganNormalizeLiblognorm->ip_src), "%s", tmp);
 
-tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
-if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
+    tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
+    if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
 
-/* Make sure it returns something values,  if not, popular with config->sagan_host */
+    /* Make sure it returns something values,  if not, popular with config->sagan_host */
 
-if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" ) || 
-    !strcmp(SaganNormalizeLiblognorm->ip_src, "")) strlcpy(SaganNormalizeLiblognorm->ip_src, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_src));
+    if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" ) ||
+            !strcmp(SaganNormalizeLiblognorm->ip_src, "")) strlcpy(SaganNormalizeLiblognorm->ip_src, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_src));
 
-if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" ) || 
-    !strcmp(SaganNormalizeLiblognorm->ip_dst, "")) strlcpy(SaganNormalizeLiblognorm->ip_dst, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
+    if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" ) ||
+            !strcmp(SaganNormalizeLiblognorm->ip_dst, "")) strlcpy(SaganNormalizeLiblognorm->ip_dst, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
 
-/* Get username information (not currently used) */
+    /* Get username information (not currently used) */
 
-/*
-tmp = json_object_get_string(json_object_object_get(json, "username"));
-if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
-*/
+    /*
+    tmp = json_object_get_string(json_object_object_get(json, "username"));
+    if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+    */
 
-/* Do DNS lookup for source hostname */
+    /* Do DNS lookup for source hostname */
 
-tmp = json_object_get_string(json_object_object_get(json, "src-host"));
+    tmp = json_object_get_string(json_object_object_get(json, "src-host"));
 
-if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1")) { 
-	snprintf(tmp_host, sizeof(tmp_host), "%s", tmp); 	/* Avoid const char * warning */
-	strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
-	}
-
-tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
-
-if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1")) {
-        snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);        /* Avoid const char * warning */
-        strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
+    if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
+        {
+            snprintf(tmp_host, sizeof(tmp_host), "%s", tmp); 	/* Avoid const char * warning */
+            strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
         }
 
-/* Get port information */
+    tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
-tmp = json_object_get_string(json_object_object_get(json, "src-port")); 
-if ( tmp != NULL ) SaganNormalizeLiblognorm->src_port = atoi(tmp); 
+    if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
+        {
+            snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);        /* Avoid const char * warning */
+            strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
+        }
 
-tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
-if ( tmp != NULL )  SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+    /* Get port information */
 
-if ( debug->debugnormalize ) { 
-     Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
-     Sagan_Log(S_DEBUG, "---------------------------------------------------");
-     Sagan_Log(S_DEBUG, "Log message to normalize: %s", syslog_msg); 
-     Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
-     Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src); 
-     Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
-     Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
-     Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
+    tmp = json_object_get_string(json_object_object_get(json, "src-port"));
+    if ( tmp != NULL ) SaganNormalizeLiblognorm->src_port = atoi(tmp);
+
+    tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
+    if ( tmp != NULL )  SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+
+    if ( debug->debugnormalize )
+        {
+            Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
+            Sagan_Log(S_DEBUG, "---------------------------------------------------");
+            Sagan_Log(S_DEBUG, "Log message to normalize: %s", syslog_msg);
+            Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
+            Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
+            Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
+            Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
+            Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
 //     Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
-     Sagan_Log(S_DEBUG, ""); 
-     }
+            Sagan_Log(S_DEBUG, "");
+        }
 
 
 //free(cstr);
-json_object_put(json);
+    json_object_put(json);
 //free(json);
 }
 

@@ -39,29 +39,31 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Windows_Domain_Search(char *syslog_msg, int rule_position )  { 
+int Sagan_Windows_Domain_Search(char *syslog_msg, int rule_position )
+{
 
-char *ptmp = NULL;
-char *tok = NULL;
-char tmp[1024] = { 0 }; 
-char tmp_search[30] = { 0 }; 	/* Max Domain size is 16 bytes + "Domain: " */
+    char *ptmp = NULL;
+    char *tok = NULL;
+    char tmp[1024] = { 0 };
+    char tmp_search[30] = { 0 }; 	/* Max Domain size is 16 bytes + "Domain: " */
 
-int return_code = 0; 
+    int return_code = 0;
 
-strlcpy(tmp, rulestruct[rule_position].windows_domains, sizeof(tmp));
+    strlcpy(tmp, rulestruct[rule_position].windows_domains, sizeof(tmp));
 
-ptmp = strtok_r(tmp, ",", &tok);
+    ptmp = strtok_r(tmp, ",", &tok);
 
-while (ptmp != NULL ) { 
+    while (ptmp != NULL )
+        {
 
-	/* Search for "Domain: %s " in log message.  The space is intensional */
+            /* Search for "Domain: %s " in log message.  The space is intensional */
 
-	snprintf(tmp_search, sizeof(tmp_search), "Domain: %s ", ptmp); 
-	if (strcasestr(syslog_msg, tmp_search)) return(TRUE); 
-	ptmp = strtok_r(NULL, ",", &tok);
+            snprintf(tmp_search, sizeof(tmp_search), "Domain: %s ", ptmp);
+            if (strcasestr(syslog_msg, tmp_search)) return(TRUE);
+            ptmp = strtok_r(NULL, ",", &tok);
 
-	}
+        }
 
-return(FALSE);
+    return(FALSE);
 }
 

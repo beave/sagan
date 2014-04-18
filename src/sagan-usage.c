@@ -20,7 +20,7 @@
 
 /* sagan-usage
  *
- * Gives the user basic operation of the sagan binary.  Also displays 
+ * Gives the user basic operation of the sagan binary.  Also displays
  * information of compile time options
  *
  */
@@ -36,60 +36,60 @@
 
 void Sagan_Usage(void)
 {
-fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
-fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
-fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
-fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,\n\t\t\tflowbit");
+    fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
+    fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
+    fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
+    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,\n\t\t\tflowbit");
 
 #ifdef HAVE_LIBESMTP
-fprintf(stderr, ", smtp");
+    fprintf(stderr, ", smtp");
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-fprintf(stderr, ", normalize");
+    fprintf(stderr, ", normalize");
 #endif
 
 #ifdef HAVE_LIBPCAP
-fprintf(stderr, ", plog");
+    fprintf(stderr, ", plog");
 #endif
 
 #ifdef WITH_WEBSENSE
-fprintf(stderr, ", websense");
+    fprintf(stderr, ", websense");
 #endif
 
 #ifdef HAVE_LIBGEOIP
-fprintf(stderr, ", geoip"); 
+    fprintf(stderr, ", geoip");
 #endif
 
-fprintf(stderr, ".\n");
+    fprintf(stderr, ".\n");
 
-fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
-fprintf(stderr, "-u, --user [username]\tRun as user (defaults to 'sagan').\n");
-fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
-fprintf(stderr, "-f, --config [file]\tSagan configuration file to load.\n");
-fprintf(stderr, "-F, --file [file]\tFIFO over ride.  This reads a file in rather than reading\n");
-fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
-fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
+    fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
+    fprintf(stderr, "-u, --user [username]\tRun as user (defaults to 'sagan').\n");
+    fprintf(stderr, "-c, --chroot [dir]\tChroot Sagan to specified directory.\n");
+    fprintf(stderr, "-f, --config [file]\tSagan configuration file to load.\n");
+    fprintf(stderr, "-F, --file [file]\tFIFO over ride.  This reads a file in rather than reading\n");
+    fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
+    fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
 
 #ifdef HAVE_LIBESMTP
-fprintf(stderr, "* libesmtp (SMTP) support is included.\n");
+    fprintf(stderr, "* libesmtp (SMTP) support is included.\n");
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-fprintf(stderr, "* liblognorm (log normalization) support is included.\n");
+    fprintf(stderr, "* liblognorm (log normalization) support is included.\n");
 #endif
 
 #ifdef HAVE_LIBPCAP
-fprintf(stderr, "* PLOG (syslog sniffer) support is included.\n");
+    fprintf(stderr, "* PLOG (syslog sniffer) support is included.\n");
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-fprintf(stderr, "* libdnet (for unified2) support is included.\n");
+    fprintf(stderr, "* libdnet (for unified2) support is included.\n");
 #endif
 
 #ifdef HAVE_LIBGEOIP
-fprintf(stderr, "* libGeoIP support is included.\n");
+    fprintf(stderr, "* libGeoIP support is included.\n");
 #endif
 
-fprintf(stderr, "* Compiled on %s at %s.\n", __DATE__, __TIME__);
+    fprintf(stderr, "* Compiled on %s at %s.\n", __DATE__, __TIME__);
 }

@@ -18,9 +18,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-gen-msg.c 
- * 
- * Reads in the sagan-gen-msg.map. 
+/* sagan-gen-msg.c
+ *
+ * Reads in the sagan-gen-msg.map.
  *
  */
 
@@ -36,56 +36,62 @@
 #include "sagan-defs.h"
 
 struct _SaganCounters *counters;
-struct _Sagan_Processor_Generator *generator; 
+struct _Sagan_Processor_Generator *generator;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-void Load_Gen_Map( const char *genmap ) {
+void Load_Gen_Map( const char *genmap )
+{
 
-FILE *genmapfile;
-char genbuf[1024];
+    FILE *genmapfile;
+    char genbuf[1024];
 
-char *saveptr=NULL;
+    char *saveptr=NULL;
 
-char *gen1=NULL;
-char *gen2=NULL; 
-char *gen3=NULL; 
+    char *gen1=NULL;
+    char *gen2=NULL;
+    char *gen3=NULL;
 
 //char *firsttoken=NULL;
 
-Sagan_Log(S_NORMAL, "Loading gen-msg.map file. [%s]", genmap);
+    Sagan_Log(S_NORMAL, "Loading gen-msg.map file. [%s]", genmap);
 
-counters->genmapcount=0;
+    counters->genmapcount=0;
 
-if (( genmapfile = fopen(genmap, "r" )) == NULL ) {
-   Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
-   }
+    if (( genmapfile = fopen(genmap, "r" )) == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
+        }
 
-while(fgets(genbuf, 1024, genmapfile) != NULL) {
+    while(fgets(genbuf, 1024, genmapfile) != NULL)
+        {
 
-     /* Skip comments and blank linkes */
+            /* Skip comments and blank linkes */
 
-     if (genbuf[0] == '#' || genbuf[0] == 10 || genbuf[0] == ';' || genbuf[0] == 32) {
-     continue;
-     } else {
-     /* Allocate memory for references,  not comments */
-     generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
-     }
+            if (genbuf[0] == '#' || genbuf[0] == 10 || genbuf[0] == ';' || genbuf[0] == 32)
+                {
+                    continue;
+                }
+            else
+                {
+                    /* Allocate memory for references,  not comments */
+                    generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
+                }
 
-gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
-gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
-gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+            gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
+            gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+            gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 
-if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
+            if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
 
-generator[counters->genmapcount].generatorid=atoi(gen1);
-generator[counters->genmapcount].alertid=atoi(gen2);
-strlcpy(generator[counters->genmapcount].generator_msg, Remove_Return(gen3), sizeof(generator[counters->genmapcount].generator_msg));
+            generator[counters->genmapcount].generatorid=atoi(gen1);
+            generator[counters->genmapcount].alertid=atoi(gen2);
+            strlcpy(generator[counters->genmapcount].generator_msg, Remove_Return(gen3), sizeof(generator[counters->genmapcount].generator_msg));
 
-counters->genmapcount++; 
-}
+            counters->genmapcount++;
+        }
 
-fclose(genmapfile);
-Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
+    fclose(genmapfile);
+    Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
 }
 

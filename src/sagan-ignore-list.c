@@ -42,34 +42,41 @@ struct _SaganConfig *config;
  * "ignore" list.
  ****************************************************************************/
 
-void Load_Ignore_List ( void ) { 
+void Load_Ignore_List ( void )
+{
 
-FILE *droplist;
+    FILE *droplist;
 
-char droplistbuf[1024] = { 0 };
+    char droplistbuf[1024] = { 0 };
 
 
-if ( config->sagan_droplist_flag ) {
+    if ( config->sagan_droplist_flag )
+        {
 
-if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL ) {
-   Sagan_Log(S_ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
-   config->sagan_droplist_flag=0;
-   }
+            if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
+                    config->sagan_droplist_flag=0;
+                }
 
-while(fgets(droplistbuf, 1024, droplist) != NULL) {
+            while(fgets(droplistbuf, 1024, droplist) != NULL)
+                {
 
-     /* Skip comments and blank linkes */
+                    /* Skip comments and blank linkes */
 
-     if (droplistbuf[0] == '#' || droplistbuf[0] == 10 || droplistbuf[0] == ';' || droplistbuf[0] == 32) {
-     continue;
+                    if (droplistbuf[0] == '#' || droplistbuf[0] == 10 || droplistbuf[0] == ';' || droplistbuf[0] == 32)
+                        {
+                            continue;
 
-     } else {
+                        }
+                    else
+                        {
 
-     /* Allocate memory for references,  not comments */
-     SaganDroplist = (_Sagan_Droplist *) realloc(SaganDroplist, (counters->droplist_count+1) * sizeof(_Sagan_Droplist));
-     strlcpy(SaganDroplist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganDroplist[counters->droplist_count].ignore_string)); 
-     counters->droplist_count++;
-     }
-    }
-   }
+                            /* Allocate memory for references,  not comments */
+                            SaganDroplist = (_Sagan_Droplist *) realloc(SaganDroplist, (counters->droplist_count+1) * sizeof(_Sagan_Droplist));
+                            strlcpy(SaganDroplist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganDroplist[counters->droplist_count].ignore_string));
+                            counters->droplist_count++;
+                        }
+                }
+        }
 }

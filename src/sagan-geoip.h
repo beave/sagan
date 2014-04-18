@@ -20,7 +20,7 @@
 
 /* sagan-geoip.h
  *
- * Sagan GeoIP prototypes 
+ * Sagan GeoIP prototypes
  */
 
 #ifdef HAVE_CONFIG_H

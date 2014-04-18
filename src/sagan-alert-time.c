@@ -18,10 +18,10 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-alert-time.c 
+/* sagan-alert-time.c
  *
- * This is for time based alerting.  This allows rules to have specific 
- * times/days to trigger or otherwise be ignored. 
+ * This is for time based alerting.  This allows rules to have specific
+ * times/days to trigger or otherwise be ignored.
  *
  */
 
@@ -35,111 +35,116 @@
 #include <time.h>
 #include <inttypes.h>
 
-#include "sagan.h" 
+#include "sagan.h"
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Check_Time(rule_number) { 
+int Sagan_Check_Time(rule_number)
+{
 
-	char ct[64] = { 0 };
-	char buf[80] = { 0 }; 
-	char tmp[2] = { 0 }; 
+    char ct[64] = { 0 };
+    char buf[80] = { 0 };
+    char tmp[2] = { 0 };
 
-	sbool flag = 0; 
-	int i; 
-	int day; 
+    sbool flag = 0;
+    int i;
+    int day;
 
-	uint64_t utime_current;
-	int day_current;
+    uint64_t utime_current;
+    int day_current;
 
-	uint64_t utime_start;
-	uint64_t utime_end;
+    uint64_t utime_start;
+    uint64_t utime_end;
 
-	/* For current mktime */
-	time_t     now;
-	struct     tm  ts;
+    /* For current mktime */
+    time_t     now;
+    struct     tm  ts;
 
-	/* For current utime */
-	time_t t;
-	struct tm *now_utime;
+    /* For current utime */
+    time_t t;
+    struct tm *now_utime;
 
-	/* For mktime */
+    /* For mktime */
 
-	struct     tm t_start;
-	time_t     start_time_t;
+    struct     tm t_start;
+    time_t     start_time_t;
 
-	struct     tm t_end;
-	time_t     end_time_t;
+    struct     tm t_end;
+    time_t     end_time_t;
 
-	int        sagan_year;
-	int        sagan_month;
-	int        sagan_day;
-	int	   sagan_day_end;  /* Used for times that run overs day changes */
+    int        sagan_year;
+    int        sagan_month;
+    int        sagan_day;
+    int	   sagan_day_end;  /* Used for times that run overs day changes */
 
-	/* Get current utime / and day of the week */
+    /* Get current utime / and day of the week */
 
-	t = time(NULL);
-	now_utime=localtime(&t);
-	strftime(ct, sizeof(ct), "%s",  now_utime);
-	utime_current = atol(ct);
-	day_current = localtime(&t)->tm_wday;
+    t = time(NULL);
+    now_utime=localtime(&t);
+    strftime(ct, sizeof(ct), "%s",  now_utime);
+    utime_current = atol(ct);
+    day_current = localtime(&t)->tm_wday;
 
-	time(&now);
-	ts = *localtime(&now);
+    time(&now);
+    ts = *localtime(&now);
 
-	strftime(buf, sizeof(buf), "%Y", &ts);
-	sagan_year = atoi(buf);
+    strftime(buf, sizeof(buf), "%Y", &ts);
+    sagan_year = atoi(buf);
 
-	strftime(buf, sizeof(buf), "%m", &ts);
-	sagan_month = atoi(buf) - 1;
+    strftime(buf, sizeof(buf), "%m", &ts);
+    sagan_month = atoi(buf) - 1;
 
-	strftime(buf, sizeof(buf), "%d", &ts);
-	sagan_day = atoi(buf);
+    strftime(buf, sizeof(buf), "%d", &ts);
+    sagan_day = atoi(buf);
 
-	/* Construct start date/time */
+    /* Construct start date/time */
 
-	t_start.tm_year = sagan_year-1900;
-	t_start.tm_mon = sagan_month;           // Month, 0 - jan
-	t_start.tm_mday = sagan_day;            // Day of the month
-	t_start.tm_hour = rulestruct[rule_number].alert_start_hour;
-	t_start.tm_min = rulestruct[rule_number].alert_start_minute;
-	t_start.tm_sec = 0;
-	t_start.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this? 
-	start_time_t = mktime(&t_start);
-	utime_start = (long) start_time_t;
-
-
-	/* mktime takes into account sagan_day = 32, 33, etc.  No need for conversion as 
-	   mktime will take care of it for us */
+    t_start.tm_year = sagan_year-1900;
+    t_start.tm_mon = sagan_month;           // Month, 0 - jan
+    t_start.tm_mday = sagan_day;            // Day of the month
+    t_start.tm_hour = rulestruct[rule_number].alert_start_hour;
+    t_start.tm_min = rulestruct[rule_number].alert_start_minute;
+    t_start.tm_sec = 0;
+    t_start.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this?
+    start_time_t = mktime(&t_start);
+    utime_start = (long) start_time_t;
 
 
-	if ( rulestruct[rule_number].alert_start_hour > rulestruct[rule_number].alert_end_hour ) {
-		sagan_day_end = sagan_day +1;
-			} else {
-		sagan_day_end = sagan_day;
-	}
+    /* mktime takes into account sagan_day = 32, 33, etc.  No need for conversion as
+       mktime will take care of it for us */
 
 
-	/* Construct end date/time */
-
-	t_end.tm_year = sagan_year-1900;
-	t_end.tm_mon = sagan_month;           // Month, 0 - jan
-	t_end.tm_mday = sagan_day_end;        // Day of the week
-	t_end.tm_hour = rulestruct[rule_number].alert_end_hour;
-	t_end.tm_min = rulestruct[rule_number].alert_end_minute;
-	t_end.tm_sec = 0;
-	t_end.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this? 
-	end_time_t = mktime(&t_end);
-	utime_end = (long) end_time_t;
-
-	/* Is this a valid day to trigger? */ 
-	if (Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current)) { 
-	
-		/* If day is valid,  check the time */
-		if ( utime_current >= utime_start && utime_current <= utime_end ) return(TRUE);
-	}
+    if ( rulestruct[rule_number].alert_start_hour > rulestruct[rule_number].alert_end_hour )
+        {
+            sagan_day_end = sagan_day +1;
+        }
+    else
+        {
+            sagan_day_end = sagan_day;
+        }
 
 
-return(FALSE);
+    /* Construct end date/time */
+
+    t_end.tm_year = sagan_year-1900;
+    t_end.tm_mon = sagan_month;           // Month, 0 - jan
+    t_end.tm_mday = sagan_day_end;        // Day of the week
+    t_end.tm_hour = rulestruct[rule_number].alert_end_hour;
+    t_end.tm_min = rulestruct[rule_number].alert_end_minute;
+    t_end.tm_sec = 0;
+    t_end.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this?
+    end_time_t = mktime(&t_end);
+    utime_end = (long) end_time_t;
+
+    /* Is this a valid day to trigger? */
+    if (Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current))
+        {
+
+            /* If day is valid,  check the time */
+            if ( utime_current >= utime_start && utime_current <= utime_end ) return(TRUE);
+        }
+
+
+    return(FALSE);
 }
 

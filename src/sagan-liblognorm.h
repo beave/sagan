@@ -3,11 +3,11 @@
 #ifdef HAVE_LIBLOGNORM
 typedef struct _SaganNormalizeLiblognorm
 {
-char ip_src[MAXIP];
-char ip_dst[MAXIP];
+    char ip_src[MAXIP];
+    char ip_dst[MAXIP];
 
-int  src_port;
-int  dst_port;
+    int  src_port;
+    int  dst_port;
 
 //const char username[256];
 //const char uid[10];

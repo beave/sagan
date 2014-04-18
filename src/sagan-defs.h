@@ -48,8 +48,8 @@
 #define MAXTAG		32		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
 
-/* Used for the syslog "msgslot" array.  This can be increased,  but 
- * anything > || == 30 causes SEGFAULTs under FreeBSD 
+/* Used for the syslog "msgslot" array.  This can be increased,  but
+ * anything > || == 30 causes SEGFAULTs under FreeBSD
  * Champ Clark - 02/28/2010
  */
 
@@ -113,7 +113,7 @@
 #define SUNDAY		1
 #define MONDAY		2
 #define TUESDAY		4
-#define WEDNESDAY	8 
+#define WEDNESDAY	8
 #define THURSDAY	16
 #define FRIDAY		32
 #define SATURDAY	64

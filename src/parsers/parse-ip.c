@@ -45,90 +45,103 @@
 
 struct _SaganConfig *config;
 
-char *parse_ip( char *syslogmessage, int pos ) {
+char *parse_ip( char *syslogmessage, int pos )
+{
 
-int result_space, result_nonspace, i, b;
+    int result_space, result_nonspace, i, b;
 
-int flag=0;
-int current_pos=0; 
-int notfound=0;
+    int flag=0;
+    int current_pos=0;
+    int notfound=0;
 
-char ctmp[2] = { 0 };
-char lastgood[16] = { 0 };
-char msg[MAX_SYSLOGMSG] = { 0 };
-char tmpmsg[MAX_SYSLOGMSG] = { 0 }; 
+    char ctmp[2] = { 0 };
+    char lastgood[16] = { 0 };
+    char msg[MAX_SYSLOGMSG] = { 0 };
+    char tmpmsg[MAX_SYSLOGMSG] = { 0 };
 
-char *retbuf = NULL;
-char *tok=NULL; 
-char *ptmp=NULL; 
+    char *retbuf = NULL;
+    char *tok=NULL;
+    char *ptmp=NULL;
 
-struct sockaddr_in sa;
+    struct sockaddr_in sa;
 
-snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage); 
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
 
-ptmp = strtok_r(tmpmsg, " ", &tok);
+    ptmp = strtok_r(tmpmsg, " ", &tok);
 
-while (ptmp != NULL ) {
+    while (ptmp != NULL )
+        {
 
-	if (strstr(ptmp, ".")) {
+            if (strstr(ptmp, "."))
+                {
 
-	   result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
+                    result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
 
-	   /* If we already have a good IP,  return it.  We can sometimes skips
-	    * the next steps */
+                    /* If we already have a good IP,  return it.  We can sometimes skips
+                     * the next steps */
 
-	   if ( result_space != 0 && strcmp(ptmp, "127.0.0.1")) {   
-	      
-	      current_pos++; 
+                    if ( result_space != 0 && strcmp(ptmp, "127.0.0.1"))
+                        {
 
-	      if ( current_pos == pos ) { 
-	         return(ptmp); 
-	      } 
-	   } else { 
-	   notfound = 1; 
-	   }
+                            current_pos++;
 
-	   /* Start tearing apart the substring */
+                            if ( current_pos == pos )
+                                {
+                                    return(ptmp);
+                                }
+                        }
+                    else
+                        {
+                            notfound = 1;
+                        }
 
-           if ( notfound == 1 ) { 
+                    /* Start tearing apart the substring */
 
-	   for (b=0; b < strlen(ptmp); b++) {
-	       for (i = b; i < strlen(ptmp); i++) {
+                    if ( notfound == 1 )
+                        {
 
-		   snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
-		   strlcat(msg, ctmp, sizeof(msg));
+                            for (b=0; b < strlen(ptmp); b++)
+                                {
+                                    for (i = b; i < strlen(ptmp); i++)
+                                        {
 
-		   result_nonspace = inet_pton(AF_INET, msg,  &(sa.sin_addr));
+                                            snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
+                                            strlcat(msg, ctmp, sizeof(msg));
 
-		   if ( result_nonspace != 0 ) {
-		      strlcpy(lastgood, msg, sizeof(lastgood));
-		      flag=1; 
-		      }
+                                            result_nonspace = inet_pton(AF_INET, msg,  &(sa.sin_addr));
 
-		   if ( flag == 1 && result_nonspace == 0 ) { 
+                                            if ( result_nonspace != 0 )
+                                                {
+                                                    strlcpy(lastgood, msg, sizeof(lastgood));
+                                                    flag=1;
+                                                }
 
-		      current_pos++;
+                                            if ( flag == 1 && result_nonspace == 0 )
+                                                {
 
-		      if ( current_pos == pos ) { 
-		         if (!strcmp(lastgood, "127.0.0.1")) return(config->sagan_host);
-			 retbuf=lastgood;
-			 return(retbuf);
-			 }
+                                                    current_pos++;
 
-		      flag = 0; 
-		      i=i+strlen(lastgood);
-		      b=b+strlen(lastgood);
-		      break;
-		      }
-		   }
-  	       strlcpy(msg, "", sizeof(msg)); 
-	       }
-	       }
-	       notfound = 0; 
-	 }
-	 ptmp = strtok_r(NULL, " ", &tok);
-     }
+                                                    if ( current_pos == pos )
+                                                        {
+                                                            if (!strcmp(lastgood, "127.0.0.1")) return(config->sagan_host);
+                                                            retbuf=lastgood;
+                                                            return(retbuf);
+                                                        }
 
-   return("0");
+                                                    flag = 0;
+                                                    i=i+strlen(lastgood);
+                                                    b=b+strlen(lastgood);
+                                                    break;
+                                                }
+                                        }
+                                    strlcpy(msg, "", sizeof(msg));
+                                }
+                        }
+                    notfound = 0;
+                }
+            ptmp = strtok_r(NULL, " ", &tok);
+        }
+
+    return("0");
 }
 

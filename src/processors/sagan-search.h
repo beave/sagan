@@ -29,13 +29,15 @@
 
 
 typedef struct _Sagan_Nocase_Searchlist _Sagan_Nocase_Searchlist;
-struct _Sagan_Nocase_Searchlist {
-char search[512];
+struct _Sagan_Nocase_Searchlist
+{
+    char search[512];
 };
 
 typedef struct _Sagan_Case_Searchlist _Sagan_Case_Searchlist;
-struct _Sagan_Case_Searchlist {
-char search[512];
+struct _Sagan_Case_Searchlist
+{
+    char search[512];
 };
 
 void Sagan_Search ( _SaganProcSyslog *, int );
