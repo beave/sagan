@@ -46,6 +46,8 @@ struct _SaganConfig *config;
 struct _Sagan_Nocase_Searchlist *SaganNocaseSearchlist;
 struct _Sagan_Case_Searchlist *SaganCaseSearchlist;
 
+struct _Sagan_Processor_Info *processor_info_search = NULL;
+
 #ifdef HAVE_LIBLOGNORM
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
 pthread_mutex_t Lognorm_Mutex;
@@ -62,6 +64,19 @@ int Sagan_Search_Load ( int type )
     FILE *search;
     char searchbuf[1024] = { 0 };
     char tmpfile[MAXPATH];
+
+    processor_info_search = malloc(sizeof(struct _Sagan_Processor_Info));
+    memset(processor_info_search, 0, sizeof(_Sagan_Processor_Info));
+
+    processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
+    processor_info_search->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
+    processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
+    processor_info_search->processor_facility      =       SEARCH_PROCESSOR_FACILITY;
+    processor_info_search->processor_priority      =       SEARCH_PROCESSOR_PRIORITY;
+    processor_info_search->processor_pri           =       SEARCH_PROCESSOR_PRI;
+    processor_info_search->processor_class         =       SEARCH_PROCESSOR_CLASS;
+    processor_info_search->processor_tag           =       SEARCH_PROCESSOR_TAG;
+    processor_info_search->processor_rev           =       SEARCH_PROCESSOR_REV;
 
     if ( type == 1 )
         {
@@ -125,22 +140,6 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type )
     int   src_port = 0;
     int   dst_port = 0;
     int   proto = 0;
-
-    struct _Sagan_Processor_Info *processor_info_search = NULL;
-    processor_info_search = malloc(sizeof(struct _Sagan_Processor_Info));
-    memset(processor_info_search, 0, sizeof(_Sagan_Processor_Info));
-
-    processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
-    processor_info_search->processor_generator_id  =       SEARCH_PROCESSOR_GENERATOR_ID;
-    processor_info_search->processor_name          =       SEARCH_PROCESSOR_NAME;
-    processor_info_search->processor_facility      =       SEARCH_PROCESSOR_FACILITY;
-    processor_info_search->processor_priority      =       SEARCH_PROCESSOR_PRIORITY;
-    processor_info_search->processor_pri           =       SEARCH_PROCESSOR_PRI;
-    processor_info_search->processor_class         =       SEARCH_PROCESSOR_CLASS;
-    processor_info_search->processor_tag           =       SEARCH_PROCESSOR_TAG;
-    processor_info_search->processor_rev           =       SEARCH_PROCESSOR_REV;
-
-
 
     if ( type == 1 )
         {

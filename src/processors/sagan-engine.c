@@ -933,6 +933,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
             rc=0;
         } /* End for for loop */
 
+    free(processor_info_engine); 
 
     return(0);
 }

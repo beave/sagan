@@ -42,6 +42,7 @@
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
+struct _Sagan_Processor_Info *processor_info_track_client = NULL;
 
 pthread_mutex_t SaganProcTrackClientsMutex=PTHREAD_MUTEX_INITIALIZER;
 
@@ -61,6 +62,19 @@ void Sagan_Load_Tracking_Cache ( void )
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
+
+    processor_info_track_client = malloc(sizeof(struct _Sagan_Processor_Info));
+    memset(processor_info_track_client, 0, sizeof(_Sagan_Processor_Info));
+
+    processor_info_track_client->processor_name         =       PROCESSOR_NAME;
+    processor_info_track_client->processor_generator_id =       PROCESSOR_GENERATOR_ID;
+    processor_info_track_client->processor_name         =       PROCESSOR_NAME;
+    processor_info_track_client->processor_facility     =       PROCESSOR_FACILITY;
+    processor_info_track_client->processor_priority     =       PROCESSOR_PRIORITY;
+    processor_info_track_client->processor_pri          =       PROCESSOR_PRI;
+    processor_info_track_client->processor_class                =       PROCESSOR_CLASS;
+    processor_info_track_client->processor_tag          =       PROCESSOR_TAG;
+    processor_info_track_client->processor_rev          =       PROCESSOR_REV;
 
     if (( config->sagan_track_client_file = fopen(config->sagan_track_client_host_cache, "r" )) == NULL )
         {
@@ -130,20 +144,6 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    struct _Sagan_Processor_Info *processor_info = NULL;
-    processor_info = malloc(sizeof(struct _Sagan_Processor_Info));
-    memset(processor_info, 0, sizeof(_Sagan_Processor_Info));
-
-    processor_info->processor_name		=	PROCESSOR_NAME;
-    processor_info->processor_generator_id	=	PROCESSOR_GENERATOR_ID;
-    processor_info->processor_name		=	PROCESSOR_NAME;
-    processor_info->processor_facility	=	PROCESSOR_FACILITY;
-    processor_info->processor_priority	=	PROCESSOR_PRIORITY;
-    processor_info->processor_pri		=	PROCESSOR_PRI;
-    processor_info->processor_class		=	PROCESSOR_CLASS;
-    processor_info->processor_tag		=	PROCESSOR_TAG;
-    processor_info->processor_rev		=	PROCESSOR_REV;
-
     for (i=0; i<counters->track_clients_client_count; i++)
         {
 
@@ -163,7 +163,7 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             alertid=101;
                             SaganTrackClients[i].status = 0;
-                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
                         }
 
                     tracking_flag=1;
@@ -184,7 +184,7 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     alertid=100;
                     SaganTrackClients[i].status = 1;
 
-                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
                 }
 
         }
