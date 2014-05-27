@@ -158,7 +158,7 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                         {
 
                             Sagan_Log(S_WARN, "[Processor: %s] Logs being received from %s again.",  PROCESSOR_NAME, SaganTrackClients[i].host);
-                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not receiving logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
+                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not sending logs.  The system appears to be sending logs again", SaganTrackClients[i].host);
                             counters->track_clients_down--;
 
                             alertid=101;
