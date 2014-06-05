@@ -18,14 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-windows-domain.c
- *
- * Functions that handle GeoIP lookup's via the Maxmind database.   For more
- * information, please see:
- *
- * http://www.maxmind.com/en/country
- * http://dev.maxmind.com/geoip/geoip2/geolite2/
- *
+/* sagan-meta-content.c
  */
 
 #ifdef HAVE_CONFIG_H
@@ -39,7 +32,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Windows_Domain_Search(char *syslog_msg, int rule_position )
+int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 {
 
     char *ptmp = NULL;
@@ -49,7 +42,7 @@ int Sagan_Windows_Domain_Search(char *syslog_msg, int rule_position )
 
     int return_code = 0;
 
-    strlcpy(tmp, rulestruct[rule_position].windows_domains, sizeof(tmp));
+    strlcpy(tmp, rulestruct[rule_position].meta_content, sizeof(tmp));
 
     ptmp = strtok_r(tmp, ",", &tok);
 

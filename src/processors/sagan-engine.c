@@ -86,8 +86,8 @@ sbool geoip_isset = 0;
 int   geoip_return = 0;
 #endif
 
-int   windows_domain_return = 0;
-int   windows_domain_trigger = 0;
+int   meta_content_return = 0;
+int   meta_content_trigger = 0;
 
 int   alert_time_return = 0;
 int   alert_time_trigger = 0;
@@ -811,28 +811,28 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
                             /****************************************************************************
-                             * Microsoft specific "DOMAIN" searching
+			     * "meta_content" searching
                              ****************************************************************************/
 
-                            if ( rulestruct[b].windows_domain_flag )
+                            if ( rulestruct[b].meta_content_flag )
                                 {
 
-                                    windows_domain_trigger = 0; 	/* Reset from previous state */
+                                    meta_content_trigger = 0; 	/* Reset from previous state */
 
-                                    windows_domain_return =  Sagan_Windows_Domain_Search(SaganProcSyslog_LOCAL->syslog_message, b);
+                                    meta_content_return =  Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
 
                                     /* Windows Domain "isnot" */
 
-                                    if ( rulestruct[b].windows_domain_type == 1 && windows_domain_return == 0)
+                                    if ( rulestruct[b].meta_content_type == 1 && meta_content_return == 0)
                                         {
-                                            windows_domain_trigger = 1;
+                                            meta_content_trigger = 1;
                                         }
 
                                     /* Windows Domain "is" */
 
-                                    if ( rulestruct[b].windows_domain_type == 2 && windows_domain_return == 1)
+                                    if ( rulestruct[b].meta_content_type == 2 && meta_content_return == 1)
                                         {
-                                            windows_domain_trigger = 1;
+                                            meta_content_trigger = 1;
                                         }
 
                                 }
@@ -863,7 +863,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0))
                                 {
 
-                                    if ( rulestruct[b].windows_domain_flag == 0 || windows_domain_trigger == 1)
+                                    if ( rulestruct[b].meta_content_flag == 0 || meta_content_trigger == 1)
                                         {
 
                                             if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )

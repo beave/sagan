@@ -104,7 +104,7 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
 	sagan-credits.$(OBJEXT) sagan-protocol-map.$(OBJEXT) \
-	sagan-geoip.$(OBJEXT) sagan-windows-domain.$(OBJEXT) \
+	sagan-geoip.$(OBJEXT) sagan-meta-content.$(OBJEXT) \
 	sagan-alert-time.$(OBJEXT) parse-ip.$(OBJEXT) \
 	parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
 	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
@@ -298,7 +298,7 @@ sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
 sagan-geoip.c \
-sagan-windows-domain.c \
+sagan-meta-content.c \
 sagan-alert-time.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
@@ -420,6 +420,7 @@ include ./$(DEPDIR)/sagan-ignore-list.Po
 include ./$(DEPDIR)/sagan-key.Po
 include ./$(DEPDIR)/sagan-liblognorm.Po
 include ./$(DEPDIR)/sagan-lockfile.Po
+include ./$(DEPDIR)/sagan-meta-content.Po
 include ./$(DEPDIR)/sagan-output.Po
 include ./$(DEPDIR)/sagan-plog.Po
 include ./$(DEPDIR)/sagan-processor.Po
@@ -439,7 +440,6 @@ include ./$(DEPDIR)/sagan-unified2.Po
 include ./$(DEPDIR)/sagan-usage.Po
 include ./$(DEPDIR)/sagan-util.Po
 include ./$(DEPDIR)/sagan-websense.Po
-include ./$(DEPDIR)/sagan-windows-domain.Po
 include ./$(DEPDIR)/sagan.Po
 
 .c.o:

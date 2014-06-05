@@ -423,9 +423,10 @@ struct _Rule_Struct
     int fwsam_src_or_dst;		/* 1 == src,  2 == dst */
     unsigned long  fwsam_seconds;
 
-    sbool windows_domain_flag;
-    int windows_domain_type;	/* 1 == isnot, 2 == is */
-    char windows_domains[1024];
+    sbool meta_content_flag;
+    int meta_content_type;	/* 1 == isnot, 2 == is */
+    char meta_content[1024];
+    char meta_content_help[512]; 
 
     sbool alert_time_flag;
     unsigned char alert_days;
@@ -703,7 +704,8 @@ void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, cha
 uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
-int Sagan_Windows_Domain_Search(char *, int );
+int Sagan_Meta_Content_Search(char *, int );
+char *Sagan_Content_Pipe(char *, int, const char *);
 int Sagan_Check_Time(int);
 int Sagan_Check_Day(unsigned char, int);
 
