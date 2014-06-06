@@ -49,10 +49,16 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     while (ptmp != NULL )
         {
 
-            /* Search for "Domain: %s " in log message.  The space is intensional */
+            /* Search for "content help" + "content" */
 
-            snprintf(tmp_search, sizeof(tmp_search), "Domain: %s ", ptmp);
-            if (strcasestr(syslog_msg, tmp_search)) return(TRUE);
+            snprintf(tmp_search, sizeof(tmp_search), "%s%s ", rulestruct[rule_position].meta_content_help, ptmp);
+
+            if (rulestruct[rule_position].meta_content_nocase == 0 ) { 
+	    	if (strcasestr(syslog_msg, tmp_search)) return(TRUE);
+		} else { 
+		if (strstr(syslog_msg, tmp_search)) return(TRUE);
+		}
+
             ptmp = strtok_r(NULL, ",", &tok);
 
         }

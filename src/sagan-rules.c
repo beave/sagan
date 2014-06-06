@@ -509,8 +509,8 @@ void Load_Rules( const char *ruleset )
 			    strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
 			    strlcpy(rulestruct[counters->rulecount].meta_content_help, Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help)); 
 
-                            tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab Search data */
-			
+                            tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ",", &saveptrrule2));           /* Grab Search data */
+
 			    if ( tmptoken == NULL )
 			    	Sagan_Log(S_ERROR, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
@@ -518,6 +518,23 @@ void Load_Rules( const char *ruleset )
 
                             strlcpy(rulestruct[counters->rulecount].meta_content, tmptoken, sizeof(rulestruct[counters->rulecount].meta_content));
                             rulestruct[counters->rulecount].meta_content_flag = 1;
+
+			    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+			    if ( tmptoken == NULL )  {
+
+			    	rulestruct[counters->rulecount].meta_content_nocase = 1; 
+
+				} else {
+
+			        Remove_Spaces(tmptoken);
+
+			        if (strcmp(tmptoken, "case") && strcmp(tmptoken, "nocase")) 
+			           Sagan_Log(S_ERROR, "[%s, line %d] Expected 'case' or 'nocase' but got '%s' in 'meta_content' option at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+				if (!strcmp(tmptoken, "case")) rulestruct[counters->rulecount].meta_content_nocase = 0; 
+				if (!strcmp(tmptoken, "nocase")) rulestruct[counters->rulecount].meta_content_nocase = 1;
+
+			 } 
 
                         }
 

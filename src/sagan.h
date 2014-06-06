@@ -427,6 +427,7 @@ struct _Rule_Struct
     int meta_content_type;	/* 1 == isnot, 2 == is */
     char meta_content[1024];
     char meta_content_help[512]; 
+    sbool meta_content_nocase; 
 
     sbool alert_time_flag;
     unsigned char alert_days;
