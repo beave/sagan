@@ -18,7 +18,14 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-meta-content.c
+/* sagan-meta-content.c - This allows content style "searching" that 
+ * involve variables.  For example,  if we wanted to search for "bob", 
+ * "frank" and "mary",  we'd typically need three content rules.  
+ * This allows one rule with the $USER variable for "bob", "frank" and
+ * "mary".  
+ *
+ * meta_content: "Username: ", $USERNAME"; meta_nocase; 
+ *
  */
 
 #ifdef HAVE_CONFIG_H
@@ -39,43 +46,46 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     char *tok = NULL;
     char tmp[1024] = { 0 };
     char tmp_search[30] = { 0 }; 	/* Max Domain size is 16 bytes + "Domain: " */
-    int results = 0; 
+    int results = 0;
 
     int return_code = 0;
 
-    int z; 
+    int z;
 
-    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)  {
-    	
-
-    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
-    ptmp = strtok_r(tmp, ",", &tok);
-
-    while (ptmp != NULL )
+    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
         {
 
 
-            /* Search for "content help" + "content" */
+            strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+            ptmp = strtok_r(tmp, ",", &tok);
 
-            snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+            while (ptmp != NULL )
+                {
 
-		if ( rulestruct[rule_position].meta_content_case[z] == 1 ) { 
+                    /* Search for "content help" + "content" */
 
-	    		if (strcasestr(syslog_msg, tmp_search)) results++; 
+                    snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
 
-			} else { 
+                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                        {
 
-			if (strstr(syslog_msg, tmp_search))  results++; 
+                            if (strcasestr(syslog_msg, tmp_search)) results++;
 
-			}
+                        }
+                    else
+                        {
 
-            ptmp = strtok_r(NULL, ",", &tok);
+                            if (strstr(syslog_msg, tmp_search))  results++;
 
+                        }
+
+                    ptmp = strtok_r(NULL, ",", &tok);
+
+                }
         }
-}
 
-    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE); 
+    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);
 
-return(FALSE);
+    return(FALSE);
 }
 

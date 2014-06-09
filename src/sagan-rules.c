@@ -102,7 +102,7 @@ void Load_Rules( const char *ruleset )
     char pcrerule[RULEBUF];
     char tmp2[512];
     char tmp[2];
-   char final_content[512] = { 0 };
+    char final_content[512] = { 0 };
 
     char alert_time_tmp1[10];
     char alert_time_tmp2[3];
@@ -111,7 +111,7 @@ void Load_Rules( const char *ruleset )
     int netcount=0;
     int ref_count=0;
     int content_count=0;
-    int meta_content_count;
+    int meta_content_count=0;
     int pcre_count=0;
     sbool pcreflag=0;
     int pcreoptions=0;
@@ -483,43 +483,43 @@ void Load_Rules( const char *ruleset )
                     if (!strcmp(rulesplit, "meta_content"))
                         {
 
-			    if ( meta_content_count > MAX_CONTENT ) 
-			    	Sagan_Log(S_ERROR, "There is to many \"meta_content\" types in the rule at line %d in %s", linecount, ruleset);
+                            if ( meta_content_count > MAX_CONTENT )
+                                Sagan_Log(S_ERROR, "There is to many \"meta_content\" types in the rule at line %d in %s", linecount, ruleset);
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
-			    tmptoken = strtok_r(arg, ",", &saveptrrule2);
+                            tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
-			    if ( tmptoken == NULL ) 
-			    	Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                            if ( tmptoken == NULL )
+                                Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
-			    strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
-			    strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count])); 
+                            strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
+                            strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count]));
 
                             tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ",", &saveptrrule2));           /* Grab Search data */
 
-			    if ( tmptoken == NULL )
-			    	Sagan_Log(S_ERROR, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                            if ( tmptoken == NULL )
+                                Sagan_Log(S_ERROR, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
                             Remove_Spaces(tmptoken);
 
                             strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count], tmptoken, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count]));
                             rulestruct[counters->rulecount].meta_content_flag = 1;
 
-			    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-				meta_content_count++; 
-				rulestruct[counters->rulecount].meta_content_count=meta_content_count;
+                            meta_content_count++;
+                            rulestruct[counters->rulecount].meta_content_count=meta_content_count;
 
                         }
 
 
-		   /* Like "nocase" for content,  but for "meta_nocase".  This is a "single option" but works better here */
-		   
-                   if (!strcmp(rulesplit, "meta_nocase"))
-                         {
-                         strtok_r(NULL, ":", &saveptrrule2);
-                         rulestruct[counters->rulecount].meta_content_case[meta_content_count-1] = 1;
-                         }
+                    /* Like "nocase" for content,  but for "meta_nocase".  This is a "single option" but works better here */
+
+                    if (!strcmp(rulesplit, "meta_nocase"))
+                        {
+                            strtok_r(NULL, ":", &saveptrrule2);
+                            rulestruct[counters->rulecount].meta_content_case[meta_content_count-1] = 1;
+                        }
 
 
                     if (!strcmp(rulesplit, "rev" ))
@@ -666,9 +666,9 @@ void Load_Rules( const char *ruleset )
                             if (tmp2 == NULL ) Sagan_Log(S_ERROR, "The \"content\" appears to be incomplete at line %d in %s", linecount, ruleset);
 
 
-			    /* Convert HEX encoded data */
+                            /* Convert HEX encoded data */
 
-			    strlcpy(final_content, Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(final_content)); 
+                            strlcpy(final_content, Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(final_content));
 
                             /* For content: ! "something" */
 
@@ -681,13 +681,13 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].content_count=content_count;
                         }
 
-		   /* Single option,  but works better here */ 
+                    /* Single option,  but "nocase" works better here */
 
-                   if (!strcmp(rulesplit, "nocase"))
-                         {
-                         strtok_r(NULL, ":", &saveptrrule2);
-			 rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
-                         }
+                    if (!strcmp(rulesplit, "nocase"))
+                        {
+                            strtok_r(NULL, ":", &saveptrrule2);
+                            rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
+                        }
 
                     /* PCRE needs a little extra "work" */
 
