@@ -387,6 +387,7 @@ struct _Rule_Struct
     int s_nocase;
     int pcre_count;
     int content_count;
+    int meta_content_count; 
     int ref_count;
     int dst_port;
     int src_port;
@@ -424,10 +425,9 @@ struct _Rule_Struct
     unsigned long  fwsam_seconds;
 
     sbool meta_content_flag;
-    int meta_content_type;	/* 1 == isnot, 2 == is */
-    char meta_content[1024];
-    char meta_content_help[512]; 
-    sbool meta_content_nocase; 
+    char meta_content[MAX_META_CONTENT][512];
+    char meta_content_help[MAX_META_CONTENT][512]; 
+    sbool meta_content_case[MAX_META_CONTENT]; 
 
     sbool alert_time_flag;
     unsigned char alert_days;

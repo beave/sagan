@@ -39,30 +39,44 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     char *tok = NULL;
     char tmp[1024] = { 0 };
     char tmp_search[30] = { 0 }; 	/* Max Domain size is 16 bytes + "Domain: " */
+    int results = 0; 
 
     int return_code = 0;
 
-    strlcpy(tmp, rulestruct[rule_position].meta_content, sizeof(tmp));
+    int z; 
 
+    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)  {
+    	
+
+    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
     ptmp = strtok_r(tmp, ",", &tok);
 
     while (ptmp != NULL )
         {
 
+
             /* Search for "content help" + "content" */
 
-            snprintf(tmp_search, sizeof(tmp_search), "%s%s ", rulestruct[rule_position].meta_content_help, ptmp);
+            snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
 
-            if (rulestruct[rule_position].meta_content_nocase == 0 ) { 
-	    	if (strcasestr(syslog_msg, tmp_search)) return(TRUE);
-		} else { 
-		if (strstr(syslog_msg, tmp_search)) return(TRUE);
-		}
+		if ( rulestruct[rule_position].meta_content_case[z] == 1 ) { 
+
+	    		if (strcasestr(syslog_msg, tmp_search)) results++; 
+
+			} else { 
+
+			if (strstr(syslog_msg, tmp_search))  results++; 
+
+			}
 
             ptmp = strtok_r(NULL, ",", &tok);
 
         }
+}
 
-    return(FALSE);
+
+    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE); 
+
+return(FALSE);
 }
 

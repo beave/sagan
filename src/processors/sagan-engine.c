@@ -821,20 +821,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     meta_content_return =  Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
 
-                                    /* Windows Domain "isnot" */
-
-                                    if ( rulestruct[b].meta_content_type == 1 && meta_content_return == 0)
-                                        {
-                                            meta_content_trigger = 1;
-                                        }
-
-                                    /* Windows Domain "is" */
-
-                                    if ( rulestruct[b].meta_content_type == 2 && meta_content_return == 1)
-                                        {
-                                            meta_content_trigger = 1;
-                                        }
-
+				    if ( meta_content_return == 1 ) meta_content_trigger = 1;
                                 }
 
                             /****************************************************************************

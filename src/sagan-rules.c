@@ -102,10 +102,7 @@ void Load_Rules( const char *ruleset )
     char pcrerule[RULEBUF];
     char tmp2[512];
     char tmp[2];
-//    int pipe_flag = 0;
    char final_content[512] = { 0 };
-//    char final_content_tmp[512] = { 0 };
-//    int  x;
 
     char alert_time_tmp1[10];
     char alert_time_tmp2[3];
@@ -114,6 +111,7 @@ void Load_Rules( const char *ruleset )
     int netcount=0;
     int ref_count=0;
     int content_count=0;
+    int meta_content_count;
     int pcre_count=0;
     sbool pcreflag=0;
     int pcreoptions=0;
@@ -316,7 +314,6 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_nocase = 1;
                         }
 
-
                     if (!strcmp(rulesplit, "parse_port"))
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
@@ -492,22 +489,17 @@ void Load_Rules( const char *ruleset )
                     if (!strcmp(rulesplit, "meta_content"))
                         {
 
+			    if ( meta_content_count > MAX_CONTENT ) 
+			    	Sagan_Log(S_ERROR, "There is to many \"meta_content\" types in the rule at line %d in %s", linecount, ruleset);
+
                             arg = strtok_r(NULL, ":", &saveptrrule2);
-                            tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
-
-                            if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot"))
-                                Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'meta_content' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
-
-                            if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].meta_content_type = 1;
-                            if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].meta_content_type = 2;
-				 
-			    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+			    tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
 			    if ( tmptoken == NULL ) 
 			    	Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
 
 			    strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
-			    strlcpy(rulestruct[counters->rulecount].meta_content_help, Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help)); 
+			    strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count])); 
 
                             tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ",", &saveptrrule2));           /* Grab Search data */
 
@@ -516,27 +508,23 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(tmptoken);
 
-                            strlcpy(rulestruct[counters->rulecount].meta_content, tmptoken, sizeof(rulestruct[counters->rulecount].meta_content));
+                            strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count], tmptoken, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count]));
                             rulestruct[counters->rulecount].meta_content_flag = 1;
 
 			    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-			    if ( tmptoken == NULL )  {
-
-			    	rulestruct[counters->rulecount].meta_content_nocase = 1; 
-
-				} else {
-
-			        Remove_Spaces(tmptoken);
-
-			        if (strcmp(tmptoken, "case") && strcmp(tmptoken, "nocase")) 
-			           Sagan_Log(S_ERROR, "[%s, line %d] Expected 'case' or 'nocase' but got '%s' in 'meta_content' option at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
-				if (!strcmp(tmptoken, "case")) rulestruct[counters->rulecount].meta_content_nocase = 0; 
-				if (!strcmp(tmptoken, "nocase")) rulestruct[counters->rulecount].meta_content_nocase = 1;
-
-			 } 
+				meta_content_count++; 
+				rulestruct[counters->rulecount].meta_content_count=meta_content_count;
 
                         }
+
+
+                   if (!strcmp(rulesplit, "meta_nocase"))
+                         {
+                         strtok_r(NULL, ":", &saveptrrule2);
+                         rulestruct[counters->rulecount].meta_content_case[meta_content_count-1] = 1;
+                         }
+
 
                     if (!strcmp(rulesplit, "rev" ))
                         {
@@ -682,57 +670,9 @@ void Load_Rules( const char *ruleset )
                             if (tmp2 == NULL ) Sagan_Log(S_ERROR, "The \"content\" appears to be incomplete at line %d in %s", linecount, ruleset);
 
 
+			    /* Convert HEX encoded data */
+
 			    strlcpy(final_content, Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(final_content)); 
-
-                            /* This is for |HEX| support (like in Snort).  From example: content: "User |3a 3c 53| and such";
-                             * If the content has no pipes,  we leave it unaltered.  If it has pipes,  we insert the ASCII
-                             * values of the Hex within the content (keeping formating correct - Champ Clark - 12/04/2013 */
-
-			
-//                            pipe_flag = 0;
-
-//                            for ( i=0; i<strlen(tmp2); i++)
-//                                {
-
-//                                    if ( tmp2[i] == '|' && pipe_flag == 0 ) pipe_flag = 1; 		/* First | has been found */
-
-                                    /* If we haven't found any |'s,  just copy the content verbatium */
-
- //                                   if ( pipe_flag == 0 )
- //                                       {
- //                                           snprintf(final_content_tmp, sizeof(final_content_tmp), "%c", tmp2[i]);
- //                                           strncat(final_content, final_content_tmp, 1);
- //                                       }
-
-                                    /* If | has been found,  start the conversion */
-
- //                                   if ( pipe_flag == 1 )
- //                                       {
-
-//                                            if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
-//
- //                                           snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]); 	/* Copy the hex value - ie 3a, 1B, etc */
-
- //                                           if (!Sagan_Validate_HEX(final_content_tmp)) Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
-
-  //                                          sscanf(final_content_tmp, "%x", &x); 							/* Convert hex to dec */
-  //                                          snprintf(tmp, sizeof(tmp), "%c", x); 							/* Convert dec to ASCII */
-  //                                          strncat(final_content, tmp, 1); 							/* Append value */
-
-                                            /* Last | found,  but continue processing rest of content as normal */
-
-             //                               if ( tmp2[i+3] == '|' )
-            //                                    {
-           //                                         pipe_flag = 0;
-          //                                          i=i+3;
-         //                                       }
-        //                                    else
-       //                                         {
-     //                                               i = i+2;
-      //                                          }
-    //                                    }
-
-   //                             }
 
                             /* For content: ! "something" */
 
