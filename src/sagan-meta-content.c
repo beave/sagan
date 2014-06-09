@@ -74,7 +74,6 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
         }
 }
 
-
     if ( results == rulestruct[rule_position].meta_content_count) return(TRUE); 
 
 return(FALSE);

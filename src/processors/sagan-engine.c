@@ -243,7 +243,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 {
 
                                     /* If case insensitive */
-                                    if ( rulestruct[b].s_nocase == 1 )
+                                    if ( rulestruct[b].s_nocase[z] == 1 )
                                         {
 
                                             if (rulestruct[b].content_not[z] != 1 && strcasestr(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_content[z]))

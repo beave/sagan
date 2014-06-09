@@ -308,12 +308,6 @@ void Load_Rules( const char *ruleset )
 
                     /* single flag options.  (nocase, find_port, etc) */
 
-                    if (!strcmp(rulesplit, "nocase"))
-                        {
-                            strtok_r(NULL, ":", &saveptrrule2);
-                            rulestruct[counters->rulecount].s_nocase = 1;
-                        }
-
                     if (!strcmp(rulesplit, "parse_port"))
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
@@ -519,6 +513,8 @@ void Load_Rules( const char *ruleset )
                         }
 
 
+		   /* Like "nocase" for content,  but for "meta_nocase".  This is a "single option" but works better here */
+		   
                    if (!strcmp(rulesplit, "meta_nocase"))
                          {
                          strtok_r(NULL, ":", &saveptrrule2);
@@ -685,6 +681,13 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].content_count=content_count;
                         }
 
+		   /* Single option,  but works better here */ 
+
+                   if (!strcmp(rulesplit, "nocase"))
+                         {
+                         strtok_r(NULL, ":", &saveptrrule2);
+			 rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
+                         }
 
                     /* PCRE needs a little extra "work" */
 
@@ -1049,7 +1052,6 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
                     Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
 
-                    if ( rulestruct[counters->rulecount].s_nocase != 0 )    Sagan_Log(S_DEBUG, "= nocase");
                     if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(S_DEBUG, "= parse_src_ip");
                     if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(S_DEBUG, "= parse_port");
 
