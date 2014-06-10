@@ -507,6 +507,9 @@ void Load_Rules( const char *ruleset )
 
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
+                            not = strtok_r(arg, "\"", &savenot);
+                            if (strstr(not, "!")) rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
+
                             meta_content_count++;
                             rulestruct[counters->rulecount].meta_content_count=meta_content_count;
 

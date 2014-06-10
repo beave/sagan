@@ -42,50 +42,84 @@ struct _Rule_Struct *rulestruct;
 int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 {
 
-    char *ptmp = NULL;
-    char *tok = NULL;
-    char tmp[1024] = { 0 };
-    char tmp_search[30] = { 0 }; 	/* Max Domain size is 16 bytes + "Domain: " */
-    int results = 0;
+char *ptmp = NULL;
+char *tok = NULL;
+char tmp[1024] = { 0 };
+char tmp_search[512] = { 0 }; 	
+int results = 0;
+int match = 0; 
+int return_code = 0;
+int z;
 
-    int return_code = 0;
+if ( rulestruct[rule_position].meta_content_not[z] == 0 ) { 
 
-    int z;
+	/* Normal "meta_content" (ie - not !) search */
 
-    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
-        {
+	for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+		{
+
+		strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+		ptmp = strtok_r(tmp, ",", &tok);
+
+			while (ptmp != NULL )
+				{
+
+				/* Search for "content help" + "content" */
+
+				snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+
+				if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+					{
+					if (strcasestr(syslog_msg, tmp_search)) results++;
+                        		}
+                    				else
+		                        {
+                            		if (strstr(syslog_msg, tmp_search))  results++;
+                        		}
+                    
+				ptmp = strtok_r(NULL, ",", &tok);
+
+                		} // End of while(ptmp)
+		} // End of for(z) loop
+
+} else { 
+
+	/* Content! search */
+	
+	for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+		{
+
+		strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+		ptmp = strtok_r(tmp, ",", &tok);
+
+			while (ptmp != NULL )
+				{
+
+				snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+
+                        	if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+					{
+					if (strcasestr(syslog_msg, tmp_search)) match++;
+					}
+						else
+					{
+					if (strstr(syslog_msg, tmp_search)) match++; 
+					}
+
+					ptmp = strtok_r(NULL, ",", &tok);
+
+                		} // End of while(ptmp)
+		} // End of for(z) loop
 
 
-            strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
-            ptmp = strtok_r(tmp, ",", &tok);
+	/* content! we do NOT want "match".  Zero means nothing matches! */
+	if ( match == 0 ) results++; 
+	
+} // end/else of if  meta_content_not ...
 
-            while (ptmp != NULL )
-                {
+if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);	
 
-                    /* Search for "content help" + "content" */
+return(FALSE);
 
-                    snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
-
-                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-                        {
-
-                            if (strcasestr(syslog_msg, tmp_search)) results++;
-
-                        }
-                    else
-                        {
-
-                            if (strstr(syslog_msg, tmp_search))  results++;
-
-                        }
-
-                    ptmp = strtok_r(NULL, ",", &tok);
-
-                }
-        }
-
-    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);
-
-    return(FALSE);
 }
 
