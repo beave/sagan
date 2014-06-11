@@ -105,8 +105,8 @@ am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
 	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
 	sagan-credits.$(OBJEXT) sagan-protocol-map.$(OBJEXT) \
 	sagan-geoip.$(OBJEXT) sagan-meta-content.$(OBJEXT) \
-	sagan-alert-time.$(OBJEXT) parse-ip.$(OBJEXT) \
-	parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
+	sagan-flowbit.$(OBJEXT) sagan-alert-time.$(OBJEXT) \
+	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
 	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
 	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
 	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
@@ -299,6 +299,7 @@ sagan-credits.c \
 sagan-protocol-map.c \
 sagan-geoip.c \
 sagan-meta-content.c \
+sagan-flowbit.c \
 sagan-alert-time.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
@@ -414,6 +415,7 @@ include ./$(DEPDIR)/sagan-credits.Po
 include ./$(DEPDIR)/sagan-engine.Po
 include ./$(DEPDIR)/sagan-esmtp.Po
 include ./$(DEPDIR)/sagan-external.Po
+include ./$(DEPDIR)/sagan-flowbit.Po
 include ./$(DEPDIR)/sagan-gen-msg.Po
 include ./$(DEPDIR)/sagan-geoip.Po
 include ./$(DEPDIR)/sagan-ignore-list.Po

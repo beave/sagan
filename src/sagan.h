@@ -707,6 +707,7 @@ uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
 int Sagan_Meta_Content_Search(char *, int );
+int Sagan_Flowbit( int ); 
 char *Sagan_Content_Pipe(char *, int, const char *);
 int Sagan_Check_Time(int);
 int Sagan_Check_Day(unsigned char, int);

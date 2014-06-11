@@ -26,6 +26,7 @@ sagan-credits.c \
 sagan-protocol-map.c \
 sagan-geoip.c \
 sagan-meta-content.c \
+sagan-flowbit.c \
 sagan-alert-time.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
