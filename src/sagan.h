@@ -451,24 +451,6 @@ struct _Rule_Struct
 
 };
 
-typedef struct _Sagan_Flowbit _Sagan_Flowbit;
-struct _Sagan_Flowbit
-{
-    char flowbit_name[128];
-};
-
-
-typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
-struct _Sagan_Flowbit_Track
-{
-    int flowbit_memory_position; 
-    char *flowbit_name; 
-    sbool flowbit_state; 
-    uint64_t ip_src; 
-    uint64_t ip_dst; 
-    uint64_t flowbit_expire;
-};
-
 typedef struct _Sagan_Proc_Syslog
 {
     char syslog_host[50];

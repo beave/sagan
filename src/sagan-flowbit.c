@@ -33,13 +33,13 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-flowbit.h"
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _Sagan_Flowbit *flowbit;
 struct _Sagan_Flowbit_Track *flowbit_track; 
-
 
 pthread_mutex_t SaganFlowbitMutex=PTHREAD_MUTEX_INITIALIZER;
 
@@ -79,7 +79,7 @@ for (i=0; i<counters->flowbit_track_count; i++)
 	{   
 	if (  flowbit_track[i].flowbit_state == 1 && atol(timet) >= flowbit_track[i].flowbit_expire )
 		{   
-		if (debug->debugflowbit) Sagan_Log(S_DEBUG, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbit[i].flowbit_name);
+		if (debug->debugflowbit) Sagan_Log(S_DEBUG, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbit_track[i].flowbit_name);
 		flowbit_track[i].flowbit_state = 0;
 		}
 	}

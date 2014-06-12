@@ -47,6 +47,8 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 
+#include "sagan-flowbit.h"
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
