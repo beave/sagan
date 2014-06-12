@@ -17,7 +17,7 @@
 ** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-/* 
+/*
  *
  */
 
@@ -28,7 +28,8 @@
 
 
 typedef struct _Sagan_Flowbit _Sagan_Flowbit;
-struct _Sagan_Flowbit{
+struct _Sagan_Flowbit
+{
     char flowbit_name[128];
 };
 
@@ -37,7 +38,10 @@ struct _Sagan_Flowbit_Track
 {
     int flowbit_memory_position;
     char *flowbit_name;
-    sbool flowbit_state;    uint64_t ip_src;    uint64_t ip_dst;    uint64_t flowbit_expire;
+    sbool flowbit_state;
+    uint64_t ip_src;
+    uint64_t ip_dst;
+    uint64_t flowbit_expire;
 };
 
 
