@@ -59,7 +59,7 @@ int liblognorm_count;
 
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
-struct _Sagan_Flowbits *flowbits;
+struct _Sagan_Flowbit *flowbit;
 
 void Load_Rules( const char *ruleset )
 {
@@ -356,17 +356,17 @@ void Load_Rules( const char *ruleset )
 
                             if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1;
 
+
                             /* SET */
 
                             if (!strcmp(tmptoken, "set"))
                                 {
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbits = (_Sagan_Flowbits *) realloc(flowbits, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbits));
-                                    strlcpy(flowbits[counters->flowbit_count].flowbit_name, tmptoken, sizeof(flowbits[counters->flowbit_count].flowbit_name));
+                                    flowbit = (_Sagan_Flowbit *) realloc(flowbit, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbit));
+                                    strlcpy(flowbit[counters->flowbit_count].flowbit_name, tmptoken, sizeof(flowbit[counters->flowbit_count].flowbit_name));
 
                                     rulestruct[counters->rulecount].flowbit_timeout = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    flowbits[counters->flowbit_count].flowbit_state=0;
                                     rulestruct[counters->rulecount].flowbit_flag=1;
                                     rulestruct[counters->rulecount].flowbit_memory_position = counters->flowbit_count;
                                     counters->flowbit_count++;
@@ -377,12 +377,17 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "unset"))
                                 {
 
+				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+
+				    if ( tmptoken != NULL )
+				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
                                     flowbit_has_been_set = 0;
 
                                     for (i = 0; i<counters->flowbit_count; i++)
                                         {
-                                            if (!strcmp(tmptoken, flowbits[i].flowbit_name))
+                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
                                                     flowbit_has_been_set = 1;
@@ -398,11 +403,16 @@ void Load_Rules( const char *ruleset )
                                 {
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbit_has_been_set = 0;
+
+				    if ( tmptoken != NULL ) 
+				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset); 
+
+				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+				    flowbit_has_been_set = 0;
 
                                     for (i = 0; i<counters->flowbit_count; i++)
                                         {
-                                            if (!strcmp(tmptoken, flowbits[i].flowbit_name))
+                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
                                                     flowbit_has_been_set = 1;
@@ -417,12 +427,17 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "isnotset"))
                                 {
 
+				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+
+				    if ( tmptoken != NULL )
+				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
                                     flowbit_has_been_set = 0;
 
                                     for (i = 0; i<counters->flowbit_count; i++)
                                         {
-                                            if (!strcmp(tmptoken, flowbits[i].flowbit_name))
+                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
                                                     flowbit_has_been_set = 1;
@@ -856,16 +871,6 @@ void Load_Rules( const char *ruleset )
                                                         {
                                                             Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp1[i], ruleset, linecount);
                                                         }
-
-                                                    /*
-                                                    if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + SUNDAY;
-                                                    if ( atoi(tmp) == 1 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + MONDAY;
-                                                    if ( atoi(tmp) == 2 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + TUESDAY;
-                                                    if ( atoi(tmp) == 3 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + WEDNESDAY;
-                                                    if ( atoi(tmp) == 4 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + THURSDAY;
-                                                    if ( atoi(tmp) == 5 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + FRIDAY;
-                                                    if ( atoi(tmp) == 6 ) rulestruct[counters->rulecount].alert_days = rulestruct[counters->rulecount].alert_days + SATURDAY;
-                                                    */
 
                                                     if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days ^= SUNDAY;
                                                     if ( atoi(tmp) == 1 ) rulestruct[counters->rulecount].alert_days ^= MONDAY;

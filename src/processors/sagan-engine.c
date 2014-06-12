@@ -687,7 +687,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                              ****************************************************************************/
 
                             if ( rulestruct[b].flowbit_flag ) 
-				    flowbit_isset = Sagan_Flowbit(b); 
+				    flowbit_isset = Sagan_Flowbit(b, ip_src, ip_dst); 
 
 
                             /****************************************************************************

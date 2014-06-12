@@ -118,6 +118,7 @@ struct _SaganCounters
     int	     search_case_count;
 
     int	     flowbit_count;
+    int	     flowbit_track_count;
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
@@ -403,6 +404,8 @@ struct _Rule_Struct
     int   s_find_dst_pos;
 
     int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset, 4 == isnotset */
+    int flowbit_type; 			/* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+
     sbool flowbit_noalert;
     int   flowbit_memory_position;
     int   flowbit_timeout;			/* How long a flowbit is to stay alive (seconds) */
@@ -448,12 +451,21 @@ struct _Rule_Struct
 
 };
 
-typedef struct _Sagan_Flowbits _Sagan_Flowbits;
-
-struct _Sagan_Flowbits
+typedef struct _Sagan_Flowbit _Sagan_Flowbit;
+struct _Sagan_Flowbit
 {
     char flowbit_name[128];
-    int  flowbit_state;
+};
+
+
+typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
+struct _Sagan_Flowbit_Track
+{
+    int flowbit_memory_position; 
+    char *flowbit_name; 
+    sbool flowbit_state; 
+    uint64_t ip_src; 
+    uint64_t ip_dst; 
     uint64_t flowbit_expire;
 };
 
@@ -707,7 +719,8 @@ uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
 int Sagan_Blacklist ( _SaganProcSyslog * );
 int Sagan_Meta_Content_Search(char *, int );
-int Sagan_Flowbit( int ); 
+int Sagan_Flowbit( int, char *, char * ); 
+int Sagan_Flowbit_Type ( char *, int, const char *); 
 char *Sagan_Content_Pipe(char *, int, const char *);
 int Sagan_Check_Time(int);
 int Sagan_Check_Day(unsigned char, int);
