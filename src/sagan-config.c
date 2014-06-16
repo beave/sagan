@@ -67,7 +67,6 @@
 #include "output-plugins/sagan-unified2.h"
 #endif
 
-
 #ifdef HAVE_LIBLOGNORM
 struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
@@ -78,6 +77,8 @@ struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganVar *var;
+
+//pthread_mutex_t SaganLoadRules=PTHREAD_MUTEX_INITIALIZER;
 
 void Load_Config( void )
 {
@@ -841,8 +842,10 @@ void Load_Config( void )
 
                     if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map") && strcmp(filename, "protocol.map"))
                         {
-
+//			    pthread_mutex_lock(&SaganLoadRules);
                             Load_Rules(ruleset);
+//			    pthread_mutex_unlock(&SaganLoadRules);
+
                         }
                 }
         }

@@ -58,6 +58,8 @@
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
 
+#include "sagan-flowbit.h"
+
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 #endif
@@ -73,6 +75,10 @@ struct _Rule_Struct *rulestruct;
 struct class_struct *classstruct;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
+struct _Sagan_Flowbit_Track *flowbit_track;
+struct _Sagan_Flowbit *flowbit;
+
+
 
 #ifdef WITH_WEBSENSE
 #include <curl/curl.h>
@@ -80,6 +86,7 @@ struct _SaganDebug *debug;
 #endif
 
 sbool daemonize=0;
+sbool sagan_reload=0; 
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
@@ -194,6 +201,12 @@ int main(int argc, char **argv)
 
     counters = malloc(sizeof(_SaganCounters));
     memset(counters, 0, sizeof(_SaganCounters));
+
+    flowbit_track = malloc(sizeof(_Sagan_Flowbit_Track)); 
+    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
+    
+    flowbit = malloc(sizeof(_Sagan_Flowbit));
+    memset(flowbit, 0, sizeof(_Sagan_Flowbit));
 
     t = time(NULL);
     run=localtime(&t);
