@@ -39,9 +39,12 @@
 #include <sys/socket.h>
 #include <string.h>
 
-#include "sagan-defs.h"
 #include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-config.h"
+
 #include "version.h"
+#include "parsers/parsers.h"
 
 struct _SaganConfig *config;
 

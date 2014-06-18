@@ -34,6 +34,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-protocol-map.h"
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;

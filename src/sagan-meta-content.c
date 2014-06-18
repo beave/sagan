@@ -34,8 +34,11 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-meta-content.h"
+#include "sagan-rules.h"
 
 struct _Rule_Struct *rulestruct;
 

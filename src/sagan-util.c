@@ -48,6 +48,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-config.h"
 
 #include "version.h"
 
@@ -469,25 +470,6 @@ char *Sagan_Var_To_Value(char *instring)
 }
 
 /****************************************************************************/
-/* Sagan_Generator_Lookup - Looks up the "generator" ID (see the            */
-/* "gen-msg.map") of a processor				            */
-/****************************************************************************/
-
-char *Sagan_Generator_Lookup(int processor_id, int alert_id)
-{
-
-    int z=0;
-    char *msg=NULL;
-
-    for (z=0; z<counters->genmapcount; z++)
-        {
-            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
-        }
-
-    return(msg);
-}
-
-/****************************************************************************/
 /* Sagan_Validate_HEX - Makes sure a string is valid hex.                   */
 /****************************************************************************/
 
@@ -532,51 +514,6 @@ int Sagan_Check_Var(const char *string)
     return(flag);
 }
 
-/****************************************************************************/
-/* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
-/****************************************************************************/
-
-int Sagan_Check_Day(unsigned char day, int day_current)
-{
-
-    if ( day_current == 0 )
-        {
-            if (( day & SUNDAY ) == SUNDAY ) return(TRUE);
-        }
-
-    if ( day_current == 1 )
-        {
-            if (( day & MONDAY ) == MONDAY ) return(TRUE);
-        }
-
-    if ( day_current == 2 )
-        {
-            if (( day & TUESDAY ) == TUESDAY ) return(TRUE);
-        }
-
-    if ( day_current == 3 )
-        {
-            if (( day & WEDNESDAY ) == WEDNESDAY ) return(TRUE);
-        }
-
-    if ( day_current == 4 )
-        {
-            if (( day & THURSDAY ) == THURSDAY ) return(TRUE);
-        }
-
-    if ( day_current == 5 )
-        {
-            if (( day & FRIDAY ) == FRIDAY ) return(TRUE);
-        }
-
-    if ( day_current == 6 )
-        {
-            if (( day & SATURDAY ) == SATURDAY ) return(TRUE);
-        }
-
-    return(FALSE);
-
-}
 
 /************************************************************************************************
 * This is for |HEX| support (like in Snort).  From example: content: "User |3a 3c 53| and such";

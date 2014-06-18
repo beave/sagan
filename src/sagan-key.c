@@ -37,6 +37,9 @@
 #include "version.h"
 
 #include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-key.h"
+#include "sagan-stats.h"
 
 struct _SaganConfig *config;
 

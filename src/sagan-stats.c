@@ -37,6 +37,8 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-stats.h"
+#include "sagan-config.h"
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;

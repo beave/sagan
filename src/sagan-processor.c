@@ -32,6 +32,9 @@
 #include <string.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-ignore-list.h"
+#include "sagan-config.h"
 
 #include "processors/sagan-engine.h"
 #include "processors/sagan-search.h"
@@ -42,7 +45,7 @@
 #include "processors/sagan-websense.h"
 #endif
 
-struct _Sagan_Droplist *SaganDroplist;
+struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _SaganConfig *config;
@@ -104,7 +107,7 @@ void Sagan_Processor ( void )
 				   for (i = 0; i < counters->droplist_count; i++)
 				       {
 
-					if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganDroplist[i].ignore_string))
+					if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
                                 	   {
 
 					   pthread_mutex_lock(&SaganIgnoreCounter);

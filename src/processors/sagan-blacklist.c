@@ -39,7 +39,11 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-blacklist.h"
+#include "sagan-send-alert.h"
 #include "sagan-liblognorm.h"
+#include "sagan-config.h"
+
+#include "parsers/parsers.h"
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;

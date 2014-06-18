@@ -48,6 +48,10 @@
 #include "sagan-defs.h"
 
 #include "sagan-flowbit.h"
+#include "sagan-lockfile.h"
+#include "sagan-classifications.h"
+#include "sagan-rules.h"
+#include "sagan-config.h"
 
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;

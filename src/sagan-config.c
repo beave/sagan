@@ -53,6 +53,12 @@
 
 #include "version.h"
 #include "sagan.h"
+#include "sagan-rules.h"
+#include "sagan-config.h"
+#include "sagan-classifications.h"
+#include "sagan-gen-msg.h"
+#include "sagan-protocol-map.h"
+#include "sagan-references.h"
 
 /* Processors */
 
@@ -77,8 +83,6 @@ struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganVar *var;
-
-//pthread_mutex_t SaganLoadRules=PTHREAD_MUTEX_INITIALIZER;
 
 void Load_Config( void )
 {
@@ -769,7 +773,7 @@ void Load_Config( void )
 
                     /* Test for multiple values via [ ] or signle value */
 
-                    if (strstr(tmpbuf2, "[") && !strstr(tmpbuf2, "]") || !strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]"))
+                    if ((strstr(tmpbuf2, "[") && !strstr(tmpbuf2, "]")) || (!strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]")))
                         {
                             Sagan_Log(S_ERROR, "[%s, line %d] A 'var' in the sagan.conf file contains mismatched [ ]!", __FILE__, __LINE__);
                         }

@@ -26,6 +26,14 @@
 
 #ifdef HAVE_LIBESMTP
 
+
+#define ESMTPTO         32            /* 'To' buffer size max */
+#define ESMTPFROM       32            /* 'From' buffer size max */
+#define ESMTPSERVER     32            /* SMTP server size max */
+define MAX_EMAILSIZE   15360          /* Largest e-mail that can be sent */
+
+const char *esmtp_cb (void **, int *, void *);
+int sagan_esmtp_thread( _SaganEvent * );
 int fixlf(_SaganConfig *, char *, char *);
 
 #endif

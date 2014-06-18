@@ -37,7 +37,10 @@
 #include <pthread.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-send-alert.h"
 #include "sagan-track-clients.h"
+#include "sagan-config.h"
 
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _SaganCounters *counters;

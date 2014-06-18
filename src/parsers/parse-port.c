@@ -45,9 +45,11 @@
 #include <string.h>
 #include <pthread.h>
 
-#include "sagan-defs.h"
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "version.h"
+#include "sagan-config.h"
+#include "parsers/parsers.h"
 
 struct _SaganConfig *config;
 

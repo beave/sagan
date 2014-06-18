@@ -18,25 +18,31 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#define BLACKLIST_PROCESSOR_NAME "Sagan_Blacklist"
-#define BLACKLIST_PROCESSOR_FACILITY "daemon"
-#define BLACKLIST_PROCESSOR_PRIORITY "warning"
-#define BLACKLIST_PROCESSOR_PRI 1
-#define BLACKLIST_PROCESSOR_CLASS "Blacklist"
-#define BLACKLIST_PROCESSOR_REV "1"
-#define BLACKLIST_PROCESSOR_TAG NULL
-#define BLACKLIST_PROCESSOR_GENERATOR_ID 1001
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
 
+/* Storage for protocol.map (program search) */
 
-int Sagan_Blacklist ( _SaganProcSyslog * );
-int  Sagan_Blacklist_Load ( void );
-
-typedef struct _Sagan_Blacklist _Sagan_Blacklist;
-struct _Sagan_Blacklist
+typedef struct _Sagan_Protocol_Map_Program _Sagan_Protocol_Map_Program;
+struct _Sagan_Protocol_Map_Program
 {
-
-    uint32_t u32_lower;
-    uint32_t u32_higher;
-
+    int type;
+    int proto;
+    int nocase;
+    char program[64];
 };
+
+/* Storage for protocol.map (message search) */
+
+typedef struct _Sagan_Protocol_Map_Message _Sagan_Protocol_Map_Message;
+struct _Sagan_Protocol_Map_Message
+{
+    int type;
+    int proto;
+    int nocase;
+    char search[512];
+};
+
+void Load_Protocol_Map( const char * );
 

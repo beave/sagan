@@ -18,25 +18,21 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#define BLACKLIST_PROCESSOR_NAME "Sagan_Blacklist"
-#define BLACKLIST_PROCESSOR_FACILITY "daemon"
-#define BLACKLIST_PROCESSOR_PRIORITY "warning"
-#define BLACKLIST_PROCESSOR_PRI 1
-#define BLACKLIST_PROCESSOR_CLASS "Blacklist"
-#define BLACKLIST_PROCESSOR_REV "1"
-#define BLACKLIST_PROCESSOR_TAG NULL
-#define BLACKLIST_PROCESSOR_GENERATOR_ID 1001
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
 
 
-int Sagan_Blacklist ( _SaganProcSyslog * );
-int  Sagan_Blacklist_Load ( void );
+#ifdef HAVE_LIBPCAP
 
-typedef struct _Sagan_Blacklist _Sagan_Blacklist;
-struct _Sagan_Blacklist
-{
+char        plog_interface[50];
+char        plog_logdev[50];
+char        plog_filter[256];
+sbool       plog_flag;
+int         plog_promiscuous;
 
-    uint32_t u32_lower;
-    uint32_t u32_higher;
 
-};
+void plog_handler( _SaganSigArgs * );
+
+#endif
 

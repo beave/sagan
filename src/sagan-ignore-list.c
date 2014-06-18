@@ -33,8 +33,10 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-ignore-list.h"
+#include "sagan-config.h"
 
-struct _Sagan_Droplist *SaganDroplist;
+struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 
@@ -73,8 +75,8 @@ void Load_Ignore_List ( void )
                         {
 
                             /* Allocate memory for references,  not comments */
-                            SaganDroplist = (_Sagan_Droplist *) realloc(SaganDroplist, (counters->droplist_count+1) * sizeof(_Sagan_Droplist));
-                            strlcpy(SaganDroplist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganDroplist[counters->droplist_count].ignore_string));
+                            SaganIgnorelist = (_Sagan_Ignorelist *) realloc(SaganIgnorelist, (counters->droplist_count+1) * sizeof(_Sagan_Ignorelist));
+                            strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
                             counters->droplist_count++;
                         }
                 }

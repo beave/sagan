@@ -40,6 +40,13 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-flowbit.h"
+#include "sagan-config.h"
+#include "sagan-lockfile.h"
+#include "sagan-signal.h"
+#include "sagan-stats.h"
+#include "sagan-gen-msg.h"
+#include "sagan-classifications.h"
+#include "sagan-rules.h"
 
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-search.h"

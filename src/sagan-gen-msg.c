@@ -34,6 +34,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-gen-msg.h"
 
 struct _SaganCounters *counters;
 struct _Sagan_Processor_Generator *generator;
@@ -51,8 +52,6 @@ void Load_Gen_Map( const char *genmap )
     char *gen1=NULL;
     char *gen2=NULL;
     char *gen3=NULL;
-
-//char *firsttoken=NULL;
 
     Sagan_Log(S_NORMAL, "Loading gen-msg.map file. [%s]", genmap);
 
@@ -93,5 +92,25 @@ void Load_Gen_Map( const char *genmap )
 
     fclose(genmapfile);
     Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
+}
+
+
+/****************************************************************************/
+/* Sagan_Generator_Lookup - Looks up the "generator" ID (see the            */
+/* "gen-msg.map") of a processor                                            */
+/****************************************************************************/
+
+char *Sagan_Generator_Lookup(int processor_id, int alert_id)
+{
+
+    int z=0;
+    char *msg=NULL;
+
+    for (z=0; z<counters->genmapcount; z++)
+        {
+            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
+        }
+
+    return(msg);
 }
 

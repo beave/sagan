@@ -37,6 +37,14 @@
 #include <sys/stat.h>
 
 #include "sagan.h"
+#include "sagan-alert-time.h"
+#include "sagan-meta-content.h"
+#include "sagan-send-alert.h"
+#include "sagan-flowbit.h"
+#include "sagan-rules.h"
+#include "sagan-config.h"
+
+#include "parsers/parsers.h"
 #include "processors/sagan-engine.h"
 
 #ifdef HAVE_LIBLOGNORM

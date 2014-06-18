@@ -55,12 +55,10 @@ int    Is_Numeric (char *);
 char   *To_UpperC(char* const );
 int	Check_Endian( void );
 void    Usage( void );
-void 	Sagan_Credits( void );
 void    Chroot( const char *, const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
-char   *Reference_Lookup( int, int );
 double CalcPct(uint64_t, uint64_t);
 char   *Replace_String(char *, char *, char *);
 char   *Get_Filename(char *);
@@ -182,275 +180,6 @@ struct _SaganDebug
 
 };
 
-/* Sagan configuration struct (global) */
-
-typedef struct _SaganConfig _SaganConfig;
-struct _SaganConfig
-{
-
-    /* Non-dependent var's */
-
-    char	 sagan_config[MAXPATH];			/* Master Sagan configuration file */
-    char         sagan_alert_filepath[MAXPATH];
-    char         sagan_interface[50];
-    FILE         *sagan_alert_stream;
-    char	 sagan_log_filepath[MAXPATH];
-    FILE	 *sagan_log_stream;
-    char	 sagan_lockfile[MAXPATH];
-    char	 sagan_fifo[MAXPATH];
-    sbool	 sagan_fifo_flag;			/* FIFO or FILE */
-    char	 sagan_log_path[MAXPATH];
-    char 	 sagan_rule_path[MAXPATH];
-    char         sagan_host[MAXHOST];
-    char         sagan_extern[MAXPATH];
-    char	 sagan_startutime[20]; 			/* Records utime at startup */
-
-    char	 sagan_droplistfile[MAXPATH];		/* Log lines to "ignore" */
-    sbool	 sagan_droplist_flag;
-
-    sbool	 output_thread_flag;
-
-    int 	 max_processor_threads;
-
-    sbool	 sagan_external_output_flag;		/* For things like external, email, fwsam */
-
-    int		 sagan_port;
-    int		 sagan_exttype;
-    sbool	 sagan_ext_flag;
-    sbool        disable_dns_warnings;
-    sbool	 syslog_src_lookup;
-    int		 daemonize;
-    int          sagan_proto;
-
-    sbool	 home_any;			/* 0 == no, 1 == yes */
-    sbool	 external_any;
-
-    sbool	 endian;
-
-    /* Processors */
-
-    int         pp_sagan_track_clients;
-    sbool	sagan_track_clients_flag;
-    char	sagan_track_client_host_cache[MAXPATH];
-    FILE	*sagan_track_client_file;
-
-    sbool       blacklist_flag;
-    char	blacklist_file[MAXPATH];
-    int		blacklist_parse_depth;
-    int		blacklist_parse_src;
-    int		blacklist_parse_dst;
-    sbool	blacklist_parse_proto;
-    sbool	blacklist_parse_proto_program;
-    sbool	blacklist_lognorm;
-    int		blacklist_priority;
-
-    sbool	search_nocase_flag;
-    char	search_nocase_file[MAXPATH];
-    int		search_nocase_parse_depth;
-    int		search_nocase_parse_src;
-    int		search_nocase_parse_dst;
-    sbool	search_nocase_parse_proto;
-    sbool	search_nocase_parse_proto_program;
-    sbool	search_nocase_lognorm;
-    int		search_nocase_priority;
-
-    sbool       search_case_flag;
-    char        search_case_file[MAXPATH];
-    int         search_case_parse_depth;
-    int         search_case_parse_src;
-    int         search_case_parse_dst;
-    sbool	search_case_parse_proto;
-    sbool	search_case_parse_proto_program;
-    sbool	search_case_lognorm;
-    int		search_case_priority;
-
-    sbool        sagan_fwsam_flag;
-    char         sagan_fwsam_info[1024];
-
-    /* libesmtp/SMTP support */
-
-#ifdef HAVE_LIBESMTP
-    int		min_email_priority;
-    char	sagan_esmtp_to[255];
-    sbool	sagan_sendto_flag;
-    char	sagan_esmtp_from[255];
-    char	sagan_esmtp_server[255];
-    sbool	sagan_esmtp_flag;
-    char	sagan_email_subject[64];
-#endif
-
-    /* Prelude framework support */
-
-#ifdef HAVE_LIBPRELUDE
-    char	sagan_prelude_profile[255];
-    sbool	sagan_prelude_flag;
-#endif
-
-    /* "plog" - syslog sniffing vars */
-
-#ifdef HAVE_LIBPCAP
-    char	plog_interface[50];
-    char	plog_logdev[50];
-    char	plog_filter[256];
-    sbool	plog_flag;
-    int		plog_promiscuous;
-#endif
-
-    /* libdnet - Used for unified2 support */
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-    char         unified2_filepath[MAXPATH];
-    uint32_t     unified2_timestamp;
-    FILE         *unified2_stream;
-    unsigned int unified2_limit;
-    unsigned int unified2_current;
-    int          unified2_nostamp;
-    sbool	 sagan_unified2_flag;
-#endif
-
-    /* Websense Threatseeker */
-
-#ifdef WITH_WEBSENSE
-    sbool	 websense_flag;
-    char	 websense_device_id[64];
-    char	 websense_url[256];
-    char	 websense_auth[64];
-    char	 websense_ignore_list[64];
-    int		 websense_parse_depth;
-    int		 websense_timeout;
-    uint64_t	 websense_max_cache;
-    uint64_t	 websense_last_time;			/* For cache cleaning */
-    sbool	 websense_lognorm;
-    sbool	 websense_parse_proto;
-    sbool	 websense_parse_proto_program;
-    int		 websense_parse_src;
-    int		 websense_parse_dst;
-    int		 websense_priority;
-#endif
-
-    /* For Maxmind GeoIP address lookup */
-
-#ifdef HAVE_LIBGEOIP
-
-    GeoIP *geoip;
-    char	geoip_country_file[256];
-    sbool have_geoip;
-
-#endif
-
-};
-
-
-/* Reference structure */
-typedef struct _Ref_Struct _Ref_Struct;
-struct _Ref_Struct
-{
-    unsigned s_size_ref;
-    char s_refid[512];
-    char s_refurl[2048];
-};
-
-/* Classification strucure */
-typedef struct _Class_Struct _Class_Struct;
-struct _Class_Struct
-{
-    unsigned s_size_class;
-    char s_shortname[512];
-    char s_desc[512];
-    int  s_priority;
-};
-
-/* Rule structure */
-typedef struct _Rule_Struct _Rule_Struct;
-struct _Rule_Struct
-{
-    unsigned s_size_rule;
-    char s_msg[512];
-
-    pcre *re_pcre[MAX_PCRE];
-    pcre_extra *pcre_extra[MAX_PCRE];
-
-    char s_content[MAX_CONTENT][512];
-    char s_reference[MAX_REFERENCE][512];
-    char s_classtype[512];
-    char s_sid[512];
-    char s_rev[512];
-    int  s_pri;
-    char s_program[512];
-    char s_facility[50];
-    char s_syspri[25];
-    char s_level[25];
-    char s_tag[10];
-
-    char email[255];
-    sbool email_flag;
-
-    int s_nocase[MAX_CONTENT];
-    int pcre_count;
-    int content_count;
-    int meta_content_count; 
-    int ref_count;
-    int dst_port;
-    int src_port;
-    int ip_proto;
-    sbool s_find_port;
-    sbool s_find_proto;
-    sbool s_find_proto_program;
-
-    sbool s_find_src_ip;
-    int   s_find_src_pos;
-
-    sbool s_find_dst_ip;
-    int   s_find_dst_pos;
-
-    int flowbit_flag;			/* 0 == none, 1 == set, 2 == unset, 3 == isset, 4 == isnotset */
-    int flowbit_type; 			/* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
-
-    sbool flowbit_noalert;
-    int   flowbit_memory_position;
-    int   flowbit_timeout;			/* How long a flowbit is to stay alive (seconds) */
-
-    sbool normalize;
-    sbool content_not[MAX_CONTENT];	/* content: ! "something" */
-
-    int drop;			/* inline DROP for ext. */
-
-    int threshold_type;		/* 1 = limit,  2 = thresh */
-    int threshold_src_or_dst;	/* 1 ==  src,  2 == dst */
-    int threshold_count;
-    int threshold_seconds;
-
-    int after_src_or_dst;		/* 1 ==  src,  2 == dst */
-    int after_count;
-    int after_seconds;
-
-    int fwsam_src_or_dst;		/* 1 == src,  2 == dst */
-    unsigned long  fwsam_seconds;
-
-    sbool meta_content_flag;
-    sbool meta_content_case[MAX_META_CONTENT];
-    sbool meta_content_not[MAX_META_CONTENT]; 
-    char meta_content[MAX_META_CONTENT][512];
-    char meta_content_help[MAX_META_CONTENT][512]; 
-
-    sbool alert_time_flag;
-    unsigned char alert_days;
-    int  alert_start_hour;
-    int  alert_start_minute;
-    int  alert_end_hour;
-    int  alert_end_minute;
-
-#ifdef HAVE_LIBGEOIP
-
-    sbool geoip_flag;
-    int   geoip_type;		/* 1 == isnot, 2 == is */
-    char  geoip_country_codes[1024];
-    int   geoip_src_or_dst;		/* 1 == src, 2 == dst */
-
-#endif
-
-};
-
 typedef struct _Sagan_Proc_Syslog
 {
     char syslog_host[50];
@@ -509,38 +238,6 @@ typedef struct _Sagan_Event
 
 } _SaganEvent;
 
-/* Storage for protocol.map (message search) */
-
-typedef struct _Sagan_Protocol_Map_Message _Sagan_Protocol_Map_Message;
-struct _Sagan_Protocol_Map_Message
-{
-    int type;
-    int proto;
-    int nocase;
-    char search[512];
-};
-
-/* Storage for protocol.map (program search) */
-
-typedef struct _Sagan_Protocol_Map_Program _Sagan_Protocol_Map_Program;
-struct _Sagan_Protocol_Map_Program
-{
-    int type;
-    int proto;
-    int nocase;
-    char program[64];
-};
-
-/* Storage for sagan-gen-msg.map */
-
-typedef struct _Sagan_Processor_Generator _Sagan_Processor_Generator;
-struct _Sagan_Processor_Generator
-{
-    unsigned long generatorid;
-    unsigned long alertid;
-    char generator_msg[512];
-};
-
 /* Thresholding structure by source */
 typedef struct thresh_by_src thresh_by_src;
 struct thresh_by_src
@@ -585,75 +282,11 @@ struct after_by_dst
     char sid[512];
 };
 
-#ifdef HAVE_LIBLOGNORM
-/* liblognorm struct */
-typedef struct liblognorm_struct liblognorm_struct;
-struct liblognorm_struct
-{
-    char type[50];
-    char filepath[MAXPATH];
-};
-
-typedef struct liblognorm_toload_struct liblognorm_toload_struct;
-struct liblognorm_toload_struct
-{
-    char type[50];
-    char filepath[MAXPATH];
-};
-#endif
-
-
-/****************************************************************************/
-/* libesmtp support                                                         */
-/****************************************************************************/
-
-#ifdef HAVE_LIBESMTP
-
-#define ESMTPTO         32		/* 'To' buffer size max */
-#define ESMTPFROM       32		/* 'From' buffer size max */
-#define ESMTPSERVER     32		/* SMTP server size max */
-#define MAX_EMAILSIZE   15360		/* Largest e-mail that can be sent */
-
-const char *esmtp_cb (void **, int *, void *);
-int sagan_esmtp_thread( _SaganEvent * );
-
-#endif
-
-/****************************************************************************/
-/* 'Signal' thread options                                                  */
-/****************************************************************************/
-
-typedef struct _SaganSigArgs _SaganSigArgs;
-struct _SaganSigArgs
-{
-    int daemonize;
-    uint64_t cid;
-};
-
-/****************************************************************************/
-/* The functions below depend on structs above                              */
-/****************************************************************************/
-
-#ifdef HAVE_LIBPCAP
-void plog_handler( _SaganSigArgs * );
-#endif
-
 typedef struct _SaganVar _SaganVar;
 struct _SaganVar
 {
     char var_name[64];
     char var_value[64];
-};
-typedef struct _SaganHomeNet _SaganHomeNet;
-struct _SaganHomeNet
-{
-    char network[130];
-};
-
-typedef struct _Sagan_Droplist _Sagan_Droplist;
-struct _Sagan_Droplist
-{
-    char ignore_string[256];
 };
 
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
@@ -662,7 +295,7 @@ struct _Sagan_Processor_Info
 
     char *processor_name;
     char *processor_facility;
-    char *processor_priority;	/* Syslog priority */
+    char *processor_priority;		/* Syslog priority */
     int   processor_pri;		/* Sagan priority */
     char *processor_class;
     char *processor_tag;
@@ -671,52 +304,12 @@ struct _Sagan_Processor_Info
 };
 
 
-void Sagan_Alert( _SaganEvent * );
-void sagan_ext_thread( _SaganEvent * );
-
-void Load_Config( void );
-void Sig_Handler( _SaganSigArgs * );
-void Load_Classifications( const char * );
-void Load_Reference ( const char * );
-void Load_Rules ( const char * );
 void Sagan_Log( int, const char *, ... );
-void Remove_Lock_File ( void );
-void checklockfile ( void );
-void sagan_statistics( void );
-void key_handler( void );
 void sagan_droppriv( const char *);
 char *DNS_Lookup( char * );
-void Sagan_Output( _SaganEvent * );
-void Sagan_Processor ( void );
-void sagan_fwsam( _SaganEvent * );
 char *Sagan_Var_To_Value(char *);
-int  Sagan_Blacklist_Load ( void );
-int  Sagan_Searchlist_Load ( int );
-void Load_Gen_Map( const char * );
-void Sagan_Alert_File( _SaganEvent * );
-void Load_Ignore_List ( void );
-char *Sagan_Generator_Lookup( int, int );
-void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int, int, int, int, int );
 uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
-int Sagan_Blacklist ( _SaganProcSyslog * );
-int Sagan_Meta_Content_Search(char *, int );
-int Sagan_Flowbit( int, char *, char * ); 
-int Sagan_Flowbit_Type ( char *, int, const char *); 
 char *Sagan_Content_Pipe(char *, int, const char *);
-int Sagan_Check_Time(int);
-int Sagan_Check_Day(unsigned char, int);
-
-void Load_Protocol_Map( const char * );
-void Sagan_Usage( void );
-
 sbool is_rfc1918 ( char * );
-
-/* Parsers */
-
-char *parse_ip( char *, int );
-int   parse_port( char * );
-int   parse_proto( char * );
-int   parse_proto_program (char *);
-
 

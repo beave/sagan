@@ -50,6 +50,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-plog.h"
 
 struct _SaganDebug *debug;
 struct _SaganConfig *config;

@@ -39,8 +39,12 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-
 #include "version.h"
+
+#include "sagan-lockfile.h"
+#include "sagan-references.h"
+#include "sagan-config.h"
+#include "output-plugins/sagan-external.h"
 
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;

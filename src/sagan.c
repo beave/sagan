@@ -53,12 +53,20 @@
 #include "sagan-defs.h"
 #include "version.h"
 
+#include "sagan-credits.h"
+#include "sagan-flowbit.h"
+#include "sagan-processor.h"
+#include "sagan-config.h"
+#include "sagan-ignore-list.h"
+#include "sagan-key.h"
+#include "sagan-lockfile.h"
+#include "sagan-signal.h"
+#include "sagan-usage.h"
+
 #include "processors/sagan-engine.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
-
-#include "sagan-flowbit.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"

@@ -36,6 +36,8 @@
 #include <inttypes.h>
 
 #include "sagan.h"
+#include "sagan-alert-time.h"
+#include "sagan-rules.h"
 
 struct _Rule_Struct *rulestruct;
 
@@ -147,4 +149,52 @@ int Sagan_Check_Time(rule_number)
 
     return(FALSE);
 }
+
+
+/****************************************************************************/
+/* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
+/****************************************************************************/
+
+int Sagan_Check_Day(unsigned char day, int day_current)
+{
+
+    if ( day_current == 0 )
+        {
+            if (( day & SUNDAY ) == SUNDAY ) return(TRUE);
+        }
+
+    if ( day_current == 1 )
+        {
+            if (( day & MONDAY ) == MONDAY ) return(TRUE);
+        }
+
+    if ( day_current == 2 )
+        {
+            if (( day & TUESDAY ) == TUESDAY ) return(TRUE);
+        }
+
+    if ( day_current == 3 )
+        {
+            if (( day & WEDNESDAY ) == WEDNESDAY ) return(TRUE);
+        }
+
+    if ( day_current == 4 )
+        {
+            if (( day & THURSDAY ) == THURSDAY ) return(TRUE);
+        }
+
+    if ( day_current == 5 )
+        {
+            if (( day & FRIDAY ) == FRIDAY ) return(TRUE);
+        }
+
+    if ( day_current == 6 )
+        {
+            if (( day & SATURDAY ) == SATURDAY ) return(TRUE);
+        }
+
+    return(FALSE);
+
+}
+
 

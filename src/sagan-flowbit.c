@@ -16,8 +16,12 @@
 ** You should have received a copy of the GNU General Public License
 ** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 /*
+ * sagan-flowbit.c - 
+ *
+ * Used to track multiple log lines and alert 
  *
  */
 
@@ -34,6 +38,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-flowbit.h"
+#include "sagan-rules.h"
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
@@ -252,7 +257,7 @@ int Sagan_Flowbit(int rule_position, char *ip_src_char, char *ip_dst_char )
 
     return(FALSE);
 
-}  /* End of Sagan_Flowbit(); 
+}  /* End of Sagan_Flowbit(); */
 
 /*****************************************************************************
  * Sagan_Flowbit_Type - Defines the "type" of flowbit tracking based on user

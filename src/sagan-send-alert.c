@@ -30,8 +30,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "sagan.h"
-#include "processors/sagan-engine.h"
 #include "version.h"
+
+#include "sagan-output.h"
+#include "sagan-gen-msg.h"
+
+#include "processors/sagan-engine.h"
 
 struct _SaganConfig *config;
 
