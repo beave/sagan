@@ -49,6 +49,7 @@
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>
+#include "sagan-liblognorm.h"
 #endif
 
 #include "version.h"

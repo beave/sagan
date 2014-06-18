@@ -24,6 +24,8 @@
 
 #ifdef HAVE_LIBLOGNORM
 
+#include "sagan-defs.h"
+
 /* liblognorm struct */
 typedef struct liblognorm_struct liblognorm_struct;
 struct liblognorm_struct

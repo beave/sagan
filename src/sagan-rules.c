@@ -58,6 +58,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 #ifdef HAVE_LIBLOGNORM
+#include "sagan-liblognorm.h"
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;

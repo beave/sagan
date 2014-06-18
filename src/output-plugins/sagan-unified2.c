@@ -49,7 +49,9 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-config.h"
 #include "sagan-unified2.h"
+#include "sagan-classifications.h"
 
 sbool endian;
 

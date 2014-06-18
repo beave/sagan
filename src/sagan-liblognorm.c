@@ -48,6 +48,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-liblognorm.h"
+#include "sagan-config.h"
 
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
