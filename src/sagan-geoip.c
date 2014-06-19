@@ -38,9 +38,12 @@
 #include <string.h>
 #include <GeoIP.h>
 #include <pthread.h>
+
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-rules.h"
 #include "sagan-geoip.h"
+#include "sagan-config.h"
 
 
 struct _SaganConfig *config;
