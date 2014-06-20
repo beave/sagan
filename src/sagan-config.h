@@ -108,7 +108,17 @@ struct _SaganConfig
     sbool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
 
+
+#ifdef HAVE_LIBPCAP
+    char        plog_interface[50];
+    char        plog_logdev[50];
+    char        plog_filter[256];
+    sbool       plog_flag;
+    int         plog_promiscuous;
+#endif
+
     /* libesmtp/SMTP support */
+
 #ifdef HAVE_LIBESMTP
     int         min_email_priority;
     char        sagan_esmtp_to[255];

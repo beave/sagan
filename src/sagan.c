@@ -63,6 +63,10 @@
 #include "sagan-signal.h"
 #include "sagan-usage.h"
 
+#ifdef HAVE_LIBPCAP
+#include "sagan-plog.h"
+#endif
+
 #include "processors/sagan-engine.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-blacklist.h"
