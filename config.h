@@ -68,7 +68,7 @@
 #define HAVE_LIBEE 1
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-/* #undef HAVE_LIBESMTP */
+#define HAVE_LIBESMTP 1
 
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1
@@ -89,7 +89,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
-#define HAVE_LIBPCAP 1
+/* #undef HAVE_LIBPCAP */
 
 /* Define to 1 if you have the `pcre' library (-lpcre). */
 #define HAVE_LIBPCRE 1
