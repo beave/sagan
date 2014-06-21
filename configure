@@ -661,6 +661,9 @@ INSTALL_SCRIPT
 INSTALL_PROGRAM
 VERSION
 ENDIAN
+MAINT
+MAINTAINER_MODE_FALSE
+MAINTAINER_MODE_TRUE
 EGREP
 GREP
 CPP
@@ -724,6 +727,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
+enable_maintainer_mode
 enable_snortsam
 enable_websense
 enable_esmtp
@@ -1370,6 +1374,9 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-maintainer-mode
+                          enable make rules and dependencies not useful (and
+                          sometimes confusing) to the casual installer
   --disable-snortsam      Disable Snortsam support.
   --enable-websense       Enable Websense Threatseeker network lookups.
   --enable-esmtp	  Enable libesmtp support.
@@ -3629,6 +3636,30 @@ $as_echo "$ac_cv_safe_to_define___extensions__" >&6; }
 
   $as_echo "#define _TANDEM_SOURCE 1" >>confdefs.h
 
+
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
+$as_echo_n "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
+    # Check whether --enable-maintainer-mode was given.
+if test "${enable_maintainer_mode+set}" = set; then :
+  enableval=$enable_maintainer_mode; USE_MAINTAINER_MODE=$enableval
+else
+  USE_MAINTAINER_MODE=no
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $USE_MAINTAINER_MODE" >&5
+$as_echo "$USE_MAINTAINER_MODE" >&6; }
+   if test $USE_MAINTAINER_MODE = yes; then
+  MAINTAINER_MODE_TRUE=
+  MAINTAINER_MODE_FALSE='#'
+else
+  MAINTAINER_MODE_TRUE='#'
+  MAINTAINER_MODE_FALSE=
+fi
+
+  MAINT=$MAINTAINER_MODE_TRUE
 
 
 
@@ -7438,6 +7469,10 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
+if test -z "${MAINTAINER_MODE_TRUE}" && test -z "${MAINTAINER_MODE_FALSE}"; then
+  as_fn_error $? "conditional \"MAINTAINER_MODE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking that generated files are newer than configure" >&5
 $as_echo_n "checking that generated files are newer than configure... " >&6; }

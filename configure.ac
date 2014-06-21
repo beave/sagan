@@ -6,6 +6,8 @@ AC_CONFIG_SRCDIR([src])
 AC_CANONICAL_SYSTEM
 AC_GNU_SOURCE
 
+AM_MAINTAINER_MODE([disable])
+
 
 #VERSION=`cat $srcdir/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
 
