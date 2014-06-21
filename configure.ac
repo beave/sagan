@@ -204,10 +204,6 @@ use the --disable-lognorm flag.])])
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. ))
-       AC_CHECK_LIB(ee, main,,AC_MSG_ERROR(The libee library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
-https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
-use the --disable-lognorm flag. ))
        AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
 This library is important for the correlation aspects of Sagan! Please see
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature

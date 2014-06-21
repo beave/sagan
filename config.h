@@ -64,9 +64,6 @@
 /* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
 /* #undef HAVE_LIBDUMBNET */
 
-/* Define to 1 if you have the `ee' library (-lee). */
-#define HAVE_LIBEE 1
-
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 /* #undef HAVE_LIBESMTP */
 
