@@ -195,23 +195,10 @@ If you're not interested in libesmtp support use the --disable-esmtp flag.))
 
 if test "$LOGNORM" = "yes"; then
        AC_MSG_RESULT([------- liblognorm support is enabled -------])
-       AC_CHECK_HEADER([liblognorm.h])
-       AC_CHECK_HEADERS([json/json.h json.h], [break], [AC_MSG_ERROR([json-c headers not found or not usable.
-This library is important for the correlation aspects of Sagan! Please see
-https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
-use the --disable-lognorm flag.])]) 
-       AC_CHECK_LIB(estr, main,,AC_MSG_ERROR(The libestr library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
-https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
-use the --disable-lognorm flag. ))
-       AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
-https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
-use the --disable-lognorm flag. ))
-       AC_CHECK_LIB(json, json_object_put,, [ AC_CHECK_LIB(json-c, json_object_put,,AC_MSG_ERROR(The json library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
-https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
-use the --disable-lognorm flag.)) ],)
+       PKG_CHECK_MODULES(LIBESTR, libestr >= 0.0.0)
+       PKG_CHECK_MODULES(LIBLOGNORM, lognorm >= 1.0.0)
+       PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
+
        fi
 
 if test "$LIBPCAP" = "yes"; then
@@ -264,13 +251,9 @@ if test "$WEBSENSE" = "yes"; then
 This library is used for Sagan's / Websense Threatseeker  support.  Please see
 https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
 To disable this feature use the --disable-websense flag. ))
-	AC_CHECK_LIB(json, json_object_put,, [ AC_CHECK_LIB(json-c, json_object_put,,AC_MSG_ERROR(The json library cannot be found.
-This library is used for Sagan's / Websense Threatseeker  support.  Please see
-https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
-To disable this feature use the --disable-websense flag.)) ],)
         AC_DEFINE(WITH_WEBSENSE, 1, With Websense Threatseeker)
         AC_CHECK_HEADER([curl/curl.h])
-        AC_CHECK_HEADER([json/json.h])
+	PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
         fi
 
 if test "$SNORTSAM" = "yes"; then

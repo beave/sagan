@@ -93,28 +93,33 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_sagan_OBJECTS = sagan.$(OBJEXT) sagan-classifications.$(OBJEXT) \
-	sagan-config.$(OBJEXT) sagan-lockfile.$(OBJEXT) \
-	sagan-references.$(OBJEXT) sagan-rules.$(OBJEXT) \
-	sagan-signal.$(OBJEXT) sagan-key.$(OBJEXT) \
-	sagan-stats.$(OBJEXT) sagan-strlcat.$(OBJEXT) \
-	sagan-strlcpy.$(OBJEXT) sagan-usage.$(OBJEXT) \
-	sagan-util.$(OBJEXT) sagan-plog.$(OBJEXT) \
-	sagan-output.$(OBJEXT) sagan-processor.$(OBJEXT) \
-	sagan-gen-msg.$(OBJEXT) sagan-liblognorm.$(OBJEXT) \
-	sagan-ignore-list.$(OBJEXT) sagan-send-alert.$(OBJEXT) \
-	sagan-credits.$(OBJEXT) sagan-protocol-map.$(OBJEXT) \
-	sagan-geoip.$(OBJEXT) sagan-meta-content.$(OBJEXT) \
-	sagan-flowbit.$(OBJEXT) sagan-alert-time.$(OBJEXT) \
-	parse-ip.$(OBJEXT) parse-port.$(OBJEXT) parse-proto.$(OBJEXT) \
-	sagan-alert.$(OBJEXT) sagan-esmtp.$(OBJEXT) \
-	sagan-external.$(OBJEXT) sagan-unified2.$(OBJEXT) \
-	sagan-twofish.$(OBJEXT) sagan-snortsam.$(OBJEXT) \
-	sagan-engine.$(OBJEXT) sagan-track-clients.$(OBJEXT) \
-	sagan-websense.$(OBJEXT) sagan-blacklist.$(OBJEXT) \
-	sagan-search.$(OBJEXT)
+am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
+	sagan-sagan-classifications.$(OBJEXT) \
+	sagan-sagan-config.$(OBJEXT) sagan-sagan-lockfile.$(OBJEXT) \
+	sagan-sagan-references.$(OBJEXT) sagan-sagan-rules.$(OBJEXT) \
+	sagan-sagan-signal.$(OBJEXT) sagan-sagan-key.$(OBJEXT) \
+	sagan-sagan-stats.$(OBJEXT) sagan-sagan-strlcat.$(OBJEXT) \
+	sagan-sagan-strlcpy.$(OBJEXT) sagan-sagan-usage.$(OBJEXT) \
+	sagan-sagan-util.$(OBJEXT) sagan-sagan-plog.$(OBJEXT) \
+	sagan-sagan-output.$(OBJEXT) sagan-sagan-processor.$(OBJEXT) \
+	sagan-sagan-gen-msg.$(OBJEXT) sagan-sagan-liblognorm.$(OBJEXT) \
+	sagan-sagan-ignore-list.$(OBJEXT) \
+	sagan-sagan-send-alert.$(OBJEXT) sagan-sagan-credits.$(OBJEXT) \
+	sagan-sagan-protocol-map.$(OBJEXT) sagan-sagan-geoip.$(OBJEXT) \
+	sagan-sagan-meta-content.$(OBJEXT) \
+	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-alert-time.$(OBJEXT) \
+	sagan-parse-ip.$(OBJEXT) sagan-parse-port.$(OBJEXT) \
+	sagan-parse-proto.$(OBJEXT) sagan-sagan-alert.$(OBJEXT) \
+	sagan-sagan-esmtp.$(OBJEXT) sagan-sagan-external.$(OBJEXT) \
+	sagan-sagan-unified2.$(OBJEXT) sagan-sagan-twofish.$(OBJEXT) \
+	sagan-sagan-snortsam.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
+	sagan-sagan-track-clients.$(OBJEXT) \
+	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
+	sagan-sagan-search.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
-sagan_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+sagan_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -201,9 +206,15 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
+JSON_C_CFLAGS = -I/usr/include/json 
+JSON_C_LIBS = -ljson 
 LDFLAGS = 
+LIBESTR_CFLAGS = 
+LIBESTR_LIBS = -L/usr/lib -lestr 
+LIBLOGNORM_CFLAGS = 
+LIBLOGNORM_LIBS = -L/usr/lib -llognorm -lestr 
 LIBOBJS = 
-LIBS = -ldnet -ljson -llognorm -lestr -lm -lpthread -lpcre 
+LIBS = -ldnet -lm -lpthread -lpcre 
 LTLIBOBJS = 
 MAINT = #
 MAKEINFO = ${SHELL} /home/champ/code/sagan/missing makeinfo
@@ -217,6 +228,9 @@ PACKAGE_TARNAME =
 PACKAGE_URL = 
 PACKAGE_VERSION = 
 PATH_SEPARATOR = :
+PKG_CONFIG = /usr/bin/pkg-config
+PKG_CONFIG_LIBDIR = 
+PKG_CONFIG_PATH = 
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = 
@@ -276,6 +290,8 @@ top_build_prefix = ../
 top_builddir = ..
 top_srcdir = ..
 AUTOMAKE_OPIONS = foreign no-dependencies
+sagan_CPPFLAGS = -I$(top_srcdir) $(JSON_C_CFLAGS) $(LIBESTR_CFLAGS)
+sagan_LDADD = $(JSON_C_LIBS) $(LIBLOGNORM_LIBS) $(LIBESTR_LIBS)
 sagan_SOURCES = sagan.c \
 sagan-classifications.c \
 sagan-config.c \
@@ -404,46 +420,46 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/parse-ip.Po
-include ./$(DEPDIR)/parse-port.Po
-include ./$(DEPDIR)/parse-proto.Po
-include ./$(DEPDIR)/sagan-alert-time.Po
-include ./$(DEPDIR)/sagan-alert.Po
-include ./$(DEPDIR)/sagan-blacklist.Po
-include ./$(DEPDIR)/sagan-classifications.Po
-include ./$(DEPDIR)/sagan-config.Po
-include ./$(DEPDIR)/sagan-credits.Po
-include ./$(DEPDIR)/sagan-engine.Po
-include ./$(DEPDIR)/sagan-esmtp.Po
-include ./$(DEPDIR)/sagan-external.Po
-include ./$(DEPDIR)/sagan-flowbit.Po
-include ./$(DEPDIR)/sagan-gen-msg.Po
-include ./$(DEPDIR)/sagan-geoip.Po
-include ./$(DEPDIR)/sagan-ignore-list.Po
-include ./$(DEPDIR)/sagan-key.Po
-include ./$(DEPDIR)/sagan-liblognorm.Po
-include ./$(DEPDIR)/sagan-lockfile.Po
-include ./$(DEPDIR)/sagan-meta-content.Po
-include ./$(DEPDIR)/sagan-output.Po
-include ./$(DEPDIR)/sagan-plog.Po
-include ./$(DEPDIR)/sagan-processor.Po
-include ./$(DEPDIR)/sagan-protocol-map.Po
-include ./$(DEPDIR)/sagan-references.Po
-include ./$(DEPDIR)/sagan-rules.Po
-include ./$(DEPDIR)/sagan-search.Po
-include ./$(DEPDIR)/sagan-send-alert.Po
-include ./$(DEPDIR)/sagan-signal.Po
-include ./$(DEPDIR)/sagan-snortsam.Po
-include ./$(DEPDIR)/sagan-stats.Po
-include ./$(DEPDIR)/sagan-strlcat.Po
-include ./$(DEPDIR)/sagan-strlcpy.Po
-include ./$(DEPDIR)/sagan-track-clients.Po
-include ./$(DEPDIR)/sagan-twofish.Po
-include ./$(DEPDIR)/sagan-unified2.Po
-include ./$(DEPDIR)/sagan-usage.Po
-include ./$(DEPDIR)/sagan-util.Po
-include ./$(DEPDIR)/sagan-websense.Po
-include ./$(DEPDIR)/sagan.Po
+include ./$(DEPDIR)/sagan-parse-ip.Po
+include ./$(DEPDIR)/sagan-parse-port.Po
+include ./$(DEPDIR)/sagan-parse-proto.Po
+include ./$(DEPDIR)/sagan-sagan-alert-time.Po
+include ./$(DEPDIR)/sagan-sagan-alert.Po
+include ./$(DEPDIR)/sagan-sagan-blacklist.Po
+include ./$(DEPDIR)/sagan-sagan-classifications.Po
+include ./$(DEPDIR)/sagan-sagan-config.Po
+include ./$(DEPDIR)/sagan-sagan-credits.Po
+include ./$(DEPDIR)/sagan-sagan-engine.Po
+include ./$(DEPDIR)/sagan-sagan-esmtp.Po
+include ./$(DEPDIR)/sagan-sagan-external.Po
+include ./$(DEPDIR)/sagan-sagan-flowbit.Po
+include ./$(DEPDIR)/sagan-sagan-gen-msg.Po
+include ./$(DEPDIR)/sagan-sagan-geoip.Po
+include ./$(DEPDIR)/sagan-sagan-ignore-list.Po
+include ./$(DEPDIR)/sagan-sagan-key.Po
+include ./$(DEPDIR)/sagan-sagan-liblognorm.Po
+include ./$(DEPDIR)/sagan-sagan-lockfile.Po
+include ./$(DEPDIR)/sagan-sagan-meta-content.Po
+include ./$(DEPDIR)/sagan-sagan-output.Po
+include ./$(DEPDIR)/sagan-sagan-plog.Po
+include ./$(DEPDIR)/sagan-sagan-processor.Po
+include ./$(DEPDIR)/sagan-sagan-protocol-map.Po
+include ./$(DEPDIR)/sagan-sagan-references.Po
+include ./$(DEPDIR)/sagan-sagan-rules.Po
+include ./$(DEPDIR)/sagan-sagan-search.Po
+include ./$(DEPDIR)/sagan-sagan-send-alert.Po
+include ./$(DEPDIR)/sagan-sagan-signal.Po
+include ./$(DEPDIR)/sagan-sagan-snortsam.Po
+include ./$(DEPDIR)/sagan-sagan-stats.Po
+include ./$(DEPDIR)/sagan-sagan-strlcat.Po
+include ./$(DEPDIR)/sagan-sagan-strlcpy.Po
+include ./$(DEPDIR)/sagan-sagan-track-clients.Po
+include ./$(DEPDIR)/sagan-sagan-twofish.Po
+include ./$(DEPDIR)/sagan-sagan-unified2.Po
+include ./$(DEPDIR)/sagan-sagan-usage.Po
+include ./$(DEPDIR)/sagan-sagan-util.Po
+include ./$(DEPDIR)/sagan-sagan-websense.Po
+include ./$(DEPDIR)/sagan-sagan.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -459,201 +475,565 @@ include ./$(DEPDIR)/sagan.Po
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-parse-ip.o: parsers/parse-ip.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip.o -MD -MP -MF $(DEPDIR)/parse-ip.Tpo -c -o parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-ip.Tpo $(DEPDIR)/parse-ip.Po
-#	$(AM_V_CC)source='parsers/parse-ip.c' object='parse-ip.o' libtool=no \
+sagan-sagan.o: sagan.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan.o -MD -MP -MF $(DEPDIR)/sagan-sagan.Tpo -c -o sagan-sagan.o `test -f 'sagan.c' || echo '$(srcdir)/'`sagan.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan.Tpo $(DEPDIR)/sagan-sagan.Po
+#	$(AM_V_CC)source='sagan.c' object='sagan-sagan.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan.o `test -f 'sagan.c' || echo '$(srcdir)/'`sagan.c
 
-parse-ip.obj: parsers/parse-ip.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-ip.obj -MD -MP -MF $(DEPDIR)/parse-ip.Tpo -c -o parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-ip.Tpo $(DEPDIR)/parse-ip.Po
-#	$(AM_V_CC)source='parsers/parse-ip.c' object='parse-ip.obj' libtool=no \
+sagan-sagan.obj: sagan.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan.obj -MD -MP -MF $(DEPDIR)/sagan-sagan.Tpo -c -o sagan-sagan.obj `if test -f 'sagan.c'; then $(CYGPATH_W) 'sagan.c'; else $(CYGPATH_W) '$(srcdir)/sagan.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan.Tpo $(DEPDIR)/sagan-sagan.Po
+#	$(AM_V_CC)source='sagan.c' object='sagan-sagan.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan.obj `if test -f 'sagan.c'; then $(CYGPATH_W) 'sagan.c'; else $(CYGPATH_W) '$(srcdir)/sagan.c'; fi`
 
-parse-port.o: parsers/parse-port.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port.o -MD -MP -MF $(DEPDIR)/parse-port.Tpo -c -o parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-port.Tpo $(DEPDIR)/parse-port.Po
-#	$(AM_V_CC)source='parsers/parse-port.c' object='parse-port.o' libtool=no \
+sagan-sagan-classifications.o: sagan-classifications.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-classifications.o -MD -MP -MF $(DEPDIR)/sagan-sagan-classifications.Tpo -c -o sagan-sagan-classifications.o `test -f 'sagan-classifications.c' || echo '$(srcdir)/'`sagan-classifications.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-classifications.Tpo $(DEPDIR)/sagan-sagan-classifications.Po
+#	$(AM_V_CC)source='sagan-classifications.c' object='sagan-sagan-classifications.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-classifications.o `test -f 'sagan-classifications.c' || echo '$(srcdir)/'`sagan-classifications.c
 
-parse-port.obj: parsers/parse-port.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-port.obj -MD -MP -MF $(DEPDIR)/parse-port.Tpo -c -o parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-port.Tpo $(DEPDIR)/parse-port.Po
-#	$(AM_V_CC)source='parsers/parse-port.c' object='parse-port.obj' libtool=no \
+sagan-sagan-classifications.obj: sagan-classifications.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-classifications.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-classifications.Tpo -c -o sagan-sagan-classifications.obj `if test -f 'sagan-classifications.c'; then $(CYGPATH_W) 'sagan-classifications.c'; else $(CYGPATH_W) '$(srcdir)/sagan-classifications.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-classifications.Tpo $(DEPDIR)/sagan-sagan-classifications.Po
+#	$(AM_V_CC)source='sagan-classifications.c' object='sagan-sagan-classifications.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-classifications.obj `if test -f 'sagan-classifications.c'; then $(CYGPATH_W) 'sagan-classifications.c'; else $(CYGPATH_W) '$(srcdir)/sagan-classifications.c'; fi`
 
-parse-proto.o: parsers/parse-proto.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-proto.o -MD -MP -MF $(DEPDIR)/parse-proto.Tpo -c -o parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-proto.Tpo $(DEPDIR)/parse-proto.Po
-#	$(AM_V_CC)source='parsers/parse-proto.c' object='parse-proto.o' libtool=no \
+sagan-sagan-config.o: sagan-config.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-config.o -MD -MP -MF $(DEPDIR)/sagan-sagan-config.Tpo -c -o sagan-sagan-config.o `test -f 'sagan-config.c' || echo '$(srcdir)/'`sagan-config.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-config.Tpo $(DEPDIR)/sagan-sagan-config.Po
+#	$(AM_V_CC)source='sagan-config.c' object='sagan-sagan-config.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-config.o `test -f 'sagan-config.c' || echo '$(srcdir)/'`sagan-config.c
 
-parse-proto.obj: parsers/parse-proto.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT parse-proto.obj -MD -MP -MF $(DEPDIR)/parse-proto.Tpo -c -o parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/parse-proto.Tpo $(DEPDIR)/parse-proto.Po
-#	$(AM_V_CC)source='parsers/parse-proto.c' object='parse-proto.obj' libtool=no \
+sagan-sagan-config.obj: sagan-config.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-config.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-config.Tpo -c -o sagan-sagan-config.obj `if test -f 'sagan-config.c'; then $(CYGPATH_W) 'sagan-config.c'; else $(CYGPATH_W) '$(srcdir)/sagan-config.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-config.Tpo $(DEPDIR)/sagan-sagan-config.Po
+#	$(AM_V_CC)source='sagan-config.c' object='sagan-sagan-config.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-config.obj `if test -f 'sagan-config.c'; then $(CYGPATH_W) 'sagan-config.c'; else $(CYGPATH_W) '$(srcdir)/sagan-config.c'; fi`
 
-sagan-alert.o: output-plugins/sagan-alert.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-alert.o -MD -MP -MF $(DEPDIR)/sagan-alert.Tpo -c -o sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-alert.Tpo $(DEPDIR)/sagan-alert.Po
-#	$(AM_V_CC)source='output-plugins/sagan-alert.c' object='sagan-alert.o' libtool=no \
+sagan-sagan-lockfile.o: sagan-lockfile.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-lockfile.o -MD -MP -MF $(DEPDIR)/sagan-sagan-lockfile.Tpo -c -o sagan-sagan-lockfile.o `test -f 'sagan-lockfile.c' || echo '$(srcdir)/'`sagan-lockfile.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-lockfile.Tpo $(DEPDIR)/sagan-sagan-lockfile.Po
+#	$(AM_V_CC)source='sagan-lockfile.c' object='sagan-sagan-lockfile.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-lockfile.o `test -f 'sagan-lockfile.c' || echo '$(srcdir)/'`sagan-lockfile.c
 
-sagan-alert.obj: output-plugins/sagan-alert.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-alert.obj -MD -MP -MF $(DEPDIR)/sagan-alert.Tpo -c -o sagan-alert.obj `if test -f 'output-plugins/sagan-alert.c'; then $(CYGPATH_W) 'output-plugins/sagan-alert.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-alert.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-alert.Tpo $(DEPDIR)/sagan-alert.Po
-#	$(AM_V_CC)source='output-plugins/sagan-alert.c' object='sagan-alert.obj' libtool=no \
+sagan-sagan-lockfile.obj: sagan-lockfile.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-lockfile.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-lockfile.Tpo -c -o sagan-sagan-lockfile.obj `if test -f 'sagan-lockfile.c'; then $(CYGPATH_W) 'sagan-lockfile.c'; else $(CYGPATH_W) '$(srcdir)/sagan-lockfile.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-lockfile.Tpo $(DEPDIR)/sagan-sagan-lockfile.Po
+#	$(AM_V_CC)source='sagan-lockfile.c' object='sagan-sagan-lockfile.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-alert.obj `if test -f 'output-plugins/sagan-alert.c'; then $(CYGPATH_W) 'output-plugins/sagan-alert.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-alert.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-lockfile.obj `if test -f 'sagan-lockfile.c'; then $(CYGPATH_W) 'sagan-lockfile.c'; else $(CYGPATH_W) '$(srcdir)/sagan-lockfile.c'; fi`
 
-sagan-esmtp.o: output-plugins/sagan-esmtp.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-esmtp.o -MD -MP -MF $(DEPDIR)/sagan-esmtp.Tpo -c -o sagan-esmtp.o `test -f 'output-plugins/sagan-esmtp.c' || echo '$(srcdir)/'`output-plugins/sagan-esmtp.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-esmtp.Tpo $(DEPDIR)/sagan-esmtp.Po
-#	$(AM_V_CC)source='output-plugins/sagan-esmtp.c' object='sagan-esmtp.o' libtool=no \
+sagan-sagan-references.o: sagan-references.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-references.o -MD -MP -MF $(DEPDIR)/sagan-sagan-references.Tpo -c -o sagan-sagan-references.o `test -f 'sagan-references.c' || echo '$(srcdir)/'`sagan-references.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-references.Tpo $(DEPDIR)/sagan-sagan-references.Po
+#	$(AM_V_CC)source='sagan-references.c' object='sagan-sagan-references.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-esmtp.o `test -f 'output-plugins/sagan-esmtp.c' || echo '$(srcdir)/'`output-plugins/sagan-esmtp.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-references.o `test -f 'sagan-references.c' || echo '$(srcdir)/'`sagan-references.c
 
-sagan-esmtp.obj: output-plugins/sagan-esmtp.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-esmtp.obj -MD -MP -MF $(DEPDIR)/sagan-esmtp.Tpo -c -o sagan-esmtp.obj `if test -f 'output-plugins/sagan-esmtp.c'; then $(CYGPATH_W) 'output-plugins/sagan-esmtp.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-esmtp.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-esmtp.Tpo $(DEPDIR)/sagan-esmtp.Po
-#	$(AM_V_CC)source='output-plugins/sagan-esmtp.c' object='sagan-esmtp.obj' libtool=no \
+sagan-sagan-references.obj: sagan-references.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-references.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-references.Tpo -c -o sagan-sagan-references.obj `if test -f 'sagan-references.c'; then $(CYGPATH_W) 'sagan-references.c'; else $(CYGPATH_W) '$(srcdir)/sagan-references.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-references.Tpo $(DEPDIR)/sagan-sagan-references.Po
+#	$(AM_V_CC)source='sagan-references.c' object='sagan-sagan-references.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-esmtp.obj `if test -f 'output-plugins/sagan-esmtp.c'; then $(CYGPATH_W) 'output-plugins/sagan-esmtp.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-esmtp.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-references.obj `if test -f 'sagan-references.c'; then $(CYGPATH_W) 'sagan-references.c'; else $(CYGPATH_W) '$(srcdir)/sagan-references.c'; fi`
 
-sagan-external.o: output-plugins/sagan-external.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-external.o -MD -MP -MF $(DEPDIR)/sagan-external.Tpo -c -o sagan-external.o `test -f 'output-plugins/sagan-external.c' || echo '$(srcdir)/'`output-plugins/sagan-external.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-external.Tpo $(DEPDIR)/sagan-external.Po
-#	$(AM_V_CC)source='output-plugins/sagan-external.c' object='sagan-external.o' libtool=no \
+sagan-sagan-rules.o: sagan-rules.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-rules.o -MD -MP -MF $(DEPDIR)/sagan-sagan-rules.Tpo -c -o sagan-sagan-rules.o `test -f 'sagan-rules.c' || echo '$(srcdir)/'`sagan-rules.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-rules.Tpo $(DEPDIR)/sagan-sagan-rules.Po
+#	$(AM_V_CC)source='sagan-rules.c' object='sagan-sagan-rules.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-external.o `test -f 'output-plugins/sagan-external.c' || echo '$(srcdir)/'`output-plugins/sagan-external.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-rules.o `test -f 'sagan-rules.c' || echo '$(srcdir)/'`sagan-rules.c
 
-sagan-external.obj: output-plugins/sagan-external.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-external.obj -MD -MP -MF $(DEPDIR)/sagan-external.Tpo -c -o sagan-external.obj `if test -f 'output-plugins/sagan-external.c'; then $(CYGPATH_W) 'output-plugins/sagan-external.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-external.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-external.Tpo $(DEPDIR)/sagan-external.Po
-#	$(AM_V_CC)source='output-plugins/sagan-external.c' object='sagan-external.obj' libtool=no \
+sagan-sagan-rules.obj: sagan-rules.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-rules.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-rules.Tpo -c -o sagan-sagan-rules.obj `if test -f 'sagan-rules.c'; then $(CYGPATH_W) 'sagan-rules.c'; else $(CYGPATH_W) '$(srcdir)/sagan-rules.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-rules.Tpo $(DEPDIR)/sagan-sagan-rules.Po
+#	$(AM_V_CC)source='sagan-rules.c' object='sagan-sagan-rules.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-external.obj `if test -f 'output-plugins/sagan-external.c'; then $(CYGPATH_W) 'output-plugins/sagan-external.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-external.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-rules.obj `if test -f 'sagan-rules.c'; then $(CYGPATH_W) 'sagan-rules.c'; else $(CYGPATH_W) '$(srcdir)/sagan-rules.c'; fi`
 
-sagan-unified2.o: output-plugins/sagan-unified2.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-unified2.o -MD -MP -MF $(DEPDIR)/sagan-unified2.Tpo -c -o sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-unified2.Tpo $(DEPDIR)/sagan-unified2.Po
-#	$(AM_V_CC)source='output-plugins/sagan-unified2.c' object='sagan-unified2.o' libtool=no \
+sagan-sagan-signal.o: sagan-signal.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-signal.o -MD -MP -MF $(DEPDIR)/sagan-sagan-signal.Tpo -c -o sagan-sagan-signal.o `test -f 'sagan-signal.c' || echo '$(srcdir)/'`sagan-signal.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-signal.Tpo $(DEPDIR)/sagan-sagan-signal.Po
+#	$(AM_V_CC)source='sagan-signal.c' object='sagan-sagan-signal.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-signal.o `test -f 'sagan-signal.c' || echo '$(srcdir)/'`sagan-signal.c
 
-sagan-unified2.obj: output-plugins/sagan-unified2.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-unified2.obj -MD -MP -MF $(DEPDIR)/sagan-unified2.Tpo -c -o sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-unified2.Tpo $(DEPDIR)/sagan-unified2.Po
-#	$(AM_V_CC)source='output-plugins/sagan-unified2.c' object='sagan-unified2.obj' libtool=no \
+sagan-sagan-signal.obj: sagan-signal.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-signal.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-signal.Tpo -c -o sagan-sagan-signal.obj `if test -f 'sagan-signal.c'; then $(CYGPATH_W) 'sagan-signal.c'; else $(CYGPATH_W) '$(srcdir)/sagan-signal.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-signal.Tpo $(DEPDIR)/sagan-sagan-signal.Po
+#	$(AM_V_CC)source='sagan-signal.c' object='sagan-sagan-signal.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-signal.obj `if test -f 'sagan-signal.c'; then $(CYGPATH_W) 'sagan-signal.c'; else $(CYGPATH_W) '$(srcdir)/sagan-signal.c'; fi`
 
-sagan-twofish.o: output-plugins/sagan-twofish.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-twofish.o -MD -MP -MF $(DEPDIR)/sagan-twofish.Tpo -c -o sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-twofish.Tpo $(DEPDIR)/sagan-twofish.Po
-#	$(AM_V_CC)source='output-plugins/sagan-twofish.c' object='sagan-twofish.o' libtool=no \
+sagan-sagan-key.o: sagan-key.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-key.o -MD -MP -MF $(DEPDIR)/sagan-sagan-key.Tpo -c -o sagan-sagan-key.o `test -f 'sagan-key.c' || echo '$(srcdir)/'`sagan-key.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-key.Tpo $(DEPDIR)/sagan-sagan-key.Po
+#	$(AM_V_CC)source='sagan-key.c' object='sagan-sagan-key.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-key.o `test -f 'sagan-key.c' || echo '$(srcdir)/'`sagan-key.c
 
-sagan-twofish.obj: output-plugins/sagan-twofish.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-twofish.obj -MD -MP -MF $(DEPDIR)/sagan-twofish.Tpo -c -o sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-twofish.Tpo $(DEPDIR)/sagan-twofish.Po
-#	$(AM_V_CC)source='output-plugins/sagan-twofish.c' object='sagan-twofish.obj' libtool=no \
+sagan-sagan-key.obj: sagan-key.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-key.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-key.Tpo -c -o sagan-sagan-key.obj `if test -f 'sagan-key.c'; then $(CYGPATH_W) 'sagan-key.c'; else $(CYGPATH_W) '$(srcdir)/sagan-key.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-key.Tpo $(DEPDIR)/sagan-sagan-key.Po
+#	$(AM_V_CC)source='sagan-key.c' object='sagan-sagan-key.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-key.obj `if test -f 'sagan-key.c'; then $(CYGPATH_W) 'sagan-key.c'; else $(CYGPATH_W) '$(srcdir)/sagan-key.c'; fi`
 
-sagan-snortsam.o: output-plugins/sagan-snortsam.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snortsam.o -MD -MP -MF $(DEPDIR)/sagan-snortsam.Tpo -c -o sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-snortsam.Tpo $(DEPDIR)/sagan-snortsam.Po
-#	$(AM_V_CC)source='output-plugins/sagan-snortsam.c' object='sagan-snortsam.o' libtool=no \
+sagan-sagan-stats.o: sagan-stats.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-stats.o -MD -MP -MF $(DEPDIR)/sagan-sagan-stats.Tpo -c -o sagan-sagan-stats.o `test -f 'sagan-stats.c' || echo '$(srcdir)/'`sagan-stats.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-stats.Tpo $(DEPDIR)/sagan-sagan-stats.Po
+#	$(AM_V_CC)source='sagan-stats.c' object='sagan-sagan-stats.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-stats.o `test -f 'sagan-stats.c' || echo '$(srcdir)/'`sagan-stats.c
 
-sagan-snortsam.obj: output-plugins/sagan-snortsam.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-snortsam.obj -MD -MP -MF $(DEPDIR)/sagan-snortsam.Tpo -c -o sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-snortsam.Tpo $(DEPDIR)/sagan-snortsam.Po
-#	$(AM_V_CC)source='output-plugins/sagan-snortsam.c' object='sagan-snortsam.obj' libtool=no \
+sagan-sagan-stats.obj: sagan-stats.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-stats.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-stats.Tpo -c -o sagan-sagan-stats.obj `if test -f 'sagan-stats.c'; then $(CYGPATH_W) 'sagan-stats.c'; else $(CYGPATH_W) '$(srcdir)/sagan-stats.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-stats.Tpo $(DEPDIR)/sagan-sagan-stats.Po
+#	$(AM_V_CC)source='sagan-stats.c' object='sagan-sagan-stats.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-stats.obj `if test -f 'sagan-stats.c'; then $(CYGPATH_W) 'sagan-stats.c'; else $(CYGPATH_W) '$(srcdir)/sagan-stats.c'; fi`
 
-sagan-engine.o: processors/sagan-engine.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-engine.o -MD -MP -MF $(DEPDIR)/sagan-engine.Tpo -c -o sagan-engine.o `test -f 'processors/sagan-engine.c' || echo '$(srcdir)/'`processors/sagan-engine.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-engine.Tpo $(DEPDIR)/sagan-engine.Po
-#	$(AM_V_CC)source='processors/sagan-engine.c' object='sagan-engine.o' libtool=no \
+sagan-sagan-strlcat.o: sagan-strlcat.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-strlcat.o -MD -MP -MF $(DEPDIR)/sagan-sagan-strlcat.Tpo -c -o sagan-sagan-strlcat.o `test -f 'sagan-strlcat.c' || echo '$(srcdir)/'`sagan-strlcat.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-strlcat.Tpo $(DEPDIR)/sagan-sagan-strlcat.Po
+#	$(AM_V_CC)source='sagan-strlcat.c' object='sagan-sagan-strlcat.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-engine.o `test -f 'processors/sagan-engine.c' || echo '$(srcdir)/'`processors/sagan-engine.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-strlcat.o `test -f 'sagan-strlcat.c' || echo '$(srcdir)/'`sagan-strlcat.c
 
-sagan-engine.obj: processors/sagan-engine.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-engine.obj -MD -MP -MF $(DEPDIR)/sagan-engine.Tpo -c -o sagan-engine.obj `if test -f 'processors/sagan-engine.c'; then $(CYGPATH_W) 'processors/sagan-engine.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-engine.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-engine.Tpo $(DEPDIR)/sagan-engine.Po
-#	$(AM_V_CC)source='processors/sagan-engine.c' object='sagan-engine.obj' libtool=no \
+sagan-sagan-strlcat.obj: sagan-strlcat.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-strlcat.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-strlcat.Tpo -c -o sagan-sagan-strlcat.obj `if test -f 'sagan-strlcat.c'; then $(CYGPATH_W) 'sagan-strlcat.c'; else $(CYGPATH_W) '$(srcdir)/sagan-strlcat.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-strlcat.Tpo $(DEPDIR)/sagan-sagan-strlcat.Po
+#	$(AM_V_CC)source='sagan-strlcat.c' object='sagan-sagan-strlcat.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-engine.obj `if test -f 'processors/sagan-engine.c'; then $(CYGPATH_W) 'processors/sagan-engine.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-engine.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-strlcat.obj `if test -f 'sagan-strlcat.c'; then $(CYGPATH_W) 'sagan-strlcat.c'; else $(CYGPATH_W) '$(srcdir)/sagan-strlcat.c'; fi`
 
-sagan-track-clients.o: processors/sagan-track-clients.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-track-clients.o -MD -MP -MF $(DEPDIR)/sagan-track-clients.Tpo -c -o sagan-track-clients.o `test -f 'processors/sagan-track-clients.c' || echo '$(srcdir)/'`processors/sagan-track-clients.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-track-clients.Tpo $(DEPDIR)/sagan-track-clients.Po
-#	$(AM_V_CC)source='processors/sagan-track-clients.c' object='sagan-track-clients.o' libtool=no \
+sagan-sagan-strlcpy.o: sagan-strlcpy.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-strlcpy.o -MD -MP -MF $(DEPDIR)/sagan-sagan-strlcpy.Tpo -c -o sagan-sagan-strlcpy.o `test -f 'sagan-strlcpy.c' || echo '$(srcdir)/'`sagan-strlcpy.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-strlcpy.Tpo $(DEPDIR)/sagan-sagan-strlcpy.Po
+#	$(AM_V_CC)source='sagan-strlcpy.c' object='sagan-sagan-strlcpy.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-track-clients.o `test -f 'processors/sagan-track-clients.c' || echo '$(srcdir)/'`processors/sagan-track-clients.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-strlcpy.o `test -f 'sagan-strlcpy.c' || echo '$(srcdir)/'`sagan-strlcpy.c
 
-sagan-track-clients.obj: processors/sagan-track-clients.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-track-clients.obj -MD -MP -MF $(DEPDIR)/sagan-track-clients.Tpo -c -o sagan-track-clients.obj `if test -f 'processors/sagan-track-clients.c'; then $(CYGPATH_W) 'processors/sagan-track-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-track-clients.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-track-clients.Tpo $(DEPDIR)/sagan-track-clients.Po
-#	$(AM_V_CC)source='processors/sagan-track-clients.c' object='sagan-track-clients.obj' libtool=no \
+sagan-sagan-strlcpy.obj: sagan-strlcpy.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-strlcpy.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-strlcpy.Tpo -c -o sagan-sagan-strlcpy.obj `if test -f 'sagan-strlcpy.c'; then $(CYGPATH_W) 'sagan-strlcpy.c'; else $(CYGPATH_W) '$(srcdir)/sagan-strlcpy.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-strlcpy.Tpo $(DEPDIR)/sagan-sagan-strlcpy.Po
+#	$(AM_V_CC)source='sagan-strlcpy.c' object='sagan-sagan-strlcpy.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-track-clients.obj `if test -f 'processors/sagan-track-clients.c'; then $(CYGPATH_W) 'processors/sagan-track-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-track-clients.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-strlcpy.obj `if test -f 'sagan-strlcpy.c'; then $(CYGPATH_W) 'sagan-strlcpy.c'; else $(CYGPATH_W) '$(srcdir)/sagan-strlcpy.c'; fi`
 
-sagan-websense.o: processors/sagan-websense.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-websense.o -MD -MP -MF $(DEPDIR)/sagan-websense.Tpo -c -o sagan-websense.o `test -f 'processors/sagan-websense.c' || echo '$(srcdir)/'`processors/sagan-websense.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-websense.Tpo $(DEPDIR)/sagan-websense.Po
-#	$(AM_V_CC)source='processors/sagan-websense.c' object='sagan-websense.o' libtool=no \
+sagan-sagan-usage.o: sagan-usage.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-usage.o -MD -MP -MF $(DEPDIR)/sagan-sagan-usage.Tpo -c -o sagan-sagan-usage.o `test -f 'sagan-usage.c' || echo '$(srcdir)/'`sagan-usage.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-usage.Tpo $(DEPDIR)/sagan-sagan-usage.Po
+#	$(AM_V_CC)source='sagan-usage.c' object='sagan-sagan-usage.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-websense.o `test -f 'processors/sagan-websense.c' || echo '$(srcdir)/'`processors/sagan-websense.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-usage.o `test -f 'sagan-usage.c' || echo '$(srcdir)/'`sagan-usage.c
 
-sagan-websense.obj: processors/sagan-websense.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-websense.obj -MD -MP -MF $(DEPDIR)/sagan-websense.Tpo -c -o sagan-websense.obj `if test -f 'processors/sagan-websense.c'; then $(CYGPATH_W) 'processors/sagan-websense.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-websense.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-websense.Tpo $(DEPDIR)/sagan-websense.Po
-#	$(AM_V_CC)source='processors/sagan-websense.c' object='sagan-websense.obj' libtool=no \
+sagan-sagan-usage.obj: sagan-usage.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-usage.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-usage.Tpo -c -o sagan-sagan-usage.obj `if test -f 'sagan-usage.c'; then $(CYGPATH_W) 'sagan-usage.c'; else $(CYGPATH_W) '$(srcdir)/sagan-usage.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-usage.Tpo $(DEPDIR)/sagan-sagan-usage.Po
+#	$(AM_V_CC)source='sagan-usage.c' object='sagan-sagan-usage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-websense.obj `if test -f 'processors/sagan-websense.c'; then $(CYGPATH_W) 'processors/sagan-websense.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-websense.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-usage.obj `if test -f 'sagan-usage.c'; then $(CYGPATH_W) 'sagan-usage.c'; else $(CYGPATH_W) '$(srcdir)/sagan-usage.c'; fi`
 
-sagan-blacklist.o: processors/sagan-blacklist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-blacklist.o -MD -MP -MF $(DEPDIR)/sagan-blacklist.Tpo -c -o sagan-blacklist.o `test -f 'processors/sagan-blacklist.c' || echo '$(srcdir)/'`processors/sagan-blacklist.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-blacklist.Tpo $(DEPDIR)/sagan-blacklist.Po
-#	$(AM_V_CC)source='processors/sagan-blacklist.c' object='sagan-blacklist.o' libtool=no \
+sagan-sagan-util.o: sagan-util.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-util.o -MD -MP -MF $(DEPDIR)/sagan-sagan-util.Tpo -c -o sagan-sagan-util.o `test -f 'sagan-util.c' || echo '$(srcdir)/'`sagan-util.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-util.Tpo $(DEPDIR)/sagan-sagan-util.Po
+#	$(AM_V_CC)source='sagan-util.c' object='sagan-sagan-util.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-blacklist.o `test -f 'processors/sagan-blacklist.c' || echo '$(srcdir)/'`processors/sagan-blacklist.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-util.o `test -f 'sagan-util.c' || echo '$(srcdir)/'`sagan-util.c
 
-sagan-blacklist.obj: processors/sagan-blacklist.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-blacklist.obj -MD -MP -MF $(DEPDIR)/sagan-blacklist.Tpo -c -o sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-blacklist.Tpo $(DEPDIR)/sagan-blacklist.Po
-#	$(AM_V_CC)source='processors/sagan-blacklist.c' object='sagan-blacklist.obj' libtool=no \
+sagan-sagan-util.obj: sagan-util.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-util.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-util.Tpo -c -o sagan-sagan-util.obj `if test -f 'sagan-util.c'; then $(CYGPATH_W) 'sagan-util.c'; else $(CYGPATH_W) '$(srcdir)/sagan-util.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-util.Tpo $(DEPDIR)/sagan-sagan-util.Po
+#	$(AM_V_CC)source='sagan-util.c' object='sagan-sagan-util.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-util.obj `if test -f 'sagan-util.c'; then $(CYGPATH_W) 'sagan-util.c'; else $(CYGPATH_W) '$(srcdir)/sagan-util.c'; fi`
 
-sagan-search.o: processors/sagan-search.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-search.o -MD -MP -MF $(DEPDIR)/sagan-search.Tpo -c -o sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-search.Tpo $(DEPDIR)/sagan-search.Po
-#	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-search.o' libtool=no \
+sagan-sagan-plog.o: sagan-plog.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-plog.o -MD -MP -MF $(DEPDIR)/sagan-sagan-plog.Tpo -c -o sagan-sagan-plog.o `test -f 'sagan-plog.c' || echo '$(srcdir)/'`sagan-plog.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-plog.Tpo $(DEPDIR)/sagan-sagan-plog.Po
+#	$(AM_V_CC)source='sagan-plog.c' object='sagan-sagan-plog.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-plog.o `test -f 'sagan-plog.c' || echo '$(srcdir)/'`sagan-plog.c
 
-sagan-search.obj: processors/sagan-search.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-search.obj -MD -MP -MF $(DEPDIR)/sagan-search.Tpo -c -o sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-search.Tpo $(DEPDIR)/sagan-search.Po
-#	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-search.obj' libtool=no \
+sagan-sagan-plog.obj: sagan-plog.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-plog.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-plog.Tpo -c -o sagan-sagan-plog.obj `if test -f 'sagan-plog.c'; then $(CYGPATH_W) 'sagan-plog.c'; else $(CYGPATH_W) '$(srcdir)/sagan-plog.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-plog.Tpo $(DEPDIR)/sagan-sagan-plog.Po
+#	$(AM_V_CC)source='sagan-plog.c' object='sagan-sagan-plog.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-plog.obj `if test -f 'sagan-plog.c'; then $(CYGPATH_W) 'sagan-plog.c'; else $(CYGPATH_W) '$(srcdir)/sagan-plog.c'; fi`
+
+sagan-sagan-output.o: sagan-output.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-output.o -MD -MP -MF $(DEPDIR)/sagan-sagan-output.Tpo -c -o sagan-sagan-output.o `test -f 'sagan-output.c' || echo '$(srcdir)/'`sagan-output.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-output.Tpo $(DEPDIR)/sagan-sagan-output.Po
+#	$(AM_V_CC)source='sagan-output.c' object='sagan-sagan-output.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-output.o `test -f 'sagan-output.c' || echo '$(srcdir)/'`sagan-output.c
+
+sagan-sagan-output.obj: sagan-output.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-output.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-output.Tpo -c -o sagan-sagan-output.obj `if test -f 'sagan-output.c'; then $(CYGPATH_W) 'sagan-output.c'; else $(CYGPATH_W) '$(srcdir)/sagan-output.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-output.Tpo $(DEPDIR)/sagan-sagan-output.Po
+#	$(AM_V_CC)source='sagan-output.c' object='sagan-sagan-output.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-output.obj `if test -f 'sagan-output.c'; then $(CYGPATH_W) 'sagan-output.c'; else $(CYGPATH_W) '$(srcdir)/sagan-output.c'; fi`
+
+sagan-sagan-processor.o: sagan-processor.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-processor.o -MD -MP -MF $(DEPDIR)/sagan-sagan-processor.Tpo -c -o sagan-sagan-processor.o `test -f 'sagan-processor.c' || echo '$(srcdir)/'`sagan-processor.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-processor.Tpo $(DEPDIR)/sagan-sagan-processor.Po
+#	$(AM_V_CC)source='sagan-processor.c' object='sagan-sagan-processor.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-processor.o `test -f 'sagan-processor.c' || echo '$(srcdir)/'`sagan-processor.c
+
+sagan-sagan-processor.obj: sagan-processor.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-processor.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-processor.Tpo -c -o sagan-sagan-processor.obj `if test -f 'sagan-processor.c'; then $(CYGPATH_W) 'sagan-processor.c'; else $(CYGPATH_W) '$(srcdir)/sagan-processor.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-processor.Tpo $(DEPDIR)/sagan-sagan-processor.Po
+#	$(AM_V_CC)source='sagan-processor.c' object='sagan-sagan-processor.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-processor.obj `if test -f 'sagan-processor.c'; then $(CYGPATH_W) 'sagan-processor.c'; else $(CYGPATH_W) '$(srcdir)/sagan-processor.c'; fi`
+
+sagan-sagan-gen-msg.o: sagan-gen-msg.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-gen-msg.o -MD -MP -MF $(DEPDIR)/sagan-sagan-gen-msg.Tpo -c -o sagan-sagan-gen-msg.o `test -f 'sagan-gen-msg.c' || echo '$(srcdir)/'`sagan-gen-msg.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-gen-msg.Tpo $(DEPDIR)/sagan-sagan-gen-msg.Po
+#	$(AM_V_CC)source='sagan-gen-msg.c' object='sagan-sagan-gen-msg.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-gen-msg.o `test -f 'sagan-gen-msg.c' || echo '$(srcdir)/'`sagan-gen-msg.c
+
+sagan-sagan-gen-msg.obj: sagan-gen-msg.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-gen-msg.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-gen-msg.Tpo -c -o sagan-sagan-gen-msg.obj `if test -f 'sagan-gen-msg.c'; then $(CYGPATH_W) 'sagan-gen-msg.c'; else $(CYGPATH_W) '$(srcdir)/sagan-gen-msg.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-gen-msg.Tpo $(DEPDIR)/sagan-sagan-gen-msg.Po
+#	$(AM_V_CC)source='sagan-gen-msg.c' object='sagan-sagan-gen-msg.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-gen-msg.obj `if test -f 'sagan-gen-msg.c'; then $(CYGPATH_W) 'sagan-gen-msg.c'; else $(CYGPATH_W) '$(srcdir)/sagan-gen-msg.c'; fi`
+
+sagan-sagan-liblognorm.o: sagan-liblognorm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-liblognorm.o -MD -MP -MF $(DEPDIR)/sagan-sagan-liblognorm.Tpo -c -o sagan-sagan-liblognorm.o `test -f 'sagan-liblognorm.c' || echo '$(srcdir)/'`sagan-liblognorm.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-liblognorm.Tpo $(DEPDIR)/sagan-sagan-liblognorm.Po
+#	$(AM_V_CC)source='sagan-liblognorm.c' object='sagan-sagan-liblognorm.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-liblognorm.o `test -f 'sagan-liblognorm.c' || echo '$(srcdir)/'`sagan-liblognorm.c
+
+sagan-sagan-liblognorm.obj: sagan-liblognorm.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-liblognorm.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-liblognorm.Tpo -c -o sagan-sagan-liblognorm.obj `if test -f 'sagan-liblognorm.c'; then $(CYGPATH_W) 'sagan-liblognorm.c'; else $(CYGPATH_W) '$(srcdir)/sagan-liblognorm.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-liblognorm.Tpo $(DEPDIR)/sagan-sagan-liblognorm.Po
+#	$(AM_V_CC)source='sagan-liblognorm.c' object='sagan-sagan-liblognorm.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-liblognorm.obj `if test -f 'sagan-liblognorm.c'; then $(CYGPATH_W) 'sagan-liblognorm.c'; else $(CYGPATH_W) '$(srcdir)/sagan-liblognorm.c'; fi`
+
+sagan-sagan-ignore-list.o: sagan-ignore-list.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-ignore-list.o -MD -MP -MF $(DEPDIR)/sagan-sagan-ignore-list.Tpo -c -o sagan-sagan-ignore-list.o `test -f 'sagan-ignore-list.c' || echo '$(srcdir)/'`sagan-ignore-list.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-ignore-list.Tpo $(DEPDIR)/sagan-sagan-ignore-list.Po
+#	$(AM_V_CC)source='sagan-ignore-list.c' object='sagan-sagan-ignore-list.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-ignore-list.o `test -f 'sagan-ignore-list.c' || echo '$(srcdir)/'`sagan-ignore-list.c
+
+sagan-sagan-ignore-list.obj: sagan-ignore-list.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-ignore-list.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-ignore-list.Tpo -c -o sagan-sagan-ignore-list.obj `if test -f 'sagan-ignore-list.c'; then $(CYGPATH_W) 'sagan-ignore-list.c'; else $(CYGPATH_W) '$(srcdir)/sagan-ignore-list.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-ignore-list.Tpo $(DEPDIR)/sagan-sagan-ignore-list.Po
+#	$(AM_V_CC)source='sagan-ignore-list.c' object='sagan-sagan-ignore-list.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-ignore-list.obj `if test -f 'sagan-ignore-list.c'; then $(CYGPATH_W) 'sagan-ignore-list.c'; else $(CYGPATH_W) '$(srcdir)/sagan-ignore-list.c'; fi`
+
+sagan-sagan-send-alert.o: sagan-send-alert.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-send-alert.o -MD -MP -MF $(DEPDIR)/sagan-sagan-send-alert.Tpo -c -o sagan-sagan-send-alert.o `test -f 'sagan-send-alert.c' || echo '$(srcdir)/'`sagan-send-alert.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-send-alert.Tpo $(DEPDIR)/sagan-sagan-send-alert.Po
+#	$(AM_V_CC)source='sagan-send-alert.c' object='sagan-sagan-send-alert.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-send-alert.o `test -f 'sagan-send-alert.c' || echo '$(srcdir)/'`sagan-send-alert.c
+
+sagan-sagan-send-alert.obj: sagan-send-alert.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-send-alert.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-send-alert.Tpo -c -o sagan-sagan-send-alert.obj `if test -f 'sagan-send-alert.c'; then $(CYGPATH_W) 'sagan-send-alert.c'; else $(CYGPATH_W) '$(srcdir)/sagan-send-alert.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-send-alert.Tpo $(DEPDIR)/sagan-sagan-send-alert.Po
+#	$(AM_V_CC)source='sagan-send-alert.c' object='sagan-sagan-send-alert.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-send-alert.obj `if test -f 'sagan-send-alert.c'; then $(CYGPATH_W) 'sagan-send-alert.c'; else $(CYGPATH_W) '$(srcdir)/sagan-send-alert.c'; fi`
+
+sagan-sagan-credits.o: sagan-credits.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-credits.o -MD -MP -MF $(DEPDIR)/sagan-sagan-credits.Tpo -c -o sagan-sagan-credits.o `test -f 'sagan-credits.c' || echo '$(srcdir)/'`sagan-credits.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-credits.Tpo $(DEPDIR)/sagan-sagan-credits.Po
+#	$(AM_V_CC)source='sagan-credits.c' object='sagan-sagan-credits.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-credits.o `test -f 'sagan-credits.c' || echo '$(srcdir)/'`sagan-credits.c
+
+sagan-sagan-credits.obj: sagan-credits.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-credits.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-credits.Tpo -c -o sagan-sagan-credits.obj `if test -f 'sagan-credits.c'; then $(CYGPATH_W) 'sagan-credits.c'; else $(CYGPATH_W) '$(srcdir)/sagan-credits.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-credits.Tpo $(DEPDIR)/sagan-sagan-credits.Po
+#	$(AM_V_CC)source='sagan-credits.c' object='sagan-sagan-credits.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-credits.obj `if test -f 'sagan-credits.c'; then $(CYGPATH_W) 'sagan-credits.c'; else $(CYGPATH_W) '$(srcdir)/sagan-credits.c'; fi`
+
+sagan-sagan-protocol-map.o: sagan-protocol-map.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-protocol-map.o -MD -MP -MF $(DEPDIR)/sagan-sagan-protocol-map.Tpo -c -o sagan-sagan-protocol-map.o `test -f 'sagan-protocol-map.c' || echo '$(srcdir)/'`sagan-protocol-map.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-protocol-map.Tpo $(DEPDIR)/sagan-sagan-protocol-map.Po
+#	$(AM_V_CC)source='sagan-protocol-map.c' object='sagan-sagan-protocol-map.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-protocol-map.o `test -f 'sagan-protocol-map.c' || echo '$(srcdir)/'`sagan-protocol-map.c
+
+sagan-sagan-protocol-map.obj: sagan-protocol-map.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-protocol-map.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-protocol-map.Tpo -c -o sagan-sagan-protocol-map.obj `if test -f 'sagan-protocol-map.c'; then $(CYGPATH_W) 'sagan-protocol-map.c'; else $(CYGPATH_W) '$(srcdir)/sagan-protocol-map.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-protocol-map.Tpo $(DEPDIR)/sagan-sagan-protocol-map.Po
+#	$(AM_V_CC)source='sagan-protocol-map.c' object='sagan-sagan-protocol-map.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-protocol-map.obj `if test -f 'sagan-protocol-map.c'; then $(CYGPATH_W) 'sagan-protocol-map.c'; else $(CYGPATH_W) '$(srcdir)/sagan-protocol-map.c'; fi`
+
+sagan-sagan-geoip.o: sagan-geoip.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip.o -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip.Tpo -c -o sagan-sagan-geoip.o `test -f 'sagan-geoip.c' || echo '$(srcdir)/'`sagan-geoip.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip.Tpo $(DEPDIR)/sagan-sagan-geoip.Po
+#	$(AM_V_CC)source='sagan-geoip.c' object='sagan-sagan-geoip.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip.o `test -f 'sagan-geoip.c' || echo '$(srcdir)/'`sagan-geoip.c
+
+sagan-sagan-geoip.obj: sagan-geoip.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip.Tpo -c -o sagan-sagan-geoip.obj `if test -f 'sagan-geoip.c'; then $(CYGPATH_W) 'sagan-geoip.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip.Tpo $(DEPDIR)/sagan-sagan-geoip.Po
+#	$(AM_V_CC)source='sagan-geoip.c' object='sagan-sagan-geoip.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip.obj `if test -f 'sagan-geoip.c'; then $(CYGPATH_W) 'sagan-geoip.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip.c'; fi`
+
+sagan-sagan-meta-content.o: sagan-meta-content.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-meta-content.o -MD -MP -MF $(DEPDIR)/sagan-sagan-meta-content.Tpo -c -o sagan-sagan-meta-content.o `test -f 'sagan-meta-content.c' || echo '$(srcdir)/'`sagan-meta-content.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-meta-content.Tpo $(DEPDIR)/sagan-sagan-meta-content.Po
+#	$(AM_V_CC)source='sagan-meta-content.c' object='sagan-sagan-meta-content.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-meta-content.o `test -f 'sagan-meta-content.c' || echo '$(srcdir)/'`sagan-meta-content.c
+
+sagan-sagan-meta-content.obj: sagan-meta-content.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-meta-content.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-meta-content.Tpo -c -o sagan-sagan-meta-content.obj `if test -f 'sagan-meta-content.c'; then $(CYGPATH_W) 'sagan-meta-content.c'; else $(CYGPATH_W) '$(srcdir)/sagan-meta-content.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-meta-content.Tpo $(DEPDIR)/sagan-sagan-meta-content.Po
+#	$(AM_V_CC)source='sagan-meta-content.c' object='sagan-sagan-meta-content.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-meta-content.obj `if test -f 'sagan-meta-content.c'; then $(CYGPATH_W) 'sagan-meta-content.c'; else $(CYGPATH_W) '$(srcdir)/sagan-meta-content.c'; fi`
+
+sagan-sagan-flowbit.o: sagan-flowbit.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-flowbit.o -MD -MP -MF $(DEPDIR)/sagan-sagan-flowbit.Tpo -c -o sagan-sagan-flowbit.o `test -f 'sagan-flowbit.c' || echo '$(srcdir)/'`sagan-flowbit.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-flowbit.Tpo $(DEPDIR)/sagan-sagan-flowbit.Po
+#	$(AM_V_CC)source='sagan-flowbit.c' object='sagan-sagan-flowbit.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-flowbit.o `test -f 'sagan-flowbit.c' || echo '$(srcdir)/'`sagan-flowbit.c
+
+sagan-sagan-flowbit.obj: sagan-flowbit.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-flowbit.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-flowbit.Tpo -c -o sagan-sagan-flowbit.obj `if test -f 'sagan-flowbit.c'; then $(CYGPATH_W) 'sagan-flowbit.c'; else $(CYGPATH_W) '$(srcdir)/sagan-flowbit.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-flowbit.Tpo $(DEPDIR)/sagan-sagan-flowbit.Po
+#	$(AM_V_CC)source='sagan-flowbit.c' object='sagan-sagan-flowbit.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-flowbit.obj `if test -f 'sagan-flowbit.c'; then $(CYGPATH_W) 'sagan-flowbit.c'; else $(CYGPATH_W) '$(srcdir)/sagan-flowbit.c'; fi`
+
+sagan-sagan-alert-time.o: sagan-alert-time.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-alert-time.o -MD -MP -MF $(DEPDIR)/sagan-sagan-alert-time.Tpo -c -o sagan-sagan-alert-time.o `test -f 'sagan-alert-time.c' || echo '$(srcdir)/'`sagan-alert-time.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-alert-time.Tpo $(DEPDIR)/sagan-sagan-alert-time.Po
+#	$(AM_V_CC)source='sagan-alert-time.c' object='sagan-sagan-alert-time.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-alert-time.o `test -f 'sagan-alert-time.c' || echo '$(srcdir)/'`sagan-alert-time.c
+
+sagan-sagan-alert-time.obj: sagan-alert-time.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-alert-time.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-alert-time.Tpo -c -o sagan-sagan-alert-time.obj `if test -f 'sagan-alert-time.c'; then $(CYGPATH_W) 'sagan-alert-time.c'; else $(CYGPATH_W) '$(srcdir)/sagan-alert-time.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-alert-time.Tpo $(DEPDIR)/sagan-sagan-alert-time.Po
+#	$(AM_V_CC)source='sagan-alert-time.c' object='sagan-sagan-alert-time.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-alert-time.obj `if test -f 'sagan-alert-time.c'; then $(CYGPATH_W) 'sagan-alert-time.c'; else $(CYGPATH_W) '$(srcdir)/sagan-alert-time.c'; fi`
+
+sagan-parse-ip.o: parsers/parse-ip.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-ip.o -MD -MP -MF $(DEPDIR)/sagan-parse-ip.Tpo -c -o sagan-parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-ip.Tpo $(DEPDIR)/sagan-parse-ip.Po
+#	$(AM_V_CC)source='parsers/parse-ip.c' object='sagan-parse-ip.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c
+
+sagan-parse-ip.obj: parsers/parse-ip.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-ip.obj -MD -MP -MF $(DEPDIR)/sagan-parse-ip.Tpo -c -o sagan-parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-ip.Tpo $(DEPDIR)/sagan-parse-ip.Po
+#	$(AM_V_CC)source='parsers/parse-ip.c' object='sagan-parse-ip.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-ip.obj `if test -f 'parsers/parse-ip.c'; then $(CYGPATH_W) 'parsers/parse-ip.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-ip.c'; fi`
+
+sagan-parse-port.o: parsers/parse-port.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-port.o -MD -MP -MF $(DEPDIR)/sagan-parse-port.Tpo -c -o sagan-parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-port.Tpo $(DEPDIR)/sagan-parse-port.Po
+#	$(AM_V_CC)source='parsers/parse-port.c' object='sagan-parse-port.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-port.o `test -f 'parsers/parse-port.c' || echo '$(srcdir)/'`parsers/parse-port.c
+
+sagan-parse-port.obj: parsers/parse-port.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-port.obj -MD -MP -MF $(DEPDIR)/sagan-parse-port.Tpo -c -o sagan-parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-port.Tpo $(DEPDIR)/sagan-parse-port.Po
+#	$(AM_V_CC)source='parsers/parse-port.c' object='sagan-parse-port.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-port.obj `if test -f 'parsers/parse-port.c'; then $(CYGPATH_W) 'parsers/parse-port.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-port.c'; fi`
+
+sagan-parse-proto.o: parsers/parse-proto.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-proto.o -MD -MP -MF $(DEPDIR)/sagan-parse-proto.Tpo -c -o sagan-parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-proto.Tpo $(DEPDIR)/sagan-parse-proto.Po
+#	$(AM_V_CC)source='parsers/parse-proto.c' object='sagan-parse-proto.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-proto.o `test -f 'parsers/parse-proto.c' || echo '$(srcdir)/'`parsers/parse-proto.c
+
+sagan-parse-proto.obj: parsers/parse-proto.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-proto.obj -MD -MP -MF $(DEPDIR)/sagan-parse-proto.Tpo -c -o sagan-parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-parse-proto.Tpo $(DEPDIR)/sagan-parse-proto.Po
+#	$(AM_V_CC)source='parsers/parse-proto.c' object='sagan-parse-proto.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-parse-proto.obj `if test -f 'parsers/parse-proto.c'; then $(CYGPATH_W) 'parsers/parse-proto.c'; else $(CYGPATH_W) '$(srcdir)/parsers/parse-proto.c'; fi`
+
+sagan-sagan-alert.o: output-plugins/sagan-alert.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-alert.o -MD -MP -MF $(DEPDIR)/sagan-sagan-alert.Tpo -c -o sagan-sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-alert.Tpo $(DEPDIR)/sagan-sagan-alert.Po
+#	$(AM_V_CC)source='output-plugins/sagan-alert.c' object='sagan-sagan-alert.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-alert.o `test -f 'output-plugins/sagan-alert.c' || echo '$(srcdir)/'`output-plugins/sagan-alert.c
+
+sagan-sagan-alert.obj: output-plugins/sagan-alert.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-alert.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-alert.Tpo -c -o sagan-sagan-alert.obj `if test -f 'output-plugins/sagan-alert.c'; then $(CYGPATH_W) 'output-plugins/sagan-alert.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-alert.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-alert.Tpo $(DEPDIR)/sagan-sagan-alert.Po
+#	$(AM_V_CC)source='output-plugins/sagan-alert.c' object='sagan-sagan-alert.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-alert.obj `if test -f 'output-plugins/sagan-alert.c'; then $(CYGPATH_W) 'output-plugins/sagan-alert.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-alert.c'; fi`
+
+sagan-sagan-esmtp.o: output-plugins/sagan-esmtp.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-esmtp.o -MD -MP -MF $(DEPDIR)/sagan-sagan-esmtp.Tpo -c -o sagan-sagan-esmtp.o `test -f 'output-plugins/sagan-esmtp.c' || echo '$(srcdir)/'`output-plugins/sagan-esmtp.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-esmtp.Tpo $(DEPDIR)/sagan-sagan-esmtp.Po
+#	$(AM_V_CC)source='output-plugins/sagan-esmtp.c' object='sagan-sagan-esmtp.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-esmtp.o `test -f 'output-plugins/sagan-esmtp.c' || echo '$(srcdir)/'`output-plugins/sagan-esmtp.c
+
+sagan-sagan-esmtp.obj: output-plugins/sagan-esmtp.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-esmtp.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-esmtp.Tpo -c -o sagan-sagan-esmtp.obj `if test -f 'output-plugins/sagan-esmtp.c'; then $(CYGPATH_W) 'output-plugins/sagan-esmtp.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-esmtp.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-esmtp.Tpo $(DEPDIR)/sagan-sagan-esmtp.Po
+#	$(AM_V_CC)source='output-plugins/sagan-esmtp.c' object='sagan-sagan-esmtp.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-esmtp.obj `if test -f 'output-plugins/sagan-esmtp.c'; then $(CYGPATH_W) 'output-plugins/sagan-esmtp.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-esmtp.c'; fi`
+
+sagan-sagan-external.o: output-plugins/sagan-external.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-external.o -MD -MP -MF $(DEPDIR)/sagan-sagan-external.Tpo -c -o sagan-sagan-external.o `test -f 'output-plugins/sagan-external.c' || echo '$(srcdir)/'`output-plugins/sagan-external.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-external.Tpo $(DEPDIR)/sagan-sagan-external.Po
+#	$(AM_V_CC)source='output-plugins/sagan-external.c' object='sagan-sagan-external.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-external.o `test -f 'output-plugins/sagan-external.c' || echo '$(srcdir)/'`output-plugins/sagan-external.c
+
+sagan-sagan-external.obj: output-plugins/sagan-external.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-external.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-external.Tpo -c -o sagan-sagan-external.obj `if test -f 'output-plugins/sagan-external.c'; then $(CYGPATH_W) 'output-plugins/sagan-external.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-external.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-external.Tpo $(DEPDIR)/sagan-sagan-external.Po
+#	$(AM_V_CC)source='output-plugins/sagan-external.c' object='sagan-sagan-external.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-external.obj `if test -f 'output-plugins/sagan-external.c'; then $(CYGPATH_W) 'output-plugins/sagan-external.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-external.c'; fi`
+
+sagan-sagan-unified2.o: output-plugins/sagan-unified2.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-unified2.o -MD -MP -MF $(DEPDIR)/sagan-sagan-unified2.Tpo -c -o sagan-sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-unified2.Tpo $(DEPDIR)/sagan-sagan-unified2.Po
+#	$(AM_V_CC)source='output-plugins/sagan-unified2.c' object='sagan-sagan-unified2.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-unified2.o `test -f 'output-plugins/sagan-unified2.c' || echo '$(srcdir)/'`output-plugins/sagan-unified2.c
+
+sagan-sagan-unified2.obj: output-plugins/sagan-unified2.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-unified2.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-unified2.Tpo -c -o sagan-sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-unified2.Tpo $(DEPDIR)/sagan-sagan-unified2.Po
+#	$(AM_V_CC)source='output-plugins/sagan-unified2.c' object='sagan-sagan-unified2.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-unified2.obj `if test -f 'output-plugins/sagan-unified2.c'; then $(CYGPATH_W) 'output-plugins/sagan-unified2.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-unified2.c'; fi`
+
+sagan-sagan-twofish.o: output-plugins/sagan-twofish.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-twofish.o -MD -MP -MF $(DEPDIR)/sagan-sagan-twofish.Tpo -c -o sagan-sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-twofish.Tpo $(DEPDIR)/sagan-sagan-twofish.Po
+#	$(AM_V_CC)source='output-plugins/sagan-twofish.c' object='sagan-sagan-twofish.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-twofish.o `test -f 'output-plugins/sagan-twofish.c' || echo '$(srcdir)/'`output-plugins/sagan-twofish.c
+
+sagan-sagan-twofish.obj: output-plugins/sagan-twofish.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-twofish.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-twofish.Tpo -c -o sagan-sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-twofish.Tpo $(DEPDIR)/sagan-sagan-twofish.Po
+#	$(AM_V_CC)source='output-plugins/sagan-twofish.c' object='sagan-sagan-twofish.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-twofish.obj `if test -f 'output-plugins/sagan-twofish.c'; then $(CYGPATH_W) 'output-plugins/sagan-twofish.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-twofish.c'; fi`
+
+sagan-sagan-snortsam.o: output-plugins/sagan-snortsam.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-snortsam.o -MD -MP -MF $(DEPDIR)/sagan-sagan-snortsam.Tpo -c -o sagan-sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-snortsam.Tpo $(DEPDIR)/sagan-sagan-snortsam.Po
+#	$(AM_V_CC)source='output-plugins/sagan-snortsam.c' object='sagan-sagan-snortsam.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-snortsam.o `test -f 'output-plugins/sagan-snortsam.c' || echo '$(srcdir)/'`output-plugins/sagan-snortsam.c
+
+sagan-sagan-snortsam.obj: output-plugins/sagan-snortsam.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-snortsam.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-snortsam.Tpo -c -o sagan-sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-snortsam.Tpo $(DEPDIR)/sagan-sagan-snortsam.Po
+#	$(AM_V_CC)source='output-plugins/sagan-snortsam.c' object='sagan-sagan-snortsam.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
+
+sagan-sagan-engine.o: processors/sagan-engine.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-engine.o -MD -MP -MF $(DEPDIR)/sagan-sagan-engine.Tpo -c -o sagan-sagan-engine.o `test -f 'processors/sagan-engine.c' || echo '$(srcdir)/'`processors/sagan-engine.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-engine.Tpo $(DEPDIR)/sagan-sagan-engine.Po
+#	$(AM_V_CC)source='processors/sagan-engine.c' object='sagan-sagan-engine.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-engine.o `test -f 'processors/sagan-engine.c' || echo '$(srcdir)/'`processors/sagan-engine.c
+
+sagan-sagan-engine.obj: processors/sagan-engine.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-engine.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-engine.Tpo -c -o sagan-sagan-engine.obj `if test -f 'processors/sagan-engine.c'; then $(CYGPATH_W) 'processors/sagan-engine.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-engine.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-engine.Tpo $(DEPDIR)/sagan-sagan-engine.Po
+#	$(AM_V_CC)source='processors/sagan-engine.c' object='sagan-sagan-engine.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-engine.obj `if test -f 'processors/sagan-engine.c'; then $(CYGPATH_W) 'processors/sagan-engine.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-engine.c'; fi`
+
+sagan-sagan-track-clients.o: processors/sagan-track-clients.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-track-clients.o -MD -MP -MF $(DEPDIR)/sagan-sagan-track-clients.Tpo -c -o sagan-sagan-track-clients.o `test -f 'processors/sagan-track-clients.c' || echo '$(srcdir)/'`processors/sagan-track-clients.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-track-clients.Tpo $(DEPDIR)/sagan-sagan-track-clients.Po
+#	$(AM_V_CC)source='processors/sagan-track-clients.c' object='sagan-sagan-track-clients.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-track-clients.o `test -f 'processors/sagan-track-clients.c' || echo '$(srcdir)/'`processors/sagan-track-clients.c
+
+sagan-sagan-track-clients.obj: processors/sagan-track-clients.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-track-clients.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-track-clients.Tpo -c -o sagan-sagan-track-clients.obj `if test -f 'processors/sagan-track-clients.c'; then $(CYGPATH_W) 'processors/sagan-track-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-track-clients.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-track-clients.Tpo $(DEPDIR)/sagan-sagan-track-clients.Po
+#	$(AM_V_CC)source='processors/sagan-track-clients.c' object='sagan-sagan-track-clients.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-track-clients.obj `if test -f 'processors/sagan-track-clients.c'; then $(CYGPATH_W) 'processors/sagan-track-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-track-clients.c'; fi`
+
+sagan-sagan-websense.o: processors/sagan-websense.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-websense.o -MD -MP -MF $(DEPDIR)/sagan-sagan-websense.Tpo -c -o sagan-sagan-websense.o `test -f 'processors/sagan-websense.c' || echo '$(srcdir)/'`processors/sagan-websense.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-websense.Tpo $(DEPDIR)/sagan-sagan-websense.Po
+#	$(AM_V_CC)source='processors/sagan-websense.c' object='sagan-sagan-websense.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-websense.o `test -f 'processors/sagan-websense.c' || echo '$(srcdir)/'`processors/sagan-websense.c
+
+sagan-sagan-websense.obj: processors/sagan-websense.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-websense.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-websense.Tpo -c -o sagan-sagan-websense.obj `if test -f 'processors/sagan-websense.c'; then $(CYGPATH_W) 'processors/sagan-websense.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-websense.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-websense.Tpo $(DEPDIR)/sagan-sagan-websense.Po
+#	$(AM_V_CC)source='processors/sagan-websense.c' object='sagan-sagan-websense.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-websense.obj `if test -f 'processors/sagan-websense.c'; then $(CYGPATH_W) 'processors/sagan-websense.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-websense.c'; fi`
+
+sagan-sagan-blacklist.o: processors/sagan-blacklist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-blacklist.o -MD -MP -MF $(DEPDIR)/sagan-sagan-blacklist.Tpo -c -o sagan-sagan-blacklist.o `test -f 'processors/sagan-blacklist.c' || echo '$(srcdir)/'`processors/sagan-blacklist.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-blacklist.Tpo $(DEPDIR)/sagan-sagan-blacklist.Po
+#	$(AM_V_CC)source='processors/sagan-blacklist.c' object='sagan-sagan-blacklist.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-blacklist.o `test -f 'processors/sagan-blacklist.c' || echo '$(srcdir)/'`processors/sagan-blacklist.c
+
+sagan-sagan-blacklist.obj: processors/sagan-blacklist.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-blacklist.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-blacklist.Tpo -c -o sagan-sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-blacklist.Tpo $(DEPDIR)/sagan-sagan-blacklist.Po
+#	$(AM_V_CC)source='processors/sagan-blacklist.c' object='sagan-sagan-blacklist.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
+
+sagan-sagan-search.o: processors/sagan-search.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-search.o -MD -MP -MF $(DEPDIR)/sagan-sagan-search.Tpo -c -o sagan-sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-search.Tpo $(DEPDIR)/sagan-sagan-search.Po
+#	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-sagan-search.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
+
+sagan-sagan-search.obj: processors/sagan-search.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-search.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-search.Tpo -c -o sagan-sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-search.Tpo $(DEPDIR)/sagan-sagan-search.Po
+#	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-sagan-search.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

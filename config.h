@@ -49,12 +49,6 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
-/* Define to 1 if you have the <json.h> header file. */
-/* #undef HAVE_JSON_H */
-
-/* Define to 1 if you have the <json/json.h> header file. */
-#define HAVE_JSON_JSON_H 1
-
 /* Define to 1 if you have the `curl' library (-lcurl). */
 /* #undef HAVE_LIBCURL */
 
@@ -67,20 +61,8 @@
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 /* #undef HAVE_LIBESMTP */
 
-/* Define to 1 if you have the `estr' library (-lestr). */
-#define HAVE_LIBESTR 1
-
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
 /* #undef HAVE_LIBGEOIP */
-
-/* Define to 1 if you have the `json' library (-ljson). */
-#define HAVE_LIBJSON 1
-
-/* Define to 1 if you have the `json-c' library (-ljson-c). */
-/* #undef HAVE_LIBJSON_C */
-
-/* Define to 1 if you have the `lognorm' library (-llognorm). */
-#define HAVE_LIBLOGNORM 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
