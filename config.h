@@ -61,8 +61,14 @@
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
 /* #undef HAVE_LIBESMTP */
 
+/* Define to 1 if you have the `estr' library (-lestr). */
+#define HAVE_LIBESTR 1
+
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
 /* #undef HAVE_LIBGEOIP */
+
+/* Define to 1 if you have the `lognorm' library (-llognorm). */
+#define HAVE_LIBLOGNORM 1
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1

@@ -198,7 +198,16 @@ if test "$LOGNORM" = "yes"; then
        PKG_CHECK_MODULES(LIBESTR, libestr >= 0.0.0)
        PKG_CHECK_MODULES(LIBLOGNORM, lognorm >= 1.0.0)
        PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
-
+       AC_CHECK_HEADER([liblognorm.h])
+       AC_CHECK_HEADER([libestr.h])
+       AC_CHECK_LIB(estr, main,,AC_MSG_ERROR(The libestr library cannot be found.
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. ))
+      AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
+This library is important for the correlation aspects of Sagan! Please see
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. ))
        fi
 
 if test "$LIBPCAP" = "yes"; then
