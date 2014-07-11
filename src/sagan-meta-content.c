@@ -69,7 +69,9 @@ if ( rulestruct[rule_position].meta_content_not[z] == 0 ) {
 
 				/* Search for "content help" + "content" */
 
-				snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+				/* This needs to happen in sagan-rules.c,  not here */
+
+				strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search)); 
 
 				if ( rulestruct[rule_position].meta_content_case[z] == 1 )
 					{

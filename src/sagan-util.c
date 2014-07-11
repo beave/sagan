@@ -587,3 +587,47 @@ ret_buf = final_content;
 return(ret_buf);
 }
 
+/****************************************************************************
+ * Sagan_Replace_Sagan() - Take the %sagan% out of a string and replaces it 
+ * with *replace 
+ ****************************************************************************/
+
+char *Sagan_Replace_Sagan( char *string_in, char *replace) 
+{
+
+char string[1024] = { 0 }; 
+char new_string[1024] = { 0 }; 
+char tmp[2] = { 0 }; 
+
+char *buf = NULL; 
+
+int i; 
+
+strlcpy(string, string_in, sizeof(string)); 
+
+for (i = 0; i < strlen(string); i++) { 
+
+	if ( string[i] == '%' ) { 
+		
+		if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
+		     string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' ) { 
+
+		     strlcat(new_string, replace, sizeof(new_string));
+		     i = i + 6;  /* Skip to end of %sagan% */
+
+		     } else { 
+
+		     strlcat(new_string, "%", sizeof(new_string)); 
+		     }
+		} else { 
+
+		snprintf(tmp, sizeof(tmp), "%c", string[i]); 
+		strlcat(new_string, tmp, sizeof(new_string)); 
+		}
+	}
+
+buf = new_string; 
+return(buf); 
+}
+
+
