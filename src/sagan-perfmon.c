@@ -1,5 +1,4 @@
 
-
 /*
 
 processor perfmonitor: time=300 file=/var/log/sagan/sagan.stats
@@ -16,7 +15,7 @@ counters->threshold_total			Threshold Total			engine.threshold.total,
 counters->sagan_processor_drop			Dropped (Due to errors)		engine.drop.total,
 counters->ignore_count				Ignored (on purpose)		engine.ignored.total,
 
-total = counters->sagantotal / seconds          Avg. per "time" (time=300)	engine.eps		(total? or within time=?)
+total = counters->sagantotal / seconds          Avg. per "time" (time=300)	engine.eps		(Total, not within "time")
 
 #ifdef HAVE_LIBGEOIP
 
