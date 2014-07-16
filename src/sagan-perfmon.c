@@ -1,5 +1,5 @@
-
 /*
+
 
 processor perfmonitor: time=300 file=/var/log/sagan/sagan.stats
 
@@ -57,11 +57,11 @@ counters->dns_miss_count			DNS misses			dns.miss
 #ifdef WITH_WEBSENSE
 if (config->websense_flag) { 
 
-counters->websense_cache_count			Websense Cache Count		websense.cache_count
-counters->websense_cache_hit			Hits from Websense Cache	websense.hits
-counters->websense_ignore_hit			Ignored (on purpose)		websense.ignored
-counters->websense_error_count			Websense Errors			websense.errors
-counters->websense_postive_hit			Hits in logs			websense.found (?)
+counters->websense_cache_count			Websense Cache Count		processor.websense.cache_count
+counters->websense_cache_hit			Hits from Websense Cache	processor.websense.hits
+counters->websense_ignore_hit			Ignored (on purpose)		processor.websense.ignored
+counters->websense_error_count			Websense Errors			processor.websense.errors
+counters->websense_postive_hit			Hits in logs			processor.websense.found (?)
 
 }
 #endif
