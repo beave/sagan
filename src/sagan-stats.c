@@ -101,6 +101,7 @@ void sagan_statistics( void )
             Sagan_Log(S_NORMAL, "           GeoIP Misses             : %" PRIu64 "", counters->geoip_miss);
 #endif
 
+	     /* TODO - ever really completed this */
 
             if ( seconds >= 60 && seconds <= 3600) Sagan_Log(S_NORMAL, "           Runtime                  : %u minutes", seconds / 60);
             if ( seconds < 60 ) Sagan_Log(S_NORMAL, "           Runtime                  : %u seconds", seconds);
