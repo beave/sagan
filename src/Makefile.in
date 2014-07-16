@@ -108,11 +108,12 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-protocol-map.$(OBJEXT) sagan-sagan-geoip.$(OBJEXT) \
 	sagan-sagan-meta-content.$(OBJEXT) \
 	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-alert-time.$(OBJEXT) \
-	sagan-parse-ip.$(OBJEXT) sagan-parse-port.$(OBJEXT) \
-	sagan-parse-proto.$(OBJEXT) sagan-sagan-alert.$(OBJEXT) \
-	sagan-sagan-esmtp.$(OBJEXT) sagan-sagan-external.$(OBJEXT) \
-	sagan-sagan-unified2.$(OBJEXT) sagan-sagan-twofish.$(OBJEXT) \
-	sagan-sagan-snortsam.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
+	sagan-sagan-perfmon.$(OBJEXT) sagan-parse-ip.$(OBJEXT) \
+	sagan-parse-port.$(OBJEXT) sagan-parse-proto.$(OBJEXT) \
+	sagan-sagan-alert.$(OBJEXT) sagan-sagan-esmtp.$(OBJEXT) \
+	sagan-sagan-external.$(OBJEXT) sagan-sagan-unified2.$(OBJEXT) \
+	sagan-sagan-twofish.$(OBJEXT) sagan-sagan-snortsam.$(OBJEXT) \
+	sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
 	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
 	sagan-sagan-search.$(OBJEXT)
@@ -318,6 +319,7 @@ sagan-geoip.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-alert-time.c \
+sagan-perfmon.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
@@ -441,6 +443,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-lockfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-meta-content.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-output.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-perfmon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-plog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-protocol-map.Po@am__quote@
@@ -838,6 +841,20 @@ sagan-sagan-alert-time.obj: sagan-alert-time.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-alert-time.c' object='sagan-sagan-alert-time.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-alert-time.obj `if test -f 'sagan-alert-time.c'; then $(CYGPATH_W) 'sagan-alert-time.c'; else $(CYGPATH_W) '$(srcdir)/sagan-alert-time.c'; fi`
+
+sagan-sagan-perfmon.o: sagan-perfmon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-perfmon.o -MD -MP -MF $(DEPDIR)/sagan-sagan-perfmon.Tpo -c -o sagan-sagan-perfmon.o `test -f 'sagan-perfmon.c' || echo '$(srcdir)/'`sagan-perfmon.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-perfmon.Tpo $(DEPDIR)/sagan-sagan-perfmon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-perfmon.c' object='sagan-sagan-perfmon.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-perfmon.o `test -f 'sagan-perfmon.c' || echo '$(srcdir)/'`sagan-perfmon.c
+
+sagan-sagan-perfmon.obj: sagan-perfmon.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-perfmon.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-perfmon.Tpo -c -o sagan-sagan-perfmon.obj `if test -f 'sagan-perfmon.c'; then $(CYGPATH_W) 'sagan-perfmon.c'; else $(CYGPATH_W) '$(srcdir)/sagan-perfmon.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-perfmon.Tpo $(DEPDIR)/sagan-sagan-perfmon.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-perfmon.c' object='sagan-sagan-perfmon.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-perfmon.obj `if test -f 'sagan-perfmon.c'; then $(CYGPATH_W) 'sagan-perfmon.c'; else $(CYGPATH_W) '$(srcdir)/sagan-perfmon.c'; fi`
 
 sagan-parse-ip.o: parsers/parse-ip.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-parse-ip.o -MD -MP -MF $(DEPDIR)/sagan-parse-ip.Tpo -c -o sagan-parse-ip.o `test -f 'parsers/parse-ip.c' || echo '$(srcdir)/'`parsers/parse-ip.c

@@ -61,6 +61,9 @@ if ( rulestruct[rule_position].meta_content_not[z] == 0 ) {
 	for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
 		{
 
+		/* TODO:  This needs to be pre-processed in sagan-rules.c and stored in memory.
+		 * This waste CPU */
+
 		strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
 		ptmp = strtok_r(tmp, ",", &tok);
 

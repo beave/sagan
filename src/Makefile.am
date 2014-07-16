@@ -30,6 +30,7 @@ sagan-geoip.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-alert-time.c \
+sagan-perfmon.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
