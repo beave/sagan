@@ -1,10 +1,14 @@
 /*
 
 
+sagan.conf
 processor perfmonitor: time=300 file=/var/log/sagan/sagan.stats
 
-Totals are "since last write" .  We'll need to subtract current verses old? 
+################################ Perfmon stop: pid=2274 at=Wed Jul 16 03:45:17 2014 (1405482317) ###################################
+################################ Perfmon start: pid=7310 at=Wed Jul 16 03:45:31 2014 (1405482331) ###################################
 
+
+Totals are "since last write" .  We'll need to subtract current verses old? 
 
 utime, 						Current time			engime.utime,
 counters->sagantotal 				Total Event			engine.total, 
