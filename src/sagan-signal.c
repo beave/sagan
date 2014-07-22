@@ -46,6 +46,7 @@
 #include "sagan-stats.h"
 #include "sagan-gen-msg.h"
 #include "sagan-classifications.h"
+#include "processors/sagan-perfmon.h"
 #include "sagan-rules.h"
 
 #include "processors/sagan-blacklist.h"
@@ -132,6 +133,9 @@ void Sig_Handler( _SaganSigArgs *args )
                     fflush(config->sagan_log_stream);               /* Close the sagan.log */
                     fclose(config->sagan_log_stream);
 
+		    if ( config->perfmonitor_flag ) 
+			Sagan_Perfmonitor_Exit(); 
+			
                     Remove_Lock_File();
                     exit(0);
                     break;

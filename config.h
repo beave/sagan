@@ -17,7 +17,7 @@
 #define HAVE_CTYPE_H 1
 
 /* Define to 1 if you have the <dnet.h> header file. */
-#define HAVE_DNET_H 1
+/* #undef HAVE_DNET_H */
 
 /* Define to 1 if you have the <dumbnet.h> header file. */
 /* #undef HAVE_DUMBNET_H */
@@ -53,7 +53,7 @@
 /* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
-#define HAVE_LIBDNET 1
+/* #undef HAVE_LIBDNET */
 
 /* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
 /* #undef HAVE_LIBDUMBNET */
@@ -62,13 +62,13 @@
 /* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
-#define HAVE_LIBESTR 1
+/* #undef HAVE_LIBESTR */
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
 /* #undef HAVE_LIBGEOIP */
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
-#define HAVE_LIBLOGNORM 1
+/* #undef HAVE_LIBLOGNORM */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -161,10 +161,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlcat' function. */
-/* #undef HAVE_STRLCAT */
+#define HAVE_STRLCAT 1
 
 /* Define to 1 if you have the `strlcpy' function. */
-/* #undef HAVE_STRLCPY */
+#define HAVE_STRLCPY 1
 
 /* Define to 1 if you have the `strlen' function. */
 #define HAVE_STRLEN 1
@@ -219,7 +219,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "sagan"

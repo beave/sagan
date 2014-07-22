@@ -71,6 +71,7 @@
 #include "processors/sagan-search.h"
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
+#include "processors/sagan-perfmon.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -145,7 +146,16 @@ int main(int argc, char **argv)
 #endif
 
     /****************************************************************************/
-    /* Various local variables						    */
+    /* Perfmonitor local variables                                              */
+    /****************************************************************************/
+
+    pthread_t perfmonitor_thread; 
+    pthread_attr_t thread_perfmonitor_attr;
+    pthread_attr_init(&thread_perfmonitor_attr);
+    pthread_attr_setdetachstate(&thread_perfmonitor_attr,  PTHREAD_CREATE_DETACHED);
+
+    /****************************************************************************/
+    /* Various local variables						        */
     /****************************************************************************/
 
     /* Block all signals,  we create a signal handling thread */
@@ -437,16 +447,38 @@ int main(int argc, char **argv)
                 }
 
             sleep(1); 	/* Sleep to avoid race between main() and plog thread
-		   plog thread needs "root" rights before sagan_droppriv().
-		   In some cases main() run sagan_droppriv() before thread
-		   can complete - Champ Clark - 07/20/2011 */
+		   	plog thread needs "root" rights before sagan_droppriv().
+		   	In some cases main() run sagan_droppriv() before thread
+		   	can complete - Champ Clark - 07/20/2011 */
 
         }
 #endif
 
-    sagan_droppriv(runas);		/* Become the Sagan user */
+
+    sagan_droppriv(runas);              /* Become the Sagan user */
     Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
 
+
+    if ( config->perfmonitor_flag ) 
+	{
+
+	    if (( config->perfmonitor_file_stream = fopen(config->perfmonitor_file_name, "a" )) == NULL )
+                {
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->perfmonitor_file_name);
+                }
+
+
+	    rc = pthread_create( &perfmonitor_thread, NULL, (void *)Sagan_Perfmonitor_Handler, sigargs );
+	    
+  	    if ( rc != 0 ) 
+		{ 
+		    Remove_Lock_File();
+		    Sagan_Log(S_ERROR, "[%s, line %d] Error creating Perfmonitor thread [error: %d].", __FILE__, __LINE__, rc);
+		} 
+	}
+
+    
     /* Open sagan alert file */
 
     if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL )

@@ -85,6 +85,11 @@ struct _SaganConfig
     sbool       blacklist_lognorm;
     int         blacklist_priority;
 
+    sbool	perfmonitor_flag; 
+    int		perfmonitor_time; 
+    char	perfmonitor_file_name[MAXPATH];
+    FILE	*perfmonitor_file_stream;
+
     sbool       search_nocase_flag;
     char        search_nocase_file[MAXPATH];
     int         search_nocase_parse_depth;

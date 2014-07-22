@@ -30,7 +30,6 @@ sagan-geoip.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-alert-time.c \
-sagan-perfmon.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
@@ -44,7 +43,8 @@ processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
-processors/sagan-search.c
+processors/sagan-search.c \
+processors/sagan-perfmon.c
 
 
 install-data-local:
