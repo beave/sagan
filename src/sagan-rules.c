@@ -384,10 +384,10 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "unset"))
                                 {
 
-				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+                                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-				    if ( tmptoken != NULL )
-				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                                    if ( tmptoken != NULL )
+                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
                                     flowbit_has_been_set = 0;
@@ -411,11 +411,11 @@ void Load_Rules( const char *ruleset )
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-				    if ( tmptoken != NULL ) 
-				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset); 
+                                    if ( tmptoken != NULL )
+                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
 
-				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-				    flowbit_has_been_set = 0;
+                                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+                                    flowbit_has_been_set = 0;
 
                                     for (i = 0; i<counters->flowbit_count; i++)
                                         {
@@ -434,10 +434,10 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "isnotset"))
                                 {
 
-				    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+                                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-				    if ( tmptoken != NULL )
-				    	rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                                    if ( tmptoken != NULL )
+                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
                                     flowbit_has_been_set = 0;

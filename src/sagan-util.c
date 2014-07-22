@@ -518,116 +518,124 @@ int Sagan_Check_Var(const char *string)
 /************************************************************************************************
 * This is for |HEX| support (like in Snort).  From example: content: "User |3a 3c 53| and such";
 * If the content has no pipes,  we leave it unaltered.  If it has pipes,  we insert the ASCII
-* values of the Hex within the content (keeping formating correct - Champ Clark - 12/04/2013 
-* Move to this function 05/05/2014 - Champ Clark 
+* values of the Hex within the content (keeping formating correct - Champ Clark - 12/04/2013
+* Move to this function 05/05/2014 - Champ Clark
 *************************************************************************************************/
 
 
-char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset) { 
+char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
+{
 
-int pipe_flag = 0;
+    int pipe_flag = 0;
     char final_content[512] = { 0 };
     char final_content_tmp[512] = { 0 };
-    char *ret_buf = NULL; 
+    char *ret_buf = NULL;
     char tmp2[512];
-    int i; 
-    int x; 
+    int i;
+    int x;
     char tmp[2];
 
 
-		strlcpy(tmp2, in_string, sizeof(tmp2)); 
+    strlcpy(tmp2, in_string, sizeof(tmp2));
 
+    pipe_flag = 0;
+
+    for ( i=0; i<strlen(tmp2); i++)
+        {
+
+
+            if ( tmp2[i] == '|' && pipe_flag == 0 ) pipe_flag = 1;              /* First | has been found */
+
+            /* If we haven't found any |'s,  just copy the content verbatium */
+
+            if ( pipe_flag == 0 )
+                {
+                    snprintf(final_content_tmp, sizeof(final_content_tmp), "%c", tmp2[i]);
+                    strncat(final_content, final_content_tmp, 1);
+                }
+
+            /* If | has been found,  start the conversion */
+
+            if ( pipe_flag == 1 )
+                {
+
+                    if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
+
+                    snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
+
+                    if (!Sagan_Validate_HEX(final_content_tmp)) Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+
+                    sscanf(final_content_tmp, "%x", &x);                                                        /* Convert hex to dec */
+                    snprintf(tmp, sizeof(tmp), "%c", x);                                                        /* Convert dec to ASCII */
+                    strncat(final_content, tmp, 1);                                                     /* Append value */
+
+                    /* Last | found,  but continue processing rest of content as normal */
+
+                    if ( tmp2[i+3] == '|' )
+                        {
                             pipe_flag = 0;
+                            i=i+3;
+                        }
+                    else
+                        {
+                            i = i+2;
+                        }
+                }
 
-                            for ( i=0; i<strlen(tmp2); i++)
-                                {
+        }
 
-
-                                    if ( tmp2[i] == '|' && pipe_flag == 0 ) pipe_flag = 1;              /* First | has been found */
-
-                                    /* If we haven't found any |'s,  just copy the content verbatium */
-
-                                    if ( pipe_flag == 0 )
-                                        {
-                                            snprintf(final_content_tmp, sizeof(final_content_tmp), "%c", tmp2[i]);
-                                            strncat(final_content, final_content_tmp, 1);
-                                        }
-
-                                    /* If | has been found,  start the conversion */
-
-                                    if ( pipe_flag == 1 )
-                                        {
-
-                                            if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
-
-                                            snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
-
-                                            if (!Sagan_Validate_HEX(final_content_tmp)) Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
-
-                                            sscanf(final_content_tmp, "%x", &x);                                                        /* Convert hex to dec */
-                                            snprintf(tmp, sizeof(tmp), "%c", x);                                                        /* Convert dec to ASCII */
-                                            strncat(final_content, tmp, 1);                                                     /* Append value */
-
-                                            /* Last | found,  but continue processing rest of content as normal */
-
-                                            if ( tmp2[i+3] == '|' )
-                                                {
-                                                    pipe_flag = 0;
-                                                    i=i+3;
-                                                }
-                                            else
-                                                {
-                                                    i = i+2;
-                                                }
-                                        }
-
-                                }
-
-ret_buf = final_content; 
-return(ret_buf);
+    ret_buf = final_content;
+    return(ret_buf);
 }
 
 /****************************************************************************
- * Sagan_Replace_Sagan() - Take the %sagan% out of a string and replaces it 
- * with *replace 
+ * Sagan_Replace_Sagan() - Take the %sagan% out of a string and replaces it
+ * with *replace
  ****************************************************************************/
 
-char *Sagan_Replace_Sagan( char *string_in, char *replace) 
+char *Sagan_Replace_Sagan( char *string_in, char *replace)
 {
 
-char string[1024] = { 0 }; 
-char new_string[1024] = { 0 }; 
-char tmp[2] = { 0 }; 
+    char string[1024] = { 0 };
+    char new_string[1024] = { 0 };
+    char tmp[2] = { 0 };
 
-char *buf = NULL; 
+    char *buf = NULL;
 
-int i; 
+    int i;
 
-strlcpy(string, string_in, sizeof(string)); 
+    strlcpy(string, string_in, sizeof(string));
 
-for (i = 0; i < strlen(string); i++) { 
+    for (i = 0; i < strlen(string); i++)
+        {
 
-	if ( string[i] == '%' ) { 
-		
-		if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
-		     string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' ) { 
+            if ( string[i] == '%' )
+                {
 
-		     strlcat(new_string, replace, sizeof(new_string));
-		     i = i + 6;  /* Skip to end of %sagan% */
+                    if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
+                            string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' )
+                        {
 
-		     } else { 
+                            strlcat(new_string, replace, sizeof(new_string));
+                            i = i + 6;  /* Skip to end of %sagan% */
 
-		     strlcat(new_string, "%", sizeof(new_string)); 
-		     }
-		} else { 
+                        }
+                    else
+                        {
 
-		snprintf(tmp, sizeof(tmp), "%c", string[i]); 
-		strlcat(new_string, tmp, sizeof(new_string)); 
-		}
-	}
+                            strlcat(new_string, "%", sizeof(new_string));
+                        }
+                }
+            else
+                {
 
-buf = new_string; 
-return(buf); 
+                    snprintf(tmp, sizeof(tmp), "%c", string[i]);
+                    strlcat(new_string, tmp, sizeof(new_string));
+                }
+        }
+
+    buf = new_string;
+    return(buf);
 }
 
 

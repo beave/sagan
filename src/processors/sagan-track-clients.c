@@ -101,7 +101,7 @@ void Sagan_Load_Tracking_Cache ( void )
                         {
                             /* Allocate memory for tracking clients cache */
 
-		pthread_mutex_lock(&SaganProcTrackClientsMutex);
+                            pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
                             SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
                             strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
@@ -109,7 +109,7 @@ void Sagan_Load_Tracking_Cache ( void )
                             SaganTrackClients[counters->track_clients_client_count].status = 0;
                             counters->track_clients_client_count++;
 
-		pthread_mutex_unlock(&SaganProcTrackClientsMutex);
+                            pthread_mutex_unlock(&SaganProcTrackClientsMutex);
 
                         }
                 }

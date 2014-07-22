@@ -694,8 +694,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                              * Flowbit
                              ****************************************************************************/
 
-                            if ( rulestruct[b].flowbit_flag ) 
-				    flowbit_isset = Sagan_Flowbit(b, ip_src, ip_dst); 
+                            if ( rulestruct[b].flowbit_flag )
+                                flowbit_isset = Sagan_Flowbit(b, ip_src, ip_dst);
 
 
                             /****************************************************************************
@@ -758,8 +758,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
                             /****************************************************************************
-			     * "meta_content" searching
-                             ****************************************************************************/
+                            * "meta_content" searching
+                                                 ****************************************************************************/
 
                             if ( rulestruct[b].meta_content_flag )
                                 {
@@ -768,7 +768,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     meta_content_return =  Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
 
-				    if ( meta_content_return == 1 ) meta_content_trigger = 1;
+                                    if ( meta_content_return == 1 ) meta_content_trigger = 1;
                                 }
 
                             /****************************************************************************
@@ -867,7 +867,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
             rc=0;
         } /* End for for loop */
 
-    free(processor_info_engine); 
+    free(processor_info_engine);
 
     return(0);
 }

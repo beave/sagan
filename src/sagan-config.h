@@ -85,8 +85,8 @@ struct _SaganConfig
     sbool       blacklist_lognorm;
     int         blacklist_priority;
 
-    sbool	perfmonitor_flag; 
-    int		perfmonitor_time; 
+    sbool	perfmonitor_flag;
+    int		perfmonitor_time;
     char	perfmonitor_file_name[MAXPATH];
     FILE	*perfmonitor_file_stream;
 

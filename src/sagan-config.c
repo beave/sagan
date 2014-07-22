@@ -65,7 +65,7 @@
 
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-search.h"
-#include "processors/sagan-perfmon.h"	
+#include "processors/sagan-perfmon.h"
 
 #ifdef WITH_WEBSENSE
 #include "processors/sagan-websense.h"
@@ -359,44 +359,44 @@ void Load_Config( void )
                         }
 
 
-		    /******* Perfmon ********/
+                    /******* Perfmon ********/
 
-		    if (!strcmp(sagan_var1, "perfmonitor:")) 
-			{
-			    
-			    config->perfmonitor_time = 0; 
-   			    config->perfmonitor_file_name[0] = '\0'; 
+                    if (!strcmp(sagan_var1, "perfmonitor:"))
+                        {
 
-			    config->perfmonitor_flag = 1; 
+                            config->perfmonitor_time = 0;
+                            config->perfmonitor_file_name[0] = '\0';
 
-			    ptmp = sagan_var1; 
+                            config->perfmonitor_flag = 1;
 
-			    while (ptmp != NULL )
-				{ 
-				    
-				    if (!strcmp(ptmp, "time"))
-					{ 
-					ptmp = strtok_r(NULL, " ", &tok);	
-					config->perfmonitor_time = atoi(ptmp); 
-					}
+                            ptmp = sagan_var1;
 
-				    if (!strcmp(ptmp, "file")) 
-					{ 
-					ptmp = strtok_r(NULL," ", &tok);
-					strlcpy(config->perfmonitor_file_name, Remove_Return(ptmp), sizeof(config->perfmonitor_file_name)); 
-					}
-			         
-  				ptmp = strtok_r(NULL, "=", &tok);
-				}
-		
+                            while (ptmp != NULL )
+                                {
 
-			/* TODO:  Do these same sanity checks on other processors! */ 
-	
-			if ( config->perfmonitor_time == 0 || config->perfmonitor_file_name[0] == '\0' ) 
-				Sagan_Log(S_ERROR, "[%s, line %d] Perfmonitor time or file is incorrect or missing!", __FILE__, __LINE__);
-			   
-			}
-			
+                                    if (!strcmp(ptmp, "time"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            config->perfmonitor_time = atoi(ptmp);
+                                        }
+
+                                    if (!strcmp(ptmp, "file"))
+                                        {
+                                            ptmp = strtok_r(NULL," ", &tok);
+                                            strlcpy(config->perfmonitor_file_name, Remove_Return(ptmp), sizeof(config->perfmonitor_file_name));
+                                        }
+
+                                    ptmp = strtok_r(NULL, "=", &tok);
+                                }
+
+
+                            /* TODO:  Do these same sanity checks on other processors! */
+
+                            if ( config->perfmonitor_time == 0 || config->perfmonitor_file_name[0] == '\0' )
+                                Sagan_Log(S_ERROR, "[%s, line %d] Perfmonitor time or file is incorrect or missing!", __FILE__, __LINE__);
+
+                        }
+
 
                     /******* Backlist *******/
 

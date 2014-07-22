@@ -19,9 +19,9 @@
 */
 
 /*
- * sagan-flowbit.c - 
+ * sagan-flowbit.c -
  *
- * Used to track multiple log lines and alert 
+ * Used to track multiple log lines and alert
  *
  */
 
@@ -115,7 +115,7 @@ int Sagan_Flowbit(int rule_position, char *ip_src_char, char *ip_dst_char )
                         }
 
                 } /* End of for i */
-		
+
             return(FALSE);
 
         } /* End of flowbit_flag == 3 */

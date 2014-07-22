@@ -18,13 +18,13 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-meta-content.c - This allows content style "searching" that 
- * involve variables.  For example,  if we wanted to search for "bob", 
- * "frank" and "mary",  we'd typically need three content rules.  
+/* sagan-meta-content.c - This allows content style "searching" that
+ * involve variables.  For example,  if we wanted to search for "bob",
+ * "frank" and "mary",  we'd typically need three content rules.
  * This allows one rule with the $USER variable for "bob", "frank" and
- * "mary".  
+ * "mary".
  *
- * meta_content: "Username: ", $USERNAME"; meta_nocase; 
+ * meta_content: "Username: ", $USERNAME"; meta_nocase;
  *
  */
 
@@ -45,89 +45,92 @@ struct _Rule_Struct *rulestruct;
 int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 {
 
-char *ptmp = NULL;
-char *tok = NULL;
-char tmp[1024] = { 0 };
-char tmp_search[512] = { 0 }; 	
-int results = 0;
-int match = 0; 
-int return_code = 0;
-int z;
+    char *ptmp = NULL;
+    char *tok = NULL;
+    char tmp[1024] = { 0 };
+    char tmp_search[512] = { 0 };
+    int results = 0;
+    int match = 0;
+    int return_code = 0;
+    int z;
 
-if ( rulestruct[rule_position].meta_content_not[z] == 0 ) { 
+    if ( rulestruct[rule_position].meta_content_not[z] == 0 )
+        {
 
-	/* Normal "meta_content" (ie - not !) search */
+            /* Normal "meta_content" (ie - not !) search */
 
-	for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
-		{
+            for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+                {
 
-		/* TODO:  This needs to be pre-processed in sagan-rules.c and stored in memory.
-		 * This waste CPU */
+                    /* TODO:  This needs to be pre-processed in sagan-rules.c and stored in memory.
+                     * This waste CPU */
 
-		strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
-		ptmp = strtok_r(tmp, ",", &tok);
+                    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+                    ptmp = strtok_r(tmp, ",", &tok);
 
-			while (ptmp != NULL )
-				{
+                    while (ptmp != NULL )
+                        {
 
-				/* Search for "content help" + "content" */
+                            /* Search for "content help" + "content" */
 
-				/* This needs to happen in sagan-rules.c,  not here */
+                            /* This needs to happen in sagan-rules.c,  not here */
 
-				strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search)); 
+                            strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
 
-				if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-					{
-					if (strcasestr(syslog_msg, tmp_search)) results++;
-                        		}
-                    				else
-		                        {
-                            		if (strstr(syslog_msg, tmp_search))  results++;
-                        		}
-                    
-				ptmp = strtok_r(NULL, ",", &tok);
+                            if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                                {
+                                    if (strcasestr(syslog_msg, tmp_search)) results++;
+                                }
+                            else
+                                {
+                                    if (strstr(syslog_msg, tmp_search))  results++;
+                                }
 
-                		} // End of while(ptmp)
-		} // End of for(z) loop
+                            ptmp = strtok_r(NULL, ",", &tok);
 
-} else { 
+                        } // End of while(ptmp)
+                } // End of for(z) loop
 
-	/* Content! search */
-	
-	for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
-		{
+        }
+    else
+        {
 
-		strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
-		ptmp = strtok_r(tmp, ",", &tok);
+            /* Content! search */
 
-			while (ptmp != NULL )
-				{
+            for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+                {
 
-				snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+                    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+                    ptmp = strtok_r(tmp, ",", &tok);
 
-                        	if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-					{
-					if (strcasestr(syslog_msg, tmp_search)) match++;
-					}
-						else
-					{
-					if (strstr(syslog_msg, tmp_search)) match++; 
-					}
+                    while (ptmp != NULL )
+                        {
 
-					ptmp = strtok_r(NULL, ",", &tok);
+                            snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
 
-                		} // End of while(ptmp)
-		} // End of for(z) loop
+                            if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                                {
+                                    if (strcasestr(syslog_msg, tmp_search)) match++;
+                                }
+                            else
+                                {
+                                    if (strstr(syslog_msg, tmp_search)) match++;
+                                }
+
+                            ptmp = strtok_r(NULL, ",", &tok);
+
+                        } // End of while(ptmp)
+                } // End of for(z) loop
 
 
-	/* content! we do NOT want "match".  Zero means nothing matches! */
-	if ( match == 0 ) results++; 
-	
-} // end/else of if  meta_content_not ...
+            /* content! we do NOT want "match".  Zero means nothing matches! */
+            if ( match == 0 ) results++;
 
-if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);	
+        } // end/else of if  meta_content_not ...
 
-return(FALSE);
+    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);
+
+    return(FALSE);
 
 }
 

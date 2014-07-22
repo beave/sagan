@@ -87,7 +87,7 @@ struct _Sagan_Flowbit_Track *flowbit_track;
 struct _Sagan_Flowbit *flowbit;
 
 sbool sagan_reload; 	/* Used to indicate Sagan is in reload.  This keeps Sagan
-			   pulling rules, etc. from memory in the middle of a 
+			   pulling rules, etc. from memory in the middle of a
 			   reload */
 
 #ifdef WITH_WEBSENSE
@@ -133,9 +133,9 @@ void Sig_Handler( _SaganSigArgs *args )
                     fflush(config->sagan_log_stream);               /* Close the sagan.log */
                     fclose(config->sagan_log_stream);
 
-		    if ( config->perfmonitor_flag ) 
-			Sagan_Perfmonitor_Exit(); 
-			
+                    if ( config->perfmonitor_flag )
+                        Sagan_Perfmonitor_Exit();
+
                     Remove_Lock_File();
                     exit(0);
                     break;
@@ -143,7 +143,7 @@ void Sig_Handler( _SaganSigArgs *args )
                 case SIGHUP:
                     pthread_mutex_lock(&sig_mutex);
 
-		    sagan_reload = 1; 			/* So we don't wipe memory while in the middle of analysis */
+                    sagan_reload = 1; 			/* So we don't wipe memory while in the middle of analysis */
 
                     Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
@@ -153,13 +153,13 @@ void Sig_Handler( _SaganSigArgs *args )
                     counters->rulecount=0;
                     counters->ruletotal=0;
                     counters->genmapcount=0;
-		    counters->flowbit_track_count=0;
+                    counters->flowbit_track_count=0;
 
                     memset(rulestruct, 0, sizeof(_Rule_Struct));
                     memset(classstruct, 0, sizeof(_Class_Struct));
                     memset(generator, 0, sizeof(_Sagan_Processor_Generator));
-		    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
-		    memset(flowbit, 0, sizeof(_Sagan_Flowbit));
+                    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
+                    memset(flowbit, 0, sizeof(_Sagan_Flowbit));
 
 
                     /* Re-load primary configuration (rules/classifictions/etc) */
@@ -229,7 +229,7 @@ void Sig_Handler( _SaganSigArgs *args )
                     config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 #endif
 
-		    sagan_reload = 0; 
+                    sagan_reload = 0;
                     pthread_mutex_unlock(&sig_mutex);
 
                     Sagan_Log(S_NORMAL, "Configuration reloaded.");
