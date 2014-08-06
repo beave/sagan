@@ -77,6 +77,8 @@ void Sagan_Perfmonitor_Handler( void )
 #ifdef WITH_WEBSENSE
     uint64_t last_websense_cache_hit = 0;
     uint64_t last_websense_ignore_hit = 0;
+    uint64_t last_websense_error_count = 0;
+    uint64_t last_websense_positive_hit = 0;
 #endif
 
 
@@ -202,8 +204,8 @@ void Sagan_Perfmonitor_Handler( void )
 
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_count);
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counter->websense_cache_hit - last_websense_cache_hit);
-                    last_websense_cache_hit = counter->websense_cache_hit;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_hit - last_websense_cache_hit);
+                    last_websense_cache_hit = counters->websense_cache_hit;
 
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_ignore_hit - last_websense_ignore_hit);
                     last_websense_ignore_hit = counters->websense_ignore_hit;
