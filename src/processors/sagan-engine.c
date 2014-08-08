@@ -64,7 +64,6 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _Sagan_Flowbits *flowbits;
 
-
 pthread_mutex_t AfterMutexSrc=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t AfterMutexDst=PTHREAD_MUTEX_INITIALIZER;
 
@@ -139,6 +138,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int ovector[PCRE_OVECCOUNT];
     int  src_port;
     int  dst_port;
+    int  alter_num;
 
     char *ptmp;
     char *tok2;
@@ -153,6 +153,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     char tmpbuf[128];
     char s_msg[1024];
+    char alter_content[MAX_SYSLOGMSG];
 
     time_t t;
     struct tm *now;
@@ -250,32 +251,67 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             for(z=0; z<rulestruct[b].content_count; z++)
                                 {
 
+				    
+				    /* Content: OFFSET */
+
+                                    alter_num = 0;
+
+                                    if ( rulestruct[b].s_offset[z] != 0 )
+                                        {
+
+                                            if ( strlen(SaganProcSyslog_LOCAL->syslog_message) > rulestruct[b].s_offset[z] )
+                                                {
+
+                                                    alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].s_offset[z];
+                                                    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num + 1), alter_num + 1);
+
+                                                }
+                                            else
+                                                {
+
+                                                    alter_content[0] = '\0'; 	/* The offset is larger than the message.  Set content too NULL */
+
+                                                }
+
+
+                                        }
+                                    else
+                                        {
+
+                                            strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message, sizeof(alter_content));
+
+                                        }
+
+
                                     /* If case insensitive */
                                     if ( rulestruct[b].s_nocase[z] == 1 )
                                         {
 
-                                            if (rulestruct[b].content_not[z] != 1 && strcasestr(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_content[z]))
+                                            if (rulestruct[b].content_not[z] != 1 && strcasestr(alter_content, rulestruct[b].s_content[z]))
+
                                                 {
                                                     pcrematch++;
                                                 }
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !strcasestr(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_content[z])) pcrematch++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !strcasestr(alter_content, rulestruct[b].s_content[z])) pcrematch++;
+
                                                 }
                                         }
                                     else
                                         {
 
                                             /* If case sensitive */
-                                            if ( rulestruct[b].content_not[z] != 1 && strstr(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_content[z] ))
+                                            if ( rulestruct[b].content_not[z] != 1 && strstr(alter_content, rulestruct[b].s_content[z] ))
                                                 {
                                                     pcrematch++;
                                                 }
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !strstr(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_content[z])) pcrematch++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !strstr(alter_content, rulestruct[b].s_content[z])) pcrematch++;
+
                                                 }
                                         }
                                 }

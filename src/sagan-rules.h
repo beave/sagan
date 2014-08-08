@@ -47,7 +47,8 @@ struct _Rule_Struct
     char email[255];
     sbool email_flag;
 
-    int s_nocase[MAX_CONTENT];
+    sbool s_nocase[MAX_CONTENT];
+    int s_offset[MAX_CONTENT];
     int pcre_count;
     int content_count;
     int meta_content_count;

@@ -714,6 +714,13 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
                         }
 
+                    if (!strcmp(rulesplit, "offset"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+                            if (arg == NULL ) Sagan_Log(S_ERROR, "The \"offset\" appears to be missing at line %d in %s", linecount, ruleset);
+                            rulestruct[counters->rulecount].s_offset[content_count - 1] = atoi(arg);
+                        }
+
                     /* PCRE needs a little extra "work" */
 
                     if (!strcmp(rulesplit, "pcre" ))
