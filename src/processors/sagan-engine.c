@@ -282,6 +282,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                         }
 
+				    /* Content: DEPTH */ 
+
+				    if ( rulestruct[b].s_depth[z] != 0 )
+				        { 
+
+					/* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
+
+					strlcpy(alter_content, alter_content, rulestruct[b].s_depth[z] + 2); 
+
+					} 
+
+				    //printf("-> |%s|\n", SaganProcSyslog_LOCAL->syslog_message); 
+				    //printf("=> |%s|\n", alter_content); 
 
                                     /* If case insensitive */
                                     if ( rulestruct[b].s_nocase[z] == 1 )

@@ -49,6 +49,9 @@ struct _Rule_Struct
 
     sbool s_nocase[MAX_CONTENT];
     int s_offset[MAX_CONTENT];
+    int s_depth[MAX_CONTENT];
+
+
     int pcre_count;
     int content_count;
     int meta_content_count;
