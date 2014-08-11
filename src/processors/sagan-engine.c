@@ -251,8 +251,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             for(z=0; z<rulestruct[b].content_count; z++)
                                 {
 
-				    
-				    /* Content: OFFSET */
+
+                                    /* Content: OFFSET */
 
                                     alter_num = 0;
 
@@ -263,7 +263,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                 {
 
                                                     alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].s_offset[z];
-						    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
+                                                    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
 
                                                 }
                                             else
@@ -282,36 +282,37 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                         }
 
-				    /* Content: DEPTH */ 
+                                    /* Content: DEPTH */
 
-				    if ( rulestruct[b].s_depth[z] != 0 )
-				        { 
+                                    if ( rulestruct[b].s_depth[z] != 0 )
+                                        {
 
-					/* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
+                                            /* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
 
-					strlcpy(alter_content, alter_content, rulestruct[b].s_depth[z] + 2); 
+                                            strlcpy(alter_content, alter_content, rulestruct[b].s_depth[z] + 2);
 
-					}
+                                        }
 
-				    /* Content: DISTANCE */
+                                    /* Content: DISTANCE */
 
-				    if ( z > 0 && rulestruct[b].s_distance[z] != 0 && rulestruct[b].s_depth[z-1] != 0 ) 
-				 	{
+                                    if ( z > 0 && rulestruct[b].s_distance[z] != 0 && rulestruct[b].s_depth[z-1] != 0 )
+                                        {
 
-						alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].s_depth[z-1] + rulestruct[b].s_distance[z] + 1);
-						strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
+                                            alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].s_depth[z-1] + rulestruct[b].s_distance[z] + 1);
+                                            strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
 
-						/* Content: WITHIN */
+                                            /* Content: WITHIN */
 
-						if ( rulestruct[b].s_within[z] != 0 ) { 
-							strlcpy(alter_content, alter_content, rulestruct[b].s_within[z] + 1);
+                                            if ( rulestruct[b].s_within[z] != 0 )
+                                                {
+                                                    strlcpy(alter_content, alter_content, rulestruct[b].s_within[z] + 1);
 
-						}
+                                                }
 
-					}
+                                        }
 
-			  	    // printf("Orig: |%s|\n",  SaganProcSyslog_LOCAL->syslog_message); 
-				    // printf("Alter: |%s|\n", alter_content); 
+                                    // printf("Orig: |%s|\n",  SaganProcSyslog_LOCAL->syslog_message);
+                                    // printf("Alter: |%s|\n", alter_content);
 
 
 
