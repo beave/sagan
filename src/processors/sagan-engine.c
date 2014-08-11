@@ -310,6 +310,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 					}
 
+			  	    // printf("Orig: |%s|\n",  SaganProcSyslog_LOCAL->syslog_message); 
+				    // printf("Alter: |%s|\n", alter_content); 
+
+
 
                                     /* If case insensitive */
                                     if ( rulestruct[b].s_nocase[z] == 1 )
