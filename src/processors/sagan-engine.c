@@ -263,7 +263,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                 {
 
                                                     alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].s_offset[z];
-                                                    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num + 1), alter_num + 1);
+						    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
 
                                                 }
                                             else
@@ -291,10 +291,25 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 					strlcpy(alter_content, alter_content, rulestruct[b].s_depth[z] + 2); 
 
-					} 
+					}
 
-				    //printf("-> |%s|\n", SaganProcSyslog_LOCAL->syslog_message); 
-				    //printf("=> |%s|\n", alter_content); 
+				    /* Content: DISTANCE */
+
+				    if ( z > 0 && rulestruct[b].s_distance[z] != 0 && rulestruct[b].s_depth[z-1] != 0 ) 
+				 	{
+
+						alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].s_depth[z-1] + rulestruct[b].s_distance[z] + 1);
+						strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
+
+						/* Content: WITHIN */
+
+						if ( rulestruct[b].s_within[z] != 0 ) { 
+							strlcpy(alter_content, alter_content, rulestruct[b].s_within[z] + 1);
+
+						}
+
+					}
+
 
                                     /* If case insensitive */
                                     if ( rulestruct[b].s_nocase[z] == 1 )

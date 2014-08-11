@@ -50,7 +50,8 @@ struct _Rule_Struct
     sbool s_nocase[MAX_CONTENT];
     int s_offset[MAX_CONTENT];
     int s_depth[MAX_CONTENT];
-
+    int s_distance[MAX_CONTENT];
+    int s_within[MAX_CONTENT];
 
     int pcre_count;
     int content_count;

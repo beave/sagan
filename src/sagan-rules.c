@@ -729,6 +729,21 @@ void Load_Rules( const char *ruleset )
                         }
 
 
+                   if (!strcmp(rulesplit, "distance"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+                            if (arg == NULL ) Sagan_Log(S_ERROR, "The \"distance\" appears to be missing at line %d in %s", linecount, ruleset);
+                            rulestruct[counters->rulecount].s_distance[content_count - 1] = atoi(arg);
+                        }
+
+                   if (!strcmp(rulesplit, "within"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+                            if (arg == NULL ) Sagan_Log(S_ERROR, "The \"within\" appears to be missing at line %d in %s", linecount, ruleset);
+                            rulestruct[counters->rulecount].s_within[content_count - 1] = atoi(arg);
+                        }
+
+
                     /* PCRE needs a little extra "work" */
 
                     if (!strcmp(rulesplit, "pcre" ))
