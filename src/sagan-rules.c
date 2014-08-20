@@ -397,7 +397,7 @@ void Load_Rules( const char *ruleset )
                                             if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
-                                                    flowbit_has_been_set = 1;
+//                                                  flowbit_has_been_set = 1;
                                                 }
                                         }
 //                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
@@ -422,7 +422,7 @@ void Load_Rules( const char *ruleset )
                                             if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
-                                                    flowbit_has_been_set = 1;
+//                                                  flowbit_has_been_set = 1;
                                                 }
                                         }
 //                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
@@ -447,7 +447,7 @@ void Load_Rules( const char *ruleset )
                                             if (!strcmp(tmptoken, flowbit[i].flowbit_name))
                                                 {
                                                     rulestruct[counters->rulecount].flowbit_memory_position = i;
-                                                    flowbit_has_been_set = 1;
+//                                                  flowbit_has_been_set = 1;
                                                 }
                                         }
 //                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
