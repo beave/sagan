@@ -282,6 +282,5 @@ int Sagan_Flowbit_Type ( char *type, int linecount, const char *ruleset )
     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'none', 'both', by_src' or 'by_dst'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
     return(0); 	/* Should never make it here */
 
-
 }
 

@@ -400,7 +400,7 @@ void Load_Rules( const char *ruleset )
                                                     flowbit_has_been_set = 1;
                                                 }
                                         }
-                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     rulestruct[counters->rulecount].flowbit_flag=2;
                                 }
 
@@ -425,7 +425,7 @@ void Load_Rules( const char *ruleset )
                                                     flowbit_has_been_set = 1;
                                                 }
                                         }
-                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     rulestruct[counters->rulecount].flowbit_flag=3;
                                 }
 
@@ -450,7 +450,7 @@ void Load_Rules( const char *ruleset )
                                                     flowbit_has_been_set = 1;
                                                 }
                                         }
-                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     rulestruct[counters->rulecount].flowbit_flag=4;
                                 }
                         }
@@ -896,7 +896,7 @@ void Load_Rules( const char *ruleset )
 
                                             if (strlen(tmptok_tmp) > 7 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] To many days in 'alert_time' in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] To many days (%s) in 'alert_time' in %s at line %d.", __FILE__, __LINE__, tmptok_tmp, ruleset, linecount);
                                                 }
 
                                             strlcpy(alert_time_tmp1, tmptok_tmp, sizeof(alert_time_tmp1));

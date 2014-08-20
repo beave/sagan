@@ -65,7 +65,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-/* #undef HAVE_LIBGEOIP */
+#define HAVE_LIBGEOIP 1
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
 #define HAVE_LIBLOGNORM 1
