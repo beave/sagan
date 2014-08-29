@@ -163,6 +163,8 @@ int Sagan_Flowbit(int rule_position, char *ip_src_char, char *ip_dst_char )
                     pthread_mutex_unlock(&SaganFlowbitMutex);
                 }
 
+	return(TRUE);
+
         } /* End if flowbit_flag == 1 */
 
     /* Flowbit "unset" */

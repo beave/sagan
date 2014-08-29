@@ -505,7 +505,7 @@ void Load_Rules( const char *ruleset )
                     if (!strcmp(rulesplit, "meta_content"))
                         {
 
-                            if ( meta_content_count > MAX_CONTENT )
+                            if ( meta_content_count > MAX_META_CONTENT )
                                 Sagan_Log(S_ERROR, "There is to many \"meta_content\" types in the rule at line %d in %s", linecount, ruleset);
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -1115,6 +1115,8 @@ void Load_Rules( const char *ruleset )
 
             pcre_count=0;
             content_count=0;
+	    meta_content_count=0; 
+
             netcount=0;
             ref_count=0;
             strlcpy(netstr, "", 1);

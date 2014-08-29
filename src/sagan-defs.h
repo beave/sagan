@@ -60,14 +60,11 @@
 
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */
-#define MAX_META_CONTENT	10
+#define MAX_META_CONTENT	10		/* Max 'meta_content' within a rule */
+
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
-#define MAXUSER         32
-#define	MAXPASS		64
-
-#define BUFLEN 		8192		/* For libesmtp */
 #define MAXIP		16		/* Max IP length.  Change to 64 for future IPv6 support */
 
 #define LOCKFILE 	"/var/run/sagan/sagan.pid"
