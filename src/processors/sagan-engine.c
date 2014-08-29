@@ -93,9 +93,6 @@ sbool geoip_isset = 0;
 int   geoip_return = 0;
 #endif
 
-int   meta_content_return = 0;
-int   meta_content_trigger = 0;
-
 int   alert_time_return = 0;
 int   alert_time_trigger = 0;
 
@@ -133,7 +130,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int b=0;
     int z=0;
     int match=0;
-    int pcrematch=0;
+    int sagan_match=0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
     int rc=0;
     int ovector[PCRE_OVECCOUNT];
     int  src_port;
@@ -323,12 +320,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             if (rulestruct[b].content_not[z] != 1 && strcasestr(alter_content, rulestruct[b].s_content[z]))
 
                                                 {
-                                                    pcrematch++;
+                                                    sagan_match++;
                                                 }
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !strcasestr(alter_content, rulestruct[b].s_content[z])) pcrematch++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !strcasestr(alter_content, rulestruct[b].s_content[z])) sagan_match++;
 
                                                 }
                                         }
@@ -338,12 +335,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             /* If case sensitive */
                                             if ( rulestruct[b].content_not[z] != 1 && strstr(alter_content, rulestruct[b].s_content[z] ))
                                                 {
-                                                    pcrematch++;
+                                                    sagan_match++;
                                                 }
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !strstr(alter_content, rulestruct[b].s_content[z])) pcrematch++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !strstr(alter_content, rulestruct[b].s_content[z])) sagan_match++;
 
                                                 }
                                         }
@@ -361,16 +358,33 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], SaganProcSyslog_LOCAL->syslog_message, (int)strlen(SaganProcSyslog_LOCAL->syslog_message), 0, 0, ovector, PCRE_OVECCOUNT);
 
-                                    if ( rc == 1 ) pcrematch++;
+                                    if ( rc == 1 ) sagan_match++;
 
                                 }  /* End of pcre if */
                         }
+
+		    /* Search via meta_content */
+
+		    if ( rulestruct[b].meta_content_count != 0 ) 
+		        { 
+		    
+		    		for (z=0; z<rulestruct[b].meta_content_count; z++)
+				    { 
+
+				    rc = Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
+
+				    if ( rc == 1 ) sagan_match++; 
+				    
+				    } 
+	                }
+
+
 
                 } /* End of content: & pcre */
 
             /* if you got match */
 
-            if ( pcrematch == rulestruct[b].pcre_count + rulestruct[b].content_count )
+            if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count )
                 {
 
                     if ( match == 0 )
@@ -827,20 +841,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
                             /****************************************************************************
-                            * "meta_content" searching
-                                                 ****************************************************************************/
-
-                            if ( rulestruct[b].meta_content_flag )
-                                {
-
-                                    meta_content_trigger = 0; 	/* Reset from previous state */
-
-                                    meta_content_return =  Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
-
-                                    if ( meta_content_return == 1 ) meta_content_trigger = 1;
-                                }
-
-                            /****************************************************************************
                              * Time based alerting
                              ****************************************************************************/
 
@@ -865,9 +865,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0))
                                 {
-
-                                    if ( rulestruct[b].meta_content_flag == 0 || meta_content_trigger == 1)
-                                        {
 
                                             if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )
                                                 {
@@ -926,13 +923,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                         } /* GeoIP */
 #endif
                                                 } /* Time based alerts */
-                                        } /* Windows Domain */
                                 } /* Flowbit */
                         } /* End of match */
                 } /* End of pcre match */
 
             match=0;  /* Reset match! */
-            pcrematch=0;
+            sagan_match=0;
             rc=0;
         } /* End for for loop */
 
