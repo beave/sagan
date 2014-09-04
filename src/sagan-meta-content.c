@@ -53,18 +53,13 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     int match = 0;
     int z;
 
-    /* FIX - THIS CANT WORK */
+    /* Normal "meta_content" search */
 
-    if ( rulestruct[rule_position].meta_content_not[z] == 0 )
+    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
         {
 
-            /* Normal "meta_content" (ie - not !) search */
-
-            for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+            if ( rulestruct[rule_position].meta_content_not[z] == 0 )
                 {
-
-                    /* TODO:  This needs to be pre-processed in sagan-rules.c and stored in memory.
-                     * This waste CPU */
 
                     strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
                     ptmp = strtok_r(tmp, ",", &tok);
@@ -80,26 +75,27 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (strcasestr(syslog_msg, tmp_search)) results++;
+                                    if (strcasestr(syslog_msg, tmp_search))
+                                        {
+                                            results++;
+                                        }
                                 }
                             else
                                 {
-                                    if (strstr(syslog_msg, tmp_search))  results++;
+                                    if (strstr(syslog_msg, tmp_search))
+                                        {
+                                            results++;
+                                        }
                                 }
 
                             ptmp = strtok_r(NULL, ",", &tok);
 
-                        } // End of while(ptmp)
-                } // End of for(z) loop
+                        }
 
-        }
-    else
-        {
-
-            /* Content! search */
-
-            for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
+                }
+            else
                 {
+
 
                     strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
                     ptmp = strtok_r(tmp, ",", &tok);
@@ -107,31 +103,45 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
                     while (ptmp != NULL )
                         {
 
-                            snprintf(tmp_search, sizeof(tmp_search), "%s%s", rulestruct[rule_position].meta_content_help[z], ptmp);
+                            strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (strcasestr(syslog_msg, tmp_search)) match++;
+                                    if (strcasestr(syslog_msg, tmp_search))
+                                        {
+                                            match++;
+                                        }
                                 }
                             else
                                 {
-                                    if (strstr(syslog_msg, tmp_search)) match++;
+
+                                    if (strstr(syslog_msg, tmp_search))
+                                        {
+                                            match++;
+                                        }
                                 }
 
                             ptmp = strtok_r(NULL, ",", &tok);
 
-                        } // End of while(ptmp)
-                } // End of for(z) loop
+                        } /* End of while(ptmp) */
+
+                    /* content! we do NOT want "match".  Zero means nothing matches! */
+
+                    if ( match == 0 )
+                        {
+                            results++;
+                        }
+
+                } /* End of "else" meta_content_not[z] == 0 */
+
+        } /* End of "for" z */
 
 
-            /* content! we do NOT want "match".  Zero means nothing matches! */
-            if ( match == 0 ) results++;
-
-        } // end/else of if  meta_content_not ...
-
-    if ( results == rulestruct[rule_position].meta_content_count) return(TRUE);
+    if ( results == rulestruct[rule_position].meta_content_count)
+        {
+            return(TRUE);
+        }
 
     return(FALSE);
 
-}
-
+} /* End of Sagan_Meta_Content_Search() */

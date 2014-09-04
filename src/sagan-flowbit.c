@@ -252,8 +252,8 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
 void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 {
 
-    int i;
-    int a;
+    int i = 0;
+    int a = 0;
 
     time_t t;
     struct tm *now;
@@ -262,13 +262,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
     sbool flowbit_match = 0;
     sbool flowbit_unset_match = 0;
 
-    uint32_t ip_src;
-    uint32_t ip_dst;
+    uint32_t ip_src = 0;
+    uint32_t ip_dst = 0;
 
     ip_src = IP2Bit(ip_src_char);
     ip_dst = IP2Bit(ip_dst_char);
-
-    int counter = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -520,7 +518,7 @@ int Sagan_Flowbit_Type ( char *type, int linecount, const char *ruleset )
 void Sagan_Flowbit_Cleanup(void)
 {
 
-    int i;
+    int i = 0;
 
     time_t t;
     struct tm *now;
