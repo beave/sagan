@@ -22,20 +22,22 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-int Sagan_Flowbit( int, char *, char * );
+void Sagan_Flowbit_Set( int, char *, char * );
+int Sagan_Flowbit_Condition ( int, char *, char * );
 int Sagan_Flowbit_Type ( char *, int, const char *);
-
-typedef struct _Sagan_Flowbit _Sagan_Flowbit;
-struct _Sagan_Flowbit
-{
-    char flowbit_name[128];
-};
+void Sagan_Flowbit_Cleanup(void);
 
 typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
 struct _Sagan_Flowbit_Track
 {
-    int flowbit_memory_position;
-    char *flowbit_name;
+    char	flowbit_name[64];
+};
+
+
+typedef struct _Sagan_Flowbit _Sagan_Flowbit;
+struct _Sagan_Flowbit
+{
+    char flowbit_name[64];
     sbool flowbit_state;
     uint64_t ip_src;
     uint64_t ip_dst;

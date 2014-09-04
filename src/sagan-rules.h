@@ -56,6 +56,11 @@ struct _Rule_Struct
     int pcre_count;
     int content_count;
     int meta_content_count;
+    int flowbit_count;				/* Number of flowbits in memory */
+
+    int flowbit_condition_count;		/* Number of isset/isnot within a rule */
+    int flowbit_set_count;			/* Number of set/unset within a rule */
+
     int ref_count;
     int dst_port;
     int src_port;
@@ -70,13 +75,14 @@ struct _Rule_Struct
     sbool s_find_dst_ip;
     int   s_find_dst_pos;
 
-    int flowbit_flag;                   /* 0 == none, 1 == set, 2 == unset, 3 == isset, 4 == isnotset */
-    int flowbit_type;                   /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    int flowbit_flag;                   	/* Does the rule contain a flowbit? */
+    int flowbit_noalert;			/* Do we want to suppress "alerts" from the flowbit? */
 
-
-    sbool flowbit_noalert;
-    int   flowbit_memory_position;
-    int   flowbit_timeout;                      /* How long a flowbit is to stay alive (seconds) */
+    int flowbit_type[MAX_FLOWBITS];		/* 1 == set, 2 == unset,  3 == isset, 4 == isnotset */
+    int flowbit_direction[MAX_FLOWBITS];	/* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    int flowbit_memory_position[MAX_FLOWBITS];	/* "Where" in the flowbit struct flowbit is */
+    int flowbit_timeout[MAX_FLOWBITS];		/* How long a flowbit is to stay alive (seconds) */
+    char flowbit_name[MAX_FLOWBITS][64]; 	/* Name of the flowbit */
 
     sbool normalize;
     sbool content_not[MAX_CONTENT];     /* content: ! "something" */

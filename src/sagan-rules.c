@@ -117,9 +117,12 @@ void Load_Rules( const char *ruleset )
     int linecount=0;
     int netcount=0;
     int ref_count=0;
+
     int content_count=0;
     int meta_content_count=0;
     int pcre_count=0;
+    int flowbit_count;
+
     sbool pcreflag=0;
     int pcreoptions=0;
 
@@ -369,90 +372,110 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "set"))
                                 {
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbit = (_Sagan_Flowbit *) realloc(flowbit, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbit));
-                                    strlcpy(flowbit[counters->flowbit_count].flowbit_name, tmptoken, sizeof(flowbit[counters->flowbit_count].flowbit_name));
 
-                                    rulestruct[counters->rulecount].flowbit_timeout = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
 
-                                    rulestruct[counters->rulecount].flowbit_flag=1;
-                                    rulestruct[counters->rulecount].flowbit_memory_position = counters->flowbit_count;
-                                    counters->flowbit_count++;
+                                    rulestruct[counters->rulecount].flowbit_flag = 1; 				/* We have flowbit in the rule! */
+                                    rulestruct[counters->rulecount].flowbit_set_count++;
+                                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 1;		/* set */
+
+                                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+
+                                    rulestruct[counters->rulecount].flowbit_timeout[flowbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+
+                                    if ( rulestruct[counters->rulecount].flowbit_timeout[flowbit_count] == 0 )
+                                        Sagan_Log(S_ERROR, "Expected flowbit valid expire time for \"set\" at line %d in %s", linecount, ruleset);
+
+                                    flowbit_count++;
+				    counters->flowbit_total_counter++; 
+
                                 }
-
-                            /* UNSET */
+		
+			    /* UNSET */
 
                             if (!strcmp(tmptoken, "unset"))
                                 {
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( tmptoken != NULL )
-                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected \"direction\" at line %d in %s", linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_flag = 1;               			/* We have flowbit in the rule! */
+                                    rulestruct[counters->rulecount].flowbit_set_count++;
+                                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 2;                	/* unset */
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbit_has_been_set = 0;
 
-                                    for (i = 0; i<counters->flowbit_count; i++)
-                                        {
-                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
-                                                {
-                                                    rulestruct[counters->rulecount].flowbit_memory_position = i;
-//                                                  flowbit_has_been_set = 1;
-                                                }
-                                        }
-//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'unset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
-                                    rulestruct[counters->rulecount].flowbit_flag=2;
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
+
+                                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+
+                                    flowbit_count++;
+
                                 }
 
-                            /* ISSET */
+			    /* ISSET */
 
                             if (!strcmp(tmptoken, "isset"))
                                 {
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( tmptoken != NULL )
-                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_flag = 1;               			/* We have flowbit in the rule! */
+                                    rulestruct[counters->rulecount].flowbit_condition_count++;
+                                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 3;               	/* isset */
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbit_has_been_set = 0;
 
-                                    for (i = 0; i<counters->flowbit_count; i++)
-                                        {
-                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
-                                                {
-                                                    rulestruct[counters->rulecount].flowbit_memory_position = i;
-//                                                  flowbit_has_been_set = 1;
-                                                }
-                                        }
-//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
-                                    rulestruct[counters->rulecount].flowbit_flag=3;
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
+
+                                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+
+                                    flowbit_count++;
+
                                 }
 
-                            /* ISNOTSET */
+			    /* ISNOTSET */
 
                             if (!strcmp(tmptoken, "isnotset"))
                                 {
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( tmptoken != NULL )
-                                        rulestruct[counters->rulecount].flowbit_type = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+
+                                    rulestruct[counters->rulecount].flowbit_flag = 1;                               	/* We have flowbit in the rule! */
+                                    rulestruct[counters->rulecount].flowbit_condition_count++;
+                                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 4;               	/* isnotset */
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
-                                    flowbit_has_been_set = 0;
 
-                                    for (i = 0; i<counters->flowbit_count; i++)
-                                        {
-                                            if (!strcmp(tmptoken, flowbit[i].flowbit_name))
-                                                {
-                                                    rulestruct[counters->rulecount].flowbit_memory_position = i;
-//                                                  flowbit_has_been_set = 1;
-                                                }
-                                        }
-//                                    if ( flowbit_has_been_set == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Flowbit 'isnotset' checked but flowbit '%s' was never set! See %d of %s.", __FILE__, __LINE__, tmptoken, linecount, ruleset);
-                                    rulestruct[counters->rulecount].flowbit_flag=4;
+                                    if ( tmptoken == NULL )
+                                        Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
+
+                                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+
+                                    flowbit_count++;
+
                                 }
+
+
+                            rulestruct[counters->rulecount].flowbit_count = flowbit_count;
+
                         }
 
 #ifdef HAVE_LIBGEOIP
@@ -536,7 +559,6 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].meta_content_count=meta_content_count;
 
                         }
-
 
                     /* Like "nocase" for content,  but for "meta_nocase".  This is a "single option" but works better here */
 
@@ -1115,12 +1137,14 @@ void Load_Rules( const char *ruleset )
 
             pcre_count=0;
             content_count=0;
-	    meta_content_count=0; 
+            meta_content_count=0;
+            flowbit_count=0;
 
             netcount=0;
             ref_count=0;
             strlcpy(netstr, "", 1);
             strlcpy(rulestr, "", 1);
+
             counters->rulecount++;
 
         } /* end of while loop */

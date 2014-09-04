@@ -88,7 +88,6 @@ struct _Rule_Struct *rulestruct;
 struct class_struct *classstruct;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
-struct _Sagan_Flowbit_Track *flowbit_track;
 struct _Sagan_Flowbit *flowbit;
 
 
@@ -223,9 +222,6 @@ int main(int argc, char **argv)
 
     counters = malloc(sizeof(_SaganCounters));
     memset(counters, 0, sizeof(_SaganCounters));
-
-    flowbit_track = malloc(sizeof(_Sagan_Flowbit_Track));
-    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
 
     flowbit = malloc(sizeof(_Sagan_Flowbit));
     memset(flowbit, 0, sizeof(_Sagan_Flowbit));
@@ -420,7 +416,7 @@ int main(int argc, char **argv)
     pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
 
     Sagan_Log(S_NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-    Sagan_Log(S_NORMAL, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_count);
+    Sagan_Log(S_NORMAL, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_total_counter);
     Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
 
     /* We go ahead and assign values to SaganSigArgs (struct sig_thread_args).  This

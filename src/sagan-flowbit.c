@@ -19,9 +19,8 @@
 */
 
 /*
- * sagan-flowbit.c -
- *
- * Used to track multiple log lines and alert
+ * sagan-flowbit.c - Functions used for tracking events over multiple log
+ * lines. 
  *
  */
 
@@ -44,23 +43,28 @@ struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _Sagan_Flowbit *flowbit;
-struct _Sagan_Flowbit_Track *flowbit_track;
 
 pthread_mutex_t SaganFlowbitMutex=PTHREAD_MUTEX_INITIALIZER;
 
-int Sagan_Flowbit(int rule_position, char *ip_src_char, char *ip_dst_char )
+/*****************************************************************************
+ * Sagan_Flowbit_Condition - Used for testing "isset" & "isnotset".  Full
+ * rule condition is tested here and returned.
+ *****************************************************************************/
+
+int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
     int i;
-    int z;
-    uint64_t ip_src;
-    uint64_t ip_dst;
+    int a;
+
+    uint32_t ip_src;
+    uint32_t ip_dst;
 
     sbool flowbit_match = 0;
-
+    int flowbit_total_match = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -69,197 +73,414 @@ int Sagan_Flowbit(int rule_position, char *ip_src_char, char *ip_dst_char )
     ip_src = IP2Bit(ip_src_char);
     ip_dst = IP2Bit(ip_dst_char);
 
-    if ( debug->debugflowbit)
+    Sagan_Flowbit_Cleanup();
+
+    for (i = 0; i < rulestruct[rule_position].flowbit_count; i++)
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] -- All flowbits and values ---------------", __FILE__, __LINE__);
 
-            for (i=0; i<counters->flowbit_track_count; i++)
-                Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit memory position: %d | Flowbit name: %s | Flowbit state: %d", __FILE__, __LINE__,  i, flowbit_track[i].flowbit_name, flowbit_track[i].flowbit_state);
-        }
+            /*******************
+             *      ISSET      *
+             *******************/
 
-
-    /* Clean up expired flowbits */
-
-    for (i=0; i<counters->flowbit_track_count; i++)
-        {
-            if (  flowbit_track[i].flowbit_state == 1 && atol(timet) >= flowbit_track[i].flowbit_expire )
-                {
-                    if (debug->debugflowbit) Sagan_Log(S_DEBUG, "[%s, line %d] Cleaning up expired flowbit %s", __FILE__, __LINE__, flowbit_track[i].flowbit_name);
-                    flowbit_track[i].flowbit_state = 0;
-                }
-        }
-
-    /* Flowbit "isset" */
-
-    if ( rulestruct[rule_position].flowbit_flag == 3 )
-        {
-            for (i = 0; i < counters->flowbit_track_count; i++)
+            if ( rulestruct[rule_position].flowbit_type[i] == 3 )
                 {
 
-                    if (!strcmp(flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name, flowbit_track[i].flowbit_name) &&
-                            flowbit_track[i].flowbit_state == 1 )
+                    for (a = 0; a < counters->flowbit_count; a++)
                         {
 
-                            if ( rulestruct[rule_position].flowbit_type == 0 ) return(TRUE);
+                            /* direction: none */
 
-                            if ( rulestruct[rule_position].flowbit_type == 1 )
-                                if ( flowbit_track[i].ip_src == ip_src && flowbit_track[i].ip_dst == ip_dst ) return(TRUE);
-
-                            if ( rulestruct[rule_position].flowbit_type == 2 )
-                                if ( flowbit_track[i].ip_src == ip_src ) return(TRUE);
-
-                            if ( rulestruct[rule_position].flowbit_type == 3 )
-                                if ( flowbit_track[i].ip_dst == ip_dst ) return(TRUE);
-
-                            if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit \"%s\" has been set. TRIGGERING",  __FILE__, __LINE__, flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name);
-                        }
-
-                } /* End of for i */
-
-            return(FALSE);
-
-        } /* End of flowbit_flag == 3 */
-
-    /* Flowbit "set" */
-
-    if ( rulestruct[rule_position].flowbit_flag == 1 )
-        {
-
-            for (i = 0; i < counters->flowbit_track_count; i++)
-                {
-
-                    if (!strcmp(flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name, flowbit_track[i].flowbit_name) &&
-                            flowbit_track[i].ip_src == ip_src &&
-                            flowbit_track[i].ip_dst == ip_dst )
-                        {
-
-                            pthread_mutex_lock(&SaganFlowbitMutex);
-                            flowbit_track[i].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout;
-                            flowbit_track[i].flowbit_state = 1;
-                            pthread_mutex_unlock(&SaganFlowbitMutex);
-
-                            flowbit_match = 1;
-
-                        }
-
-                }
-
-            if ( flowbit_match == 0 )
-                {
-
-                    pthread_mutex_lock(&SaganFlowbitMutex);
-
-                    flowbit_track = ( _Sagan_Flowbit_Track * ) realloc(flowbit_track, (counters->flowbit_track_count+1) * sizeof(_Sagan_Flowbit_Track));
-
-                    flowbit_track[counters->flowbit_track_count].flowbit_memory_position = rule_position;
-                    flowbit_track[counters->flowbit_track_count].flowbit_name = flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name;
-                    flowbit_track[counters->flowbit_track_count].ip_src = ip_src;
-                    flowbit_track[counters->flowbit_track_count].ip_dst = ip_dst;
-                    flowbit_track[counters->flowbit_track_count].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout;
-                    flowbit_track[counters->flowbit_track_count].flowbit_state = 1;
-
-                    counters->flowbit_track_count++;
-
-                    pthread_mutex_unlock(&SaganFlowbitMutex);
-                }
-
-	return(TRUE);
-
-        } /* End if flowbit_flag == 1 */
-
-    /* Flowbit "unset" */
-
-    if ( rulestruct[rule_position].flowbit_flag == 2 )
-        {
-            for (i = 0; i < counters->flowbit_track_count; i++)
-                {
-
-                    if (!strcmp(flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name, flowbit_track[i].flowbit_name) && flowbit_track[i].flowbit_state == 1)
-                        {
-
-                            if ( rulestruct[rule_position].flowbit_type == 0 )
+                            if (!strcmp(rulestruct[rule_position].flowbit_name[i], flowbit[a].flowbit_name) &&
+                                    flowbit[a].flowbit_state == 1 )
                                 {
-                                    pthread_mutex_lock(&SaganFlowbitMutex);
-                                    flowbit_track[i].flowbit_state = 0;
-                                    pthread_mutex_unlock(&SaganFlowbitMutex);
-                                    return(FALSE);
-                                }
 
-                            if ( rulestruct[rule_position].flowbit_type == 1 )
-                                if ( flowbit_track[i].ip_src == ip_src && flowbit_track[i].ip_dst == ip_dst )
-                                    {
-                                        pthread_mutex_lock(&SaganFlowbitMutex);
-                                        flowbit_track[i].flowbit_state = 0;
-                                        pthread_mutex_unlock(&SaganFlowbitMutex);
-                                        return(FALSE);
-                                    }
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 0 )
 
-                            if ( rulestruct[rule_position].flowbit_type == 2 )
-                                if ( flowbit_track[i].ip_src == ip_src )
-                                    {
-                                        pthread_mutex_lock(&SaganFlowbitMutex);
-                                        flowbit_track[i].flowbit_state = 0;
-                                        pthread_mutex_unlock(&SaganFlowbitMutex);
-                                        return(FALSE);
-                                    }
+                                        {
+                                            flowbit_total_match++;
+                                        }
 
-                            if ( rulestruct[rule_position].flowbit_type == 3 )
-                                if ( flowbit_track[i].ip_dst == ip_dst )
-                                    {
-                                        pthread_mutex_lock(&SaganFlowbitMutex);
-                                        flowbit_track[i].flowbit_state = 0;
-                                        pthread_mutex_unlock(&SaganFlowbitMutex);
-                                        return(FALSE);
-                                    }
+                                    /* direction: both */
 
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 1 &&
+                                            flowbit[a].ip_src == ip_src &&
+                                            flowbit[a].ip_dst == ip_dst )
 
-                        } /* End of strcmp */
+                                        {
+                                            flowbit_total_match++;
+                                        }
 
-                } /* End of for i */
+                                    /* direction: by_src */
 
-            return(FALSE);
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 2 &&
+                                            flowbit[a].ip_src == ip_src )
 
-        } /* End of flowbit_flag == 2 */
+                                        {
+                                            flowbit_total_match++;
+                                        }
 
+                                    /* direction: by_dst */
 
-    /* Flowbit "isnotset" */
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 3 &&
+                                            flowbit[a].ip_dst == ip_dst )
 
-    if ( rulestruct[rule_position].flowbit_flag == 4  )
-        {
+                                        {
+                                            flowbit_total_match++;
+                                        }
 
-            if ( counters->flowbit_track_count == 0 ) return(TRUE);     /* for loop fails if nothing is in the table.  If there is nothing
-                                                                                                           in the table,  we obviously didn't match */
+                                    /* direction: reverse */
 
-            flowbit_match = 0;
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 4 &&
+                                            flowbit[a].ip_src == ip_dst &&
+                                            flowbit[a].ip_dst == ip_src )
 
-            for (i = 0; i < counters->flowbit_track_count; i++)
+                                        {
+                                            flowbit_total_match++;
+                                        }
+
+                                } /* End of strcmp flowbit_name & flowbit_state = 1 */
+
+                        } /* End "for" a */
+
+                } /* End "if" flowbit_type == 3 (ISSET) */
+
+            /*******************
+            *    ISNOTSET     *
+            *******************/
+
+            if ( rulestruct[rule_position].flowbit_type[i] == 4 )
                 {
 
-                    if (!strcmp(flowbit[rulestruct[rule_position].flowbit_memory_position].flowbit_name, flowbit_track[i].flowbit_name) && flowbit_track[i].flowbit_state == 1 )
+                    flowbit_match = 0;
+
+                    for (a = 0; a < counters->flowbit_count; a++)
                         {
 
-                            if ( rulestruct[rule_position].flowbit_type == 0 ) return(FALSE);
+                            if (!strcmp(rulestruct[rule_position].flowbit_name[i], flowbit[a].flowbit_name))
+                                {
 
-                            if ( rulestruct[rule_position].flowbit_type == 1 )
-                                if ( flowbit_track[i].ip_src == ip_src && flowbit_track[i].ip_dst == ip_dst ) return(FALSE);
+                                    flowbit_match=1;
 
-                            if ( rulestruct[rule_position].flowbit_type == 2 )
-                                if ( flowbit_track[i].ip_src == ip_src ) return(FALSE);
+                                    if ( flowbit[a].flowbit_state == 0 )
+                                        {
 
-                            if ( rulestruct[rule_position].flowbit_type == 3 )
-                                if ( flowbit_track[i].ip_dst == ip_dst ) return(FALSE);
+                                            /* direction: none */
+                                            if ( rulestruct[rule_position].flowbit_direction[i] == 0 )
+                                                {
+                                                    flowbit_total_match++;
+                                                }
 
-                        }
+                                            /* direction: both */
+                                            if ( rulestruct[rule_position].flowbit_direction[i] == 1 )
+                                                {
 
-                } /* End of for i  */
+                                                    if ( flowbit[i].ip_src == ip_src && flowbit[i].ip_dst == ip_dst )
+                                                        {
+                                                            flowbit_total_match++;
+                                                        }
+                                                }
 
-            return(TRUE);
+                                            /* direction: by_src */
+                                            if ( rulestruct[rule_position].flowbit_direction[i] == 2 )
+                                                {
 
-        } /* Enfo of if flowbit_flag == 4 */
+                                                    if ( flowbit[i].ip_src == ip_src )
+                                                        {
+                                                            flowbit_total_match++;
+                                                        }
+                                                }
+
+                                            /* direction: by_dst */
+                                            if ( rulestruct[rule_position].flowbit_direction[i] == 3 )
+                                                {
+
+                                                    if ( flowbit[i].ip_dst == ip_dst )
+                                                        {
+                                                            flowbit_total_match++;
+                                                        }
+                                                }
+
+                                            /* direction: reverse */
+                                            if ( rulestruct[rule_position].flowbit_direction[i] == 4 )
+                                                {
+
+                                                    if ( flowbit[i].ip_src == ip_dst && flowbit[i].ip_dst == ip_src )
+                                                        {
+                                                            flowbit_total_match++;
+                                                        }
+                                                }
+
+                                        } /* ENd of "if" flowbit_state == 0 */
+
+                                } /* End of strcmp flowbit_name */
+
+                        } /* End of "for" a */
+
+                    if ( flowbit_match == 0 ) flowbit_total_match++; 	/* Flowbit was NOT found in memory.
+									   Flowbit ISNOTSET then! */
+                } /* End of "if" flowbit_type == 4 (ISNOTSET ) */
+
+        } /* End of "for" i */
+
+
+    /* IF we match all criteria for isset/isnotset */
+
+    if ( rulestruct[rule_position].flowbit_condition_count == flowbit_total_match ) 
+    { 
+
+    if ( debug->debugflowbit)
+       Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning TRUE", __FILE__, __LINE__);
+    
+    return(TRUE);
+    } 
+
+    /* isset/isnotset failed. */
+    
+    if ( debug->debugflowbit)
+       Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning FALSE", __FILE__, __LINE__);
 
     return(FALSE);
 
-}  /* End of Sagan_Flowbit(); */
+}  /* End of Sagan_Flowbit_Condition(); */
+
+
+/*****************************************************************************
+ * Sagan_Flowbit_Set - Used to "set" & "unset" flowbit.  All rule "set" and
+ * "unset" happen here.
+ *****************************************************************************/
+
+void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
+{
+
+    int i;
+    int a;
+
+    time_t t;
+    struct tm *now;
+    char  timet[20];
+
+    sbool flowbit_match = 0;
+    sbool flowbit_unset_match = 0;
+
+    uint32_t ip_src;
+    uint32_t ip_dst;
+
+    ip_src = IP2Bit(ip_src_char);
+    ip_dst = IP2Bit(ip_dst_char);
+
+    int counter = 0;
+
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
+
+    struct _Sagan_Flowbit_Track *flowbit_track;
+
+    flowbit_track = malloc(sizeof(_Sagan_Flowbit_Track));
+    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
+
+    int flowbit_track_count = 0;
+
+    Sagan_Flowbit_Cleanup();
+
+
+    for (i = 0; i < rulestruct[rule_position].flowbit_count; i++)
+        {
+
+	    /*******************
+	     *      UNSET      *
+             *******************/
+
+            if ( rulestruct[rule_position].flowbit_type[i] == 2 )
+                {
+
+                    for (a = 0; a < counters->flowbit_count; a++)
+                        {
+
+                            if ( !strcmp(rulestruct[rule_position].flowbit_name[i],flowbit[a].flowbit_name ))
+                                {
+
+                                    /* direction: none */
+
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 0 )
+                                        {
+
+                                            if ( debug->debugflowbit)
+                                                Sagan_Log(S_DEBUG, "[%s, line %d] Unset flowbit \"%s\" (direction: \"none\").", __FILE__, __LINE__, flowbit[a].flowbit_name);
+
+
+                                            pthread_mutex_lock(&SaganFlowbitMutex);
+                                            flowbit[i].flowbit_state = 0;
+                                            pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                            flowbit_unset_match = 1;
+
+                                        }
+
+
+                                    /* direction: both */
+
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 1 &&
+                                            flowbit[a].ip_src == ip_src &&
+                                            flowbit[a].ip_dst == ip_dst )
+                                        {
+
+                                            if ( debug->debugflowbit)
+                                                Sagan_Log(S_DEBUG, "[%s, line %d] Unset flowbit \"%s\" (direction: \"both\").", __FILE__, __LINE__, flowbit[a].flowbit_name);
+
+
+                                            pthread_mutex_lock(&SaganFlowbitMutex);
+                                            flowbit[i].flowbit_state = 0;
+                                            pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                            flowbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: by_src */
+
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 2 &&
+                                            flowbit[a].ip_src == ip_src )
+
+                                        {
+
+                                            if ( debug->debugflowbit)
+                                                Sagan_Log(S_DEBUG, "[%s, line %d] Unset flowbit \"%s\" (direction: \"by_src\").", __FILE__, __LINE__, flowbit[a].flowbit_name);
+
+                                            pthread_mutex_lock(&SaganFlowbitMutex);
+                                            flowbit[i].flowbit_state = 0;
+                                            pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                            flowbit_unset_match = 1;
+
+                                        }
+
+
+                                    /* direction: by_dst */
+
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 3 &&
+                                            flowbit[a].ip_dst == ip_dst )
+                                        {
+
+                                            if ( debug->debugflowbit)
+                                                Sagan_Log(S_DEBUG, "[%s, line %d] Unset flowbit \"%s\" (direction: \"by_dst\").", __FILE__, __LINE__, flowbit[a].flowbit_name);
+
+                                            pthread_mutex_lock(&SaganFlowbitMutex);
+                                            flowbit[i].flowbit_state = 0;
+                                            pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                            flowbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: reverse */
+
+                                    if ( rulestruct[rule_position].flowbit_direction[i] == 4 &&
+                                            flowbit[a].ip_dst == ip_src &&
+                                            flowbit[a].ip_src == ip_dst )
+
+                                        {
+
+                                            if ( debug->debugflowbit)
+                                                Sagan_Log(S_DEBUG, "[%s, line %d] Unset flowbit \"%s\" (direction: \"reverse\").", __FILE__, __LINE__, flowbit[a].flowbit_name);
+
+                                            pthread_mutex_lock(&SaganFlowbitMutex);
+                                            flowbit[i].flowbit_state = 0;
+                                            pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                            flowbit_unset_match = 1;
+
+                                        }
+                                }
+                        }
+
+                    if ( debug->debugflowbit && flowbit_unset_match == 0 )
+                        Sagan_Log(S_DEBUG, "[%s, line %d] No flowbit found to \"unset\" for %s.", __FILE__, __LINE__, rulestruct[rule_position].flowbit_name[i]);
+
+                }
+
+            /*******************
+             *      SET        *
+	     *******************/
+
+            if ( rulestruct[rule_position].flowbit_type[i] == 1 )
+                {
+
+                    flowbit_match = 0;
+
+                    for (a = 0; a < counters->flowbit_count; a++)
+                        {
+
+                            /* Do we have the flowbit already in memory?  If so,  update the information */
+
+                            if (!strcmp(rulestruct[rule_position].flowbit_name[i],flowbit[a].flowbit_name) &&
+                                    flowbit[a].ip_src == ip_src &&
+                                    flowbit[a].ip_dst == ip_dst )
+                                {
+
+                                    pthread_mutex_lock(&SaganFlowbitMutex);
+
+                                    flowbit[i].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout[i];
+                                    flowbit[i].flowbit_state = 1;
+
+                                    if ( debug->debugflowbit)
+                                        Sagan_Log(S_DEBUG, "[%s, line %d] Updated flowbit \"%s\", [%d].  New expire time is %d (%d).", __FILE__, __LINE__, flowbit[a].flowbit_name, i, flowbit[i].flowbit_expire, rulestruct[rule_position].flowbit_timeout[i]);
+
+                                    pthread_mutex_unlock(&SaganFlowbitMutex);
+
+                                    flowbit_match = 1;
+                                }
+
+                        }
+
+
+                    /* If the flowbit isn't in memory,  store it to be created later */
+
+                    if ( flowbit_match == 0 )
+                        {
+
+                            flowbit_track = ( _Sagan_Flowbit_Track * ) realloc(flowbit_track, (flowbit_track_count+1) * sizeof(_Sagan_Flowbit_Track));
+                            strlcpy(flowbit_track[flowbit_track_count].flowbit_name, rulestruct[rule_position].flowbit_name[i], sizeof(flowbit_track[flowbit_track_count].flowbit_name));
+                            flowbit_track_count++;
+
+                        }
+
+                } /* if flowbit_type == 1 */
+
+        } /* Out of for i loop */
+
+    /* Do we have any flowbits in memory that need to be created?  */
+
+    if ( flowbit_track_count != 0 )
+        {
+
+            pthread_mutex_lock(&SaganFlowbitMutex);
+
+            for (i = 0; i < flowbit_track_count; i++)
+                {
+
+                    flowbit = ( _Sagan_Flowbit * ) realloc(flowbit, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbit));
+
+                    flowbit[counters->flowbit_count].ip_src = ip_src;
+                    flowbit[counters->flowbit_count].ip_dst = ip_dst;
+                    flowbit[counters->flowbit_count].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout[i];
+                    flowbit[counters->flowbit_count].flowbit_state = 1;
+
+                    strlcpy(flowbit[counters->flowbit_count].flowbit_name, rulestruct[rule_position].flowbit_name[i], sizeof(flowbit[counters->flowbit_count].flowbit_name));
+
+                    if ( debug->debugflowbit)
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Created flowbit \"%s\", [%d]", __FILE__, __LINE__, flowbit[counters->flowbit_count].flowbit_name, counters->flowbit_count);
+
+                    counters->flowbit_count++;
+                }
+
+            pthread_mutex_unlock(&SaganFlowbitMutex);
+        }
+
+    free(flowbit_track);
+
+} /* End of Sagan_Flowbit_Set */
+
 
 /*****************************************************************************
  * Sagan_Flowbit_Type - Defines the "type" of flowbit tracking based on user
@@ -281,8 +502,42 @@ int Sagan_Flowbit_Type ( char *type, int linecount, const char *ruleset )
     if (!strcmp(type, "by_dst"))
         return(3);
 
-    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'none', 'both', by_src' or 'by_dst'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
+    if (!strcmp(type, "reverse"))
+        return(4);
+
+    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst' or 'reverse'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
+
     return(0); 	/* Should never make it here */
 
 }
 
+
+/*****************************************************************************
+ * Sagan_Flowbit_Cleanup - Find "expired" flowbits and toggle the "state"
+ * to "off"
+ *****************************************************************************/
+
+void Sagan_Flowbit_Cleanup(void)
+{
+
+    int i;
+
+    time_t t;
+    struct tm *now;
+    char  timet[20];
+
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
+
+
+    for (i=0; i<counters->flowbit_count; i++)
+        {
+            if (  flowbit[i].flowbit_state == 1 && atol(timet) >= flowbit[i].flowbit_expire )
+                {
+                    if (debug->debugflowbit) Sagan_Log(S_DEBUG, "[%s, line %d] Setting flowbit %s to \"expired\" state.", __FILE__, __LINE__, flowbit[i].flowbit_name);
+                    flowbit[i].flowbit_state = 0;
+                }
+        }
+
+}

@@ -99,6 +99,8 @@ struct _SaganCounters
     int	     thread_output_counter;
     int	     thread_processor_counter;
 
+    int	     flowbit_total_counter;
+
     int      var_count;
 
     int	     classcount;

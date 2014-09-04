@@ -83,7 +83,6 @@ struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Nocase_Searchlist *SaganNocaseSearchlist;
 struct _Sagan_Case_Searchlist *SaganCaseSearchlist;
 struct _Sagan_Track_Clients *SaganTrackClients;
-struct _Sagan_Flowbit_Track *flowbit_track;
 struct _Sagan_Flowbit *flowbit;
 
 sbool sagan_reload; 	/* Used to indicate Sagan is in reload.  This keeps Sagan
@@ -158,7 +157,6 @@ void Sig_Handler( _SaganSigArgs *args )
                     memset(rulestruct, 0, sizeof(_Rule_Struct));
                     memset(classstruct, 0, sizeof(_Class_Struct));
                     memset(generator, 0, sizeof(_Sagan_Processor_Generator));
-                    memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
                     memset(flowbit, 0, sizeof(_Sagan_Flowbit));
 
 

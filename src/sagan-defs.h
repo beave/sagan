@@ -61,6 +61,7 @@
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */
 #define MAX_META_CONTENT	10		/* Max 'meta_content' within a rule */
+#define MAX_FLOWBITS		20		/* Max 'flowbits' within a rule */
 
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */

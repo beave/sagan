@@ -86,7 +86,7 @@ struct thresh_by_dst *threshbydst = NULL;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
-sbool flowbit_isset = 0;
+sbool flowbit_return = 0;
 sbool geoip_isset = 0;
 
 #ifdef HAVE_LIBGEOIP
@@ -777,9 +777,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                              * Flowbit
                              ****************************************************************************/
 
-                            if ( rulestruct[b].flowbit_flag )
-                                flowbit_isset = Sagan_Flowbit(b, ip_src, ip_dst);
-
+                            if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_condition_count )
+			        {
+				flowbit_return = Sagan_Flowbit_Condition(b, ip_src, ip_dst); 
+				}
 
                             /****************************************************************************
                              * Country code
@@ -861,9 +862,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             /* threshold state.                                                         */
                             /****************************************************************************/
 
-                            if ( debug->debugflowbit ) Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit for sid: %s | Flowbit Flag: %d | Flowbit ISSET: %d",  __FILE__, __LINE__, rulestruct[b].s_sid, rulestruct[b].flowbit_flag,  flowbit_isset);
-
-                            if ( rulestruct[b].flowbit_flag == 0 || ( flowbit_isset == 1 && rulestruct[b].flowbit_noalert == 0))
+                            if ( rulestruct[b].flowbit_flag == 0 || (rulestruct[b].flowbit_flag == 1 && rulestruct[b].flowbit_set_count) || ( rulestruct[b].flowbit_condition_count && flowbit_return == 1 ))
                                 {
 
                                             if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )
@@ -888,10 +887,13 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                             Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
                                                                             Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_isset);
+                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
                                                                             Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                         }
+
+								    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count ) 
+								    	Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
                                                                     threadid++;
                                                                     if ( threadid >= MAX_THREADS ) threadid=0;
@@ -916,20 +918,27 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                     processor_info_engine_proto                    =       proto;
                                                                     processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
+								    if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 ) { 
                                                                     Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
+								    }
+
 
                                                                 } /* Threshold / After */
 #ifdef HAVE_LIBGEOIP
                                                         } /* GeoIP */
 #endif
                                                 } /* Time based alerts */
+
                                 } /* Flowbit */
+
                         } /* End of match */
+
                 } /* End of pcre match */
 
-            match=0;  /* Reset match! */
-            sagan_match=0;
+            match=0;  		/* Reset match! */
+            sagan_match=0;	/* Reset pcre/meta_content/content match! */
             rc=0;
+
         } /* End for for loop */
 
     free(processor_info_engine);
