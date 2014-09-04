@@ -51,8 +51,9 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     char tmp_search[512] = { 0 };
     int results = 0;
     int match = 0;
-    int return_code = 0;
     int z;
+
+    /* FIX - THIS CANT WORK */
 
     if ( rulestruct[rule_position].meta_content_not[z] == 0 )
         {

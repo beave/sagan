@@ -140,8 +140,6 @@ void Load_Rules( const char *ruleset )
     int dst_port=0;
     int src_port=0;
 
-    sbool flowbit_has_been_set = 0;
-
 #ifdef HAVE_LIBLOGNORM
     sbool liblognorm_flag=0;
 #endif
