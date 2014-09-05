@@ -18,9 +18,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-alert.c 
+/* sagan-alert.c
  *
- * Provides logging functionality in a 'snort like' format.  Usually in 
+ * Provides logging functionality in a 'snort like' format.  Usually in
  * the /var/log/sagan directory named 'alert'
  *
  */
@@ -44,23 +44,25 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void Sagan_Alert_File( _SaganEvent *Event ) { 
+void Sagan_Alert_File( _SaganEvent *Event )
+{
 
-char tmpref[2048] = { 0 }; 
+    char tmpref[2048] = { 0 };
 
-counters->alert_total++; 
+    counters->alert_total++;
 
-fprintf(config->sagan_alert_stream, "\n[**] [%lu:%s] %s [**]\n", Event->generatorid, Event->sid, Event->f_msg);
-fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d]\n", Event->class, Event->pri );
-fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
-fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
+    fprintf(config->sagan_alert_stream, "\n[**] [%lu:%s] %s [**]\n", Event->generatorid, Event->sid, Event->f_msg);
+    fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d]\n", Event->class, Event->pri );
+    fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
+    fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 
-if ( Event->found != 0 ) {
-	snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
-	if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);
-	}
+    if ( Event->found != 0 )
+        {
+            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
+            if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);
+        }
 
 
-fflush(config->sagan_alert_stream);
+    fflush(config->sagan_alert_stream);
 
 }

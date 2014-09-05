@@ -20,7 +20,7 @@
 
 /*
  * sagan-flowbit.c - Functions used for tracking events over multiple log
- * lines. 
+ * lines.
  *
  */
 
@@ -225,19 +225,19 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
 
     /* IF we match all criteria for isset/isnotset */
 
-    if ( rulestruct[rule_position].flowbit_condition_count == flowbit_total_match ) 
-    { 
+    if ( rulestruct[rule_position].flowbit_condition_count == flowbit_total_match )
+        {
 
-    if ( debug->debugflowbit)
-       Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning TRUE", __FILE__, __LINE__);
-    
-    return(TRUE);
-    } 
+            if ( debug->debugflowbit)
+                Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning TRUE", __FILE__, __LINE__);
+
+            return(TRUE);
+        }
 
     /* isset/isnotset failed. */
-    
+
     if ( debug->debugflowbit)
-       Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning FALSE", __FILE__, __LINE__);
+        Sagan_Log(S_DEBUG, "[%s, line %d] Flowbit returning FALSE", __FILE__, __LINE__);
 
     return(FALSE);
 
@@ -285,9 +285,9 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
     for (i = 0; i < rulestruct[rule_position].flowbit_count; i++)
         {
 
-	    /*******************
-	     *      UNSET      *
-             *******************/
+            /*******************
+             *      UNSET      *
+                 *******************/
 
             if ( rulestruct[rule_position].flowbit_type[i] == 2 )
                 {
@@ -399,7 +399,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
             /*******************
              *      SET        *
-	     *******************/
+            *******************/
 
             if ( rulestruct[rule_position].flowbit_type[i] == 1 )
                 {

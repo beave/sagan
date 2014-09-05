@@ -58,8 +58,6 @@ void Sagan_Perfmonitor_Handler( void )
     strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
     strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
 
-    char tmp[64] = { 0 };
-
     uint64_t last_sagantotal = 0;
     uint64_t last_saganfound = 0;
     uint64_t last_alert_total = 0;
@@ -81,13 +79,15 @@ void Sagan_Perfmonitor_Handler( void )
     uint64_t last_websense_positive_hit = 0;
 #endif
 
+#ifdef HAVE_LIBESMTP
+    uint64_t last_esmtp_count_success = 0;
+    uint64_t last_esmtp_count_failed = 0;
+#endif
 
     uint64_t last_blacklist_hit_count = 0;
     uint64_t last_search_case_hit_count = 0;
     uint64_t last_search_nocase_hit_count = 0;
     uint64_t last_sagan_output_drop = 0;
-    uint64_t last_esmtp_count_success = 0;
-    uint64_t last_esmtp_count_failed = 0;
 
     uint64_t last_dns_miss_count = 0;
 

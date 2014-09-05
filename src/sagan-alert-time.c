@@ -46,11 +46,6 @@ int Sagan_Check_Time(rule_number)
 
     char ct[64] = { 0 };
     char buf[80] = { 0 };
-    char tmp[2] = { 0 };
-
-    sbool flag = 0;
-    int i;
-    int day;
 
     uint64_t utime_current;
     int day_current;

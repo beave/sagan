@@ -386,11 +386,11 @@ void Load_Rules( const char *ruleset )
                                         Sagan_Log(S_ERROR, "Expected flowbit valid expire time for \"set\" at line %d in %s", linecount, ruleset);
 
                                     flowbit_count++;
-				    counters->flowbit_total_counter++; 
+                                    counters->flowbit_total_counter++;
 
                                 }
-		
-			    /* UNSET */
+
+                            /* UNSET */
 
                             if (!strcmp(tmptoken, "unset"))
                                 {
@@ -417,7 +417,7 @@ void Load_Rules( const char *ruleset )
 
                                 }
 
-			    /* ISSET */
+                            /* ISSET */
 
                             if (!strcmp(tmptoken, "isset"))
                                 {
@@ -444,7 +444,7 @@ void Load_Rules( const char *ruleset )
 
                                 }
 
-			    /* ISNOTSET */
+                            /* ISNOTSET */
 
                             if (!strcmp(tmptoken, "isnotset"))
                                 {

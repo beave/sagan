@@ -18,10 +18,10 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-external.c 
+/* sagan-external.c
  *
  * Threaded function for user defined external system (execl) calls.  This
- * allows sagan to pass information to a external program. 
+ * allows sagan to pass information to a external program.
  *
  */
 
@@ -53,96 +53,106 @@ struct _SaganConfig *config;
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-void sagan_ext_thread ( _SaganEvent *Event ) {
+void sagan_ext_thread ( _SaganEvent *Event )
+{
 
-int in[2];
-int out[2];
-int n, pid;
-char buf[MAX_SYSLOGMSG];
-char data[MAX_SYSLOGMSG];
-char tmpref[2048];
-int ret;
-char tmp[6];
+    int in[2];
+    int out[2];
+    int n, pid;
+    char buf[MAX_SYSLOGMSG];
+    char data[MAX_SYSLOGMSG];
+    char tmpref[2048];
+    int ret;
+    char tmp[6];
 
-if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+    if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
 
-if ( config->sagan_exttype == 1 ) { 
-   
-   /* Parsable */
+    if ( config->sagan_exttype == 1 )
+        {
 
-  snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 1 ));
+            /* Parsable */
 
-if ( Event->drop == 1 ) { 
-   snprintf(tmp, sizeof(tmp), "True");
-   } else { 
-   snprintf(tmp, sizeof(tmp), "False");
-   }
+            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 1 ));
 
-   snprintf(data, sizeof(data), "\nID:%lu:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, tmp, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
-   
-  } else { 
+            if ( Event->drop == 1 )
+                {
+                    snprintf(tmp, sizeof(tmp), "True");
+                }
+            else
+                {
+                    snprintf(tmp, sizeof(tmp), "False");
+                }
 
-  /* Alert like */
+            snprintf(data, sizeof(data), "\nID:%lu:%s\nMessage:%s\nClassification:%s\nDrop:%s\nPriority:%d\nDate:%s\nTime:%s\nSource:%s\nSource Port:%d\nDestination:%s\nDestination Port:%d\nFacility:%s\nSyslog Priority:%s\n%sSyslog message:%s\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, tmp, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port,  Event->ip_dst, Event->dst_port, Event->facility, Event->priority, tmpref, Event->message);
 
-  snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
+        }
+    else
+        {
 
-  snprintf(data, sizeof(data), "[**] [%lu:%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
-  }
+            /* Alert like */
 
+            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
 
-if ( pipe(in) < 0 ) {
-   Remove_Lock_File();
-   Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
-   }
-
-
-if ( pipe(out) < 0 ) {
-   Remove_Lock_File();
-   Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
-   }
+            snprintf(data, sizeof(data), "[**] [%lu:%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
+        }
 
 
-if (( pid = fork()) == 0 ) { 
-
-   /* Causes problems with alert.log */
-   pthread_mutex_lock( &ext_mutex );
-   close(0);
-   close(1);
-   close(2);
-
-   dup2(in[0],0);		// Stdin..
-   dup2(out[1],1);
-   dup2(out[1],2);
-
-   close(in[1]);
-   close(out[0]);
-   pthread_mutex_unlock( &ext_mutex );
-
-   ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-   Remove_Lock_File();
-   Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
-   } 
-
-   pthread_mutex_lock( &ext_mutex );
-   close(in[0]);
-   close(out[1]);
-   pthread_mutex_unlock( &ext_mutex );
-
-   /* Write to child input */
+    if ( pipe(in) < 0 )
+        {
+            Remove_Lock_File();
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
+        }
 
 
-   n = write(in[1], data, strlen(data));
-   pthread_mutex_lock( &ext_mutex );
-   close(in[1]);
-   pthread_mutex_unlock( &ext_mutex );
+    if ( pipe(out) < 0 )
+        {
+            Remove_Lock_File();
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
+        }
 
-   n = read(out[0], buf, sizeof(buf));
-   close(out[0]);
-   buf[n] = 0;
 
-   waitpid(pid, NULL, 0);
-   
-   if ( debug->debugexternal == 1 ) Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+    if (( pid = fork()) == 0 )
+        {
+
+            /* Causes problems with alert.log */
+            pthread_mutex_lock( &ext_mutex );
+            close(0);
+            close(1);
+            close(2);
+
+            dup2(in[0],0);		// Stdin..
+            dup2(out[1],1);
+            dup2(out[1],2);
+
+            close(in[1]);
+            close(out[0]);
+            pthread_mutex_unlock( &ext_mutex );
+
+            ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+            Remove_Lock_File();
+            Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
+        }
+
+    pthread_mutex_lock( &ext_mutex );
+    close(in[0]);
+    close(out[1]);
+    pthread_mutex_unlock( &ext_mutex );
+
+    /* Write to child input */
+
+
+    n = write(in[1], data, strlen(data));
+    pthread_mutex_lock( &ext_mutex );
+    close(in[1]);
+    pthread_mutex_unlock( &ext_mutex );
+
+    n = read(out[0], buf, sizeof(buf));
+    close(out[0]);
+    buf[n] = 0;
+
+    waitpid(pid, NULL, 0);
+
+    if ( debug->debugexternal == 1 ) Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
 
 }
 
