@@ -308,11 +308,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                         }
 
-                                    // printf("Orig: |%s|\n",  SaganProcSyslog_LOCAL->syslog_message);
-                                    // printf("Alter: |%s|\n", alter_content);
-
-
-
                                     /* If case insensitive */
                                     if ( rulestruct[b].s_nocase[z] == 1 )
                                         {
@@ -347,10 +342,13 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 }
                         }
 
-
                     /* Search via PCRE */
 
-                    if ( rulestruct[b].pcre_count != 0 )
+		    /* Note:  We verify each "step" has succeeded before function execution.  For example, 
+		     * if there is a "content",  but that has failed,  there is no point in doing the 
+		     * pcre or meta_content. */
+
+                    if ( rulestruct[b].pcre_count != 0 && sagan_match == rulestruct[b].content_count ) 
                         {
 
                             for(z=0; z<rulestruct[b].pcre_count; z++)
@@ -365,7 +363,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 		    /* Search via meta_content */
 
-		    if ( rulestruct[b].meta_content_count != 0 ) 
+		    if ( rulestruct[b].meta_content_count != 0 && sagan_match == rulestruct[b].content_count + rulestruct[b].pcre_count ) 
 		        { 
 		    
 		    		for (z=0; z<rulestruct[b].meta_content_count; z++)
