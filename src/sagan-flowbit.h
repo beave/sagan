@@ -31,6 +31,7 @@ typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
 struct _Sagan_Flowbit_Track
 {
     char	flowbit_name[64];
+    int		flowbit_timeout; 
 };
 
 
@@ -39,8 +40,8 @@ struct _Sagan_Flowbit
 {
     char flowbit_name[64];
     sbool flowbit_state;
-    uint64_t ip_src;
-    uint64_t ip_dst;
+    uint32_t ip_src;
+    uint32_t ip_dst;
     uint64_t flowbit_expire;
 };
 

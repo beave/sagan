@@ -860,8 +860,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             /* threshold state.                                                         */
                             /****************************************************************************/
 
-                            if ( rulestruct[b].flowbit_flag == 0 || (rulestruct[b].flowbit_flag == 1 && rulestruct[b].flowbit_set_count) || ( rulestruct[b].flowbit_condition_count && flowbit_return == 1 ))
-                                {
+			      if ( rulestruct[b].flowbit_flag == 0 || 
+			         ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count == 0 ) || 
+				 ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count && flowbit_return ) ||
+				 ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count == 0 && rulestruct[b].flowbit_condition_count && flowbit_return ))
+                                 {
 
                                     if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )
                                         {
@@ -936,7 +939,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
             match=0;  		/* Reset match! */
             sagan_match=0;	/* Reset pcre/meta_content/content match! */
-            rc=0;
+            rc=0;		/* Return code */
+	    flowbit_return=0;	/* Flowbit reset */
+
 
         } /* End for for loop */
 
