@@ -298,6 +298,10 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
     time_t t;
     struct tm *now;
     char  timet[20];
+   
+    char tmp[128] = { 0 }; 
+    char *tmp_flowbit_name = NULL; 
+    char *tok = NULL;
 
     sbool flowbit_match = 0;
     sbool flowbit_unset_match = 0;
@@ -446,23 +450,29 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                     flowbit_match = 0;
 
+		    strlcpy(tmp, rulestruct[rule_position].flowbit_name[i], sizeof(tmp)); 
+                    tmp_flowbit_name = strtok_r(tmp, "&", &tok);
+
+		    while( tmp_flowbit_name != NULL )
+		    {
+
                     for (a = 0; a < counters->flowbit_count; a++)
                         {
 
                             /* Do we have the flowbit already in memory?  If so,  update the information */
 
-                            if (!strcmp(rulestruct[rule_position].flowbit_name[i],flowbit[a].flowbit_name) &&
+                            if (!strcmp(flowbit[a].flowbit_name, tmp_flowbit_name) &&
                                     flowbit[a].ip_src == ip_src &&
                                     flowbit[a].ip_dst == ip_dst )
                                 {
-
+			
                                     pthread_mutex_lock(&SaganFlowbitMutex);
 
                                     flowbit[i].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout[i];
                                     flowbit[i].flowbit_state = 1;
 
                                     if ( debug->debugflowbit)
-                                        Sagan_Log(S_DEBUG, "[%s, line %d] Updated via \"set\" for flowbit \"%s\", [%d].  New expire time is %d (%d).", __FILE__, __LINE__, flowbit[a].flowbit_name, i, flowbit[i].flowbit_expire, rulestruct[rule_position].flowbit_timeout[i]);
+                                        Sagan_Log(S_DEBUG, "[%s, line %d] Updated via \"set\" for flowbit \"%s\", [%d].  New expire time is %d (%d).", __FILE__, __LINE__, tmp_flowbit_name, i, flowbit[i].flowbit_expire, rulestruct[rule_position].flowbit_timeout[i]);
 
                                     pthread_mutex_unlock(&SaganFlowbitMutex);
 
@@ -478,11 +488,16 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                         {
 
                             flowbit_track = ( _Sagan_Flowbit_Track * ) realloc(flowbit_track, (flowbit_track_count+1) * sizeof(_Sagan_Flowbit_Track));
-                            strlcpy(flowbit_track[flowbit_track_count].flowbit_name, rulestruct[rule_position].flowbit_name[i], sizeof(flowbit_track[flowbit_track_count].flowbit_name));
+                            strlcpy(flowbit_track[flowbit_track_count].flowbit_name, tmp_flowbit_name, sizeof(flowbit_track[flowbit_track_count].flowbit_name));
 			    flowbit_track[flowbit_track_count].flowbit_timeout = rulestruct[rule_position].flowbit_timeout[i];
                             flowbit_track_count++;
 
                         }
+			
+			tmp_flowbit_name = strtok_r(NULL, "&", &tok);
+
+			}
+
 
                 } /* if flowbit_type == 1 */
 
