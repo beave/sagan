@@ -430,7 +430,6 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
 
                                     rulestruct[counters->rulecount].flowbit_flag = 1;               			/* We have flowbit in the rule! */
-                                    rulestruct[counters->rulecount].flowbit_condition_count++;
                                     rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 3;               	/* isset */
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
@@ -440,8 +439,22 @@ void Load_Rules( const char *ruleset )
 
                                     strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
 
-                                    flowbit_count++;
+                                    /* If we have multiple flowbit conditions (bit1&bit2),
+                                     * we alter the flowbit_conditon_count to reflect that.
+                                     * |'s are easy.  We just test to see if one of the
+                                     * flowbits matched or not!
+                                     */
 
+                                    if (strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
+                                        {
+                                            rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
+                                        }
+                                    else
+                                        {
+                                            rulestruct[counters->rulecount].flowbit_condition_count++;
+                                        }
+
+                                    flowbit_count++;
                                 }
 
                             /* ISNOTSET */
@@ -457,7 +470,6 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
 
                                     rulestruct[counters->rulecount].flowbit_flag = 1;                               	/* We have flowbit in the rule! */
-                                    rulestruct[counters->rulecount].flowbit_condition_count++;
                                     rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 4;               	/* isnotset */
 
                                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
@@ -466,6 +478,21 @@ void Load_Rules( const char *ruleset )
                                         Sagan_Log(S_ERROR, "Expected flowbit name at line %d in %s", linecount, ruleset);
 
                                     strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+
+                                    /* If we have multiple flowbit conditions (bit1&bit2),
+                                     * we alter the flowbit_conditon_count to reflect that.
+                                     * |'s are easy.  We just test to see if one of the
+                                     * flowbits matched or not!
+                                     */
+
+                                    if (strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
+                                        {
+                                            rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
+                                        }
+                                    else
+                                        {
+                                            rulestruct[counters->rulecount].flowbit_condition_count++;
+                                        }
 
                                     flowbit_count++;
 
