@@ -163,8 +163,12 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
     u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
 
     /* WTF? */
+
+    /*
     if(ntohs(u->uh_dport) != 514)
         goto bad;
+
+    */
 
     if(ntohs(u->uh_ulen < 8))
         goto bad;
