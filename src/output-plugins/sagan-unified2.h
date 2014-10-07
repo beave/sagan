@@ -51,7 +51,7 @@ void Unified2InitFile( _SaganConfig * );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc( _SaganConfig *, unsigned long);
 
-void Unified2CleanExit( _SaganConfig * ); 
+void Unified2CleanExit( _SaganConfig * );
 
 /* Data structure used for serialization of Unified2 Records */
 typedef struct _Serial_Unified2_Header
@@ -123,7 +123,7 @@ typedef struct _Serial_Unified2IDSEventIPv6_legacy
 } Serial_Unified2IDSEventIPv6_legacy;
 */
 
-/* The below is from packet.h from Snort */ 
+/* The below is from packet.h from Snort */
 
 struct sf_timeval32
 {

@@ -52,68 +52,71 @@
 #define TwoFish_MAGIC			"TwoFish"			/* to indentify a successful decryption */
 
 enum
-{	TwoFish_KEY_SIZE = 256,					/* Valid values: 64, 128, 192, 256 */
-											/* User 256, other key sizes have not been tested. */
-											/* (But should work. I substituted as much as */
-											/* I could with this define.) */
-	TwoFish_ROUNDS = 16,
-	TwoFish_BLOCK_SIZE = 16,				/* bytes in a data-block */
-	TwoFish_KEY_LENGTH = TwoFish_KEY_SIZE/8,	/* 32= 256-bit key */
-	TwoFish_TOTAL_SUBKEYS = 4+4+2*TwoFish_ROUNDS,
-	TwoFish_MAGIC_LEN = TwoFish_BLOCK_SIZE-8,
-	TwoFish_SK_BUMP = 0x01010101,
-	TwoFish_SK_ROTL = 9,
-	TwoFish_P_00 = 1,
-	TwoFish_P_01 = 0,
-	TwoFish_P_02 = 0,
-	TwoFish_P_03 = TwoFish_P_01 ^ 1,
-	TwoFish_P_04 = 1,
-	TwoFish_P_10 = 0,
-	TwoFish_P_11 = 0,
-	TwoFish_P_12 = 1,
-	TwoFish_P_13 = TwoFish_P_11 ^ 1,
-	TwoFish_P_14 = 0,
-	TwoFish_P_20 = 1,
-	TwoFish_P_21 = 1,
-	TwoFish_P_22 = 0,
-	TwoFish_P_23 = TwoFish_P_21 ^ 1,
-	TwoFish_P_24 = 0,
-	TwoFish_P_30 = 0,
-	TwoFish_P_31 = 1,
-	TwoFish_P_32 = 1,
-	TwoFish_P_33 = TwoFish_P_31 ^ 1,
-	TwoFish_P_34 = 1,
-	TwoFish_GF256_FDBK =   0x169,
-	TwoFish_GF256_FDBK_2 = 0x169 / 2,
-	TwoFish_GF256_FDBK_4 = 0x169 / 4,
-	TwoFish_RS_GF_FDBK = 0x14D,		/* field generator */
-	TwoFish_MDS_GF_FDBK = 0x169		/* primitive polynomial for GF(256) */
+{
+    TwoFish_KEY_SIZE = 256,					/* Valid values: 64, 128, 192, 256 */
+    /* User 256, other key sizes have not been tested. */
+    /* (But should work. I substituted as much as */
+    /* I could with this define.) */
+    TwoFish_ROUNDS = 16,
+    TwoFish_BLOCK_SIZE = 16,				/* bytes in a data-block */
+    TwoFish_KEY_LENGTH = TwoFish_KEY_SIZE/8,	/* 32= 256-bit key */
+    TwoFish_TOTAL_SUBKEYS = 4+4+2*TwoFish_ROUNDS,
+    TwoFish_MAGIC_LEN = TwoFish_BLOCK_SIZE-8,
+    TwoFish_SK_BUMP = 0x01010101,
+    TwoFish_SK_ROTL = 9,
+    TwoFish_P_00 = 1,
+    TwoFish_P_01 = 0,
+    TwoFish_P_02 = 0,
+    TwoFish_P_03 = TwoFish_P_01 ^ 1,
+    TwoFish_P_04 = 1,
+    TwoFish_P_10 = 0,
+    TwoFish_P_11 = 0,
+    TwoFish_P_12 = 1,
+    TwoFish_P_13 = TwoFish_P_11 ^ 1,
+    TwoFish_P_14 = 0,
+    TwoFish_P_20 = 1,
+    TwoFish_P_21 = 1,
+    TwoFish_P_22 = 0,
+    TwoFish_P_23 = TwoFish_P_21 ^ 1,
+    TwoFish_P_24 = 0,
+    TwoFish_P_30 = 0,
+    TwoFish_P_31 = 1,
+    TwoFish_P_32 = 1,
+    TwoFish_P_33 = TwoFish_P_31 ^ 1,
+    TwoFish_P_34 = 1,
+    TwoFish_GF256_FDBK =   0x169,
+    TwoFish_GF256_FDBK_2 = 0x169 / 2,
+    TwoFish_GF256_FDBK_4 = 0x169 / 4,
+    TwoFish_RS_GF_FDBK = 0x14D,		/* field generator */
+    TwoFish_MDS_GF_FDBK = 0x169		/* primitive polynomial for GF(256) */
 };
 
 
 /* Global data structure for callers */
 
 typedef struct
-{	u_int32_t sBox[4 * 256];					/* Key dependent S-box */
-	u_int32_t subKeys[TwoFish_TOTAL_SUBKEYS];	/* Subkeys  */
-	u_int8_t key[TwoFish_KEY_LENGTH];			/* Encryption Key */
-	u_int8_t *output;							/* Pointer to output buffer */
-	u_int8_t qBlockPlain[TwoFish_BLOCK_SIZE];	/* Used by CBC */
-	u_int8_t qBlockCrypt[TwoFish_BLOCK_SIZE];
-	u_int8_t prevCipher[TwoFish_BLOCK_SIZE];
-	struct 				/* Header for crypt functions. Has to be at least one block long. */
-	{	u_int32_t salt;							/* Random salt in first block (will salt the rest through CBC) */
-		u_int8_t length[4];					/* The amount of data following the header */
-		u_int8_t magic[TwoFish_MAGIC_LEN];		/* Magic to identify successful decryption  */
-	}	header;
-	bool qBlockDefined;
-	bool dontflush;
+{
+    u_int32_t sBox[4 * 256];					/* Key dependent S-box */
+    u_int32_t subKeys[TwoFish_TOTAL_SUBKEYS];	/* Subkeys  */
+    u_int8_t key[TwoFish_KEY_LENGTH];			/* Encryption Key */
+    u_int8_t *output;							/* Pointer to output buffer */
+    u_int8_t qBlockPlain[TwoFish_BLOCK_SIZE];	/* Used by CBC */
+    u_int8_t qBlockCrypt[TwoFish_BLOCK_SIZE];
+    u_int8_t prevCipher[TwoFish_BLOCK_SIZE];
+    struct 				/* Header for crypt functions. Has to be at least one block long. */
+    {
+        u_int32_t salt;							/* Random salt in first block (will salt the rest through CBC) */
+        u_int8_t length[4];					/* The amount of data following the header */
+        u_int8_t magic[TwoFish_MAGIC_LEN];		/* Magic to identify successful decryption  */
+    }	header;
+    bool qBlockDefined;
+    bool dontflush;
 }	TWOFISH;
 
 #ifndef __TWOFISH_LIBRARY_SOURCE__
 
 extern bool TwoFish_srand;					/* if set to TRUE (default), first call of TwoFishInit will seed rand();  */
-											/* call of TwoFishInit */
+/* call of TwoFishInit */
 #endif
 
 

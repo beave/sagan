@@ -1031,7 +1031,6 @@ int main(int argc, char **argv)
 
                                 }
 
-//Sagan_Log(S_DEBUG, "%s|%s|%s|%s|%s|%s|%s|%s|%s", syslog_host, syslog_facility, syslog_priority, syslog_level, syslog_tag, syslog_date, syslog_time, syslog_program, syslog_msg);
 
                         } /* while(fgets) */
 
