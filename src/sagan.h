@@ -315,4 +315,5 @@ int Sagan_Validate_HEX (const char *);
 char *Sagan_Content_Pipe(char *, int, const char *);
 sbool is_rfc1918 ( char * );
 char *Sagan_Replace_Sagan( char *, char *);
+int Sagan_Character_Count ( char *, char *);
 

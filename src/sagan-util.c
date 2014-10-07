@@ -69,9 +69,8 @@ sbool daemonize;
 void Chroot(const char *username, const char *chrootdir )
 {
 
-    struct passwd *pw = NULL;
-
-    pw = getpwnam(username);
+//    struct passwd *pw = NULL;
+//    pw = getpwnam(username);
 
     printf("[*] Chroot to %s\n", chrootdir);
 

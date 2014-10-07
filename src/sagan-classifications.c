@@ -64,7 +64,6 @@ void Load_Classifications( const char *ruleset )
 
     char classbuf[CLASSBUF];
     char *saveptr=NULL;
-    char *firststring=NULL;
     char *tmptoken=NULL;
     char *laststring=NULL;
     char tmpbuf2[5];
@@ -94,7 +93,7 @@ void Load_Classifications( const char *ruleset )
                     classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
                 }
 
-            firststring = strtok_r(classbuf, ":", &saveptr);
+            strtok_r(classbuf, ":", &saveptr);
             tmptoken = strtok_r(NULL, ":" , &saveptr);
 
             laststring = strtok_r(tmptoken, ",", &saveptr);

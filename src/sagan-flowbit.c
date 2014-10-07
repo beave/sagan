@@ -337,7 +337,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
      *
      */
 
-    if ( rulestruct[rule_position].flowbit_condition_count == flowbit_total_match || and_or == 1 && flowbit_total_match != 0 )
+    if ( ( rulestruct[rule_position].flowbit_condition_count == flowbit_total_match ) || ( and_or == 1 && flowbit_total_match != 0 ) )
         {
 
             if ( debug->debugflowbit)

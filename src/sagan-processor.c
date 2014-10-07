@@ -70,7 +70,10 @@ void Sagan_Processor ( void )
     sbool ignore_flag=0;
 
     int i;
-    int rc;
+
+#ifdef WITH_WEBSENSE
+    int rc;			/* Return code for Websense */
+#endif 
 
     for (;;)
         {

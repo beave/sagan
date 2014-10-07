@@ -62,7 +62,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
     char buf[MAX_SYSLOGMSG];
     char data[MAX_SYSLOGMSG];
     char tmpref[2048];
-    int ret;
+//    int ret;
     char tmp[6];
 
     if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
@@ -128,7 +128,8 @@ void sagan_ext_thread ( _SaganEvent *Event )
             close(out[0]);
             pthread_mutex_unlock( &ext_mutex );
 
-            ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+            //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+	    execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
             Remove_Lock_File();
             Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
         }

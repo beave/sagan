@@ -64,7 +64,6 @@ void Load_Reference( const char *ruleset )
 
     char refbuf[1024];
     char *saveptr=NULL;
-    char *firststring=NULL;
     char *tmptoken=NULL;
     char *laststring=NULL;
 
@@ -95,7 +94,7 @@ void Load_Reference( const char *ruleset )
                     refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
                 }
 
-            firststring = strtok_r(refbuf, ":", &saveptr);
+            strtok_r(refbuf, ":", &saveptr);
             tmptoken = strtok_r(NULL, " " , &saveptr);
 
             laststring = strtok_r(tmptoken, ",", &saveptr);
