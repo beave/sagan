@@ -208,14 +208,14 @@ typedef long time_t;
 #define FWSAMHISTORYVERSION			"SSSF01"	/* Magic is probably better word. Records filetype and version in header of state file. */
 
 #define BLOCKQUEUESIZE				20000		/* Create a blocking queue with this many blocking requests.
-								   It's set a bit high to accomodate the rollback field */
+It's set a bit high to accomodate the rollback field */
 #define QUEUE_RETRYTIME				3000		/* If the queue is full, wait three seconds and check again for a
-								   free slot for a blocking request */
+free slot for a blocking request */
 #define STRBUFSIZE				1024
 #define FILEBUFSIZE				512
 
 #define FWSAM_DEFAULTPORT			898	/* Default port if user does not specify one in snort.conf */
-							/* (Was unused last time I checked...) */
+/* (Was unused last time I checked...) */
 #define FWSAM_PACKETVERSION			14
 #define FWSAM_PACKETVERSION_PERSISTENT_CONN	15
 

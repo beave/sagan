@@ -115,7 +115,7 @@ struct _SaganConfig
 
     /* Syslog output */
 
-    sbool	sagan_syslog_flag; 
+    sbool	sagan_syslog_flag;
     int		sagan_syslog_facility;
     int		sagan_syslog_priority;
     int		sagan_syslog_options;

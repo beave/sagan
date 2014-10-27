@@ -20,8 +20,8 @@
 
 /* sagan-syslog.c
 *
-* Send Sagan alerts to a remote syslog server using the same format that 
-* Snort uses. 
+* Send Sagan alerts to a remote syslog server using the same format that
+* Snort uses.
 *
 */
 

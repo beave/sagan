@@ -20,8 +20,8 @@
 
 /* sagan-syslog.c
 *
-* Send Sagan alerts to a remote syslog server using the same format that 
-* Snort uses. 
+* Send Sagan alerts to a remote syslog server using the same format that
+* Snort uses.
 *
 */
 
@@ -48,36 +48,36 @@ struct _SaganCounters *counters;
 void Sagan_Alert_Syslog( _SaganEvent *Event )
 {
 
-char syslog_message_output[1024] = { 0 }; 
-char *tmp_proto = NULL; 
+    char syslog_message_output[1024] = { 0 };
+    char *tmp_proto = NULL;
 
-char *syslog_template = "[%lu:%s:%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d"; 
+    char *syslog_template = "[%lu:%s:%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d";
 
-if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )  
-  	{ 
-	tmp_proto = "{UNKNOWN}"; 
-	}
+    if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
+        {
+            tmp_proto = "{UNKNOWN}";
+        }
 
-if ( Event->ip_proto == 1 ) 
-	{
-	tmp_proto = "{ICMP}"; 
-	}
+    if ( Event->ip_proto == 1 )
+        {
+            tmp_proto = "{ICMP}";
+        }
 
-if ( Event->ip_proto == 6 ) 
-	{ 
-	tmp_proto = "{TCP}"; 
-	}
+    if ( Event->ip_proto == 6 )
+        {
+            tmp_proto = "{TCP}";
+        }
 
-if ( Event->ip_proto == 17 ) 
-	{ 
-	tmp_proto = "{UDP}"; 
-	}
+    if ( Event->ip_proto == 17 )
+        {
+            tmp_proto = "{UDP}";
+        }
 
-snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, Sagan_Classtype_Lookup ( Event->class ), Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port); 
+    snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, Sagan_Classtype_Lookup ( Event->class ), Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
 
-openlog("sagan", config->sagan_syslog_options, config->sagan_syslog_facility);
-syslog(config->sagan_syslog_priority, "%s", syslog_message_output);
-closelog(); 
+    openlog("sagan", config->sagan_syslog_options, config->sagan_syslog_facility);
+    syslog(config->sagan_syslog_priority, "%s", syslog_message_output);
+    closelog();
 
 
 

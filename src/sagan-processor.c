@@ -73,7 +73,7 @@ void Sagan_Processor ( void )
 
 #ifdef WITH_WEBSENSE
     int rc;			/* Return code for Websense */
-#endif 
+#endif
 
     for (;;)
         {

@@ -123,20 +123,22 @@ void Load_Classifications( const char *ruleset )
 
 }
 
-char *Sagan_Classtype_Lookup( const char *classtype) 
+char *Sagan_Classtype_Lookup( const char *classtype)
 {
 
-int i;
+    int i;
 
-for (i = 0; i < counters->classcount; i++) { 
+    for (i = 0; i < counters->classcount; i++)
+        {
 
-	if (!strcmp(classtype, classstruct[i].s_shortname)) { 
-		return(classstruct[i].s_desc); 
-	}
-}
+            if (!strcmp(classtype, classstruct[i].s_shortname))
+                {
+                    return(classstruct[i].s_desc);
+                }
+        }
 
 
-return("UNKNOWN"); 
+    return("UNKNOWN");
 }
 
 

@@ -129,7 +129,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
             pthread_mutex_unlock( &ext_mutex );
 
             //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-	    execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+            execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
             Remove_Lock_File();
             Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
         }
