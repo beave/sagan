@@ -51,6 +51,8 @@ void Sagan_Alert_Syslog( _SaganEvent *Event )
     char syslog_message_output[1024] = { 0 };
     char *tmp_proto = NULL;
 
+    /* Template to mimic Snort syslog output */
+
     char *syslog_template = "[%lu:%s:%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d";
 
     if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
@@ -75,10 +77,11 @@ void Sagan_Alert_Syslog( _SaganEvent *Event )
 
     snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, Sagan_Classtype_Lookup ( Event->class ), Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
 
+    /* Send syslog message */
+
     openlog("sagan", config->sagan_syslog_options, config->sagan_syslog_facility);
     syslog(config->sagan_syslog_priority, "%s", syslog_message_output);
     closelog();
-
 
 
 }

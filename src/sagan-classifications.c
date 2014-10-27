@@ -123,6 +123,11 @@ void Load_Classifications( const char *ruleset )
 
 }
 
+/****************************************************************************
+ * Sagan_Classtype_Lookup - Simple routine that looks up the classtype
+ * (s_shortname) and returns the classtype's description
+ ****************************************************************************/
+
 char *Sagan_Classtype_Lookup( const char *classtype)
 {
 
@@ -140,5 +145,4 @@ char *Sagan_Classtype_Lookup( const char *classtype)
 
     return("UNKNOWN");
 }
-
 
