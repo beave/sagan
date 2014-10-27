@@ -38,6 +38,7 @@
 #include "output-plugins/sagan-unified2.h"
 #include "output-plugins/sagan-alert.h"
 #include "output-plugins/sagan-external.h"
+#include "output-plugins/sagan-syslog.h"
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
@@ -75,7 +76,16 @@ void Sagan_Output( _SaganEvent *Event )
     /* Are any "External" output formats enabled? */
 
     /****************************************************************************/
-    /* Snortsam Support	                                                    */
+    /* Syslog output                                                            */
+    /****************************************************************************/
+
+    if ( config->sagan_syslog_flag )  
+       { 
+       Sagan_Alert_Syslog( Event );
+       }
+
+    /****************************************************************************/
+    /* Snortsam Support	                                                        */
     /****************************************************************************/
 
     /* If we have a snortsam server && the rule requires snortsam..... */

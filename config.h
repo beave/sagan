@@ -17,7 +17,7 @@
 #define HAVE_CTYPE_H 1
 
 /* Define to 1 if you have the <dnet.h> header file. */
-#define HAVE_DNET_H 1
+/* #undef HAVE_DNET_H */
 
 /* Define to 1 if you have the <dumbnet.h> header file. */
 /* #undef HAVE_DUMBNET_H */
@@ -53,7 +53,7 @@
 /* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
-#define HAVE_LIBDNET 1
+/* #undef HAVE_LIBDNET */
 
 /* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
 /* #undef HAVE_LIBDUMBNET */
@@ -62,13 +62,19 @@
 /* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
-#define HAVE_LIBESTR 1
+/* #undef HAVE_LIBESTR */
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
 /* #undef HAVE_LIBGEOIP */
 
+/* Define to 1 if you have the `json' library (-ljson). */
+/* #undef HAVE_LIBJSON */
+
+/* Define to 1 if you have the `json-c' library (-ljson-c). */
+#define HAVE_LIBJSON_C 1
+
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
-#define HAVE_LIBLOGNORM 1
+/* #undef HAVE_LIBLOGNORM */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
@@ -161,10 +167,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlcat' function. */
-/* #undef HAVE_STRLCAT */
+#define HAVE_STRLCAT 1
 
 /* Define to 1 if you have the `strlcpy' function. */
-/* #undef HAVE_STRLCPY */
+#define HAVE_STRLCPY 1
 
 /* Define to 1 if you have the `strlen' function. */
 #define HAVE_STRLEN 1
@@ -219,7 +225,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "sagan"
@@ -231,7 +237,7 @@
 #define PACKAGE_NAME "sagan"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Sagan 1.0.0-RC4"
+#define PACKAGE_STRING "Sagan 1.0.0-RC5"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "sagan"
@@ -240,7 +246,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.0.0-RC4"
+#define PACKAGE_VERSION "1.0.0-RC5"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -286,7 +292,7 @@
 
 
 /* Version number of package */
-#define VERSION "1.0.0-RC4"
+#define VERSION "1.0.0-RC5"
 
 /* With Snortsam */
 #define WITH_SNORTSAM 1

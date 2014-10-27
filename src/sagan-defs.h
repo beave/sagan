@@ -29,6 +29,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#include <syslog.h>
 
 #define PCRE_OVECCOUNT 30
 
@@ -91,6 +92,9 @@
 #define S_WARN		2
 #define S_DEBUG		3
 
+#define DEFAULT_SYSLOG_FACILITY	LOG_AUTH
+#define DEFAULT_SYSLOG_PRIORITY LOG_ALERT
+
 #define PARSEIP_RETURN_STRING	0
 
 #define DEFAULT_SMTP_SUBJECT 	"[Sagan]"
@@ -107,7 +111,6 @@
 #ifndef FALSE
 # define FALSE 0
 #endif
-
 
 #define SUNDAY		1
 #define MONDAY		2

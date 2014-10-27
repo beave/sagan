@@ -113,6 +113,13 @@ struct _SaganConfig
     sbool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
 
+    /* Syslog output */
+
+    sbool	sagan_syslog_flag; 
+    int		sagan_syslog_facility;
+    int		sagan_syslog_priority;
+    int		sagan_syslog_options;
+
 
 #ifdef HAVE_LIBPCAP
     char        plog_interface[50];

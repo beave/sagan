@@ -112,10 +112,12 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-parse-proto.$(OBJEXT) sagan-sagan-alert.$(OBJEXT) \
 	sagan-sagan-esmtp.$(OBJEXT) sagan-sagan-external.$(OBJEXT) \
 	sagan-sagan-unified2.$(OBJEXT) sagan-sagan-twofish.$(OBJEXT) \
-	sagan-sagan-snortsam.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
+	sagan-sagan-snortsam.$(OBJEXT) sagan-sagan-syslog.$(OBJEXT) \
+	sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
 	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
-	sagan-sagan-search.$(OBJEXT) sagan-sagan-perfmon.$(OBJEXT)
+	sagan-sagan-search.$(OBJEXT) sagan-sagan-perfmon.$(OBJEXT) \
+	sagan-sagan-cif.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 am__DEPENDENCIES_1 =
 sagan_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -206,6 +208,8 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
+JSONC_CFLAGS = @JSONC_CFLAGS@
+JSONC_LIBS = @JSONC_LIBS@
 JSON_C_CFLAGS = @JSON_C_CFLAGS@
 JSON_C_LIBS = @JSON_C_LIBS@
 LDFLAGS = @LDFLAGS@
@@ -327,12 +331,14 @@ output-plugins/sagan-external.c \
 output-plugins/sagan-unified2.c \
 output-plugins/sagan-twofish.c \
 output-plugins/sagan-snortsam.c \
+output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
 processors/sagan-search.c \
-processors/sagan-perfmon.c
+processors/sagan-perfmon.c \
+processors/sagan-cif.c
 
 all: all-am
 
@@ -427,6 +433,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-alert-time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-blacklist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-cif.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-classifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-credits.Po@am__quote@
@@ -455,6 +462,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-stats.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-strlcat.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-strlcpy.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-syslog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-track-clients.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-twofish.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-unified2.Po@am__quote@
@@ -967,6 +975,20 @@ sagan-sagan-snortsam.obj: output-plugins/sagan-snortsam.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-snortsam.obj `if test -f 'output-plugins/sagan-snortsam.c'; then $(CYGPATH_W) 'output-plugins/sagan-snortsam.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-snortsam.c'; fi`
 
+sagan-sagan-syslog.o: output-plugins/sagan-syslog.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-syslog.o -MD -MP -MF $(DEPDIR)/sagan-sagan-syslog.Tpo -c -o sagan-sagan-syslog.o `test -f 'output-plugins/sagan-syslog.c' || echo '$(srcdir)/'`output-plugins/sagan-syslog.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-syslog.Tpo $(DEPDIR)/sagan-sagan-syslog.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='output-plugins/sagan-syslog.c' object='sagan-sagan-syslog.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-syslog.o `test -f 'output-plugins/sagan-syslog.c' || echo '$(srcdir)/'`output-plugins/sagan-syslog.c
+
+sagan-sagan-syslog.obj: output-plugins/sagan-syslog.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-syslog.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-syslog.Tpo -c -o sagan-sagan-syslog.obj `if test -f 'output-plugins/sagan-syslog.c'; then $(CYGPATH_W) 'output-plugins/sagan-syslog.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-syslog.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-syslog.Tpo $(DEPDIR)/sagan-sagan-syslog.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='output-plugins/sagan-syslog.c' object='sagan-sagan-syslog.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-syslog.obj `if test -f 'output-plugins/sagan-syslog.c'; then $(CYGPATH_W) 'output-plugins/sagan-syslog.c'; else $(CYGPATH_W) '$(srcdir)/output-plugins/sagan-syslog.c'; fi`
+
 sagan-sagan-engine.o: processors/sagan-engine.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-engine.o -MD -MP -MF $(DEPDIR)/sagan-sagan-engine.Tpo -c -o sagan-sagan-engine.o `test -f 'processors/sagan-engine.c' || echo '$(srcdir)/'`processors/sagan-engine.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-engine.Tpo $(DEPDIR)/sagan-sagan-engine.Po
@@ -1050,6 +1072,20 @@ sagan-sagan-perfmon.obj: processors/sagan-perfmon.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-perfmon.c' object='sagan-sagan-perfmon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-perfmon.obj `if test -f 'processors/sagan-perfmon.c'; then $(CYGPATH_W) 'processors/sagan-perfmon.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-perfmon.c'; fi`
+
+sagan-sagan-cif.o: processors/sagan-cif.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-cif.o -MD -MP -MF $(DEPDIR)/sagan-sagan-cif.Tpo -c -o sagan-sagan-cif.o `test -f 'processors/sagan-cif.c' || echo '$(srcdir)/'`processors/sagan-cif.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-cif.Tpo $(DEPDIR)/sagan-sagan-cif.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-cif.c' object='sagan-sagan-cif.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-cif.o `test -f 'processors/sagan-cif.c' || echo '$(srcdir)/'`processors/sagan-cif.c
+
+sagan-sagan-cif.obj: processors/sagan-cif.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-cif.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-cif.Tpo -c -o sagan-sagan-cif.obj `if test -f 'processors/sagan-cif.c'; then $(CYGPATH_W) 'processors/sagan-cif.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-cif.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-cif.Tpo $(DEPDIR)/sagan-sagan-cif.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-cif.c' object='sagan-sagan-cif.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-cif.obj `if test -f 'processors/sagan-cif.c'; then $(CYGPATH_W) 'processors/sagan-cif.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-cif.c'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

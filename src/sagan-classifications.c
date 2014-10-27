@@ -122,3 +122,21 @@ void Load_Classifications( const char *ruleset )
     Sagan_Log(S_NORMAL, "%d classifications loaded", counters->classcount);
 
 }
+
+char *Sagan_Classtype_Lookup( const char *classtype) 
+{
+
+int i;
+
+for (i = 0; i < counters->classcount; i++) { 
+
+	if (!strcmp(classtype, classstruct[i].s_shortname)) { 
+		return(classstruct[i].s_desc); 
+	}
+}
+
+
+return("UNKNOWN"); 
+}
+
+

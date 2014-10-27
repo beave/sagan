@@ -95,6 +95,31 @@ if test "x$with_lognorm_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_lognorm_libraries}"
 fi
 
+# -- 
+
+AC_ARG_ENABLE(jsonc,
+  [  --disable-jsonc       Disable jsonc (liblognorm) support.],
+  [ JSONC="$enableval"],
+  [ JSONC="yes" ]
+)
+
+AC_ARG_WITH(json_c_includes,
+        [  --with-jsonc-includes=DIR    jsonc include directory],
+        [with_jsonc_includes="$withval"],[with_jsonc_includes="no"])
+
+AC_ARG_WITH(json_c_libraries,
+        [  --with-jsonc-libraries=DIR   jsonc library directory],
+        [with_jsonc_libraries="$withval"],[with_jsonc_libraries="no"])
+
+if test "x$with_jsonc_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_jsonc_includes}"
+   fi
+
+if test "x$with_jsonc_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_jsonc_libraries}"
+fi
+
+# --
 
 AC_ARG_ENABLE(libpcap,
   [  --disable-libpcap       Disable libpcap (plog) support.],
@@ -192,6 +217,20 @@ if test "$ESMTP" = "yes"; then
        AC_CHECK_LIB(esmtp, main,,AC_MSG_ERROR(The libesmtp library cannot be found.
 If you're not interested in libesmtp support use the --disable-esmtp flag.))
        fi
+
+
+if test "$JSONC" = "yes"; then
+	AC_MSG_RESULT([------- jsonc support is enabled -------])
+        PKG_CHECK_MODULES(JSONC, json-c,, [PKG_CHECK_MODULES(JSONC, json)])
+	
+AC_CHECK_LIB([json], [json_object_new_string],,
+	[AC_CHECK_LIB([json-c], [json_object_new_string],,
+	[AC_MSG_ERROR([
+Cannot find required library: libjson-c (aka libjson0, libjson)
+	])])])
+
+
+	fi
 
 if test "$LOGNORM" = "yes"; then
        AC_MSG_RESULT([------- liblognorm support is enabled -------])

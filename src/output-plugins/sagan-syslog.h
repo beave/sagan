@@ -18,22 +18,16 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+/* sagan-syslog.c
+*
+* Send Sagan alerts to a remote syslog server using the same format that 
+* Snort uses. 
+*
+*/
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
-
-/* Classification strucure */
-typedef struct _Class_Struct _Class_Struct;
-struct _Class_Struct
-{
-    unsigned s_size_class;
-    char s_shortname[512];
-    char s_desc[512];
-    int  s_priority;
-};
-
-
-void Load_Classifications( const char * );
-char *Sagan_Classtype_Lookup( const char *);
+void Sagan_Alert_Syslog( _SaganEvent * );
 

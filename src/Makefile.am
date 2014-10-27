@@ -39,12 +39,14 @@ output-plugins/sagan-external.c \
 output-plugins/sagan-unified2.c \
 output-plugins/sagan-twofish.c \
 output-plugins/sagan-snortsam.c \
+output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
 processors/sagan-search.c \
-processors/sagan-perfmon.c
+processors/sagan-perfmon.c \
+processors/sagan-cif.c
 
 
 install-data-local:

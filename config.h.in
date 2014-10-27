@@ -66,6 +66,12 @@
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
 #undef HAVE_LIBGEOIP
 
+/* Define to 1 if you have the `json' library (-ljson). */
+#undef HAVE_LIBJSON
+
+/* Define to 1 if you have the `json-c' library (-ljson-c). */
+#undef HAVE_LIBJSON_C
+
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
 #undef HAVE_LIBLOGNORM
 
