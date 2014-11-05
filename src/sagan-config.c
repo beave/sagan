@@ -725,7 +725,7 @@ void Load_Config( void )
                             if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
                         }
 
-                    if (!strcmp(sagan_var1, "syslog:"))
+                    if (!strcmp(sagan_var1, "syslog:") || !strcmp(sagan_var1, "alert_syslog:" ) )
                         {
 
                             config->sagan_syslog_flag = 1;
@@ -800,7 +800,7 @@ void Load_Config( void )
                                             config->sagan_syslog_facility = LOG_RAS;
                                         }
 
-                                    if (!strcmp(sagan_var2, "LOG_RMEOTEAUTH"))
+                                    if (!strcmp(sagan_var2, "LOG_REMOTEAUTH"))
                                         {
                                             config->sagan_syslog_facility = LOG_REMOTEAUTH;
                                         }
