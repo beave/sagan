@@ -912,7 +912,7 @@ void Load_Config( void )
                                             config->sagan_syslog_priority = LOG_INFO;
                                         }
 
-                                    if (!strcmp(sagan_var2, "LOG_DBEUG"))
+                                    if (!strcmp(sagan_var2, "LOG_DEBUG"))
                                         {
                                             config->sagan_syslog_priority = LOG_DEBUG;
                                         }
