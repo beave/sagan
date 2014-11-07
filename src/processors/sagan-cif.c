@@ -21,8 +21,8 @@
 /* sagan-cif.c
 *
 * This process is to lookup data via the CIF (Collective Intelligence Framework).
-* For more information about CIF,  please see: 
-* 
+* For more information about CIF,  please see:
+*
 * https://code.google.com/p/collective-intelligence-framework/
 * http://csirtgadgets.org/
 *

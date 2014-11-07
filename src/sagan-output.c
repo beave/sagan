@@ -79,10 +79,14 @@ void Sagan_Output( _SaganEvent *Event )
     /* Syslog output                                                            */
     /****************************************************************************/
 
+#ifdef WITH_SYSLOG
+
     if ( config->sagan_syslog_flag )
         {
             Sagan_Alert_Syslog( Event );
         }
+
+#endif
 
     /****************************************************************************/
     /* Snortsam Support	                                                        */

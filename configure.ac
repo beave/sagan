@@ -39,6 +39,12 @@ AC_ARG_ENABLE(geoip,
   [ GEOIP="no" ]
 )
 
+AC_ARG_ENABLE(syslog,
+  [  --disable-syslog        Disable syslog support.],
+  [ SYSLOG="$enableval"],
+  [ SYSLOG="yes" ]
+)
+
 
 AC_ARG_WITH(esmtp_includes,
         [  --with-esmtp-includes=DIR    libesmtp include directory],
@@ -203,6 +209,12 @@ AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat
 AC_CHECK_LIB(pcre, main,,AC_MSG_ERROR(Sagan needs PCRE installed.  Please see http://www.pcre.org.))
 AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
+
+if test "$SYSLOG" = "yes"; then
+	AC_MSG_RESULT([------- Syslog support is enabled -------])
+	AC_CHECK_HEADER([syslog.h])
+	AC_DEFINE(WITH_SYSLOG, 1, With Syslog)
+	fi
 
 if test "$GEOIP" = "yes"; then
        AC_MSG_RESULT([------- Maxmind GeoIP support is enabled -------])

@@ -725,6 +725,7 @@ void Load_Config( void )
                             if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
                         }
 
+#ifdef WITH_SYSLOG
                     if (!strcmp(sagan_var1, "syslog:") || !strcmp(sagan_var1, "alert_syslog:" ) )
                         {
 
@@ -745,125 +746,173 @@ void Load_Config( void )
 
                                     sagan_var2 = Remove_Return(sagan_var3);
 
+#ifdef LOG_AUTH
                                     if (!strcmp(sagan_var2, "LOG_AUTH"))
                                         {
                                             config->sagan_syslog_facility = LOG_AUTH;
                                         }
+#endif
 
+#ifdef LOG_AUTHPRIV
                                     if (!strcmp(sagan_var2, "LOG_AUTHPRIV"))
                                         {
                                             config->sagan_syslog_facility = LOG_AUTHPRIV;
                                         }
+#endif
 
+#ifdef LOG_CRON
                                     if (!strcmp(sagan_var2, "LOG_CRON"))
                                         {
                                             config->sagan_syslog_facility = LOG_CRON;
                                         }
+#endif
 
+#ifdef LOG_DAEMON
                                     if (!strcmp(sagan_var2, "LOG_DAEMON"))
                                         {
                                             config->sagan_syslog_facility = LOG_DAEMON;
                                         }
+#endif
 
+#ifdef LOG_FTP
                                     if (!strcmp(sagan_var2, "LOG_FTP"))
                                         {
                                             config->sagan_syslog_facility = LOG_FTP;
                                         }
+#endif
 
+#ifdef LOG_INSTALL
                                     if (!strcmp(sagan_var2, "LOG_INSTALL"))
                                         {
                                             config->sagan_syslog_facility = LOG_INSTALL;
                                         }
+#endif
 
+#ifdef LOG_KERN
                                     if (!strcmp(sagan_var2, "LOG_KERN"))
                                         {
                                             config->sagan_syslog_facility = LOG_KERN;
                                         }
+#endif
 
+#ifdef LOG_LPR
                                     if (!strcmp(sagan_var2, "LOG_LPR"))
                                         {
                                             config->sagan_syslog_facility = LOG_LPR;
                                         }
+#endif
 
+#ifdef LOG_MAIL
                                     if (!strcmp(sagan_var2, "LOG_MAIL"))
                                         {
                                             config->sagan_syslog_facility = LOG_MAIL;
                                         }
+#endif
 
+#ifdef LOG_NETINFO
                                     if (!strcmp(sagan_var2, "LOG_NETINFO"))
                                         {
                                             config->sagan_syslog_facility = LOG_NETINFO;
                                         }
+#endif
 
+#ifdef LOG_RAS
                                     if (!strcmp(sagan_var2, "LOG_RAS"))
                                         {
                                             config->sagan_syslog_facility = LOG_RAS;
                                         }
+#endif
 
+#ifdef LOG_REMOTEAUTH
                                     if (!strcmp(sagan_var2, "LOG_REMOTEAUTH"))
                                         {
                                             config->sagan_syslog_facility = LOG_REMOTEAUTH;
                                         }
+#endif
 
+#ifdef LOG_NEWS
                                     if (!strcmp(sagan_var2, "LOG_NEWS"))
                                         {
                                             config->sagan_syslog_facility = LOG_NEWS;
                                         }
+#endif
 
+#ifdef LOG_SYSLOG
                                     if (!strcmp(sagan_var2, "LOG_SYSLOG"))
                                         {
                                             config->sagan_syslog_facility = LOG_SYSLOG;
                                         }
+#endif
 
+#ifdef LOG_USER
                                     if (!strcmp(sagan_var2, "LOG_USER"))
                                         {
                                             config->sagan_syslog_facility = LOG_USER;
                                         }
+#endif
 
+#ifdef LOG_UUCP
                                     if (!strcmp(sagan_var2, "LOG_UUCP"))
                                         {
                                             config->sagan_syslog_facility = LOG_UUCP;
                                         }
+#endif
 
+#ifdef LOG_LOCAL0
                                     if (!strcmp(sagan_var2, "LOG_LOCAL0"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL0;
                                         }
+#endif
 
+#ifdef LOG_LOCAL1
                                     if (!strcmp(sagan_var2, "LOG_LOCAL1"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL1;
                                         }
+#endif
 
+#ifdef LOG_LOCAL2
                                     if (!strcmp(sagan_var2, "LOG_LOCAL2"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL2;
                                         }
+#endif
 
+#ifdef LOG_LOCAL3
                                     if (!strcmp(sagan_var2, "LOG_LOCAL3"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL3;
                                         }
+#endif
 
+#ifdef LOG_LOCAL4
                                     if (!strcmp(sagan_var2, "LOG_LOCAL4"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL4;
                                         }
+#endif
 
+#ifdef LOG_LOCAL5
                                     if (!strcmp(sagan_var2, "LOG_LOCAL5"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL5;
                                         }
+#endif
 
+#ifdef LOG_LOCAL6
                                     if (!strcmp(sagan_var2, "LOG_LOCAL6"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL6;
                                         }
+#endif
 
+#ifdef LOG_LOCAL7
                                     if (!strcmp(sagan_var2, "LOG_LOCAL7"))
                                         {
                                             config->sagan_syslog_facility = LOG_LOCAL7;
                                         }
+#endif
 
                                 }
 
@@ -877,45 +926,62 @@ void Load_Config( void )
 
                                     sagan_var2 = Remove_Return(sagan_var3);
 
+
+#ifdef LOG_EMERG
                                     if (!strcmp(sagan_var2, "LOG_EMERG"))
                                         {
                                             config->sagan_syslog_priority = LOG_EMERG;
                                         }
+#endif
 
+#ifdef LOG_ALERT
                                     if (!strcmp(sagan_var2, "LOG_ALERT"))
                                         {
                                             config->sagan_syslog_priority = LOG_ALERT;
                                         }
+#endif
 
+#ifdef LOG_CRIT
                                     if (!strcmp(sagan_var2, "LOG_CRIT"))
                                         {
                                             config->sagan_syslog_priority = LOG_CRIT;
                                         }
+#endif
 
+#ifdef LOG_ERR
                                     if (!strcmp(sagan_var2, "LOG_ERR"))
                                         {
                                             config->sagan_syslog_priority = LOG_ERR;
                                         }
+#endif
 
+#ifdef LOG_WARNING
                                     if (!strcmp(sagan_var2, "LOG_WARNING"))
                                         {
                                             config->sagan_syslog_priority = LOG_WARNING;
                                         }
+#endif
 
+#ifdef LOG_NOTICE
                                     if (!strcmp(sagan_var2, "LOG_NOTICE"))
                                         {
                                             config->sagan_syslog_priority = LOG_NOTICE;
                                         }
+#endif
 
+#ifdef LOG_INFO
                                     if (!strcmp(sagan_var2, "LOG_INFO"))
                                         {
                                             config->sagan_syslog_priority = LOG_INFO;
                                         }
+#endif
 
+#ifdef LOG_DEBUG
                                     if (!strcmp(sagan_var2, "LOG_DEBUG"))
                                         {
                                             config->sagan_syslog_priority = LOG_DEBUG;
                                         }
+#endif
                                 }
 
                             /* Syslog options */
@@ -927,34 +993,46 @@ void Load_Config( void )
 
                                     sagan_var2 = Remove_Return(sagan_var3);
 
+
+#ifdef LOG_CONS
                                     if (!strcmp(sagan_var2, "LOG_CONS"))
                                         {
                                             config->sagan_syslog_options |= LOG_CONS;
                                         }
+#endif
 
+#ifdef LOG_NDELAY
                                     if (!strcmp(sagan_var2, "LOG_NDELAY"))
                                         {
                                             config->sagan_syslog_options |= LOG_NDELAY;
                                         }
+#endif
 
+#ifdef LOG_PERROR
                                     if (!strcmp(sagan_var2, "LOG_PERROR"))
                                         {
                                             config->sagan_syslog_options |= LOG_PERROR;
                                         }
+#endif
 
+#ifdef LOG_PID
                                     if (!strcmp(sagan_var2, "LOG_PID"))
                                         {
                                             config->sagan_syslog_options |= LOG_PID;
                                         }
+#endif
 
+#ifdef LOG_NOWAIT
                                     if (!strcmp(sagan_var2, "LOG_NOWAIT"))
                                         {
                                             config->sagan_syslog_options |= LOG_NOWAIT;
                                         }
+#endif
 
                                 }
 
                         } /* end of syslog config */
+#endif
 
 
 #ifdef WITH_SNORTSAM

@@ -29,6 +29,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef WITH_SYSLOG
 
 #include <syslog.h>
 #include <stdio.h>
@@ -85,3 +86,5 @@ void Sagan_Alert_Syslog( _SaganEvent *Event )
 
 
 }
+
+#endif
