@@ -46,7 +46,7 @@ struct _SaganCounters *counters;
 void Sagan_Alert_File( _SaganEvent *Event )
 {
 
-    char tmpref[2048] = { 0 };
+    char *tmpref = NULL;
 
     counters->alert_total++;
 
@@ -57,8 +57,8 @@ void Sagan_Alert_File( _SaganEvent *Event )
 
     if ( Event->found != 0 )
         {
-            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
-            if ( strcmp(tmpref, "")) fprintf(config->sagan_alert_stream, "%s\n", tmpref);
+            tmpref = Reference_Lookup( Event->found, 0 );
+            if ( tmpref != "" ) fprintf(config->sagan_alert_stream, "%s\n", Reference_Lookup( Event->found, 0 ));
         }
 
 

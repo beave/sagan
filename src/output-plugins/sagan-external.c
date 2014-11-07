@@ -61,8 +61,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
     int n, pid;
     char buf[MAX_SYSLOGMSG];
     char data[MAX_SYSLOGMSG];
-    char tmpref[2048];
-//    int ret;
+    char *tmpref = NULL;
     char tmp[6];
 
     if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
@@ -72,7 +71,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
 
             /* Parsable */
 
-            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 1 ));
+            tmpref = Reference_Lookup( Event->found, 1 );
 
             if ( Event->drop == 1 )
                 {
@@ -91,7 +90,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
 
             /* Alert like */
 
-            snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
+            tmpref =  Reference_Lookup( Event->found, 0 );
 
             snprintf(data, sizeof(data), "[**] [%lu:%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
         }
