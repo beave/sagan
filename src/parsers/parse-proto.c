@@ -57,7 +57,7 @@ int parse_proto( char *msg )
 
             if ( map_message[i].nocase == 1 )
                 {
-                    if (strcasestr(msg, map_message[i].search)) return(map_message[i].proto);
+                    if (Sagan_stristr(msg, map_message[i].search)) return(map_message[i].proto);
                 }
             else
                 {
@@ -82,7 +82,7 @@ int parse_proto_program( char *program )
 
             if ( map_program[i].nocase == 1 )
                 {
-                    if (strcasestr(program, map_program[i].program)) return(map_program[i].proto);
+                    if (Sagan_stristr(program, map_program[i].program)) return(map_program[i].proto);
                 }
             else
                 {

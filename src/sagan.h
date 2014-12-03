@@ -53,6 +53,8 @@ int strlcat(char *, const char *, size_t );
 
 int    Is_Numeric (char *);
 char   *To_UpperC(char* const );
+char   *To_LowerC(char* const );
+
 int	Check_Endian( void );
 void    Usage( void );
 void    Chroot( const char *, const char * );

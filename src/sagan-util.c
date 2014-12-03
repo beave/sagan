@@ -167,7 +167,7 @@ char *Remove_Spaces(char *s)
 
 /* Shift a string to all uppercase */
 
-char *To_UpperC(char* const s)
+char *To_UpperC(char *const s)
 {
     char* cur = s;
     while (*cur)
@@ -177,6 +177,20 @@ char *To_UpperC(char* const s)
         }
     return s;
 }
+
+/* Shift a string to all lowercase */
+
+char *To_LowerC(char *const s)
+{
+    char* cur = s;
+    while (*cur)
+        {   
+            *cur = tolower(*cur);
+            ++cur;
+        }
+    return s;
+}
+
 
 void Sagan_Log (int type, const char *format,... )
 {

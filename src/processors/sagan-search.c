@@ -29,8 +29,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-//#define _GNU_SOURCE		/* for strcasestr() */
-
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
@@ -157,7 +155,7 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type )
                     ip_dst[0] = '0';
                     ip_dst[1] = '\0';
 
-                    if (strcasestr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].search ))
+                    if (Sagan_stristr(SaganProcSyslog_LOCAL->syslog_message, SaganNocaseSearchlist[i].search ))
                         {
 
                             counters->search_nocase_hit_count++;

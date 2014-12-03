@@ -33,7 +33,10 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#include <stdio.h>
 #include <string.h>
+
+#include "sagan-defs.h"
 #include "sagan-strstr-hook.h"
 
 #ifdef HAVE_SSE2
@@ -69,3 +72,18 @@ char *Sagan_strstr(const char *_x, const char *_y) {
 }
 
 #endif
+
+char *Sagan_stristr(const char *_x, const char *_y) {
+
+	char *p = NULL; 
+	char convert_string[MAX_SYSLOGMSG] = { 0 };
+
+	strlcpy(convert_string, _x, sizeof(convert_string));
+	To_LowerC(convert_string);
+	
+	p = Sagan_strstr( convert_string, _y);
+	
+	return p; 
+
+}
+

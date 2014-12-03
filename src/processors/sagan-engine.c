@@ -312,7 +312,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].s_nocase[z] == 1 )
                                         {
 
-                                            if (rulestruct[b].content_not[z] != 1 && strcasestr(alter_content, rulestruct[b].s_content[z]))
+                                            if (rulestruct[b].content_not[z] != 1 && Sagan_stristr(alter_content, rulestruct[b].s_content[z]))
 
                                                 {
                                                     sagan_match++;
@@ -320,7 +320,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !strcasestr(alter_content, rulestruct[b].s_content[z])) sagan_match++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !Sagan_stristr(alter_content, rulestruct[b].s_content[z])) sagan_match++;
 
                                                 }
                                         }

@@ -1168,11 +1168,11 @@ void Load_Config( void )
 
                     /*
                     	if (!strcmp(sagan_var1, "HOME_NET" )) {
-                    	   if (strcasestr(sagan_var2, "any" )) config->home_any = 1;
+                    	   if (Sagan_stristr(sagan_var2, "any" )) config->home_any = 1;
                     	   }
 
                     	if (!strcmp(sagan_var1, "EXTERNAL_NET" )) {
-                    	   if (strcasestr(sagan_var2, "any" )) config->external_any = 1;
+                    	   if (Sagan_stristr(sagan_var2, "any" )) config->external_any = 1;
                     	   }
                     */
                 }
