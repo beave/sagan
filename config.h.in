@@ -6,8 +6,14 @@
 /* Sagan configuration file */
 #undef CONFIG_FILE_PATH
 
+/* Support Altivec instructions */
+#undef HAVE_ALTIVEC
+
 /* Define to 1 if you have the <arpa/inet.h> header file. */
 #undef HAVE_ARPA_INET_H
+
+/* Support AVX (Advanced Vector Extensions) instructions */
+#undef HAVE_AVX
 
 /* Define to 1 if you have the `connect' function. */
 #undef HAVE_CONNECT
@@ -100,6 +106,9 @@
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
 
+/* Support mmx instructions */
+#undef HAVE_MMX
+
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
@@ -130,6 +139,24 @@
 
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
+
+/* Support SSE (Streaming SIMD Extensions) instructions */
+#undef HAVE_SSE
+
+/* Support SSE2 (Streaming SIMD Extensions 2) instructions */
+#undef HAVE_SSE2
+
+/* Support SSE3 (Streaming SIMD Extensions 3) instructions */
+#undef HAVE_SSE3
+
+/* Support SSSE4.1 (Streaming SIMD Extensions 4.1) instructions */
+#undef HAVE_SSE4_1
+
+/* Support SSSE4.2 (Streaming SIMD Extensions 4.2) instructions */
+#undef HAVE_SSE4_2
+
+/* Support SSSE3 (Supplemental Streaming SIMD Extensions 3) instructions */
+#undef HAVE_SSSE3
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */

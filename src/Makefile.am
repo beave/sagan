@@ -33,6 +33,9 @@ sagan-alert-time.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
+parsers/sagan-strstr/sagan-strstr-hook.c \
+parsers/sagan-strstr/strstr_sse2.s \
+parsers/sagan-strstr/strstr_sse4_2.s \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \

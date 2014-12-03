@@ -61,7 +61,7 @@ int parse_proto( char *msg )
                 }
             else
                 {
-                    if (strstr(msg, map_message[i].search)) return(map_message[i].proto);
+                    if (Sagan_strstr(msg, map_message[i].search)) return(map_message[i].proto);
                 }
         }
     return(0);
@@ -86,7 +86,7 @@ int parse_proto_program( char *program )
                 }
             else
                 {
-                    if (strstr(program, map_program[i].program)) return(map_program[i].proto);
+                    if (Sagan_strstr(program, map_program[i].program)) return(map_program[i].proto);
                 }
         }
     return(0);

@@ -96,7 +96,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
 
                             strlcpy(tmp, rulestruct[rule_position].flowbit_name[i], sizeof(tmp));
 
-                            if (strstr(rulestruct[rule_position].flowbit_name[i], "|"))
+                            if (Sagan_strstr(rulestruct[rule_position].flowbit_name[i], "|"))
                                 {
                                     tmp_flowbit_name = strtok_r(tmp, "|", &tok);
                                     and_or = 1;
@@ -211,7 +211,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
 
                             strlcpy(tmp, rulestruct[rule_position].flowbit_name[i], sizeof(tmp));
 
-                            if (strstr(rulestruct[rule_position].flowbit_name[i], "|"))
+                            if (Sagan_strstr(rulestruct[rule_position].flowbit_name[i], "|"))
                                 {
                                     tmp_flowbit_name = strtok_r(tmp, "|", &tok);
                                     and_or = 1;

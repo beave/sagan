@@ -225,7 +225,7 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type )
                     ip_dst[0] = '0';
                     ip_dst[1] = '\0';
 
-                    if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search ))
+                    if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganCaseSearchlist[i].search ))
                         {
 
                             counters->search_case_hit_count++;

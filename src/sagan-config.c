@@ -722,7 +722,7 @@ void Load_Config( void )
                             config->sagan_ext_flag=1;
                             config->sagan_external_output_flag=1;
                             strlcpy(config->sagan_extern, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->sagan_extern));
-                            if (strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
+                            if (Sagan_strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
                         }
 
 #ifdef WITH_SYSLOG
@@ -1125,14 +1125,14 @@ void Load_Config( void )
 
                     /* Test for multiple values via [ ] or signle value */
 
-                    if ((strstr(tmpbuf2, "[") && !strstr(tmpbuf2, "]")) || (!strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]")))
+                    if ((Sagan_strstr(tmpbuf2, "[") && !Sagan_strstr(tmpbuf2, "]")) || (!Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]")))
                         {
                             Sagan_Log(S_ERROR, "[%s, line %d] A 'var' in the sagan.conf file contains mismatched [ ]!", __FILE__, __LINE__);
                         }
 
                     /* Multiple values */
 
-                    if (strstr(tmpbuf2, "[") && strstr(tmpbuf2, "]"))
+                    if (Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]"))
                         {
 
                             sagan_var2 = strtok_r(NULL, "[", &tok);

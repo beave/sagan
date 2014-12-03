@@ -82,7 +82,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
                                 }
                             else
                                 {
-                                    if (strstr(syslog_msg, tmp_search))
+                                    if (Sagan_strstr(syslog_msg, tmp_search))
                                         {
                                             results++;
                                         }
@@ -115,7 +115,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
                             else
                                 {
 
-                                    if (strstr(syslog_msg, tmp_search))
+                                    if (Sagan_strstr(syslog_msg, tmp_search))
                                         {
                                             match++;
                                         }

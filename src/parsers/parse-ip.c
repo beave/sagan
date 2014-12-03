@@ -75,7 +75,7 @@ char *parse_ip( char *syslogmessage, int pos )
     while (ptmp != NULL )
         {
 
-            if (strstr(ptmp, "."))
+            if (Sagan_strstr(ptmp, "."))
                 {
 
                     result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));

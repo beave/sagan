@@ -110,7 +110,7 @@ void Sagan_Processor ( void )
                             for (i = 0; i < counters->droplist_count; i++)
                                 {
 
-                                    if (strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
+                                    if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
                                         {
 
                                             pthread_mutex_lock(&SaganIgnoreCounter);

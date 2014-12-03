@@ -5,6 +5,7 @@ AC_INIT
 AC_CONFIG_SRCDIR([src])
 AC_CANONICAL_SYSTEM
 AC_GNU_SOURCE
+AC_CONFIG_MACRO_DIRS([m4])
 
 AM_MAINTAINER_MODE([disable])
 
@@ -44,7 +45,6 @@ AC_ARG_ENABLE(syslog,
   [ SYSLOG="$enableval"],
   [ SYSLOG="yes" ]
 )
-
 
 AC_ARG_WITH(esmtp_includes,
         [  --with-esmtp-includes=DIR    libesmtp include directory],
@@ -202,7 +202,10 @@ AC_FUNC_FORK
 AC_FUNC_REALLOC
 AC_TYPE_PID_T
 AC_TYPE_SIZE_T
-AC_STRUCT_TM
+AC_STRUCT_TM 
+
+AX_EXT
+AM_PROG_AS
 
 AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat strlcat strlcpy getopt_long gethostbyname socket htons connect send recv dup2 strspn strdup memset])
 
@@ -320,6 +323,7 @@ if test "$SNORTSAM" = "yes"; then
         AC_MSG_RESULT([------- Snortsam support is enabled -------])
 	AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
         fi
+
 
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local

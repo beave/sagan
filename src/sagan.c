@@ -258,50 +258,50 @@ int main(int argc, char **argv)
 
                 case 'd':
 
-                    if (strstr(optarg, "syslog"))
+                    if (Sagan_strstr(optarg, "syslog"))
                         {
                             debug->debugsyslog=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "load"))
+                    if (Sagan_strstr(optarg, "load"))
                         {
                             debug->debugload=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "fwsam"))
+                    if (Sagan_strstr(optarg, "fwsam"))
                         {
                             debug->debugfwsam=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "external"))
+                    if (Sagan_strstr(optarg, "external"))
                         {
                             debug->debugexternal=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "threads"))
+                    if (Sagan_strstr(optarg, "threads"))
                         {
                             debug->debugthreads=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "flowbit"))
+                    if (Sagan_strstr(optarg, "flowbit"))
                         {
                             debug->debugflowbit=1;
                             debugflag=1;
                         }
 
-                    if (strstr(optarg, "engine"))
+                    if (Sagan_strstr(optarg, "engine"))
                         {
                             debug->debugengine=1;
                             debugflag=1;
                         }
 
 #ifdef HAVE_LIBGEOIP
-                    if (strstr(optarg, "geoip"))
+                    if (Sagan_strstr(optarg, "geoip"))
                         {
                             debug->debuggeoip=1;
                             debugflag=1;
@@ -309,7 +309,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-                    if (strstr(optarg, "normalize" ))
+                    if (Sagan_strstr(optarg, "normalize" ))
                         {
                             debug->debugnormalize=1;
                             debugflag=1;
@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef HAVE_LIBESMTP
-                    if (strstr(optarg, "smtp"))
+                    if (Sagan_strstr(optarg, "smtp"))
                         {
                             debug->debugesmtp=1;
                             debugflag=1;
@@ -325,7 +325,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef HAVE_LIBPCAP
-                    if (strstr(optarg, "plog"))
+                    if (Sagan_strstr(optarg, "plog"))
                         {
                             debug->debugplog=1;
                             debugflag=1;
@@ -333,7 +333,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef WITH_WEBSENSE
-                    if (strstr(optarg, "websense"))
+                    if (Sagan_strstr(optarg, "websense"))
                         {
                             debug->debugwebsense=1;
                             debugflag=1;

@@ -85,7 +85,11 @@ DIST_COMMON = INSTALL NEWS README AUTHORS ChangeLog \
 	$(srcdir)/config.h.in COPYING TODO config.guess config.sub \
 	depcomp install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ax_check_compile_flag.m4 \
+	$(top_srcdir)/m4/ax_ext.m4 \
+	$(top_srcdir)/m4/ax_gcc_x86_avx_xgetbv.m4 \
+	$(top_srcdir)/m4/ax_gcc_x86_cpuid.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -201,6 +205,9 @@ AUTOHEADER = ${SHELL} /home/champ/code/sagan/missing autoheader
 AUTOMAKE = ${SHELL} /home/champ/code/sagan/missing automake-1.13
 AWK = gawk
 CC = gcc
+CCAS = gcc
+CCASDEPMODE = depmode=gcc3
+CCASFLAGS = -g -O2
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = gcc -E
@@ -249,6 +256,7 @@ PKG_CONFIG_LIBDIR =
 PKG_CONFIG_PATH = 
 SET_MAKE = 
 SHELL = /bin/sh
+SIMD_FLAGS =  -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1
 STRIP = 
 VERSION = 1.0.0-RC5
 abs_builddir = /home/champ/code/sagan

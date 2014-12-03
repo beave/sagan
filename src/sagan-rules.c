@@ -175,20 +175,20 @@ void Load_Rules( const char *ruleset )
             if (!strchr(rulebuf, ';') || !strchr(rulebuf, ':') ||
                     !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
 
-            if (!strstr(rulebuf, "sid:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
-            if (!strstr(rulebuf, "rev:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
-            if (!strstr(rulebuf, "msg:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
+            if (!Sagan_strstr(rulebuf, "sid:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
+            if (!Sagan_strstr(rulebuf, "rev:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
+            if (!Sagan_strstr(rulebuf, "msg:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
 
             rc=0;
-            if (!strstr(rulebuf, "alert")) rc++;
-            if (!strstr(rulebuf, "drop")) rc++;
+            if (!Sagan_strstr(rulebuf, "alert")) rc++;
+            if (!Sagan_strstr(rulebuf, "drop")) rc++;
             if ( rc == 2 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
 
             rc=0;
-            if (!strstr(rulebuf, "tcp")) rc++;
-            if (!strstr(rulebuf, "udp")) rc++;
-            if (!strstr(rulebuf, "icmp")) rc++;
-            if (!strstr(rulebuf, "syslog")) rc++;
+            if (!Sagan_strstr(rulebuf, "tcp")) rc++;
+            if (!Sagan_strstr(rulebuf, "udp")) rc++;
+            if (!Sagan_strstr(rulebuf, "icmp")) rc++;
+            if (!Sagan_strstr(rulebuf, "syslog")) rc++;
             if ( rc == 4 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
 
             /* Parse forward for the first '(' */
@@ -445,7 +445,7 @@ void Load_Rules( const char *ruleset )
                                      * flowbits matched or not!
                                      */
 
-                                    if (strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
+                                    if (Sagan_strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
                                         {
                                             rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
                                         }
@@ -485,7 +485,7 @@ void Load_Rules( const char *ruleset )
                                      * flowbits matched or not!
                                      */
 
-                                    if (strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
+                                    if (Sagan_strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&"))
                                         {
                                             rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
                                         }
@@ -578,7 +578,7 @@ void Load_Rules( const char *ruleset )
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                             not = strtok_r(arg, "\"", &savenot);
-                            if (strstr(not, "!")) rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
+                            if (Sagan_strstr(not, "!")) rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
 
                             meta_content_count++;
                             rulestruct[counters->rulecount].meta_content_count=meta_content_count;
@@ -745,7 +745,7 @@ void Load_Rules( const char *ruleset )
                             /* For content: ! "something" */
 
                             not = strtok_r(arg, "\"", &savenot);
-                            if (strstr(not, "!")) rulestruct[counters->rulecount].content_not[content_count] = 1;
+                            if (Sagan_strstr(not, "!")) rulestruct[counters->rulecount].content_not[content_count] = 1;
 
                             strlcpy(rulestruct[counters->rulecount].s_content[content_count], final_content, sizeof(rulestruct[counters->rulecount].s_content[content_count]));
                             final_content[0] = '\0';
@@ -897,8 +897,8 @@ void Load_Rules( const char *ruleset )
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
                             tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
 
-                            if (strstr(tmptoken, "src")) rulestruct[counters->rulecount].fwsam_src_or_dst=1;
-                            if (strstr(tmptoken, "dst")) rulestruct[counters->rulecount].fwsam_src_or_dst=2;
+                            if (Sagan_strstr(tmptoken, "src")) rulestruct[counters->rulecount].fwsam_src_or_dst=1;
+                            if (Sagan_strstr(tmptoken, "dst")) rulestruct[counters->rulecount].fwsam_src_or_dst=2;
 
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
@@ -909,13 +909,13 @@ void Load_Rules( const char *ruleset )
 
                             /* Covers both plural and non-plural (ie - minute/minutes) */
 
-                            if (strstr(tmptok_tmp, "second")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
-                            if (strstr(tmptok_tmp, "minute")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
-                            if (strstr(tmptok_tmp, "hour")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60;
-                            if (strstr(tmptok_tmp, "day")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
-                            if (strstr(tmptok_tmp, "week")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
-                            if (strstr(tmptok_tmp, "month")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
-                            if (strstr(tmptok_tmp, "year")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365;
+                            if (Sagan_strstr(tmptok_tmp, "second")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
+                            if (Sagan_strstr(tmptok_tmp, "minute")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
+                            if (Sagan_strstr(tmptok_tmp, "hour")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60;
+                            if (Sagan_strstr(tmptok_tmp, "day")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
+                            if (Sagan_strstr(tmptok_tmp, "week")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
+                            if (Sagan_strstr(tmptok_tmp, "month")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
+                            if (Sagan_strstr(tmptok_tmp, "year")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365;
 
                         }
 
@@ -935,7 +935,7 @@ void Load_Rules( const char *ruleset )
                             while( tmptoken != NULL )
                                 {
 
-                                    if (strstr(tmptoken, "days"))
+                                    if (Sagan_strstr(tmptoken, "days"))
                                         {
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
@@ -969,7 +969,7 @@ void Load_Rules( const char *ruleset )
 
                                         }
 
-                                    if (strstr(tmptoken, "hours"))
+                                    if (Sagan_strstr(tmptoken, "hours"))
                                         {
 
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
@@ -1060,26 +1060,26 @@ void Load_Rules( const char *ruleset )
                             while( tmptoken != NULL )
                                 {
 
-                                    if (strstr(tmptoken, "type"))
+                                    if (Sagan_strstr(tmptoken, "type"))
                                         {
-                                            if (strstr(tmptoken, "limit")) rulestruct[counters->rulecount].threshold_type = 1;
-                                            if (strstr(tmptoken, "threshold")) rulestruct[counters->rulecount].threshold_type = 2;
+                                            if (Sagan_strstr(tmptoken, "limit")) rulestruct[counters->rulecount].threshold_type = 1;
+                                            if (Sagan_strstr(tmptoken, "threshold")) rulestruct[counters->rulecount].threshold_type = 2;
                                         }
 
-                                    if (strstr(tmptoken, "track"))
+                                    if (Sagan_strstr(tmptoken, "track"))
                                         {
-                                            if (strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].threshold_src_or_dst = 1;
-                                            if (strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].threshold_src_or_dst = 2;
+                                            if (Sagan_strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].threshold_src_or_dst = 1;
+                                            if (Sagan_strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].threshold_src_or_dst = 2;
                                         }
 
-                                    if (strstr(tmptoken, "count"))
+                                    if (Sagan_strstr(tmptoken, "count"))
                                         {
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
                                             rulestruct[counters->rulecount].threshold_count = atoi(tmptok_tmp);
                                         }
 
-                                    if (strstr(tmptoken, "seconds"))
+                                    if (Sagan_strstr(tmptoken, "seconds"))
                                         {
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
@@ -1101,20 +1101,20 @@ void Load_Rules( const char *ruleset )
                             while( tmptoken != NULL )
                                 {
 
-                                    if (strstr(tmptoken, "track"))
+                                    if (Sagan_strstr(tmptoken, "track"))
                                         {
-                                            if (strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].after_src_or_dst = 1;
-                                            if (strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].after_src_or_dst = 2;
+                                            if (Sagan_strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].after_src_or_dst = 1;
+                                            if (Sagan_strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].after_src_or_dst = 2;
                                         }
 
-                                    if (strstr(tmptoken, "count"))
+                                    if (Sagan_strstr(tmptoken, "count"))
                                         {
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
                                             rulestruct[counters->rulecount].after_count = atoi(tmptok_tmp);
                                         }
 
-                                    if (strstr(tmptoken, "seconds"))
+                                    if (Sagan_strstr(tmptoken, "seconds"))
                                         {
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );

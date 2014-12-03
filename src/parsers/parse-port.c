@@ -75,7 +75,7 @@ int parse_port (char *msg)
 
     /* See if the word " port" is in the string */
 
-    if ( strstr(tmpmsg, " PORT "))
+    if ( Sagan_strstr(tmpmsg, " PORT "))
         {
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
@@ -110,7 +110,7 @@ int parse_port (char *msg)
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
     To_UpperC(tmpmsg);
 
-    if ( strstr(tmpmsg, ":"))
+    if ( Sagan_strstr(tmpmsg, ":"))
         {
 
             portstring = strtok_r(tmpmsg, ":", &saveptr1);
@@ -144,7 +144,7 @@ int parse_port (char *msg)
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
     To_UpperC(tmpmsg);
 
-    if ( strstr(tmpmsg, "#"))
+    if ( Sagan_strstr(tmpmsg, "#"))
         {
 
             portstring = strtok_r(tmpmsg, "#", &saveptr1);
