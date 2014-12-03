@@ -50,7 +50,13 @@ char *Sagan_strstr(const char *_x,const char *_y)
 
 #else
 
-/* Non-SSE2 CPUs get to use the pure C function */
+/* 
+ * Non-SSE2 CPUs get to use the pure C function.  This code is based
+ * off Dale Moore mine3a.  Information can be found at:
+ *
+ * http://computer-programming-forum.com/47-c-language/69de641587bbb919.htm
+ *
+ */
 
 char *Sagan_strstr(const char *_x, const char *_y) {
         size_t    len = strlen (_y);
