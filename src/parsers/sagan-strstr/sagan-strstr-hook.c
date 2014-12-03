@@ -20,10 +20,10 @@
 
 /* sagan-strstr-hook.c
  *
- * This "hooks" in the "Sagan_strstr" function for CPUs supporting SSE2. 
- * This code is based on work by Ondra Bílk and the glibc projects. 
+ * This "hooks" in the "Sagan_strstr" function for CPUs supporting SSE2.
+ * This code is based on work by Ondra Bílk and the glibc projects.
  *
- * His code/original post can be found at: 
+ * His code/original post can be found at:
  *
  * http://comments.gmane.org/gmane.comp.lib.glibc.alpha/34531
  *
@@ -44,17 +44,17 @@
 
 /* This function takes advantage of CPUs with SSE2 */
 
-char *Sagan_strstr(const char *_x,const char *_y) 
+char *Sagan_strstr(const char *_x,const char *_y)
 {
-	char *x= (char*) _x, *y=(char*)_y;
-	char* (*fn)(char *,char *) = function_func[0];
-	char * p=fn(x,y);
-  	return p;
+    char *x= (char*) _x, *y=(char*)_y;
+    char* (*fn)(char *,char *) = function_func[0];
+    char * p=fn(x,y);
+    return p;
 }
 
 #else
 
-/* 
+/*
  * Non-SSE2 CPUs get to use the pure C function.  This code is based
  * off Dale Moore mine3a.  Information can be found at:
  *
@@ -62,13 +62,15 @@ char *Sagan_strstr(const char *_x,const char *_y)
  *
  */
 
-char *Sagan_strstr(const char *_x, const char *_y) {
-        size_t    len = strlen (_y);
-        if (!*_y) return (char *) _x;
-        for (;;) {
-                if (!(_x = strchr (_x, *_y))) return NULL;
-                if (!strncmp (_x, _y, len)) return (char *) _x;
-                _x++;
+char *Sagan_strstr(const char *_x, const char *_y)
+{
+    size_t    len = strlen (_y);
+    if (!*_y) return (char *) _x;
+    for (;;)
+        {
+            if (!(_x = strchr (_x, *_y))) return NULL;
+            if (!strncmp (_x, _y, len)) return (char *) _x;
+            _x++;
         }
 }
 
@@ -78,28 +80,29 @@ char *Sagan_strstr(const char *_x, const char *_y) {
  * already be converted to lowercase
  *
  * 0/FALSE == Don't convert needle
- * 1/TRUE  == Convert needle 
+ * 1/TRUE  == Convert needle
  */
 
-char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower ) {
+char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
+{
 
-	char *p = NULL; 
-	char haystack_string[MAX_SYSLOGMSG] = { 0 };
-	char needle_string[512] = { 0 }; 
+    char *p = NULL;
+    char haystack_string[MAX_SYSLOGMSG] = { 0 };
+    char needle_string[512] = { 0 };
 
-	strlcpy(haystack_string, _x, sizeof(haystack_string));
-	To_LowerC(haystack_string);
+    strlcpy(haystack_string, _x, sizeof(haystack_string));
+    To_LowerC(haystack_string);
 
-	strlcpy(needle_string, _y, sizeof(needle_string)); 
+    strlcpy(needle_string, _y, sizeof(needle_string));
 
-	if ( needle_lower ) 
-		{ 
-		To_LowerC(needle_string); 
-		}
+    if ( needle_lower )
+        {
+            To_LowerC(needle_string);
+        }
 
-	p = Sagan_strstr( haystack_string, needle_string);
-	
-	return p; 
+    p = Sagan_strstr( haystack_string, needle_string);
+
+    return p;
 
 }
 

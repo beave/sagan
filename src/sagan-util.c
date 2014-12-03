@@ -184,7 +184,7 @@ char *To_LowerC(char *const s)
 {
     char* cur = s;
     while (*cur)
-        {   
+        {
             *cur = tolower(*cur);
             ++cur;
         }
