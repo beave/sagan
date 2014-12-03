@@ -38,6 +38,8 @@
 
 #ifdef HAVE_SSE2
 
+/* This function takes advantage of CPUs with SSE2 */
+
 char *Sagan_strstr(const char *_x,const char *_y) 
 {
 	char *x= (char*) _x, *y=(char*)_y;
@@ -46,5 +48,18 @@ char *Sagan_strstr(const char *_x,const char *_y)
   	return p;
 }
 
-#endif
+#else
 
+/* Non-SSE2 CPUs get to use the pure C function */
+
+char *Sagan_strstr(const char *_x, const char *_y) {
+        size_t    len = strlen (_y);
+        if (!*_y) return (char *) _x;
+        for (;;) {
+                if (!(_x = strchr (_x, *_y))) return NULL;
+                if (!strncmp (_x, _y, len)) return (char *) _x;
+                _x++;
+        }
+}
+
+#endif
