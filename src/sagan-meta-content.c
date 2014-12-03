@@ -75,7 +75,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, FALSE))
                                         {
                                             results++;
                                         }
@@ -107,7 +107,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, FALSE))
                                         {
                                             match++;
                                         }

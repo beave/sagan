@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-strstr-hook.h"
 
@@ -73,15 +74,30 @@ char *Sagan_strstr(const char *_x, const char *_y) {
 
 #endif
 
-char *Sagan_stristr(const char *_x, const char *_y) {
+/* This works similar to "strcasestr".  The "needle" (_y) is assumed to
+ * already be converted to lowercase
+ *
+ * 0/FALSE == Don't convert needle
+ * 1/TRUE  == Convert needle 
+ */
+
+char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower ) {
 
 	char *p = NULL; 
-	char convert_string[MAX_SYSLOGMSG] = { 0 };
+	char haystack_string[MAX_SYSLOGMSG] = { 0 };
+	char needle_string[512] = { 0 }; 
 
-	strlcpy(convert_string, _x, sizeof(convert_string));
-	To_LowerC(convert_string);
-	
-	p = Sagan_strstr( convert_string, _y);
+	strlcpy(haystack_string, _x, sizeof(haystack_string));
+	To_LowerC(haystack_string);
+
+	strlcpy(needle_string, _y, sizeof(needle_string)); 
+
+	if ( needle_lower ) 
+		{ 
+		To_LowerC(needle_string); 
+		}
+
+	p = Sagan_strstr( haystack_string, needle_string);
 	
 	return p; 
 

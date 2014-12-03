@@ -41,5 +41,5 @@ static void* function_func[]={  __strstr_sse2_unaligned, __strstr_sse42, NULL};
 #endif 
 
 char *Sagan_strstr(const char *, const char *);
-char *Sagan_stristr(const char *, const char *);
+char *Sagan_stristr(const char *, const char *, sbool);
 
