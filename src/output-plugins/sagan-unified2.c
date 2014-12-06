@@ -62,10 +62,10 @@ struct _Class_Struct *classstruct;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 
-static void Unified2Write( _SaganConfig *, uint8_t *, uint32_t);
+static void Unified2Write( uint8_t *, uint32_t );
 static int SafeMemcpy(void *, const void *, size_t, const void *, const void *);
 static int inBounds(const uint8_t *, const uint8_t *, const uint8_t *);
-static void Unified2RotateFile( _SaganConfig * );
+static void Unified2RotateFile( void );
 
 /* Future note on IPv6 - This would have been
  * Serial_Unified2IDSEventIPv6_legacy.
@@ -83,7 +83,7 @@ char *eth_addr="00:11:22:33:44:55";	/* Bogus ethernet address for ethernet frame
 /* Unified2InitFile - Initializes the file to be openned */
 /*********************************************************/
 
-void Unified2InitFile( _SaganConfig *config  )
+void Unified2InitFile( void ) 
 {
 
     char filepath[1024];
@@ -143,7 +143,7 @@ void Sagan_Unified2( _SaganEvent *Event )
 
     alertdata.priority_id = htonl(Event->pri);					//P riority
     alertdata.protocol = Event->ip_proto;					// Protocol
-    alertdata.generator_id = htonl(Event->generatorid); 				// From gen-msg.map
+    alertdata.generator_id = htonl(Event->generatorid); 			// From gen-msg.map
 
     alertdata.ip_source = htonl(IP2Bit(Event->ip_src));
     alertdata.ip_destination = htonl(IP2Bit(Event->ip_dst));
@@ -154,7 +154,7 @@ void Sagan_Unified2( _SaganEvent *Event )
     /* Rotate if log has gotten to big */
 
     if ((config->unified2_current + write_len) > config->unified2_limit)
-        Unified2RotateFile(config);
+        Unified2RotateFile();
 
 
     hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
@@ -175,7 +175,7 @@ void Sagan_Unified2( _SaganEvent *Event )
             return;
         }
 
-    Unified2Write(config, write_pkt_buffer, write_len);
+    Unified2Write(write_pkt_buffer, write_len);
 
 }
 
@@ -398,7 +398,7 @@ void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
         }
 
 
-    Unified2Write(config, write_pkt_buffer, write_len);
+    Unified2Write(write_pkt_buffer, write_len);
     unified_event_id++;
 
 }
@@ -409,7 +409,7 @@ void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
 /* compatibility.                                                            */
 /*****************************************************************************/
 
-void Unified2CleanExit( _SaganConfig *config )
+void Unified2CleanExit( void )
 {
     if (config != NULL)
         {
@@ -419,24 +419,11 @@ void Unified2CleanExit( _SaganConfig *config )
         }
 }
 
-static void Unified2RotateFile( _SaganConfig *config )
+static void Unified2RotateFile( void )
 {
     fclose(config->unified2_stream);
     config->unified2_current = 0;
-    Unified2InitFile(config);
-}
-
-
-void *SaganAlloc( _SaganConfig *config, unsigned long size)
-{
-    void *tmp;
-
-    tmp = (void *) calloc(size, sizeof(char));
-
-    if(tmp == NULL)
-        Sagan_Log(S_ERROR, "[%s, line %d] Unable to allocate memory! (%lu requested)", __FILE__, __LINE__, size);
-
-    return tmp;
+    Unified2InitFile();
 }
 
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...)
@@ -514,7 +501,7 @@ int inBounds(const uint8_t *start, const uint8_t *end, const uint8_t *p)
     return 0;
 }
 
-static void Unified2Write( _SaganConfig *config, uint8_t *buf, uint32_t buf_len)
+static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 {
     size_t fwcount = 0;
     int ffstatus = 0;
@@ -591,7 +578,7 @@ static void Unified2Write( _SaganConfig *config, uint8_t *buf, uint32_t buf_len)
                         case EIO:
                             Sagan_Log(S_ERROR, "[%s, line %d] Unified2 file is corrupt", __FILE__, __LINE__);
 
-                            Unified2RotateFile(config);
+                            Unified2RotateFile();
 
                             if (config->unified2_nostamp)
                                 {

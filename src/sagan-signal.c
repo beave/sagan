@@ -123,7 +123,7 @@ void Sig_Handler( _SaganSigArgs *args )
                     sagan_statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-                    if ( sagan_unified2_flag ) Unified2CleanExit(config);
+                    if ( sagan_unified2_flag ) Unified2CleanExit();
 #endif
 
                     fflush(config->sagan_alert_stream);

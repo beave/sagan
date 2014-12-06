@@ -717,7 +717,7 @@ int main(int argc, char **argv)
             Sagan_Log(S_NORMAL, "");
             Sagan_Log(S_NORMAL, "Unified2 file: %s", config->unified2_filepath);
             Sagan_Log(S_NORMAL, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
-            Unified2InitFile( config );
+            Unified2InitFile();
         }
 
 #endif
