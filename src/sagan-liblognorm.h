@@ -46,6 +46,9 @@ typedef struct _SaganNormalizeLiblognorm
     char ip_src[MAXIP];
     char ip_dst[MAXIP];
 
+    char src_host[MAXHOST];
+    char dst_host[MAXHOST];
+
     int  src_port;
     int  dst_port;
 
@@ -56,5 +59,5 @@ typedef struct _SaganNormalizeLiblognorm
 #endif
 
 
-void sagan_liblognorm_load( void );
-void sagan_normalize_liblognorm( char *);
+void Sagan_Liblognorm_Load( void );
+void Sagan_Normalize_Liblognorm( char *);

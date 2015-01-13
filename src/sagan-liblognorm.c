@@ -61,19 +61,17 @@ struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
 
 static ln_ctx ctx;
-//static ee_ctx eectx;
-
 
 struct _SaganCounters *counters;
 
 
 /************************************************************************
- * sagan_liblognorm_load
+ * Sagan_Liblognorm_Load
  *
  * Load in the normalization files into memory
  ************************************************************************/
 
-void sagan_liblognorm_load(void)
+void Sagan_Liblognorm_Load(void)
 {
 
     int i;
@@ -82,8 +80,6 @@ void sagan_liblognorm_load(void)
     memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
     if((ctx = ln_initCtx()) == NULL) Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
-
-//ln_setEECtx(ctx, eectx);
 
     for (i=0; i < counters->liblognormtoload_count; i++)
         {
@@ -100,7 +96,7 @@ void sagan_liblognorm_load(void)
  * Locates interesting log data via Rainer's liblognorm library
  ***********************************************************************/
 
-void sagan_normalize_liblognorm(char *syslog_msg)
+void Sagan_Normalize_Liblognorm(char *syslog_msg)
 {
 
     char buf[10*1024] = { 0 };
@@ -116,6 +112,9 @@ void sagan_normalize_liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
     SaganNormalizeLiblognorm->ip_dst[1] = '\0';
 
+    SaganNormalizeLiblognorm->src_host[0] = '\0'; 
+    SaganNormalizeLiblognorm->dst_host[0] = '\0'; 
+
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
     ln_normalize(ctx, buf, strlen(buf), &json);
@@ -129,7 +128,7 @@ void sagan_normalize_liblognorm(char *syslog_msg)
     tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
     if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
 
-    /* Make sure it returns something values,  if not, popular with config->sagan_host */
+    /* Make sure it returns something values,  if not, populate with config->sagan_host */
 
     if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" ) ||
             !strcmp(SaganNormalizeLiblognorm->ip_src, "")) strlcpy(SaganNormalizeLiblognorm->ip_src, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_src));
@@ -148,19 +147,32 @@ void sagan_normalize_liblognorm(char *syslog_msg)
 
     tmp = json_object_get_string(json_object_object_get(json, "src-host"));
 
+    if ( tmp != NULL ) 
+    	strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
+
+
+    tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
+
+    if ( tmp != NULL ) 
+         strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
+
+
+/*
     if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
         {
             snprintf(tmp_host, sizeof(tmp_host), "%s", tmp); 	/* Avoid const char * warning */
-            strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
-        }
+//            strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
+//        }
 
+
+/*
     tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
     if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
         {
             snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);        /* Avoid const char * warning */
-            strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
-        }
+ //           strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
+//        }
 
     /* Get port information */
 
@@ -180,6 +192,8 @@ void sagan_normalize_liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
             Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
             Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
+	    Sagan_Log(S_DEBUG, "Source Host: %s", SaganNormalizeLiblognorm->src_host);
+	    Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
 //     Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
             Sagan_Log(S_DEBUG, "");
         }

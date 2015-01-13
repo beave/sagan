@@ -398,7 +398,7 @@ int main(int argc, char **argv)
     Sagan_Engine_Init();
 
 #ifdef HAVE_LIBLOGNORM
-    sagan_liblognorm_load();
+    Sagan_Liblognorm_Load();
 #endif
 
 

@@ -40,7 +40,7 @@
 #define CONFBUF		1024
 
 #define MAXPATH 	255		/* Max path for files/directories */
-#define MAXHOST         32		/* Max host length */
+#define MAXHOST         128		/* Max host length */
 #define MAXPROGRAM	32		/* Max syslog 'program' length */
 #define MAXDATE		25		/* Max syslog 'date' length */
 #define MAXTIME		10		/* Max syslog 'time length */
@@ -48,13 +48,6 @@
 #define MAXPRIORITY	20		/* Max syslog 'priority' length */
 #define MAXTAG		32		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
-
-/* Used for the syslog "msgslot" array.  This can be increased,  but
- * anything > || == 30 causes SEGFAULTs under FreeBSD
- * Champ Clark - 02/28/2010
- */
-
-#define MAX_MSGSLOT	25		/* Slots for syslog message passing */
 
 #define MAX_THREADS     4096            /* Max system threads */
 #define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */

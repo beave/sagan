@@ -166,7 +166,7 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type )
 
                                     pthread_mutex_lock(&Lognorm_Mutex);
 
-                                    sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
+                                    Sagan_Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
                                     if (SaganNormalizeLiblognorm->ip_src[0] != '0')
                                         strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
@@ -234,7 +234,7 @@ void Sagan_Search (_SaganProcSyslog *SaganProcSyslog_LOCAL, int type )
 
                                     pthread_mutex_lock(&Lognorm_Mutex);
 
-                                    sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
+                                    Sagan_Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
                                     if (SaganNormalizeLiblognorm->ip_src[0] != '0')
                                         strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));

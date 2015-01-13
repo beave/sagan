@@ -178,7 +178,7 @@ int Sagan_Blacklist( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
             pthread_mutex_lock(&Lognorm_Mutex);
 
-            sagan_normalize_liblognorm(SaganProcSyslog_LOCAL->syslog_message);
+            Sagan_Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
             if (SaganNormalizeLiblognorm->ip_src[0] != '0')
                 {
