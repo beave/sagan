@@ -119,7 +119,7 @@ int main(int argc, char **argv)
         { "help",         no_argument,          NULL,   'h' },
         { "debug",        required_argument,    NULL,   'd' },
         { "daemon",       no_argument,          NULL,   'D' },
-        { "user",         required_argument,    NULL,   'U' },
+        { "user",         required_argument,    NULL,   'u' },
         { "chroot",       required_argument,    NULL,   'c' },
         { "credits",	  no_argument,		NULL,	'C' },
         { "config",       required_argument,    NULL,   'f' },
