@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2011 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2011 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -47,13 +47,10 @@
 
 void Sagan_Unified2( _SaganEvent * );
 void Sagan_Unified2LogPacketAlert( _SaganEvent * );
-//void Unified2InitFile( _SaganConfig * );
 void Unified2InitFile( void ); 
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
-//void *SaganAlloc( _SaganConfig *, unsigned long);
 void *SaganAlloc( unsigned long );
 
-//void Unified2CleanExit( _SaganConfig * );
 void Unified2CleanExit( void ); 
 
 /* Data structure used for serialization of Unified2 Records */
