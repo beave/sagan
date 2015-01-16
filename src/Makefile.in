@@ -114,7 +114,7 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-alert-time.$(OBJEXT) \
 	sagan-parse-ip.$(OBJEXT) sagan-parse-port.$(OBJEXT) \
 	sagan-parse-proto.$(OBJEXT) sagan-sagan-strstr-hook.$(OBJEXT) \
-	strstr_sse2.$(OBJEXT) strstr_sse4_2.$(OBJEXT) \
+	sagan-strstr_sse2.$(OBJEXT) sagan-strstr_sse4_2.$(OBJEXT) \
 	sagan-sagan-alert.$(OBJEXT) sagan-sagan-esmtp.$(OBJEXT) \
 	sagan-sagan-external.$(OBJEXT) sagan-sagan-unified2.$(OBJEXT) \
 	sagan-sagan-twofish.$(OBJEXT) sagan-sagan-snortsam.$(OBJEXT) \
@@ -147,6 +147,12 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+CPPASCOMPILE = $(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
+	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS)
+AM_V_CPPAS = $(am__v_CPPAS_@AM_V@)
+am__v_CPPAS_ = $(am__v_CPPAS_@AM_DEFAULT_V@)
+am__v_CPPAS_0 = @echo "  CPPAS   " $@;
+am__v_CPPAS_1 = 
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 AM_V_CC = $(am__v_CC_@AM_V@)
@@ -159,11 +165,6 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-CCASCOMPILE = $(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS)
-AM_V_CCAS = $(am__v_CCAS_@AM_V@)
-am__v_CCAS_ = $(am__v_CCAS_@AM_DEFAULT_V@)
-am__v_CCAS_0 = @echo "  CCAS    " $@;
-am__v_CCAS_1 = 
 SOURCES = $(sagan_SOURCES)
 DIST_SOURCES = $(sagan_SOURCES)
 am__can_run_installinfo = \
@@ -340,8 +341,8 @@ parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
 parsers/sagan-strstr/sagan-strstr-hook.c \
-parsers/sagan-strstr/strstr_sse2.s \
-parsers/sagan-strstr/strstr_sse4_2.s \
+parsers/sagan-strstr/strstr_sse2.S \
+parsers/sagan-strstr/strstr_sse4_2.S \
 output-plugins/sagan-alert.c \
 output-plugins/sagan-esmtp.c \
 output-plugins/sagan-external.c \
@@ -360,7 +361,7 @@ processors/sagan-cif.c
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj .s
+.SUFFIXES: .S .c .o .obj
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -488,6 +489,50 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-websense.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strstr_sse2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-strstr_sse4_2.Po@am__quote@
+
+.S.o:
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CPPASCOMPILE) -c -o $@ $<
+
+.S.obj:
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CPPASCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CPPASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+sagan-strstr_sse2.o: parsers/sagan-strstr/strstr_sse2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT sagan-strstr_sse2.o -MD -MP -MF $(DEPDIR)/sagan-strstr_sse2.Tpo -c -o sagan-strstr_sse2.o `test -f 'parsers/sagan-strstr/strstr_sse2.S' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-strstr_sse2.Tpo $(DEPDIR)/sagan-strstr_sse2.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='parsers/sagan-strstr/strstr_sse2.S' object='sagan-strstr_sse2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o sagan-strstr_sse2.o `test -f 'parsers/sagan-strstr/strstr_sse2.S' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse2.S
+
+sagan-strstr_sse2.obj: parsers/sagan-strstr/strstr_sse2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT sagan-strstr_sse2.obj -MD -MP -MF $(DEPDIR)/sagan-strstr_sse2.Tpo -c -o sagan-strstr_sse2.obj `if test -f 'parsers/sagan-strstr/strstr_sse2.S'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse2.S'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse2.S'; fi`
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-strstr_sse2.Tpo $(DEPDIR)/sagan-strstr_sse2.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='parsers/sagan-strstr/strstr_sse2.S' object='sagan-strstr_sse2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o sagan-strstr_sse2.obj `if test -f 'parsers/sagan-strstr/strstr_sse2.S'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse2.S'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse2.S'; fi`
+
+sagan-strstr_sse4_2.o: parsers/sagan-strstr/strstr_sse4_2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT sagan-strstr_sse4_2.o -MD -MP -MF $(DEPDIR)/sagan-strstr_sse4_2.Tpo -c -o sagan-strstr_sse4_2.o `test -f 'parsers/sagan-strstr/strstr_sse4_2.S' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse4_2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-strstr_sse4_2.Tpo $(DEPDIR)/sagan-strstr_sse4_2.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='parsers/sagan-strstr/strstr_sse4_2.S' object='sagan-strstr_sse4_2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o sagan-strstr_sse4_2.o `test -f 'parsers/sagan-strstr/strstr_sse4_2.S' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse4_2.S
+
+sagan-strstr_sse4_2.obj: parsers/sagan-strstr/strstr_sse4_2.S
+@am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -MT sagan-strstr_sse4_2.obj -MD -MP -MF $(DEPDIR)/sagan-strstr_sse4_2.Tpo -c -o sagan-strstr_sse4_2.obj `if test -f 'parsers/sagan-strstr/strstr_sse4_2.S'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse4_2.S'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse4_2.S'; fi`
+@am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-strstr_sse4_2.Tpo $(DEPDIR)/sagan-strstr_sse4_2.Po
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS)source='parsers/sagan-strstr/strstr_sse4_2.S' object='sagan-strstr_sse4_2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o sagan-strstr_sse4_2.obj `if test -f 'parsers/sagan-strstr/strstr_sse4_2.S'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse4_2.S'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse4_2.S'; fi`
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1118,24 +1163,6 @@ sagan-sagan-cif.obj: processors/sagan-cif.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-cif.c' object='sagan-sagan-cif.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-cif.obj `if test -f 'processors/sagan-cif.c'; then $(CYGPATH_W) 'processors/sagan-cif.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-cif.c'; fi`
-
-.s.o:
-	$(AM_V_CCAS)$(CCASCOMPILE) -c -o $@ $<
-
-.s.obj:
-	$(AM_V_CCAS)$(CCASCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-strstr_sse2.o: parsers/sagan-strstr/strstr_sse2.s
-	$(AM_V_CCAS)$(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o strstr_sse2.o `test -f 'parsers/sagan-strstr/strstr_sse2.s' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse2.s
-
-strstr_sse2.obj: parsers/sagan-strstr/strstr_sse2.s
-	$(AM_V_CCAS)$(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o strstr_sse2.obj `if test -f 'parsers/sagan-strstr/strstr_sse2.s'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse2.s'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse2.s'; fi`
-
-strstr_sse4_2.o: parsers/sagan-strstr/strstr_sse4_2.s
-	$(AM_V_CCAS)$(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o strstr_sse4_2.o `test -f 'parsers/sagan-strstr/strstr_sse4_2.s' || echo '$(srcdir)/'`parsers/sagan-strstr/strstr_sse4_2.s
-
-strstr_sse4_2.obj: parsers/sagan-strstr/strstr_sse4_2.s
-	$(AM_V_CCAS)$(CCAS) $(AM_CCASFLAGS) $(CCASFLAGS) -c -o strstr_sse4_2.obj `if test -f 'parsers/sagan-strstr/strstr_sse4_2.s'; then $(CYGPATH_W) 'parsers/sagan-strstr/strstr_sse4_2.s'; else $(CYGPATH_W) '$(srcdir)/parsers/sagan-strstr/strstr_sse4_2.s'; fi`
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique

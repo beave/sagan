@@ -29,6 +29,7 @@
 #endif
 
 #include "sagan.h"
+#include "version.h"
 
 void Sagan_Credits(void)
 {

@@ -89,15 +89,12 @@ int  thresh_count_by_dst=0;
 sbool flowbit_return = 0;
 sbool geoip_isset = 0;
 
-#ifdef HAVE_LIBGEOIP
-int   geoip_return = 0;
-#endif
-
 int   alert_time_return = 0;
 int   alert_time_trigger = 0;
 
-pthread_t output_id[MAX_THREADS];
-pthread_attr_t thread_output_attr;
+#ifdef HAVE_LIBGEOIP
+int   geoip_return = 0;
+#endif
 
 void Sagan_Engine_Init ( void )
 {

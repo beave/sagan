@@ -647,9 +647,9 @@ ___m128i_shift_right:
 	.byte	-1
 	.byte	-1
 	.byte	-1
-	.ident	"GCC: (Debian 4.7.3-6) 4.7.3"
+	.ident	"Sagan builtin __strstr_sse42 function"
 	.section	.note.GNU-stack,"",@progbits
-	.ident	"GCC: (Debian 4.7.3-6) 4.7.3"
+	.ident	"Sagan builtin __strstr_sse42 function"
 	.section	.note.GNU-stack,"",@progbits
 
 #endif
