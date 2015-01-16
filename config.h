@@ -142,22 +142,22 @@
 #define HAVE_SOCKET 1
 
 /* Support SSE (Streaming SIMD Extensions) instructions */
-#define HAVE_SSE /**/
+//#define HAVE_SSE /**/
 
 /* Support SSE2 (Streaming SIMD Extensions 2) instructions */
-#define HAVE_SSE2 /**/
+//#define HAVE_SSE2 /**/
 
 /* Support SSE3 (Streaming SIMD Extensions 3) instructions */
-#define HAVE_SSE3 /**/
+//#define HAVE_SSE3 /**/
 
 /* Support SSSE4.1 (Streaming SIMD Extensions 4.1) instructions */
-#define HAVE_SSE4_1 /**/
+//#define HAVE_SSE4_1 /**/
 
 /* Support SSSE4.2 (Streaming SIMD Extensions 4.2) instructions */
 /* #undef HAVE_SSE4_2 */
 
 /* Support SSSE3 (Supplemental Streaming SIMD Extensions 3) instructions */
-#define HAVE_SSSE3 /**/
+//#define HAVE_SSSE3 /**/
 
 /* Define to 1 if `stat' has the bug that it succeeds when given the
    zero-length file name argument. */
@@ -326,6 +326,9 @@
 
 /* With Syslog */
 #define WITH_SYSLOG 1
+
+/* With system strstr */
+/* #undef WITH_SYSSTRSTR */
 
 /* With Websense Threatseeker */
 /* #undef WITH_WEBSENSE */

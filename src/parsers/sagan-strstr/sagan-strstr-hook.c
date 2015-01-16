@@ -40,7 +40,11 @@
 #include "sagan-defs.h"
 #include "sagan-strstr-hook.h"
 
-#ifdef HAVE_SSE2
+
+
+#ifndef WITH_SYSSTRSTR 		/* If NOT using system built in strstr */
+
+#ifdef HAVE_SSE2		/* And our CPU supports SSE2 */
 
 /* This function takes advantage of CPUs with SSE2 */
 
@@ -64,6 +68,7 @@ char *Sagan_strstr(const char *_x,const char *_y)
 
 char *Sagan_strstr(const char *_x, const char *_y)
 {
+
     size_t    len = strlen (_y);
     if (!*_y) return (char *) _x;
     for (;;)
@@ -77,7 +82,7 @@ char *Sagan_strstr(const char *_x, const char *_y)
 #endif
 
 /* This works similar to "strcasestr".  The "needle" (_y) is assumed to
- * already be converted to lowercase it "needle_lower" is FALSE. 
+ * already be converted to lowercase if "needle_lower" is FALSE. 
  *
  * 0/FALSE == Don't convert needle
  * 1/TRUE  == Convert needle
@@ -106,3 +111,19 @@ char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
 
 }
 
+#else
+
+/****************************************************************************
+ * To use the system standard strstr()
+ ****************************************************************************/
+
+char *Sagan_strstr(const char *_x, const char *_y)
+{
+	return (strstr(_x, _y)); 
+}
+
+char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
+{
+	return (strcasestr(_x, _y)); 
+}
+#endif

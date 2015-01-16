@@ -750,6 +750,7 @@ enable_websense
 enable_esmtp
 enable_geoip
 enable_syslog
+enable_system_strstr
 with_esmtp_includes
 with_esmtp_libraries
 with_geoip_includes
@@ -1416,8 +1417,9 @@ Optional Features:
   --enable-esmtp	  Enable libesmtp support.
   --enable-geoip          Enable Maxmind GeoIP support.
   --disable-syslog        Disable syslog support.
+  --enable-system-strstr  Enable system strstr.
   --disable-lognorm       Disable Lognorm (liblognorm) support.
-  --disable-jsonc       Disable jsonc (liblognorm) support.
+  --disable-jsonc         Disable jsonc (liblognorm) support.
   --disable-libpcap       Disable libpcap (plog) support.
   --disable-libdnet       Disable libdnet (unified2) support.
   --enable-dependency-tracking
@@ -3995,6 +3997,15 @@ if test "${enable_syslog+set}" = set; then :
   enableval=$enable_syslog;  SYSLOG="$enableval"
 else
    SYSLOG="yes"
+
+fi
+
+
+# Check whether --enable-system-strstr was given.
+if test "${enable_system_strstr+set}" = set; then :
+  enableval=$enable_system_strstr;  SYSSTRSTR="$enableval"
+else
+   SYSSTRSTR="no"
 
 fi
 
@@ -7626,6 +7637,14 @@ else
 fi
 
 
+if test "$SYSSTRSTR" = "yes"; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: using build in strstr()..." >&5
+$as_echo "using build in strstr()..." >&6; }
+
+$as_echo "#define WITH_SYSSTRSTR 1" >>confdefs.h
+
+	fi
+
 if test "$SYSLOG" = "yes"; then
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- Syslog support is enabled -------" >&5
 $as_echo "------- Syslog support is enabled -------" >&6; }
@@ -10823,8 +10842,8 @@ $as_echo "  ,-._,-.    Sagan has been configured!" >&6; }
 $as_echo "  \/)\"(\/ " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&5
 $as_echo "   (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2014 Quadrant Information Security, et al." >&5
-$as_echo "   /   \/)   Copyright (C) 2009-2014 Quadrant Information Security, et al." >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result:    /   \/)   Copyright (C) 2009-2015 Quadrant Information Security, et al." >&5
+$as_echo "   /   \/)   Copyright (C) 2009-2015 Quadrant Information Security, et al." >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:   (|| ||) " >&5
 $as_echo "  (|| ||) " >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result:    oo-oo  " >&5

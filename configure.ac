@@ -46,6 +46,12 @@ AC_ARG_ENABLE(syslog,
   [ SYSLOG="yes" ]
 )
 
+AC_ARG_ENABLE(system-strstr,
+  [  --enable-system-strstr  Enable system strstr.],
+  [ SYSSTRSTR="$enableval"],
+  [ SYSSTRSTR="no" ]
+)
+
 AC_ARG_WITH(esmtp_includes,
         [  --with-esmtp-includes=DIR    libesmtp include directory],
         [with_esmtp_includes="$withval"],[with_esmtp_includes="no"])
@@ -104,7 +110,7 @@ fi
 # -- 
 
 AC_ARG_ENABLE(jsonc,
-  [  --disable-jsonc       Disable jsonc (liblognorm) support.],
+  [  --disable-jsonc         Disable jsonc (liblognorm) support.],
   [ JSONC="$enableval"],
   [ JSONC="yes" ]
 )
@@ -212,6 +218,11 @@ AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat
 AC_CHECK_LIB(pcre, main,,AC_MSG_ERROR(Sagan needs PCRE installed.  Please see http://www.pcre.org.))
 AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
+
+if test "$SYSSTRSTR" = "yes"; then
+	AC_MSG_RESULT([using build in strstr()...])
+	AC_DEFINE(WITH_SYSSTRSTR, 1, With system strstr)
+	fi
 
 if test "$SYSLOG" = "yes"; then
 	AC_MSG_RESULT([------- Syslog support is enabled -------])
@@ -347,7 +358,7 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([  ,-._,-.    Sagan has been configured!])
 AC_MSG_RESULT([  \/)"(\/ ])
 AC_MSG_RESULT([   (_o_)     Champ Clark III & The Quadrant InfoSec Team [[quadrantsec.com]]])
-AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2014 Quadrant Information Security, et al.])
+AC_MSG_RESULT([   /   \/)   Copyright (C) 2009-2015 Quadrant Information Security, et al.])
 AC_MSG_RESULT([  (|| ||) ])
 AC_MSG_RESULT([   oo-oo  ]) 
 AC_MSG_RESULT([])
