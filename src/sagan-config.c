@@ -608,10 +608,13 @@ void Load_Config( void )
                             /* Set defaults */
 
                             config->websense_parse_depth=2;		/* default */
-                            strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
                             config->websense_parse_src = 1;
                             config->websense_parse_dst = 2;
+			    config->websense_rules_only = 1;
+
                             config->websense_priority = WEBSENSE_PROCESSOR_PRI;
+			    strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
+
 
                             ptmp = sagan_var1;
 
@@ -707,7 +710,10 @@ void Load_Config( void )
 
                         }
 
-                    /* ERROR CHECKING HERE? */
+		if (!strcmp(config->websense_auth, "")) 
+			{ 
+			Sagan_Log(S_ERROR,"Websense \"auth\" option is missing..");
+			}
 
 #endif
                 }
