@@ -53,7 +53,7 @@ struct _SaganConfig *config;
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-void sagan_ext_thread ( _SaganEvent *Event )
+void Sagan_Ext_Thread ( _SaganEvent *Event )
 {
 
     int in[2];
@@ -95,6 +95,7 @@ void sagan_ext_thread ( _SaganEvent *Event )
             snprintf(data, sizeof(data), "[**] [%lu:%s] %s [**]\n[Classification: %s] [Priority: %d]\n%s %s %s:%d -> %s:%d %s %s\nSyslog message: %s%s\n\n", Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri, Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->message, tmpref);
         }
 
+    pthread_mutex_lock( &ext_mutex );
 
     if ( pipe(in) < 0 )
         {
@@ -109,12 +110,12 @@ void sagan_ext_thread ( _SaganEvent *Event )
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
         }
 
-
+  
     if (( pid = fork()) == 0 )
         {
 
             /* Causes problems with alert.log */
-            pthread_mutex_lock( &ext_mutex );
+
             close(0);
             close(1);
             close(2);
@@ -125,32 +126,30 @@ void sagan_ext_thread ( _SaganEvent *Event )
 
             close(in[1]);
             close(out[0]);
-            pthread_mutex_unlock( &ext_mutex );
 
             //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
             execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+
             Remove_Lock_File();
             Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
-        }
+       }
 
-    pthread_mutex_lock( &ext_mutex );
     close(in[0]);
     close(out[1]);
-    pthread_mutex_unlock( &ext_mutex );
 
     /* Write to child input */
 
 
     n = write(in[1], data, strlen(data));
-    pthread_mutex_lock( &ext_mutex );
     close(in[1]);
-    pthread_mutex_unlock( &ext_mutex );
 
     n = read(out[0], buf, sizeof(buf));
     close(out[0]);
     buf[n] = 0;
 
     waitpid(pid, NULL, 0);
+
+    pthread_mutex_unlock( &ext_mutex );
 
     if ( debug->debugexternal == 1 ) Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
 
