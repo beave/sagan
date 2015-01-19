@@ -56,7 +56,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `curl' library (-lcurl). */
-/* #undef HAVE_LIBCURL */
+#define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
@@ -65,7 +65,7 @@
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-#define HAVE_LIBESMTP 1
+/* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1
@@ -331,7 +331,7 @@
 /* #undef WITH_SYSSTRSTR */
 
 /* With Websense Threatseeker */
-/* #undef WITH_WEBSENSE */
+#define WITH_WEBSENSE 1
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

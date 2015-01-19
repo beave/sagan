@@ -696,6 +696,12 @@ void Load_Config( void )
                                             config->websense_priority=atoi(ptmp);
                                         }
 
+                                    if (!strcmp(ptmp, "rules_only"))
+                                        {
+                                        ptmp = strtok_r(NULL, " ", &tok);
+                                        if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) config->websense_rules_only = 1;
+                                        }
+
                                     ptmp = strtok_r(NULL, "=", &tok);
                                 }
 

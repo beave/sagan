@@ -164,6 +164,7 @@ struct _SaganConfig
 
 #ifdef WITH_WEBSENSE
     sbool        websense_flag;
+    sbool	 websense_rules_only;
     char         websense_device_id[64];
     char         websense_url[256];
     char         websense_auth[64];
