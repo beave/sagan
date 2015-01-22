@@ -52,6 +52,7 @@
 #include "sagan-classifications.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
+#include "parsers/parsers.h"
 
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;

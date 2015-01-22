@@ -62,6 +62,7 @@
 #include "sagan-gen-msg.h"
 #include "sagan-protocol-map.h"
 #include "sagan-references.h"
+#include "parsers/parsers.h"
 
 /* Processors */
 

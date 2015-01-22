@@ -83,9 +83,9 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-snortsam.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
+#include "sagan-snortsam.h"
 
 #define NUM_HOSTS 255
 #define FWSAM_NETWAIT	1000

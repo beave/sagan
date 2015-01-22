@@ -66,6 +66,7 @@ void checklockfile ( void )
         {
 
             /* Lock file is present,  open for read */
+
             if (( lck = fopen(config->sagan_lockfile, "r" )) == NULL )
                 {
                     Sagan_Log(S_ERROR, "[%s, line %d] Lock file (%s) is present but can't be read", __FILE__, __LINE__, config->sagan_lockfile);

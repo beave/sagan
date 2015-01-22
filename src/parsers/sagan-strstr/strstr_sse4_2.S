@@ -33,6 +33,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifndef WITH_SYSSTRSTR              /* If NOT using system built in strstr */
+
 #ifdef HAVE_SSE2
 
 
@@ -681,5 +683,7 @@ ___m128i_shift_right:
 	.section	.note.GNU-stack,"",@progbits
 	.ident	"Sagan builtin __strstr_sse42 function"
 	.section	.note.GNU-stack,"",@progbits
+
+#endif
 
 #endif

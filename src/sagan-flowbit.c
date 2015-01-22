@@ -38,6 +38,7 @@
 #include "sagan-defs.h"
 #include "sagan-flowbit.h"
 #include "sagan-rules.h"
+#include "parsers/parsers.h"
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;

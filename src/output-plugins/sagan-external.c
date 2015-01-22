@@ -139,7 +139,6 @@ void Sagan_Ext_Thread ( _SaganEvent *Event )
 
     /* Write to child input */
 
-
     n = write(in[1], data, strlen(data));
     close(in[1]);
 

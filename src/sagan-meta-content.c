@@ -24,7 +24,9 @@
  * This allows one rule with the $USER variable for "bob", "frank" and
  * "mary".
  *
- * meta_content: "Username: ", $USERNAME"; meta_nocase;
+ * meta_content: "Username: %sagan%", $USERNAME"; meta_nocase;
+ * 
+ * The %sagan% becomes whatever the variable holds. 
  *
  */
 
@@ -39,6 +41,7 @@
 #include "sagan-defs.h"
 #include "sagan-meta-content.h"
 #include "sagan-rules.h"
+#include "parsers/parsers.h"
 
 struct _Rule_Struct *rulestruct;
 
@@ -69,7 +72,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             /* Search for "content help" + "content" */
 
-                            /* This needs to happen in sagan-rules.c,  not here */
+                            /* This needs to happen in sagan-rules.c,  not here - FIXME */
 
                             strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
 
@@ -102,6 +105,8 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                     while (ptmp != NULL )
                         {
+
+			    /* This needs to happen in sagan-rules.c,  not here - FIXME */
 
                             strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
 

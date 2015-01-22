@@ -22,6 +22,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#include "parsers/sagan-strstr/sagan-strstr-hook.h"
+
 char *parse_ip( char *, int );
 int   parse_port( char * );
 int   parse_proto( char * );

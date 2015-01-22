@@ -33,6 +33,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifndef WITH_SYSSTRSTR              /* If NOT using system built in strstr */
+
 #ifdef HAVE_SSE2
 
 #ifndef ALIGN
@@ -423,3 +425,6 @@ __strstr_sse2_unaligned:
 .section        .note.GNU-stack,"",@progbits
 
 #endif
+
+#endif
+

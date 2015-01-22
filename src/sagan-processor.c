@@ -35,6 +35,7 @@
 #include "sagan-defs.h"
 #include "sagan-ignore-list.h"
 #include "sagan-config.h"
+#include "parsers/parsers.h"
 
 #include "processors/sagan-engine.h"
 #include "processors/sagan-search.h"

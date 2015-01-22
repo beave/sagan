@@ -62,6 +62,7 @@
 #include "sagan-lockfile.h"
 #include "sagan-signal.h"
 #include "sagan-usage.h"
+#include "parsers/parsers.h"
 
 #ifdef HAVE_LIBPCAP
 #include "sagan-plog.h"
