@@ -49,7 +49,8 @@ processors/sagan-websense.c \
 processors/sagan-blacklist.c \
 processors/sagan-search.c \
 processors/sagan-perfmon.c \
-processors/sagan-cif.c
+processors/sagan-cif.c \
+processors/sagan-criticalstack.c 
 
 
 install-data-local:
