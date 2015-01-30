@@ -98,6 +98,16 @@ struct _SaganCounters
     uint64_t search_nocase_hit_count;
     uint64_t search_case_hit_count;
 
+    int	     criticalstack_addr_count;
+    int	     criticalstack_domain_count;
+    int	     criticalstack_file_hash_count;
+    int	     criticalstack_url_count;
+    int	     criticalstack_software_count;
+    int	     criticalstack_email_count;
+    int	     criticalstack_user_name_count;
+    int	     criticalstack_file_name_count; 
+    int	     criticalstack_cert_hash_count;
+
     int	     thread_output_counter;
     int	     thread_processor_counter;
 

@@ -1,0 +1,212 @@
+/*
+** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+**
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License Version 2 as
+** published by the Free Software Foundation.  You may not use, modify or
+** distribute this program under any other version of the GNU General
+** Public License.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+/* sagan-criticalstack.c
+*
+* This allows Sagan to read in,  parse and use the Critical Stack threat
+* feeds.  Please see:
+*
+* https://intel.criticalstack.com 
+*
+*/
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+
+
+#include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-config.h"
+
+#include "processors/sagan-criticalstack.h"
+
+#define MAX_CRITICALSTACK_LINE_SIZE 10240
+
+struct _SaganConfig *config;
+struct _SaganCounters *counters;
+
+struct _Sagan_Processor_Info *processor_info_criticalstack = NULL;
+
+struct _Sagan_CriticalStack_Intel_Addr *Sagan_CriticalStack_Intel_Addr;
+struct _Sagan_CriticalStack_Intel_Domain *Sagan_CriticalStack_Intel_Domain;
+struct _Sagan_CriticalStack_Intel_File_Hash *Sagan_CriticalStack_Intel_File_Hash;
+struct _Sagan_CriticalStack_Intel_URL *Sagan_CriticalStack_Intel_URL;
+struct _Sagan_CriticalStack_Intel_Software *Sagan_CriticalStack_Intel_Software;
+struct _Sagan_CriticalStack_Intel_Email *Sagan_CriticalStack_Intel_Email;
+struct _Sagan_CriticalStack_Intel_User_Name *Sagan_CriticalStack_Intel_User_Name;
+struct _Sagan_CriticalStack_Intel_File_Name *Sagan_CriticalStack_Intel_File_Name;
+struct _Sagan_CriticalStack_Intel_Cert_Hash *Sagan_CriticalStack_Intel_Cert_Hash;
+
+
+void Sagan_CriticalStack_Init(void) 
+{ 
+
+    processor_info_criticalstack = malloc(sizeof(struct _Sagan_Processor_Info));
+    memset(processor_info_criticalstack, 0, sizeof(_Sagan_Processor_Info));
+
+    processor_info_criticalstack->processor_name          =       CRITICALSTACK_PROCESSOR_NAME;
+    processor_info_criticalstack->processor_generator_id  =       CRITICALSTACK_PROCESSOR_GENERATOR_ID;
+    processor_info_criticalstack->processor_name          =       CRITICALSTACK_PROCESSOR_NAME;
+    processor_info_criticalstack->processor_facility      =       CRITICALSTACK_PROCESSOR_FACILITY;
+    processor_info_criticalstack->processor_priority      =       CRITICALSTACK_PROCESSOR_PRIORITY;
+    processor_info_criticalstack->processor_pri           =       CRITICALSTACK_PROCESSOR_PRI;
+    processor_info_criticalstack->processor_class         =       CRITICALSTACK_PROCESSOR_CLASS;
+    processor_info_criticalstack->processor_tag           =       CRITICALSTACK_PROCESSOR_TAG;
+    processor_info_criticalstack->processor_rev           =       CRITICALSTACK_PROCESSOR_REV;
+
+
+} 
+
+
+void Sagan_CriticalStack_Load_File(void)
+{
+
+FILE *criticalstack_file;
+
+char *value;
+char *type; 
+char *description;
+
+sbool found_flag; 
+
+char *tok;
+
+int line_count;
+
+char criticalstackbuf[MAX_CRITICALSTACK_LINE_SIZE] = { 0 }; 
+
+	if (( criticalstack_file = fopen(config->criticalstack_file, "r")) == NULL ) 
+		{
+			Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s)", __FILE__, __LINE__, config->criticalstack_file);
+		}
+
+	while(fgets(criticalstackbuf, MAX_CRITICALSTACK_LINE_SIZE, criticalstack_file) != NULL)
+		{
+		
+		/* Skip comments and blank linkes */
+
+		if (criticalstackbuf[0] == '#' || criticalstackbuf[0] == 10 || criticalstackbuf[0] == ';' || criticalstackbuf[0] == 32 )
+			{
+			continue;
+			} else { 
+
+			Remove_Return(criticalstackbuf); 
+
+			value = strtok_r(criticalstackbuf, "\t", &tok); 
+			type = strtok_r(NULL, "\t", &tok);
+			description = strtok_r(NULL, "\t", &tok);
+
+			if ( value == NULL || type == NULL || description == NULL ) { 
+				Sagan_Log(S_WARN, "[%s, line %d] Got invalid line at %d in %s", __FILE__, __LINE__, line_count, config->criticalstack_file); 
+				}
+
+			found_flag = 0; 
+
+			if (!strcmp(type, "Intel::ADDR")) 
+				{
+				Sagan_CriticalStack_Intel_Addr = (_Sagan_CriticalStack_Intel_Addr *) realloc(Sagan_CriticalStack_Intel_Addr, (counters->criticalstack_addr_count+1) * sizeof(_Sagan_CriticalStack_Intel_Addr));
+				Sagan_CriticalStack_Intel_Addr[counters->criticalstack_addr_count].u32_ip = IP2Bit(value); 
+				counters->criticalstack_addr_count++; 
+				found_flag = 1; 
+				}
+
+			if (!strcmp(type, "Intel::DOMAIN") && found_flag == 0) 
+				{ 
+                                Sagan_CriticalStack_Intel_Domain = (_Sagan_CriticalStack_Intel_Domain *) realloc(Sagan_CriticalStack_Intel_Domain, (counters->criticalstack_domain_count+1) * sizeof(_Sagan_CriticalStack_Intel_Domain));
+				strlcpy(Sagan_CriticalStack_Intel_Domain[counters->criticalstack_domain_count].domain, value, sizeof(Sagan_CriticalStack_Intel_Domain[counters->criticalstack_domain_count].domain)); 
+				counters->criticalstack_domain_count++; 
+				found_flag = 1;
+				}
+
+			if (!strcmp(type, "Intel::FILE_HASH") && found_flag == 0) 
+				{
+				Sagan_CriticalStack_Intel_File_Hash = (_Sagan_CriticalStack_Intel_File_Hash *) realloc(Sagan_CriticalStack_Intel_File_Hash, (counters->criticalstack_file_hash_count+1) * sizeof(_Sagan_CriticalStack_Intel_File_Hash));
+				strlcpy(Sagan_CriticalStack_Intel_File_Hash[counters->criticalstack_file_hash_count].hash, value, sizeof(Sagan_CriticalStack_Intel_File_Hash[counters->criticalstack_file_hash_count].hash)); 
+				counters->criticalstack_file_hash_count++; 
+				found_flag = 1; 
+				}
+				
+
+			if (!strcmp(type, "Intel::URL") && found_flag == 0) 
+				{ 
+                                Sagan_CriticalStack_Intel_URL = (_Sagan_CriticalStack_Intel_URL *) realloc(Sagan_CriticalStack_Intel_URL, (counters->criticalstack_url_count+1) * sizeof(_Sagan_CriticalStack_Intel_URL));
+				strlcpy(Sagan_CriticalStack_Intel_URL[counters->criticalstack_url_count].url, value, sizeof(Sagan_CriticalStack_Intel_URL[counters->criticalstack_url_count].url));
+				counters->criticalstack_url_count++;
+				found_flag = 1; 
+				}
+
+
+                        if (!strcmp(type, "Intel::SOFTWARE") && found_flag == 0)                                  
+				{
+                                Sagan_CriticalStack_Intel_Software = (_Sagan_CriticalStack_Intel_Software *) realloc(Sagan_CriticalStack_Intel_Software, (counters->criticalstack_software_count+1) * sizeof(_Sagan_CriticalStack_Intel_Software));
+				strlcpy(Sagan_CriticalStack_Intel_Software[counters->criticalstack_software_count].software, value, sizeof(Sagan_CriticalStack_Intel_Software[counters->criticalstack_software_count].software));
+				counters->criticalstack_software_count++;                                  
+				found_flag = 1;
+				}
+
+			if (!strcmp(type, "Intel::EMAIL") && found_flag == 0)
+				{
+				Sagan_CriticalStack_Intel_Email = (_Sagan_CriticalStack_Intel_Email *) realloc(Sagan_CriticalStack_Intel_Email, (counters->criticalstack_email_count+1) * sizeof(_Sagan_CriticalStack_Intel_Email));
+				strlcpy(Sagan_CriticalStack_Intel_Email[counters->criticalstack_email_count].email, value, sizeof(Sagan_CriticalStack_Intel_Email[counters->criticalstack_email_count].email));
+				counters->criticalstack_email_count++;
+				found_flag = 1; 
+				}
+
+			
+			if (!strcmp(type, "Intel::USER_NAME") && found_flag == 0)
+				{
+				Sagan_CriticalStack_Intel_User_Name = (_Sagan_CriticalStack_Intel_User_Name *) realloc(Sagan_CriticalStack_Intel_User_Name, (counters->criticalstack_user_name_count+1) * sizeof(_Sagan_CriticalStack_Intel_User_Name));
+				strlcpy(Sagan_CriticalStack_Intel_User_Name[counters->criticalstack_user_name_count].username, value, sizeof(Sagan_CriticalStack_Intel_User_Name[counters->criticalstack_user_name_count].username));
+				counters->criticalstack_user_name_count++;
+				found_flag = 1; 
+				}
+
+			if (!strcmp(type, "Intel::FILE_NAME") && found_flag == 0)
+				{
+				Sagan_CriticalStack_Intel_File_Name = (_Sagan_CriticalStack_Intel_File_Name *) realloc(Sagan_CriticalStack_Intel_File_Name, (counters->criticalstack_file_name_count+1) * sizeof(_Sagan_CriticalStack_Intel_File_Name));
+				strlcpy(Sagan_CriticalStack_Intel_File_Name[counters->criticalstack_file_name_count].file_name, value, sizeof(Sagan_CriticalStack_Intel_File_Name[counters->criticalstack_file_name_count].file_name));
+				counters->criticalstack_file_name_count++;
+				found_flag = 1; 
+				}
+
+			if (!strcmp(type, "Intel::CERT_HASH") && found_flag == 0)
+				{
+				Sagan_CriticalStack_Intel_Cert_Hash = (_Sagan_CriticalStack_Intel_Cert_Hash *) realloc(Sagan_CriticalStack_Intel_Cert_Hash, (counters->criticalstack_cert_hash_count+1) * sizeof(_Sagan_CriticalStack_Intel_Cert_Hash));
+				strlcpy(Sagan_CriticalStack_Intel_Cert_Hash[counters->criticalstack_cert_hash_count].cert_hash, value, sizeof(Sagan_CriticalStack_Intel_Cert_Hash[counters->criticalstack_cert_hash_count].cert_hash));
+				counters->criticalstack_cert_hash_count++;
+				found_flag = 1; 
+				}
+
+			
+			}
+
+		line_count++; 
+
+		}
+	fclose(criticalstack_file);
+
+
+
+} 

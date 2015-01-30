@@ -73,6 +73,7 @@
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-perfmon.h"
+#include "processors/sagan-criticalstack.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -674,10 +675,51 @@ int main(int argc, char **argv)
         }
 
     if ( config->websense_lognorm ) Sagan_Log(S_NORMAL, "Websense Liblognorm: Enabled");
-    if ( config->websense_parse_src ) Sagan_Log(S_NORMAL, "Websense Parse Source Depth: %d", config->websense_parse_src);
-    if ( config->websense_parse_dst ) Sagan_Log(S_NORMAL, "Websense Parse Destination Depth: %d", config->websense_parse_dst);
+    if ( config->websense_parse_src ) Sagan_Log(S_NORMAL, "Websense Default Parse Source Depth: %d", config->websense_parse_src);
+    if ( config->websense_parse_dst ) Sagan_Log(S_NORMAL, "Websense Default Parse Destination Depth: %d", config->websense_parse_dst);
 
 #endif
+
+    /* Sagan Critical Stack processor *******************************************/
+
+    if ( config->criticalstack_flag ) 
+	{
+
+		Sagan_CriticalStack_Init(); 
+		Sagan_CriticalStack_Load_File(); 
+
+		Sagan_Log(S_NORMAL, ""); 
+		Sagan_Log(S_NORMAL, "Critical Stack File: %s", config->criticalstack_file); 
+
+	if (strcmp(config->criticalstack_ignorefile, "")) 
+			{
+			Sagan_Log(S_NORMAL, "Critical Stack Ignore File: %s", config->criticalstack_ignorefile); 
+			} else { 
+			Sagan_Log(S_NORMAL, "Critical Stack Ignore File: [None]"); 
+			}
+
+		Sagan_Log(S_NORMAL, "Critical Stack Parse Depth: %d", config->criticalstack_parse_depth); 
+		Sagan_Log(S_NORMAL, "Critical Stack Priority: %d", config->criticalstack_priority); 
+
+		if ( config->criticalstack_lognorm ) Sagan_Log(S_NORMAL, "Critical Stack Liblognorm: Enabled"); 
+		if ( config->criticalstack_rules_only ) Sagan_Log(S_NORMAL, "Critical Stack Rules Only: Enabled");
+		if ( config->criticalstack_parse_proto ) Sagan_Log(S_NORMAL, "Critical Stack Parse Proto: Enabled");
+		if ( config->criticalstack_parse_proto_program) Sagan_Log(S_NORMAL, "Critical Stack Parse Proto Program: Enabled");
+		if ( config->criticalstack_parse_src ) Sagan_Log(S_NORMAL, "Critical Stack Default Parse Source Depth: %d", config->criticalstack_parse_src); 
+                if ( config->criticalstack_parse_dst ) Sagan_Log(S_NORMAL, "Critical Stack Default Parse Destination Depth: %d", config->criticalstack_parse_dst);
+
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::ADDR Loaded: %d", counters->criticalstack_addr_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::DOMAIN Loaded: %d", counters->criticalstack_domain_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_HASH Loaded: %d", counters->criticalstack_file_hash_count); 
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::URL Loaded: %d", counters->criticalstack_url_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::SOFTWARE Loaded: %d", counters->criticalstack_software_count); 
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::EMAIL Loaded: %d", counters->criticalstack_email_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::USER_NAME Loaded: %d", counters->criticalstack_user_name_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_NAME Loaded: %d", counters->criticalstack_file_name_count);
+		Sagan_Log(S_NORMAL, "Critical Stack Intel::CERT_HASH Loaded: %d", counters->criticalstack_cert_hash_count);
+
+		
+	}
 
     /***************************************************************************
      * Output plugins

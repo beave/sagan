@@ -164,11 +164,10 @@ struct _SaganConfig
 
 #ifdef WITH_WEBSENSE
     sbool        websense_flag;
-    sbool	 websense_rules_only;
     char         websense_device_id[64];
     char         websense_url[256];
     char         websense_auth[64];
-    char         websense_ignore_list[64];
+    char         websense_ignore_list[MAXPATH];
     int          websense_parse_depth;
     int          websense_timeout;
     uint64_t     websense_max_cache;
@@ -181,19 +180,31 @@ struct _SaganConfig
     int          websense_priority;
 #endif
 
+    /* Critical Stack Support - see https://intel.criticalstack.com/ */
+     
+    sbool	 criticalstack_flag;
+    sbool	 criticalstack_rules_only;
+    sbool	 criticalstack_lognorm;
+    sbool	 criticalstack_parse_proto; 
+    sbool 	 criticalstack_parse_proto_program;
+    int		 criticalstack_parse_src;
+    int		 criticalstack_parse_dst; 
+    int 	 criticalstack_priority; 
+    int		 criticalstack_parse_depth; 
+    char	 criticalstack_file[MAXPATH];
+    char	 criticalstack_ignorefile[MAXPATH];
+
     /* For Maxmind GeoIP address lookup */
 
 #ifdef HAVE_LIBGEOIP
 
     GeoIP *geoip;
-    char        geoip_country_file[256];
+    char        geoip_country_file[MAXPATH];
     sbool have_geoip;
 
 #endif
 
 };
-
-
 
 
 
