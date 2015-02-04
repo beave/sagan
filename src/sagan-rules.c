@@ -81,6 +81,8 @@ void Load_Rules( const char *ruleset )
     char *netstring;
     char *nettmp = NULL;
 
+    char tolower_tmp[512] = { 0 }; 
+
     char *tokenrule;
     char *tokennet;
     char *rulesplit;
@@ -592,7 +594,8 @@ void Load_Rules( const char *ruleset )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].meta_content_case[meta_content_count-1] = 1;
-                            strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count-1], To_LowerC(rulestruct[counters->rulecount].meta_content[meta_content_count-1]), sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count-1]));
+			    strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].meta_content[meta_content_count-1]), sizeof(tolower_tmp));
+                            strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count-1]));
                         }
 
 
@@ -761,7 +764,9 @@ void Load_Rules( const char *ruleset )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
-                            strlcpy(rulestruct[counters->rulecount].s_content[content_count - 1], To_LowerC(rulestruct[counters->rulecount].s_content[content_count - 1]), sizeof(rulestruct[counters->rulecount].s_content[content_count - 1]));
+			    strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].s_content[content_count - 1]), sizeof(tolower_tmp));
+			    strlcpy(rulestruct[counters->rulecount].s_content[content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].s_content[content_count-1]));
+
                         }
 
                     if (!strcmp(rulesplit, "offset"))

@@ -99,7 +99,7 @@ char criticalstackbuf[MAX_CRITICALSTACK_LINE_SIZE] = { 0 };
 
 	if (( criticalstack_file = fopen(config->criticalstack_file, "r")) == NULL ) 
 		{
-			Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s)", __FILE__, __LINE__, config->criticalstack_file);
+			Sagan_Log(S_ERROR, "[%s, line %d] Could not load Critical Threats file! (%s)", __FILE__, __LINE__, config->criticalstack_file);
 		}
 
 	while(fgets(criticalstackbuf, MAX_CRITICALSTACK_LINE_SIZE, criticalstack_file) != NULL)
