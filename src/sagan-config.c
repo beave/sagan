@@ -779,13 +779,13 @@ void Load_Config( void )
 
 			/* Set defaults */
 
-			config->criticalstack_parse_src = 1; 
-			config->criticalstack_parse_dst = 2; 
-			config->criticalstack_priority = 2; 
-			config->criticalstack_parse_depth = 4;
-			config->criticalstack_rules_only = 0;
-			config->criticalstack_lognorm = 1; 
-			config->criticalstack_parse_proto_program = 0; 
+//			config->criticalstack_parse_src = 1; 
+//			config->criticalstack_parse_dst = 2; 
+//			config->criticalstack_priority = 2; 
+//			config->criticalstack_parse_depth = 4;
+//			config->criticalstack_rules_only = 0;
+//			config->criticalstack_lognorm = 1; 
+//			config->criticalstack_parse_proto_program = 0; 
 
 			strlcpy(config->criticalstack_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->criticalstack_file)); 
 			strlcpy(config->criticalstack_ignorefile, "", sizeof(config->criticalstack_ignorefile));
@@ -795,6 +795,7 @@ void Load_Config( void )
 			while (ptmp != NULL )
 			{
 
+/*
 				if (!strcmp(ptmp, "rules_only")) 
 					{
 
@@ -875,7 +876,7 @@ void Load_Config( void )
 					config->criticalstack_parse_depth = atoi(ptmp); 
 
 					}
-
+*/
 				if (!strcmp(ptmp, "cs_file")) 
 					{
 
@@ -883,7 +884,7 @@ void Load_Config( void )
 					strlcpy(config->criticalstack_file, Remove_Return(ptmp), sizeof(config->criticalstack_file));
 
 					}
-
+/*
 				if (!strcmp(ptmp, "ignore_list")) 
 					{
 
@@ -892,7 +893,7 @@ void Load_Config( void )
 
 					}
 
-
+*/
 			ptmp = strtok_r(NULL, "=", &tok);
 			}
 			}
