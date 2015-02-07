@@ -23,7 +23,7 @@
 * This allows Sagan to read in,  parse and use the Critical Stack threat
 * feeds.  Please see:
 *
-* https://intel.criticalstack.com 
+* https://intel.criticalstack.com
 *
 */
 
@@ -45,67 +45,67 @@
 typedef struct _Sagan_CriticalStack_Intel_Addr _Sagan_CriticalStack_Intel_Addr;
 struct _Sagan_CriticalStack_Intel_Addr
 {
-uint32_t u32_ip;
+    uint32_t u32_ip;
 };
 
 typedef struct _Sagan_CriticalStack_Intel_Domain _Sagan_CriticalStack_Intel_Domain;
 struct _Sagan_CriticalStack_Intel_Domain
 {
-char domain[255];
+    char domain[255];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_File_Hash _Sagan_CriticalStack_Intel_File_Hash;
 struct _Sagan_CriticalStack_Intel_File_Hash
 {
-char hash[64];
+    char hash[64];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_URL _Sagan_CriticalStack_Intel_URL;
 struct _Sagan_CriticalStack_Intel_URL
 {
-char url[10240];
+    char url[10240];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_Software _Sagan_CriticalStack_Intel_Software;
 struct _Sagan_CriticalStack_Intel_Software
 {
-char software[128];
+    char software[128];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_Email _Sagan_CriticalStack_Intel_Email;
 struct _Sagan_CriticalStack_Intel_Email
 {
-char email[128];
+    char email[128];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_User_Name _Sagan_CriticalStack_Intel_User_Name;
 struct _Sagan_CriticalStack_Intel_User_Name
 {
-char username[64];
+    char username[64];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_File_Name _Sagan_CriticalStack_Intel_File_Name;
 struct _Sagan_CriticalStack_Intel_File_Name
 {
-char file_name[128];
+    char file_name[128];
 };
 
 typedef struct _Sagan_CriticalStack_Intel_Cert_Hash _Sagan_CriticalStack_Intel_Cert_Hash;
 struct _Sagan_CriticalStack_Intel_Cert_Hash
 {
-char cert_hash[64];
+    char cert_hash[64];
 };
 
 
 void Sagan_CriticalStack_Init(void);
 void Sagan_CriticalStack_Load_File(void);
 int  Sagan_CriticalStack_IPADDR ( uint32_t );
-int  Sagan_CriticalStack_DOMAIN ( char * ); 
-int  Sagan_CriticalStack_FILE_HASH ( char * ); 
-int  Sagan_CriticalStack_URL ( char * ); 
-int  Sagan_CriticalStack_SOFTWARE( char * ); 
-int  Sagan_CriticalStack_EMAIL( char * ); 
-int  Sagan_CriticalStack_USER_NAME ( char * ); 
-int  Sagan_CriticalStack_FILE_NAME ( char * ); 
-int  Sagan_CriticalStack_CERT_HASH ( char * ); 
+int  Sagan_CriticalStack_DOMAIN ( char * );
+int  Sagan_CriticalStack_FILE_HASH ( char * );
+int  Sagan_CriticalStack_URL ( char * );
+int  Sagan_CriticalStack_SOFTWARE( char * );
+int  Sagan_CriticalStack_EMAIL( char * );
+int  Sagan_CriticalStack_USER_NAME ( char * );
+int  Sagan_CriticalStack_FILE_NAME ( char * );
+int  Sagan_CriticalStack_CERT_HASH ( char * );
 

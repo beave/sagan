@@ -51,23 +51,26 @@ void Sagan_CIF_Clean_Cache ( void );
 void Sagan_CIF_Init(void);
 
 typedef struct _Sagan_CIF_Ignore_List _Sagan_CIF_Ignore_List;
-struct _Sagan_CIF_Ignore_List {
-char    ignore[26];
+struct _Sagan_CIF_Ignore_List
+{
+    char    ignore[26];
 };
 
 
 typedef struct _Sagan_CIF_Cache _Sagan_CIF_Cache;
-struct _Sagan_CIF_Cache  {
-char    host[16];               /* IPv4? */
-uint64_t utime;
-int     alertid;
-char    generator_msg[80];
-sbool   status;
+struct _Sagan_CIF_Cache
+{
+    char    host[16];               /* IPv4? */
+    uint64_t utime;
+    int     alertid;
+    char    generator_msg[80];
+    sbool   status;
 };
 
 typedef struct _Sagan_CIF_Queue _Sagan_CIF_Queue;
-struct _Sagan_CIF_Queue {
-char    host[16];
+struct _Sagan_CIF_Queue
+{
+    char    host[16];
 };
 
 int Sagan_CIF ( _SaganProcSyslog *, int  );

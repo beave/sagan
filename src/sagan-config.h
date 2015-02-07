@@ -181,16 +181,16 @@ struct _SaganConfig
 #endif
 
     /* Critical Stack Support - see https://intel.criticalstack.com/ */
-     
+
     sbool	 criticalstack_flag;
     sbool	 criticalstack_rules_only;
     sbool	 criticalstack_lognorm;
-    sbool	 criticalstack_parse_proto; 
+    sbool	 criticalstack_parse_proto;
     sbool 	 criticalstack_parse_proto_program;
     int		 criticalstack_parse_src;
-    int		 criticalstack_parse_dst; 
-    int 	 criticalstack_priority; 
-    int		 criticalstack_parse_depth; 
+    int		 criticalstack_parse_dst;
+    int 	 criticalstack_priority;
+    int		 criticalstack_parse_depth;
     char	 criticalstack_file[MAXPATH];
     char	 criticalstack_ignorefile[MAXPATH];
 

@@ -20,10 +20,10 @@
 
 /* sagan-strstr-hook.c
  *
- * This "hooks" in the "Sagan_strstr" function for CPUs supporting SSE2. 
- * This code is based on work by Ondra B�lk and the glibc projects. 
+ * This "hooks" in the "Sagan_strstr" function for CPUs supporting SSE2.
+ * This code is based on work by Ondra B�lk and the glibc projects.
  *
- * His code/original post can be found at: 
+ * His code/original post can be found at:
  *
  * http://comments.gmane.org/gmane.comp.lib.glibc.alpha/34531
  *
@@ -35,10 +35,11 @@
 
 #ifdef HAVE_SSE2
 
-int __strstr_sse2_unaligned(); int __strstr_sse42();
-static void* function_func[]={  __strstr_sse2_unaligned, __strstr_sse42, NULL};
+int __strstr_sse2_unaligned();
+int __strstr_sse42();
+static void* function_func[]= {  __strstr_sse2_unaligned, __strstr_sse42, NULL};
 
-#endif 
+#endif
 
 char *Sagan_strstr(const char *, const char *);
 char *Sagan_stristr(const char *, const char *, sbool);

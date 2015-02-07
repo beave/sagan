@@ -47,11 +47,11 @@
 
 void Sagan_Unified2( _SaganEvent * );
 void Sagan_Unified2LogPacketAlert( _SaganEvent * );
-void Unified2InitFile( void ); 
+void Unified2InitFile( void );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc( unsigned long );
 
-void Unified2CleanExit( void ); 
+void Unified2CleanExit( void );
 
 /* Data structure used for serialization of Unified2 Records */
 typedef struct _Serial_Unified2_Header
