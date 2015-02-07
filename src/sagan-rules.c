@@ -1241,7 +1241,6 @@ void Load_Rules( const char *ruleset )
 			}
 
 
-
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }
 

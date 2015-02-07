@@ -124,8 +124,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool after_log_flag=0;
     sbool after_flag=0;
 
-    sbool criticalstack_results; 
-
     int   threadid=0;
     int i=0;
     int b=0;
@@ -164,6 +162,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool thresh_log_flag=0;
 
     int proto = config->sagan_proto;		/* Set proto to default */
+
+    sbool criticalstack_results;
 
     /* Search for matches */
 
@@ -871,12 +871,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_src) ); 
 						}
 
-					if ( rulestruct[b].criticalstack_ipaddr_dst ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_dst ) 
 						{
 							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_dst) );
 						}
 
-					if ( rulestruct[b].criticalstack_ipaddr_both ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_both ) 
 						{ 
 							if ( Sagan_CriticalStack_IPADDR(IP2Bit(ip_src)) || Sagan_CriticalStack_IPADDR(IP2Bit(ip_dst)) ) 
 								{
@@ -884,45 +884,42 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 								}
 						}
 
-					if ( rulestruct[b].criticalstack_domain ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_domain ) 
 						{
 							criticalstack_results = Sagan_CriticalStack_DOMAIN(SaganProcSyslog_LOCAL->syslog_message); 
 						}
 					
-					if ( rulestruct[b].criticalstack_file_hash )					
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_hash )					
 						{
 							criticalstack_results = Sagan_CriticalStack_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
 						}
 					
-					if ( rulestruct[b].criticalstack_url )					
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_url )					
 						{
 							criticalstack_results = Sagan_CriticalStack_URL(SaganProcSyslog_LOCAL->syslog_message);
 						}
 					
-					if ( rulestruct[b].criticalstack_software ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_software ) 
 						{
 							criticalstack_results = Sagan_CriticalStack_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
 						}
 
-					if ( rulestruct[b].criticalstack_user_name ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_user_name ) 
 						{
 							criticalstack_results = Sagan_CriticalStack_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
 						}
 
-					if ( rulestruct[b].criticalstack_file_name ) 
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_name ) 
 						{
 							criticalstack_results = Sagan_CriticalStack_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
 						}
 
-					if ( rulestruct[b].criticalstack_cert_hash )
+					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_cert_hash )
 						{
 							criticalstack_results = Sagan_CriticalStack_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
 						}
 
 				}
-
-
-			    	printf("CRITICAL_FLAG: %d\n", criticalstack_results); 
 
                             /****************************************************************************/
                             /* Populate the SaganEvent array with the information needed.  This info    */
@@ -943,6 +940,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             if ( rulestruct[b].geoip_flag == 0 || geoip_isset == 1 )
                                                 {
 #endif
+
+						if ( rulestruct[b].criticalstack_flag == 0 || criticalstack_results == 1) 
+						    { 
 
                                                     pthread_mutex_lock(&CounterMutex);
                                                     counters->saganfound++;
@@ -995,7 +995,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                 }
 
 
-                                                        } /* Threshold / After */
+                                                        	} /* Threshold / After */
+
+							} /* CriticalStack */
+
 #ifdef HAVE_LIBGEOIP
                                                 } /* GeoIP */
 #endif

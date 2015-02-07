@@ -27,7 +27,11 @@
 *
 */
 
-/*
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
 #define CRITICALSTACK_PROCESSOR_NAME "Sagan_CriticalStack"
 #define CRITICALSTACK_PROCESSOR_FACILITY "daemon"
 #define CRITICALSTACK_PROCESSOR_PRIORITY "warning"
@@ -36,7 +40,7 @@
 #define CRITICALSTACK_PROCESSOR_REV "1"
 #define CRITICALSTACK_PROCESSOR_TAG NULL
 #define CRITICALSTACK_PROCESSOR_GENERATOR_ID 1003
-*/
+
 
 typedef struct _Sagan_CriticalStack_Intel_Addr _Sagan_CriticalStack_Intel_Addr;
 struct _Sagan_CriticalStack_Intel_Addr
@@ -104,5 +108,4 @@ int  Sagan_CriticalStack_EMAIL( char * );
 int  Sagan_CriticalStack_USER_NAME ( char * ); 
 int  Sagan_CriticalStack_FILE_NAME ( char * ); 
 int  Sagan_CriticalStack_CERT_HASH ( char * ); 
-
 

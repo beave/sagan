@@ -62,6 +62,9 @@ struct _Sagan_CriticalStack_Intel_User_Name *Sagan_CriticalStack_Intel_User_Name
 struct _Sagan_CriticalStack_Intel_File_Name *Sagan_CriticalStack_Intel_File_Name;
 struct _Sagan_CriticalStack_Intel_Cert_Hash *Sagan_CriticalStack_Intel_Cert_Hash;
 
+/*****************************************************************************
+ * Sagan_CriticalStack_Init - Sets up globals.  Not really used yet. 
+ *****************************************************************************/
 
 void Sagan_CriticalStack_Init(void) 
 { 
@@ -69,7 +72,8 @@ void Sagan_CriticalStack_Init(void)
     processor_info_criticalstack = malloc(sizeof(struct _Sagan_Processor_Info));
     memset(processor_info_criticalstack, 0, sizeof(_Sagan_Processor_Info));
 
-    /*
+    /* This really isn't being used (yet)? */
+    
     processor_info_criticalstack->processor_name          =       CRITICALSTACK_PROCESSOR_NAME;
     processor_info_criticalstack->processor_generator_id  =       CRITICALSTACK_PROCESSOR_GENERATOR_ID;
     processor_info_criticalstack->processor_name          =       CRITICALSTACK_PROCESSOR_NAME;
@@ -79,10 +83,13 @@ void Sagan_CriticalStack_Init(void)
     processor_info_criticalstack->processor_class         =       CRITICALSTACK_PROCESSOR_CLASS;
     processor_info_criticalstack->processor_tag           =       CRITICALSTACK_PROCESSOR_TAG;
     processor_info_criticalstack->processor_rev           =       CRITICALSTACK_PROCESSOR_REV;
-    */
-
+    
 } 
 
+/*****************************************************************************
+ * Sagan_CriticalStack_Load_File - Loads CriticalStack data and splits it up
+ * into different arrays.
+ * ***************************************************************************/
 
 void Sagan_CriticalStack_Load_File(void)
 {
@@ -221,18 +228,28 @@ char criticalstackbuf[MAX_CRITICALSTACK_LINE_SIZE] = { 0 };
 
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_IPADDR - Search array for blacklisted IP addresses
+ *****************************************************************************/
 
 int Sagan_CriticalStack_IPADDR ( uint32_t ip )
 {
 
 int i; 
 
+/* If RFC1918,  we can short circuit here */
 
 if ( is_rfc1918(ip)) { 
-	printf("Is RFC1918\n"); 
+        
+	if ( debug->debugcriticalstack )
+	   {
+	   Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918.", __FILE__, __LINE__, ip);
+	   }
+
 	return(0); 
 	}
 
+/* Search array for for the IP address */
 
 for ( i = 0; i < counters->criticalstack_addr_count; i++) 
 	{ 
@@ -252,6 +269,10 @@ for ( i = 0; i < counters->criticalstack_addr_count; i++)
 return(0);
 
 }
+
+/*****************************************************************************
+ * Sagan_CriticalStack_DOMAIN - Search DOMAIN array
+ *****************************************************************************/
 
 int Sagan_CriticalStack_DOMAIN ( char *syslog_message ) 
 {
@@ -277,12 +298,14 @@ return(0);
 
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_FILE_HASH - Search FILE_HASH array
+ *****************************************************************************/
 
 int Sagan_CriticalStack_FILE_HASH ( char *syslog_message )
 {
 
 int i; 
-
 
 for ( i = 0; i < counters->criticalstack_file_hash_count; i++)
         {
@@ -303,12 +326,14 @@ return(0);
 
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_URL - Search URL array
+ *****************************************************************************/
 
 int Sagan_CriticalStack_URL ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_url_count; i++)
         {
@@ -328,12 +353,14 @@ for ( i = 0; i < counters->criticalstack_url_count; i++)
 return(0);
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_SOFTWARE - Search SOFTWARE array
+ ****************************************************************************/
 
 int Sagan_CriticalStack_SOFTWARE ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_software_count; i++)
         {
@@ -353,12 +380,14 @@ for ( i = 0; i < counters->criticalstack_software_count; i++)
 return(0);
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_EMAIL - Search EMAIL array
+ *****************************************************************************/
 
 int Sagan_CriticalStack_EMAIL ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_email_count; i++)
         {
@@ -378,12 +407,14 @@ for ( i = 0; i < counters->criticalstack_email_count; i++)
 return(0);
 }
 
+/*****************************************************************************
+ * Sagan_CriticalStack_USER_NAME - Search USER_NAME array
+ ****************************************************************************/
 
 int Sagan_CriticalStack_USER_NAME ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_user_name_count; i++)
         {
@@ -403,13 +434,14 @@ for ( i = 0; i < counters->criticalstack_user_name_count; i++)
 return(0);
 }
 
-
+/****************************************************************************
+ * Sagan_CriticalStack_FILE_NAME - Search FILE_NAME array
+ ****************************************************************************/
 
 int Sagan_CriticalStack_FILE_NAME ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_file_name_count; i++)
         {
@@ -429,12 +461,14 @@ for ( i = 0; i < counters->criticalstack_file_name_count; i++)
 return(0);
 }
 
+/***************************************************************************
+ * Sagan_CriticalStack_CERT_HASH - Search CERT_HASH array
+ ***************************************************************************/
 
 int Sagan_CriticalStack_CERT_HASH ( char *syslog_message )
 {
 
 int i;
-
 
 for ( i = 0; i < counters->criticalstack_cert_hash_count; i++)
         {

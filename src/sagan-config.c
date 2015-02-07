@@ -772,6 +772,7 @@ void Load_Config( void )
 
 #endif
 
+
 		if (!strcmp(sagan_var1, "criticalstack:"))
 			{
 
@@ -779,104 +780,14 @@ void Load_Config( void )
 
 			/* Set defaults */
 
-//			config->criticalstack_parse_src = 1; 
-//			config->criticalstack_parse_dst = 2; 
-//			config->criticalstack_priority = 2; 
-//			config->criticalstack_parse_depth = 4;
-//			config->criticalstack_rules_only = 0;
-//			config->criticalstack_lognorm = 1; 
-//			config->criticalstack_parse_proto_program = 0; 
-
 			strlcpy(config->criticalstack_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->criticalstack_file)); 
 			strlcpy(config->criticalstack_ignorefile, "", sizeof(config->criticalstack_ignorefile));
 
 			ptmp = sagan_var1;
 			
 			while (ptmp != NULL )
-			{
+				{
 
-/*
-				if (!strcmp(ptmp, "rules_only")) 
-					{
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-						{
-						config->criticalstack_rules_only = 1; 
-						} else { 
-						config->criticalstack_rules_only = 0; 
-						}
-
-					}
-
-				if (!strcmp(ptmp, "lognorm")) 
-					{ 
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-						{
-						config->criticalstack_lognorm = 1;
-						} else { 
-						config->criticalstack_lognorm = 0; 
-						}
-					}
-
-				if (!strcmp(ptmp, "parse_proto")) 
-					{ 
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-						{
-						config->criticalstack_parse_proto = 1; 
-						} else { 
-						config->criticalstack_parse_proto = 0; 
-						}
-					}
-
-				if (!strcmp(ptmp, "parse_proto_program"))
-					{ 
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-						{
-						config->criticalstack_parse_proto_program = 1; 
-						} else { 
-						config->criticalstack_parse_proto_program = 0; 
-						}
-					}
-
-				if (!strcmp(ptmp, "parse_src"))
-					{
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					config->criticalstack_parse_src = atoi(ptmp); 
-
-					}
-
-				if (!strcmp(ptmp, "parse_dst")) 
-					{
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					config->criticalstack_parse_dst = atoi(ptmp);
-
-					}
-
-				if (!strcmp(ptmp, "priority")) 
-					{
-					
-					ptmp = strtok_r(NULL, " ", &tok);
-					config->criticalstack_priority = atoi(ptmp); 
-
-					}
-
-				if (!strcmp(ptmp, "parse_depth"))
-					{
-
-					ptmp = strtok_r(NULL, " ", &tok);
-					config->criticalstack_parse_depth = atoi(ptmp); 
-
-					}
-*/
 				if (!strcmp(ptmp, "cs_file")) 
 					{
 
@@ -884,20 +795,11 @@ void Load_Config( void )
 					strlcpy(config->criticalstack_file, Remove_Return(ptmp), sizeof(config->criticalstack_file));
 
 					}
-/*
-				if (!strcmp(ptmp, "ignore_list")) 
-					{
 
-					ptmp = strtok_r(NULL, " ", &tok);
-					strlcpy(config->criticalstack_ignorefile, Remove_Return(ptmp), sizeof(config->criticalstack_ignorefile));
+				ptmp = strtok_r(NULL, "=", &tok);
 
-					}
-
-*/
-			ptmp = strtok_r(NULL, "=", &tok);
+				}
 			}
-			}
-
 	
                 }
 

@@ -91,5 +91,17 @@ void Sagan_Usage(void)
     fprintf(stderr, "* libGeoIP support is included.\n");
 #endif
 
-    fprintf(stderr, "* Compiled on %s at %s.\n", __DATE__, __TIME__);
+#ifdef WITH_SNORTSAM
+    fprintf(stderr, "* Snortsam support is included.\n"); 
+#endif
+
+#ifdef WITH_SYSLOG
+    fprintf(stderr, "* Syslog output is included.\n"); 
+#endif
+
+#ifdef WITH_SYSSTRSTR
+    fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n"); 
+#endif
+
+    fprintf(stderr, "\n* Compiled on %s at %s.\n", __DATE__, __TIME__);
 }

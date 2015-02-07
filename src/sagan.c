@@ -259,12 +259,6 @@ int main(int argc, char **argv)
 
                 case 'd':
 
-		    if (Sagan_strstr(optarg, "criticalstack")) 
-			{
-		            debug->debugcriticalstack=1; 
-			    debugflag=1; 
-			}
-
                     if (Sagan_strstr(optarg, "syslog"))
                         {
                             debug->debugsyslog=1;
@@ -304,6 +298,12 @@ int main(int argc, char **argv)
                     if (Sagan_strstr(optarg, "engine"))
                         {
                             debug->debugengine=1;
+                            debugflag=1;
+                        }
+
+                    if (Sagan_strstr(optarg, "criticalstack"))
+                        {   
+                            debug->debugcriticalstack=1;
                             debugflag=1;
                         }
 
@@ -696,25 +696,6 @@ int main(int argc, char **argv)
 		Sagan_Log(S_NORMAL, ""); 
 		Sagan_Log(S_NORMAL, "Critical Stack File: %s", config->criticalstack_file); 
 
-/*
-	if (strcmp(config->criticalstack_ignorefile, "")) 
-			{
-			Sagan_Log(S_NORMAL, "Critical Stack Ignore File: %s", config->criticalstack_ignorefile); 
-			} else { 
-			Sagan_Log(S_NORMAL, "Critical Stack Ignore File: [None]"); 
-			}
-
-		Sagan_Log(S_NORMAL, "Critical Stack Parse Depth: %d", config->criticalstack_parse_depth); 
-		Sagan_Log(S_NORMAL, "Critical Stack Priority: %d", config->criticalstack_priority); 
-
-		if ( config->criticalstack_lognorm ) Sagan_Log(S_NORMAL, "Critical Stack Liblognorm: Enabled"); 
-		if ( config->criticalstack_rules_only ) Sagan_Log(S_NORMAL, "Critical Stack Rules Only: Enabled");
-		if ( config->criticalstack_parse_proto ) Sagan_Log(S_NORMAL, "Critical Stack Parse Proto: Enabled");
-		if ( config->criticalstack_parse_proto_program) Sagan_Log(S_NORMAL, "Critical Stack Parse Proto Program: Enabled");
-		if ( config->criticalstack_parse_src ) Sagan_Log(S_NORMAL, "Critical Stack Default Parse Source Depth: %d", config->criticalstack_parse_src); 
-                if ( config->criticalstack_parse_dst ) Sagan_Log(S_NORMAL, "Critical Stack Default Parse Destination Depth: %d", config->criticalstack_parse_dst);
-*/
-
 		Sagan_Log(S_NORMAL, "Critical Stack Intel::ADDR Loaded: %d", counters->criticalstack_addr_count);
 		Sagan_Log(S_NORMAL, "Critical Stack Intel::DOMAIN Loaded: %d", counters->criticalstack_domain_count);
 		Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_HASH Loaded: %d", counters->criticalstack_file_hash_count); 
@@ -727,7 +708,8 @@ int main(int argc, char **argv)
 
 		
 	}
-
+	
+    
     /***************************************************************************
      * Output plugins
      ***************************************************************************/

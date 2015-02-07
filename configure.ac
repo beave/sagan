@@ -335,8 +335,6 @@ if test "$SNORTSAM" = "yes"; then
 	AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
         fi
 
-
-
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 
 

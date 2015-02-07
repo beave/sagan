@@ -9334,8 +9334,6 @@ $as_echo "#define WITH_SNORTSAM 1" >>confdefs.h
 
         fi
 
-
-
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 
 cat >>confdefs.h <<_ACEOF

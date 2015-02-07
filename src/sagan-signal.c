@@ -52,6 +52,7 @@
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-track-clients.h"
+#include "processors/sagan-criticalstack.h"
 
 #ifdef WITH_WEBSENSE
 #include "processors/sagan-websense.h"
@@ -88,6 +89,16 @@ struct _Sagan_Flowbit *flowbit;
 sbool sagan_reload; 	/* Used to indicate Sagan is in reload.  This keeps Sagan
 			   pulling rules, etc. from memory in the middle of a
 			   reload */
+
+struct _Sagan_CriticalStack_Intel_Addr *Sagan_CriticalStack_Intel_Addr;
+struct _Sagan_CriticalStack_Intel_Domain *Sagan_CriticalStack_Intel_Domain;
+struct _Sagan_CriticalStack_Intel_File_Hash *Sagan_CriticalStack_Intel_File_Hash;
+struct _Sagan_CriticalStack_Intel_URL *Sagan_CriticalStack_Intel_URL;
+struct _Sagan_CriticalStack_Intel_Software *Sagan_CriticalStack_Intel_Software;
+struct _Sagan_CriticalStack_Intel_Email *Sagan_CriticalStack_Intel_Email;
+struct _Sagan_CriticalStack_Intel_User_Name *Sagan_CriticalStack_Intel_User_Name;
+struct _Sagan_CriticalStack_Intel_File_Name *Sagan_CriticalStack_Intel_File_Name;
+struct _Sagan_CriticalStack_Intel_Cert_Hash *Sagan_CriticalStack_Intel_Cert_Hash;
 
 #ifdef WITH_WEBSENSE
 struct _Sagan_Websense_Ignore_List *SaganWebsenseIgnoreList;
@@ -188,8 +199,46 @@ void Sig_Handler( _SaganSigArgs *args )
                             Sagan_Log(S_NORMAL, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
                         }
 
+
+		    if (config->criticalstack_flag) 
+		        {
+			    
+			     Sagan_CriticalStack_Intel_Addr = (_Sagan_CriticalStack_Intel_Addr *) realloc(Sagan_CriticalStack_Intel_Addr, 1 * sizeof(_Sagan_CriticalStack_Intel_Addr));
+			     counters->criticalstack_addr_count = 0; 
+
+			     Sagan_CriticalStack_Intel_Domain = (_Sagan_CriticalStack_Intel_Domain *) realloc(Sagan_CriticalStack_Intel_Domain, 1 * sizeof(_Sagan_CriticalStack_Intel_Domain));
+			     counters->criticalstack_domain_count=0; 
+
+			     Sagan_CriticalStack_Intel_File_Hash = (_Sagan_CriticalStack_Intel_File_Hash *) realloc(Sagan_CriticalStack_Intel_File_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Hash));
+			     counters->criticalstack_file_hash_count=0;
+
+			     Sagan_CriticalStack_Intel_URL = (_Sagan_CriticalStack_Intel_URL *) realloc(Sagan_CriticalStack_Intel_URL, 1 * sizeof(_Sagan_CriticalStack_Intel_URL));
+			     counters->criticalstack_url_count=0;
+
+			     Sagan_CriticalStack_Intel_Software = (_Sagan_CriticalStack_Intel_Software *) realloc(Sagan_CriticalStack_Intel_Software, 1 * sizeof(_Sagan_CriticalStack_Intel_Software));
+			     counters->criticalstack_software_count=0;
+
+			     Sagan_CriticalStack_Intel_Email = (_Sagan_CriticalStack_Intel_Email *) realloc(Sagan_CriticalStack_Intel_Email, 1 * sizeof(_Sagan_CriticalStack_Intel_Email));
+			     counters->criticalstack_email_count=0;
+
+		             Sagan_CriticalStack_Intel_User_Name = (_Sagan_CriticalStack_Intel_User_Name *) realloc(Sagan_CriticalStack_Intel_User_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_User_Name));
+			     counters->criticalstack_user_name_count=0;
+
+			     Sagan_CriticalStack_Intel_File_Name = (_Sagan_CriticalStack_Intel_File_Name *) realloc(Sagan_CriticalStack_Intel_File_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Name));
+			     counters->criticalstack_file_name_count=0;
+
+			     Sagan_CriticalStack_Intel_Cert_Hash = (_Sagan_CriticalStack_Intel_Cert_Hash *) realloc(Sagan_CriticalStack_Intel_Cert_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_Cert_Hash));
+			     counters->criticalstack_cert_hash_count=0;
+
+			     Sagan_CriticalStack_Load_File(); 
+			     Sagan_Log(S_NORMAL, "Reloaded CriticalStack data.");
+
+			}
+			
+
+
                     if (config->sagan_track_clients_flag)
-                        {
+                        {   
                             counters->track_clients_client_count = 0;
                             counters->track_clients_down = 0;
                             memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
@@ -197,6 +246,7 @@ void Sig_Handler( _SaganSigArgs *args )
                             Sagan_Load_Tracking_Cache();
                             Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
                         }
+
 
                     /*		  DNS Cache *not currently global* DEBUG
                     		  if (config->syslog_src_lookup) {
