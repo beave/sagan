@@ -93,7 +93,6 @@ struct _SaganDebug *debug;
 struct _Sagan_Flowbit *flowbit;
 
 
-
 #ifdef WITH_WEBSENSE
 #include <curl/curl.h>
 #include "processors/sagan-websense.h"
@@ -259,6 +258,12 @@ int main(int argc, char **argv)
                     break;
 
                 case 'd':
+
+		    if (Sagan_strstr(optarg, "criticalstack")) 
+			{
+		            debug->debugcriticalstack=1; 
+			    debugflag=1; 
+			}
 
                     if (Sagan_strstr(optarg, "syslog"))
                         {

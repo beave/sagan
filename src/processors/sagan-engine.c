@@ -45,7 +45,9 @@
 #include "sagan-config.h"
 
 #include "parsers/parsers.h"
+
 #include "processors/sagan-engine.h"
+#include "processors/sagan-criticalstack.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -121,6 +123,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     sbool after_log_flag=0;
     sbool after_flag=0;
+
+    sbool criticalstack_results; 
 
     int   threadid=0;
     int i=0;
@@ -850,6 +854,75 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             alert_time_trigger = 1;
                                         }
                                 }
+
+                            /****************************************************************************
+			     * Criticalstack 
+                             ****************************************************************************/
+
+			    if ( rulestruct[b].criticalstack_flag ) 
+				{
+				
+					/* DEBUF: Need to break this IF statkment if found! */
+
+					criticalstack_results = 0; 
+
+					if ( rulestruct[b].criticalstack_ipaddr_src )
+						{
+							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_src) ); 
+						}
+
+					if ( rulestruct[b].criticalstack_ipaddr_dst ) 
+						{
+							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_dst) );
+						}
+
+					if ( rulestruct[b].criticalstack_ipaddr_both ) 
+						{ 
+							if ( Sagan_CriticalStack_IPADDR(IP2Bit(ip_src)) || Sagan_CriticalStack_IPADDR(IP2Bit(ip_dst)) ) 
+								{
+								criticalstack_results = 1; 
+								}
+						}
+
+					if ( rulestruct[b].criticalstack_domain ) 
+						{
+							criticalstack_results = Sagan_CriticalStack_DOMAIN(SaganProcSyslog_LOCAL->syslog_message); 
+						}
+					
+					if ( rulestruct[b].criticalstack_file_hash )					
+						{
+							criticalstack_results = Sagan_CriticalStack_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
+						}
+					
+					if ( rulestruct[b].criticalstack_url )					
+						{
+							criticalstack_results = Sagan_CriticalStack_URL(SaganProcSyslog_LOCAL->syslog_message);
+						}
+					
+					if ( rulestruct[b].criticalstack_software ) 
+						{
+							criticalstack_results = Sagan_CriticalStack_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
+						}
+
+					if ( rulestruct[b].criticalstack_user_name ) 
+						{
+							criticalstack_results = Sagan_CriticalStack_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
+						}
+
+					if ( rulestruct[b].criticalstack_file_name ) 
+						{
+							criticalstack_results = Sagan_CriticalStack_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
+						}
+
+					if ( rulestruct[b].criticalstack_cert_hash )
+						{
+							criticalstack_results = Sagan_CriticalStack_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
+						}
+
+				}
+
+
+			    	printf("CRITICAL_FLAG: %d\n", criticalstack_results); 
 
                             /****************************************************************************/
                             /* Populate the SaganEvent array with the information needed.  This info    */

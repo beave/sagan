@@ -170,6 +170,7 @@ struct _SaganDebug
     sbool debugthreads;
     sbool debugflowbit;
     sbool debugengine;
+    sbool debugcriticalstack;
 
 #ifdef HAVE_LIBGEOIP
     sbool debuggeoip;
@@ -325,7 +326,7 @@ char *Sagan_Var_To_Value(char *);
 uint32_t IP2Bit (char * );
 int Sagan_Validate_HEX (const char *);
 char *Sagan_Content_Pipe(char *, int, const char *);
-sbool is_rfc1918 ( char * );
+sbool is_rfc1918 ( uint32_t );
 char *Sagan_Replace_Sagan( char *, char *);
 int Sagan_Character_Count ( char *, char *);
 

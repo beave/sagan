@@ -84,7 +84,7 @@ int Sagan_GeoIP_Lookup_Country( char *ipaddr, int rule_position )
 
     /* is_rfc1918() This likely burns less CPU than GeoIP lookup! */
 
-    if (is_rfc1918(ipaddr))
+    if (is_rfc1918(IP2Bit(ipaddr)))
         {
             if (debug->debuggeoip) Sagan_Log(S_DEBUG, "IP address %s is RFC1918, skipping GeoIP lookup.", ipaddr);
             return(2);

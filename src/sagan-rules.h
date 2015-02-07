@@ -114,6 +114,25 @@ struct _Rule_Struct
     int  alert_end_hour;
     int  alert_end_minute;
 
+
+    /* Critical Stack */
+
+    sbool criticalstack_flag; 
+
+    sbool criticalstack_ipaddr_src; 
+    sbool criticalstack_ipaddr_dst; 
+    sbool criticalstack_ipaddr_both;
+
+    sbool criticalstack_domain;
+    sbool criticalstack_file_hash; 
+    sbool criticalstack_url; 
+    sbool criticalstack_software;
+    sbool criticalstack_email; 
+    sbool criticalstack_user_name; 
+    sbool criticalstack_file_name;
+    sbool criticalstack_cert_hash; 
+
+
 #ifdef HAVE_LIBGEOIP
 
     sbool geoip_flag;

@@ -27,6 +27,7 @@
 *
 */
 
+/*
 #define CRITICALSTACK_PROCESSOR_NAME "Sagan_CriticalStack"
 #define CRITICALSTACK_PROCESSOR_FACILITY "daemon"
 #define CRITICALSTACK_PROCESSOR_PRIORITY "warning"
@@ -35,6 +36,7 @@
 #define CRITICALSTACK_PROCESSOR_REV "1"
 #define CRITICALSTACK_PROCESSOR_TAG NULL
 #define CRITICALSTACK_PROCESSOR_GENERATOR_ID 1003
+*/
 
 typedef struct _Sagan_CriticalStack_Intel_Addr _Sagan_CriticalStack_Intel_Addr;
 struct _Sagan_CriticalStack_Intel_Addr
@@ -93,5 +95,14 @@ char cert_hash[64];
 
 void Sagan_CriticalStack_Init(void);
 void Sagan_CriticalStack_Load_File(void);
+int  Sagan_CriticalStack_IPADDR ( uint32_t );
+int  Sagan_CriticalStack_DOMAIN ( char * ); 
+int  Sagan_CriticalStack_FILE_HASH ( char * ); 
+int  Sagan_CriticalStack_URL ( char * ); 
+int  Sagan_CriticalStack_SOFTWARE( char * ); 
+int  Sagan_CriticalStack_EMAIL( char * ); 
+int  Sagan_CriticalStack_USER_NAME ( char * ); 
+int  Sagan_CriticalStack_FILE_NAME ( char * ); 
+int  Sagan_CriticalStack_CERT_HASH ( char * ); 
 
 
