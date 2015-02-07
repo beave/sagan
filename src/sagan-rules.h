@@ -114,7 +114,6 @@ struct _Rule_Struct
     int  alert_end_hour;
     int  alert_end_minute;
 
-
     /* Critical Stack */
 
     sbool criticalstack_flag;
