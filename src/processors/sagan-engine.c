@@ -857,12 +857,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             /****************************************************************************
                             * Criticalstack
-                                                 ****************************************************************************/
+                            ****************************************************************************/
 
                             if ( rulestruct[b].criticalstack_flag )
                                 {
-
-                                    /* DEBUF: Need to break this IF statkment if found! */
 
                                     criticalstack_results = 0;
 
