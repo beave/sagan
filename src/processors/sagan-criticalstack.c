@@ -253,7 +253,7 @@ int Sagan_CriticalStack_IPADDR ( uint32_t ip )
                     Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918.", __FILE__, __LINE__, ip);
                 }
 
-            return(0);
+            return(FALSE);
         }
 
     /* Search array for for the IP address */
@@ -268,12 +268,12 @@ int Sagan_CriticalStack_IPADDR ( uint32_t ip )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found IP %u.", __FILE__, __LINE__, ip);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 
 }
 
@@ -296,12 +296,12 @@ int Sagan_CriticalStack_DOMAIN ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found domain %s.", __FILE__, __LINE__, Sagan_CriticalStack_Intel_Domain[i].domain);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 
 }
 
@@ -324,12 +324,12 @@ int Sagan_CriticalStack_FILE_HASH ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found file hash %s.", __FILE__, __LINE__, Sagan_CriticalStack_Intel_File_Hash[i].hash);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 
 }
 
@@ -352,12 +352,12 @@ int Sagan_CriticalStack_URL ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found URL \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_URL[i].url);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
 /*****************************************************************************
@@ -379,12 +379,12 @@ int Sagan_CriticalStack_SOFTWARE ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found software \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_Software[i].software);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
 /*****************************************************************************
@@ -406,12 +406,12 @@ int Sagan_CriticalStack_EMAIL ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail address \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_Email[i].email);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
 /*****************************************************************************
@@ -433,12 +433,12 @@ int Sagan_CriticalStack_USER_NAME ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the username \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_User_Name[i].username);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
 /****************************************************************************
@@ -460,12 +460,12 @@ int Sagan_CriticalStack_FILE_NAME ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the file name \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_File_Name[i].file_name);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
 /***************************************************************************
@@ -487,11 +487,11 @@ int Sagan_CriticalStack_CERT_HASH ( char *syslog_message )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the CERT_HASH \"%s\".", __FILE__, __LINE__, Sagan_CriticalStack_Intel_Cert_Hash[i].cert_hash);
                         }
 
-                    return(1);
+                    return(TRUE);
                 }
 
         }
 
-    return(0);
+    return(FALSE);
 }
 
