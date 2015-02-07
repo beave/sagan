@@ -447,34 +447,40 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "parse_proto"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->blacklist_parse_proto = 1;
-						} else { 
-						config->blacklist_parse_proto = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->blacklist_parse_proto = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->blacklist_parse_proto = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "parse_proto_program"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->blacklist_parse_proto_program = 1;
-						} else { 
-						config->blacklist_parse_proto_program = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->blacklist_parse_proto_program = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->blacklist_parse_proto_program = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "lognorm"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->blacklist_lognorm = 1;
-						} else {
-						config->blacklist_lognorm = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->blacklist_lognorm = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->blacklist_lognorm = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "priority"))
@@ -519,23 +525,27 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "parse_proto"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-					    	config->search_nocase_parse_proto = 1;
-						} else { 
-						config->search_nocase_parse_proto = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_nocase_parse_proto = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_nocase_parse_proto = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "parse_proto_program"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->search_nocase_parse_proto_program = 1;
-						} else { 
-						config->search_nocase_parse_proto_program = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_nocase_parse_proto_program = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_nocase_parse_proto_program = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "searchlist"))
@@ -547,12 +557,14 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "lognorm"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{ 
-						config->search_nocase_lognorm = 1;
-						} else { 
-						config->search_nocase_lognorm = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_nocase_lognorm = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_nocase_lognorm = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "priority"))
@@ -596,23 +608,27 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "parse_proto"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->search_case_parse_proto = 1;
-						} else { 
-						config->search_case_parse_proto = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_case_parse_proto = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_case_parse_proto = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "parse_proto_program"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->search_case_parse_proto_program = 1;
-						} else { 
-						config->search_case_parse_proto_program = 0;
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_case_parse_proto_program = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_case_parse_proto_program = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "searchlist"))
@@ -624,12 +640,14 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "lognorm"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->search_case_lognorm = 1;
-						} else { 
-						config->search_case_lognorm = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->search_case_lognorm = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->search_case_lognorm = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "priority"))
@@ -656,10 +674,10 @@ void Load_Config( void )
                             config->websense_parse_depth=2;		/* default */
                             config->websense_parse_src = 1;
                             config->websense_parse_dst = 2;
-			    config->websense_rules_only = 1;
+                            config->websense_rules_only = 1;
 
                             config->websense_priority = WEBSENSE_PROCESSOR_PRI;
-			    strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
+                            strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
 
 
                             ptmp = sagan_var1;
@@ -724,34 +742,40 @@ void Load_Config( void )
                                     if (!strcmp(ptmp, "parse_proto"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->websense_parse_proto = 1;
-						} else { 
-						config->websense_parse_proto = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->websense_parse_proto = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->websense_parse_proto = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "parse_proto_program"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{ 
-						config->websense_parse_proto_program = 1;
-						} else { 
-						config->websense_parse_proto_program = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->websense_parse_proto_program = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->websense_parse_proto_program = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "lognorm"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1")) 
-					    	{
-						config->websense_lognorm = 1;
-						} else { 
-						config->websense_lognorm = 0; 
-						}
+                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
+                                                {
+                                                    config->websense_lognorm = 1;
+                                                }
+                                            else
+                                                {
+                                                    config->websense_lognorm = 0;
+                                                }
                                         }
 
                                     if (!strcmp(ptmp, "priority"))
@@ -765,42 +789,42 @@ void Load_Config( void )
 
                         }
 
-		if (!strcmp(config->websense_auth, "")) 
-			{ 
-			Sagan_Log(S_ERROR,"Websense \"auth\" option is missing..");
-			}
+                    if (!strcmp(config->websense_auth, ""))
+                        {
+                            Sagan_Log(S_ERROR,"Websense \"auth\" option is missing..");
+                        }
 
 #endif
 
 
-		if (!strcmp(sagan_var1, "criticalstack:"))
-			{
+                    if (!strcmp(sagan_var1, "criticalstack:"))
+                        {
 
-			config->criticalstack_flag = 1; 
+                            config->criticalstack_flag = 1;
 
-			/* Set defaults */
+                            /* Set defaults */
 
-			strlcpy(config->criticalstack_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->criticalstack_file)); 
-			strlcpy(config->criticalstack_ignorefile, "", sizeof(config->criticalstack_ignorefile));
+                            strlcpy(config->criticalstack_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->criticalstack_file));
+                            strlcpy(config->criticalstack_ignorefile, "", sizeof(config->criticalstack_ignorefile));
 
-			ptmp = sagan_var1;
-			
-			while (ptmp != NULL )
-				{
+                            ptmp = sagan_var1;
 
-				if (!strcmp(ptmp, "cs_file")) 
-					{
+                            while (ptmp != NULL )
+                                {
 
-					ptmp = strtok_r(NULL, " ", &tok);
-					strlcpy(config->criticalstack_file, Remove_Return(ptmp), sizeof(config->criticalstack_file));
+                                    if (!strcmp(ptmp, "cs_file"))
+                                        {
 
-					}
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            strlcpy(config->criticalstack_file, Remove_Return(ptmp), sizeof(config->criticalstack_file));
 
-				ptmp = strtok_r(NULL, "=", &tok);
+                                        }
 
-				}
-			}
-	
+                                    ptmp = strtok_r(NULL, "=", &tok);
+
+                                }
+                        }
+
                 }
 
             /****************************************************************************

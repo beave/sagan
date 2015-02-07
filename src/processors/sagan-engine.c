@@ -856,70 +856,70 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 }
 
                             /****************************************************************************
-			     * Criticalstack 
-                             ****************************************************************************/
+                            * Criticalstack
+                                                 ****************************************************************************/
 
-			    if ( rulestruct[b].criticalstack_flag ) 
-				{
-				
-					/* DEBUF: Need to break this IF statkment if found! */
+                            if ( rulestruct[b].criticalstack_flag )
+                                {
 
-					criticalstack_results = 0; 
+                                    /* DEBUF: Need to break this IF statkment if found! */
 
-					if ( rulestruct[b].criticalstack_ipaddr_src )
-						{
-							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_src) ); 
-						}
+                                    criticalstack_results = 0;
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_dst ) 
-						{
-							criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_dst) );
-						}
+                                    if ( rulestruct[b].criticalstack_ipaddr_src )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_src) );
+                                        }
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_both ) 
-						{ 
-							if ( Sagan_CriticalStack_IPADDR(IP2Bit(ip_src)) || Sagan_CriticalStack_IPADDR(IP2Bit(ip_dst)) ) 
-								{
-								criticalstack_results = 1; 
-								}
-						}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_dst )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_dst) );
+                                        }
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_domain ) 
-						{
-							criticalstack_results = Sagan_CriticalStack_DOMAIN(SaganProcSyslog_LOCAL->syslog_message); 
-						}
-					
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_hash )					
-						{
-							criticalstack_results = Sagan_CriticalStack_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
-						}
-					
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_url )					
-						{
-							criticalstack_results = Sagan_CriticalStack_URL(SaganProcSyslog_LOCAL->syslog_message);
-						}
-					
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_software ) 
-						{
-							criticalstack_results = Sagan_CriticalStack_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
-						}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_both )
+                                        {
+                                            if ( Sagan_CriticalStack_IPADDR(IP2Bit(ip_src)) || Sagan_CriticalStack_IPADDR(IP2Bit(ip_dst)) )
+                                                {
+                                                    criticalstack_results = 1;
+                                                }
+                                        }
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_user_name ) 
-						{
-							criticalstack_results = Sagan_CriticalStack_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
-						}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_domain )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_DOMAIN(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_name ) 
-						{
-							criticalstack_results = Sagan_CriticalStack_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
-						}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_hash )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
 
-					if ( criticalstack_results == 0 && rulestruct[b].criticalstack_cert_hash )
-						{
-							criticalstack_results = Sagan_CriticalStack_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
-						}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_url )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_URL(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
 
-				}
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_software )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
+
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_user_name )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
+
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_name )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
+
+                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_cert_hash )
+                                        {
+                                            criticalstack_results = Sagan_CriticalStack_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
+                                        }
+
+                                }
 
                             /****************************************************************************/
                             /* Populate the SaganEvent array with the information needed.  This info    */
@@ -941,63 +941,63 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                 {
 #endif
 
-						if ( rulestruct[b].criticalstack_flag == 0 || criticalstack_results == 1) 
-						    { 
-
-                                                    pthread_mutex_lock(&CounterMutex);
-                                                    counters->saganfound++;
-                                                    pthread_mutex_unlock(&CounterMutex);
-
-                                                    /* Check for thesholding & "after" */
-
-                                                    if ( thresh_log_flag == 0 && after_log_flag == 0 )
+                                                    if ( rulestruct[b].criticalstack_flag == 0 || criticalstack_results == 1)
                                                         {
 
-                                                            if ( debug->debugengine )
+                                                            pthread_mutex_lock(&CounterMutex);
+                                                            counters->saganfound++;
+                                                            pthread_mutex_unlock(&CounterMutex);
+
+                                                            /* Check for thesholding & "after" */
+
+                                                            if ( thresh_log_flag == 0 && after_log_flag == 0 )
                                                                 {
 
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                                                                    if ( debug->debugengine )
+                                                                        {
 
-                                                                }
+                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
+                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
-                                                            if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
-                                                                Sagan_Flowbit_Set(b, ip_src, ip_dst);
+                                                                        }
 
-                                                            threadid++;
-                                                            if ( threadid >= MAX_THREADS ) threadid=0;
+                                                                    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
+                                                                        Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
-                                                            /* We can't use the pointers from our syslog data.  If two (or more) event's
-                                                             * fire at the same time,  the two alerts will have corrupted information
-                                                             * (due to threading).   So we populate the SaganEvent[threadid] with the
-                                                             * var[msgslot] information. - Champ Clark 02/02/2011
-                                                             */
+                                                                    threadid++;
+                                                                    if ( threadid >= MAX_THREADS ) threadid=0;
 
-                                                            processor_info_engine->processor_name          =       s_msg;
-                                                            processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                            processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                            processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                            processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                            processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                            processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                            processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+                                                                    /* We can't use the pointers from our syslog data.  If two (or more) event's
+                                                                     * fire at the same time,  the two alerts will have corrupted information
+                                                                     * (due to threading).   So we populate the SaganEvent[threadid] with the
+                                                                     * var[msgslot] information. - Champ Clark 02/02/2011
+                                                                     */
 
-                                                            processor_info_engine_dst_port                 =       dst_port;
-                                                            processor_info_engine_src_port                 =       src_port;
-                                                            processor_info_engine_proto                    =       proto;
-                                                            processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+                                                                    processor_info_engine->processor_name          =       s_msg;
+                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                            if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
-                                                                {
-                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
-                                                                }
+                                                                    processor_info_engine_dst_port                 =       dst_port;
+                                                                    processor_info_engine_src_port                 =       src_port;
+                                                                    processor_info_engine_proto                    =       proto;
+                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+
+                                                                    if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
+                                                                        {
+                                                                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
+                                                                        }
 
 
-                                                        	} /* Threshold / After */
+                                                                } /* Threshold / After */
 
-							} /* CriticalStack */
+                                                        } /* CriticalStack */
 
 #ifdef HAVE_LIBGEOIP
                                                 } /* GeoIP */

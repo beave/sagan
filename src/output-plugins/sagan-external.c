@@ -110,7 +110,7 @@ void Sagan_Ext_Thread ( _SaganEvent *Event )
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
         }
 
-  
+
     if (( pid = fork()) == 0 )
         {
 
@@ -132,7 +132,7 @@ void Sagan_Ext_Thread ( _SaganEvent *Event )
 
             Remove_Lock_File();
             Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
-       }
+        }
 
     close(in[0]);
     close(out[1]);

@@ -25,8 +25,8 @@
  * "mary".
  *
  * meta_content: "Username: %sagan%", $USERNAME"; meta_nocase;
- * 
- * The %sagan% becomes whatever the variable holds. 
+ *
+ * The %sagan% becomes whatever the variable holds.
  *
  */
 
@@ -106,7 +106,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
                     while (ptmp != NULL )
                         {
 
-			    /* This needs to happen in sagan-rules.c,  not here - FIXME */
+                            /* This needs to happen in sagan-rules.c,  not here - FIXME */
 
                             strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
 

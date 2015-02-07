@@ -58,9 +58,10 @@ void Sagan_Alert_File( _SaganEvent *Event )
     if ( Event->found != 0 )
         {
             tmpref = Reference_Lookup( Event->found, 0 );
-            if (strcmp(tmpref, "" )) { 
-		 fprintf(config->sagan_alert_stream, "%s\n", Reference_Lookup( Event->found, 0 ));
-		 }
+            if (strcmp(tmpref, "" ))
+                {
+                    fprintf(config->sagan_alert_stream, "%s\n", Reference_Lookup( Event->found, 0 ));
+                }
         }
 
 

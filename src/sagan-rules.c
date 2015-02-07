@@ -71,8 +71,8 @@ struct _Sagan_Flowbit *flowbit;
 
 void Load_Rules( const char *ruleset )
 {
- 
-    sbool found = 0; 
+
+    sbool found = 0;
 
     const char *error;
     int erroffset;
@@ -83,7 +83,7 @@ void Load_Rules( const char *ruleset )
     char *netstring;
     char *nettmp = NULL;
 
-    char tolower_tmp[512] = { 0 }; 
+    char tolower_tmp[512] = { 0 };
 
     char *tokenrule;
     char *tokennet;
@@ -596,7 +596,7 @@ void Load_Rules( const char *ruleset )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].meta_content_case[meta_content_count-1] = 1;
-			    strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].meta_content[meta_content_count-1]), sizeof(tolower_tmp));
+                            strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].meta_content[meta_content_count-1]), sizeof(tolower_tmp));
                             strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count-1]));
                         }
 
@@ -766,8 +766,8 @@ void Load_Rules( const char *ruleset )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
-			    strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].s_content[content_count - 1]), sizeof(tolower_tmp));
-			    strlcpy(rulestruct[counters->rulecount].s_content[content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].s_content[content_count-1]));
+                            strlcpy(tolower_tmp, To_LowerC(rulestruct[counters->rulecount].s_content[content_count - 1]), sizeof(tolower_tmp));
+                            strlcpy(rulestruct[counters->rulecount].s_content[content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].s_content[content_count-1]));
 
                         }
 
@@ -1136,109 +1136,110 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-		    /* "criticalstack" */
+                    /* "criticalstack" */
 
-		    if (!strcmp(rulesplit, "criticalstack")) 
-			{
-			    tok_tmp = strtok_r(NULL, ":", &saveptrrule2);	
+                    if (!strcmp(rulesplit, "criticalstack"))
+                        {
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
 
-			    if ( tok_tmp == NULL ) 
-				    Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"criticalstack:\" options appear incomplete.", __FILE__, __LINE__, ruleset, linecount);
+                            if ( tok_tmp == NULL )
+                                Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"criticalstack:\" options appear incomplete.", __FILE__, __LINE__, ruleset, linecount);
 
-			    Remove_Spaces(tok_tmp);
+                            Remove_Spaces(tok_tmp);
 
- 			    tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3); 
+                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
 
-			    while( tmptoken != NULL ) { 
+                            while( tmptoken != NULL )
+                                {
 
-			    	    found = 0; 
+                                    found = 0;
 
-			    	    if (!strcmp(tmptoken, "src_ipaddr")) 
-				    	    { 
-					    rulestruct[counters->rulecount].criticalstack_ipaddr_src = 1; 
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                    if (!strcmp(tmptoken, "src_ipaddr"))
+                                        {
+                                            rulestruct[counters->rulecount].criticalstack_ipaddr_src = 1;
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "dst_ipaddr"))
-                                            {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_ipaddr_dst = 1;
                                             rulestruct[counters->rulecount].criticalstack_flag = 1;
                                             found = 1;
-                                            }
+                                        }
 
                                     if (!strcmp(tmptoken, "both_ipaddr"))
-                                            {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_ipaddr_both = 1;
                                             rulestruct[counters->rulecount].criticalstack_flag = 1;
                                             found = 1;
-                                            }
+                                        }
 
-				    if (!strcmp(tmptoken, "domain"))
-					    {
-					    rulestruct[counters->rulecount].criticalstack_domain = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                    if (!strcmp(tmptoken, "domain"))
+                                        {
+                                            rulestruct[counters->rulecount].criticalstack_domain = 1;
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "file_hash"))
-				    	    {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_file_hash = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
-					    
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
+
                                     if (!strcmp(tmptoken, "url"))
-				    	    {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_url = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "software"))
-				   	    { 
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_software = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "email"))
-					    {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_email = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "user_name"))
-				    	    {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_user_name = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "file_name"))
-					    {
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_file_name = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
                                     if (!strcmp(tmptoken, "cert_hash"))
-				   	    { 
+                                        {
                                             rulestruct[counters->rulecount].criticalstack_cert_hash = 1;
-					    rulestruct[counters->rulecount].criticalstack_flag = 1;
-					    found = 1; 
-					    }
+                                            rulestruct[counters->rulecount].criticalstack_flag = 1;
+                                            found = 1;
+                                        }
 
-				if ( found == 0 ) 
-					{
-		    			Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d has an unknown \"criticalstack\" option \"%s\".", __FILE__, __LINE__, ruleset, linecount, tmptoken);			    
-					}
+                                    if ( found == 0 )
+                                        {
+                                            Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d has an unknown \"criticalstack\" option \"%s\".", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                        }
 
-				tmptoken = strtok_r(NULL, ",", &saveptrrule3);
-				} 
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule3);
+                                }
 
-			}
+                        }
 
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);

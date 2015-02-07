@@ -83,7 +83,7 @@ char *eth_addr="00:11:22:33:44:55";	/* Bogus ethernet address for ethernet frame
 /* Unified2InitFile - Initializes the file to be openned */
 /*********************************************************/
 
-void Unified2InitFile( void ) 
+void Unified2InitFile( void )
 {
 
     char filepath[1024];

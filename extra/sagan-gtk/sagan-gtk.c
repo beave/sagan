@@ -32,36 +32,38 @@
 
 static void destroy( GtkWidget *, gpointer );
 
-int main() {
+int main()
+{
 
-GtkWidget *window;
-GtkWidget *label;
+    GtkWidget *window;
+    GtkWidget *label;
 
-char input[MAX_BUF]="\0";
-char messageit[MAX_BUF]="\0";
+    char input[MAX_BUF]="\0";
+    char messageit[MAX_BUF]="\0";
 
-while (fgets(input, MAX_BUF-1, stdin)) { 
-	strncat(messageit, input, MAX_BUF-1-strlen(messageit));
-}
+    while (fgets(input, MAX_BUF-1, stdin))
+        {
+            strncat(messageit, input, MAX_BUF-1-strlen(messageit));
+        }
 
-messageit[MAX_BUF-1] = '\0';	/* Avoid overflow and null terminates */
+    messageit[MAX_BUF-1] = '\0';	/* Avoid overflow and null terminates */
 
-	gtk_init(NULL,NULL);
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	label = gtk_label_new(NULL);
+    gtk_init(NULL,NULL);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    label = gtk_label_new(NULL);
 
-	g_signal_connect (window, "destroy", G_CALLBACK (destroy), NULL);
+    g_signal_connect (window, "destroy", G_CALLBACK (destroy), NULL);
 
-	gtk_window_set_title(GTK_WINDOW(window), "Sagan Alert Message");
-	gtk_label_set_markup(GTK_LABEL(label), messageit );
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_container_add(GTK_CONTAINER(window), label);
-	gtk_widget_show(label);
+    gtk_window_set_title(GTK_WINDOW(window), "Sagan Alert Message");
+    gtk_label_set_markup(GTK_LABEL(label), messageit );
+    gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+    gtk_container_add(GTK_CONTAINER(window), label);
+    gtk_widget_show(label);
 
-	gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);
-	gtk_widget_show_all(window);
-	gtk_main();	
-	return 0;
+    gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);
+    gtk_widget_show_all(window);
+    gtk_main();
+    return 0;
 }
 
 static void destroy( GtkWidget *widget, gpointer   data )

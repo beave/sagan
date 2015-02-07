@@ -92,15 +92,15 @@ void Sagan_Usage(void)
 #endif
 
 #ifdef WITH_SNORTSAM
-    fprintf(stderr, "* Snortsam support is included.\n"); 
+    fprintf(stderr, "* Snortsam support is included.\n");
 #endif
 
 #ifdef WITH_SYSLOG
-    fprintf(stderr, "* Syslog output is included.\n"); 
+    fprintf(stderr, "* Syslog output is included.\n");
 #endif
 
 #ifdef WITH_SYSSTRSTR
-    fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n"); 
+    fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n");
 #endif
 
     fprintf(stderr, "\n* Compiled on %s at %s.\n", __DATE__, __TIME__);

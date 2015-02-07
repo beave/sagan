@@ -302,7 +302,7 @@ int main(int argc, char **argv)
                         }
 
                     if (Sagan_strstr(optarg, "criticalstack"))
-                        {   
+                        {
                             debug->debugcriticalstack=1;
                             debugflag=1;
                         }
@@ -687,29 +687,29 @@ int main(int argc, char **argv)
 
     /* Sagan Critical Stack processor *******************************************/
 
-    if ( config->criticalstack_flag ) 
-	{
+    if ( config->criticalstack_flag )
+        {
 
-		Sagan_CriticalStack_Init(); 
-		Sagan_CriticalStack_Load_File(); 
+            Sagan_CriticalStack_Init();
+            Sagan_CriticalStack_Load_File();
 
-		Sagan_Log(S_NORMAL, ""); 
-		Sagan_Log(S_NORMAL, "Critical Stack File: %s", config->criticalstack_file); 
+            Sagan_Log(S_NORMAL, "");
+            Sagan_Log(S_NORMAL, "Critical Stack File: %s", config->criticalstack_file);
 
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::ADDR Loaded: %d", counters->criticalstack_addr_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::DOMAIN Loaded: %d", counters->criticalstack_domain_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_HASH Loaded: %d", counters->criticalstack_file_hash_count); 
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::URL Loaded: %d", counters->criticalstack_url_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::SOFTWARE Loaded: %d", counters->criticalstack_software_count); 
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::EMAIL Loaded: %d", counters->criticalstack_email_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::USER_NAME Loaded: %d", counters->criticalstack_user_name_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_NAME Loaded: %d", counters->criticalstack_file_name_count);
-		Sagan_Log(S_NORMAL, "Critical Stack Intel::CERT_HASH Loaded: %d", counters->criticalstack_cert_hash_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::ADDR Loaded: %d", counters->criticalstack_addr_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::DOMAIN Loaded: %d", counters->criticalstack_domain_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_HASH Loaded: %d", counters->criticalstack_file_hash_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::URL Loaded: %d", counters->criticalstack_url_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::SOFTWARE Loaded: %d", counters->criticalstack_software_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::EMAIL Loaded: %d", counters->criticalstack_email_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::USER_NAME Loaded: %d", counters->criticalstack_user_name_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_NAME Loaded: %d", counters->criticalstack_file_name_count);
+            Sagan_Log(S_NORMAL, "Critical Stack Intel::CERT_HASH Loaded: %d", counters->criticalstack_cert_hash_count);
 
-		
-	}
-	
-    
+
+        }
+
+
     /***************************************************************************
      * Output plugins
      ***************************************************************************/

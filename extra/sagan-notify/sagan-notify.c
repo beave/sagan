@@ -30,33 +30,36 @@
 
 #define MAX_BUF 10240
 
-int main() {
+int main()
+{
 
-char input[MAX_BUF]="\0";
-char messageit[MAX_BUF]="\0";
+    char input[MAX_BUF]="\0";
+    char messageit[MAX_BUF]="\0";
 
-char *title="Sagan Alert";
+    char *title="Sagan Alert";
 
-while (fgets(input, MAX_BUF-1, stdin)) { 
-	strncat(messageit, input, MAX_BUF-1-strlen(messageit));
+    while (fgets(input, MAX_BUF-1, stdin))
+        {
+            strncat(messageit, input, MAX_BUF-1-strlen(messageit));
+        }
+
+    messageit[MAX_BUF-1] = '\0';	/* Avoid overflow and null terminates */
+
+    NotifyNotification *n;
+    notify_init("Sagan");
+    n = notify_notification_new (title,messageit, NULL, NULL);
+    notify_notification_set_timeout(n, 1000);
+
+    if (!notify_notification_show (n, NULL))
+        {
+            g_error("Failed to send notification.\n");
+            return 1;
+        }
+    g_object_unref(G_OBJECT(n));
+
+    return 0;
 }
 
-messageit[MAX_BUF-1] = '\0';	/* Avoid overflow and null terminates */
 
-NotifyNotification *n;
-notify_init("Sagan");
-n = notify_notification_new (title,messageit, NULL, NULL);
-notify_notification_set_timeout(n, 1000);
-
-     if (!notify_notification_show (n, NULL)) {
-        g_error("Failed to send notification.\n");
-	return 1;
-     }
-      g_object_unref(G_OBJECT(n));
-
-return 0;
-}
-
- 
 
 

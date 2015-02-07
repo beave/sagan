@@ -421,7 +421,7 @@ char *Get_Filename(char *file)
 /* Checks to see if an ip address is RFC1918 or not                         */
 /****************************************************************************/
 
-sbool is_rfc1918 ( uint32_t ipint ) 
+sbool is_rfc1918 ( uint32_t ipint )
 {
 
     if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	// 10.X.X.X

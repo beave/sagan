@@ -65,9 +65,9 @@ pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Processor ( void )
 {
 
-struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
-SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
-memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
+    struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
+    SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
+    memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
     sbool ignore_flag=0;
 
@@ -151,7 +151,7 @@ outside_loop:
 #endif
 
 
-			    
+
 
                             if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
                             if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);

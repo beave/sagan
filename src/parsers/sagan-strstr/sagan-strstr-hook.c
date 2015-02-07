@@ -82,7 +82,7 @@ char *Sagan_strstr(const char *_x, const char *_y)
 #endif
 
 /* This works similar to "strcasestr".  The "needle" (_y) is assumed to
- * already be converted to lowercase if "needle_lower" is FALSE. 
+ * already be converted to lowercase if "needle_lower" is FALSE.
  *
  * 0/FALSE == Don't convert needle
  * 1/TRUE  == Convert needle
@@ -119,11 +119,11 @@ char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
 
 char *Sagan_strstr(const char *_x, const char *_y)
 {
-	return (strstr(_x, _y)); 
+    return (strstr(_x, _y));
 }
 
 char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
 {
-	return (strcasestr(_x, _y)); 
+    return (strcasestr(_x, _y));
 }
 #endif

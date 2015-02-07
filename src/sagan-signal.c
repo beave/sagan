@@ -200,45 +200,45 @@ void Sig_Handler( _SaganSigArgs *args )
                         }
 
 
-		    if (config->criticalstack_flag) 
-		        {
-			    
-			     Sagan_CriticalStack_Intel_Addr = (_Sagan_CriticalStack_Intel_Addr *) realloc(Sagan_CriticalStack_Intel_Addr, 1 * sizeof(_Sagan_CriticalStack_Intel_Addr));
-			     counters->criticalstack_addr_count = 0; 
+                    if (config->criticalstack_flag)
+                        {
 
-			     Sagan_CriticalStack_Intel_Domain = (_Sagan_CriticalStack_Intel_Domain *) realloc(Sagan_CriticalStack_Intel_Domain, 1 * sizeof(_Sagan_CriticalStack_Intel_Domain));
-			     counters->criticalstack_domain_count=0; 
+                            Sagan_CriticalStack_Intel_Addr = (_Sagan_CriticalStack_Intel_Addr *) realloc(Sagan_CriticalStack_Intel_Addr, 1 * sizeof(_Sagan_CriticalStack_Intel_Addr));
+                            counters->criticalstack_addr_count = 0;
 
-			     Sagan_CriticalStack_Intel_File_Hash = (_Sagan_CriticalStack_Intel_File_Hash *) realloc(Sagan_CriticalStack_Intel_File_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Hash));
-			     counters->criticalstack_file_hash_count=0;
+                            Sagan_CriticalStack_Intel_Domain = (_Sagan_CriticalStack_Intel_Domain *) realloc(Sagan_CriticalStack_Intel_Domain, 1 * sizeof(_Sagan_CriticalStack_Intel_Domain));
+                            counters->criticalstack_domain_count=0;
 
-			     Sagan_CriticalStack_Intel_URL = (_Sagan_CriticalStack_Intel_URL *) realloc(Sagan_CriticalStack_Intel_URL, 1 * sizeof(_Sagan_CriticalStack_Intel_URL));
-			     counters->criticalstack_url_count=0;
+                            Sagan_CriticalStack_Intel_File_Hash = (_Sagan_CriticalStack_Intel_File_Hash *) realloc(Sagan_CriticalStack_Intel_File_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Hash));
+                            counters->criticalstack_file_hash_count=0;
 
-			     Sagan_CriticalStack_Intel_Software = (_Sagan_CriticalStack_Intel_Software *) realloc(Sagan_CriticalStack_Intel_Software, 1 * sizeof(_Sagan_CriticalStack_Intel_Software));
-			     counters->criticalstack_software_count=0;
+                            Sagan_CriticalStack_Intel_URL = (_Sagan_CriticalStack_Intel_URL *) realloc(Sagan_CriticalStack_Intel_URL, 1 * sizeof(_Sagan_CriticalStack_Intel_URL));
+                            counters->criticalstack_url_count=0;
 
-			     Sagan_CriticalStack_Intel_Email = (_Sagan_CriticalStack_Intel_Email *) realloc(Sagan_CriticalStack_Intel_Email, 1 * sizeof(_Sagan_CriticalStack_Intel_Email));
-			     counters->criticalstack_email_count=0;
+                            Sagan_CriticalStack_Intel_Software = (_Sagan_CriticalStack_Intel_Software *) realloc(Sagan_CriticalStack_Intel_Software, 1 * sizeof(_Sagan_CriticalStack_Intel_Software));
+                            counters->criticalstack_software_count=0;
 
-		             Sagan_CriticalStack_Intel_User_Name = (_Sagan_CriticalStack_Intel_User_Name *) realloc(Sagan_CriticalStack_Intel_User_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_User_Name));
-			     counters->criticalstack_user_name_count=0;
+                            Sagan_CriticalStack_Intel_Email = (_Sagan_CriticalStack_Intel_Email *) realloc(Sagan_CriticalStack_Intel_Email, 1 * sizeof(_Sagan_CriticalStack_Intel_Email));
+                            counters->criticalstack_email_count=0;
 
-			     Sagan_CriticalStack_Intel_File_Name = (_Sagan_CriticalStack_Intel_File_Name *) realloc(Sagan_CriticalStack_Intel_File_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Name));
-			     counters->criticalstack_file_name_count=0;
+                            Sagan_CriticalStack_Intel_User_Name = (_Sagan_CriticalStack_Intel_User_Name *) realloc(Sagan_CriticalStack_Intel_User_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_User_Name));
+                            counters->criticalstack_user_name_count=0;
 
-			     Sagan_CriticalStack_Intel_Cert_Hash = (_Sagan_CriticalStack_Intel_Cert_Hash *) realloc(Sagan_CriticalStack_Intel_Cert_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_Cert_Hash));
-			     counters->criticalstack_cert_hash_count=0;
+                            Sagan_CriticalStack_Intel_File_Name = (_Sagan_CriticalStack_Intel_File_Name *) realloc(Sagan_CriticalStack_Intel_File_Name, 1 * sizeof(_Sagan_CriticalStack_Intel_File_Name));
+                            counters->criticalstack_file_name_count=0;
 
-			     Sagan_CriticalStack_Load_File(); 
-			     Sagan_Log(S_NORMAL, "Reloaded CriticalStack data.");
+                            Sagan_CriticalStack_Intel_Cert_Hash = (_Sagan_CriticalStack_Intel_Cert_Hash *) realloc(Sagan_CriticalStack_Intel_Cert_Hash, 1 * sizeof(_Sagan_CriticalStack_Intel_Cert_Hash));
+                            counters->criticalstack_cert_hash_count=0;
 
-			}
-			
+                            Sagan_CriticalStack_Load_File();
+                            Sagan_Log(S_NORMAL, "Reloaded CriticalStack data.");
+
+                        }
+
 
 
                     if (config->sagan_track_clients_flag)
-                        {   
+                        {
                             counters->track_clients_client_count = 0;
                             counters->track_clients_down = 0;
                             memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
