@@ -180,19 +180,19 @@ struct _SaganConfig
     int          websense_priority;
 #endif
 
-    /* Critical Stack Support - see https://intel.criticalstack.com/ */
+    /* Bro Intel Framework Support */
 
-    sbool	 criticalstack_flag;
-    sbool	 criticalstack_rules_only;
-    sbool	 criticalstack_lognorm;
-    sbool	 criticalstack_parse_proto;
-    sbool 	 criticalstack_parse_proto_program;
-    int		 criticalstack_parse_src;
-    int		 criticalstack_parse_dst;
-    int 	 criticalstack_priority;
-    int		 criticalstack_parse_depth;
-    char	 criticalstack_file[MAXPATH];
-    char	 criticalstack_ignorefile[MAXPATH];
+    sbool	 brointel_flag;
+    sbool	 brointel_rules_only;
+    sbool	 brointel_lognorm;
+    sbool	 brointel_parse_proto;
+    sbool 	 brointel_parse_proto_program;
+    int		 brointel_parse_src;
+    int		 brointel_parse_dst;
+    int 	 brointel_priority;
+    int		 brointel_parse_depth;
+    char	 brointel_file[MAXPATH];
+    char	 brointel_ignorefile[MAXPATH];
 
     /* For Maxmind GeoIP address lookup */
 

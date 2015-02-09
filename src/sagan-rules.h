@@ -114,22 +114,22 @@ struct _Rule_Struct
     int  alert_end_hour;
     int  alert_end_minute;
 
-    /* Critical Stack */
+    /* Bro Intel */
 
-    sbool criticalstack_flag;
+    sbool brointel_flag;
 
-    sbool criticalstack_ipaddr_src;
-    sbool criticalstack_ipaddr_dst;
-    sbool criticalstack_ipaddr_both;
+    sbool brointel_ipaddr_src;
+    sbool brointel_ipaddr_dst;
+    sbool brointel_ipaddr_both;
 
-    sbool criticalstack_domain;
-    sbool criticalstack_file_hash;
-    sbool criticalstack_url;
-    sbool criticalstack_software;
-    sbool criticalstack_email;
-    sbool criticalstack_user_name;
-    sbool criticalstack_file_name;
-    sbool criticalstack_cert_hash;
+    sbool brointel_domain;
+    sbool brointel_file_hash;
+    sbool brointel_url;
+    sbool brointel_software;
+    sbool brointel_email;
+    sbool brointel_user_name;
+    sbool brointel_file_name;
+    sbool brointel_cert_hash;
 
 
 #ifdef HAVE_LIBGEOIP

@@ -73,7 +73,7 @@
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-perfmon.h"
-#include "processors/sagan-criticalstack.h"
+#include "processors/sagan-bro-intel.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -301,9 +301,9 @@ int main(int argc, char **argv)
                             debugflag=1;
                         }
 
-                    if (Sagan_strstr(optarg, "criticalstack"))
+                    if (Sagan_strstr(optarg, "brointel"))
                         {
-                            debug->debugcriticalstack=1;
+                            debug->debugbrointel=1;
                             debugflag=1;
                         }
 
@@ -685,26 +685,26 @@ int main(int argc, char **argv)
 
 #endif
 
-    /* Sagan Critical Stack processor *******************************************/
+    /* Sagan Bro Intel processor *******************************************/
 
-    if ( config->criticalstack_flag )
+    if ( config->brointel_flag )
         {
 
-            Sagan_CriticalStack_Init();
-            Sagan_CriticalStack_Load_File();
+            Sagan_BroIntel_Init();
+            Sagan_BroIntel_Load_File();
 
             Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "Critical Stack File: %s", config->criticalstack_file);
+            Sagan_Log(S_NORMAL, "Bro Intel File: %s", config->brointel_file);
 
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::ADDR Loaded: %d", counters->criticalstack_addr_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::DOMAIN Loaded: %d", counters->criticalstack_domain_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_HASH Loaded: %d", counters->criticalstack_file_hash_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::URL Loaded: %d", counters->criticalstack_url_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::SOFTWARE Loaded: %d", counters->criticalstack_software_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::EMAIL Loaded: %d", counters->criticalstack_email_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::USER_NAME Loaded: %d", counters->criticalstack_user_name_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::FILE_NAME Loaded: %d", counters->criticalstack_file_name_count);
-            Sagan_Log(S_NORMAL, "Critical Stack Intel::CERT_HASH Loaded: %d", counters->criticalstack_cert_hash_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::ADDR Loaded: %d", counters->brointel_addr_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::DOMAIN Loaded: %d", counters->brointel_domain_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::FILE_HASH Loaded: %d", counters->brointel_file_hash_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::URL Loaded: %d", counters->brointel_url_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::SOFTWARE Loaded: %d", counters->brointel_software_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::EMAIL Loaded: %d", counters->brointel_email_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::USER_NAME Loaded: %d", counters->brointel_user_name_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::FILE_NAME Loaded: %d", counters->brointel_file_name_count);
+            Sagan_Log(S_NORMAL, "Bro Intel::CERT_HASH Loaded: %d", counters->brointel_cert_hash_count);
 
 
         }

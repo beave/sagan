@@ -122,15 +122,15 @@ struct _SaganCounters
     int	     flowbit_count;
     int	     flowbit_track_count;
 
-    int      criticalstack_addr_count;
-    int      criticalstack_domain_count;
-    int      criticalstack_file_hash_count;
-    int      criticalstack_url_count;
-    int      criticalstack_software_count;
-    int      criticalstack_email_count;
-    int      criticalstack_user_name_count;
-    int      criticalstack_file_name_count;
-    int      criticalstack_cert_hash_count;
+    int      brointel_addr_count;
+    int      brointel_domain_count;
+    int      brointel_file_hash_count;
+    int      brointel_url_count;
+    int      brointel_software_count;
+    int      brointel_email_count;
+    int      brointel_user_name_count;
+    int      brointel_file_name_count;
+    int      brointel_cert_hash_count;
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
@@ -170,7 +170,7 @@ struct _SaganDebug
     sbool debugthreads;
     sbool debugflowbit;
     sbool debugengine;
-    sbool debugcriticalstack;
+    sbool debugbrointel;
 
 #ifdef HAVE_LIBGEOIP
     sbool debuggeoip;

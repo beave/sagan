@@ -797,15 +797,15 @@ void Load_Config( void )
 #endif
 
 
-                    if (!strcmp(sagan_var1, "criticalstack:"))
+                    if (!strcmp(sagan_var1, "bro-intel:"))
                         {
 
-                            config->criticalstack_flag = 1;
+                            config->brointel_flag = 1;
 
                             /* Set defaults */
 
-                            strlcpy(config->criticalstack_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->criticalstack_file));
-                            strlcpy(config->criticalstack_ignorefile, "", sizeof(config->criticalstack_ignorefile));
+                            strlcpy(config->brointel_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->brointel_file));
+                            strlcpy(config->brointel_ignorefile, "", sizeof(config->brointel_ignorefile));
 
                             ptmp = sagan_var1;
 
@@ -816,7 +816,7 @@ void Load_Config( void )
                                         {
 
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->criticalstack_file, Remove_Return(ptmp), sizeof(config->criticalstack_file));
+                                            strlcpy(config->brointel_file, Remove_Return(ptmp), sizeof(config->brointel_file));
 
                                         }
 

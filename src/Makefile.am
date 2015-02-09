@@ -50,7 +50,7 @@ processors/sagan-blacklist.c \
 processors/sagan-search.c \
 processors/sagan-perfmon.c \
 processors/sagan-cif.c \
-processors/sagan-criticalstack.c 
+processors/sagan-bro-intel.c 
 
 
 install-data-local:

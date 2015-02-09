@@ -47,7 +47,7 @@
 #include "parsers/parsers.h"
 
 #include "processors/sagan-engine.h"
-#include "processors/sagan-criticalstack.h"
+#include "processors/sagan-bro-intel.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -163,7 +163,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     int proto = config->sagan_proto;		/* Set proto to default */
 
-    sbool criticalstack_results;
+    sbool brointel_results;
 
     /* Search for matches */
 
@@ -856,65 +856,65 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 }
 
                             /****************************************************************************
-                            * Criticalstack
+                            * Bro Intel
                             ****************************************************************************/
 
-                            if ( rulestruct[b].criticalstack_flag )
+                            if ( rulestruct[b].brointel_flag )
                                 {
 
-                                    criticalstack_results = 0;
+                                    brointel_results = 0;
 
-                                    if ( rulestruct[b].criticalstack_ipaddr_src )
+                                    if ( rulestruct[b].brointel_ipaddr_src )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_src) );
+                                            brointel_results = Sagan_BroIntel_IPADDR( IP2Bit(ip_src) );
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_dst )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_dst )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_IPADDR( IP2Bit(ip_dst) );
+                                            brointel_results = Sagan_BroIntel_IPADDR( IP2Bit(ip_dst) );
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_ipaddr_both )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_both )
                                         {
-                                            if ( Sagan_CriticalStack_IPADDR(IP2Bit(ip_src)) || Sagan_CriticalStack_IPADDR(IP2Bit(ip_dst)) )
+                                            if ( Sagan_BroIntel_IPADDR(IP2Bit(ip_src)) || Sagan_BroIntel_IPADDR(IP2Bit(ip_dst)) )
                                                 {
-                                                    criticalstack_results = 1;
+                                                    brointel_results = 1;
                                                 }
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_domain )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_domain )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_DOMAIN(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_DOMAIN(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_hash )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_file_hash )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_url )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_url )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_URL(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_URL(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_software )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_software )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_user_name )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_user_name )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_file_name )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_file_name )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
-                                    if ( criticalstack_results == 0 && rulestruct[b].criticalstack_cert_hash )
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_cert_hash )
                                         {
-                                            criticalstack_results = Sagan_CriticalStack_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
+                                            brointel_results = Sagan_BroIntel_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
                                 }
@@ -939,7 +939,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                 {
 #endif
 
-                                                    if ( rulestruct[b].criticalstack_flag == 0 || criticalstack_results == 1)
+                                                    if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1)
                                                         {
 
                                                             pthread_mutex_lock(&CounterMutex);
@@ -995,7 +995,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                 } /* Threshold / After */
 
-                                                        } /* CriticalStack */
+                                                        } /* BroIntel */
 
 #ifdef HAVE_LIBGEOIP
                                                 } /* GeoIP */
