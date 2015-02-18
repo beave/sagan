@@ -92,7 +92,7 @@ void Sagan_BroIntel_Init(void)
  * into different arrays.
  * ***************************************************************************/
 
-void Sagan_BroIntel_Load_File(void)
+void Sagan_BroIntel_Load_File( char *brointel_filename)
 {
 
     FILE *brointel_file;
@@ -109,9 +109,9 @@ void Sagan_BroIntel_Load_File(void)
 
     char brointelbuf[MAX_BROINTEL_LINE_SIZE] = { 0 };
 
-    if (( brointel_file = fopen(config->brointel_file, "r")) == NULL )
+    if (( brointel_file = fopen(brointel_filename, "r")) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Could not load Bro Intel file! (%s)", __FILE__, __LINE__, config->brointel_file);
+            Sagan_Log(S_ERROR, "[%s, line %d] Could not load Bro Intel file! (%s)", __FILE__, __LINE__, brointel_filename);
         }
 
     while(fgets(brointelbuf, MAX_BROINTEL_LINE_SIZE, brointel_file) != NULL)
@@ -132,9 +132,11 @@ void Sagan_BroIntel_Load_File(void)
                     type = strtok_r(NULL, "\t", &tok);
                     description = strtok_r(NULL, "\t", &tok);
 
+		    /* DEBUG: Check for dups here! */
+
                     if ( value == NULL || type == NULL || description == NULL )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Got invalid line at %d in %s", __FILE__, __LINE__, line_count, config->brointel_file);
+                            Sagan_Log(S_WARN, "[%s, line %d] Got invalid line at %d in %s", __FILE__, __LINE__, line_count, brointel_filename);
                         }
 
                     found_flag = 0;

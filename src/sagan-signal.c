@@ -230,7 +230,7 @@ void Sig_Handler( _SaganSigArgs *args )
                             Sagan_BroIntel_Intel_Cert_Hash = (_Sagan_BroIntel_Intel_Cert_Hash *) realloc(Sagan_BroIntel_Intel_Cert_Hash, 1 * sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
                             counters->brointel_cert_hash_count=0;
 
-                            Sagan_BroIntel_Load_File();
+//                            Sagan_BroIntel_Load_File();
                             Sagan_Log(S_NORMAL, "Reloaded BroIntel data.");
 
                         }

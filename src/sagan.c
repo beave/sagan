@@ -690,11 +690,11 @@ int main(int argc, char **argv)
     if ( config->brointel_flag )
         {
 
-            Sagan_BroIntel_Init();
-            Sagan_BroIntel_Load_File();
+//            Sagan_BroIntel_Init();
+//            Sagan_BroIntel_Load_File();
 
             Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "Bro Intel File: %s", config->brointel_file);
+//            Sagan_Log(S_NORMAL, "Bro Intel File: %s", config->brointel_file);
 
             Sagan_Log(S_NORMAL, "Bro Intel::ADDR Loaded: %d", counters->brointel_addr_count);
             Sagan_Log(S_NORMAL, "Bro Intel::DOMAIN Loaded: %d", counters->brointel_domain_count);
