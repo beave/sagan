@@ -21,6 +21,8 @@ Sagan supports many different output formats,  log normalization
 automatic firewall support via "Snortsam" 
 (see http://www.snortsam.net).  
 
+Sagan uses the GNU "artisic style". 
+
 For more information, please visit the Sagan web site: 
 http://sagan.quadrantsec.com. 
 

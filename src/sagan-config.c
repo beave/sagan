@@ -69,6 +69,7 @@
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-search.h"
 #include "processors/sagan-perfmon.h"
+#include "processors/sagan-bro-intel.h"
 
 #ifdef WITH_WEBSENSE
 #include "processors/sagan-websense.h"
@@ -796,6 +797,9 @@ void Load_Config( void )
 
 #endif
 
+                    /* For the Bro Intellegence framework */
+
+                    /* This allows Sagan to load Bro Intel files like Critical Stack Bro/Intel files */
 
                     if (!strcmp(sagan_var1, "bro-intel:"))
                         {
@@ -804,46 +808,18 @@ void Load_Config( void )
 
                             /* Set defaults */
 
-//                            strlcpy(config->brointel_file, "/opt/critical-stack/frameworks/intel/master-public.bro.dat", sizeof(config->brointel_file));
-//                            strlcpy(config->brointel_ignorefile, "", sizeof(config->brointel_ignorefile));
+                            ptmp = strtok_r(NULL,"\0", &tok);
 
-//                            ptmp = sagan_var1;
-
-			    Sagan_BroIntel_Init();
-
-		            ptmp = strtok_r(NULL, ",", &tok);
-
-                            while (ptmp != NULL )
+                            if ( ptmp == NULL )
                                 {
-
-
-//            Sagan_BroIntel_Init();
-//            Sagan_BroIntel_Load_File();
-
-
-/*
-			if (!strcmp(ptmp, "cs_file"))
-                                        {
-
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->brointel_file, Remove_Return(ptmp), sizeof(config->brointel_file));
-
-                                        }
-*/
-
-				    Remove_Return(ptmp);
-				    Remove_Spaces(ptmp);
-
-				    printf("----> %s\n", ptmp);
-
-
-
-				   
-				    Sagan_BroIntel_Load_File(Remove_Return(ptmp)); 
-				  
-                                    ptmp = strtok_r(NULL, ",", &tok);
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"bro-intel:\" processor file(s) missing", __FILE__, __LINE__);
                                 }
+
+                            Remove_Return(ptmp);
+                            Remove_Spaces(ptmp);
+
+                            strlcpy(config->brointel_files, ptmp, sizeof(config->brointel_files));
+
                         }
 
                 }

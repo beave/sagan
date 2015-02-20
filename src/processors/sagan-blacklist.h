@@ -29,7 +29,8 @@
 
 
 int Sagan_Blacklist ( _SaganProcSyslog * );
-int  Sagan_Blacklist_Load ( void );
+int Sagan_Blacklist_Load ( void );
+void Sagan_Blacklist_Init( void ); 
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist

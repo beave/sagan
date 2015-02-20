@@ -123,7 +123,7 @@ void Sig_Handler( _SaganSigArgs *args )
 
             switch( sig )
                 {
-                    /* exit */
+                /* exit */
                 case SIGQUIT:
                 case SIGINT:
                 case SIGTERM:
@@ -203,35 +203,41 @@ void Sig_Handler( _SaganSigArgs *args )
                     if (config->brointel_flag)
                         {
 
-                            Sagan_BroIntel_Intel_Addr = (_Sagan_BroIntel_Intel_Addr *) realloc(Sagan_BroIntel_Intel_Addr, 1 * sizeof(_Sagan_BroIntel_Intel_Addr));
+
+                            Sagan_Log(S_NORMAL, "Started Reloading All Bro Intel Data");
+
+                            counters->brointel_dups = 0;
+
+                            memset(Sagan_BroIntel_Intel_Addr, 0, sizeof(_Sagan_BroIntel_Intel_Addr));
                             counters->brointel_addr_count = 0;
 
-                            Sagan_BroIntel_Intel_Domain = (_Sagan_BroIntel_Intel_Domain *) realloc(Sagan_BroIntel_Intel_Domain, 1 * sizeof(_Sagan_BroIntel_Intel_Domain));
+                            memset(Sagan_BroIntel_Intel_Domain, 0, sizeof(_Sagan_BroIntel_Intel_Domain));
                             counters->brointel_domain_count=0;
 
-                            Sagan_BroIntel_Intel_File_Hash = (_Sagan_BroIntel_Intel_File_Hash *) realloc(Sagan_BroIntel_Intel_File_Hash, 1 * sizeof(_Sagan_BroIntel_Intel_File_Hash));
+                            memset(Sagan_BroIntel_Intel_File_Hash, 0, sizeof(_Sagan_BroIntel_Intel_File_Hash));
                             counters->brointel_file_hash_count=0;
 
-                            Sagan_BroIntel_Intel_URL = (_Sagan_BroIntel_Intel_URL *) realloc(Sagan_BroIntel_Intel_URL, 1 * sizeof(_Sagan_BroIntel_Intel_URL));
+                            memset(Sagan_BroIntel_Intel_URL, 0, sizeof(_Sagan_BroIntel_Intel_URL));
                             counters->brointel_url_count=0;
 
-                            Sagan_BroIntel_Intel_Software = (_Sagan_BroIntel_Intel_Software *) realloc(Sagan_BroIntel_Intel_Software, 1 * sizeof(_Sagan_BroIntel_Intel_Software));
+                            memset(Sagan_BroIntel_Intel_Software, 0, sizeof(_Sagan_BroIntel_Intel_Software));
                             counters->brointel_software_count=0;
 
-                            Sagan_BroIntel_Intel_Email = (_Sagan_BroIntel_Intel_Email *) realloc(Sagan_BroIntel_Intel_Email, 1 * sizeof(_Sagan_BroIntel_Intel_Email));
+                            memset(Sagan_BroIntel_Intel_Email, 0, sizeof(_Sagan_BroIntel_Intel_Email));
                             counters->brointel_email_count=0;
 
-                            Sagan_BroIntel_Intel_User_Name = (_Sagan_BroIntel_Intel_User_Name *) realloc(Sagan_BroIntel_Intel_User_Name, 1 * sizeof(_Sagan_BroIntel_Intel_User_Name));
+                            memset(Sagan_BroIntel_Intel_User_Name, 0, sizeof(_Sagan_BroIntel_Intel_User_Name));
                             counters->brointel_user_name_count=0;
 
-                            Sagan_BroIntel_Intel_File_Name = (_Sagan_BroIntel_Intel_File_Name *) realloc(Sagan_BroIntel_Intel_File_Name, 1 * sizeof(_Sagan_BroIntel_Intel_File_Name));
+                            memset(Sagan_BroIntel_Intel_File_Name, 0, sizeof(_Sagan_BroIntel_Intel_File_Name));
                             counters->brointel_file_name_count=0;
 
-                            Sagan_BroIntel_Intel_Cert_Hash = (_Sagan_BroIntel_Intel_Cert_Hash *) realloc(Sagan_BroIntel_Intel_Cert_Hash, 1 * sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
+                            memset(Sagan_BroIntel_Intel_Cert_Hash, 0, sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
                             counters->brointel_cert_hash_count=0;
 
-//                            Sagan_BroIntel_Load_File();
-                            Sagan_Log(S_NORMAL, "Reloaded BroIntel data.");
+                            Sagan_BroIntel_Load_File();
+
+                            Sagan_Log(S_NORMAL, "Reloaded Bro Intel data.");
 
                         }
 
@@ -283,7 +289,7 @@ void Sig_Handler( _SaganSigArgs *args )
                     Sagan_Log(S_NORMAL, "Configuration reloaded.");
                     break;
 
-                    /* Signals to ignore */
+                /* Signals to ignore */
                 case 17:		/* Child process has exited. */
                 case 28:		/* Terminal 'resize'/alarm. */
                     break;

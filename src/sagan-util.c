@@ -101,14 +101,14 @@ void sagan_droppriv(const char *username)
             Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
             ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
-            if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO!",  __FILE__, __LINE__, config->sagan_fifo);
+            if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
 
-            if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s", __FILE__, __LINE__, config->sagan_fifo, username);
+            if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, username, strerror(errno));
 
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu - %s!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, strerror(errno));
                 }
 
         }

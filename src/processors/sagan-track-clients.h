@@ -47,3 +47,5 @@ struct _Sagan_Track_Clients
 
 int Sagan_Track_Clients ( _SaganProcSyslog * );
 void Sagan_Load_Tracking_Cache ( void );
+void Sagan_Track_Clients_Init ( void ); 
+

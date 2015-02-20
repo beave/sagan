@@ -468,7 +468,7 @@ int main(int argc, char **argv)
             if (( config->perfmonitor_file_stream = fopen(config->perfmonitor_file_name, "a" )) == NULL )
                 {
                     Remove_Lock_File();
-                    Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->perfmonitor_file_name);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
                 }
 
 
@@ -487,7 +487,7 @@ int main(int argc, char **argv)
     if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL )
         {
             Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s!", __FILE__, __LINE__, config->sagan_alert_filepath);
+            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
         }
 
     /****************************************************************************
@@ -499,6 +499,7 @@ int main(int argc, char **argv)
     if ( config->sagan_track_clients_flag)
         {
             if ( config->pp_sagan_track_clients ) Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
+            Sagan_Track_Clients_Init();
             Sagan_Load_Tracking_Cache();
         }
 
@@ -506,8 +507,10 @@ int main(int argc, char **argv)
 
     if ( config->blacklist_flag)
         {
+            Sagan_Blacklist_Init();
             Sagan_Blacklist_Load();
             Sagan_Log(S_NORMAL, "");
+
             Sagan_Log(S_NORMAL, "Blacklist Processor loaded [%s]", config->blacklist_file);
             Sagan_Log(S_NORMAL, "Blacklist loaded %d entries", counters->blacklist_count);
             Sagan_Log(S_NORMAL, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
@@ -551,13 +554,20 @@ int main(int argc, char **argv)
 
             if (config->blacklist_parse_src) Sagan_Log(S_NORMAL, "Blacklist Default Source Position: %d", config->blacklist_parse_src);
             if (config->blacklist_parse_dst) Sagan_Log(S_NORMAL, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst);
-
+	    
         }
 
-    /* Sagan Search [nocase ****************************************************/
+    /* Sagan Search [nocase] ****************************************************/
+
+    if ( config->search_nocase_flag || config->search_case_file )
+        {
+            Sagan_Search_Init();
+        }
+
 
     if ( config->search_nocase_flag)
         {
+
             Sagan_Search_Load( 1 );
             Sagan_Log(S_NORMAL, "");
             Sagan_Log(S_NORMAL, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
@@ -690,11 +700,10 @@ int main(int argc, char **argv)
     if ( config->brointel_flag )
         {
 
-//            Sagan_BroIntel_Init();
-//            Sagan_BroIntel_Load_File();
+	    Sagan_Log(S_NORMAL, "");
 
-            Sagan_Log(S_NORMAL, "");
-//            Sagan_Log(S_NORMAL, "Bro Intel File: %s", config->brointel_file);
+            Sagan_BroIntel_Init();
+            Sagan_BroIntel_Load_File();
 
             Sagan_Log(S_NORMAL, "Bro Intel::ADDR Loaded: %d", counters->brointel_addr_count);
             Sagan_Log(S_NORMAL, "Bro Intel::DOMAIN Loaded: %d", counters->brointel_domain_count);
@@ -705,6 +714,7 @@ int main(int argc, char **argv)
             Sagan_Log(S_NORMAL, "Bro Intel::USER_NAME Loaded: %d", counters->brointel_user_name_count);
             Sagan_Log(S_NORMAL, "Bro Intel::FILE_NAME Loaded: %d", counters->brointel_file_name_count);
             Sagan_Log(S_NORMAL, "Bro Intel::CERT_HASH Loaded: %d", counters->brointel_cert_hash_count);
+            Sagan_Log(S_NORMAL, "Bro Intel Duplicates Detected: %d", counters->brointel_dups);
 
 
         }

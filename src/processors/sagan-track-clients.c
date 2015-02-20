@@ -51,6 +51,13 @@ pthread_mutex_t SaganProcTrackClientsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 
+void Sagan_Track_Clients_Init ( void )
+{
+
+    SaganTrackClients = malloc(sizeof(_Sagan_Track_Clients));
+
+}
+
 void Sagan_Load_Tracking_Cache ( void )
 {
 

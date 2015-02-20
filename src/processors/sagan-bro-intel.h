@@ -96,7 +96,7 @@ struct _Sagan_BroIntel_Intel_Cert_Hash
 
 
 void Sagan_BroIntel_Init(void);
-void Sagan_BroIntel_Load_File(char *);
+void Sagan_BroIntel_Load_File(void);
 int  Sagan_BroIntel_IPADDR ( uint32_t );
 int  Sagan_BroIntel_DOMAIN ( char * );
 int  Sagan_BroIntel_FILE_HASH ( char * );

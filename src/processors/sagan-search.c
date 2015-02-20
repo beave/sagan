@@ -56,9 +56,23 @@ pthread_mutex_t Lognorm_Mutex;
 #endif
 
 /****************************************************************************
+ * Init memory for usage
+ ****************************************************************************/
+
+void Sagan_Search_Init ( void )
+{
+
+    SaganNocaseSearchlist = malloc(sizeof(_Sagan_Nocase_Searchlist));
+    SaganCaseSearchlist = malloc(sizeof(_Sagan_Case_Searchlist));
+
+}
+
+
+/****************************************************************************
  * Sagan_Search_Load - Initializes processor info and loads the search
  * file into memory
  ****************************************************************************/
+
 
 int Sagan_Search_Load ( int type )
 {

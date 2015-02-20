@@ -38,6 +38,8 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
+#include <errno.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -69,7 +71,7 @@ void checklockfile ( void )
 
             if (( lck = fopen(config->sagan_lockfile, "r" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Lock file (%s) is present but can't be read", __FILE__, __LINE__, config->sagan_lockfile);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Lock file '%s' is present but can't be read [%s]", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
                 }
             else
                 {
@@ -105,7 +107,7 @@ void checklockfile ( void )
 
             if (( lck = fopen(config->sagan_lockfile, "w" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot create lock file (%s)", __FILE__, __LINE__, config->sagan_lockfile);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot create lock file (%s - %s)", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
                 }
             else
                 {
@@ -123,6 +125,6 @@ void Remove_Lock_File ( void )
 
     if ((stat(config->sagan_lockfile, &lckcheck) == 0) && unlink(config->sagan_lockfile) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot remove lock file (%s)\n", __FILE__, __LINE__, config->sagan_lockfile);
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot remove lock file (%s - %s)\n", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
         }
 }

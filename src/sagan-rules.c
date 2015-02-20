@@ -151,7 +151,7 @@ void Load_Rules( const char *ruleset )
 
     if (( rulesfile = fopen(ruleset, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s - %s)", __FILE__, __LINE__, ruleset, strerror(errno));
         }
 
     Sagan_Log(S_NORMAL, "Loading %s rule file", ruleset);

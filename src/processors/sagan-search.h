@@ -42,3 +42,4 @@ struct _Sagan_Case_Searchlist
 
 void Sagan_Search ( _SaganProcSyslog *, int );
 int Sagan_Search_Load ( int );
+void Sagan_Search_Init ( void ); 

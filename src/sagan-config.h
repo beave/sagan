@@ -183,16 +183,7 @@ struct _SaganConfig
     /* Bro Intel Framework Support */
 
     sbool	 brointel_flag;
-    sbool	 brointel_rules_only;
-    sbool	 brointel_lognorm;
-    sbool	 brointel_parse_proto;
-    sbool 	 brointel_parse_proto_program;
-    int		 brointel_parse_src;
-    int		 brointel_parse_dst;
-    int 	 brointel_priority;
-    int		 brointel_parse_depth;
-    char	 brointel_file[MAXPATH];
-    char	 brointel_ignorefile[MAXPATH];
+    char	 brointel_files[2048]; 
 
     /* For Maxmind GeoIP address lookup */
 

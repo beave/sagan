@@ -57,6 +57,12 @@ struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
 pthread_mutex_t Lognorm_Mutex;
 #endif
 
+void Sagan_Blacklist_Init ( void )
+{
+
+    SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
+
+}
 
 int Sagan_Blacklist_Load ( void )
 {
