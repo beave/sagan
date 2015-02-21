@@ -123,7 +123,7 @@ void Sig_Handler( _SaganSigArgs *args )
 
             switch( sig )
                 {
-                /* exit */
+                    /* exit */
                 case SIGQUIT:
                 case SIGINT:
                 case SIGTERM:
@@ -174,6 +174,10 @@ void Sig_Handler( _SaganSigArgs *args )
                     /* Re-load primary configuration (rules/classifictions/etc) */
 
                     Load_Config();
+
+#ifdef HAVE_LIBLOGNORM
+                    Sagan_Liblognorm_Load();
+#endif
 
                     if (config->blacklist_flag)
                         {
@@ -289,7 +293,7 @@ void Sig_Handler( _SaganSigArgs *args )
                     Sagan_Log(S_NORMAL, "Configuration reloaded.");
                     break;
 
-                /* Signals to ignore */
+                    /* Signals to ignore */
                 case 17:		/* Child process has exited. */
                 case 28:		/* Terminal 'resize'/alarm. */
                     break;

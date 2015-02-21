@@ -107,11 +107,11 @@ void Load_Rules( const char *ruleset )
     /* line added by drforbin array should be initialized */
     memset(netstr, 0, RULEBUF);
     char rulestr[RULEBUF];
-    /* line added by drforbin array should be initialized */
 
     memset(rulestr, 0, RULEBUF);
     char rulebuf[RULEBUF];
     char pcrerule[RULEBUF];
+
     char tmp2[512];
     char tmp[2];
     char final_content[512] = { 0 };
@@ -144,6 +144,8 @@ void Load_Rules( const char *ruleset )
     int ip_proto=0;
     int dst_port=0;
     int src_port=0;
+
+    config->lognorm_all = 0;
 
 #ifdef HAVE_LIBLOGNORM
     sbool liblognorm_flag=0;
@@ -698,30 +700,63 @@ void Load_Rules( const char *ruleset )
                             if (arg == NULL ) Sagan_Log(S_ERROR, "The \"normalize\" appears to be incomplete at line %d in %s", linecount, ruleset);
                             Remove_Spaces(arg);
 
-                            /* Search for a normalize rule that fits the rule set's spec */
 
-                            for (i=0; i < liblognorm_count; i++)
+                            /* If the rule specifies "all",  then we load the "liblognormtoloadstruct" with all
+                             * normalization files.  We then set the config->lognorm_all = 1 to short circuit the
+                             * individual normalization file loading */
+
+                            if (!strcmp(arg, "all") && config->lognorm_all == 0)
                                 {
-                                    if (!strcmp(liblognormstruct[i].type, arg ))
+
+                                    memset(liblognormtoloadstruct, 0, sizeof(liblognorm_toload_struct));
+                                    counters->liblognormtoload_count=0;
+
+                                    for (i=0; i < liblognorm_count; i++)
                                         {
 
-                                            liblognorm_flag=1;
+                                            liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
+                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
+                                            counters->liblognormtoload_count++;
 
-                                            for (a=0; a < counters->liblognormtoload_count; a++)
-                                                {
-                                                    if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[a].type )) liblognorm_flag=0;
-                                                }
+                                            config->lognorm_all = 1;
 
-                                            if ( liblognorm_flag == 1 )
+                                        }
+                                }
+
+                            /* If we aren't loading "all",  then store in the array the specific normalization
+                             * files the rule specifies */
+
+                            if ( config->lognorm_all == 0 )
+                                {
+
+                                    for (i=0; i < liblognorm_count; i++)
+                                        {
+
+                                            if (!strcmp(liblognormstruct[i].type, arg))
                                                 {
-                                                    liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
-                                                    strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
-                                                    strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
-                                                    counters->liblognormtoload_count++;
+
+                                                    liblognorm_flag=1;
+
+                                                    for (a=0; a < counters->liblognormtoload_count; a++)
+                                                        {
+                                                            if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[a].type ))
+                                                                {
+                                                                    liblognorm_flag=0;
+                                                                }
+                                                        }
+
+                                                    if ( liblognorm_flag == 1 )
+                                                        {
+                                                            liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+                                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
+                                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
+                                                            counters->liblognormtoload_count++;
+                                                        }
+
                                                 }
 
                                         }
-
                                 }
                         }
 

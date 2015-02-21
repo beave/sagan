@@ -554,7 +554,7 @@ int main(int argc, char **argv)
 
             if (config->blacklist_parse_src) Sagan_Log(S_NORMAL, "Blacklist Default Source Position: %d", config->blacklist_parse_src);
             if (config->blacklist_parse_dst) Sagan_Log(S_NORMAL, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst);
-	    
+
         }
 
     /* Sagan Search [nocase] ****************************************************/
@@ -700,7 +700,7 @@ int main(int argc, char **argv)
     if ( config->brointel_flag )
         {
 
-	    Sagan_Log(S_NORMAL, "");
+            Sagan_Log(S_NORMAL, "");
 
             Sagan_BroIntel_Init();
             Sagan_BroIntel_Load_File();

@@ -131,7 +131,7 @@ struct _SaganCounters
     int      brointel_user_name_count;
     int      brointel_file_name_count;
     int      brointel_cert_hash_count;
-    int      brointel_dups; 
+    int      brointel_dups;
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;

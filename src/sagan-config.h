@@ -63,8 +63,11 @@ struct _SaganConfig
     int          daemonize;
     int          sagan_proto;
 
-    sbool        home_any;                      /* 0 == no, 1 == yes */
-    sbool        external_any;
+
+    /*    sbool        home_any;  */                     /* 0 == no, 1 == yes */
+    /*    sbool        external_any;  */
+
+    sbool 	 lognorm_all; 				/* Flag to load all normalization files or not */
 
     sbool        endian;
 
@@ -183,7 +186,7 @@ struct _SaganConfig
     /* Bro Intel Framework Support */
 
     sbool	 brointel_flag;
-    char	 brointel_files[2048]; 
+    char	 brointel_files[2048];
 
     /* For Maxmind GeoIP address lookup */
 
