@@ -447,7 +447,7 @@ void Sagan_BroIntel_Load_File ( void )
  * Sagan_BroIntel_IPADDR - Search array for blacklisted IP addresses
  *****************************************************************************/
 
-int Sagan_BroIntel_IPADDR ( uint32_t ip )
+sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
 {
 
     int i;
@@ -490,7 +490,7 @@ int Sagan_BroIntel_IPADDR ( uint32_t ip )
  * Sagan_BroIntel_DOMAIN - Search DOMAIN array
  *****************************************************************************/
 
-int Sagan_BroIntel_DOMAIN ( char *syslog_message )
+sbool Sagan_BroIntel_DOMAIN ( char *syslog_message )
 {
 
     int i;
@@ -518,7 +518,7 @@ int Sagan_BroIntel_DOMAIN ( char *syslog_message )
  * Sagan_BroIntel_FILE_HASH - Search FILE_HASH array
  *****************************************************************************/
 
-int Sagan_BroIntel_FILE_HASH ( char *syslog_message )
+sbool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
 {
 
     int i;
@@ -546,7 +546,7 @@ int Sagan_BroIntel_FILE_HASH ( char *syslog_message )
  * Sagan_BroIntel_URL - Search URL array
  *****************************************************************************/
 
-int Sagan_BroIntel_URL ( char *syslog_message )
+sbool Sagan_BroIntel_URL ( char *syslog_message )
 {
 
     int i;
@@ -573,7 +573,7 @@ int Sagan_BroIntel_URL ( char *syslog_message )
  * Sagan_BroIntel_SOFTWARE - Search SOFTWARE array
  ****************************************************************************/
 
-int Sagan_BroIntel_SOFTWARE ( char *syslog_message )
+sbool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
 {
 
     int i;
@@ -600,7 +600,7 @@ int Sagan_BroIntel_SOFTWARE ( char *syslog_message )
  * Sagan_BroIntel_EMAIL - Search EMAIL array
  *****************************************************************************/
 
-int Sagan_BroIntel_EMAIL ( char *syslog_message )
+sbool Sagan_BroIntel_EMAIL ( char *syslog_message )
 {
 
     int i;
@@ -627,7 +627,7 @@ int Sagan_BroIntel_EMAIL ( char *syslog_message )
  * Sagan_BroIntel_USER_NAME - Search USER_NAME array
  ****************************************************************************/
 
-int Sagan_BroIntel_USER_NAME ( char *syslog_message )
+sbool Sagan_BroIntel_USER_NAME ( char *syslog_message )
 {
 
     int i;
@@ -654,7 +654,7 @@ int Sagan_BroIntel_USER_NAME ( char *syslog_message )
  * Sagan_BroIntel_FILE_NAME - Search FILE_NAME array
  ****************************************************************************/
 
-int Sagan_BroIntel_FILE_NAME ( char *syslog_message )
+sbool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
 {
 
     int i;
@@ -681,7 +681,7 @@ int Sagan_BroIntel_FILE_NAME ( char *syslog_message )
  * Sagan_BroIntel_CERT_HASH - Search CERT_HASH array
  ***************************************************************************/
 
-int Sagan_BroIntel_CERT_HASH ( char *syslog_message )
+sbool Sagan_BroIntel_CERT_HASH ( char *syslog_message )
 {
 
     int i;

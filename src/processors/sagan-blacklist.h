@@ -28,9 +28,9 @@
 #define BLACKLIST_PROCESSOR_GENERATOR_ID 1001
 
 
-int Sagan_Blacklist ( _SaganProcSyslog * );
-int Sagan_Blacklist_Load ( void );
+void Sagan_Blacklist_Load ( void );
 void Sagan_Blacklist_Init( void ); 
+sbool Sagan_Blacklist_IPADDR( uint32_t ); 
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist

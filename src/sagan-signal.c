@@ -184,7 +184,7 @@ void Sig_Handler( _SaganSigArgs *args )
                             counters->blacklist_count=0;
                             memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
                             Sagan_Blacklist_Load();
-                            Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
+//                            Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
                         }
 
                     if (config->search_nocase_flag)

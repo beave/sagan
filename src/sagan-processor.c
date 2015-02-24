@@ -153,7 +153,7 @@ outside_loop:
 
 
 
-                            if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
+//                            if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
                             if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);
                             if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2);
 

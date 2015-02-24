@@ -409,91 +409,20 @@ void Load_Config( void )
 
                             config->blacklist_flag=1;
 
-                            /* Set defaults */
+                            ptmp = strtok_r(NULL,"\0", &tok);
 
-                            config->blacklist_priority = BLACKLIST_PROCESSOR_PRI; /* Set default */
-                            config->blacklist_parse_depth = 2;
-                            config->blacklist_parse_src = 1;
-                            config->blacklist_parse_dst = 2;
-
-                            ptmp = sagan_var1;
-
-                            while (ptmp != NULL)
+                            if ( ptmp == NULL )
                                 {
-
-                                    if (!strcmp(ptmp, "parse_depth"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->blacklist_parse_depth = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "blacklist"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->blacklist_file, Remove_Return(ptmp), sizeof(config->blacklist_file));
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_src"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->blacklist_parse_src = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_dst"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->blacklist_parse_dst = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_proto"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->blacklist_parse_proto = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->blacklist_parse_proto = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_proto_program"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->blacklist_parse_proto_program = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->blacklist_parse_proto_program = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "lognorm"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->blacklist_lognorm = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->blacklist_lognorm = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "priority"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->blacklist_priority=atoi(ptmp);
-                                        }
-
-                                    ptmp = strtok_r(NULL, "=", &tok);
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"blacklist:\" processor file(s) missing", __FILE__, __LINE__);
                                 }
+
+                            Remove_Return(ptmp);
+                            Remove_Spaces(ptmp);
+
+                            strlcpy(config->blacklist_files, ptmp, sizeof(config->blacklist_files));
+
                         }
+
 
                     /******* Search "Nocase" *******/
 
@@ -675,7 +604,6 @@ void Load_Config( void )
                             config->websense_parse_depth=2;		/* default */
                             config->websense_parse_src = 1;
                             config->websense_parse_dst = 2;
-                            config->websense_rules_only = 1;
 
                             config->websense_priority = WEBSENSE_PROCESSOR_PRI;
                             strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
@@ -805,8 +733,6 @@ void Load_Config( void )
                         {
 
                             config->brointel_flag = 1;
-
-                            /* Set defaults */
 
                             ptmp = strtok_r(NULL,"\0", &tok);
 

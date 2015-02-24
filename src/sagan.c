@@ -509,52 +509,6 @@ int main(int argc, char **argv)
         {
             Sagan_Blacklist_Init();
             Sagan_Blacklist_Load();
-            Sagan_Log(S_NORMAL, "");
-
-            Sagan_Log(S_NORMAL, "Blacklist Processor loaded [%s]", config->blacklist_file);
-            Sagan_Log(S_NORMAL, "Blacklist loaded %d entries", counters->blacklist_count);
-            Sagan_Log(S_NORMAL, "Blacklist Parse Depth: %d", config->blacklist_parse_depth);
-
-#ifdef HAVE_LIBLOGNORM
-            if (config->blacklist_lognorm)
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Liblognorm: Disabled");
-                }
-#endif
-
-#ifndef HAVE_LIBLOGNORM
-            if (config->blacklist_lognorm)
-                {
-                    Sagan_Log(S_WARN, "Blacklist Liblognorm: Disabled (lacks compiled in support!)");
-                    config->blacklist_lognorm=0;
-                }
-#endif
-
-            if (config->blacklist_parse_proto)
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Parse_Protocol: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Parse Protocol: Disabled");
-                }
-
-            if (config->blacklist_parse_proto_program)
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Parse Protocol via Program: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Blacklist Parse Protocol via Program: Disabled");
-                }
-
-            if (config->blacklist_parse_src) Sagan_Log(S_NORMAL, "Blacklist Default Source Position: %d", config->blacklist_parse_src);
-            if (config->blacklist_parse_dst) Sagan_Log(S_NORMAL, "Blacklist Default Destination Position: %d", config->blacklist_parse_dst);
-
         }
 
     /* Sagan Search [nocase] ****************************************************/
@@ -715,7 +669,6 @@ int main(int argc, char **argv)
             Sagan_Log(S_NORMAL, "Bro Intel::FILE_NAME Loaded: %d", counters->brointel_file_name_count);
             Sagan_Log(S_NORMAL, "Bro Intel::CERT_HASH Loaded: %d", counters->brointel_cert_hash_count);
             Sagan_Log(S_NORMAL, "Bro Intel Duplicates Detected: %d", counters->brointel_dups);
-
 
         }
 

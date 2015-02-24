@@ -1171,6 +1171,50 @@ void Load_Rules( const char *ruleset )
                         }
 
 
+                    /* Blacklist */
+
+                    if (!strcmp(rulesplit, "blacklist"))
+                        {
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( tok_tmp == NULL )
+                                Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"blacklist:\" options appear incomplete.", __FILE__, __LINE__, ruleset, linecount);
+
+                            Remove_Spaces(tok_tmp);
+
+                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+
+                            while( tmptoken != NULL )
+                                {
+
+                                    found = 0;
+
+                                    if (!strcmp(tmptoken, "src_ipaddr"))
+                                        {
+                                            rulestruct[counters->rulecount].blacklist_ipaddr_src = 1;
+                                            rulestruct[counters->rulecount].blacklist_flag = 1;
+                                            found = 1;
+                                        }
+
+                                    if (!strcmp(tmptoken, "dst_ipaddr"))
+                                        {
+                                            rulestruct[counters->rulecount].blacklist_ipaddr_dst = 1;
+                                            rulestruct[counters->rulecount].blacklist_flag = 1;
+                                            found = 1;
+                                        }
+
+                                    if (!strcmp(tmptoken, "both_ipaddr"))
+                                        {
+                                            rulestruct[counters->rulecount].blacklist_ipaddr_both = 1;
+                                            rulestruct[counters->rulecount].blacklist_flag = 1;
+                                            found = 1;
+                                        }
+
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule3);
+                                }
+
+                        }
+
                     /* Bro Intel */
 
                     if (!strcmp(rulesplit, "bro-intel"))

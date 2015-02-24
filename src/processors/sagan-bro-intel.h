@@ -97,13 +97,13 @@ struct _Sagan_BroIntel_Intel_Cert_Hash
 
 void Sagan_BroIntel_Init(void);
 void Sagan_BroIntel_Load_File(void);
-int  Sagan_BroIntel_IPADDR ( uint32_t );
-int  Sagan_BroIntel_DOMAIN ( char * );
-int  Sagan_BroIntel_FILE_HASH ( char * );
-int  Sagan_BroIntel_URL ( char * );
-int  Sagan_BroIntel_SOFTWARE( char * );
-int  Sagan_BroIntel_EMAIL( char * );
-int  Sagan_BroIntel_USER_NAME ( char * );
-int  Sagan_BroIntel_FILE_NAME ( char * );
-int  Sagan_BroIntel_CERT_HASH ( char * );
+sbool  Sagan_BroIntel_IPADDR ( uint32_t );
+sbool  Sagan_BroIntel_DOMAIN ( char * );
+sbool  Sagan_BroIntel_FILE_HASH ( char * );
+sbool  Sagan_BroIntel_URL ( char * );
+sbool  Sagan_BroIntel_SOFTWARE( char * );
+sbool  Sagan_BroIntel_EMAIL( char * );
+sbool  Sagan_BroIntel_USER_NAME ( char * );
+sbool  Sagan_BroIntel_FILE_NAME ( char * );
+sbool  Sagan_BroIntel_CERT_HASH ( char * );
 

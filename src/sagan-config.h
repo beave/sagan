@@ -79,14 +79,7 @@ struct _SaganConfig
     FILE        *sagan_track_client_file;
 
     sbool       blacklist_flag;
-    char        blacklist_file[MAXPATH];
-    int         blacklist_parse_depth;
-    int         blacklist_parse_src;
-    int         blacklist_parse_dst;
-    sbool       blacklist_parse_proto;
-    sbool       blacklist_parse_proto_program;
-    sbool       blacklist_lognorm;
-    int         blacklist_priority;
+    char        blacklist_files[2048];
 
     sbool	perfmonitor_flag;
     int		perfmonitor_time;
