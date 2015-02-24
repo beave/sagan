@@ -50,7 +50,6 @@
 #include "sagan-rules.h"
 
 #include "processors/sagan-blacklist.h"
-#include "processors/sagan-search.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-bro-intel.h"
 
@@ -81,8 +80,6 @@ struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
 struct _Sagan_Processor_Generator *generator;
 struct _Sagan_Blacklist *SaganBlacklist;
-struct _Sagan_Nocase_Searchlist *SaganNocaseSearchlist;
-struct _Sagan_Case_Searchlist *SaganCaseSearchlist;
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _Sagan_Flowbit *flowbit;
 
@@ -184,25 +181,7 @@ void Sig_Handler( _SaganSigArgs *args )
                             counters->blacklist_count=0;
                             memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
                             Sagan_Blacklist_Load();
-//                            Sagan_Log(S_NORMAL, "Reloaded Blacklist. [File: %s | Count: %d | Parse Depth: %d]", config->blacklist_file, counters->blacklist_count, config->blacklist_parse_depth);
                         }
-
-                    if (config->search_nocase_flag)
-                        {
-                            counters->search_nocase_count=0;
-                            memset(SaganNocaseSearchlist, 0, sizeof(_Sagan_Nocase_Searchlist));
-                            Sagan_Search_Load(1);
-                            Sagan_Log(S_NORMAL, "Reloaded Search [nocase]. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
-                        }
-
-                    if (config->search_case_flag)
-                        {
-                            counters->search_case_count=0;
-                            memset(SaganCaseSearchlist, 0, sizeof(_Sagan_Case_Searchlist));
-                            Sagan_Search_Load(2);
-                            Sagan_Log(S_NORMAL, "Reloaded Search. [File: %s | Count: %d]", config->search_nocase_file, counters->search_nocase_count);
-                        }
-
 
                     if (config->brointel_flag)
                         {

@@ -1254,6 +1254,13 @@ void Load_Rules( const char *ruleset )
                                             found = 1;
                                         }
 
+                                    if (!strcmp(tmptoken, "all_ipaddr"))
+                                        {
+                                            rulestruct[counters->rulecount].brointel_ipaddr_all = 1;
+                                            rulestruct[counters->rulecount].brointel_flag = 1;
+                                            found = 1;
+                                        }
+
                                     if (!strcmp(tmptoken, "domain"))
                                         {
                                             rulestruct[counters->rulecount].brointel_domain = 1;

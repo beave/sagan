@@ -20,8 +20,8 @@
 
 /* sagan-bro-intel.c
 *
-* This allows Sagan to read in Bro Intel files,  like those from Critical 
-* Stack (https://intel.criticalstack.com). 
+* This allows Sagan to read in Bro Intel files,  like those from Critical
+* Stack (https://intel.criticalstack.com).
 *
 */
 
@@ -97,7 +97,10 @@ struct _Sagan_BroIntel_Intel_Cert_Hash
 
 void Sagan_BroIntel_Init(void);
 void Sagan_BroIntel_Load_File(void);
+
 sbool  Sagan_BroIntel_IPADDR ( uint32_t );
+sbool  Sagan_BroIntel_IPADDR_All ( char * );
+
 sbool  Sagan_BroIntel_DOMAIN ( char * );
 sbool  Sagan_BroIntel_FILE_HASH ( char * );
 sbool  Sagan_BroIntel_URL ( char * );

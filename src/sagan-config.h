@@ -86,26 +86,6 @@ struct _SaganConfig
     char	perfmonitor_file_name[MAXPATH];
     FILE	*perfmonitor_file_stream;
 
-    sbool       search_nocase_flag;
-    char        search_nocase_file[MAXPATH];
-    int         search_nocase_parse_depth;
-    int         search_nocase_parse_src;
-    int         search_nocase_parse_dst;
-    sbool       search_nocase_parse_proto;
-    sbool       search_nocase_parse_proto_program;
-    sbool       search_nocase_lognorm;
-    int         search_nocase_priority;
-
-    sbool       search_case_flag;
-    char        search_case_file[MAXPATH];
-    int         search_case_parse_depth;
-    int         search_case_parse_src;
-    int         search_case_parse_dst;
-    sbool       search_case_parse_proto;
-    sbool       search_case_parse_proto_program;
-    sbool       search_case_lognorm;
-    int         search_case_priority;
-
     sbool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
 

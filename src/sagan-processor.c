@@ -38,7 +38,6 @@
 #include "parsers/parsers.h"
 
 #include "processors/sagan-engine.h"
-#include "processors/sagan-search.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-blacklist.h"
 
@@ -144,7 +143,7 @@ outside_loop:
 
                                             rc = Sagan_Websense(SaganProcSyslog_LOCAL, i);
                                             if ( rc == 0 ) break; 		/* Exit for() if nothing is found.  No reason
-									   search config->websense_parse_depth. */
+									   	   search config->websense_parse_depth. */
                                         }
                                 }
 
@@ -152,10 +151,6 @@ outside_loop:
 
 
 
-
-//                            if ( config->blacklist_flag ) Sagan_Blacklist(SaganProcSyslog_LOCAL);
-                            if ( config->search_nocase_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 1);
-                            if ( config->search_case_flag ) Sagan_Search(SaganProcSyslog_LOCAL, 2);
 
                             if ( config->sagan_track_clients_flag)
                                 {

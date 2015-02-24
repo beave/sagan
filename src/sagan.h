@@ -95,8 +95,6 @@ struct _SaganCounters
     uint64_t track_clients_down;
 
     uint64_t blacklist_hit_count;
-    uint64_t search_nocase_hit_count;
-    uint64_t search_case_hit_count;
 
     int	     thread_output_counter;
     int	     thread_processor_counter;
@@ -116,8 +114,6 @@ struct _SaganCounters
     int      mapcount_program;
 
     int	     droplist_count;
-    int	     search_nocase_count;
-    int	     search_case_count;
 
     int	     flowbit_count;
     int	     flowbit_track_count;

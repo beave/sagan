@@ -131,16 +131,6 @@ void sagan_statistics( void )
                     Sagan_Log(S_NORMAL, "           Blacklist Hits           : %" PRIu64 " (%.3f%%)", counters->blacklist_hit_count, CalcPct(counters->blacklist_hit_count, counters->sagantotal) );
                 }
 
-            if ( config->search_case_flag)
-                {
-                    Sagan_Log(S_NORMAL, "           Search Hits              : %" PRIu64 " (%.3f%%)", counters->search_case_hit_count, CalcPct(counters->search_case_hit_count, counters->sagantotal) );
-                }
-
-            if ( config->search_nocase_flag)
-                {
-                    Sagan_Log(S_NORMAL, "           Search Hits [nocase]     : %" PRIu64 " (%.3f%%)", counters->search_nocase_hit_count, CalcPct(counters->search_nocase_hit_count, counters->sagantotal) );
-                }
-
             if (config->sagan_track_clients_flag)
                 {
                     Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters->track_clients_client_count, counters->track_clients_down, config->pp_sagan_track_clients);

@@ -907,6 +907,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             brointel_results = Sagan_BroIntel_IPADDR( IP2Bit(ip_dst) );
                                         }
 
+                                    if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_all )
+                                        {
+                                            brointel_results = Sagan_BroIntel_IPADDR_All ( SaganProcSyslog_LOCAL->syslog_message );
+                                        }
+
                                     if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_both )
                                         {
                                             if ( Sagan_BroIntel_IPADDR(IP2Bit(ip_src)) || Sagan_BroIntel_IPADDR(IP2Bit(ip_dst)) )

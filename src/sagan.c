@@ -69,7 +69,6 @@
 #endif
 
 #include "processors/sagan-engine.h"
-#include "processors/sagan-search.h"
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-perfmon.h"
@@ -509,116 +508,6 @@ int main(int argc, char **argv)
         {
             Sagan_Blacklist_Init();
             Sagan_Blacklist_Load();
-        }
-
-    /* Sagan Search [nocase] ****************************************************/
-
-    if ( config->search_nocase_flag || config->search_case_file )
-        {
-            Sagan_Search_Init();
-        }
-
-
-    if ( config->search_nocase_flag)
-        {
-
-            Sagan_Search_Load( 1 );
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "Search [nocase] Processor loaded [%s]", config->search_nocase_file);
-            Sagan_Log(S_NORMAL, "Search [nocase] loaded %d entries", counters->search_nocase_count);
-            Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_nocase_parse_depth);
-
-#ifdef HAVE_LIBLOGNORM
-            if (config->search_nocase_lognorm)
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Liblognorm: Disabled");
-                }
-#endif
-
-#ifndef HAVE_LIBLOGNORM
-            if (config->search_nocase_lognorm)
-                {
-                    Sagan_Log(S_WARN, "Search [nocase] Liblognorm: Disabled (lacks compiled in support!)");
-                    config->search_nocase_lognorm = 0;
-                }
-#endif
-
-            if (config->search_nocase_parse_proto)
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol: Disabled");
-                }
-
-            if (config->search_nocase_parse_proto_program)
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol via Program: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search [nocase] Parse Protocol via Program: Disabled");
-                }
-
-            if (config->search_nocase_parse_src) Sagan_Log(S_NORMAL, "Search [nocase] Default Source Position: %d", config->search_nocase_parse_src);
-            if (config->search_nocase_parse_dst) Sagan_Log(S_NORMAL, "Search [nocase] Default Destination Position: %d", config->search_nocase_parse_dst);
-        }
-
-    /* Sagan Search ************************************************************/
-
-    if ( config->search_case_flag)
-        {
-            Sagan_Search_Load( 2 );
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "Search Processor loaded [%s]", config->search_case_file);
-            Sagan_Log(S_NORMAL, "Search loaded %d entries", counters->search_case_count);
-            Sagan_Log(S_NORMAL, "Search [nocase] Parse Depth: %d", config->search_case_parse_depth);
-
-#ifdef HAVE_LIBLOGNORM
-            if (config->search_case_lognorm)
-                {
-                    Sagan_Log(S_NORMAL, "Search Liblognorm: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search Liblognorm: Disabled");
-                }
-#endif
-
-#ifndef HAVE_LIBLOGNORM
-            if (config->search_case_lognorm)
-                {
-                    Sagan_Log(S_WARN, "Search Liblognorm: Disabled (lacks compiled in support!)");
-                    config->search_case_lognorm = 0;
-                }
-#endif
-
-            if (config->search_case_parse_proto)
-                {
-                    Sagan_Log(S_NORMAL, "Search Parse Protocol: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search Parse Protocol: Disabled");
-                }
-
-            if (config->search_case_parse_proto_program)
-                {
-                    Sagan_Log(S_NORMAL, "Search Parse Protocol via Program: Enabled");
-                }
-            else
-                {
-                    Sagan_Log(S_NORMAL, "Search Parse Protocol via Program: Disabled");
-                }
-
-            if (config->search_case_parse_src) Sagan_Log(S_NORMAL, "Search Default Source Position: %d", config->search_case_parse_src);
-            if (config->search_case_parse_dst) Sagan_Log(S_NORMAL, "Search Default Destination Position: %d", config->search_case_parse_dst);
-
         }
 
     /* Sagan Websense processor ************************************************/

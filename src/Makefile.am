@@ -47,7 +47,6 @@ processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
-processors/sagan-search.c \
 processors/sagan-perfmon.c \
 processors/sagan-cif.c \
 processors/sagan-bro-intel.c 

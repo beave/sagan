@@ -29,8 +29,8 @@
 
 
 void Sagan_Blacklist_Load ( void );
-void Sagan_Blacklist_Init( void ); 
-sbool Sagan_Blacklist_IPADDR( uint32_t ); 
+void Sagan_Blacklist_Init( void );
+sbool Sagan_Blacklist_IPADDR( uint32_t );
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist

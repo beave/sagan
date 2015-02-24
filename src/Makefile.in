@@ -121,8 +121,8 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-syslog.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
 	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
-	sagan-sagan-search.$(OBJEXT) sagan-sagan-perfmon.$(OBJEXT) \
-	sagan-sagan-cif.$(OBJEXT) sagan-sagan-bro-intel.$(OBJEXT)
+	sagan-sagan-perfmon.$(OBJEXT) sagan-sagan-cif.$(OBJEXT) \
+	sagan-sagan-bro-intel.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 am__DEPENDENCIES_1 =
 sagan_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -354,7 +354,6 @@ processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
-processors/sagan-search.c \
 processors/sagan-perfmon.c \
 processors/sagan-cif.c \
 processors/sagan-bro-intel.c 
@@ -475,7 +474,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-protocol-map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-references.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-rules.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-search.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-send-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-signal.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-snortsam.Po@am__quote@
@@ -1123,20 +1121,6 @@ sagan-sagan-blacklist.obj: processors/sagan-blacklist.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-blacklist.c' object='sagan-sagan-blacklist.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-blacklist.obj `if test -f 'processors/sagan-blacklist.c'; then $(CYGPATH_W) 'processors/sagan-blacklist.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-blacklist.c'; fi`
-
-sagan-sagan-search.o: processors/sagan-search.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-search.o -MD -MP -MF $(DEPDIR)/sagan-sagan-search.Tpo -c -o sagan-sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-search.Tpo $(DEPDIR)/sagan-sagan-search.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-sagan-search.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-search.o `test -f 'processors/sagan-search.c' || echo '$(srcdir)/'`processors/sagan-search.c
-
-sagan-sagan-search.obj: processors/sagan-search.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-search.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-search.Tpo -c -o sagan-sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-search.Tpo $(DEPDIR)/sagan-sagan-search.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-search.c' object='sagan-sagan-search.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-search.obj `if test -f 'processors/sagan-search.c'; then $(CYGPATH_W) 'processors/sagan-search.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-search.c'; fi`
 
 sagan-sagan-perfmon.o: processors/sagan-perfmon.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-perfmon.o -MD -MP -MF $(DEPDIR)/sagan-sagan-perfmon.Tpo -c -o sagan-sagan-perfmon.o `test -f 'processors/sagan-perfmon.c' || echo '$(srcdir)/'`processors/sagan-perfmon.c

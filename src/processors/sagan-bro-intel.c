@@ -487,6 +487,49 @@ sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
 }
 
 /*****************************************************************************
+ * Sagan_BroIntel_IPADDR_All - Search and tests _all_ IP addresses within
+ * a syslog_message (reguardless of lognorm/parse ip)!
+ *****************************************************************************/
+
+sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
+{
+
+    int i;
+    int b;
+
+    uint32_t ip;
+
+    char *results = NULL;
+
+
+    for (i = 1; i < MAX_PARSE_IP; i++)
+        {
+
+            results = parse_ip(syslog_message, i);
+
+            /* Failed to find next IP,  short circuit the process */
+
+            if (!strcmp(results, "0"))
+                {
+                    return(FALSE);
+                }
+
+            ip = IP2Bit(results);
+
+            for ( b = 0; b < counters->brointel_addr_count; b++ )
+                {
+
+                    if ( Sagan_BroIntel_Intel_Addr[b].u32_ip == ip )
+                        {
+                            return(TRUE);
+                        }
+                }
+
+        }
+
+}
+
+/*****************************************************************************
  * Sagan_BroIntel_DOMAIN - Search DOMAIN array
  *****************************************************************************/
 

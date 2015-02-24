@@ -121,6 +121,7 @@ struct _Rule_Struct
     sbool brointel_ipaddr_src;
     sbool brointel_ipaddr_dst;
     sbool brointel_ipaddr_both;
+    sbool brointel_ipaddr_all;
 
     sbool brointel_domain;
     sbool brointel_file_hash;
@@ -133,7 +134,7 @@ struct _Rule_Struct
 
     /* Blacklist */
 
-    sbool blacklist_flag; 
+    sbool blacklist_flag;
 
     sbool blacklist_ipaddr_src;
     sbool blacklist_ipaddr_dst;
