@@ -1210,6 +1210,13 @@ void Load_Rules( const char *ruleset )
                                             found = 1;
                                         }
 
+				    if (!strcmp(tmptoken, "all_ipaddr"))
+				        {
+					    rulestruct[counters->rulecount].blacklist_ipaddr_all = 1;
+					    rulestruct[counters->rulecount].blacklist_flag = 1;
+					    found = 1; 
+					}
+
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule3);
                                 }
 

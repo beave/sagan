@@ -139,6 +139,7 @@ struct _Rule_Struct
     sbool blacklist_ipaddr_src;
     sbool blacklist_ipaddr_dst;
     sbool blacklist_ipaddr_both;
+    sbool blacklist_ipaddr_all;
 
 
 #ifdef HAVE_LIBGEOIP

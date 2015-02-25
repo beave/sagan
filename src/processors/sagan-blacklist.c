@@ -254,3 +254,44 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
 }
 
+
+
+sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
+{
+
+    int i;
+    int b;
+
+    uint32_t ip;
+
+    char *results = NULL;
+
+
+    for (i = 1; i < MAX_PARSE_IP; i++)
+        {   
+
+            results = parse_ip(syslog_message, i);
+
+            /* Failed to find next IP,  short circuit the process */
+
+            if (!strcmp(results, "0"))
+                {   
+                    return(FALSE);
+                }
+
+            ip = IP2Bit(results);
+
+            for ( b = 0; b < counters->blacklist_count; b++ )
+                {   
+			 if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
+
+                        {   
+                            return(TRUE);
+                        }
+                }
+
+        }
+
+	return(FALSE);
+}
+

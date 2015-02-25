@@ -867,16 +867,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     blacklist_results = 0;
 
                                     if ( rulestruct[b].blacklist_ipaddr_src )
-
-                                        if ( rulestruct[b].blacklist_ipaddr_src )
-                                            {
-                                                blacklist_results = Sagan_Blacklist_IPADDR( IP2Bit (ip_src) );
-                                            }
+                                       {
+                                       blacklist_results = Sagan_Blacklist_IPADDR( IP2Bit (ip_src) );
+                                       }
 
                                     if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_dst )
                                         {
                                             blacklist_results = Sagan_Blacklist_IPADDR( IP2Bit(ip_dst) );
                                         }
+
+			            if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_all )
+				        {
+					    blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message);
+					}
 
                                     if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_both )
                                         {
