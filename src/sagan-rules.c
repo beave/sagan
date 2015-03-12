@@ -1342,6 +1342,7 @@ void Load_Rules( const char *ruleset )
 
                         }
 
+
 #ifdef WITH_WEBSENSE
 
                     if (!strcmp(rulesplit, "websense"))
@@ -1349,7 +1350,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( config->websense_flag == 0 )
                                 {
-                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'websense' option enabled,  but 'processor websense' is not configured!", __FILE__, __LINE__, ruleset, linecount);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'websense' option enabled,  but 'processor websense' is not configured!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
@@ -1432,10 +1433,15 @@ void Load_Rules( const char *ruleset )
                             /* Websense configuration check here! */
 
                         }
-
 #endif
 
+#ifndef WITH_WEBSENSE
 
+		if (!strcmp(rulesplit, "websense")) 
+			{ 
+			Sagan_Log(S_ERROR, "%s has Websense rules,  but support isn't compiled in! Abort!", ruleset);
+			}
+#endif	
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }

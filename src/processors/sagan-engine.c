@@ -146,9 +146,13 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 //char *uid = NULL;
 
     char ip_src[MAXIP] = { 0 };
+    uint32_t ip_src_u32; 
+   
     sbool ip_src_flag = 0;
 
     char ip_dst[MAXIP] = { 0 };
+    uint32_t ip_dst_u32;
+
     sbool ip_dst_flag = 0;
 
     char tmpbuf[128];
@@ -492,6 +496,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 }
 
 
+
                             if ( ip_src_flag == 0 || ip_src[0] == '0' ) strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
                             if ( ip_dst_flag == 0 || ip_dst[0] == '0' ) strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
 
@@ -504,6 +509,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             if (!strcmp(ip_src, "127.0.0.1")) strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
                             if (!strcmp(ip_dst, "127.0.0.1")) strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
+
+			    ip_src_u32 = IP2Bit(ip_src); 
+			    ip_dst_u32 = IP2Bit(ip_dst); 
 
                             strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
@@ -532,7 +540,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             for (i = 0; i < after_count_by_src; i++ )
                                                 {
 
-                                                    if (!strcmp( afterbysrc[i].ipsrc, ip_src ) && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
+						    if ( afterbysrc[i].ipsrc == ip_src_u32 && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
                                                         {
 
                                                             after_flag=1;
@@ -575,7 +583,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             pthread_mutex_lock(&AfterMutexSrc);
 
                                             afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
-                                            strlcpy(afterbysrc[after_count_by_src].ipsrc, ip_src, sizeof(afterbysrc[after_count_by_src].ipsrc));
+ 					    afterbysrc[after_count_by_src].ipsrc = ip_src_u32; 
                                             strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
                                             afterbysrc[after_count_by_src].count = 1;
                                             afterbysrc[after_count_by_src].utime = atol(timet);
@@ -595,7 +603,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                             for (i = 0; i < after_count_by_dst; i++ )
                                                 {
-                                                    if (!strcmp( afterbydst[i].ipdst, ip_dst ) && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
+					    	      if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
                                                         {
                                                             after_flag=1;
 
@@ -633,7 +641,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                     pthread_mutex_lock(&AfterMutexDst);
 
                                                     afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
-                                                    strlcpy(afterbydst[after_count_by_dst].ipdst, ip_dst, sizeof(afterbydst[after_count_by_dst].ipdst));
+						    afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
                                                     strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
                                                     afterbydst[after_count_by_dst].count = 1;
                                                     afterbydst[after_count_by_dst].utime = atol(timet);
@@ -669,7 +677,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                             for (i = 0; i < thresh_count_by_src; i++ )
                                                 {
-                                                    if (!strcmp( threshbysrc[i].ipsrc, ip_src ) && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
+						    if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
                                                         {
 
                                                             thresh_flag=1;
@@ -711,7 +719,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                     pthread_mutex_lock(&ThreshMutexSrc);
 
                                                     threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-                                                    strlcpy(threshbysrc[thresh_count_by_src].ipsrc, ip_src, sizeof(threshbysrc[thresh_count_by_src].ipsrc));
+						    threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32; 
                                                     strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
                                                     threshbysrc[thresh_count_by_src].count = 1;
                                                     threshbysrc[thresh_count_by_src].utime = atol(timet);
@@ -732,7 +740,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                             for (i = 0; i < thresh_count_by_dst; i++ )
                                                 {
-                                                    if (!strcmp( threshbydst[i].ipdst, ip_dst ) && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
+						    if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
                                                         {
 
                                                             thresh_flag=1;
@@ -771,7 +779,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                     pthread_mutex_lock(&ThreshMutexDst);
 
                                                     threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-                                                    strlcpy(threshbydst[thresh_count_by_dst].ipdst, ip_dst, sizeof(threshbydst[thresh_count_by_dst].ipdst));
+                                                    //strlcpy(threshbydst[thresh_count_by_dst].ipdst, ip_dst, sizeof(threshbydst[thresh_count_by_dst].ipdst));
+						    threshbydst[thresh_count_by_dst].ipdst == ip_dst_u32; 
                                                     strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
                                                     threshbydst[thresh_count_by_dst].count = 1;
                                                     threshbydst[thresh_count_by_dst].utime = atol(timet);
@@ -877,12 +886,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( rulestruct[b].blacklist_ipaddr_src )
                                         {
-                                            blacklist_results = Sagan_Blacklist_IPADDR( IP2Bit (ip_src) );
+                                            blacklist_results = Sagan_Blacklist_IPADDR( ip_src_u32 );
                                         }
 
                                     if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_dst )
                                         {
-                                            blacklist_results = Sagan_Blacklist_IPADDR( IP2Bit(ip_dst) );
+                                            blacklist_results = Sagan_Blacklist_IPADDR( ip_dst_u32 );
                                         }
 
                                     if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_all )
@@ -892,7 +901,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_both )
                                         {
-                                            if ( Sagan_Blacklist_IPADDR(IP2Bit(ip_src)) || Sagan_Blacklist_IPADDR(IP2Bit(ip_dst)) )
+                                            if ( Sagan_Blacklist_IPADDR( ip_src_u32 ) || Sagan_Blacklist_IPADDR( ip_dst_u32) )
                                                 {
                                                     blacklist_results = 1;
                                                 }
@@ -969,12 +978,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( rulestruct[b].brointel_ipaddr_src )
                                         {
-                                            brointel_results = Sagan_BroIntel_IPADDR( IP2Bit(ip_src) );
+                                            brointel_results = Sagan_BroIntel_IPADDR( ip_src_u32 );
                                         }
 
                                     if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_dst )
                                         {
-                                            brointel_results = Sagan_BroIntel_IPADDR( IP2Bit(ip_dst) );
+                                            brointel_results = Sagan_BroIntel_IPADDR( ip_dst_u32 );
                                         }
 
                                     if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_all )
@@ -984,7 +993,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_both )
                                         {
-                                            if ( Sagan_BroIntel_IPADDR(IP2Bit(ip_src)) || Sagan_BroIntel_IPADDR(IP2Bit(ip_dst)) )
+                                            if ( Sagan_BroIntel_IPADDR( ip_src_u32) || Sagan_BroIntel_IPADDR( ip_dst_u32 ) )
                                                 {
                                                     brointel_results = 1;
                                                 }

@@ -254,7 +254,7 @@ typedef struct thresh_by_src thresh_by_src;
 struct thresh_by_src
 {
     unsigned s_size_thresh_by_src;
-    char ipsrc[64];
+    uint32_t ipsrc; 
     int  count;
     uint64_t utime;
     char sid[512];
@@ -265,7 +265,7 @@ typedef struct thresh_by_dst thresh_by_dst;
 struct thresh_by_dst
 {
     unsigned s_size_thresh_by_dst;
-    char ipdst[64];
+    uint32_t ipdst; 
     int  count;
     uint64_t utime;
     char sid[512];
@@ -276,7 +276,7 @@ typedef struct after_by_src after_by_src;
 struct after_by_src
 {
     unsigned s_size_afterh_by_src;
-    char ipsrc[64];
+    uint32_t ipsrc; 
     int  count;
     uint64_t utime;
     char sid[512];
@@ -287,7 +287,7 @@ typedef struct after_by_dst after_by_dst;
 struct after_by_dst
 {
     unsigned s_size_after_by_dst;
-    char ipdst[64];
+    uint32_t ipdst; 
     int  count;
     uint64_t utime;
     char sid[512];
