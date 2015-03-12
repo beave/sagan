@@ -50,6 +50,10 @@
 #include "processors/sagan-bro-intel.h"
 #include "processors/sagan-blacklist.h"
 
+#ifdef WITH_WEBSENSE
+#include "processors/sagan-websense.h"
+#endif
+
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
@@ -59,7 +63,6 @@ pthread_mutex_t Lognorm_Mutex;
 #ifdef HAVE_LIBGEOIP
 #include <sagan-geoip.h>
 #endif
-
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
@@ -166,6 +169,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     sbool brointel_results;
     sbool blacklist_results;
+
+#ifdef WITH_WEBSENSE
+    int websense_results;
+    sbool websense_flag;
+#endif
+
 
     /* Search for matches */
 
@@ -891,6 +900,64 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                 }
 
 
+#ifdef WITH_WEBSENSE
+
+                            if ( config->websense_flag && rulestruct[b].websense_ipaddr_type )
+                                {
+
+                                    websense_results = 0;
+
+                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
+
+                                    if ( rulestruct[b].websense_ipaddr_type == 1 )
+                                        {
+                                            websense_results = Sagan_Websense_Lookup(ip_src);
+                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
+                                        }
+
+                                    if ( rulestruct[b].websense_ipaddr_type == 2 )
+                                        {
+                                            websense_results = Sagan_Websense_Lookup(ip_dst);
+                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
+                                        }
+
+                                    if ( rulestruct[b].websense_ipaddr_type == 3 )
+                                        {
+
+                                            websense_results = Sagan_Websense_Lookup(ip_src);
+                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
+
+                                            /* If the source isn't found,  then check the dst */
+
+                                            if ( websense_flag != 0 )
+                                                {
+                                                    websense_results = Sagan_Websense_Lookup(ip_dst);
+                                                    websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
+                                                }
+
+                                        }
+
+                                    if ( rulestruct[b].websense_ipaddr_type == 4 )
+                                        {
+
+                                            websense_flag = Sagan_Websense_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
+
+                                        }
+
+                                    /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
+                                     * "delete" an entry only to re-add it! */
+
+                                    Sagan_Websene_Check_Cache_Time();
+
+                                }
+
+                            if ( debug->debugwebsense )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Websense flag: %d", __FILE__, __LINE__, websense_flag);
+                                }
+
+#endif
+
                             /****************************************************************************
                             * Bro Intel
                             ****************************************************************************/
@@ -984,64 +1051,68 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                             if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1)
                                                                 {
-
-                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                    counters->saganfound++;
-                                                                    pthread_mutex_unlock(&CounterMutex);
-
-                                                                    /* Check for thesholding & "after" */
-
-                                                                    if ( thresh_log_flag == 0 && after_log_flag == 0 )
+#ifdef WITH_WEBSENSE
+                                                                    if ( ( config->websense_flag == 0 || rulestruct[b].websense_ipaddr_type == 0 ) ||  websense_flag == 1 )
                                                                         {
+#endif
+                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                            counters->saganfound++;
+                                                                            pthread_mutex_unlock(&CounterMutex);
 
-                                                                            if ( debug->debugengine )
+                                                                            /* Check for thesholding & "after" */
+
+                                                                            if ( thresh_log_flag == 0 && after_log_flag == 0 )
                                                                                 {
 
-                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
-                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                                                                                    if ( debug->debugengine )
+                                                                                        {
 
-                                                                                }
+                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
+                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
-                                                                            if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
-                                                                                Sagan_Flowbit_Set(b, ip_src, ip_dst);
+                                                                                        }
 
-                                                                            threadid++;
-                                                                            if ( threadid >= MAX_THREADS ) threadid=0;
+                                                                                    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
+                                                                                        Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
-                                                                            /* We can't use the pointers from our syslog data.  If two (or more) event's
-                                                                             * fire at the same time,  the two alerts will have corrupted information
-                                                                             * (due to threading).   So we populate the SaganEvent[threadid] with the
-                                                                             * var[msgslot] information. - Champ Clark 02/02/2011
-                                                                             */
+                                                                                    threadid++;
+                                                                                    if ( threadid >= MAX_THREADS ) threadid=0;
 
-                                                                            processor_info_engine->processor_name          =       s_msg;
-                                                                            processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                                            processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                                            processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                                            processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                                            processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                                            processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                                            processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+                                                                                    /* We can't use the pointers from our syslog data.  If two (or more) event's
+                                                                                     * fire at the same time,  the two alerts will have corrupted information
+                                                                                     * (due to threading).   So we populate the SaganEvent[threadid] with the
+                                                                                     * var[msgslot] information. - Champ Clark 02/02/2011
+                                                                                     */
 
-                                                                            processor_info_engine_dst_port                 =       dst_port;
-                                                                            processor_info_engine_src_port                 =       src_port;
-                                                                            processor_info_engine_proto                    =       proto;
-                                                                            processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+                                                                                    processor_info_engine->processor_name          =       s_msg;
+                                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                                            if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
-                                                                                {
-                                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
-                                                                                }
+                                                                                    processor_info_engine_dst_port                 =       dst_port;
+                                                                                    processor_info_engine_src_port                 =       src_port;
+                                                                                    processor_info_engine_proto                    =       proto;
+                                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+
+                                                                                    if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
+                                                                                        {
+                                                                                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
+                                                                                        }
 
 
-                                                                        } /* Threshold / After */
+                                                                                } /* Threshold / After */
+#ifdef WITH_WEBSENSE
+                                                                        } /* Websense */
+#endif
+                                                                } /* Bro Intel */
 
-                                                                } /* Blacklists */
-
-                                                        } /* BroIntel */
-
+                                                        } /* Blacklist */
 #ifdef HAVE_LIBGEOIP
                                                 } /* GeoIP */
 #endif

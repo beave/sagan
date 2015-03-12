@@ -133,25 +133,6 @@ outside_loop:
 
                             Sagan_Engine(SaganProcSyslog_LOCAL);
 
-#ifdef WITH_WEBSENSE
-
-                            if ( config->websense_flag )
-                                {
-
-                                    for (i=1; i < config->websense_parse_depth+1; i++)
-                                        {
-
-                                            rc = Sagan_Websense(SaganProcSyslog_LOCAL, i);
-                                            if ( rc == 0 ) break; 		/* Exit for() if nothing is found.  No reason
-									   	   search config->websense_parse_depth. */
-                                        }
-                                }
-
-#endif
-
-
-
-
                             if ( config->sagan_track_clients_flag)
                                 {
 

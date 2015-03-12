@@ -433,23 +433,17 @@ void Load_Config( void )
 
                             /* Set defaults */
 
-                            config->websense_parse_depth=2;		/* default */
-                            config->websense_parse_src = 1;
-                            config->websense_parse_dst = 2;
-
-                            config->websense_priority = WEBSENSE_PROCESSOR_PRI;
                             strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
-
 
                             ptmp = sagan_var1;
 
                             while (ptmp != NULL )
                                 {
 
-                                    if (!strcmp(ptmp, "parse_depth"))
+                                    if (!strcmp(ptmp, "catagories"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_parse_depth = atoi(ptmp);
+                                            strlcpy(config->websense_cat, Remove_Return(ptmp), sizeof(config->websense_cat));
                                         }
 
                                     if (!strcmp(ptmp, "auth"))
@@ -476,77 +470,16 @@ void Load_Config( void )
                                             config->websense_timeout = atoi(ptmp) * 60;
                                         }
 
-                                    if (!strcmp(ptmp, "ignore_list"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->websense_ignore_list, Remove_Return(ptmp), sizeof(config->websense_ignore_list));
-                                        }
-
                                     if (!strcmp(ptmp, "device_id"))
                                         {
                                             ptmp = strtok_r(NULL, " ", &tok);
                                             strlcpy(config->websense_device_id, Remove_Return(ptmp), sizeof(config->websense_device_id));
                                         }
 
-                                    if (!strcmp(ptmp, "parse_src"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_parse_src = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_dst"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_parse_dst = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_proto"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->websense_parse_proto = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->websense_parse_proto = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "parse_proto_program"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->websense_parse_proto_program = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->websense_parse_proto_program = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "lognorm"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            if (!strcmp(ptmp, "true") || !strcmp(ptmp, "1"))
-                                                {
-                                                    config->websense_lognorm = 1;
-                                                }
-                                            else
-                                                {
-                                                    config->websense_lognorm = 0;
-                                                }
-                                        }
-
-                                    if (!strcmp(ptmp, "priority"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_priority=atoi(ptmp);
-                                        }
-
                                     ptmp = strtok_r(NULL, "=", &tok);
                                 }
+
+                            Sagan_Websense_Load_Cat();
 
                         }
 

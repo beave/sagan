@@ -120,7 +120,7 @@ struct _SaganConfig
     /* Prelude framework support */
 
 #ifdef HAVE_LIBPRELUDE
-    char        sagan_prelude_profile[255];
+    char        sagan_prelude_profile[MAXPATH];
     sbool       sagan_prelude_flag;
 #endif
 
@@ -143,17 +143,10 @@ struct _SaganConfig
     char         websense_device_id[64];
     char         websense_url[256];
     char         websense_auth[64];
-    char         websense_ignore_list[MAXPATH];
-    int          websense_parse_depth;
+    char	 websense_cat[MAXPATH];
     int          websense_timeout;
     uint64_t     websense_max_cache;
     uint64_t     websense_last_time;                    /* For cache cleaning */
-    sbool        websense_lognorm;
-    sbool        websense_parse_proto;
-    sbool        websense_parse_proto_program;
-    int          websense_parse_src;
-    int          websense_parse_dst;
-    int          websense_priority;
 #endif
 
     /* Bro Intel Framework Support */

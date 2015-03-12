@@ -98,7 +98,6 @@ struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
 struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 
 #ifdef WITH_WEBSENSE
-struct _Sagan_Websense_Ignore_List *SaganWebsenseIgnoreList;
 struct _Sagan_Websense_Queue *SaganWebsenseQueue;
 struct _Sagan_Websense_Cache *SaganWebsenseCache;
 #endif
@@ -249,14 +248,11 @@ void Sig_Handler( _SaganSigArgs *args )
                         {
                             counters->websense_cache_count=0;
                             counters->websense_cache_hit=0;
-                            counters->websense_ignore_hit=0;
                             counters->websense_postive_hit=0;
-                            memset(SaganWebsenseIgnoreList, 0, sizeof(_Sagan_Websense_Ignore_List));
                             memset(SaganWebsenseQueue, 0, sizeof(_Sagan_Websense_Queue));
                             memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
 
                             config->websense_last_time = atol(config->sagan_startutime);
-                            Sagan_Websense_Ignore_List();
                             Sagan_Log(S_NORMAL, "Reset Websense Processor.");
                         }
 #endif

@@ -54,9 +54,17 @@
 #include "sagan-config.h"
 #include "parsers/parsers.h"
 
+#ifdef WITH_WEBSENSE
+#include "processors/sagan-websense.h"
+#endif
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
+
+#ifdef WITH_WEBSENSE
+struct _Sagan_Websense_Cat_List *SaganWebsenseCatList;
+#endif
 
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
@@ -1326,13 +1334,111 @@ void Load_Rules( const char *ruleset )
 
                                     if ( found == 0 )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d has an unknown \"brointel\" option \"%s\".", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d has an unknown \"brointel\" option \"%s\".", __FILE__, __LINE__, ruleset, linecount, tmptoken);
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule3);
                                 }
 
                         }
+
+#ifdef WITH_WEBSENSE
+
+                    /* is websense enabled?!?!? via conf */
+
+                    if (!strcmp(rulesplit, "websense"))
+                        {
+
+                            if ( config->websense_flag == 0 )
+                                {
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'websense' option enabled,  but 'processor websense' is not configured!", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                            Remove_Spaces(tok_tmp);
+                            To_LowerC(tok_tmp);
+
+                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+
+                            found = 0;
+
+                            /* What IP's do we want to test for with Websense? */
+
+                            /* 1 == src,  2 == dst,  3 == both,  4 == all */
+
+                            if (!strcmp(tmptoken, "src_ipaddr"))
+                                {
+                                    rulestruct[counters->rulecount].websense_ipaddr_type  = 1;
+                                }
+
+                            if (!strcmp(tmptoken, "dst_ipaddr") && found == 0 )
+                                {
+                                    rulestruct[counters->rulecount].websense_ipaddr_type  = 2;
+                                }
+
+                            if (!strcmp(tmptoken, "both_ipaddr") && found == 0)
+                                {
+                                    rulestruct[counters->rulecount].websense_ipaddr_type  = 3;
+                                }
+
+                            if (!strcmp(tmptoken, "all_ipaddr") && found == 0)
+                                {
+                                    rulestruct[counters->rulecount].websense_ipaddr_type  = 4;
+                                }
+
+                            /* Invalid direction - abort */
+
+                            if ( rulestruct[counters->rulecount].websense_ipaddr_type == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has an invalid option of '%s'.", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                }
+
+                            /* Start collecting "what" we want to "look for" from Websense */
+
+                            tmptoken = strtok_r(NULL, "," , &saveptrrule3);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Websense categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                }
+
+
+                            while ( tmptoken != NULL )
+                                {
+                                    for ( i = 0; i < counters->websense_cat_count; i++ )
+                                        {
+
+                                            if (!strcmp(SaganWebsenseCatList[i].cat, tmptoken))
+                                                {
+
+
+                                                    if ( rulestruct[counters->rulecount].websense_cat_count <= WEBSENSE_MAX_CAT )
+                                                        {
+
+                                                            rulestruct[counters->rulecount].websense_cats[rulestruct[counters->rulecount].websense_cat_count] =  SaganWebsenseCatList[i].cat_number;
+                                                            rulestruct[counters->rulecount].websense_cat_count++;
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            Sagan_Log(S_WARN, "[%s, line %d] !", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    tmptoken = strtok_r(NULL, "," , &saveptrrule3);
+                                }
+
+                            /* Websense configuration check here! */
+
+                        }
+
+#endif
+
 
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);

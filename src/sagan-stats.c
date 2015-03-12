@@ -171,7 +171,6 @@ void sagan_statistics( void )
                     Sagan_Log(S_NORMAL, "");
                     Sagan_Log(S_NORMAL, "          Entries in cache          : %" PRIu64 " (%.3f%%)", counters->websense_cache_count, CalcPct(counters->websense_cache_count, config->websense_max_cache));
                     Sagan_Log(S_NORMAL, "          Hits from cache           : %" PRIu64 " (%.3f%%)", counters->websense_cache_hit, CalcPct(counters->websense_cache_hit, counters->websense_cache_count));
-                    Sagan_Log(S_NORMAL, "          Ignored                   : %" PRIu64 "", counters->websense_ignore_hit);
                     Sagan_Log(S_NORMAL, "          Errors                    : %" PRIu64 "", counters->websense_error_count);
                     Sagan_Log(S_NORMAL, "          Websense hits in logs     : %" PRIu64 "", counters->websense_postive_hit);
                     Sagan_Log(S_NORMAL, "          Queries per/second        : %lu", websense_total);

@@ -519,22 +519,17 @@ int main(int argc, char **argv)
             curl_global_init(CURL_GLOBAL_ALL);
             config->websense_last_time = atol(config->sagan_startutime);
             Sagan_Websense_Init();
-            Sagan_Websense_Ignore_List();
 
             Sagan_Log(S_NORMAL, "");
             Sagan_Log(S_NORMAL, "Websense URL: %s", config->websense_url);
             Sagan_Log(S_NORMAL, "Websense Auth: %s", config->websense_auth);
             Sagan_Log(S_NORMAL, "Websense Device ID: %s", config->websense_device_id);
-            Sagan_Log(S_NORMAL, "Websense Parse Depth: %d", config->websense_parse_depth);
+            Sagan_Log(S_NORMAL, "Websense Categories File: %s", config->websense_cat);
             Sagan_Log(S_NORMAL, "Websense Max Cache: %d", config->websense_max_cache);
-            Sagan_Log(S_NORMAL, "Websense Cache Timeout: %d minutes", config->websense_timeout  / 60);
-            Sagan_Log(S_NORMAL, "Websense Ignore List File: %s", config->websense_ignore_list);
-            Sagan_Log(S_NORMAL, "Websense Ignore List entries: %d", counters->websense_ignore_list_count);
-        }
+            Sagan_Log(S_NORMAL, "Websense Cache Timeout: %d minutes.", config->websense_timeout  / 60);
+            Sagan_Log(S_NORMAL, "Websense loaded %d categories.", counters->websense_cat_count);
 
-    if ( config->websense_lognorm ) Sagan_Log(S_NORMAL, "Websense Liblognorm: Enabled");
-    if ( config->websense_parse_src ) Sagan_Log(S_NORMAL, "Websense Default Parse Source Depth: %d", config->websense_parse_src);
-    if ( config->websense_parse_dst ) Sagan_Log(S_NORMAL, "Websense Default Parse Destination Depth: %d", config->websense_parse_dst);
+        }
 
 #endif
 
