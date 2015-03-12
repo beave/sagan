@@ -49,7 +49,7 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
-struct _Sagan_Processor_Info *processor_info_blacklist = NULL;
+pthread_mutex_t SaganProcBlacklistWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Sagan_Blacklist_Init - Init any global memory structures we might need
@@ -62,22 +62,6 @@ void Sagan_Blacklist_Init ( void )
 
     SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
-
-    processor_info_blacklist = malloc(sizeof(_Sagan_Processor_Info));
-    memset(processor_info_blacklist, 0, sizeof(_Sagan_Processor_Info));
-
-    /* Not really used */
-
-    processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
-    processor_info_blacklist->processor_generator_id  =       BLACKLIST_PROCESSOR_GENERATOR_ID;
-    processor_info_blacklist->processor_name          =       BLACKLIST_PROCESSOR_NAME;
-    processor_info_blacklist->processor_facility      =       BLACKLIST_PROCESSOR_FACILITY;
-    processor_info_blacklist->processor_priority      =       BLACKLIST_PROCESSOR_PRIORITY;
-    processor_info_blacklist->processor_pri           =       BLACKLIST_PROCESSOR_PRI;
-    processor_info_blacklist->processor_class         =       BLACKLIST_PROCESSOR_CLASS;
-    processor_info_blacklist->processor_tag           =       BLACKLIST_PROCESSOR_TAG;
-    processor_info_blacklist->processor_rev           =       BLACKLIST_PROCESSOR_REV;
-
 
 }
 
@@ -107,7 +91,9 @@ void Sagan_Blacklist_Load ( void )
 
     sbool found = 0;
 
+    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
     counters->blacklist_count=0;
+    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
     blacklist_filename = strtok_r(config->blacklist_files, ",", &ptmp);
 
@@ -217,7 +203,10 @@ void Sagan_Blacklist_Load ( void )
 
                                     SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
                                     SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
+
+				    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
                                     counters->blacklist_count++;
+				    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
                                 }
                         }
@@ -246,6 +235,11 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
             if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) )
                 {
+
+		    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+		    counters->blacklist_hit_count++; 
+		    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+
                     return(TRUE);
                 }
         }
@@ -254,7 +248,10 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
 }
 
-
+/***************************************************************************
+ * Sagan_Blacklist_IPADDR_All - Check all IPv4 addresses against the 
+ * blacklist IP's in memory!
+ ***************************************************************************/
 
 sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 {
@@ -265,7 +262,6 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
     uint32_t ip;
 
     char *results = NULL;
-
 
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
@@ -286,6 +282,11 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
                     if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
 
                         {
+
+			    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+			    counters->blacklist_hit_count++;
+			    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+
                             return(TRUE);
                         }
                 }

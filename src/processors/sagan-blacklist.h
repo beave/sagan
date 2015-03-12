@@ -18,16 +18,6 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#define BLACKLIST_PROCESSOR_NAME "Sagan_Blacklist"
-#define BLACKLIST_PROCESSOR_FACILITY "daemon"
-#define BLACKLIST_PROCESSOR_PRIORITY "warning"
-#define BLACKLIST_PROCESSOR_PRI 1
-#define BLACKLIST_PROCESSOR_CLASS "Blacklist"
-#define BLACKLIST_PROCESSOR_REV "1"
-#define BLACKLIST_PROCESSOR_TAG NULL
-#define BLACKLIST_PROCESSOR_GENERATOR_ID 1001
-
-
 void Sagan_Blacklist_Load ( void );
 void Sagan_Blacklist_Init( void );
 sbool Sagan_Blacklist_IPADDR( uint32_t );
