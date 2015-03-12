@@ -1344,8 +1344,6 @@ void Load_Rules( const char *ruleset )
 
 #ifdef WITH_WEBSENSE
 
-                    /* is websense enabled?!?!? via conf */
-
                     if (!strcmp(rulesplit, "websense"))
                         {
 
@@ -1361,8 +1359,6 @@ void Load_Rules( const char *ruleset )
                             tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
 
                             found = 0;
-
-                            /* What IP's do we want to test for with Websense? */
 
                             /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
