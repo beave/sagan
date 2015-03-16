@@ -50,8 +50,16 @@ void sagan_statistics( void )
 
     time_t t;
     struct tm *now;
-    unsigned long seconds = 0;
+//    unsigned long seconds = 0;
+    int seconds = 0;
     unsigned long total=0;
+
+    int uptime_days;
+    int uptime_abovedays;
+    int uptime_hours;
+    int uptime_abovehours;
+    int uptime_minutes;
+    int uptime_seconds;
 
 #ifdef WITH_WEBSENSE
     unsigned long websense_total=0;
@@ -89,6 +97,11 @@ void sagan_statistics( void )
             Sagan_Log(S_NORMAL, "  oo-oo    After                    : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
             Sagan_Log(S_NORMAL, "           Threshold                : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
             Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
+	    
+//	    Sagan_Log(S_NORMAL, "           Malformed                : h:%" PRIu64 "|f:%" PRIu64 "|p:%" PRIu64 "|l:%" PRIu64 "|T:%" PRIu64 "|d:%" PRIu64 "|T:%" PRIu64 "|P:%" PRIu64 "|M:%" PRIu64 "", counters->malformed_host, counters->malformed_facility, counters->malformed_priority, counters->malformed_level, counters->malformed_tag, counters->malformed_date, counters->malformed_time, counters->malformed_program, counters->malformed_message);
+
+	    Sagan_Log(S_NORMAL, "           Thread Exhaustion        : %" PRIu64 " (%.3f%%)", counters->worker_thread_exhaustion,  CalcPct( counters->worker_thread_exhaustion, counters->sagantotal) );
+
 
             if (config->sagan_droplist_flag)
                 {
@@ -101,10 +114,13 @@ void sagan_statistics( void )
             Sagan_Log(S_NORMAL, "           GeoIP Misses             : %" PRIu64 "", counters->geoip_miss);
 #endif
 
-            /* TODO - ever really completed this */
+	    uptime_days = seconds / 86400;
+	    uptime_abovedays = seconds % 86400;uptime_hours = uptime_abovedays / 3600;
+	    uptime_abovehours = uptime_abovedays % 3600;
+	    uptime_minutes = uptime_abovehours / 60;
+	    uptime_seconds = uptime_abovehours % 60;
 
-            if ( seconds >= 60 && seconds <= 3600) Sagan_Log(S_NORMAL, "           Runtime                  : %u minutes", seconds / 60);
-            if ( seconds < 60 ) Sagan_Log(S_NORMAL, "           Runtime                  : %u seconds", seconds);
+	    Sagan_Log(S_NORMAL, "           Uptime                   : %d days, %d hours, %d minutes, %d seconds.", uptime_days, uptime_hours, uptime_minutes, uptime_seconds);
 
             /* If processing from a file,  don't display events per/second */
 

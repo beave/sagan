@@ -833,7 +833,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( rulestruct[b].after_count < afterbysrc[i].count )
                                                                                                                 {
                                                                                                                     after_log_flag = 0;
-                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+
+														    if ( debug->debuglimits ) 
+														       {
+                                                                                                                       Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+														       }
+
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->after_total++;
@@ -894,7 +899,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( rulestruct[b].after_count < afterbydst[i].count )
                                                                                                                 {
                                                                                                                     after_log_flag = 0;
-                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
+
+														    if ( debug->debuglimits ) 
+														       {
+                                                                                                                       Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
+														       }
+
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->after_total++;
@@ -970,7 +980,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( rulestruct[b].threshold_count < threshbysrc[i].count )
                                                                                                                 {
                                                                                                                     thresh_log_flag = 1;
-                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+
+														    if ( debug->debuglimits ) 
+														       {
+                                                                                                                       Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+														       }
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->threshold_total++;
@@ -1031,7 +1045,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( rulestruct[b].threshold_count < threshbydst[i].count )
                                                                                                                 {
                                                                                                                     thresh_log_flag = 1;
-                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
+
+														    if ( debug->debuglimits ) 
+														       {
+                                                                                                                       Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
+														       }
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->threshold_total++;

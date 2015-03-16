@@ -91,7 +91,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Flowbit *flowbit;
 
-
 #ifdef WITH_WEBSENSE
 #include <curl/curl.h>
 #include "processors/sagan-websense.h"
@@ -106,6 +105,7 @@ int proc_msgslot=0;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganMalformedCounter=PTHREAD_MUTEX_INITIALIZER;
 
 /* ########################################################################
  * Start of main() thread
@@ -257,6 +257,18 @@ int main(int argc, char **argv)
                     break;
 
                 case 'd':
+
+		    if (Sagan_strstr(optarg, "malformed"))
+		        {
+			    debug->debugmalformed=1;
+			    debugflag=1;
+			}
+
+		    if (Sagan_strstr(optarg, "limits"))
+		        {
+			    debug->debuglimits=1;
+			    debugflag=1;
+			}
 
                     if (Sagan_strstr(optarg, "syslog"))
                         {
@@ -795,7 +807,16 @@ int main(int argc, char **argv)
                                     if (syslog_host == NULL || inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0  )
                                         {
                                             syslog_host = config->sagan_host;
-                                            Sagan_Log(S_WARN, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
+
+					    pthread_mutex_lock(&SaganMalformedCounter);
+					    counters->malformed_host++;
+					    pthread_mutex_unlock(&SaganMalformedCounter);
+
+					    if ( debug->debugmalformed ) 
+					       {
+                                               Sagan_Log(S_WARN, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
+					       }
+
                                         }
                                 }
 
@@ -807,42 +828,90 @@ int main(int argc, char **argv)
                             if ( syslog_facility == NULL )
                                 {
                                     syslog_facility = "SAGAN: FACILITY ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'facility'");
+				
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_facility++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'facility'");
+				       }
                                 }
 
                             syslog_priority=strtok_r(NULL, "|", &tok);
                             if ( syslog_priority == NULL )
                                 {
                                     syslog_priority = "SAGAN: PRIORITY ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'priority'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_priority++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'priority'");
+				       }
                                 }
 
                             syslog_level=strtok_r(NULL, "|", &tok);
                             if ( syslog_level == NULL )
                                 {
                                     syslog_level = "SAGAN: LEVEL ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'level'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_level++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'level'");
+				       }
                                 }
 
                             syslog_tag=strtok_r(NULL, "|", &tok);
                             if ( syslog_tag == NULL )
                                 {
                                     syslog_tag = "SAGAN: TAG ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'tag'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_tag++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+			
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'tag'");
+				       }
                                 }
 
                             syslog_date=strtok_r(NULL, "|", &tok);
                             if ( syslog_date == NULL )
                                 {
                                     syslog_date = "SAGAN: DATE ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'date'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_date++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'date'");
+				       }
                                 }
 
                             syslog_time=strtok_r(NULL, "|", &tok);
                             if ( syslog_time == NULL )
                                 {
                                     syslog_time = "SAGAN: TIME ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'time'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_time++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'time'");
+				       }
                                 }
 
 
@@ -850,15 +919,30 @@ int main(int argc, char **argv)
                             if ( syslog_program == NULL )
                                 {
                                     syslog_program = "SAGAN: PROGRAM ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'program'");
+
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_program++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'program'");
+				       }
                                 }
 
                             syslog_msg=strtok_r(NULL, "", &tok);		/* In case the message has | in it,  we delimit on "" */
                             if ( syslog_msg == NULL )
                                 {
                                     syslog_msg = "SAGAN: MESSAGE ERROR";
-                                    Sagan_Log(S_WARN, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
 
+				    pthread_mutex_lock(&SaganMalformedCounter);
+				    counters->malformed_message++;
+				    pthread_mutex_unlock(&SaganMalformedCounter);
+
+				    if ( debug->debugmalformed )
+				       {
+                                       Sagan_Log(S_WARN, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
+				       }
 
                                     /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,
                                      * it's more likely to lose all  - Champ Clark III 11/17/2011 */
@@ -895,7 +979,7 @@ int main(int argc, char **argv)
                                 }
                             else
                                 {
-                                    Sagan_Log(S_WARN, "[%s, line %d] Out of worker threads!", __FILE__, __LINE__);
+				    counters->worker_thread_exhaustion++;
                                     counters->sagan_log_drop++;
                                 }
 

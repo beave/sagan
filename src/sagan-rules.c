@@ -1197,28 +1197,28 @@ void Load_Rules( const char *ruleset )
 
                                     found = 0;
 
-                                    if (!strcmp(tmptoken, "src_ipaddr"))
+                                    if (!strcmp(tmptoken, "by_src"))
                                         {
                                             rulestruct[counters->rulecount].blacklist_ipaddr_src = 1;
                                             rulestruct[counters->rulecount].blacklist_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "dst_ipaddr"))
+                                    if (!strcmp(tmptoken, "by_dst"))
                                         {
                                             rulestruct[counters->rulecount].blacklist_ipaddr_dst = 1;
                                             rulestruct[counters->rulecount].blacklist_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "both_ipaddr"))
+                                    if (!strcmp(tmptoken, "both"))
                                         {
                                             rulestruct[counters->rulecount].blacklist_ipaddr_both = 1;
                                             rulestruct[counters->rulecount].blacklist_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "all_ipaddr"))
+                                    if (!strcmp(tmptoken, "all"))
                                         {
                                             rulestruct[counters->rulecount].blacklist_ipaddr_all = 1;
                                             rulestruct[counters->rulecount].blacklist_flag = 1;
@@ -1248,28 +1248,28 @@ void Load_Rules( const char *ruleset )
 
                                     found = 0;
 
-                                    if (!strcmp(tmptoken, "src_ipaddr"))
+                                    if (!strcmp(tmptoken, "by_src"))
                                         {
                                             rulestruct[counters->rulecount].brointel_ipaddr_src = 1;
                                             rulestruct[counters->rulecount].brointel_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "dst_ipaddr"))
+                                    if (!strcmp(tmptoken, "by_dst"))
                                         {
                                             rulestruct[counters->rulecount].brointel_ipaddr_dst = 1;
                                             rulestruct[counters->rulecount].brointel_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "both_ipaddr"))
+                                    if (!strcmp(tmptoken, "both"))
                                         {
                                             rulestruct[counters->rulecount].brointel_ipaddr_both = 1;
                                             rulestruct[counters->rulecount].brointel_flag = 1;
                                             found = 1;
                                         }
 
-                                    if (!strcmp(tmptoken, "all_ipaddr"))
+                                    if (!strcmp(tmptoken, "all"))
                                         {
                                             rulestruct[counters->rulecount].brointel_ipaddr_all = 1;
                                             rulestruct[counters->rulecount].brointel_flag = 1;
@@ -1354,31 +1354,32 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
-                            Remove_Spaces(tok_tmp);
-                            To_LowerC(tok_tmp);
+//                            Remove_Spaces(tok_tmp);
+//                            To_LowerC(tok_tmp);
 
                             tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+			    Remove_Spaces(tmptoken);
 
                             found = 0;
 
                             /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
-                            if (!strcmp(tmptoken, "src_ipaddr"))
+                            if (!strcmp(tmptoken, "by_src"))
                                 {
                                     rulestruct[counters->rulecount].websense_ipaddr_type  = 1;
                                 }
 
-                            if (!strcmp(tmptoken, "dst_ipaddr") && found == 0 )
+                            if (!strcmp(tmptoken, "by_dst") && found == 0 )
                                 {
                                     rulestruct[counters->rulecount].websense_ipaddr_type  = 2;
                                 }
 
-                            if (!strcmp(tmptoken, "both_ipaddr") && found == 0)
+                            if (!strcmp(tmptoken, "both") && found == 0)
                                 {
                                     rulestruct[counters->rulecount].websense_ipaddr_type  = 3;
                                 }
 
-                            if (!strcmp(tmptoken, "all_ipaddr") && found == 0)
+                            if (!strcmp(tmptoken, "all") && found == 0)
                                 {
                                     rulestruct[counters->rulecount].websense_ipaddr_type  = 4;
                                 }
@@ -1402,12 +1403,21 @@ void Load_Rules( const char *ruleset )
 
                             while ( tmptoken != NULL )
                                 {
+
+				    strlcpy(tmp2, tmptoken, sizeof(tmp2)); 
+
+				    Remove_Spaces(tmptoken);
+				    To_LowerC(tmptoken);
+
+				    found = 0; 
+
                                     for ( i = 0; i < counters->websense_cat_count; i++ )
                                         {
 
                                             if (!strcmp(SaganWebsenseCatList[i].cat, tmptoken))
                                                 {
 
+						    found = 1; 
 
                                                     if ( rulestruct[counters->rulecount].websense_cat_count <= WEBSENSE_MAX_CAT )
                                                         {
@@ -1419,13 +1429,20 @@ void Load_Rules( const char *ruleset )
                                                     else
                                                         {
 
-                                                            Sagan_Log(S_WARN, "[%s, line %d] !", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                                            Sagan_Log(S_WARN, "[%s, line %d] To many Websense catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
 
                                                         }
 
                                                 }
+						}
 
-                                        }
+						if ( found == 0 ) 
+							{
+
+							Sagan_Log(S_ERROR, "[%s, line %d] Unknown Websense category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
+
+							}
+
 
                                     tmptoken = strtok_r(NULL, "," , &saveptrrule3);
                                 }

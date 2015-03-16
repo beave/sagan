@@ -91,6 +91,18 @@ struct _SaganCounters
     uint64_t blacklist_count;
     uint64_t alert_total;
 
+    uint64_t malformed_host;
+    uint64_t malformed_facility;
+    uint64_t malformed_priority;
+    uint64_t malformed_level;
+    uint64_t malformed_tag;
+    uint64_t malformed_date;
+    uint64_t malformed_time;
+    uint64_t malformed_program;
+    uint64_t malformed_message;
+
+    uint64_t worker_thread_exhaustion;
+
     uint64_t track_clients_client_count;                /* sagan-track-clients processor */
     uint64_t track_clients_down;
 
@@ -167,6 +179,8 @@ struct _SaganDebug
     sbool debugflowbit;
     sbool debugengine;
     sbool debugbrointel;
+    sbool debugmalformed;
+    sbool debuglimits;
 
 #ifdef HAVE_LIBGEOIP
     sbool debuggeoip;
