@@ -147,11 +147,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     char ip_src[MAXIP] = { 0 };
     sbool ip_src_flag = 0;
-    uint32_t ip_src_u32; 
+    uint32_t ip_src_u32;
 
     char ip_dst[MAXIP] = { 0 };
     sbool ip_dst_flag = 0;
-    uint32_t ip_dst_u32; 
+    uint32_t ip_dst_u32;
 
     char tmpbuf[128];
     char s_msg[1024];
@@ -507,8 +507,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             if (!strcmp(ip_src, "127.0.0.1")) strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
                             if (!strcmp(ip_dst, "127.0.0.1")) strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
 
-			    ip_src_u32 = IP2Bit(ip_src); 
-			    ip_dst_u32 = IP2Bit(ip_dst); 
+                            ip_src_u32 = IP2Bit(ip_src);
+                            ip_dst_u32 = IP2Bit(ip_dst);
 
                             strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
@@ -810,7 +810,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                             for (i = 0; i < after_count_by_src; i++ )
                                                                                                 {
-												    if ( afterbysrc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                    if ( afterbysrc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
                                                                                                         {
 
                                                                                                             after_flag=1;
@@ -834,10 +834,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 {
                                                                                                                     after_log_flag = 0;
 
-														    if ( debug->debuglimits ) 
-														       {
-                                                                                                                       Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
-														       }
+                                                                                                                    if ( debug->debuglimits )
+                                                                                                                        {
+                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+                                                                                                                        }
 
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
@@ -858,7 +858,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                             pthread_mutex_lock(&AfterMutexSrc);
 
                                                                                             afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
-											    afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
+                                                                                            afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
                                                                                             strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
                                                                                             afterbysrc[after_count_by_src].count = 1;
                                                                                             afterbysrc[after_count_by_src].utime = atol(timet);
@@ -878,7 +878,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                             for (i = 0; i < after_count_by_dst; i++ )
                                                                                                 {
-												    if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
+                                                                                                    if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
                                                                                                         {
                                                                                                             after_flag=1;
 
@@ -900,10 +900,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 {
                                                                                                                     after_log_flag = 0;
 
-														    if ( debug->debuglimits ) 
-														       {
-                                                                                                                       Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
-														       }
+                                                                                                                    if ( debug->debuglimits )
+                                                                                                                        {
+                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
+                                                                                                                        }
 
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
@@ -921,7 +921,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                     pthread_mutex_lock(&AfterMutexDst);
 
                                                                                                     afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
-												    afterbydst[after_count_by_dst].ipdst = ip_dst_u32; 
+                                                                                                    afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
                                                                                                     strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
                                                                                                     afterbydst[after_count_by_dst].count = 1;
                                                                                                     afterbydst[after_count_by_dst].utime = atol(timet);
@@ -956,7 +956,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                             for (i = 0; i < thresh_count_by_src; i++ )
                                                                                                 {
-												    if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                    if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
                                                                                                         {
 
                                                                                                             thresh_flag=1;
@@ -981,10 +981,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 {
                                                                                                                     thresh_log_flag = 1;
 
-														    if ( debug->debuglimits ) 
-														       {
-                                                                                                                       Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
-														       }
+                                                                                                                    if ( debug->debuglimits )
+                                                                                                                        {
+                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+                                                                                                                        }
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->threshold_total++;
@@ -1002,7 +1002,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                     pthread_mutex_lock(&ThreshMutexSrc);
 
                                                                                                     threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-												    threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
+                                                                                                    threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
                                                                                                     strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
                                                                                                     threshbysrc[thresh_count_by_src].count = 1;
                                                                                                     threshbysrc[thresh_count_by_src].utime = atol(timet);
@@ -1023,7 +1023,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                             for (i = 0; i < thresh_count_by_dst; i++ )
                                                                                                 {
-												    if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
+                                                                                                    if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
                                                                                                         {
 
                                                                                                             thresh_flag=1;
@@ -1046,10 +1046,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 {
                                                                                                                     thresh_log_flag = 1;
 
-														    if ( debug->debuglimits ) 
-														       {
-                                                                                                                       Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
-														       }
+                                                                                                                    if ( debug->debuglimits )
+                                                                                                                        {
+                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
+                                                                                                                        }
 
                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                     counters->threshold_total++;
@@ -1066,7 +1066,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                     pthread_mutex_lock(&ThreshMutexDst);
 
                                                                                                     threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-												    threshbydst[thresh_count_by_dst].ipdst == ip_dst_u32; 
+                                                                                                    threshbydst[thresh_count_by_dst].ipdst == ip_dst_u32;
                                                                                                     strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
                                                                                                     threshbydst[thresh_count_by_dst].count = 1;
                                                                                                     threshbydst[thresh_count_by_dst].utime = atol(timet);

@@ -204,9 +204,9 @@ void Sagan_Blacklist_Load ( void )
                                     SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
                                     SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
 
-				    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
                                     counters->blacklist_count++;
-				    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+                                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
                                 }
                         }
@@ -236,9 +236,9 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
             if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) )
                 {
 
-		    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
-		    counters->blacklist_hit_count++; 
-		    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                    counters->blacklist_hit_count++;
+                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
                     return(TRUE);
                 }
@@ -249,7 +249,7 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 }
 
 /***************************************************************************
- * Sagan_Blacklist_IPADDR_All - Check all IPv4 addresses against the 
+ * Sagan_Blacklist_IPADDR_All - Check all IPv4 addresses against the
  * blacklist IP's in memory!
  ***************************************************************************/
 
@@ -283,9 +283,9 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 
                         {
 
-			    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
-			    counters->blacklist_hit_count++;
-			    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+                            pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                            counters->blacklist_hit_count++;
+                            pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
                             return(TRUE);
                         }

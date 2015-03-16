@@ -1358,7 +1358,7 @@ void Load_Rules( const char *ruleset )
 //                            To_LowerC(tok_tmp);
 
                             tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
-			    Remove_Spaces(tmptoken);
+                            Remove_Spaces(tmptoken);
 
                             found = 0;
 
@@ -1404,12 +1404,12 @@ void Load_Rules( const char *ruleset )
                             while ( tmptoken != NULL )
                                 {
 
-				    strlcpy(tmp2, tmptoken, sizeof(tmp2)); 
+                                    strlcpy(tmp2, tmptoken, sizeof(tmp2));
 
-				    Remove_Spaces(tmptoken);
-				    To_LowerC(tmptoken);
+                                    Remove_Spaces(tmptoken);
+                                    To_LowerC(tmptoken);
 
-				    found = 0; 
+                                    found = 0;
 
                                     for ( i = 0; i < counters->websense_cat_count; i++ )
                                         {
@@ -1417,7 +1417,7 @@ void Load_Rules( const char *ruleset )
                                             if (!strcmp(SaganWebsenseCatList[i].cat, tmptoken))
                                                 {
 
-						    found = 1; 
+                                                    found = 1;
 
                                                     if ( rulestruct[counters->rulecount].websense_cat_count <= WEBSENSE_MAX_CAT )
                                                         {
@@ -1434,14 +1434,14 @@ void Load_Rules( const char *ruleset )
                                                         }
 
                                                 }
-						}
+                                        }
 
-						if ( found == 0 ) 
-							{
+                                    if ( found == 0 )
+                                        {
 
-							Sagan_Log(S_ERROR, "[%s, line %d] Unknown Websense category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] Unknown Websense category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
 
-							}
+                                        }
 
 
                                     tmptoken = strtok_r(NULL, "," , &saveptrrule3);
@@ -1454,11 +1454,11 @@ void Load_Rules( const char *ruleset )
 
 #ifndef WITH_WEBSENSE
 
-		if (!strcmp(rulesplit, "websense")) 
-			{ 
-			Sagan_Log(S_ERROR, "%s has Websense rules,  but support isn't compiled in! Abort!", ruleset);
-			}
-#endif	
+                    if (!strcmp(rulesplit, "websense"))
+                        {
+                            Sagan_Log(S_ERROR, "%s has Websense rules,  but support isn't compiled in! Abort!", ruleset);
+                        }
+#endif
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }
