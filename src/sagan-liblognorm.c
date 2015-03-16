@@ -100,7 +100,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 {
 
     char buf[10*1024] = { 0 };
-    char tmp_host[254] = { 0 };
+/*    char tmp_host[254] = { 0 }; */
 
     const char *cstr = NULL;
     const char *tmp = NULL;
@@ -118,6 +118,9 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
     ln_normalize(ctx, buf, strlen(buf), &json);
+
+    //int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p);
+
     cstr = (char*)json_object_to_json_string(json);
 
     /* Get source address information */
@@ -136,11 +139,11 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" ) ||
             !strcmp(SaganNormalizeLiblognorm->ip_dst, "")) strlcpy(SaganNormalizeLiblognorm->ip_dst, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
 
-    /* Get username information (not currently used) */
+    /* Get username information (not currently used) 
 
-    /*
     tmp = json_object_get_string(json_object_object_get(json, "username"));
     if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+
     */
 
     /* Do DNS lookup for source hostname */
@@ -157,22 +160,33 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
 
 
-    /*
+/*
         if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
             {
-                snprintf(tmp_host, sizeof(tmp_host), "%s", tmp); 	/* Avoid const char * warning */
-//            strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
-//        }
+*/
 
+	      /* Avoid const char * warning */
+
+/*              snprintf(tmp_host, sizeof(tmp_host), "%s", tmp); 	
+                strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
+             }
+*/
 
     /*
         tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
         if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
             {
-                snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);        /* Avoid const char * warning */
-//           strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
-//        }
+*/
+	    
+	    /* Avoid const char * warning */
+
+/*
+              snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);        
+              strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
+        }
+
+*/
 
     /* Get port information */
 
@@ -199,9 +213,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         }
 
 
-//free(cstr);
     json_object_put(json);
-//free(json);
 }
 
 #endif

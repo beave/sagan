@@ -58,6 +58,7 @@
 #endif
 
 #ifdef HAVE_LIBLOGNORM
+#include "sagan-liblognorm.h"
 #include <liblognorm.h>
 #include <ptree.h>
 #include <lognorm.h>

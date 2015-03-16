@@ -120,7 +120,6 @@ void Sagan_BroIntel_Load_File ( void )
 
     char *tok = NULL; ;
     char *ptmp = NULL;
-    char *file_name = NULL;
 
     int line_count;
     int i;
@@ -527,6 +526,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
 
         }
 
+return(FALSE);
 }
 
 /*****************************************************************************

@@ -169,8 +169,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     int proto = config->sagan_proto;		/* Set proto to default */
 
-    sbool brointel_results;
-    sbool blacklist_results;
+    sbool brointel_results = 0;
+    sbool blacklist_results = 0;
 
 #ifdef WITH_WEBSENSE
     int websense_results;
@@ -1066,7 +1066,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                     pthread_mutex_lock(&ThreshMutexDst);
 
                                                                                                     threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-                                                                                                    threshbydst[thresh_count_by_dst].ipdst == ip_dst_u32;
+                                                                                                    threshbydst[thresh_count_by_dst].ipdst = ip_dst_u32;
                                                                                                     strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
                                                                                                     threshbydst[thresh_count_by_dst].count = 1;
                                                                                                     threshbydst[thresh_count_by_dst].utime = atol(timet);
