@@ -310,8 +310,8 @@ struct after_by_dst
 typedef struct _SaganVar _SaganVar;
 struct _SaganVar
 {
-    char var_name[64];
-    char var_value[64];
+    char var_name[MAX_VAR_NAME_SIZE];
+    char var_value[MAX_VAR_VALUE_SIZE];
 };
 
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;

@@ -107,8 +107,8 @@ struct _Rule_Struct
     sbool meta_content_flag;
     sbool meta_content_case[MAX_META_CONTENT];
     sbool meta_content_not[MAX_META_CONTENT];
-    char meta_content[MAX_META_CONTENT][512];
-    char meta_content_help[MAX_META_CONTENT][512];
+    char meta_content[1024][1024];
+    char meta_content_help[1024][512];
 
     sbool alert_time_flag;
     unsigned char alert_days;

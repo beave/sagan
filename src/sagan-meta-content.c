@@ -65,6 +65,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
                 {
 
                     strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+
                     ptmp = strtok_r(tmp, ",", &tok);
 
                     while (ptmp != NULL )

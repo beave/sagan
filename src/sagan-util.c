@@ -447,10 +447,10 @@ char *Sagan_Var_To_Value(char *instring)
 
     char *ptmp = NULL;
     char *tok = NULL;
-    char tmp[256] = { 0 };
-    char tmp2[256] = { 0 };
-    char tmp3[254] = { 0 };
-    char tmp_result[256] = { 0 };
+    char tmp[1024] = { 0 };
+    char tmp2[1024] = { 0 };
+    char tmp3[1024] = { 0 };
+    char tmp_result[1024] = { 0 };
     char *tmpbuf = NULL;
     int i=0;
 
