@@ -49,6 +49,8 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <stdbool.h>
+
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "version.h"

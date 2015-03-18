@@ -41,6 +41,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <net/if.h>
+#include <stdbool.h>
 #include <net/if_arp.h>
 #include <netinet/in_systm.h>
 #include <netinet/if_ether.h>
@@ -222,10 +223,10 @@ wiredevlog( _SaganConfig *config )
      * Right now,  the syslog server must use SOCK_DGRAM */
 
     if((outf = socket(AF_UNIX,SOCK_DGRAM,0)) < 0)
-        return(TRUE);
+        return(true);
     if(connect(outf,&s,sizeof(s)))
-        return(TRUE);
-    return(FALSE);
+        return(true);
+    return(false);
 }
 
 #endif

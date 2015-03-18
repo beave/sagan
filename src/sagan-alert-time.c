@@ -34,6 +34,7 @@
 #include <string.h>
 #include <time.h>
 #include <inttypes.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-alert-time.h"
@@ -138,11 +139,11 @@ int Sagan_Check_Time(rule_number)
         {
 
             /* If day is valid,  check the time */
-            if ( utime_current >= utime_start && utime_current <= utime_end ) return(TRUE);
+            if ( utime_current >= utime_start && utime_current <= utime_end ) return(true);
         }
 
 
-    return(FALSE);
+    return(false);
 }
 
 
@@ -155,40 +156,40 @@ int Sagan_Check_Day(unsigned char day, int day_current)
 
     if ( day_current == 0 )
         {
-            if (( day & SUNDAY ) == SUNDAY ) return(TRUE);
+            if (( day & SUNDAY ) == SUNDAY ) return(true);
         }
 
     if ( day_current == 1 )
         {
-            if (( day & MONDAY ) == MONDAY ) return(TRUE);
+            if (( day & MONDAY ) == MONDAY ) return(true);
         }
 
     if ( day_current == 2 )
         {
-            if (( day & TUESDAY ) == TUESDAY ) return(TRUE);
+            if (( day & TUESDAY ) == TUESDAY ) return(true);
         }
 
     if ( day_current == 3 )
         {
-            if (( day & WEDNESDAY ) == WEDNESDAY ) return(TRUE);
+            if (( day & WEDNESDAY ) == WEDNESDAY ) return(true);
         }
 
     if ( day_current == 4 )
         {
-            if (( day & THURSDAY ) == THURSDAY ) return(TRUE);
+            if (( day & THURSDAY ) == THURSDAY ) return(true);
         }
 
     if ( day_current == 5 )
         {
-            if (( day & FRIDAY ) == FRIDAY ) return(TRUE);
+            if (( day & FRIDAY ) == FRIDAY ) return(true);
         }
 
     if ( day_current == 6 )
         {
-            if (( day & SATURDAY ) == SATURDAY ) return(TRUE);
+            if (( day & SATURDAY ) == SATURDAY ) return(true);
         }
 
-    return(FALSE);
+    return(false);
 
 }
 

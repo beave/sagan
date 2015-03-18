@@ -191,7 +191,7 @@ AC_PROG_MAKE_SET
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST

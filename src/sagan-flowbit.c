@@ -33,6 +33,7 @@
 #include <string.h>
 #include <time.h>
 #include <pthread.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -344,7 +345,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
             if ( debug->debugflowbit)
                 Sagan_Log(S_DEBUG, "[%s, line %d] Condition of flowbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].flowbit_condition_count, flowbit_total_match);
 
-            return(TRUE);
+            return(true);
         }
 
     /* isset/isnotset failed. */
@@ -352,7 +353,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
     if ( debug->debugflowbit)
         Sagan_Log(S_DEBUG, "[%s, line %d] Condition of flowbit returning FALSE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].flowbit_condition_count, flowbit_total_match);
 
-    return(FALSE);
+    return(false);
 
 }  /* End of Sagan_Flowbit_Condition(); */
 

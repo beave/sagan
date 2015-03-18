@@ -122,12 +122,12 @@ void Load_Config( void )
 
     config->sagan_fifo[0] = '\0';
     config->sagan_host[0] = '\0';
-    config->sagan_port = 514; 
-    
-    if ( config->sagan_fifo_flag != 1 ) 
-    	{
-	strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
-	}
+    config->sagan_port = 514;
+
+    if ( config->sagan_fifo_flag != 1 )
+        {
+            strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
+        }
 
 
 #ifdef HAVE_LIBESMTP
@@ -176,10 +176,10 @@ void Load_Config( void )
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
 
-		    if ( sagan_var1 == NULL ) 
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \"max_processor_threads\" is incomplete!", __FILE__, __LINE__); 
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"max_processor_threads\" is incomplete!", __FILE__, __LINE__);
+                        }
 
                     config->max_processor_threads = strtoull(sagan_var1, NULL, 10);
                 }
@@ -198,34 +198,34 @@ void Load_Config( void )
 
 
             if (!strcmp(Remove_Return(sagan_option), "sagan_host"))
-	    	{
-		    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
+                {
+                    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
 
-		    if ( sagan_var1 == NULL )
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \"sagan_host\" is incomplete!", __FILE__, __LINE__);
-			}
-		    
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"sagan_host\" is incomplete!", __FILE__, __LINE__);
+                        }
+
                     strlcpy(config->sagan_host, sagan_var1, sizeof(config->sagan_host));
-		}
+                }
 
             if (!strcmp(sagan_option, "sagan_port"))
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
 
-		    if ( sagan_var1 == NULL ) 
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \"sagan_port\" is incomplete!", __FILE__, __LINE__); 
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"sagan_port\" is incomplete!", __FILE__, __LINE__);
+                        }
 
                     config->sagan_port = atoi(sagan_var1);
                 }
 
 #ifndef HAVE_LIBESMTP
             if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priority"))
-	    	{
-                Sagan_Log(S_ERROR, "[%s, line %d] \"libesmtp\" support not found. Re-compile with ESMTP support or disable in the sagan.conf.", __FILE__, __LINE__);
-		}
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"libesmtp\" support not found. Re-compile with ESMTP support or disable in the sagan.conf.", __FILE__, __LINE__);
+                }
 
 #endif
 
@@ -235,10 +235,10 @@ void Load_Config( void )
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
 
-		    if ( sagan_var1 == NULL ) 
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \"send-to\" is incomplete!", __FILE__, __LINE__); 
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"send-to\" is incomplete!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(config->sagan_esmtp_to, Remove_Return(sagan_var1), sizeof(config->sagan_esmtp_to));
                     config->sagan_esmtp_flag=1;
@@ -249,10 +249,10 @@ void Load_Config( void )
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
 
-		    if ( sagan_var1 == NULL )
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \"min_email_priority\" is incomplete!", __FILE__, __LINE__);
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"min_email_priority\" is incomplete!", __FILE__, __LINE__);
+                        }
 
                     config->min_email_priority = atoi(sagan_var1);
                 }
@@ -261,10 +261,10 @@ void Load_Config( void )
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
 
-		    if ( sagan_var1 == NULL )
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] \email_subject\" is incomplete!", __FILE__, __LINE__);
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \email_subject\" is incomplete!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(config->sagan_email_subject, Remove_Return(Between_Quotes(tmpbuf2)), sizeof(config->sagan_email_subject));
                 }
@@ -273,9 +273,9 @@ void Load_Config( void )
 
 #ifndef HAVE_LIBPCAP
             if (!strcmp(sagan_option, "plog_interface") || !strcmp(sagan_option, "plog_logdev") || !strcmp(sagan_option, "plog_port"))
-	    	{
-                Sagan_Log(S_ERROR, "[%s, line %d] \"libpcap\" support not found. Re-compile with PCAP support or disable in the sagan.conf.", __FILE__, __LINE__);
-		}
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"libpcap\" support not found. Re-compile with PCAP support or disable in the sagan.conf.", __FILE__, __LINE__);
+                }
 #endif
 
 #ifdef HAVE_LIBPCAP
@@ -355,10 +355,10 @@ void Load_Config( void )
                 {
                     sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
 
-		    if ( sagan_var1 == NULL ) 
-		    	{
-			Sagan_Log(S_ERROR, "[%s, line %d] country_database: is missing country codes!", __FILE__, __LINE__);
-			}
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] country_database: is missing country codes!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(config->geoip_country_file, sagan_var1, sizeof(config->geoip_country_file));
                     Sagan_Log(S_NORMAL, "Loading GeoIP database. [%s]", config->geoip_country_file);
@@ -372,9 +372,9 @@ void Load_Config( void )
                     sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
 
                     if ( sagan_var1 == NULL )
-		    	{
-                        Sagan_Log(S_ERROR, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
-			}
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] No \"ignore file\" specified in the sagan.conf file!", __FILE__, __LINE__);
+                        }
 
                     config->sagan_droplist_flag = 1;
                     strlcpy(config->sagan_droplistfile, sagan_var1, sizeof(config->sagan_droplistfile));
@@ -457,9 +457,9 @@ void Load_Config( void )
                             /* TODO:  Do these same sanity checks on other processors! */
 
                             if ( config->perfmonitor_time == 0 || config->perfmonitor_file_name[0] == '\0' )
-			    	{
-                                Sagan_Log(S_ERROR, "[%s, line %d] Perfmonitor time or file is incorrect or missing!", __FILE__, __LINE__);
-				}
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Perfmonitor time or file is incorrect or missing!", __FILE__, __LINE__);
+                                }
 
                         }
 
@@ -497,11 +497,11 @@ void Load_Config( void )
                             /* Set defaults */
 
                             strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
-			    config->websense_timeout = 120;
+                            config->websense_timeout = 120;
 
-			    config->websense_cat[0] = '\0';
-			    config->websense_auth[0] = '\0';
-			    config->websense_url[0] = '\0';
+                            config->websense_cat[0] = '\0';
+                            config->websense_auth[0] = '\0';
+                            config->websense_url[0] = '\0';
 
                             ptmp = sagan_var1;
 
@@ -548,26 +548,26 @@ void Load_Config( void )
                                 }
 
 
-				/* Websense sanity checks */
+                            /* Websense sanity checks */
 
-				if ( config->websense_auth[0] == '\0' )
-                        		{
-	                                Sagan_Log(S_ERROR,"[%s, line %d] Websense \"auth\" option is missing.", __FILE__, __LINE__);
-           		                }
+                            if ( config->websense_auth[0] == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR,"[%s, line %d] Websense \"auth\" option is missing.", __FILE__, __LINE__);
+                                }
 
-				if ( config->websense_cat[0] == '\0' ) 
-					{ 
-					Sagan_Log(S_ERROR, "[%s, line %d] Websense \"catagories\" option is missing.", __FILE__, __LINE__);
-					}
+                            if ( config->websense_cat[0] == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Websense \"catagories\" option is missing.", __FILE__, __LINE__);
+                                }
 
-				if ( config->websense_url[0] == '\0' ) 
-					{
-					Sagan_Log(S_ERROR, "[%s, line %d] Websense \"url\" optin is missing.", __FILE__, __LINE__);
-					}
+                            if ( config->websense_url[0] == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Websense \"url\" optin is missing.", __FILE__, __LINE__);
+                                }
 
-     			        Sagan_Websense_Load_Cat();
+                            Sagan_Websense_Load_Cat();
 
-			}
+                        }
 
 #endif
 
@@ -607,11 +607,26 @@ void Load_Config( void )
 
                     sagan_var1 = strtok_r(NULL," ", &tok);
 
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"%s\" appears to be incomplete!", sagan_option, __FILE__, __LINE__);
+                        }
+
                     if (!strcmp(sagan_var1, "external:"))
                         {
                             config->sagan_ext_flag=1;
                             config->sagan_external_output_flag=1;
-                            strlcpy(config->sagan_extern, Remove_Return(strtok_r(NULL, " ", &tok)), sizeof(config->sagan_extern));
+
+                            ptmp = strtok_r(NULL, " ", &tok);
+
+                            if ( ptmp == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output option is incomplete!", __FILE__, __LINE__);
+                                }
+
+                            Remove_Return(ptmp);
+
+                            strlcpy(config->sagan_extern, ptmp, sizeof(config->sagan_extern));
                             if (Sagan_strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
                         }
 
@@ -811,6 +826,11 @@ void Load_Config( void )
 
                             sagan_var3 = strtok_r(NULL, " ", &tok);
 
+                            if ( sagan_var3 == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"syslog\" output \"priority\" is missing!", __FILE__, __LINE__);
+                                }
+
                             if ( sagan_var3 != NULL )
                                 {
 
@@ -948,7 +968,7 @@ void Load_Config( void )
 
                             config->sagan_unified2_flag = 1;
 
-			    config->unified2_filepath[0] = '\0';
+                            config->unified2_filepath[0] = '\0';
 
                             ptmp = sagan_var1;
                             Remove_Return(ptmp);
@@ -974,12 +994,12 @@ void Load_Config( void )
 
                                 }
 
-				/* Sanity check for unified2 */
+                            /* Sanity check for unified2 */
 
-				if ( config->unified2_filepath == '\0' ) 
-					{
-					Sagan_Log(S_ERROR, "[%s, line %d] Unified2 \"filename\" is missing.", __FILE__, __LINE__); 
-					}
+                            if ( config->unified2_filepath == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Unified2 \"filename\" is missing.", __FILE__, __LINE__);
+                                }
                         }
 
 #endif
@@ -991,8 +1011,8 @@ void Load_Config( void )
 
                             ptmp = sagan_var1;
 
-			    config->sagan_esmtp_from[0] = '\0';
-			    config->sagan_esmtp_server[0] = '\0';
+                            config->sagan_esmtp_from[0] = '\0';
+                            config->sagan_esmtp_server[0] = '\0';
 
                             while (ptmp != NULL )
                                 {
@@ -1012,17 +1032,17 @@ void Load_Config( void )
                                     ptmp = strtok_r(NULL, "=", &tok);
                                 }
 
-				/* Sanity checks for email: */
+                            /* Sanity checks for email: */
 
-				if ( config->sagan_esmtp_from == '\0' ) 
-					{
-					Sagan_Log(S_ERROR, "[%s, line %d] email: \"from\" option is missing.", __FILE__, __LINE__);
-					}
+                            if ( config->sagan_esmtp_from == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] email: \"from\" option is missing.", __FILE__, __LINE__);
+                                }
 
-				if ( config->sagan_esmtp_server == '\0' ) 
-					{
-					Sagan_Log(S_ERROR, "[%s, line %d] email: \"smtpserver\" option is missing.", __FILE__, __LINE__); 
-					}
+                            if ( config->sagan_esmtp_server == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] email: \"smtpserver\" option is missing.", __FILE__, __LINE__);
+                                }
 
                         }
 #endif
@@ -1126,9 +1146,9 @@ void Load_Config( void )
             for ( check = i+1; check < counters->rulecount; check ++)
                 {
                     if (!strcmp (rulestruct[check].s_sid, rulestruct[i].s_sid ))
-		    	{
-                        Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
-			}
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[i].s_sid);
+                        }
                 }
         }
 
@@ -1136,27 +1156,27 @@ void Load_Config( void )
 
 #ifdef HAVE_LIBESMTP
 
-    if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, "")) 
-    	{
-	Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
-	}
+    if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_server, ""))
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'smtpserver' field is missing! |%s|", __FILE__, __LINE__, config->sagan_esmtp_server);
+        }
 
-    if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" )) 
-    	{
-	Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
-	}
+    if (config->sagan_esmtp_flag && !strcmp(config->sagan_esmtp_from, "" ))
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Configuration SMTP 'from' field is missing!", __FILE__,  __LINE__);
+        }
 
 #endif
 
-    if ( config->sagan_fifo[0] == '\0' ) 
-    	{
-	Sagan_Log(S_ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
-	}
+    if ( config->sagan_fifo[0] == '\0' )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
+        }
 
-    if ( config->sagan_host[0] == '\0' ) 
-    	{
-	Sagan_Log(S_ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
-	}
+    if ( config->sagan_host[0] == '\0' )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
+        }
 
 #ifdef HAVE_LIBGEOIP
     if ( config->have_geoip )

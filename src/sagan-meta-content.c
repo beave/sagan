@@ -36,6 +36,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -79,7 +80,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, FALSE))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, false))
                                         {
                                             results++;
                                         }
@@ -113,7 +114,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, FALSE))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, false))
                                         {
                                             match++;
                                         }
@@ -145,9 +146,9 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
     if ( results == rulestruct[rule_position].meta_content_count)
         {
-            return(TRUE);
+            return(true);
         }
 
-    return(FALSE);
+    return(false);
 
 } /* End of Sagan_Meta_Content_Search() */

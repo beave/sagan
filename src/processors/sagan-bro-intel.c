@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 
 #include "sagan.h"
@@ -461,7 +462,7 @@ sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
                     Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918.", __FILE__, __LINE__, ip);
                 }
 
-            return(FALSE);
+            return(false);
         }
 
     /* Search array for for the IP address */
@@ -476,12 +477,12 @@ sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found IP %u.", __FILE__, __LINE__, ip);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 
 }
 
@@ -510,7 +511,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
 
             if (!strcmp(results, "0"))
                 {
-                    return(FALSE);
+                    return(false);
                 }
 
             ip = IP2Bit(results);
@@ -520,13 +521,13 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
 
                     if ( Sagan_BroIntel_Intel_Addr[b].u32_ip == ip )
                         {
-                            return(TRUE);
+                            return(true);
                         }
                 }
 
         }
 
-return(FALSE);
+    return(false);
 }
 
 /*****************************************************************************
@@ -541,19 +542,19 @@ sbool Sagan_BroIntel_DOMAIN ( char *syslog_message )
     for ( i = 0; i < counters->brointel_domain_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Domain[i].domain, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Domain[i].domain, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found domain %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_Domain[i].domain);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 
 }
 
@@ -569,19 +570,19 @@ sbool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
     for ( i = 0; i < counters->brointel_file_hash_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_File_Hash[i].hash, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_File_Hash[i].hash, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found file hash %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Hash[i].hash);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 
 }
 
@@ -597,19 +598,19 @@ sbool Sagan_BroIntel_URL ( char *syslog_message )
     for ( i = 0; i < counters->brointel_url_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_URL[i].url, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_URL[i].url, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found URL \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_URL[i].url);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
 /*****************************************************************************
@@ -624,19 +625,19 @@ sbool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
     for ( i = 0; i < counters->brointel_software_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Software[i].software, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Software[i].software, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found software \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Software[i].software);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
 /*****************************************************************************
@@ -651,19 +652,19 @@ sbool Sagan_BroIntel_EMAIL ( char *syslog_message )
     for ( i = 0; i < counters->brointel_email_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Email[i].email, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Email[i].email, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail address \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Email[i].email);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
 /*****************************************************************************
@@ -678,19 +679,19 @@ sbool Sagan_BroIntel_USER_NAME ( char *syslog_message )
     for ( i = 0; i < counters->brointel_user_name_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_User_Name[i].username, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_User_Name[i].username, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the username \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_User_Name[i].username);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
 /****************************************************************************
@@ -705,19 +706,19 @@ sbool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
     for ( i = 0; i < counters->brointel_file_name_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_File_Name[i].file_name, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_File_Name[i].file_name, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the file name \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Name[i].file_name);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
 /***************************************************************************
@@ -732,18 +733,18 @@ sbool Sagan_BroIntel_CERT_HASH ( char *syslog_message )
     for ( i = 0; i < counters->brointel_cert_hash_count; i++)
         {
 
-            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, FALSE) )
+            if ( Sagan_stristr(syslog_message, Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, false) )
                 {
                     if ( debug->debugbrointel )
                         {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Found the CERT_HASH \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash);
                         }
 
-                    return(TRUE);
+                    return(true);
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 

@@ -34,6 +34,7 @@
 #include <string.h>
 #include <time.h>
 #include <pthread.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 
 #include "sagan.h"
@@ -195,7 +196,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     match=1;
                     while ( ptmp != NULL )
                         {
-                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_program)) match=0;
+                            if ( Sagan_Wildcard(ptmp, SaganProcSyslog_LOCAL->syslog_program) == 1 )
+                                {
+                                    match = 0;
+                                }
+
                             ptmp = strtok_r(NULL, "|", &tok2);
                         }
                 }
@@ -207,7 +212,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     match=1;
                     while ( ptmp != NULL )
                         {
-                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_facility)) match=0;
+                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_facility))
+                                {
+                                    match=0;
+                                }
+
                             ptmp = strtok_r(NULL, "|", &tok2);
                         }
                 }
@@ -219,7 +228,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     match=1;
                     while ( ptmp != NULL )
                         {
-                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_priority)) match=0;
+                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_priority))
+                                {
+                                    match=0;
+                                }
+
                             ptmp = strtok_r(NULL, "|", &tok2);
                         }
                 }
@@ -231,7 +244,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     match=1;
                     while ( ptmp != NULL )
                         {
-                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_level)) match=0;
+                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_level))
+                                {
+                                    match=0;
+                                }
+
                             ptmp = strtok_r(NULL, "|", &tok2);
                         }
                 }
@@ -243,7 +260,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     match=1;
                     while ( ptmp != NULL )
                         {
-                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_tag)) match=0;
+                            if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_tag))
+                                {
+                                    match=0;
+                                }
+
                             ptmp = strtok_r(NULL, "|", &tok2);
                         }
                 }
@@ -326,7 +347,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].s_nocase[z] == 1 )
                                         {
 
-                                            if (rulestruct[b].content_not[z] != 1 && Sagan_stristr(alter_content, rulestruct[b].s_content[z], FALSE))
+                                            if (rulestruct[b].content_not[z] != 1 && Sagan_stristr(alter_content, rulestruct[b].s_content[z], false))
 
                                                 {
                                                     sagan_match++;
@@ -334,7 +355,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             else
                                                 {
                                                     /* for content: ! */
-                                                    if ( rulestruct[b].content_not[z] == 1 && !Sagan_stristr(alter_content, rulestruct[b].s_content[z], FALSE)) sagan_match++;
+                                                    if ( rulestruct[b].content_not[z] == 1 && !Sagan_stristr(alter_content, rulestruct[b].s_content[z], false)) sagan_match++;
 
                                                 }
                                         }

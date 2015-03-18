@@ -44,6 +44,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <sys/stat.h>
 
 #include "sagan.h"
@@ -267,11 +268,11 @@ int Is_Numeric (char *str)
 
     if(strlen(str) == strspn(str, "0123456789"))
         {
-            return(TRUE);
+            return(true);
         }
     else
         {
-            return(FALSE);
+            return(false);
         }
 
 }
@@ -424,16 +425,16 @@ char *Get_Filename(char *file)
 sbool is_rfc1918 ( uint32_t ipint )
 {
 
-    if ( ipint > 167772160 && ipint < 184549375 ) return(TRUE); 	// 10.X.X.X
-    if ( ipint > 3232235520 && ipint < 3232301055 ) return(TRUE);    	// 192.168.X.X
-    if ( ipint > 2886729728 && ipint < 2887778303 ) return(TRUE);    	// 172.16/31.X.X
-    if ( ipint == 2130706433 ) return(TRUE);			 	// 127.0.0.1
+    if ( ipint > 167772160 && ipint < 184549375 ) return(true); 	// 10.X.X.X
+    if ( ipint > 3232235520 && ipint < 3232301055 ) return(true);    	// 192.168.X.X
+    if ( ipint > 2886729728 && ipint < 2887778303 ) return(true);    	// 172.16/31.X.X
+    if ( ipint == 2130706433 ) return(true);			 	// 127.0.0.1
 
     /* Invalid IP addresses */
 
-    if ( ipint < 16777216 ) return(FALSE); 				 // Larger than 1.0.0.0
+    if ( ipint < 16777216 ) return(false); 				 // Larger than 1.0.0.0
 
-    return(FALSE);
+    return(false);
 
 }
 
@@ -494,10 +495,10 @@ int Sagan_Validate_HEX (const char *string)
                 }
             else
                 {
-                    return(FALSE);
+                    return(false);
                 }
         }
-    return(TRUE);
+    return(true);
 }
 
 /****************************************************************************/
@@ -680,6 +681,31 @@ int Sagan_Character_Count ( char *string_in, char *char_to_count)
         }
 
     return(return_count);
+}
+
+/****************************************************************************
+ * Sagan_Wildcard - Used for comparing strings with wildcard support.  This
+ * function was taken from:
+ *
+ * http://www.geeksforgeeks.org/wildcard-character-matching/
+ *
+ * They had a much better solution than mine!
+ ****************************************************************************/
+
+sbool Sagan_Wildcard( char *first, char *second )
+{
+    if (*first == '\0' && *second == '\0')
+        return true;
+
+    if (*first == '*' && *(first+1) != '\0' && *second == '\0')
+        return false;
+
+    if (*first == '?' || *first == *second)
+        return Sagan_Wildcard(first+1, second+1);
+
+    if (*first == '*')
+        return Sagan_Wildcard(first+1, second) || Sagan_Wildcard(first, second+1);
+    return false;
 }
 
 

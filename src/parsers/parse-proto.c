@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "sagan-defs.h"
 #include "sagan.h"
@@ -57,7 +58,7 @@ int parse_proto( char *msg )
 
             if ( map_message[i].nocase == 1 )
                 {
-                    if (Sagan_stristr(msg, map_message[i].search, TRUE)) return(map_message[i].proto);
+                    if (Sagan_stristr(msg, map_message[i].search, true)) return(map_message[i].proto);
                 }
             else
                 {
@@ -82,7 +83,7 @@ int parse_proto_program( char *program )
 
             if ( map_program[i].nocase == 1 )
                 {
-                    if (Sagan_stristr(program, map_program[i].program, TRUE)) return(map_program[i].proto);
+                    if (Sagan_stristr(program, map_program[i].program, true)) return(map_program[i].proto);
                 }
             else
                 {

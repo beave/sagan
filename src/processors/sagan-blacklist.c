@@ -36,6 +36,7 @@
 #include <math.h>
 #include <pthread.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -240,11 +241,11 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
                     counters->blacklist_hit_count++;
                     pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
-                    return(TRUE);
+                    return(true);
                 }
         }
 
-    return(FALSE);
+    return(false);
 
 }
 
@@ -272,7 +273,7 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 
             if (!strcmp(results, "0"))
                 {
-                    return(FALSE);
+                    return(false);
                 }
 
             ip = IP2Bit(results);
@@ -287,12 +288,12 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
                             counters->blacklist_hit_count++;
                             pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
-                            return(TRUE);
+                            return(true);
                         }
                 }
 
         }
 
-    return(FALSE);
+    return(false);
 }
 
