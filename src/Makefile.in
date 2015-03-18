@@ -121,8 +121,7 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-syslog.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
 	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
-	sagan-sagan-perfmon.$(OBJEXT) sagan-sagan-cif.$(OBJEXT) \
-	sagan-sagan-bro-intel.$(OBJEXT)
+	sagan-sagan-perfmon.$(OBJEXT) sagan-sagan-bro-intel.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 am__DEPENDENCIES_1 =
 sagan_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -355,7 +354,6 @@ processors/sagan-track-clients.c \
 processors/sagan-websense.c \
 processors/sagan-blacklist.c \
 processors/sagan-perfmon.c \
-processors/sagan-cif.c \
 processors/sagan-bro-intel.c 
 
 all: all-am
@@ -452,7 +450,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-blacklist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-bro-intel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-cif.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-classifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-credits.Po@am__quote@
@@ -1135,20 +1132,6 @@ sagan-sagan-perfmon.obj: processors/sagan-perfmon.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-perfmon.c' object='sagan-sagan-perfmon.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-perfmon.obj `if test -f 'processors/sagan-perfmon.c'; then $(CYGPATH_W) 'processors/sagan-perfmon.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-perfmon.c'; fi`
-
-sagan-sagan-cif.o: processors/sagan-cif.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-cif.o -MD -MP -MF $(DEPDIR)/sagan-sagan-cif.Tpo -c -o sagan-sagan-cif.o `test -f 'processors/sagan-cif.c' || echo '$(srcdir)/'`processors/sagan-cif.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-cif.Tpo $(DEPDIR)/sagan-sagan-cif.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-cif.c' object='sagan-sagan-cif.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-cif.o `test -f 'processors/sagan-cif.c' || echo '$(srcdir)/'`processors/sagan-cif.c
-
-sagan-sagan-cif.obj: processors/sagan-cif.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-cif.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-cif.Tpo -c -o sagan-sagan-cif.obj `if test -f 'processors/sagan-cif.c'; then $(CYGPATH_W) 'processors/sagan-cif.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-cif.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-cif.Tpo $(DEPDIR)/sagan-sagan-cif.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-cif.c' object='sagan-sagan-cif.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-cif.obj `if test -f 'processors/sagan-cif.c'; then $(CYGPATH_W) 'processors/sagan-cif.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-cif.c'; fi`
 
 sagan-sagan-bro-intel.o: processors/sagan-bro-intel.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-bro-intel.o -MD -MP -MF $(DEPDIR)/sagan-sagan-bro-intel.Tpo -c -o sagan-sagan-bro-intel.o `test -f 'processors/sagan-bro-intel.c' || echo '$(srcdir)/'`processors/sagan-bro-intel.c

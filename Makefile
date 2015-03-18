@@ -209,7 +209,7 @@ CCAS = gcc
 CCASDEPMODE = depmode=gcc3
 CCASFLAGS = -g -O2
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2 -Wall
+CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
@@ -237,7 +237,7 @@ LIBESTR_LIBS = -L/usr/lib -lestr
 LIBLOGNORM_CFLAGS = 
 LIBLOGNORM_LIBS = -L/usr/lib -llognorm -lestr 
 LIBOBJS = 
-LIBS = -ldnet -llognorm -lestr -ljson -lm -lpthread -lpcre 
+LIBS = -ldnet -llognorm -lestr -ljson -lGeoIP -lm -lpthread -lpcre 
 LTLIBOBJS = 
 MAINT = #
 MAKEINFO = ${SHELL} /home/champ/code/sagan/missing makeinfo
