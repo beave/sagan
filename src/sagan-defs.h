@@ -100,14 +100,6 @@
 #define MAX_OUTPUT_THREADS      50
 #define MAX_PROCESSOR_THREADS   50
 
-//#ifndef TRUE
-//# define TRUE 1
-//#endif
-
-//#ifndef FALSE
-//# define FALSE 0
-//#endif
-
 #define SUNDAY		1
 #define MONDAY		2
 #define TUESDAY		4
