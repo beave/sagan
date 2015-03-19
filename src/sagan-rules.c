@@ -825,7 +825,6 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(arg, "all") && config->lognorm_all == 0)
                                 {
 
-                                    memset(liblognormtoloadstruct, 0, sizeof(liblognorm_toload_struct));
                                     counters->liblognormtoload_count=0;
 
                                     for (i=0; i < liblognorm_count; i++)
