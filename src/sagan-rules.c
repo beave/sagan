@@ -1504,9 +1504,7 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'websense' option enabled,  but 'processor websense' is not configured!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
-                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
-//                            Remove_Spaces(tok_tmp);
-//                            To_LowerC(tok_tmp);
+                            tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));	/* Support var's */
 
                             tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
                             Remove_Spaces(tmptoken);
