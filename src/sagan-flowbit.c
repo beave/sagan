@@ -253,7 +253,9 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
                                                     if ( rulestruct[rule_position].flowbit_direction[i] == 1 )
                                                         {
 
-                                                            if ( flowbit[i].ip_src == ip_src && flowbit[i].ip_dst == ip_dst )
+
+                                                            if ( flowbit[a].ip_src == ip_src && 
+							         flowbit[a].ip_dst == ip_dst )
                                                                 {
 
                                                                     if ( debug->debugflowbit)
@@ -268,7 +270,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
                                                     if ( rulestruct[rule_position].flowbit_direction[i] == 2 )
                                                         {
 
-                                                            if ( flowbit[i].ip_src == ip_src )
+                                                            if ( flowbit[a].ip_src == ip_src )
                                                                 {
 
                                                                     if ( debug->debugflowbit)
@@ -283,7 +285,7 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
                                                     if ( rulestruct[rule_position].flowbit_direction[i] == 3 )
                                                         {
 
-                                                            if ( flowbit[i].ip_dst == ip_dst )
+                                                            if ( flowbit[a].ip_dst == ip_dst )
                                                                 {
 
                                                                     if ( debug->debugflowbit)
@@ -298,7 +300,8 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
                                                     if ( rulestruct[rule_position].flowbit_direction[i] == 4 )
                                                         {
 
-                                                            if ( flowbit[i].ip_src == ip_dst && flowbit[i].ip_dst == ip_src )
+                                                            if ( flowbit[a].ip_src == ip_dst && 
+								 flowbit[a].ip_dst == ip_src )
                                                                 {
 
                                                                     if ( debug->debugflowbit)
