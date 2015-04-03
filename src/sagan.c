@@ -1016,7 +1016,7 @@ int main(int argc, char **argv)
                                 }
                             else
                                 {
-                                    Sagan_Log(S_WARN, "FIFO writer closed.  Waiting for FIFO write to restart....");
+                                    Sagan_Log(S_WARN, "FIFO writer closed.  Waiting for FIFO writer to restart....");
                                     fifoerr=1; 			/* Set flag so our wile(fgets) knows */
                                 }
                         }
