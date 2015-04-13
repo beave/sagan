@@ -145,7 +145,9 @@ void sagan_statistics( void )
 
             if (config->blacklist_flag)
                 {
+		    Sagan_Log(S_NORMAL, "           Blacklist Lookups        : %" PRIu64 " (%.3f%%)", counters->blacklist_lookup_count, CalcPct(counters->blacklist_lookup_count, counters->sagantotal) );
                     Sagan_Log(S_NORMAL, "           Blacklist Hits           : %" PRIu64 " (%.3f%%)", counters->blacklist_hit_count, CalcPct(counters->blacklist_hit_count, counters->sagantotal) );
+
                 }
 
             if (config->sagan_track_clients_flag)

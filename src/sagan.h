@@ -89,6 +89,7 @@ struct _SaganCounters
     uint64_t fwsam_count;
     uint64_t ignore_count;
     uint64_t blacklist_count;
+
     uint64_t alert_total;
 
     uint64_t malformed_host;
@@ -107,6 +108,7 @@ struct _SaganCounters
     uint64_t track_clients_down;
 
     uint64_t blacklist_hit_count;
+    uint64_t blacklist_lookup_count;
 
     int	     thread_output_counter;
     int	     thread_processor_counter;
