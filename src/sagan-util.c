@@ -101,13 +101,37 @@ void sagan_droppriv(const char *username)
         {
             Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 
+	    /* 
+	     * We chown certain log files to our Sagan user.  This is done so no files are "owned" 
+	     * by "root".  This prevents problems in the future when doing things like handling
+             * SIGHUP's and what not.  
+             * 
+             * Champ Clark (04/14/2015)
+             */
+
             ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 ) 
+                {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, username, strerror(errno));
+                }
+
             ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 ) 
+                {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_log_filepath, username, strerror(errno));
+                }
+
             ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 )
+                {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, username, strerror(errno));
+                }  
 
             if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
 
-            if ( ret < 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, username, strerror(errno));
 
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
