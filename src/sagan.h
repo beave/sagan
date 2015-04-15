@@ -57,7 +57,7 @@ char   *To_LowerC(char* const );
 
 int	Check_Endian( void );
 void    Usage( void );
-void    Chroot( const char *, const char * );
+void    Sagan_Chroot( const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
@@ -332,7 +332,7 @@ struct _Sagan_Processor_Info
 
 
 void Sagan_Log( int, const char *, ... );
-void sagan_droppriv( const char *);
+void Dagan_Droppriv( void );
 char *DNS_Lookup( char * );
 char *Sagan_Var_To_Value(char *);
 uint32_t IP2Bit (char * );

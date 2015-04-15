@@ -67,11 +67,8 @@ sbool daemonize;
  * it initalized                                                             *
  *****************************************************************************/
 
-void Chroot(const char *username, const char *chrootdir )
+void Sagan_Chroot(const char *chrootdir )
 {
-
-//    struct passwd *pw = NULL;
-//    pw = getpwnam(username);
 
     printf("[*] Chroot to %s\n", chrootdir);
 
@@ -86,52 +83,37 @@ void Chroot(const char *username, const char *chrootdir )
  * Drop priv's so we aren't running as "root".  *
  ************************************************/
 
-void sagan_droppriv(const char *username)
+void Sagan_Droppriv(void)
 {
 
     struct stat fifocheck;
     struct passwd *pw = NULL;
     int ret;
 
-    pw = getpwnam(username);
+    pw = getpwnam(config->sagan_runas);
 
-    if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", username);
+    if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
 
     if ( getuid() == 0 )
         {
             Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 
-	    /* 
-	     * We chown certain log files to our Sagan user.  This is done so no files are "owned" 
-	     * by "root".  This prevents problems in the future when doing things like handling
-             * SIGHUP's and what not.  
-             * 
-             * Champ Clark (04/14/2015)
-             */
+            /*
+             * We chown certain log files to our Sagan user.  This is done so no files are "owned"
+             * by "root".  This prevents problems in the future when doing things like handling
+                 * SIGHUP's and what not.
+                 *
+                 * Champ Clark (04/14/2015)
+                 */
 
             ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
-            if ( ret < 0 ) 
-                {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, username, strerror(errno));
-                }
-
-            ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 ) 
-                {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_log_filepath, username, strerror(errno));
-                }
-
-            ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
             if ( ret < 0 )
                 {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, username, strerror(errno));
-                }  
+                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                }
 
             if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
-
 
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
@@ -744,8 +726,15 @@ sbool Sagan_Wildcard( char *first, char *second )
 void Sagan_Open_Log_File( sbool state, int type )
 {
 
+    struct passwd *pw = NULL;
+    int ret;
+
+    pw = getpwnam(config->sagan_runas);
+
     if ( type == SAGAN_LOG || type == ALL_LOGS )
         {
+
+            /* For SIGHUP */
 
             if ( state == REOPEN )
                 {
@@ -757,11 +746,23 @@ void Sagan_Open_Log_File( sbool state, int type )
                     fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
                     exit(1);
                 }
+
+            /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
+
+            ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_log_filepath, config->sagan_runas, strerror(errno));
+                }
+
         }
 
 
     if ( type == ALERT_LOG || type == ALL_LOGS )
         {
+
+            /* For SIGHUP */
 
             if ( state == REOPEN )
                 {
@@ -772,6 +773,15 @@ void Sagan_Open_Log_File( sbool state, int type )
                 {
                     Remove_Lock_File();
                     Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                }
+
+            /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
+
+            ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
                 }
 
         }

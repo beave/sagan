@@ -195,8 +195,6 @@ int main(int argc, char **argv)
     char *tok;
     int rc=0;
 
-    char *runas=RUNAS;
-
     int i;
 
     time_t t;
@@ -238,6 +236,7 @@ int main(int argc, char **argv)
        shortly - 06/03/2011 - Champ Clark III */
 
     strlcpy(config->sagan_log_filepath, SAGANLOG, sizeof(config->sagan_log_filepath));
+    config->sagan_runas = RUNAS;
 
     /* Get command line arg's */
     while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1)
@@ -376,11 +375,11 @@ int main(int argc, char **argv)
                     break;
 
                 case 'u':
-                    runas=optarg;
+                    config->sagan_runas=optarg;
                     break;
 
                 case 'c':
-                    Chroot(runas,optarg);
+                    Sagan_Chroot(optarg);
                     break;
 
                 case 'F':
@@ -464,7 +463,7 @@ int main(int argc, char **argv)
 #endif
 
 
-    sagan_droppriv(runas);              /* Become the Sagan user */
+    Sagan_Droppriv();              /* Become the Sagan user */
     Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
 
 
