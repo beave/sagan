@@ -332,7 +332,7 @@ struct _Sagan_Processor_Info
 
 
 void Sagan_Log( int, const char *, ... );
-void Dagan_Droppriv( void );
+void Sagan_Droppriv( void );
 char *DNS_Lookup( char * );
 char *Sagan_Var_To_Value(char *);
 uint32_t IP2Bit (char * );
