@@ -154,6 +154,14 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
+                    /*
+                    * Close and re-open log files.  This is for logrotate and such
+                    * 04/14/2015 - Champ Clark III (cclark@quadrantsec.com)
+                    */
+
+                    Sagan_Open_Log_File(REOPEN, ALL_LOGS);
+
+
                     /* Reset counters */
                     counters->refcount=0;
                     counters->classcount=0;

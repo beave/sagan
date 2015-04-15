@@ -108,3 +108,11 @@
 #define FRIDAY		32
 #define SATURDAY	64
 
+/* This is for loading/reloading Sagan log files */
+
+#define OPEN		0
+#define REOPEN		1
+
+#define SAGAN_LOG	0
+#define ALERT_LOG	1
+#define ALL_LOGS	100

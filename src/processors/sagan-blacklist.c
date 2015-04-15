@@ -231,7 +231,7 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
     int i;
 
-    counters->blacklist_lookup_count++; 
+    counters->blacklist_lookup_count++;
 
 
     for ( i = 0; i < counters->blacklist_count; i++)
@@ -281,7 +281,7 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 
             ip = IP2Bit(results);
 
-	    counters->blacklist_lookup_count++; 
+            counters->blacklist_lookup_count++;
 
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {

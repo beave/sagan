@@ -342,4 +342,4 @@ sbool is_rfc1918 ( uint32_t );
 char *Sagan_Replace_Sagan( char *, char *);
 int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
-
+void Sagan_Open_Log_File( sbool, int );

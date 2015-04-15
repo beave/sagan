@@ -404,17 +404,10 @@ int main(int argc, char **argv)
                 }
         }
 
-    /* Open the sagan.log file.  Moved from sagan-config.c as it became to complex
-       06/03/2011 - Champ Clark */
-
-    if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL)
-        {
-            fprintf(stderr, "[E] [%s, line %d] Cannot open %s!\n", __FILE__, __LINE__, config->sagan_log_filepath);
-            exit(1);
-        }
-
+    Sagan_Open_Log_File(OPEN, SAGAN_LOG);
 
     Load_Config();
+
     Sagan_Engine_Init();
 
 #ifdef HAVE_LIBLOGNORM
@@ -497,11 +490,7 @@ int main(int argc, char **argv)
 
     /* Open sagan alert file */
 
-    if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL )
-        {
-            Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
-        }
+    Sagan_Open_Log_File(OPEN, ALERT_LOG);
 
     /****************************************************************************
      * Display processor information as we load

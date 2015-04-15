@@ -100,7 +100,10 @@ void sagan_droppriv(const char *username)
     if ( getuid() == 0 )
         {
             Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+
             ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+            ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+            ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
             if (stat(config->sagan_fifo, &fifocheck) != 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
 
@@ -708,4 +711,46 @@ sbool Sagan_Wildcard( char *first, char *second )
     return false;
 }
 
+/****************************************************************************
+ * Sagan_Open_Log_File - This controls the opening and/or re-opening of log
+ * files.  This is useful for situation like SIGHUP,  where we want to
+ * close a file handle and start a new one.  Think of 'logrotate'.
+ ****************************************************************************/
+
+void Sagan_Open_Log_File( sbool state, int type )
+{
+
+    if ( type == SAGAN_LOG || type == ALL_LOGS )
+        {
+
+            if ( state == REOPEN )
+                {
+                    fclose(config->sagan_log_stream);
+                }
+
+            if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL)
+                {
+                    fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+                    exit(1);
+                }
+        }
+
+
+    if ( type == ALERT_LOG || type == ALL_LOGS )
+        {
+
+            if ( state == REOPEN )
+                {
+                    fclose(config->sagan_alert_stream);
+                }
+
+            if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL )
+                {
+                    Remove_Lock_File();
+                    Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                }
+
+        }
+
+}
 
