@@ -38,6 +38,8 @@
 #include <string.h>
 #include <GeoIP.h>
 #include <pthread.h>
+#include <errno.h>
+#include <unistd.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -56,6 +58,26 @@ pthread_mutex_t SaganGeoIPMutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Open_GeoIP_Database( void )
 {
 
+    int result;
+
+    /*
+     * The GeoIP library gives a really vague error when it cannot load
+     * the GeoIP database.  We give the user more information here so
+     * that they might fix the issue.  This also serves as a test when
+     * Sagan is reloading (SIGHUP) - Champ Clark III (04/20/2015)
+     */
+
+    result = access(config->geoip_country_file, R_OK);
+
+    if ( result != 0 )
+        {
+            Sagan_Log(S_WARN, "Cannot open '%s' [%s]!",  config->geoip_country_file, strerror(errno));
+            Sagan_Log(S_WARN, "Make sure the GeoIP database '%s' is readable by '%s'.", config->geoip_country_file, config->sagan_runas);
+            Sagan_Log(S_WARN, "Sagan is NOT loading the GeoIP database data!");
+            return;
+        }
+
+
     config->geoip = NULL;
 
     /* May want to provide option for GEOIP_STANDARD, GEOIP_MEMORY_CACHE,
@@ -63,7 +85,10 @@ void Sagan_Open_GeoIP_Database( void )
 
     config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
 
-    if ( config->geoip == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] Cannot open GeoIP datbase : %s", __FILE__, __LINE__, config->geoip_country_file);
+    if ( config->geoip == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Something went wrong.  Cannot load '%s'", __FILE__, __LINE__, config->geoip_country_file);
+        }
 
 }
 

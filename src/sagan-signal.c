@@ -268,7 +268,7 @@ void Sig_Handler( _SaganSigArgs *args )
 
 #ifdef HAVE_LIBGEOIP
                     Sagan_Log(S_NORMAL, "Reloading GeoIP data.");
-                    config->geoip = GeoIP_open(config->geoip_country_file, GEOIP_MEMORY_CACHE);
+                    Sagan_Open_GeoIP_Database();
 #endif
 
                     sagan_reload = 0;
