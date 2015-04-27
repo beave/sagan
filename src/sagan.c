@@ -191,7 +191,7 @@ int main(int argc, char **argv)
 
     char syslogstring[MAX_SYSLOGMSG];
 
-    char c;
+    signed char c;
     char *tok;
     int rc=0;
 
