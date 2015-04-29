@@ -10,5 +10,8 @@ ossec-sagan.pl	- This utility takes a series of OSSEC rules, and generates
 		  a series of compatible SAGAN rules.  This was written 
 		  by Michael Iverson. [OSSEC to Sagan conversion utility]
 
+RPM		- Example RPM spec and system files to build Sagan RPM package
+		  for CentOS 7
+
 rsyslog		- Configuration to send rsyslog data to Sagan. Place this
 		  file in /etc/rsyslog.d

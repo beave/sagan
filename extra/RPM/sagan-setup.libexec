@@ -1,0 +1,28 @@
+#!/bin/sh
+
+config="$1"
+
+if [ ! -f "$config" ]; then
+    echo "config file '$config' does not exist"
+    exit 1
+fi
+
+while read a b c; do
+    if [ "$a" = "var" -a "$b" = "FIFO" ]; then
+        fifo="$c"
+    fi
+done < "$config"
+
+if [ -z "$fifo" ]; then
+    echo "var FIFO is not defined"
+    exit 1
+fi
+
+if [ ! -p "$fifo" ]; then
+    if ! mkfifo "$fifo" 2>/dev/null; then
+        echo "can't create fifo '$fifo'"
+        exit 1
+    fi
+fi
+
+chmod 0750 "$fifo"
