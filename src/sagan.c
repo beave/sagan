@@ -197,14 +197,6 @@ int main(int argc, char **argv)
 
     int i;
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
-    int fd_int;
-    int current_fifo_size;
-    int new_fifo_size;
-    int fd_results;
-#endif
-
-
     time_t t;
     struct tm *run;
 
@@ -725,41 +717,11 @@ int main(int argc, char **argv)
                 {
                     Sagan_Log(S_NORMAL, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
-
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 
-                    if ( config->sagan_fifo_size != 0 )
-                        {
+                    Sagan_Set_Pipe_Size(fd);
 
-                            fd_int = fileno(fd);
-                            current_fifo_size = fcntl(fd_int, F_GETPIPE_SZ);
-
-                            if ( current_fifo_size == config->sagan_fifo_size )
-                                {
-
-                                    Sagan_Log(S_NORMAL, "FIFO capacity already set to %d bytes.", config->sagan_fifo_size);
-
-                                }
-                            else
-                                {
-
-                                    Sagan_Log(S_NORMAL, "FIFO capacity is %d bytes.  Changing to %d bytes.", current_fifo_size, config->sagan_fifo_size);
-
-                                    fd_results = fcntl(fd_int, F_SETPIPE_SZ, config->sagan_fifo_size );
-
-                                    if ( fd_results == -1 )
-                                        {
-                                            Sagan_Log(S_WARN, "FIFO capacity could not be changed.  Continuing anyways...");
-                                        }
-
-                                    if ( fd_results > config->sagan_fifo_size )
-                                        {
-                                            Sagan_Log(S_WARN, "FIFO capacity was rounded up to the next page size of %d bytes.", fd_results);
-                                        }
-                                }
-                        }
 #endif
-
 
                 }
             else
@@ -779,6 +741,13 @@ int main(int argc, char **argv)
                             if ( fifoerr == 1 )
                                 {
                                     Sagan_Log(S_NORMAL, "FIFO writer has restarted. Processing events.");
+
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+
+                                    Sagan_Set_Pipe_Size(fd);
+
+#endif
+
                                     fifoerr=0;
                                 }
 

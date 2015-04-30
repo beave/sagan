@@ -156,11 +156,9 @@ struct _SaganConfig
     /* For Maxmind GeoIP address lookup */
 
 #ifdef HAVE_LIBGEOIP
-
     GeoIP *geoip;
     char        geoip_country_file[MAXPATH];
     sbool have_geoip;
-
 #endif
 
     /* Used for altering pipe size (if supported) */
