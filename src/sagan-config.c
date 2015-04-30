@@ -124,6 +124,8 @@ void Load_Config( void )
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
 
+    config->sagan_fifo_size = MAX_FIFO_SIZE;
+
     if ( config->sagan_fifo_flag != 1 )
         {
             strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
@@ -220,6 +222,22 @@ void Load_Config( void )
 
                     config->sagan_port = atoi(sagan_var1);
                 }
+
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+
+            if (!strcmp(sagan_option, "sagan_fifo_size"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"sagan_fifo_size\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->sagan_fifo_size = atoi(sagan_var1);
+                }
+#endif
+
 
 #ifndef HAVE_LIBESMTP
             if (!strcmp(sagan_option, "send-to") || !strcmp(sagan_option, "min_email_priority"))

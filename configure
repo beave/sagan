@@ -5905,6 +5905,73 @@ _ACEOF
 
 
 
+
+# F_SETPIPE_SZ in fcntl.h
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for F_SETPIPE_SZ in fcntl.h" >&5
+$as_echo_n "checking for F_SETPIPE_SZ in fcntl.h... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+  #define _GNU_SOURCE
+  #include <fcntl.h>
+  #ifdef F_SETPIPE_SZ
+  yes_have_f_setpipe_sz
+  #endif
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "yes_have_f_setpipe_sz" >/dev/null 2>&1; then :
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define HAVE_SETPIPE_SZ /**/" >>confdefs.h
+
+
+else
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: F_SETPIPE_SZ not found, cannot alter FIFO" >&5
+$as_echo "$as_me: F_SETPIPE_SZ not found, cannot alter FIFO" >&6;}
+
+fi
+rm -f conftest*
+
+
+# F_GETPIPE_SZ in fcntl.h
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for F_GETPIPE_SZ in fcntl.h" >&5
+$as_echo_n "checking for F_GETPIPE_SZ in fcntl.h... " >&6; }
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+  #define _GNU_SOURCE
+  #include <fcntl.h>
+  #ifdef F_GETPIPE_SZ
+  yes_have_f_getpipe_sz
+  #endif
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "yes_have_f_getpipe_sz" >/dev/null 2>&1; then :
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+$as_echo "#define HAVE_GETPIPE_SZ /**/" >>confdefs.h
+
+
+else
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  { $as_echo "$as_me:${as_lineno-$LINENO}: F_GETPIPE_SZ not found, cannot alter FIFO" >&5
+$as_echo "$as_me: F_GETPIPE_SZ not found, cannot alter FIFO" >&6;}
+
+fi
+rm -f conftest*
+
+
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
 $as_echo_n "checking for an ANSI C-conforming const... " >&6; }

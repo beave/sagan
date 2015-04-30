@@ -195,6 +195,39 @@ AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthr
 
 AC_CHECK_SIZEOF([size_t])
 
+
+# F_SETPIPE_SZ in fcntl.h
+AC_MSG_CHECKING([for F_SETPIPE_SZ in fcntl.h])
+AC_EGREP_CPP([yes_have_f_setpipe_sz], [
+  #define _GNU_SOURCE
+  #include <fcntl.h>
+  #ifdef F_SETPIPE_SZ
+  yes_have_f_setpipe_sz
+  #endif
+], [
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_SETPIPE_SZ], [], [F_SETPIPE_SZ is supported])
+], [
+  AC_MSG_RESULT([no])
+  AC_MSG_NOTICE([F_SETPIPE_SZ not found, cannot alter FIFO])
+])
+
+# F_GETPIPE_SZ in fcntl.h
+AC_MSG_CHECKING([for F_GETPIPE_SZ in fcntl.h])
+AC_EGREP_CPP([yes_have_f_getpipe_sz], [
+  #define _GNU_SOURCE
+  #include <fcntl.h>
+  #ifdef F_GETPIPE_SZ
+  yes_have_f_getpipe_sz
+  #endif
+], [
+  AC_MSG_RESULT([yes])
+  AC_DEFINE([HAVE_GETPIPE_SZ], [], [F_GETPIPE_SZ is supported])
+], [
+  AC_MSG_RESULT([no])
+  AC_MSG_NOTICE([F_GETPIPE_SZ not found, cannot alter FIFO])
+])
+
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_HEADER_TIME

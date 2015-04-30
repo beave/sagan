@@ -64,12 +64,10 @@ struct _SaganConfig
     int          daemonize;
     int          sagan_proto;
 
-
     /*    sbool        home_any;  */                     /* 0 == no, 1 == yes */
     /*    sbool        external_any;  */
 
     sbool 	 lognorm_all; 				/* Flag to load all normalization files or not */
-
     sbool        endian;
 
     /* Processors */
@@ -163,6 +161,12 @@ struct _SaganConfig
     char        geoip_country_file[MAXPATH];
     sbool have_geoip;
 
+#endif
+
+    /* Used for altering pipe size (if supported) */
+
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+    int          sagan_fifo_size;
 #endif
 
 };

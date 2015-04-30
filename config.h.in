@@ -48,6 +48,9 @@
 /* Define to 1 if you have the `getopt_long' function. */
 #undef HAVE_GETOPT_LONG
 
+/* F_GETPIPE_SZ is supported */
+#undef HAVE_GETPIPE_SZ
+
 /* Define to 1 if you have the `htons' function. */
 #undef HAVE_HTONS
 
@@ -130,6 +133,9 @@
 
 /* Define to 1 if you have the `send' function. */
 #undef HAVE_SEND
+
+/* F_SETPIPE_SZ is supported */
+#undef HAVE_SETPIPE_SZ
 
 /* Define to 1 if you have the `sizeof' function. */
 #undef HAVE_SIZEOF
