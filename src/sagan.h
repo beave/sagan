@@ -344,6 +344,6 @@ int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 
-//#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * ); 
-//#endif
+#endif
