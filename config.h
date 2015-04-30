@@ -71,7 +71,7 @@
 #define HAVE_LIBESTR 1
 
 /* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-#define HAVE_LIBGEOIP 1
+/* #undef HAVE_LIBGEOIP */
 
 /* Define to 1 if you have the `json' library (-ljson). */
 #define HAVE_LIBJSON 1
@@ -289,6 +289,9 @@
 
 /* Define to the type of arg 5 for `select'. */
 #define SELECT_TYPE_ARG5 (struct timeval *)
+
+/* The size of `size_t', as computed by sizeof. */
+#define SIZEOF_SIZE_T 8
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
