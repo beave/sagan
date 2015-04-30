@@ -44,7 +44,7 @@
 
 #ifndef WITH_SYSSTRSTR 		/* If NOT using system built in strstr */
 
-#if defined(HAVE_SSE2) && defined(HAVE_SSE4_1)	/* And our CPU supports SSE2 & HAVE_SSE4_1 */
+#if defined(HAVE_SSE2) && SIZEOF_SIZE_T == 8  	/* And our CPU supports SSE2 & is the CPU 64 bit */
 
 /* This function takes advantage of CPUs with SSE2 */
 
