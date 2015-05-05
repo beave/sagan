@@ -9,7 +9,7 @@ ExecStartPre=/usr/libexec/sagan/sagan-setup $CONFIG
 ExecStart=/usr/sbin/sagan -f $CONFIG
 ExecReload=/bin/kill -HUP $MAINPID
 Restart=on-failure
-StandOutput=null
+StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
