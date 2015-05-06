@@ -351,11 +351,18 @@ char *DNS_Lookup( char *host )
     char ipstr[INET6_ADDRSTRLEN];
     char *ret;
     void *addr;
+     
+    /* Short circuit if it's a "localhost" lookup */
+
+    if ( !strcmp(host, "localhost" ) )
+    	{
+	return(config->sagan_host); 
+	}
 
     if ( config->disable_dns_warnings == 0 )
         {
             Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-            Sagan_Log(S_WARN, "Sagan DNS lookup need for %s.", host);
+            Sagan_Log(S_WARN, "Sagan DNS lookup need for '%s'.", host);
             Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
             Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
             Sagan_Log(S_WARN, "--------------------------------------------------------------------------");

@@ -100,7 +100,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 {
 
     char buf[10*1024] = { 0 };
-    /*    char tmp_host[254] = { 0 }; */
+    char tmp_host[254] = { 0 }; 
 
     const char *cstr = NULL;
     const char *tmp = NULL;
@@ -129,10 +129,18 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     /* Get source address information */
 
     tmp = json_object_get_string(json_object_object_get(json, "src-ip"));
-    if ( tmp != NULL) snprintf(SaganNormalizeLiblognorm->ip_src, sizeof(SaganNormalizeLiblognorm->ip_src), "%s", tmp);
+
+    if ( tmp != NULL) 
+    	{
+	snprintf(SaganNormalizeLiblognorm->ip_src, sizeof(SaganNormalizeLiblognorm->ip_src), "%s", tmp);
+	}
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
-    if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
+
+    if ( tmp != NULL ) 
+    	{
+	snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
+	}
 
     /* Get username information - Will be used in the future */
 
@@ -150,6 +158,18 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
+
+	    if ( SaganNormalizeLiblognorm->ip_src[0] == '0' ) 
+	    	{
+		strlcpy(tmp_host, DNS_Lookup(SaganNormalizeLiblognorm->src_host), sizeof(tmp_host));
+
+		if ( tmp_host[0] == '0' ) 
+			{
+			Sagan_Log(S_WARN, "Failed to do a DNS lookup for source '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->src_host, config->sagan_host); 
+			strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host)); 
+			}
+		} 
+
         }
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
@@ -157,6 +177,17 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
+
+	    if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' )
+	    	{
+		strlcpy(tmp_host, DNS_Lookup(SaganNormalizeLiblognorm->dst_host), sizeof(tmp_host));
+
+		if ( tmp_host[0] == '0' )
+			{
+			Sagan_Log(S_WARN, "Failed to do a DNS lookup for destination '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->dst_host, config->sagan_host);
+			strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host));
+			}
+		}
         }
 
     /* Get port information */
