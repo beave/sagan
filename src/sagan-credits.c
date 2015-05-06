@@ -67,6 +67,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "Iman Khosravi\t\t\t\t\tRules.\n");
     fprintf(stderr, "Jon Schipp\t\t\t\t\tBug reports & testing.\n");
     fprintf(stderr, "Aleksey Chudov\t\t\t\t\t\"logrotate\" fix/suggestion.\n");
+    fprintf(stderr, "DonPiekarz (Github)\t\t\t\tBug reports & fixes.\n");
 
     fprintf(stderr, "\n");
 

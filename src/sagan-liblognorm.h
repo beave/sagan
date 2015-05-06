@@ -52,7 +52,8 @@ typedef struct _SaganNormalizeLiblognorm
     int  src_port;
     int  dst_port;
 
-//const char username[256];
+    char username[256];
+
 //const char uid[10];
 
 } _SaganNormalizeLiblognorm;

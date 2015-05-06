@@ -115,11 +115,13 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->src_host[0] = '\0';
     SaganNormalizeLiblognorm->dst_host[0] = '\0';
 
+    SaganNormalizeLiblognorm->src_port = 0; 
+    SaganNormalizeLiblognorm->dst_port = 0; 
+
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
+    /* int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p); */
     ln_normalize(ctx, buf, strlen(buf), &json);
-
-    //int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p);
 
     cstr = (char*)json_object_to_json_string(json);
 
@@ -139,54 +141,31 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" ) ||
             !strcmp(SaganNormalizeLiblognorm->ip_dst, "")) strlcpy(SaganNormalizeLiblognorm->ip_dst, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
 
-    /* Get username information (not currently used)
+    /* Get username information - Will be used in the future */
 
     tmp = json_object_get_string(json_object_object_get(json, "username"));
-    if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
 
-    */
+    if ( tmp != NULL ) 
+    	{ 
+	snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+	}
 
     /* Do DNS lookup for source hostname */
 
     tmp = json_object_get_string(json_object_object_get(json, "src-host"));
 
     if ( tmp != NULL )
+    	{
         strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
+	}
 
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
     if ( tmp != NULL )
+    	{
         strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
-
-
-    /*
-            if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
-                {
-    */
-
-    /* Avoid const char * warning */
-
-    /*              snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);
-                    strlcpy(SaganNormalizeLiblognorm->ip_src, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_src));
-                 }
-    */
-
-    /*
-        tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
-
-        if ( tmp != NULL && strcmp(tmp, "::1") && strcmp(tmp, "localhost") && strcmp(tmp, "127.0.0.1"))
-            {
-    */
-
-    /* Avoid const char * warning */
-
-    /*
-                  snprintf(tmp_host, sizeof(tmp_host), "%s", tmp);
-                  strlcpy(SaganNormalizeLiblognorm->ip_dst, DNS_Lookup(tmp_host), sizeof(SaganNormalizeLiblognorm->ip_dst));
-            }
-
-    */
+	}
 
     /* Get port information */
 
@@ -208,7 +187,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
             Sagan_Log(S_DEBUG, "Source Host: %s", SaganNormalizeLiblognorm->src_host);
             Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
-//     Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
+            Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
             Sagan_Log(S_DEBUG, "");
         }
 
