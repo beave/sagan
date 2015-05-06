@@ -20,5 +20,6 @@
 
 
 void Sagan_Perfmonitor_Handler( void );
-void Sagan_Perfmonitor_Exit( void );
+void Sagan_Perfmonitor_Open( void );
+void Sagan_Perfmonitor_Close( void );
 

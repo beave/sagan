@@ -112,12 +112,12 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
     SaganNormalizeLiblognorm->ip_dst[1] = '\0';
 
-    SaganNormalizeLiblognorm->username[0] = '\0'; 
+    SaganNormalizeLiblognorm->username[0] = '\0';
     SaganNormalizeLiblognorm->src_host[0] = '\0';
     SaganNormalizeLiblognorm->dst_host[0] = '\0';
 
-    SaganNormalizeLiblognorm->src_port = 0; 
-    SaganNormalizeLiblognorm->dst_port = 0; 
+    SaganNormalizeLiblognorm->src_port = 0;
+    SaganNormalizeLiblognorm->dst_port = 0;
 
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
@@ -138,42 +138,42 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     tmp = json_object_get_string(json_object_object_get(json, "username"));
 
-    if ( tmp != NULL ) 
-    	{ 
-	snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
-	}
+    if ( tmp != NULL )
+        {
+            snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+        }
 
     /* Do DNS lookup for source hostname */
 
     tmp = json_object_get_string(json_object_object_get(json, "src-host"));
 
     if ( tmp != NULL )
-    	{
-        strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
-	}
+        {
+            strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
+        }
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
     if ( tmp != NULL )
-    	{
-        strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
-	}
+        {
+            strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
+        }
 
     /* Get port information */
 
     tmp = json_object_get_string(json_object_object_get(json, "src-port"));
 
-    if ( tmp != NULL ) 
-    	{
-	SaganNormalizeLiblognorm->src_port = atoi(tmp);
-	}
+    if ( tmp != NULL )
+        {
+            SaganNormalizeLiblognorm->src_port = atoi(tmp);
+        }
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
 
-    if ( tmp != NULL ) 
-    	{
-	SaganNormalizeLiblognorm->dst_port = atoi(tmp);
-	}
+    if ( tmp != NULL )
+        {
+            SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+        }
 
     if ( debug->debugnormalize )
         {

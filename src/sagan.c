@@ -470,12 +470,7 @@ int main(int argc, char **argv)
     if ( config->perfmonitor_flag )
         {
 
-            if (( config->perfmonitor_file_stream = fopen(config->perfmonitor_file_name, "a" )) == NULL )
-                {
-                    Remove_Lock_File();
-                    Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
-                }
-
+            Sagan_Perfmonitor_Open();
 
             rc = pthread_create( &perfmonitor_thread, NULL, (void *)Sagan_Perfmonitor_Handler, sigargs );
 

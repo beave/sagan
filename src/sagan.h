@@ -42,7 +42,6 @@
 
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
 
-
 #ifndef HAVE_STRLCPY
 int strlcpy(char *, const char *,  size_t );
 #endif
@@ -345,5 +344,5 @@ sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
-void Sagan_Set_Pipe_Size( FILE * ); 
+void Sagan_Set_Pipe_Size( FILE * );
 #endif

@@ -34,6 +34,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <inttypes.h>
+#include <errno.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -42,20 +43,23 @@
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
+/*****************************************************************************
+ * Sagan_Perfmonitor_Handler - This becomes the thread to write out 
+ * preformance monitoring data.
+ *****************************************************************************/
+
 void Sagan_Perfmonitor_Handler( void )
 {
 
     unsigned long total=0;
     unsigned long seconds=0;
 
-    char curtime[64] = { 0 };
     char curtime_utime[64] = { 0 };
     time_t t;
     struct tm *now;
 
     t = time(NULL);
     now=localtime(&t);
-    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
     strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
 
     uint64_t last_sagantotal = 0;
@@ -87,10 +91,6 @@ void Sagan_Perfmonitor_Handler( void )
     uint64_t last_sagan_output_drop = 0;
 
     uint64_t last_dns_miss_count = 0;
-
-    fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);
-    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip.lookup.total,geoip.hits,geoip.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.websense.cache_count,processor.websense.hits,processor.websense.errors,processor.websense.found\n");
-    fflush(config->perfmonitor_file_stream);
 
     while (1)
         {
@@ -222,7 +222,11 @@ void Sagan_Perfmonitor_Handler( void )
         }
 }
 
-void Sagan_Perfmonitor_Exit(void)
+/*****************************************************************************
+ * Sagan_Perfmonitor_Close - Closes performance monitoring file.
+ *****************************************************************************/
+
+void Sagan_Perfmonitor_Close(void)
 {
 
     char curtime[64] = { 0 };
@@ -238,5 +242,32 @@ void Sagan_Perfmonitor_Exit(void)
 
     fflush(config->perfmonitor_file_stream);
     fclose(config->perfmonitor_file_stream);
+
+}
+
+/*****************************************************************************
+ * Sagan_Perfmonitor_Open - Open's performance monitoring file.
+ *****************************************************************************/
+
+void Sagan_Perfmonitor_Open(void)
+{
+
+    char curtime[64] = { 0 };
+    time_t t;
+    struct tm *now;
+
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
+
+    if (( config->perfmonitor_file_stream = fopen(config->perfmonitor_file_name, "a" )) == NULL )
+        {
+            Remove_Lock_File();
+            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
+        }
+
+    fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);
+    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip.lookup.total,geoip.hits,geoip.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.websense.cache_count,processor.websense.hits,processor.websense.errors,processor.websense.found\n");
+    fflush(config->perfmonitor_file_stream);
 
 }

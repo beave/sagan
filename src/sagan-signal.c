@@ -141,7 +141,9 @@ void Sig_Handler( _SaganSigArgs *args )
                     fclose(config->sagan_log_stream);
 
                     if ( config->perfmonitor_flag )
-                        Sagan_Perfmonitor_Exit();
+                        {
+                            Sagan_Perfmonitor_Close();
+                        }
 
                     Remove_Lock_File();
                     exit(0);
@@ -161,6 +163,11 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     Sagan_Open_Log_File(REOPEN, ALL_LOGS);
 
+                    if ( config->perfmonitor_flag )
+                        {
+                            Sagan_Perfmonitor_Close();
+                            Sagan_Perfmonitor_Open();
+                        }
 
                     /* Reset counters */
                     counters->refcount=0;

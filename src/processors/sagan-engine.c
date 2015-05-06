@@ -178,8 +178,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-    sbool liblognorm_status = 0; 	
-#endif	
+    sbool liblognorm_status = 0;
+#endif
 
     /* Search for matches */
 
@@ -439,7 +439,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     pthread_mutex_lock(&Lognorm_Mutex);
 
-				    liblognorm_status = 0; 
+                                    liblognorm_status = 0;
 
                                     Sagan_Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
 
@@ -447,33 +447,33 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                         {
                                             strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
                                             ip_src_flag = 1;
-					    liblognorm_status = 1; 
+                                            liblognorm_status = 1;
                                         }
 
                                     if (SaganNormalizeLiblognorm->ip_dst[0] != '0' )
                                         {
                                             strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst));
                                             ip_dst_flag = 1;
-					    liblognorm_status = 1;
+                                            liblognorm_status = 1;
                                         }
 
-				    if ( SaganNormalizeLiblognorm->src_port != 0 ) 
-				    	{ 
-				   	    src_port = SaganNormalizeLiblognorm->src_port;
-					    liblognorm_status = 1; 
-					} 
+                                    if ( SaganNormalizeLiblognorm->src_port != 0 )
+                                        {
+                                            src_port = SaganNormalizeLiblognorm->src_port;
+                                            liblognorm_status = 1;
+                                        }
 
-				    if ( SaganNormalizeLiblognorm->dst_port != 0 ) 
-				    	{ 
-					    dst_port = SaganNormalizeLiblognorm->dst_port;
-					    liblognorm_status = 1; 
-					} 
+                                    if ( SaganNormalizeLiblognorm->dst_port != 0 )
+                                        {
+                                            dst_port = SaganNormalizeLiblognorm->dst_port;
+                                            liblognorm_status = 1;
+                                        }
 
-				    if ( SaganNormalizeLiblognorm->username != NULL ) 
-				    	{
-	   			     	    username = SaganNormalizeLiblognorm->username;
-					    liblognorm_status = 1; 
-					} 
+                                    if ( SaganNormalizeLiblognorm->username != NULL )
+                                        {
+                                            username = SaganNormalizeLiblognorm->username;
+                                            liblognorm_status = 1;
+                                        }
 
 
 //		  			 uid = SaganNormalizeLiblognorm->uid;
@@ -484,8 +484,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #endif
 
-			    /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port, 
-			     * _unless_ liblognorm fails and both are in a rule */
+                            /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port,
+                             * _unless_ liblognorm fails and both are in a rule */
 
                             if ( rulestruct[b].normalize == 0 || (rulestruct[b].normalize == 1 && liblognorm_status == 0 ) )
                                 {
@@ -550,14 +550,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                              * (defined by user in sagan.conf */
 
                             if ( !strcmp(ip_src, "127.0.0.1") || !strcmp(ip_dst, "::1") )
-			    	{ 
-				strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
-				}
+                                {
+                                    strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
+                                }
 
                             if ( !strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "::1" ) )
-			    	{
-				strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
-				}
+                                {
+                                    strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
+                                }
 
                             ip_src_u32 = IP2Bit(ip_src);
                             ip_dst_u32 = IP2Bit(ip_dst);
