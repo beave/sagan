@@ -123,8 +123,9 @@ void Load_Config( void )
     config->sagan_fifo[0] = '\0';
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
-
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;
+#endif
 
     if ( config->sagan_fifo_flag != 1 )
         {
