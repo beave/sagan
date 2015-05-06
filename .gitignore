@@ -1,0 +1,13 @@
+
+# after configure
+config.log
+Makefile
+config.h
+config.status
+src/.deps/
+src/Makefile
+
+# after make
+*.o
+src/sagan
+
