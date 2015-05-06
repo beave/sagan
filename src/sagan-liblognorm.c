@@ -112,6 +112,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
     SaganNormalizeLiblognorm->ip_dst[1] = '\0';
 
+    SaganNormalizeLiblognorm->username[0] = '\0'; 
     SaganNormalizeLiblognorm->src_host[0] = '\0';
     SaganNormalizeLiblognorm->dst_host[0] = '\0';
 
@@ -133,14 +134,6 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
     if ( tmp != NULL ) snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
 
-    /* Make sure it returns something values,  if not, populate with config->sagan_host */
-
-    if (!strcmp(SaganNormalizeLiblognorm->ip_src, "127.0.0.1" ) ||
-            !strcmp(SaganNormalizeLiblognorm->ip_src, "")) strlcpy(SaganNormalizeLiblognorm->ip_src, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_src));
-
-    if (!strcmp(SaganNormalizeLiblognorm->ip_dst, "127.0.0.1" ) ||
-            !strcmp(SaganNormalizeLiblognorm->ip_dst, "")) strlcpy(SaganNormalizeLiblognorm->ip_dst, config->sagan_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
-
     /* Get username information - Will be used in the future */
 
     tmp = json_object_get_string(json_object_object_get(json, "username"));
@@ -159,7 +152,6 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
 	}
 
-
     tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
 
     if ( tmp != NULL )
@@ -170,10 +162,18 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     /* Get port information */
 
     tmp = json_object_get_string(json_object_object_get(json, "src-port"));
-    if ( tmp != NULL ) SaganNormalizeLiblognorm->src_port = atoi(tmp);
+
+    if ( tmp != NULL ) 
+    	{
+	SaganNormalizeLiblognorm->src_port = atoi(tmp);
+	}
 
     tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
-    if ( tmp != NULL )  SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+
+    if ( tmp != NULL ) 
+    	{
+	SaganNormalizeLiblognorm->dst_port = atoi(tmp);
+	}
 
     if ( debug->debugnormalize )
         {
