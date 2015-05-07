@@ -99,7 +99,6 @@ struct _Sagan_Flowbit *flowbit;
 #endif
 
 sbool daemonize=0;
-sbool sagan_reload=0;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 

@@ -53,8 +53,6 @@ struct _Rule_Struct *rulestruct;
 
 int proc_msgslot; 		/* Comes from sagan.c */
 
-sbool sagan_reload;
-
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
 
@@ -82,9 +80,6 @@ void Sagan_Processor ( void )
             pthread_mutex_lock(&SaganProcWorkMutex);
 
             while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
-
-            if ( sagan_reload == 0 )
-                {
 
                     proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
 					 * original value */
@@ -146,11 +141,6 @@ outside_loop:
 
                         } // End if if (ignore_Flag)
 
-                }
-            else
-                {
-                    counters->sagan_log_drop++;
-                }	/* sagan_reload */
 
         } //  for (;;)
 

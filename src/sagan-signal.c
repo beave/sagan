@@ -84,10 +84,6 @@ struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _Sagan_Flowbit *flowbit;
 
-sbool sagan_reload; 	/* Used to indicate Sagan is in reload.  This keeps Sagan
-			   pulling rules, etc. from memory in the middle of a
-			   reload */
-
 struct _Sagan_BroIntel_Intel_Addr *Sagan_BroIntel_Intel_Addr;
 struct _Sagan_BroIntel_Intel_Domain *Sagan_BroIntel_Intel_Domain;
 struct _Sagan_BroIntel_Intel_File_Hash *Sagan_BroIntel_Intel_File_Hash;
@@ -150,9 +146,8 @@ void Sig_Handler( _SaganSigArgs *args )
                     break;
 
                 case SIGHUP:
-                    pthread_mutex_lock(&sig_mutex);
 
-                    sagan_reload = 1; 			/* So we don't wipe memory while in the middle of analysis */
+                    pthread_mutex_lock(&sig_mutex);
 
                     Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
@@ -278,7 +273,6 @@ void Sig_Handler( _SaganSigArgs *args )
                     Sagan_Open_GeoIP_Database();
 #endif
 
-                    sagan_reload = 0;
                     pthread_mutex_unlock(&sig_mutex);
 
                     Sagan_Log(S_NORMAL, "Configuration reloaded.");
