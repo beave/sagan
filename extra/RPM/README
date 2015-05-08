@@ -4,12 +4,10 @@ To prepare source tarballs from the Git repository execute the following command
 
 1. For the Sagan
 cd ~/rpmbuild/SOURCES
-git -C /path/to/sagan.git pull
-cp -a /path/to/sagan.git sagan-1.0.0RC5
+git clone https://github.com/beave/sagan.git sagan-1.0.0RC5
 tar --exclude='.git*' -czf sagan-1.0.0RC5.tar.gz sagan-1.0.0RC5
 
 2. For the Sagan Rules
 cd ~/rpmbuild/SOURCES
-git -C /path/to/sagan-rules.git pull
-tar --exclude='.git*' -czf "sagan-rules-`git -C /path/to/sagan-rules.git rev-parse --short HEAD`.tar.gz" -C /path/to sagan-rules.git
-
+git clone https://github.com/beave/sagan-rules.git
+tar --exclude='.git*' -czf "sagan-rules-`git -C sagan-rules rev-parse --short HEAD`.tar.gz" sagan-rules
