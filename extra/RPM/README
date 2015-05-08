@@ -1,0 +1,15 @@
+Example RPM spec and system files for CentOS 7.
+
+To prepare source tarballs from the Git repository execute the following commands:
+
+1. For the Sagan
+cd ~/rpmbuild/SOURCES
+git -C /path/to/sagan.git pull
+cp -a /path/to/sagan.git sagan-1.0.0RC5
+tar --exclude='.git*' -czf sagan-1.0.0RC5.tar.gz sagan-1.0.0RC5
+
+2. For the Sagan Rules
+cd ~/rpmbuild/SOURCES
+git -C /path/to/sagan-rules.git pull
+tar --exclude='.git*' -czf "sagan-rules-`git -C /path/to/sagan-rules.git rev-parse --short HEAD`.tar.gz" -C /path/to sagan-rules.git
+

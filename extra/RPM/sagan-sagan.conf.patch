@@ -1,0 +1,281 @@
+diff -ur sagan-1.0.0RC5.orig/etc/sagan.conf sagan-1.0.0RC5/etc/sagan.conf
+--- sagan-1.0.0RC5.orig/etc/sagan.conf	2015-04-30 08:39:26.000000000 +0300
++++ sagan-1.0.0RC5/etc/sagan.conf	2015-04-30 11:35:46.429266091 +0300
+@@ -15,13 +15,13 @@
+ #
+ # [Required]
+ 
+-var FIFO /var/run/sagan.fifo
++var FIFO /var/log/sagan/sagan.fifo
+ 
+ # This variable contains the path of the Sagan rule sets.  It is required.
+ #
+ # [Required]
+ 
+-var RULE_PATH /usr/local/etc/sagan-rules
++var RULE_PATH /etc/sagan/sagan-rules
+ 
+ # Where Sagan should store it's lock file. 
+ #
+@@ -132,7 +132,7 @@
+ # you don't want to burn CPU in analyzing them.
+ ##############################################################################
+ 
+-; ignore_list: /usr/local/etc/sagan-ignore-list.txt
++; ignore_list: /etc/sagan/sagan-ignore-list.txt
+ 
+ ##############################################################################
+ # Maxmind GeoIP support:  Sagan will need the --enable-geoip flag for this 
+@@ -150,8 +150,8 @@
+ #
+ ##############################################################################
+ 
+-; country_database: /usr/local/share/GeoIP/GeoIP.dat
+-; var HOME_COUNTRY [US, CA]
++country_database: /usr/share/GeoIP/GeoIP.dat
++var HOME_COUNTRY [US, CA]
+ 
+ ##############################################################################
+ # The "WINDOWS_DOMAINS" variable.  This is used by some Windows rules to 
+@@ -205,7 +205,7 @@
+ # of performance or generating graphs with RRDTool.
+ ##############################################################################
+ 
+-; processor perfmonitor: time=600 file=/var/log/sagan/stats/sagan.stats
++; processor perfmonitor: time=600 file=/var/log/sagan/sagan.stats
+ 
+ ##############################################################################
+ # Websense Threatseeker  processor - This is the Sagan Websense processor.  
+@@ -223,7 +223,7 @@
+ #
+ ##############################################################################
+ 
+-; processor websense: device_id=SAGAN_SIEM max_cache=300000 cache_timeout=1 catagories=/usr/local/etc/sagan-rules/websense-catagories.conf auth=XXXXXXXXXXXX url=http://rp.cloud.threatseeker.com/urlinfo/cat?url=
++; processor websense: device_id=SAGAN_SIEM max_cache=300000 cache_timeout=1 catagories=/etc/sagan/sagan-rules/websense-catagories.conf auth=XXXXXXXXXXXX url=http://rp.cloud.threatseeker.com/urlinfo/cat?url=
+ 
+ # Define the Websense Catagory to trigger on via rules!
+ 
+@@ -240,7 +240,7 @@
+ # by a comma
+ ##############################################################################
+ 
+-; processor blacklist: /usr/local/etc/sagan-rules/blacklist.txt
++; processor blacklist: /etc/sagan/sagan-rules/blacklist.txt
+ 
+ ##############################################################################
+ # The Bro Intellegence framework
+@@ -440,15 +440,15 @@
+ # at run time,  they are loaded 'as needed' by the Sagan rule sets.  These
+ # get triggered by the 'normalize:' flag within a Sagan rule. 
+ 
+-normalize: cisco, $RULE_PATH/cisco-normalize.rulebase
+-normalize: openssh, $RULE_PATH/openssh-normalize.rulebase
+-normalize: smtp, $RULE_PATH/smtp-normalize.rulebase
+-normalize: dns, $RULE_PATH/dns-normalize.rulebase
+-normalize: imap, $RULE_PATH/imap-normalize.rulebase
+-normalize: su, $RULE_PATH/su-normalize.rulebase
+-normalize: vmware,  $RULE_PATH/vmware-normalize.rulebase
+-normalize: linux-kernel, $RULE_PATH/linux-kernel-normalize.rulebase
+-normalize: windows, $RULE_PATH/windows-normalize.rulebase
++#normalize: cisco, $RULE_PATH/cisco-normalize.rulebase
++#normalize: openssh, $RULE_PATH/openssh-normalize.rulebase
++#normalize: smtp, $RULE_PATH/smtp-normalize.rulebase
++#normalize: dns, $RULE_PATH/dns-normalize.rulebase
++#normalize: imap, $RULE_PATH/imap-normalize.rulebase
++#normalize: su, $RULE_PATH/su-normalize.rulebase
++#normalize: vmware,  $RULE_PATH/vmware-normalize.rulebase
++#normalize: linux-kernel, $RULE_PATH/linux-kernel-normalize.rulebase
++#normalize: windows, $RULE_PATH/windows-normalize.rulebase
+ 
+ #############################################################################
+ # GeoIP Sagan rule sets
+@@ -498,96 +498,96 @@
+ #
+ # It is _UNLIKELY_ you want to have _ALL_ rules enabled! 
+ 
+-include $RULE_PATH/adtran.rules
+-include $RULE_PATH/apache.rules
+-include $RULE_PATH/apc-emu.rules
+-include $RULE_PATH/arp.rules
+-include $RULE_PATH/artillery.rules
+-include $RULE_PATH/asterisk.rules
+-include $RULE_PATH/attack.rules
+-include $RULE_PATH/bash.rules
+-include $RULE_PATH/bind.rules
+-include $RULE_PATH/bonding.rules
+-include $RULE_PATH/bro-ids.rules
+-include $RULE_PATH/cacti-thold.rules
+-include $RULE_PATH/cisco-acs.rules
+-include $RULE_PATH/cisco-cucm.rules
+-include $RULE_PATH/cisco-ios.rules
+-include $RULE_PATH/cisco-malware.rules
+-include $RULE_PATH/cisco-pixasa.rules
+-include $RULE_PATH/cisco-prime.rules
+-include $RULE_PATH/cisco-sdee.rules
+-include $RULE_PATH/cisco-wlc.rules
+-include $RULE_PATH/citrix.rules
+-include $RULE_PATH/courier.rules
+-include $RULE_PATH/deleted.rules
+-include $RULE_PATH/digitalpersona.rules
+-include $RULE_PATH/dovecot.rules
+-include $RULE_PATH/fatpipe.rules
+-include $RULE_PATH/fortinet-malware.rules
+-include $RULE_PATH/fortinet.rules
+-include $RULE_PATH/ftpd.rules
+-include $RULE_PATH/grsec.rules
+-include $RULE_PATH/honeyd.rules
+-include $RULE_PATH/hordeimp.rules
+-include $RULE_PATH/hostapd.rules
+-include $RULE_PATH/huawei.rules
+-include $RULE_PATH/imapd.rules
+-include $RULE_PATH/ipop3d.rules
+-include $RULE_PATH/juniper.rules
+-include $RULE_PATH/kismet.rules
+-include $RULE_PATH/knockd.rules
+-include $RULE_PATH/linux-kernel.rules
+-include $RULE_PATH/milter.rules
+-include $RULE_PATH/mongodb.rules
+-include $RULE_PATH/mysql.rules
+-include $RULE_PATH/nfcapd-malware.rules
+-include $RULE_PATH/nfcapd.rules
+-include $RULE_PATH/nginx.rules
+-include $RULE_PATH/ntp.rules
+-include $RULE_PATH/openssh.rules
+-include $RULE_PATH/openvpn.rules
+-include $RULE_PATH/oracle.rules
+-include $RULE_PATH/ossec-mi.rules
+-include $RULE_PATH/ossec.rules
+-include $RULE_PATH/php.rules
+-include $RULE_PATH/postfix.rules
+-include $RULE_PATH/postgresql.rules
+-include $RULE_PATH/pptp.rules
+-include $RULE_PATH/procurve.rules
+-include $RULE_PATH/proftpd.rules
+-include $RULE_PATH/proxy-malware.rules
+-include $RULE_PATH/pure-ftpd.rules
+-include $RULE_PATH/racoon.rules
+-include $RULE_PATH/riverbed.rules
+-include $RULE_PATH/roundcube.rules
+-include $RULE_PATH/rsync.rules
+-include $RULE_PATH/samba.rules
+-include $RULE_PATH/sendmail.rules
+-include $RULE_PATH/snort.rules
+-include $RULE_PATH/solaris.rules
+-include $RULE_PATH/sonicwall.rules
+-include $RULE_PATH/squid.rules
+-include $RULE_PATH/ssh-tectia-server.rules
+-include $RULE_PATH/su.rules
+-include $RULE_PATH/symantec-ems.rules
+-include $RULE_PATH/syslog.rules
+-include $RULE_PATH/tcp.rules
+-include $RULE_PATH/telnet.rules
+-include $RULE_PATH/tripwire.rules
+-include $RULE_PATH/vmpop3d.rules
+-include $RULE_PATH/vmware.rules
+-include $RULE_PATH/vpopmail.rules
+-include $RULE_PATH/vsftpd.rules
+-include $RULE_PATH/web-attack.rules
+-include $RULE_PATH/weblabrinth.rules
+-include $RULE_PATH/windows-applocker.rules
+-include $RULE_PATH/windows-auth.rules
+-include $RULE_PATH/windows-emet.rules
+-include $RULE_PATH/windows-malware.rules
+-include $RULE_PATH/windows-misc.rules
+-include $RULE_PATH/windows-mssql.rules
+-include $RULE_PATH/windows.rules
+-include $RULE_PATH/wordpress.rules
+-include $RULE_PATH/xinetd.rules
+-include $RULE_PATH/zeus.rules
++#include $RULE_PATH/adtran.rules
++#include $RULE_PATH/apache.rules
++#include $RULE_PATH/apc-emu.rules
++#include $RULE_PATH/arp.rules
++#include $RULE_PATH/artillery.rules
++#include $RULE_PATH/asterisk.rules
++#include $RULE_PATH/attack.rules
++#include $RULE_PATH/bash.rules
++#include $RULE_PATH/bind.rules
++#include $RULE_PATH/bonding.rules
++#include $RULE_PATH/bro-ids.rules
++#include $RULE_PATH/cacti-thold.rules
++#include $RULE_PATH/cisco-acs.rules
++#include $RULE_PATH/cisco-cucm.rules
++#include $RULE_PATH/cisco-ios.rules
++#include $RULE_PATH/cisco-malware.rules
++#include $RULE_PATH/cisco-pixasa.rules
++#include $RULE_PATH/cisco-prime.rules
++#include $RULE_PATH/cisco-sdee.rules
++#include $RULE_PATH/cisco-wlc.rules
++#include $RULE_PATH/citrix.rules
++#include $RULE_PATH/courier.rules
++#include $RULE_PATH/deleted.rules
++#include $RULE_PATH/digitalpersona.rules
++#include $RULE_PATH/dovecot.rules
++#include $RULE_PATH/fatpipe.rules
++#include $RULE_PATH/fortinet-malware.rules
++#include $RULE_PATH/fortinet.rules
++#include $RULE_PATH/ftpd.rules
++#include $RULE_PATH/grsec.rules
++#include $RULE_PATH/honeyd.rules
++#include $RULE_PATH/hordeimp.rules
++#include $RULE_PATH/hostapd.rules
++#include $RULE_PATH/huawei.rules
++#include $RULE_PATH/imapd.rules
++#include $RULE_PATH/ipop3d.rules
++#include $RULE_PATH/juniper.rules
++#include $RULE_PATH/kismet.rules
++#include $RULE_PATH/knockd.rules
++#include $RULE_PATH/linux-kernel.rules
++#include $RULE_PATH/milter.rules
++#include $RULE_PATH/mongodb.rules
++#include $RULE_PATH/mysql.rules
++#include $RULE_PATH/nfcapd-malware.rules
++#include $RULE_PATH/nfcapd.rules
++#include $RULE_PATH/nginx.rules
++#include $RULE_PATH/ntp.rules
++#include $RULE_PATH/openssh.rules
++#include $RULE_PATH/openvpn.rules
++#include $RULE_PATH/oracle.rules
++#include $RULE_PATH/ossec-mi.rules
++#include $RULE_PATH/ossec.rules
++#include $RULE_PATH/php.rules
++#include $RULE_PATH/postfix.rules
++#include $RULE_PATH/postgresql.rules
++#include $RULE_PATH/pptp.rules
++#include $RULE_PATH/procurve.rules
++#include $RULE_PATH/proftpd.rules
++#include $RULE_PATH/proxy-malware.rules
++#include $RULE_PATH/pure-ftpd.rules
++#include $RULE_PATH/racoon.rules
++#include $RULE_PATH/riverbed.rules
++#include $RULE_PATH/roundcube.rules
++#include $RULE_PATH/rsync.rules
++#include $RULE_PATH/samba.rules
++#include $RULE_PATH/sendmail.rules
++#include $RULE_PATH/snort.rules
++#include $RULE_PATH/solaris.rules
++#include $RULE_PATH/sonicwall.rules
++#include $RULE_PATH/squid.rules
++#include $RULE_PATH/ssh-tectia-server.rules
++#include $RULE_PATH/su.rules
++#include $RULE_PATH/symantec-ems.rules
++#include $RULE_PATH/syslog.rules
++#include $RULE_PATH/tcp.rules
++#include $RULE_PATH/telnet.rules
++#include $RULE_PATH/tripwire.rules
++#include $RULE_PATH/vmpop3d.rules
++#include $RULE_PATH/vmware.rules
++#include $RULE_PATH/vpopmail.rules
++#include $RULE_PATH/vsftpd.rules
++#include $RULE_PATH/web-attack.rules
++#include $RULE_PATH/weblabrinth.rules
++#include $RULE_PATH/windows-applocker.rules
++#include $RULE_PATH/windows-auth.rules
++#include $RULE_PATH/windows-emet.rules
++#include $RULE_PATH/windows-malware.rules
++#include $RULE_PATH/windows-misc.rules
++#include $RULE_PATH/windows-mssql.rules
++#include $RULE_PATH/windows.rules
++#include $RULE_PATH/wordpress.rules
++#include $RULE_PATH/xinetd.rules
++#include $RULE_PATH/zeus.rules

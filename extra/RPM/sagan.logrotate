@@ -1,5 +1,6 @@
 /var/log/sagan/alert
 /var/log/sagan/sagan.log
+/var/log/sagan/sagan.stats
 {
     compress
     delaycompress
