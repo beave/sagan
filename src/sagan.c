@@ -513,7 +513,6 @@ int main(int argc, char **argv)
         {
 
             curl_global_init(CURL_GLOBAL_ALL);
-            config->websense_last_time = atol(config->sagan_startutime);
             Sagan_Websense_Init();
 
             Sagan_Log(S_NORMAL, "");

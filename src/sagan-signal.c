@@ -54,6 +54,7 @@
 #include "processors/sagan-bro-intel.h"
 
 #ifdef WITH_WEBSENSE
+#include <curl/curl.h>
 #include "processors/sagan-websense.h"
 #endif
 
@@ -96,8 +97,8 @@ struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
 struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 
 #ifdef WITH_WEBSENSE
-struct _Sagan_Websense_Queue *SaganWebsenseQueue;
 struct _Sagan_Websense_Cache *SaganWebsenseCache;
+struct _Sagan_Websense_Cat_List *SaganWebsenseCatList;
 #endif
 
 pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -112,6 +113,10 @@ void Sig_Handler( _SaganSigArgs *args )
 
 #ifdef HAVE_LIBPCAP
     sbool orig_plog_value = 0;
+#endif
+
+#ifdef WITH_WEBSENSE
+    sbool orig_websense_value = 0;
 #endif
 
     for(;;)
@@ -134,10 +139,10 @@ void Sig_Handler( _SaganSigArgs *args )
                     sagan_statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-                    if ( sagan_unified2_flag ) 
-		    	{
-			Unified2CleanExit();
-			}
+                    if ( sagan_unified2_flag )
+                        {
+                            Unified2CleanExit();
+                        }
 #endif
 
                     fflush(config->sagan_alert_stream);
@@ -266,11 +271,17 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     if ( config->websense_flag )
                         {
-                            free(SaganWebsenseCache);
-                            free(SaganWebsenseCatList);
+                            orig_websense_value = 1;
                         }
 
                     config->websense_flag = 0;
+                    counters->websense_cat_count = 0;
+                    counters->websense_error_count = 0;
+                    counters->websense_cache_count = 0;
+                    counters->websense_postive_hit = 0;
+                    counters->websense_cache_hit = 0;
+                    counters->websense_error_count = 0;
+
 #endif
 
                     /* Output formats */
@@ -326,16 +337,34 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     if ( config->plog_flag == 1 )
                         {
-                            if ( orig_plog_value == 1)
+                            if ( orig_plog_value == 1 )
                                 {
                                     config->plog_flag = 1;
                                 }
                             else
                                 {
                                     Sagan_Log(S_WARN, "** 'plog' must be loaded at runtime! NOT loading 'plog'!");
-                                    config->plog_flag = 1;
+                                    config->plog_flag = 0;
                                 }
                         }
+#endif
+
+#ifdef WITH_WEBSENSE
+
+                    if ( config->websense_flag == 1 )
+                        {
+                            if ( orig_websense_value == 1 )
+                                {
+                                    Sagan_Log(S_NORMAL, "Websense reloaded.");
+                                    config->websense_flag = 1;
+                                }
+                            else
+                                {
+                                    Sagan_Log(S_WARN, "** 'websense' must be loaded at runtime! NOT loading 'websense'!");
+                                    config->websense_flag = 0;
+                                }
+                        }
+
 #endif
 
                     /* Load Blacklist data */
@@ -360,20 +389,6 @@ void Sig_Handler( _SaganSigArgs *args )
                         }
 
 
-#ifdef WITH_WEBSENSE
-                    /* This needs serious testing : DEBUG */
-
-                    if ( config->websense_flag == 1 )
-                        {
-                            curl_global_init(CURL_GLOBAL_ALL);
-                            Sagan_Websense_Init();
-                        }
-#endif
-
-#ifdef HAVE_LIBLOGNORM
-                    Sagan_Liblognorm_Load();
-#endif
-
                     /* Non output / processors */
 
                     if ( config->sagan_droplist_flag )
@@ -386,6 +401,11 @@ void Sig_Handler( _SaganSigArgs *args )
                     Sagan_Log(S_NORMAL, "Reloading GeoIP data.");
                     Sagan_Open_GeoIP_Database();
 #endif
+
+#ifdef HAVE_LIBLOGNORM
+                    Sagan_Liblognorm_Load();
+#endif
+
 
                     pthread_cond_signal(&SaganReloadCond);
                     pthread_mutex_unlock(&SaganReloadMutex);
