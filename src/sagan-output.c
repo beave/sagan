@@ -53,6 +53,8 @@ void Sagan_Output( _SaganEvent *Event )
 
     /* Single threaded operations */
 
+    /* Should this be a pthread_cond_wait ?? */
+
     if ( nonthread_alert_lock == 0 )
         {
 
@@ -96,7 +98,10 @@ void Sagan_Output( _SaganEvent *Event )
 
 #ifdef WITH_SNORTSAM
 
-    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) Sagan_FWSam( Event );
+    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst )
+        {
+            Sagan_FWSam( Event );
+        }
 
 #endif
 
@@ -105,14 +110,21 @@ void Sagan_Output( _SaganEvent *Event )
     /****************************************************************************/
 
 #ifdef HAVE_LIBESMTP
-    if ( config->sagan_esmtp_flag ) Sagan_ESMTP_Thread( Event );
+
+    if ( config->sagan_esmtp_flag )
+        {
+            Sagan_ESMTP_Thread( Event );
+        }
 #endif
 
     /****************************************************************************/
     /* External program support                                                 */
     /****************************************************************************/
 
-    if ( config->sagan_ext_flag ) Sagan_Ext_Thread( Event );
+    if ( config->sagan_ext_flag )
+        {
+            Sagan_Ext_Thread( Event );
+        }
 
 }
 

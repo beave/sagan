@@ -72,21 +72,6 @@ struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 void Sagan_BroIntel_Init(void)
 {
 
-    processor_info_brointel = malloc(sizeof(struct _Sagan_Processor_Info));
-    memset(processor_info_brointel, 0, sizeof(_Sagan_Processor_Info));
-
-    /* This really isn't being used (yet)? */
-
-    processor_info_brointel->processor_name          =       BROINTEL_PROCESSOR_NAME;
-    processor_info_brointel->processor_generator_id  =       BROINTEL_PROCESSOR_GENERATOR_ID;
-    processor_info_brointel->processor_name          =       BROINTEL_PROCESSOR_NAME;
-    processor_info_brointel->processor_facility      =       BROINTEL_PROCESSOR_FACILITY;
-    processor_info_brointel->processor_priority      =       BROINTEL_PROCESSOR_PRIORITY;
-    processor_info_brointel->processor_pri           =       BROINTEL_PROCESSOR_PRI;
-    processor_info_brointel->processor_class         =       BROINTEL_PROCESSOR_CLASS;
-    processor_info_brointel->processor_tag           =       BROINTEL_PROCESSOR_TAG;
-    processor_info_brointel->processor_rev           =       BROINTEL_PROCESSOR_REV;
-
     /* Init memory for processor / storage of Bro Intel data */
 
     Sagan_BroIntel_Intel_Addr = malloc(sizeof(_Sagan_BroIntel_Intel_Addr));
@@ -98,7 +83,6 @@ void Sagan_BroIntel_Init(void)
     Sagan_BroIntel_Intel_User_Name = malloc(sizeof(_Sagan_BroIntel_Intel_User_Name));
     Sagan_BroIntel_Intel_File_Name = malloc(sizeof(_Sagan_BroIntel_Intel_File_Name));
     Sagan_BroIntel_Intel_Cert_Hash = malloc(sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
-
 
 }
 

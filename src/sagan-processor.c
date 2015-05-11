@@ -56,6 +56,9 @@ int proc_msgslot; 		/* Comes from sagan.c */
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
 
+pthread_cond_t SaganReloadCond;
+pthread_mutex_t SaganReloadMutex;
+
 pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 
@@ -81,65 +84,67 @@ void Sagan_Processor ( void )
 
             while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
 
-                    proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
+            if ( config->sagan_reload == 1 ) pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
+
+            proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
 					 * original value */
 
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
-                    pthread_mutex_unlock(&SaganProcWorkMutex);
+            pthread_mutex_unlock(&SaganProcWorkMutex);
 
-                    /* Check for general "drop" items.  We do this first so we can save CPU later */
+            /* Check for general "drop" items.  We do this first so we can save CPU later */
 
-                    if ( config->sagan_droplist_flag )
+            if ( config->sagan_droplist_flag )
+                {
+
+                    ignore_flag=0;
+
+                    for (i = 0; i < counters->droplist_count; i++)
                         {
 
-                            ignore_flag=0;
-
-                            for (i = 0; i < counters->droplist_count; i++)
+                            if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
                                 {
 
-                                    if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
-                                        {
+                                    pthread_mutex_lock(&SaganIgnoreCounter);
+                                    counters->ignore_count++;
+                                    pthread_mutex_unlock(&SaganIgnoreCounter);
 
-                                            pthread_mutex_lock(&SaganIgnoreCounter);
-                                            counters->ignore_count++;
-                                            pthread_mutex_unlock(&SaganIgnoreCounter);
-
-                                            ignore_flag=1;
-                                            goto outside_loop;	/* Stop processing from ignore list */
-                                        }
+                                    ignore_flag=1;
+                                    goto outside_loop;	/* Stop processing from ignore list */
                                 }
                         }
+                }
 
 outside_loop:
 
-                    /* If we're in a ignore state,  then we can bypass the processors */
+            /* If we're in a ignore state,  then we can bypass the processors */
 
-                    if ( ignore_flag == 0 )
+            if ( ignore_flag == 0 )
+                {
+
+                    Sagan_Engine(SaganProcSyslog_LOCAL);
+
+                    if ( config->sagan_track_clients_flag)
                         {
 
-                            Sagan_Engine(SaganProcSyslog_LOCAL);
+                            /* Essentially becomes a signle threaded operation */
 
-                            if ( config->sagan_track_clients_flag)
-                                {
+                            pthread_mutex_lock(&SaganClientTracker);
+                            Sagan_Track_Clients(SaganProcSyslog_LOCAL);
+                            pthread_mutex_unlock(&SaganClientTracker);
 
-                                    /* Essentially becomes a signle threaded operation */
+                        }
 
-                                    pthread_mutex_lock(&SaganClientTracker);
-                                    Sagan_Track_Clients(SaganProcSyslog_LOCAL);
-                                    pthread_mutex_unlock(&SaganClientTracker);
-
-                                }
-
-                        } // End if if (ignore_Flag)
+                } // End if if (ignore_Flag)
 
 
         } //  for (;;)

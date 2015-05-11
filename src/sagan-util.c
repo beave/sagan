@@ -351,13 +351,13 @@ char *DNS_Lookup( char *host )
     char ipstr[INET6_ADDRSTRLEN];
     char *ret;
     void *addr;
-     
+
     /* Short circuit if it's a "localhost" lookup */
 
     if ( !strcmp(host, "localhost" ) )
-    	{
-	return(config->sagan_host); 
-	}
+        {
+            return(config->sagan_host);
+        }
 
     if ( config->disable_dns_warnings == 0 )
         {

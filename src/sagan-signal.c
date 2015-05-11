@@ -83,6 +83,7 @@ struct _Sagan_Processor_Generator *generator;
 struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _Sagan_Flowbit *flowbit;
+struct _Sagan_Ignorelist *SaganIgnorelist;
 
 struct _Sagan_BroIntel_Intel_Addr *Sagan_BroIntel_Intel_Addr;
 struct _Sagan_BroIntel_Intel_Domain *Sagan_BroIntel_Intel_Domain;
@@ -99,13 +100,19 @@ struct _Sagan_Websense_Queue *SaganWebsenseQueue;
 struct _Sagan_Websense_Cache *SaganWebsenseCache;
 #endif
 
-pthread_mutex_t sig_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
 void Sig_Handler( _SaganSigArgs *args )
 {
 
     sigset_t signal_set;
     int sig;
+    sbool orig_perfmon_value = 0;
+
+#ifdef HAVE_LIBPCAP
+    sbool orig_plog_value = 0;
+#endif
 
     for(;;)
         {
@@ -127,7 +134,10 @@ void Sig_Handler( _SaganSigArgs *args )
                     sagan_statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-                    if ( sagan_unified2_flag ) Unified2CleanExit();
+                    if ( sagan_unified2_flag ) 
+		    	{
+			Unified2CleanExit();
+			}
 #endif
 
                     fflush(config->sagan_alert_stream);
@@ -147,7 +157,9 @@ void Sig_Handler( _SaganSigArgs *args )
 
                 case SIGHUP:
 
-                    pthread_mutex_lock(&sig_mutex);
+                    config->sagan_reload = 1;				/* Only this thread can alter this */
+
+                    pthread_mutex_lock(&SaganReloadMutex);
 
                     Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
@@ -158,13 +170,10 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     Sagan_Open_Log_File(REOPEN, ALL_LOGS);
 
-                    if ( config->perfmonitor_flag )
-                        {
-                            Sagan_Perfmonitor_Close();
-                            Sagan_Perfmonitor_Open();
-                        }
-
+                    /******************/
                     /* Reset counters */
+                    /******************/
+
                     counters->refcount=0;
                     counters->classcount=0;
                     counters->rulecount=0;
@@ -178,102 +187,210 @@ void Sig_Handler( _SaganSigArgs *args )
                     memset(flowbit, 0, sizeof(_Sagan_Flowbit));
 
 
-                    /* Re-load primary configuration (rules/classifictions/etc) */
+                    /**********************************/
+                    /* Disabled and reset processors. */
+                    /**********************************/
 
-                    Load_Config();
+                    /* Note: Processors that run as there own thread (perfmon, plog) cannot be
+                     * loaded via SIGHUP.  They must be loaded at run time.  Once they are loaded,
+                     * they can be disabled/re-enabled. */
 
-#ifdef HAVE_LIBLOGNORM
-                    Sagan_Liblognorm_Load();
+                    /* Single Threaded processors */
+
+                    if ( config->perfmonitor_flag == 1 && orig_perfmon_value == 0 )
+                        {
+                            Sagan_Perfmonitor_Close();
+                            orig_perfmon_value = 1;
+                        }
+
+                    config->perfmonitor_flag = 0;
+
+#ifdef HAVE_LIBPCAP
+
+                    if ( config->plog_flag )
+                        {
+                            orig_plog_value = 1;
+                        }
+
+                    config->plog_flag = 0;
 #endif
 
-                    if (config->blacklist_flag)
+                    /* Multi Threaded processors */
+
+                    config->blacklist_flag = 0;
+
+                    if ( config->blacklist_flag )
+                        {
+                            free(SaganBlacklist);
+                        }
+
+                    config->blacklist_flag = 0;
+
+                    if ( config->brointel_flag )
+                        {
+                            free(Sagan_BroIntel_Intel_Addr);
+                            free(Sagan_BroIntel_Intel_Domain);
+                            free(Sagan_BroIntel_Intel_File_Hash);
+                            free(Sagan_BroIntel_Intel_URL);
+                            free(Sagan_BroIntel_Intel_Software);
+                            free(Sagan_BroIntel_Intel_Email);
+                            free(Sagan_BroIntel_Intel_User_Name);
+                            free(Sagan_BroIntel_Intel_File_Name);
+                            free(Sagan_BroIntel_Intel_Cert_Hash);
+
+                            counters->brointel_addr_count = 0;
+                            counters->brointel_domain_count = 0;
+                            counters->brointel_file_hash_count = 0;
+                            counters->brointel_url_count = 0;
+                            counters->brointel_software_count = 0;
+                            counters->brointel_email_count = 0;
+                            counters->brointel_user_name_count = 0;
+                            counters->brointel_file_name_count = 0;
+                            counters->brointel_cert_hash_count = 0;
+                            counters->brointel_dups = 0;
+                        }
+
+                    config->brointel_flag = 0;
+
+                    if ( config->sagan_track_clients_flag )
+                        {
+                            free(SaganTrackClients);
+                            fclose(config->sagan_track_client_file);
+                        }
+
+                    config->sagan_track_clients_flag = 0;
+                    counters->track_clients_client_count = 0;
+                    counters->track_clients_down = 0;
+
+#ifdef WITH_WEBSENSE
+
+                    if ( config->websense_flag )
+                        {
+                            free(SaganWebsenseCache);
+                            free(SaganWebsenseCatList);
+                        }
+
+                    config->websense_flag = 0;
+#endif
+
+                    /* Output formats */
+
+                    config->sagan_ext_flag = 0;
+
+#ifdef WITH_SYSLOG
+                    config->sagan_syslog_flag = 0;
+#endif
+
+
+#ifdef HAVE_LIBESMTP
+                    config->sagan_esmtp_flag = 0;
+#endif
+
+#ifdef WITH_SNORTSAM
+                    config->sagan_fwsam_flag = 0;
+#endif
+
+                    /* Non-output / Processors */
+
+                    if ( config->sagan_droplist_flag )
+                        {
+                            config->sagan_droplist_flag = 0;
+                            free(SaganIgnorelist);
+                        }
+
+                    /************************************************************/
+                    /* Re-load primary configuration (rules/classifictions/etc) */
+                    /************************************************************/
+
+                    Load_Config();	/* <- RELOAD */
+
+                    /************************************************************/
+                    /* Re-load primary configuration (rules/classifictions/etc) */
+                    /************************************************************/
+
+                    if ( config->perfmonitor_flag == 1 )
+                        {
+                            if ( orig_perfmon_value == 1 )
+                                {
+                                    Sagan_Perfmonitor_Open();
+                                }
+                            else
+                                {
+                                    Sagan_Log(S_WARN, "** 'perfmonitor' must be loaded at runtime! NOT loading 'perfmonitor'!");
+                                    config->perfmonitor_flag = 0;
+                                }
+                        }
+
+
+#ifdef HAVE_LIBPCAP
+
+                    if ( config->plog_flag == 1 )
+                        {
+                            if ( orig_plog_value == 1)
+                                {
+                                    config->plog_flag = 1;
+                                }
+                            else
+                                {
+                                    Sagan_Log(S_WARN, "** 'plog' must be loaded at runtime! NOT loading 'plog'!");
+                                    config->plog_flag = 1;
+                                }
+                        }
+#endif
+
+                    /* Load Blacklist data */
+
+                    if ( config->blacklist_flag )
                         {
                             counters->blacklist_count=0;
-                            memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
+                            Sagan_Blacklist_Init();
                             Sagan_Blacklist_Load();
                         }
 
-                    if (config->brointel_flag)
+                    if ( config->brointel_flag )
                         {
-
-
-                            Sagan_Log(S_NORMAL, "Started Reloading All Bro Intel Data");
-
-                            counters->brointel_dups = 0;
-
-                            memset(Sagan_BroIntel_Intel_Addr, 0, sizeof(_Sagan_BroIntel_Intel_Addr));
-                            counters->brointel_addr_count = 0;
-
-                            memset(Sagan_BroIntel_Intel_Domain, 0, sizeof(_Sagan_BroIntel_Intel_Domain));
-                            counters->brointel_domain_count=0;
-
-                            memset(Sagan_BroIntel_Intel_File_Hash, 0, sizeof(_Sagan_BroIntel_Intel_File_Hash));
-                            counters->brointel_file_hash_count=0;
-
-                            memset(Sagan_BroIntel_Intel_URL, 0, sizeof(_Sagan_BroIntel_Intel_URL));
-                            counters->brointel_url_count=0;
-
-                            memset(Sagan_BroIntel_Intel_Software, 0, sizeof(_Sagan_BroIntel_Intel_Software));
-                            counters->brointel_software_count=0;
-
-                            memset(Sagan_BroIntel_Intel_Email, 0, sizeof(_Sagan_BroIntel_Intel_Email));
-                            counters->brointel_email_count=0;
-
-                            memset(Sagan_BroIntel_Intel_User_Name, 0, sizeof(_Sagan_BroIntel_Intel_User_Name));
-                            counters->brointel_user_name_count=0;
-
-                            memset(Sagan_BroIntel_Intel_File_Name, 0, sizeof(_Sagan_BroIntel_Intel_File_Name));
-                            counters->brointel_file_name_count=0;
-
-                            memset(Sagan_BroIntel_Intel_Cert_Hash, 0, sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
-                            counters->brointel_cert_hash_count=0;
-
+                            Sagan_BroIntel_Init();
                             Sagan_BroIntel_Load_File();
-
-                            Sagan_Log(S_NORMAL, "Reloaded Bro Intel data.");
-
                         }
 
-
-
-                    if (config->sagan_track_clients_flag)
+                    if ( config->sagan_track_clients_flag )
                         {
-                            counters->track_clients_client_count = 0;
-                            counters->track_clients_down = 0;
-                            memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
-                            fclose(config->sagan_track_client_file);
                             Sagan_Load_Tracking_Cache();
                             Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
                         }
 
 
-                    /*		  DNS Cache *not currently global* DEBUG
-                    		  if (config->syslog_src_lookup) {
-                    		     counters->dns_cache_count=0;
-                    		     counters->dns_miss_count=0;
-                    		     }
-                    */
-
 #ifdef WITH_WEBSENSE
-                    if ( config->websense_flag )
-                        {
-                            counters->websense_cache_count=0;
-                            counters->websense_cache_hit=0;
-                            counters->websense_postive_hit=0;
-                            memset(SaganWebsenseQueue, 0, sizeof(_Sagan_Websense_Queue));
-                            memset(SaganWebsenseCache, 0, sizeof(_Sagan_Websense_Cache));
+                    /* This needs serious testing : DEBUG */
 
-                            config->websense_last_time = atol(config->sagan_startutime);
-                            Sagan_Log(S_NORMAL, "Reset Websense Processor.");
+                    if ( config->websense_flag == 1 )
+                        {
+                            curl_global_init(CURL_GLOBAL_ALL);
+                            Sagan_Websense_Init();
                         }
 #endif
+
+#ifdef HAVE_LIBLOGNORM
+                    Sagan_Liblognorm_Load();
+#endif
+
+                    /* Non output / processors */
+
+                    if ( config->sagan_droplist_flag )
+                        {
+                            Load_Ignore_List();
+                            Sagan_Log(S_NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
+                        }
 
 #ifdef HAVE_LIBGEOIP
                     Sagan_Log(S_NORMAL, "Reloading GeoIP data.");
                     Sagan_Open_GeoIP_Database();
 #endif
 
-                    pthread_mutex_unlock(&sig_mutex);
+                    pthread_cond_signal(&SaganReloadCond);
+                    pthread_mutex_unlock(&SaganReloadMutex);
+
+                    config->sagan_reload = 0;
 
                     Sagan_Log(S_NORMAL, "Configuration reloaded.");
                     break;

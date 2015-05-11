@@ -139,76 +139,72 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
     int                     len;
     char                    *l;
 
-    /* crack the ethernet header */
-    eh = (struct ether_header *)pkt;
-    if(ntohs(eh->ether_type) != ETHERTYPE_IP)
-        goto bad;
-
-    /* crack the IP header */
-    ih = (struct ip *)(pkt + sizeof(struct ether_header));
-    off = ntohs(ih->ip_off);
-    len = ntohs(ih->ip_len);
-
-    /* short packet */
-    if(len > p->len)
-        goto bad;
-
-    /* frags we don't deal with */
-    if((off & 0x1fff) != 0)
-        goto bad;
-    /* weird - we ASKED for UDP */
-    if(ih->ip_p != IPPROTO_UDP)
-        goto bad;
-
-    /* line the UDP header up */
-    u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
-
-    /* WTF? */
-
-    /*
-    if(ntohs(u->uh_dport) != 514)
-        goto bad;
-
-    */
-
-    if(ntohs(u->uh_ulen < 8))
-        goto bad;
-
-    /* our log message ought to be just past the UDP header now... */
-    l = (char *)u + sizeof(struct udphdr);
-    len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
-
-    if(debug->debugplog)
+    if ( config->plog_flag )
         {
 
-            int     x;
+            /* crack the ethernet header */
+            eh = (struct ether_header *)pkt;
+            if(ntohs(eh->ether_type) != ETHERTYPE_IP)
+                goto bad;
 
-            /* I can't use Sagan_Log() here,  so we dump to strerr.
-             * have the check the tty (isatty()) before dumping or
-             * strange things happen if detached and threaded
-             * - Champ Clark III Jan 7th 2011
-             */
+            /* crack the IP header */
+            ih = (struct ip *)(pkt + sizeof(struct ether_header));
+            off = ntohs(ih->ip_off);
+            len = ntohs(ih->ip_len);
 
+            /* short packet */
+            if(len > p->len)
+                goto bad;
 
-            for(x = 0; x < len; x++)
+            /* frags we don't deal with */
+            if((off & 0x1fff) != 0)
+                goto bad;
+            /* weird - we ASKED for UDP */
+            if(ih->ip_p != IPPROTO_UDP)
+                goto bad;
+
+            /* line the UDP header up */
+            u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
+
+            if(ntohs(u->uh_ulen < 8))
+                goto bad;
+
+            /* our log message ought to be just past the UDP header now... */
+            l = (char *)u + sizeof(struct udphdr);
+            len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
+
+            if(debug->debugplog)
                 {
-                    if(isprint(l[x]) && (isatty(1)) )
-                        fprintf(stderr,"%c",(int)(l[x]));
-                    else
-                        fprintf(stderr,"[0x%x]",(int)(l[x]));
+
+                    int     x;
+
+                    /* I can't use Sagan_Log() here,  so we dump to strerr.
+                     * have the check the tty (isatty()) before dumping or
+                     * strange things happen if detached and threaded
+                     * - Champ Clark III Jan 7th 2011
+                     */
+
+
+                    for(x = 0; x < len; x++)
+                        {
+                            if(isprint(l[x]) && (isatty(1)) )
+                                fprintf(stderr,"%c",(int)(l[x]));
+                            else
+                                fprintf(stderr,"[0x%x]",(int)(l[x]));
+                        }
+                    if (isatty(1)) fprintf(stderr,"\n");
                 }
-            if (isatty(1)) fprintf(stderr,"\n");
-        }
 
 
-    /* send it! */
-    if(send(outf,l,len,0) < 0)
-        Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
+            /* send it! */
+            if(send(outf,l,len,0) < 0)
+                Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
 
-    return;
+            return;
 bad:
-    Sagan_Log(S_WARN, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
+            Sagan_Log(S_WARN, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
 
+        }
 }
 
 static  int

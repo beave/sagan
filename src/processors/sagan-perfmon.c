@@ -44,7 +44,7 @@ struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 /*****************************************************************************
- * Sagan_Perfmonitor_Handler - This becomes the thread to write out 
+ * Sagan_Perfmonitor_Handler - This becomes the thread to write out
  * preformance monitoring data.
  *****************************************************************************/
 
@@ -97,128 +97,132 @@ void Sagan_Perfmonitor_Handler( void )
 
             sleep(config->perfmonitor_time);
 
-            fprintf(config->perfmonitor_file_stream, "%s,", curtime_utime),
+            if ( config->perfmonitor_flag )
+                {
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagantotal - last_sagantotal);
-            last_sagantotal = counters->sagantotal;
+                    fprintf(config->perfmonitor_file_stream, "%s,", curtime_utime),
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->saganfound - last_saganfound);
-            last_saganfound = counters->saganfound;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagantotal - last_sagantotal);
+                    last_sagantotal = counters->sagantotal;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->alert_total - last_alert_total);
-            last_alert_total = counters->alert_total;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->saganfound - last_saganfound);
+                    last_saganfound = counters->saganfound;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->after_total - last_after_total);
-            last_after_total = counters->after_total;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->alert_total - last_alert_total);
+                    last_alert_total = counters->alert_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->threshold_total - last_threshold_total);
-            last_threshold_total = counters->threshold_total;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->after_total - last_after_total);
+                    last_after_total = counters->after_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
-            last_sagan_processor_drop = counters->sagan_processor_drop;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->threshold_total - last_threshold_total);
+                    last_threshold_total = counters->threshold_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->ignore_count - last_ignore_count);
-            last_ignore_count = counters->ignore_count;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
+                    last_sagan_processor_drop = counters->sagan_processor_drop;
 
-            t = time(NULL);
-            now=localtime(&t);
-            strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
-            seconds = atol(curtime_utime) - atol(config->sagan_startutime);
-            total = counters->sagantotal / seconds;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->ignore_count - last_ignore_count);
+                    last_ignore_count = counters->ignore_count;
 
-            fprintf(config->perfmonitor_file_stream, "%lu,", total);
+                    t = time(NULL);
+                    now=localtime(&t);
+                    strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
+                    seconds = atol(curtime_utime) - atol(config->sagan_startutime);
+                    total = counters->sagantotal / seconds;
+
+                    fprintf(config->perfmonitor_file_stream, "%lu,", total);
 
 #ifdef HAVE_LIBGEOIP
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_lookup - last_geoip_lookup);
-            last_geoip_lookup = counters->geoip_lookup;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_lookup - last_geoip_lookup);
+                    last_geoip_lookup = counters->geoip_lookup;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_hit - last_geoip_hit);
-            last_geoip_hit = counters->geoip_hit;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_hit - last_geoip_hit);
+                    last_geoip_hit = counters->geoip_hit;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_miss - last_geoip_miss);
-            last_geoip_miss = counters->geoip_miss;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_miss - last_geoip_miss);
+                    last_geoip_miss = counters->geoip_miss;
 
 #endif
 
 #ifndef HAVE_LIBGEOIP
 
-            fprintf(config->perfmonitor_file_stream, "0,0,0,");
+                    fprintf(config->perfmonitor_file_stream, "0,0,0,");
 
 #endif
 
-            /* DEBUG: IS THE BELOW RIGHT?  TWO counters->sagan_processor_drop REFERENCES */
+                    /* DEBUG: IS THE BELOW RIGHT?  TWO counters->sagan_processor_drop REFERENCES */
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
-            last_sagan_processor_drop = counters->sagan_processor_drop;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
+                    last_sagan_processor_drop = counters->sagan_processor_drop;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->blacklist_hit_count - last_blacklist_hit_count);
-            last_blacklist_hit_count = counters->blacklist_hit_count;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->blacklist_hit_count - last_blacklist_hit_count);
+                    last_blacklist_hit_count = counters->blacklist_hit_count;
 
-            /* DEBUG: CONSTANT? */
+                    /* DEBUG: CONSTANT? */
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_client_count);
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_down);
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_client_count);
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_down);
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_output_drop - last_sagan_output_drop);
-            last_sagan_output_drop = counters->sagan_output_drop;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_output_drop - last_sagan_output_drop);
+                    last_sagan_output_drop = counters->sagan_output_drop;
 
 #ifdef HAVE_LIBESMTP
-            if ( config->sagan_esmtp_flag )
-                {
+                    if ( config->sagan_esmtp_flag )
+                        {
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_success - last_esmtp_count_success);
-                    last_esmtp_count_success = counters->esmtp_count_success;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_success - last_esmtp_count_success);
+                            last_esmtp_count_success = counters->esmtp_count_success;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_failed - last_esmtp_count_failed);
-                    last_esmtp_count_failed = counters->esmtp_count_failed;
-                }
-            else
-                {
-                    fprintf(config->perfmonitor_file_stream, "0,0,");
-                }
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_failed - last_esmtp_count_failed);
+                            last_esmtp_count_failed = counters->esmtp_count_failed;
+                        }
+                    else
+                        {
+                            fprintf(config->perfmonitor_file_stream, "0,0,");
+                        }
 #endif
 
 #ifndef HAVE_LIBESMTP
-            fprintf(config->perfmonitor_file_stream, "0,0,");
+                    fprintf(config->perfmonitor_file_stream, "0,0,");
 #endif
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_cache_count);
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_cache_count);
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_miss_count - last_dns_miss_count);
-            last_dns_miss_count = counters->dns_miss_count;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_miss_count - last_dns_miss_count);
+                    last_dns_miss_count = counters->dns_miss_count;
 
 #ifdef WITH_WEBSENSE
 
-            if (config->websense_flag)
-                {
+                    if (config->websense_flag)
+                        {
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_count);
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_count);
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_hit - last_websense_cache_hit);
-                    last_websense_cache_hit = counters->websense_cache_hit;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_hit - last_websense_cache_hit);
+                            last_websense_cache_hit = counters->websense_cache_hit;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_error_count - last_websense_error_count);
-                    last_websense_error_count = counters->websense_error_count;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_error_count - last_websense_error_count);
+                            last_websense_error_count = counters->websense_error_count;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 "", counters->websense_postive_hit - last_websense_positive_hit); 	/* Don't need , here */
-                    last_websense_positive_hit = counters->websense_postive_hit;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 "", counters->websense_postive_hit - last_websense_positive_hit); 	/* Don't need , here */
+                            last_websense_positive_hit = counters->websense_postive_hit;
 
-                }
-            else
-                {
+                        }
+                    else
+                        {
 
-                    fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
-                }
+                            fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
+                        }
 
 #endif
 
 #ifndef WITH_WEBSENSE
-            fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
+                    fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
 #endif
 
-            fprintf(config->perfmonitor_file_stream, "\n");
-            fflush(config->perfmonitor_file_stream);
+                    fprintf(config->perfmonitor_file_stream, "\n");
+                    fflush(config->perfmonitor_file_stream);
+                }
         }
 }
 
