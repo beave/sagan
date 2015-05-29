@@ -187,9 +187,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
 
-#ifdef HAVE_LIBLOGNORM
+    /* This needs to be included,  even if liblognorm isn't in use */
+
     sbool liblognorm_status = 0;
-#endif
 
     /* Search for matches */
 
