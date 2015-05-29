@@ -98,6 +98,11 @@ struct _Sagan_Flowbit *flowbit;
 #include "processors/sagan-websense.h"
 #endif
 
+#ifdef WITH_BLUEDOT
+#include <curl/curl.h>
+#include "processors/sagan-bluedot.h"
+#endif
+
 sbool daemonize=0;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
@@ -358,6 +363,15 @@ int main(int argc, char **argv)
                         }
 #endif
 
+#ifdef WITH_BLUEDOT
+                    if (Sagan_strstr(optarg, "bluedot"))
+                        {   
+                            debug->debugbluedot=1;
+                            debugflag=1;
+                        }
+#endif
+
+
                     /* If option is unknown */
 
                     if ( debugflag == 0 )
@@ -527,6 +541,27 @@ int main(int argc, char **argv)
         }
 
 #endif
+
+#ifdef WITH_BLUEDOT
+    if ( config->bluedot_flag )
+        {   
+
+            curl_global_init(CURL_GLOBAL_ALL);
+            Sagan_Bluedot_Init();
+
+            Sagan_Log(S_NORMAL, "");
+            Sagan_Log(S_NORMAL, "Bluedot URL: %s", config->bluedot_url);
+//            Sagan_Log(S_NORMAL, "Bluedot Auth: %s", config->bluedot_auth);
+            Sagan_Log(S_NORMAL, "Bluedot Device ID: %s", config->bluedot_device_id);
+            Sagan_Log(S_NORMAL, "Bluedot Categories File: %s", config->bluedot_cat);
+            Sagan_Log(S_NORMAL, "Bluedot Max Cache: %d", config->bluedot_max_cache);
+            Sagan_Log(S_NORMAL, "Bluedot Cache Timeout: %d minutes.", config->bluedot_timeout  / 60);
+            Sagan_Log(S_NORMAL, "Bluedot loaded %d categories.", counters->bluedot_cat_count);
+
+        }
+
+#endif
+
 
     /* Sagan Bro Intel processor *******************************************/
 

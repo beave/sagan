@@ -120,8 +120,9 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-twofish.$(OBJEXT) sagan-sagan-snortsam.$(OBJEXT) \
 	sagan-sagan-syslog.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
-	sagan-sagan-websense.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
-	sagan-sagan-perfmon.$(OBJEXT) sagan-sagan-bro-intel.$(OBJEXT)
+	sagan-sagan-websense.$(OBJEXT) sagan-sagan-bluedot.$(OBJEXT) \
+	sagan-sagan-blacklist.$(OBJEXT) sagan-sagan-perfmon.$(OBJEXT) \
+	sagan-sagan-bro-intel.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
 am__DEPENDENCIES_1 =
 sagan_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -352,6 +353,7 @@ output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
+processors/sagan-bluedot.c \
 processors/sagan-blacklist.c \
 processors/sagan-perfmon.c \
 processors/sagan-bro-intel.c 
@@ -449,6 +451,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-alert-time.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-blacklist.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-bluedot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-bro-intel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-classifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-config.Po@am__quote@
@@ -1104,6 +1107,20 @@ sagan-sagan-websense.obj: processors/sagan-websense.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-websense.c' object='sagan-sagan-websense.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-websense.obj `if test -f 'processors/sagan-websense.c'; then $(CYGPATH_W) 'processors/sagan-websense.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-websense.c'; fi`
+
+sagan-sagan-bluedot.o: processors/sagan-bluedot.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-bluedot.o -MD -MP -MF $(DEPDIR)/sagan-sagan-bluedot.Tpo -c -o sagan-sagan-bluedot.o `test -f 'processors/sagan-bluedot.c' || echo '$(srcdir)/'`processors/sagan-bluedot.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-bluedot.Tpo $(DEPDIR)/sagan-sagan-bluedot.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-bluedot.c' object='sagan-sagan-bluedot.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-bluedot.o `test -f 'processors/sagan-bluedot.c' || echo '$(srcdir)/'`processors/sagan-bluedot.c
+
+sagan-sagan-bluedot.obj: processors/sagan-bluedot.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-bluedot.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-bluedot.Tpo -c -o sagan-sagan-bluedot.obj `if test -f 'processors/sagan-bluedot.c'; then $(CYGPATH_W) 'processors/sagan-bluedot.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-bluedot.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-bluedot.Tpo $(DEPDIR)/sagan-sagan-bluedot.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-bluedot.c' object='sagan-sagan-bluedot.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-bluedot.obj `if test -f 'processors/sagan-bluedot.c'; then $(CYGPATH_W) 'processors/sagan-bluedot.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-bluedot.c'; fi`
 
 sagan-sagan-blacklist.o: processors/sagan-blacklist.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-blacklist.o -MD -MP -MF $(DEPDIR)/sagan-sagan-blacklist.Tpo -c -o sagan-sagan-blacklist.o `test -f 'processors/sagan-blacklist.c' || echo '$(srcdir)/'`processors/sagan-blacklist.c

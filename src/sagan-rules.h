@@ -26,6 +26,10 @@
 #define WEBSENSE_MAX_CAT	10
 #endif
 
+#ifdef WITH_BLUEDOT
+#define BLUEDOT_MAX_CAT        10
+#endif
+
 typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
@@ -151,6 +155,15 @@ struct _Rule_Struct
     int   websense_cat_count;
 
 #endif
+
+#ifdef WITH_BLUEDOT
+
+    int   bluedot_ipaddr_type;                 /* 1 == src,  2 == dst,  3 == both,  4 == all */
+    int   bluedot_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_cat_count;
+
+#endif
+
 
 #ifdef HAVE_LIBGEOIP
 

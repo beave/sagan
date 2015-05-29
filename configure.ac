@@ -28,6 +28,12 @@ AC_ARG_ENABLE(websense,
   [ WEBSENSE="no" ]
 )
 
+AC_ARG_ENABLE(bluedot,
+  [  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.],
+  [ BLUEDOT="$enableval"],
+  [ BLUEDOT="no" ]
+)
+
 AC_ARG_ENABLE(esmtp,
   [  --enable-esmtp	  Enable libesmtp support.],
   [ ESMTP="$enableval"],
@@ -365,9 +371,20 @@ To disable this feature use the --disable-websense flag. ))
 	PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
         fi
 
+if test "$BLUEDOT" = "yes"; then
+        AC_MSG_RESULT([------- Quadrant "Bluedot" is enabled -------])
+        AC_CHECK_LIB(curl, main,,AC_MSG_ERROR(The libcurl library cannot be found.
+This library is used for Sagan's / "Bluedot" support.  Please see
+https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
+To disable this feature use the --disable-bluedot flag. ))
+        AC_DEFINE(WITH_BLUEDOT, 1, With Bluedot)
+        AC_CHECK_HEADER([curl/curl.h])
+        PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
+        fi
+
 if test "$SNORTSAM" = "yes"; then
         AC_MSG_RESULT([------- Snortsam support is enabled -------])
-	AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
+        AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
         fi
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local

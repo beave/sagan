@@ -333,6 +333,9 @@
 /* Version number of package */
 #define VERSION "1.0.0-RC5"
 
+/* With Bluedot */
+/* #undef WITH_BLUEDOT */
+
 /* With Snortsam */
 #define WITH_SNORTSAM 1
 

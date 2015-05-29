@@ -58,12 +58,20 @@
 #include "processors/sagan-websense.h"
 #endif
 
+#ifdef WITH_BLUEDOT
+#include "processors/sagan-bluedot.h"
+#endif
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 #ifdef WITH_WEBSENSE
 struct _Sagan_Websense_Cat_List *SaganWebsenseCatList;
+#endif
+
+#ifdef WITH_BLUEDOT
+struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 #endif
 
 #ifdef HAVE_LIBLOGNORM
@@ -1546,7 +1554,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( tmptoken == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Websense categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Websense categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
                                 }
 
 
@@ -1608,6 +1616,124 @@ void Load_Rules( const char *ruleset )
                             Sagan_Log(S_ERROR, "%s has Websense rules,  but support isn't compiled in! Abort!", ruleset);
                         }
 #endif
+
+#ifdef WITH_BLUEDOT
+
+                    if (!strcmp(rulesplit, "bluedot"))
+                        {
+
+                            if ( config->bluedot_flag == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'bluedot' option enabled,  but 'processor bluedot' is not configured!", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+                            tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));	/* Support var's */
+
+                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+                            Remove_Spaces(tmptoken);
+
+                            found = 0;
+
+                            /* 1 == src,  2 == dst,  3 == both,  4 == all */
+
+                            if (!strcmp(tmptoken, "by_src"))
+                                {
+                                    rulestruct[counters->rulecount].bluedot_ipaddr_type  = 1;
+                                }
+
+                            if (!strcmp(tmptoken, "by_dst") && found == 0 )
+                                {
+                                    rulestruct[counters->rulecount].bluedot_ipaddr_type  = 2;
+                                }
+
+                            if (!strcmp(tmptoken, "both") && found == 0)
+                                {
+                                    rulestruct[counters->rulecount].bluedot_ipaddr_type  = 3;
+                                }
+
+                            if (!strcmp(tmptoken, "all") && found == 0)
+                                {
+                                    rulestruct[counters->rulecount].bluedot_ipaddr_type  = 4;
+                                }
+
+                            /* Invalid direction - abort */
+
+                            if ( rulestruct[counters->rulecount].bluedot_ipaddr_type == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has an invalid option of '%s'.", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                }
+
+                            /* Start collecting "what" we want to "look for" from Bluedot */
+
+                            tmptoken = strtok_r(NULL, "," , &saveptrrule3);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                }
+
+
+                            while ( tmptoken != NULL )
+                                {
+
+                                    strlcpy(tmp2, tmptoken, sizeof(tmp2));
+
+                                    Remove_Spaces(tmptoken);
+                                    To_LowerC(tmptoken);
+
+                                    found = 0;
+
+                                    for ( i = 0; i < counters->bluedot_cat_count; i++ )
+                                        {
+
+                                            if (!strcmp(SaganBluedotCatList[i].cat, tmptoken))
+                                                {
+
+                                                    found = 1;
+
+                                                    if ( rulestruct[counters->rulecount].bluedot_cat_count <= BLUEDOT_MAX_CAT )
+                                                        {
+
+                                                            rulestruct[counters->rulecount].bluedot_cats[rulestruct[counters->rulecount].bluedot_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                                            rulestruct[counters->rulecount].bluedot_cat_count++;
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            Sagan_Log(S_WARN, "[%s, line %d] To many Bluedot catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+
+                                                        }
+
+                                                }
+                                        }
+
+                                    if ( found == 0 )
+                                        {
+
+                                            Sagan_Log(S_ERROR, "[%s, line %d] Unknown Bluedot category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
+
+                                        }
+
+
+                                    tmptoken = strtok_r(NULL, "," , &saveptrrule3);
+                                }
+
+                            /* Bluedot configuration check here! */
+
+                        }
+#endif
+
+#ifndef WITH_BLUEDOT
+
+                    if (!strcmp(rulesplit, "bluedot"))
+                        {
+                            Sagan_Log(S_ERROR, "%s has Bluedot rules,  but support isn't compiled in! Abort!", ruleset);
+                        }
+#endif
+
+
+		    /* -< Go to next line >- */
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }

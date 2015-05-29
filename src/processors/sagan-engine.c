@@ -55,6 +55,10 @@
 #include "processors/sagan-websense.h"
 #endif
 
+#ifdef WITH_BLUEDOT
+#include "processors/sagan-bluedot.h"
+#endif
+
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm;
@@ -176,6 +180,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int websense_results;
     sbool websense_flag;
 #endif
+
+#ifdef WITH_BLUEDOT
+    int bluedot_results;
+    sbool bluedot_flag;
+#endif
+
 
 #ifdef HAVE_LIBLOGNORM
     sbool liblognorm_status = 0;
@@ -740,6 +750,65 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #endif
 
+#ifdef WITH_BLUEDOT
+
+                            if ( config->bluedot_flag && rulestruct[b].bluedot_ipaddr_type )
+                                {
+
+                                    bluedot_results = 0;
+
+                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
+
+                                    if ( rulestruct[b].bluedot_ipaddr_type == 1 )
+                                        {
+                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src);
+                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                        }
+
+                                    if ( rulestruct[b].bluedot_ipaddr_type == 2 )
+                                        {
+                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst);
+                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                        }
+
+                                    if ( rulestruct[b].bluedot_ipaddr_type == 3 )
+                                        {
+
+                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src);
+                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+
+                                            /* If the source isn't found,  then check the dst */
+
+                                            if ( bluedot_flag != 0 )
+                                                {
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst);
+                                                    bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                }
+
+                                        }
+
+                                    if ( rulestruct[b].bluedot_ipaddr_type == 4 )
+                                        {
+
+                                            bluedot_flag = Sagan_Bluedot_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
+
+                                        }
+
+                                    /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
+                                     * "delete" an entry only to re-add it! */
+
+                                    Sagan_Bluedot_Check_Cache_Time();
+
+                                }
+
+                            if ( debug->debugbluedot )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot flag: %d", __FILE__, __LINE__, bluedot_flag);
+                                }
+
+#endif
+
+
                             /****************************************************************************
                             * Bro Intel
                             ****************************************************************************/
@@ -837,6 +906,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                     if ( ( config->websense_flag == 0 || rulestruct[b].websense_ipaddr_type == 0 ) ||  websense_flag == 1 )
                                                                         {
 #endif
+
+#ifdef WITH_BLUEDOT
+								     if ( ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 ) ||  bluedot_flag == 1 )
+                                                                        {
+#endif
+
 
                                                                             after_log_flag=0;
 
@@ -1185,6 +1260,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #ifdef WITH_WEBSENSE
                                                                         } /* Websense */
 #endif
+
+#ifdef WITH_BLUEDOT
+									} /* Bluedot */
+#endif
+
                                                                 } /* Bro Intel */
 
                                                         } /* Blacklist */

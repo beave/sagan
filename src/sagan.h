@@ -161,6 +161,16 @@ struct _SaganCounters
     int websense_cat_count;
 #endif
 
+#ifdef WITH_BLUEDOT
+    uint64_t bluedot_cache_count;                      /* Bluedot cache processor */
+    uint64_t bluedot_cache_hit;                        /* Bluedot hit's from Cache */
+    uint64_t bluedot_postive_hit;
+    uint64_t bluedot_total;
+    uint64_t bluedot_error_count;
+    int bluedot_cat_count;
+#endif
+
+
 #ifdef HAVE_LIBESMTP
     uint64_t esmtp_count_success;
     uint64_t esmtp_count_failed;
@@ -202,6 +212,11 @@ struct _SaganDebug
 #ifdef WITH_WEBSENSE
     sbool debugwebsense;
 #endif
+
+#ifdef WITH_BLUEDOT
+    sbool debugbluedot;
+#endif
+
 
 
 };

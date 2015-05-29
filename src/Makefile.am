@@ -46,6 +46,7 @@ output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
 processors/sagan-websense.c \
+processors/sagan-bluedot.c \
 processors/sagan-blacklist.c \
 processors/sagan-perfmon.c \
 processors/sagan-bro-intel.c 

@@ -64,6 +64,11 @@ void sagan_statistics( void )
     unsigned long websense_total=0;
 #endif
 
+#ifdef WITH_BLUEDOT
+    unsigned long bluedot_total=0;
+#endif
+
+
     /* This is used to calulate the events per/second */
     /* Champ Clark III - 11/17/2011 */
 
@@ -81,6 +86,11 @@ void sagan_statistics( void )
 #ifdef WITH_WEBSENSE
             websense_total = counters->websense_total / seconds;
 #endif
+
+#ifdef WITH_BLUEDOT
+            bluedot_total = counters->bluedot_total / seconds;
+#endif
+
         }
 
 
@@ -196,6 +206,24 @@ void sagan_statistics( void )
 //if ( config->websense_flag ) Sagan_Log(S_NORMAL, "Websense Cache Statistics - Cached: %" PRIu64 " Hits: %" PRIu64 " Total: %" PRIu64 " Queries Per/Sec: %lu", counters->websense_cache_count, counters->websense_cache_hit, counters->websense_total, websense_total );
                 }
 #endif
+
+
+#ifdef WITH_BLUEDOT
+
+            if (config->bluedot_flag)
+                {   
+                    Sagan_Log(S_NORMAL, "");
+                    Sagan_Log(S_NORMAL, "          -[ Sagan Bluedot Processor ]-");
+                    Sagan_Log(S_NORMAL, "");
+                    Sagan_Log(S_NORMAL, "          Entries in cache          : %" PRIu64 " (%.3f%%)", counters->bluedot_cache_count, CalcPct(counters->bluedot_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(S_NORMAL, "          Hits from cache           : %" PRIu64 " (%.3f%%)", counters->bluedot_cache_hit, CalcPct(counters->bluedot_cache_hit, counters->bluedot_cache_count));
+                    Sagan_Log(S_NORMAL, "          Errors                    : %" PRIu64 "", counters->bluedot_error_count);
+                    Sagan_Log(S_NORMAL, "          Bluedot hits in logs      : %" PRIu64 "", counters->bluedot_postive_hit);
+                    Sagan_Log(S_NORMAL, "          Queries per/second        : %lu", bluedot_total);
+
+                }
+#endif
+
 
             Sagan_Log(S_NORMAL, "-------------------------------------------------------------------------------");
 

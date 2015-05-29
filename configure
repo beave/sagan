@@ -747,6 +747,7 @@ enable_option_checking
 enable_maintainer_mode
 enable_snortsam
 enable_websense
+enable_bluedot
 enable_esmtp
 enable_geoip
 enable_syslog
@@ -1414,6 +1415,7 @@ Optional Features:
                           sometimes confusing) to the casual installer
   --disable-snortsam      Disable Snortsam support.
   --enable-websense       Enable Websense Threatseeker network lookups.
+  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.
   --enable-esmtp	  Enable libesmtp support.
   --enable-geoip          Enable Maxmind GeoIP support.
   --disable-syslog        Disable syslog support.
@@ -4153,6 +4155,15 @@ if test "${enable_websense+set}" = set; then :
   enableval=$enable_websense;  WEBSENSE="$enableval"
 else
    WEBSENSE="no"
+
+fi
+
+
+# Check whether --enable-bluedot was given.
+if test "${enable_bluedot+set}" = set; then :
+  enableval=$enable_bluedot;  BLUEDOT="$enableval"
+else
+   BLUEDOT="no"
 
 fi
 
@@ -9350,6 +9361,315 @@ fi
 
 
 $as_echo "#define WITH_WEBSENSE 1" >>confdefs.h
+
+        ac_fn_c_check_header_mongrel "$LINENO" "curl/curl.h" "ac_cv_header_curl_curl_h" "$ac_includes_default"
+if test "x$ac_cv_header_curl_curl_h" = xyes; then :
+
+fi
+
+
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
+$as_echo_n "checking for JSON_C... " >&6; }
+
+if test -n "$JSON_C_CFLAGS"; then
+    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json-c" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$JSON_C_LIBS"; then
+    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json-c" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json-c" 2>&1`
+        else
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json-c" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$JSON_C_PKG_ERRORS" >&5
+
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
+$as_echo_n "checking for JSON_C... " >&6; }
+
+if test -n "$JSON_C_CFLAGS"; then
+    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$JSON_C_LIBS"; then
+    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
+        else
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$JSON_C_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (json) were not met:
+
+$JSON_C_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables JSON_C_CFLAGS
+and JSON_C_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables JSON_C_CFLAGS
+and JSON_C_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
+	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+pkg_failed=no
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
+$as_echo_n "checking for JSON_C... " >&6; }
+
+if test -n "$JSON_C_CFLAGS"; then
+    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+if test -n "$JSON_C_LIBS"; then
+    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
+ elif test -n "$PKG_CONFIG"; then
+    if test -n "$PKG_CONFIG" && \
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "json") 2>&5
+  ac_status=$?
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; }; then
+  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
+		      test "x$?" != "x0" && pkg_failed=yes
+else
+  pkg_failed=yes
+fi
+ else
+    pkg_failed=untried
+fi
+
+
+
+if test $pkg_failed = yes; then
+   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+
+if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
+        _pkg_short_errors_supported=yes
+else
+        _pkg_short_errors_supported=no
+fi
+        if test $_pkg_short_errors_supported = yes; then
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
+        else
+	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
+        fi
+	# Put the nasty error message in config.log where it belongs
+	echo "$JSON_C_PKG_ERRORS" >&5
+
+	as_fn_error $? "Package requirements (json) were not met:
+
+$JSON_C_PKG_ERRORS
+
+Consider adjusting the PKG_CONFIG_PATH environment variable if you
+installed software in a non-standard prefix.
+
+Alternatively, you may set the environment variables JSON_C_CFLAGS
+and JSON_C_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details." "$LINENO" 5
+elif test $pkg_failed = untried; then
+     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
+is in your PATH or set the PKG_CONFIG environment variable to the full
+path to pkg-config.
+
+Alternatively, you may set the environment variables JSON_C_CFLAGS
+and JSON_C_LIBS to avoid the need to call pkg-config.
+See the pkg-config man page for more details.
+
+To get pkg-config, see <http://pkg-config.freedesktop.org/>.
+See \`config.log' for more details" "$LINENO" 5; }
+else
+	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
+	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+else
+	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
+	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+
+fi
+        fi
+
+if test "$BLUEDOT" = "yes"; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- Quadrant \"Bluedot\" is enabled -------" >&5
+$as_echo "------- Quadrant \"Bluedot\" is enabled -------" >&6; }
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lcurl" >&5
+$as_echo_n "checking for main in -lcurl... " >&6; }
+if ${ac_cv_lib_curl_main+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcurl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_curl_main=yes
+else
+  ac_cv_lib_curl_main=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_curl_main" >&5
+$as_echo "$ac_cv_lib_curl_main" >&6; }
+if test "x$ac_cv_lib_curl_main" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCURL 1
+_ACEOF
+
+  LIBS="-lcurl $LIBS"
+
+else
+  as_fn_error $? "The libcurl library cannot be found.
+This library is used for Sagan's / \"Bluedot\" support.  Please see
+https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
+To disable this feature use the --disable-bluedot flag. " "$LINENO" 5
+fi
+
+
+$as_echo "#define WITH_BLUEDOT 1" >>confdefs.h
 
         ac_fn_c_check_header_mongrel "$LINENO" "curl/curl.h" "ac_cv_header_curl_curl_h" "$ac_includes_default"
 if test "x$ac_cv_header_curl_curl_h" = xyes; then :

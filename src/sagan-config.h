@@ -149,6 +149,20 @@ struct _SaganConfig
     uint64_t     websense_last_time;                    /* For cache cleaning */
 #endif
 
+    /* Bluedot Threatseeker */
+
+#ifdef WITH_BLUEDOT
+    sbool        bluedot_flag;
+    char         bluedot_device_id[64];
+    char         bluedot_url[256];
+    char         bluedot_auth[64];
+    char         bluedot_cat[MAXPATH];
+    int          bluedot_timeout;
+    uint64_t     bluedot_max_cache;
+    uint64_t     bluedot_last_time;                    /* For cache cleaning */
+#endif
+
+
     /* Bro Intel Framework Support */
 
     sbool	 brointel_flag;

@@ -332,6 +332,9 @@
 /* Version number of package */
 #undef VERSION
 
+/* With Bluedot */
+#undef WITH_BLUEDOT
+
 /* With Snortsam */
 #undef WITH_SNORTSAM
 

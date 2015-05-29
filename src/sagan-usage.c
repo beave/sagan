@@ -57,6 +57,10 @@ void Sagan_Usage(void)
     fprintf(stderr, ", websense");
 #endif
 
+#ifdef WITH_BLUEDOT
+    fprintf(stderr, ", bluedot");
+#endif
+
 #ifdef HAVE_LIBGEOIP
     fprintf(stderr, ", geoip");
 #endif
@@ -102,6 +106,11 @@ void Sagan_Usage(void)
 #ifdef WITH_SYSSTRSTR
     fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n");
 #endif
+
+#ifdef WITH_BLUEDOT
+    fprintf(stderr, "* Using Quadrant's Bluedot.\n");
+#endif
+
 
     fprintf(stderr, "\n* Compiled on %s at %s.\n", __DATE__, __TIME__);
 }

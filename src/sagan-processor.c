@@ -41,10 +41,6 @@
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-blacklist.h"
 
-#ifdef WITH_WEBSENSE
-#include "processors/sagan-websense.h"
-#endif
-
 struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
@@ -72,10 +68,6 @@ void Sagan_Processor ( void )
     sbool ignore_flag=0;
 
     int i;
-
-#ifdef WITH_WEBSENSE
-    int rc;			/* Return code for Websense */
-#endif
 
     for (;;)
         {

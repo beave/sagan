@@ -74,6 +74,11 @@
 #include "processors/sagan-websense.h"
 #endif
 
+#ifdef WITH_BLUEDOT
+#include "processors/sagan-bluedot.h"
+#endif
+
+
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/sagan-unified2.h"
 #endif
@@ -588,6 +593,91 @@ void Load_Config( void )
 
                         }
 
+#endif
+
+#ifdef WITH_BLUEDOT
+
+                    /******* Bluedot *******/
+
+                    if (!strcmp(sagan_var1, "bluedot:"))
+                        {
+
+                            config->bluedot_flag=1;
+
+                            /* Set defaults */
+
+                            strlcpy(config->bluedot_device_id, "NO_DEVICE_ID", sizeof(config->bluedot_device_id));
+                            config->bluedot_timeout = 120;
+
+                            config->bluedot_cat[0] = '\0';
+                            config->bluedot_auth[0] = '\0';
+                            config->bluedot_url[0] = '\0';
+
+                            ptmp = sagan_var1;
+
+                            while (ptmp != NULL )
+                                {
+
+                                    if (!strcmp(ptmp, "catagories"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            strlcpy(config->bluedot_cat, Remove_Return(ptmp), sizeof(config->bluedot_cat));
+                                        }
+
+//                                    if (!strcmp(ptmp, "auth"))
+//                                        {
+//                                            ptmp = strtok_r(NULL, " ", &tok);
+//                                            strlcpy(config->bluedot_auth, Remove_Return(ptmp), sizeof(config->bluedot_auth));
+//                                        }
+
+                                    if (!strcmp(ptmp, "url"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            strlcpy(config->bluedot_url, Remove_Return(ptmp), sizeof(config->bluedot_url));
+                                        }
+
+                                    if (!strcmp(ptmp, "max_cache"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            config->bluedot_max_cache = strtoull(ptmp, NULL, 10);
+                                        }
+
+                                    if (!strcmp(ptmp, "cache_timeout"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            config->bluedot_timeout = atoi(ptmp) * 60;
+                                        }
+
+                                    if (!strcmp(ptmp, "device_id"))
+                                        {
+                                            ptmp = strtok_r(NULL, " ", &tok);
+                                            strlcpy(config->bluedot_device_id, Remove_Return(ptmp), sizeof(config->bluedot_device_id));
+                                        }
+
+                                    ptmp = strtok_r(NULL, "=", &tok);
+                                }
+
+
+                            /* Bluedot sanity checks */
+
+//                            if ( config->bluedot_auth[0] == '\0' )
+//                               {
+//                                    Sagan_Log(S_ERROR,"[%s, line %d] Bluedot \"auth\" option is missing.", __FILE__, __LINE__);
+//                                }
+
+                            if ( config->bluedot_cat[0] == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
+                                }
+
+                            if ( config->bluedot_url[0] == '\0' )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Bluedott \"url\" optin is missing.", __FILE__, __LINE__);
+                                }
+
+                            Sagan_Bluedot_Load_Cat();
+
+                        }
 #endif
 
                     /* For the Bro Intellegence framework */
