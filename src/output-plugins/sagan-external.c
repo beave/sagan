@@ -53,7 +53,7 @@ struct _SaganConfig *config;
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-void Sagan_Ext_Thread ( _SaganEvent *Event )
+void Sagan_Ext_Thread ( _SaganEvent *Event, char *execute_script )
 {
 
     int in[2];
@@ -128,7 +128,9 @@ void Sagan_Ext_Thread ( _SaganEvent *Event )
             close(out[0]);
 
             //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-            execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+            //execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+
+            execl(execute_script, execute_script, NULL, (char *)NULL);
 
             Remove_Lock_File();
             Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);

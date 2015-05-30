@@ -121,6 +121,9 @@ struct _Rule_Struct
     int  alert_end_hour;
     int  alert_end_minute;
 
+    sbool external_flag;
+    char  external_program[MAXPATH];
+
     /* Bro Intel */
 
     sbool brointel_flag;

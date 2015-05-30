@@ -211,7 +211,7 @@ void sagan_statistics( void )
 #ifdef WITH_BLUEDOT
 
             if (config->bluedot_flag)
-                {   
+                {
                     Sagan_Log(S_NORMAL, "");
                     Sagan_Log(S_NORMAL, "          -[ Sagan Bluedot Processor ]-");
                     Sagan_Log(S_NORMAL, "");

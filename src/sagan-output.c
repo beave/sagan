@@ -123,8 +123,18 @@ void Sagan_Output( _SaganEvent *Event )
 
     if ( config->sagan_ext_flag )
         {
-            Sagan_Ext_Thread( Event );
+            Sagan_Ext_Thread( Event, config->sagan_extern );
         }
+
+    /****************************************************************************/
+    /* External program via rule                                                */
+    /****************************************************************************/
+
+    if (  rulestruct[Event->found].external_flag == 1 )
+        {
+            Sagan_Ext_Thread( Event, rulestruct[Event->found].external_program );
+        }
+
 
 }
 

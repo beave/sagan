@@ -365,7 +365,7 @@ int main(int argc, char **argv)
 
 #ifdef WITH_BLUEDOT
                     if (Sagan_strstr(optarg, "bluedot"))
-                        {   
+                        {
                             debug->debugbluedot=1;
                             debugflag=1;
                         }
@@ -544,7 +544,7 @@ int main(int argc, char **argv)
 
 #ifdef WITH_BLUEDOT
     if ( config->bluedot_flag )
-        {   
+        {
 
             curl_global_init(CURL_GLOBAL_ALL);
             Sagan_Bluedot_Init();

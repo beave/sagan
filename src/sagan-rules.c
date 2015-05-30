@@ -1501,6 +1501,23 @@ void Load_Rules( const char *ruleset )
 
                         }
 
+                    if (!strcmp(rulesplit, "external"))
+                        {
+
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( tok_tmp == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option  but not external 'program' is specified!", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+                            Remove_Spaces(tok_tmp);
+
+                            rulestruct[counters->rulecount].external_flag = 1;
+                            strlcpy(rulestruct[counters->rulecount].external_program, tok_tmp, sizeof(rulestruct[counters->rulecount].external_program));
+
+                        }
+
 
 #ifdef WITH_WEBSENSE
 
@@ -1733,7 +1750,8 @@ void Load_Rules( const char *ruleset )
 #endif
 
 
-		    /* -< Go to next line >- */
+
+                    /* -< Go to next line >- */
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }
