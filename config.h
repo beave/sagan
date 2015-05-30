@@ -7,6 +7,9 @@
 /* Sagan configuration file */
 #define CONFIG_FILE_PATH "/usr/local/etc/sagan.conf"
 
+/* Define to 1 if you have the `access' function. */
+#define HAVE_ACCESS 1
+
 /* Support Altivec instructions */
 /* #undef HAVE_ALTIVEC */
 

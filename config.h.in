@@ -6,6 +6,9 @@
 /* Sagan configuration file */
 #undef CONFIG_FILE_PATH
 
+/* Define to 1 if you have the `access' function. */
+#undef HAVE_ACCESS
+
 /* Support Altivec instructions */
 #undef HAVE_ALTIVEC
 

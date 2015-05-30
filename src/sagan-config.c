@@ -97,6 +97,8 @@ struct _SaganVar *var;
 void Load_Config( void )
 {
 
+    struct stat filecheck;
+
     FILE *sagancfg;
 
     char *filename;
@@ -734,9 +736,19 @@ void Load_Config( void )
                                 }
 
                             Remove_Return(ptmp);
+			    Remove_Spaces(ptmp);
+
+                            if (stat(ptmp, &filecheck) != 0 )
+                                {   
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' does not exist! Abort!", __FILE__, __LINE__, ptmp);
+ 			        }     
+
+                           if (access(ptmp, X_OK) == -1)
+                                {  
+                                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' is not executable! Abort!", __FILE__, __LINE__, ptmp);                         
+				}     
 
                             strlcpy(config->sagan_extern, ptmp, sizeof(config->sagan_extern));
-                            if (Sagan_strstr(strtok_r(NULL, " ", &tok), "parsable")) config->sagan_exttype=1;
                         }
 
 #ifdef WITH_SYSLOG

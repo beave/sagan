@@ -58,7 +58,6 @@ struct _SaganConfig
     sbool        sagan_external_output_flag;            /* For things like external, email, fwsam */
 
     int          sagan_port;
-    int          sagan_exttype;
     sbool        sagan_ext_flag;
     sbool        disable_dns_warnings;
     sbool        syslog_src_lookup;
