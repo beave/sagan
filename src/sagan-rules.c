@@ -1515,15 +1515,15 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(tok_tmp);
 
-			    if (stat(tok_tmp, &filecheck) != 0 )
-			    	{
-				    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' does not exist! Abort!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
-				}
+                            if (stat(tok_tmp, &filecheck) != 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' does not exist! Abort!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
+                                }
 
-  			   if (access(tok_tmp, X_OK) == -1)
-			    	{
-				    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' is not executable! Abort!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
-				}
+                            if (access(tok_tmp, X_OK) == -1)
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' is not executable! Abort!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
+                                }
 
                             rulestruct[counters->rulecount].external_flag = 1;
                             strlcpy(rulestruct[counters->rulecount].external_program, tok_tmp, sizeof(rulestruct[counters->rulecount].external_program));

@@ -66,18 +66,18 @@ void Sagan_Ext_Thread ( _SaganEvent *Event, char *execute_script )
 
     if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
 
-            tmpref = Reference_Lookup( Event->found, 1 );
+    tmpref = Reference_Lookup( Event->found, 1 );
 
-            if ( Event->drop == 1 )
-                {
-                    snprintf(tmp, sizeof(tmp), "True");
-                }
-            else
-                {
-                    snprintf(tmp, sizeof(tmp), "False");
-                }
+    if ( Event->drop == 1 )
+        {
+            snprintf(tmp, sizeof(tmp), "True");
+        }
+    else
+        {
+            snprintf(tmp, sizeof(tmp), "False");
+        }
 
-snprintf(data, sizeof(data), "\n\
+    snprintf(data, sizeof(data), "\n\
 ID:%lu:%s\n\
 Message:%s\n\
 Classification:%s\n\
@@ -92,23 +92,23 @@ Destination Port:%d\n\
 Facility:%s\n\
 Syslog Priority:%s\n\
 %sSyslog message:%s\n"\
-\
-,Event->generatorid\
-,Event->sid,\
-Event->f_msg,\
-Event->class,\
-tmp,\
-Event->pri,\
-Event->date,\
-Event->time,\
-Event->ip_src,\
-Event->src_port,\
-Event->ip_dst,\
-Event->dst_port,\
-Event->facility,\
-Event->priority,\
-tmpref,\
-Event->message);
+             \
+             ,Event->generatorid\
+             ,Event->sid,\
+             Event->f_msg,\
+             Event->class,\
+             tmp,\
+             Event->pri,\
+             Event->date,\
+             Event->time,\
+             Event->ip_src,\
+             Event->src_port,\
+             Event->ip_dst,\
+             Event->dst_port,\
+             Event->facility,\
+             Event->priority,\
+             tmpref,\
+             Event->message);
 
 
     pthread_mutex_lock( &ext_mutex );
