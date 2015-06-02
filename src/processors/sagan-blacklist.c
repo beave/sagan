@@ -270,7 +270,7 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            results = parse_ip(syslog_message, i);
+            results = Sagan_Parse_IP(syslog_message, i);
 
             /* Failed to find next IP,  short circuit the process */
 

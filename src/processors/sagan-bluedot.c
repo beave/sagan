@@ -20,7 +20,7 @@
 
 /* sagan-bluedot.c
  *
- * Does real time lookups of IP addresses from the Quadrant reputation 
+ * Does real time lookups of IP addresses from the Quadrant reputation
  * database.   This means you have to have authentication!
  *
  */
@@ -152,8 +152,6 @@ void Sagan_Bluedot_Load_Cat(void)
                     Remove_Return(bluedot_tok2);
                     Remove_Spaces(bluedot_tok2);
                     To_LowerC(bluedot_tok2);
-
-		    printf("|%s|%s|\n", bluedot_tok1, bluedot_tok2);
 
                     strlcpy(SaganBluedotCatList[counters->bluedot_cat_count].cat, bluedot_tok2, sizeof(SaganBluedotCatList[counters->bluedot_cat_count].cat));
                     counters->bluedot_cat_count++;
@@ -484,7 +482,7 @@ int Sagan_Bluedot_Lookup_All ( char *syslog_message, int rule_position )
         {
 
 
-            strlcpy(results, parse_ip(syslog_message, i), sizeof(results));
+            strlcpy(results, Sagan_Parse_IP(syslog_message, i), sizeof(results));
 
             /* Failed to find next IP,  short circuit the process */
 

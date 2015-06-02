@@ -22,7 +22,7 @@
  *
  * Simple method of "finding" the "real" IP address from a syslog message.  This
  * works with OpenSSH and messages of that nature.  An example message might be:
- * "Invalid login from 12.145.241.50".  It'll pull the 12.145.241.50.  This
+ * "Invalid login from 12.145.241.50".  This will pull the 12.145.241.50.  This
  * is part of the "parse_ip" Sagan rules flag.
  *
  */
@@ -48,7 +48,7 @@
 
 struct _SaganConfig *config;
 
-char *parse_ip( char *syslogmessage, int pos )
+char *Sagan_Parse_IP( char *syslogmessage, int pos )
 {
 
     int result_space, result_nonspace, i, b;

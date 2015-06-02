@@ -44,11 +44,11 @@ struct _Sagan_Protocol_Map_Message *map_message;
 struct _Sagan_Protocol_Map_Program *map_program;
 
 /****************************************************************************
- * parse_proto - Searches for simple clues from the message about what
+ * Sagan_Parse_Proto - Searches for simple clues from the message about what
  * protocl might have generated this event
  ****************************************************************************/
 
-int parse_proto( char *msg )
+int Sagan_Parse_Proto( char *msg )
 {
 
     int i;
@@ -69,11 +69,11 @@ int parse_proto( char *msg )
 }
 
 /****************************************************************************
- * parse_proto_program - Attempts to determine the protocol that generate
+ * Sagan_Parse_Proto_Program - Attempts to determine the protocol that generate
  * the event by the program that generate it.
  ****************************************************************************/
 
-int parse_proto_program( char *program )
+int Sagan_Parse_Proto_Program( char *program )
 {
 
     int i;

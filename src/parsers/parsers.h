@@ -24,9 +24,9 @@
 
 #include "parsers/sagan-strstr/sagan-strstr-hook.h"
 
-char *parse_ip( char *, int );
-int   parse_port( char * );
-int   parse_proto( char * );
-int   parse_proto_program (char *);
+char *Sagan_Parse_IP( char *, int );
+int   Sagan_Parse_Port( char * );
+int   Sagan_Parse_Proto( char * );
+int   Sagan_Parse_Proto_Program (char *);
 
 

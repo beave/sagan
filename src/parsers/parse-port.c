@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* parse-port-simple.c
+/* parse-port.c
  *
  * A simple method of finding a port in a syslog message.  An example message
  * might be "Invalid connection from 12.145.241.50 on port 22".  This code
@@ -53,7 +53,7 @@
 
 struct _SaganConfig *config;
 
-int parse_port (char *msg)
+int Sagan_Parse_Port (char *msg)
 {
 
     char *portstring=NULL;
