@@ -35,10 +35,12 @@
 #include <time.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "sagan-lockfile.h"
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;

@@ -48,6 +48,7 @@
 #include "sagan-classifications.h"
 #include "processors/sagan-perfmon.h"
 #include "sagan-rules.h"
+#include "sagan-ignore-list.h"
 
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"

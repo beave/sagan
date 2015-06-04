@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-alert-time.c
+/* sagan-aetas.c
  *
  * This is for time based alerting.  This allows rules to have specific
  * times/days to trigger or otherwise be ignored.
@@ -37,7 +37,7 @@
 #include <stdbool.h>
 
 #include "sagan.h"
-#include "sagan-alert-time.h"
+#include "sagan-aetas.h"
 #include "sagan-rules.h"
 
 struct _Rule_Struct *rulestruct;
@@ -48,13 +48,8 @@ int Sagan_Check_Time(rule_number)
     char ct[64] = { 0 };
     char buf[80] = { 0 };
 
-    uint64_t utime_current;
     int day_current;
 
-    uint64_t utime_start;
-    uint64_t utime_end;
-
-    /* For current mktime */
     time_t     now;
     struct     tm  ts;
 
@@ -62,35 +57,21 @@ int Sagan_Check_Time(rule_number)
     time_t t;
     struct tm *now_utime;
 
-    /* For mktime */
 
-    struct     tm t_start;
-    time_t     start_time_t;
+    sbool   next_day = 0;
+    sbool   off_day = 0;
 
-    struct     tm t_end;
-    time_t     end_time_t;
-
-    int        sagan_year;
-    int        sagan_month;
-    int        sagan_day;
-    int	   sagan_day_end;  /* Used for times that run overs day changes */
-
-    sbool   next_day = 0; 
-
-    char current_time_tmp[5]; 
+    char current_time_tmp[5];
     char hour_tmp[3];
     char minute_tmp[3];
-    
-    int	 current_time; 
 
-
+    int	 current_time;
 
     /* Get current utime / and day of the week */
 
     t = time(NULL);
     now_utime=localtime(&t);
     strftime(ct, sizeof(ct), "%s",  now_utime);
-    utime_current = atol(ct);
     day_current = localtime(&t)->tm_wday;
 
     time(&now);
@@ -99,45 +80,67 @@ int Sagan_Check_Time(rule_number)
     strftime(hour_tmp, sizeof(buf), "%H", &ts);
     strftime(minute_tmp, sizeof(buf), "%M", &ts);
 
-
     snprintf(current_time_tmp, sizeof(current_time_tmp), "%s%s",  hour_tmp, minute_tmp);
-    current_time = atoi(current_time_tmp); 
+    current_time = atoi(current_time_tmp);
 
     strftime(buf, sizeof(buf), "%d", &ts);
-    sagan_day = atoi(buf);
+
+    /* We check if rule extends to a new day */
+
+    if ( rulestruct[rule_number].aetas_start > rulestruct[rule_number].aetas_end )
+        {
+            next_day = 1;
+        }
+
+    /* We check if current day is not one of our days */
+
+    if ( ! Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) )
+        {
+            off_day = 1;
+        }
+
+    /* We check that we are in the current day || that the previous day is
+       one of our days and the rule goes over to a new day */
+
+    if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) || ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current - 1) && next_day == 1) )
+        {
+
+            /* We check if rule is in current day and does not extend to a new day */
+
+            if ( next_day == 0 && off_day == 0)
+                {
+                    if ( current_time >= rulestruct[rule_number].aetas_start && current_time <= rulestruct[rule_number].aetas_end )
+                        {
+                            return(true);
+                        }
+                }
+
+            /* We check if rule extends to a new day and that we are in a current day */
+
+            if ( next_day == 1 && off_day == 0 )
+                {
+                    if ( current_time >= rulestruct[rule_number].aetas_start || current_time <= rulestruct[rule_number].aetas_end )
+                        {
+                            return(true);
+                        }
+                }
+
+            /* We check if rule is on an off day but the rule rolled into the day */
+
+            if ( next_day == 1 && off_day == 1 )
+                {
+                    if ( current_time <= rulestruct[rule_number].aetas_end )
+                        {
+                            return(true);
+                        }
+                }
 
 
+            //  return(false);
+        }
 
-if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current )) 
-        {   
-            	if ( current_time >= rulestruct[rule_number].aetas_start && current_time <= rulestruct[rule_number].aetas_end ) 
-			{
-			return(true);
-			}
-	}
-
-/*
-if ( rulestruct[rule_number].aetas_start > rulestruct[rule_number].aetas_end ) 
-	{
-
-		printf("Between\n"); 
-		if ( current_time >= rulestruct[rule_number].aetas_start || current_time <= rulestruct[rule_number].aetas_end && 
-	             rulestruct[rule_number].aetas_next_day == 0 ) 
-			
-			{
-			rulestruct[rule_number].aetas_next_day = 1; 
-			printf("weee\n");
-			return(true);
-			}
-
-
-	} 
-    
- */   
-    
     return(false);
 }
-
 
 /****************************************************************************/
 /* Sagan_Check_Day - Returns days if found in the "day" bitmask             */

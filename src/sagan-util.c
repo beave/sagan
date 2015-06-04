@@ -51,6 +51,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "sagan-lockfile.h"
 
 #include "version.h"
 

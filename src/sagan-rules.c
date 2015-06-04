@@ -135,7 +135,6 @@ void Load_Rules( const char *ruleset )
     char final_content[512] = { 0 };
 
     char alert_time_tmp1[10];
-    char alert_time_tmp2[3];
 
     char alert_tmp_minute[3];
     char alert_tmp_hour[3];
@@ -1201,22 +1200,22 @@ void Load_Rules( const char *ruleset )
 
                                             /* Start hour */
 
-					    snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]);
-					    snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
-					    snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
+                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]);
+                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
+                                            snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
 
-					    rulestruct[counters->rulecount].aetas_start = atoi(alert_time_all); 
+                                            rulestruct[counters->rulecount].aetas_start = atoi(alert_time_all);
 
 
                                             /* End hour */
 
                                             snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[5], alert_time_tmp1[6]);
                                             snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[7], alert_time_tmp1[8]);
-					    snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
+                                            snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
 
-					    rulestruct[counters->rulecount].aetas_end = atoi(alert_time_all);
+                                            rulestruct[counters->rulecount].aetas_end = atoi(alert_time_all);
 
-					printf("s: %d , e: %d\n", rulestruct[counters->rulecount].aetas_start, rulestruct[counters->rulecount].aetas_end); 
+                                            printf("s: %d , e: %d\n", rulestruct[counters->rulecount].aetas_start, rulestruct[counters->rulecount].aetas_end);
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);

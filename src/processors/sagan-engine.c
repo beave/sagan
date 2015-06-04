@@ -38,7 +38,7 @@
 #include <sys/stat.h>
 
 #include "sagan.h"
-#include "sagan-alert-time.h"
+#include "sagan-aetas.h"
 #include "sagan-meta-content.h"
 #include "sagan-send-alert.h"
 #include "sagan-flowbit.h"
