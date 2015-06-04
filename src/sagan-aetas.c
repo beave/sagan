@@ -23,6 +23,8 @@
  * This is for time based alerting.  This allows rules to have specific
  * times/days to trigger or otherwise be ignored.
  *
+ * Largely re-written by Adam Hall with Champ Clark III's assistance.
+ *
  */
 
 #ifdef HAVE_CONFIG_H
