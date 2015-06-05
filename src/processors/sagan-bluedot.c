@@ -280,11 +280,11 @@ void Sagan_Bluedot_Clean_Cache ( void )
 }
 
 /***************************************************************************
- * Sagan_Bluedot_Lookup - This does the actual Bluedot lookup.  It returns
+ * Sagan_Bluedot_IP_Lookup - This does the actual Bluedot lookup.  It returns
  * the bluedot_alertid value (0 if not found)
  ***************************************************************************/
 
-int Sagan_Bluedot_Lookup(char *parseip)
+int Sagan_Bluedot_IP_Lookup(char *parseip)
 {
 
     char tmpurl[256] = { 0 };
@@ -347,9 +347,8 @@ int Sagan_Bluedot_Lookup(char *parseip)
                 }
         }
 
-    snprintf(tmpurl, sizeof(tmpurl), "%s%s", config->bluedot_url, parseip);
-    snprintf(tmpauth, sizeof(tmpauth), "X-WSL-Auth: %s", config->bluedot_auth);
-    snprintf(tmpdeviceid, sizeof(tmpdeviceid), "X-WSL-DEVICEID: %s", config->bluedot_device_id);
+    snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_IP_LOOKUP, parseip);
+    snprintf(tmpdeviceid, sizeof(tmpdeviceid), "X-BLUEDOT-DEVICEID: %s", config->bluedot_device_id);
 
     curl = curl_easy_init();
 
@@ -469,7 +468,7 @@ int Sagan_Bluedot_Cat_Compare ( int bluedot_results, int rule_position )
  * message and preforms a Bluedot query.
  ***************************************************************************/
 
-int Sagan_Bluedot_Lookup_All ( char *syslog_message, int rule_position )
+int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
 {
 
     int i;
@@ -491,7 +490,7 @@ int Sagan_Bluedot_Lookup_All ( char *syslog_message, int rule_position )
                     return(false);
                 }
 
-            bluedot_results = Sagan_Bluedot_Lookup(results);
+            bluedot_results = Sagan_Bluedot_IP_Lookup(results);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position );
 
             if ( bluedot_flag == 1 )

@@ -771,27 +771,27 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( rulestruct[b].bluedot_ipaddr_type == 1 )
                                         {
-                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src);
+                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_src);
                                             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
                                         }
 
                                     if ( rulestruct[b].bluedot_ipaddr_type == 2 )
                                         {
-                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst);
+                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_dst);
                                             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
                                         }
 
                                     if ( rulestruct[b].bluedot_ipaddr_type == 3 )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src);
+                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_src);
                                             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
 
                                             /* If the source isn't found,  then check the dst */
 
                                             if ( bluedot_flag != 0 )
                                                 {
-                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst);
+                                                    bluedot_results = Sagan_Bluedot_IP_Lookup(ip_dst);
                                                     bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
                                                 }
 
@@ -800,7 +800,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].bluedot_ipaddr_type == 4 )
                                         {
 
-                                            bluedot_flag = Sagan_Bluedot_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
+                                            bluedot_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
 
                                         }
 

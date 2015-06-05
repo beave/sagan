@@ -30,11 +30,15 @@
 
 #define BLUEDOT_PROCESSOR_USER_AGENT "User-Agent: Sagan-SIEM"
 
+#define BLUEDOT_IP_LOOKUP "&qip="
+#define BLUEDOT_HASH_LOOKUP "&qhash="
+
+
 int Sagan_Bluedot_Ignore_List ( void );
 int Sagan_Bluedot_Cat_Compare ( int, int );
 int Sagan_Bluedot ( _SaganProcSyslog *, int  );
-int Sagan_Bluedot_Lookup(char *);
-int Sagan_Bluedot_Lookup_All(char *, int);
+int Sagan_Bluedot_IP_Lookup(char *);
+int Sagan_Bluedot_IP_Lookup_All(char *, int);
 
 void Sagan_Bluedot_Clean_Cache ( void );
 void Sagan_Bluedot_Init(void);

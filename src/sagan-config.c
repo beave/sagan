@@ -612,7 +612,6 @@ void Load_Config( void )
                             config->bluedot_timeout = 120;
 
                             config->bluedot_cat[0] = '\0';
-                            config->bluedot_auth[0] = '\0';
                             config->bluedot_url[0] = '\0';
 
                             ptmp = sagan_var1;
@@ -625,12 +624,6 @@ void Load_Config( void )
                                             ptmp = strtok_r(NULL, " ", &tok);
                                             strlcpy(config->bluedot_cat, Remove_Return(ptmp), sizeof(config->bluedot_cat));
                                         }
-
-//                                    if (!strcmp(ptmp, "auth"))
-//                                        {
-//                                            ptmp = strtok_r(NULL, " ", &tok);
-//                                            strlcpy(config->bluedot_auth, Remove_Return(ptmp), sizeof(config->bluedot_auth));
-//                                        }
 
                                     if (!strcmp(ptmp, "url"))
                                         {
@@ -661,11 +654,6 @@ void Load_Config( void )
 
 
                             /* Bluedot sanity checks */
-
-//                            if ( config->bluedot_auth[0] == '\0' )
-//                               {
-//                                    Sagan_Log(S_ERROR,"[%s, line %d] Bluedot \"auth\" option is missing.", __FILE__, __LINE__);
-//                                }
 
                             if ( config->bluedot_cat[0] == '\0' )
                                 {
