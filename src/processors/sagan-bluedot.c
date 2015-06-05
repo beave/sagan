@@ -54,7 +54,7 @@ struct _SaganCounters *counters;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-struct _Sagan_Bluedot_Cache *SaganBluedotCache;
+struct _Sagan_Bluedot_IP_Cache *SaganBluedotCache;
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 struct _Rule_Struct *rulestruct;
 
@@ -80,8 +80,8 @@ void Sagan_Bluedot_Init(void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    SaganBluedotCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Cache));
-    memset(SaganBluedotCache, 0, sizeof(_Sagan_Bluedot_Cache));
+    SaganBluedotCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+    memset(SaganBluedotCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
 
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
@@ -221,7 +221,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    struct _Sagan_Bluedot_Cache *TmpSaganBluedotCache = NULL;
+    struct _Sagan_Bluedot_IP_Cache *TmpSaganBluedotCache = NULL;
 
     if ( bluedot_cache_clean_lock == 0 )	/* So no two threads try to "clean up" */
         {
@@ -251,7 +251,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     else
                         {
 
-                            TmpSaganBluedotCache = (_Sagan_Bluedot_Cache *) realloc(TmpSaganBluedotCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_Cache));
+                            TmpSaganBluedotCache = (_Sagan_Bluedot_IP_Cache *) realloc(TmpSaganBluedotCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
                             TmpSaganBluedotCache[timeout_count].host = SaganBluedotCache[i].host;
                             TmpSaganBluedotCache[timeout_count].utime = SaganBluedotCache[i].utime;                                                                                 /* store utime */
                             TmpSaganBluedotCache[timeout_count].alertid = SaganBluedotCache[i].alertid;
@@ -422,7 +422,7 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
 
     pthread_mutex_lock(&SaganProcBluedotWorkMutex);
 
-    SaganBluedotCache = (_Sagan_Bluedot_Cache *) realloc(SaganBluedotCache, (counters->bluedot_cache_count+1) * sizeof(_Sagan_Bluedot_Cache));
+    SaganBluedotCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotCache, (counters->bluedot_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
     SaganBluedotCache[counters->bluedot_cache_count].host = ip;
     SaganBluedotCache[counters->bluedot_cache_count].utime = atol(timet);                                                                                     /* store utime */
     SaganBluedotCache[counters->bluedot_cache_count].alertid = bluedot_alertid;

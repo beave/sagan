@@ -30,11 +30,12 @@
 
 #define BLUEDOT_PROCESSOR_USER_AGENT "User-Agent: Sagan-SIEM"
 
+/* Extensions on URL passed depending on what type of query we want to do */
+
 #define BLUEDOT_IP_LOOKUP "&qip="
 #define BLUEDOT_HASH_LOOKUP "&qhash="
+#define BLUEDOT_FILENAME_LOOKUP "&qfilename="
 
-
-int Sagan_Bluedot_Ignore_List ( void );
 int Sagan_Bluedot_Cat_Compare ( int, int );
 int Sagan_Bluedot ( _SaganProcSyslog *, int  );
 int Sagan_Bluedot_IP_Lookup(char *);
@@ -54,8 +55,8 @@ struct _Sagan_Bluedot_Cat_List
 };
 
 
-typedef struct _Sagan_Bluedot_Cache _Sagan_Bluedot_Cache;
-struct _Sagan_Bluedot_Cache
+typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
+struct _Sagan_Bluedot_IP_Cache
 {
     uint32_t host;
     uint64_t utime;
@@ -67,6 +68,7 @@ struct _Sagan_Bluedot_Queue
 {
     char	host[16];
 };
+
 
 
 #endif
