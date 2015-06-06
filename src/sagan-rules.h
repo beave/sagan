@@ -116,8 +116,12 @@ struct _Rule_Struct
 
     sbool alert_time_flag;
     unsigned char alert_days;
-    int  alert_start_hour;
-    int  alert_start_minute;
+    sbool aetas_next_day;
+//    int  alert_start_hour;
+//    int  alert_start_minute;
+    int	 aetas_start; 
+    int  aetas_end;
+
     int  alert_end_hour;
     int  alert_end_minute;
 

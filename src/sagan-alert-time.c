@@ -75,6 +75,16 @@ int Sagan_Check_Time(rule_number)
     int        sagan_day;
     int	   sagan_day_end;  /* Used for times that run overs day changes */
 
+    sbool   next_day = 0; 
+
+    char current_time_tmp[5]; 
+    char hour_tmp[3];
+    char minute_tmp[3];
+    
+    int	 current_time; 
+
+
+
     /* Get current utime / and day of the week */
 
     t = time(NULL);
@@ -86,63 +96,45 @@ int Sagan_Check_Time(rule_number)
     time(&now);
     ts = *localtime(&now);
 
-    strftime(buf, sizeof(buf), "%Y", &ts);
-    sagan_year = atoi(buf);
+    strftime(hour_tmp, sizeof(buf), "%H", &ts);
+    strftime(minute_tmp, sizeof(buf), "%M", &ts);
 
-    strftime(buf, sizeof(buf), "%m", &ts);
-    sagan_month = atoi(buf) - 1;
+
+    snprintf(current_time_tmp, sizeof(current_time_tmp), "%s%s",  hour_tmp, minute_tmp);
+    current_time = atoi(current_time_tmp); 
 
     strftime(buf, sizeof(buf), "%d", &ts);
     sagan_day = atoi(buf);
 
-    /* Construct start date/time */
-
-    t_start.tm_year = sagan_year-1900;
-    t_start.tm_mon = sagan_month;           // Month, 0 - jan
-    t_start.tm_mday = sagan_day;            // Day of the month
-    t_start.tm_hour = rulestruct[rule_number].alert_start_hour;
-    t_start.tm_min = rulestruct[rule_number].alert_start_minute;
-    t_start.tm_sec = 0;
-    t_start.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this?
-    start_time_t = mktime(&t_start);
-    utime_start = (long) start_time_t;
 
 
-    /* mktime takes into account sagan_day = 32, 33, etc.  No need for conversion as
-       mktime will take care of it for us */
+if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current )) 
+        {   
+            	if ( current_time >= rulestruct[rule_number].aetas_start && current_time <= rulestruct[rule_number].aetas_end ) 
+			{
+			return(true);
+			}
+	}
+
+/*
+if ( rulestruct[rule_number].aetas_start > rulestruct[rule_number].aetas_end ) 
+	{
+
+		printf("Between\n"); 
+		if ( current_time >= rulestruct[rule_number].aetas_start || current_time <= rulestruct[rule_number].aetas_end && 
+	             rulestruct[rule_number].aetas_next_day == 0 ) 
+			
+			{
+			rulestruct[rule_number].aetas_next_day = 1; 
+			printf("weee\n");
+			return(true);
+			}
 
 
-    if ( rulestruct[rule_number].alert_start_hour > rulestruct[rule_number].alert_end_hour )
-        {
-            sagan_day_end = sagan_day +1;
-        }
-    else
-        {
-            sagan_day_end = sagan_day;
-        }
-
-
-    /* Construct end date/time */
-
-    t_end.tm_year = sagan_year-1900;
-    t_end.tm_mon = sagan_month;           // Month, 0 - jan
-    t_end.tm_mday = sagan_day_end;        // Day of the week
-    t_end.tm_hour = rulestruct[rule_number].alert_end_hour;
-    t_end.tm_min = rulestruct[rule_number].alert_end_minute;
-    t_end.tm_sec = 0;
-    t_end.tm_isdst = -1;        // Is DST on? 1 = yes, 0 = no, -1 = unknown - Test this?
-    end_time_t = mktime(&t_end);
-    utime_end = (long) end_time_t;
-
-    /* Is this a valid day to trigger? */
-    if (Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current))
-        {
-
-            /* If day is valid,  check the time */
-            if ( utime_current >= utime_start && utime_current <= utime_end ) return(true);
-        }
-
-
+	} 
+    
+ */   
+    
     return(false);
 }
 

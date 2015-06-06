@@ -137,6 +137,12 @@ void Load_Rules( const char *ruleset )
     char alert_time_tmp1[10];
     char alert_time_tmp2[3];
 
+    char alert_tmp_minute[3];
+    char alert_tmp_hour[3];
+
+    char alert_time_all[5];
+
+
     int linecount=0;
     int netcount=0;
     int ref_count=0;
@@ -1194,62 +1200,23 @@ void Load_Rules( const char *ruleset )
                                             snprintf(alert_time_tmp1, sizeof(alert_time_tmp1), "%s", tmptok_tmp);
 
                                             /* Start hour */
-                                            snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]);
-                                            rulestruct[counters->rulecount].alert_start_hour = atoi(alert_time_tmp2);
 
-                                            if (!Is_Numeric(alert_time_tmp2))
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start hour is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
+					    snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]);
+					    snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
+					    snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
 
-                                            if ( rulestruct[counters->rulecount].alert_start_hour > 23 )
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start hour is greater than 23 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
+					    rulestruct[counters->rulecount].aetas_start = atoi(alert_time_all); 
 
-                                            /* Start minute */
-                                            snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
-                                            rulestruct[counters->rulecount].alert_start_minute = atoi(alert_time_tmp2);
-
-                                            if (!Is_Numeric(alert_time_tmp2))
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start minute is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
-
-                                            if ( rulestruct[counters->rulecount].alert_start_minute > 59 )
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' start minute is greater than 59 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
 
                                             /* End hour */
-                                            snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[5], alert_time_tmp1[6]);
-                                            rulestruct[counters->rulecount].alert_end_hour = atoi(alert_time_tmp2);
 
-                                            if (!Is_Numeric(alert_time_tmp2))
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end hour is not nermeric in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
+                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[5], alert_time_tmp1[6]);
+                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[7], alert_time_tmp1[8]);
+					    snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
 
-                                            if ( rulestruct[counters->rulecount].alert_end_hour > 23 )
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end hour is greater than 23 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
+					    rulestruct[counters->rulecount].aetas_end = atoi(alert_time_all);
 
-
-                                            /* End minute */
-                                            snprintf(alert_time_tmp2, sizeof(alert_time_tmp2), "%c%c", alert_time_tmp1[7], alert_time_tmp1[8]);
-                                            rulestruct[counters->rulecount].alert_end_minute = atoi(alert_time_tmp2);
-
-                                            if (!Is_Numeric(alert_time_tmp2))
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end minute is not nermeric in  %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
-
-                                            if ( rulestruct[counters->rulecount].alert_end_minute > 59 )
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'alert_time' end minute is greater than 59 in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
-                                                }
-
+					printf("s: %d , e: %d\n", rulestruct[counters->rulecount].aetas_start, rulestruct[counters->rulecount].aetas_end); 
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
