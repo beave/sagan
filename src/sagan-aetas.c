@@ -22,8 +22,9 @@
  *
  * This is for time based alerting.  This allows rules to have specific
  * times/days to trigger or otherwise be ignored.
- *
- * Largely re-written by Adam Hall with Champ Clark III's assistance.
+ * 
+ * Orignally by Champ Clark III.
+ * Largely re-written by Champ Clark III & Adam Hall (ahall@quadrantsec.com)
  *
  */
 
@@ -137,8 +138,6 @@ int Sagan_Check_Time(rule_number)
                         }
                 }
 
-
-            //  return(false);
         }
 
     return(false);

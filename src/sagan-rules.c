@@ -132,13 +132,11 @@ void Load_Rules( const char *ruleset )
 
     char tmp2[512];
     char tmp[2];
-    char final_content[512] = { 0 };
+    char final_content[512];
 
-    char alert_time_tmp1[10];
-
+    char alert_time_tmp[10];
     char alert_tmp_minute[3];
     char alert_tmp_hour[3];
-
     char alert_time_all[5];
 
 
@@ -1161,14 +1159,14 @@ void Load_Rules( const char *ruleset )
                                                     Sagan_Log(S_ERROR, "[%s, line %d] To many days (%s) in 'alert_time' in %s at line %d.", __FILE__, __LINE__, tmptok_tmp, ruleset, linecount);
                                                 }
 
-                                            strlcpy(alert_time_tmp1, tmptok_tmp, sizeof(alert_time_tmp1));
+                                            strlcpy(alert_time_tmp, tmptok_tmp, sizeof(alert_time_tmp));
 
-                                            for (i=0; i<strlen(alert_time_tmp1); i++)
+                                            for (i=0; i<strlen(alert_time_tmp); i++)
                                                 {
-                                                    snprintf(tmp, sizeof(tmp), "%c", alert_time_tmp1[i]);
+                                                    snprintf(tmp, sizeof(tmp), "%c", alert_time_tmp[i]);
                                                     if (!Is_Numeric(tmp))
                                                         {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp1[i], ruleset, linecount);
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp[i], ruleset, linecount);
                                                         }
 
                                                     if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days ^= SUNDAY;
@@ -1196,26 +1194,47 @@ void Load_Rules( const char *ruleset )
                                                     Sagan_Log(S_ERROR, "[%s, line %d] Improper 'alert_time' format in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
                                                 }
 
-                                            snprintf(alert_time_tmp1, sizeof(alert_time_tmp1), "%s", tmptok_tmp);
+                                            snprintf(alert_time_tmp, sizeof(alert_time_tmp), "%s", tmptok_tmp);
 
                                             /* Start hour */
 
-                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[0], alert_time_tmp1[1]);
-                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[2], alert_time_tmp1[3]);
+                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp[0], alert_time_tmp[1]);
+
+					    if ( atoi(alert_tmp_hour) > 23 ) 
+					    	{
+							Sagan_Log(S_ERROR, "[%s, line %d] Starting 'alert_time' hour cannot be over 23 in %s at line %d.",  __FILE__, __LINE__, ruleset, linecount);
+						}
+
+                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp[2], alert_time_tmp[3]);
+
+					    if ( atoi(alert_tmp_minute) > 59 ) 
+					    	{
+							Sagan_Log(S_ERROR, "[%s, line %d] Starting 'alert_time' minute cannot be over 59 in %s at line %d.",  __FILE__, __LINE__, ruleset, linecount);  
+						}
+
                                             snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
-
                                             rulestruct[counters->rulecount].aetas_start = atoi(alert_time_all);
-
 
                                             /* End hour */
 
-                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp1[5], alert_time_tmp1[6]);
-                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp1[7], alert_time_tmp1[8]);
+                                            snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp[5], alert_time_tmp[6]);
+
+					    if ( atoi(alert_tmp_hour) > 23 ) 
+					    	{
+							Sagan_Log(S_ERROR, "[%s, line %d] Ending 'alert_time' hour cannot be over 23 in %s at line %d.",  __FILE__, __LINE__, ruleset, linecount);
+						}
+
+                                            snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp[7], alert_time_tmp[8]);
+
+					    if ( atoi(alert_tmp_minute) > 59 ) 
+					    	{ 
+							Sagan_Log(S_ERROR, "[%s, line %d] Ending 'alert_time' minute cannot be over 59 in %s at line %d.",  __FILE__, __LINE__, ruleset, linecount);
+						}
+
                                             snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
 
                                             rulestruct[counters->rulecount].aetas_end = atoi(alert_time_all);
 
-                                            printf("s: %d , e: %d\n", rulestruct[counters->rulecount].aetas_start, rulestruct[counters->rulecount].aetas_end);
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
