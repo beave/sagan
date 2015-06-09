@@ -69,8 +69,8 @@ void Sagan_Credits(void)
     fprintf(stderr, "Aleksey Chudov\t\t\t\t\t\"logrotate\" fix/suggestion.\n");
     fprintf(stderr, "DonPiekarz (Github)\t\t\t\tBug reports & fixes.\n");
     fprintf(stderr, "rtkkdeng (Github)\t\t\t\tRules fixes.\n");
-    fprintf(stderr, "Adam Hall (ahall@quadrantsec.com)\t\tAetas & other bug fixes.\n"); 
-    fprintf(stderr, "Brian Echeverry (<becheverry@quadrantsec.com)\tRules/bug reports/testing.\n"); 
+    fprintf(stderr, "Adam Hall (ahall@quadrantsec.com)\t\tAetas & other bug fixes.\n");
+    fprintf(stderr, "Brian Echeverry (<becheverry@quadrantsec.com)\tRules/bug reports/testing.\n");
 
     fprintf(stderr, "\n");
 

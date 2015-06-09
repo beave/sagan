@@ -32,13 +32,19 @@
 
 /* Extensions on URL passed depending on what type of query we want to do */
 
-#define BLUEDOT_IP_LOOKUP "&qip="
-#define BLUEDOT_HASH_LOOKUP "&qhash="
-#define BLUEDOT_FILENAME_LOOKUP "&qfilename="
+#define BLUEDOT_IP_LOOKUP_URL "&qip="
+#define BLUEDOT_HASH_LOOKUP_URL "&qhash="
+#define BLUEDOT_FILENAME_LOOKUP_URL "&qfilename="
+
+#define BLUEDOT_LOOKUP_IP 1
+#define BLUEDOT_LOOKUP_HASH 2
+#define BLUEDOT_LOOKUP_FILENAME 3
+
+#define BLUEDOT_MAX_HASH_SIZE	257			/* This can handle MD5,  SHA1 and SHA256 */
 
 int Sagan_Bluedot_Cat_Compare ( int, int );
 int Sagan_Bluedot ( _SaganProcSyslog *, int  );
-int Sagan_Bluedot_IP_Lookup(char *);
+int Sagan_Bluedot_Lookup(char *, int);			/* what to lookup,  lookup type */
 int Sagan_Bluedot_IP_Lookup_All(char *, int);
 
 void Sagan_Bluedot_Clean_Cache ( void );
@@ -62,6 +68,15 @@ struct _Sagan_Bluedot_IP_Cache
     uint64_t utime;
     int	alertid;
 };
+
+typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
+struct _Sagan_Bluedot_Hash_Cache
+{
+    char hash[BLUEDOT_MAX_HASH_SIZE];
+    uint64_t utime;
+    int alertid;
+};
+
 
 typedef struct _Sagan_Bluedot_Queue _Sagan_Bluedot_Queue;
 struct _Sagan_Bluedot_Queue

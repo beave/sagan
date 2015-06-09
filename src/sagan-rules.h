@@ -169,6 +169,8 @@ struct _Rule_Struct
     int   bluedot_cats[BLUEDOT_MAX_CAT];
     int   bluedot_cat_count;
 
+    sbool bluedot_file_hash;
+
 #endif
 
 

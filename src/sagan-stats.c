@@ -65,7 +65,7 @@ void sagan_statistics( void )
 #endif
 
 #ifdef WITH_BLUEDOT
-    unsigned long bluedot_total=0;
+    unsigned long bluedot_ip_total=0;
 #endif
 
 
@@ -88,7 +88,7 @@ void sagan_statistics( void )
 #endif
 
 #ifdef WITH_BLUEDOT
-            bluedot_total = counters->bluedot_total / seconds;
+            bluedot_ip_total = counters->bluedot_ip_total / seconds;
 #endif
 
         }
@@ -215,11 +215,16 @@ void sagan_statistics( void )
                     Sagan_Log(S_NORMAL, "");
                     Sagan_Log(S_NORMAL, "          -[ Sagan Bluedot Processor ]-");
                     Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          Entries in cache          : %" PRIu64 " (%.3f%%)", counters->bluedot_cache_count, CalcPct(counters->bluedot_cache_count, config->bluedot_max_cache));
-                    Sagan_Log(S_NORMAL, "          Hits from cache           : %" PRIu64 " (%.3f%%)", counters->bluedot_cache_hit, CalcPct(counters->bluedot_cache_hit, counters->bluedot_cache_count));
-                    Sagan_Log(S_NORMAL, "          Errors                    : %" PRIu64 "", counters->bluedot_error_count);
-                    Sagan_Log(S_NORMAL, "          Bluedot hits in logs      : %" PRIu64 "", counters->bluedot_postive_hit);
-                    Sagan_Log(S_NORMAL, "          Queries per/second        : %lu", bluedot_total);
+                    Sagan_Log(S_NORMAL, "          * IP reputation *");
+                    Sagan_Log(S_NORMAL, "");
+                    Sagan_Log(S_NORMAL, "          IP addresses in cache     : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(S_NORMAL, "          IP hits from cache        : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
+                    //Sagan_Log(S_NORMAL, "          IP lookup errors          : %" PRIu64 "", counters->bluedot_error_count);
+                    Sagan_Log(S_NORMAL, "          IP / Bluedot hits in logs : %" PRIu64 "", counters->bluedot_ip_positive_hit);
+                    Sagan_Log(S_NORMAL, "          IP queries per/second     : %lu", bluedot_ip_total);
+
+                    Sagan_Log(S_NORMAL, "          IP lookup errors          : %" PRIu64 "", counters->bluedot_error_count);
+
 
                 }
 #endif

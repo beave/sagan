@@ -116,6 +116,9 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->src_host[0] = '\0';
     SaganNormalizeLiblognorm->dst_host[0] = '\0';
 
+    SaganNormalizeLiblognorm->filehash_sha1[0] = '\0';
+    SaganNormalizeLiblognorm->filehash_md5[0] = '\0';
+
     SaganNormalizeLiblognorm->src_port = 0;
     SaganNormalizeLiblognorm->dst_port = 0;
 
@@ -206,6 +209,28 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             SaganNormalizeLiblognorm->dst_port = atoi(tmp);
         }
 
+
+    tmp = json_object_get_string(json_object_object_get(json, "filehash-md5"));
+
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->filehash_md5, tmp, sizeof(SaganNormalizeLiblognorm->filehash_md5));
+        }
+
+    tmp = json_object_get_string(json_object_object_get(json, "filehash-sha1"));
+
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->filehash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->filehash_sha1));
+        }
+
+    tmp = json_object_get_string(json_object_object_get(json, "filehash-sha256"));
+
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->filehash_sha256, tmp, sizeof(SaganNormalizeLiblognorm->filehash_sha256));
+        }
+
     if ( debug->debugnormalize )
         {
             Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
@@ -219,6 +244,10 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "Source Host: %s", SaganNormalizeLiblognorm->src_host);
             Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
             Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
+            Sagan_Log(S_DEBUG, "MD5 Filehash: %s", SaganNormalizeLiblognorm->filehash_md5);
+            Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
+            Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256);
+
             Sagan_Log(S_DEBUG, "");
         }
 

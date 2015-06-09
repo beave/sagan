@@ -162,12 +162,20 @@ struct _SaganCounters
 #endif
 
 #ifdef WITH_BLUEDOT
-    uint64_t bluedot_cache_count;                      /* Bluedot cache processor */
-    uint64_t bluedot_cache_hit;                        /* Bluedot hit's from Cache */
-    uint64_t bluedot_postive_hit;
-    uint64_t bluedot_total;
+    uint64_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
+    uint64_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
+    uint64_t bluedot_ip_positive_hit;
+    uint64_t bluedot_ip_total;
+
     uint64_t bluedot_error_count;
+
+    uint64_t bluedot_hash_cache_count;
+    uint64_t bluedot_hash_cache_hit;
+    uint64_t bluedot_hash_total;
+
+
     int bluedot_cat_count;
+
 #endif
 
 

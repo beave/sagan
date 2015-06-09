@@ -54,7 +54,8 @@ struct _SaganCounters *counters;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-struct _Sagan_Bluedot_IP_Cache *SaganBluedotCache;
+struct _Sagan_Bluedot_IP_Cache *SaganBluedotIPCache;
+struct _Sagan_Bluedot_Hash_Cache *SaganBluedotHashCache;
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 struct _Rule_Struct *rulestruct;
 
@@ -80,8 +81,11 @@ void Sagan_Bluedot_Init(void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    SaganBluedotCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
-    memset(SaganBluedotCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
+    SaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+    memset(SaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
+
+    SaganBluedotHashCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
+    memset(SaganBluedotHashCache, 0, sizeof(_Sagan_Bluedot_Hash_Cache));
 
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
@@ -194,7 +198,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
             if ( bluedot_cache_clean_lock == 0 ) Sagan_Bluedot_Clean_Cache();
         }
 
-    if ( counters->bluedot_cache_count >= config->bluedot_max_cache )
+    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
         {
             Sagan_Log(S_NORMAL, "[%s, line %d] Out of cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
@@ -221,7 +225,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    struct _Sagan_Bluedot_IP_Cache *TmpSaganBluedotCache = NULL;
+    struct _Sagan_Bluedot_IP_Cache *TmpSaganBluedotIPCache = NULL;
+    struct _Sagan_Bluedot_Hash_Cache *TmpSaganBluedotHashCache = NULL;
 
     if ( bluedot_cache_clean_lock == 0 )	/* So no two threads try to "clean up" */
         {
@@ -236,47 +241,84 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             config->bluedot_last_time = atol(timet);
 
-            for (i=0; i<counters->bluedot_cache_count; i++)
+            for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotCache[i].utime > config->bluedot_timeout )
+                    if ( atol(timet) - SaganBluedotIPCache[i].utime > config->bluedot_timeout )
                         {
 
                             if (debug->debugbluedot)
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] == Deleting from cache -> %u",  __FILE__, __LINE__, SaganBluedotCache[i].host);
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] == Deleting IP address from cache -> %u",  __FILE__, __LINE__, SaganBluedotIPCache[i].host);
                                 }
 
                         }
                     else
                         {
 
-                            TmpSaganBluedotCache = (_Sagan_Bluedot_IP_Cache *) realloc(TmpSaganBluedotCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
-                            TmpSaganBluedotCache[timeout_count].host = SaganBluedotCache[i].host;
-                            TmpSaganBluedotCache[timeout_count].utime = SaganBluedotCache[i].utime;                                                                                 /* store utime */
-                            TmpSaganBluedotCache[timeout_count].alertid = SaganBluedotCache[i].alertid;
+                            TmpSaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(TmpSaganBluedotIPCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
+                            TmpSaganBluedotIPCache[timeout_count].host = SaganBluedotIPCache[i].host;
+                            TmpSaganBluedotIPCache[timeout_count].utime = SaganBluedotIPCache[i].utime;                                                                                 /* store utime */
+                            TmpSaganBluedotIPCache[timeout_count].alertid = SaganBluedotIPCache[i].alertid;
                             timeout_count++;
                         }
                 }
 
             for (i=0; i<timeout_count; i++)
                 {
-                    SaganBluedotCache[i].host = TmpSaganBluedotCache[i].host;
-                    SaganBluedotCache[i].utime = TmpSaganBluedotCache[i].utime;
-                    SaganBluedotCache[i].alertid = TmpSaganBluedotCache[i].alertid;
+                    SaganBluedotIPCache[i].host = TmpSaganBluedotIPCache[i].host;
+                    SaganBluedotIPCache[i].utime = TmpSaganBluedotIPCache[i].utime;
+                    SaganBluedotIPCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
                 }
 
-            deleted_count = counters->bluedot_cache_count - (uint64_t)timeout_count;
-            counters->bluedot_cache_count = (uint64_t)timeout_count;
+            deleted_count = counters->bluedot_ip_cache_count - (uint64_t)timeout_count;
+            counters->bluedot_ip_cache_count = (uint64_t)timeout_count;
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d entries from Bluedot cache.",__FILE__, __LINE__, deleted_count);
+            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d IP addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
+
+            timeout_count = 0;
+
+            for (i=0; i<counters->bluedot_hash_cache_count; i++)
+                {
+
+                    if ( atol(timet) - SaganBluedotHashCache[i].utime > config->bluedot_timeout )
+                        {
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] == Deleting hash from cache -> %s",  __FILE__, __LINE__, SaganBluedotHashCache[i].hash);
+                                }
+                        }
+                    else
+                        {
+
+                            TmpSaganBluedotHashCache = (_Sagan_Bluedot_Hash_Cache *) realloc(TmpSaganBluedotHashCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_Hash_Cache));
+                            strlcpy(TmpSaganBluedotHashCache[timeout_count].hash, SaganBluedotHashCache[i].hash, sizeof(TmpSaganBluedotHashCache[timeout_count].hash));
+                            TmpSaganBluedotHashCache[timeout_count].utime = SaganBluedotHashCache[i].utime;                                                                                 /* store utime */
+                            TmpSaganBluedotHashCache[timeout_count].alertid = SaganBluedotHashCache[i].alertid;
+                            timeout_count++;
+                        }
+                }
+
+            for (i=0; i<timeout_count; i++)
+                {
+
+                    strlcpy(SaganBluedotHashCache[i].hash, TmpSaganBluedotHashCache[i].hash, sizeof(SaganBluedotHashCache[i].hash));
+                    SaganBluedotHashCache[i].utime = TmpSaganBluedotIPCache[i].utime;
+                    SaganBluedotHashCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
+                }
+
+            deleted_count = counters->bluedot_hash_cache_count - (uint64_t)timeout_count;
+            counters->bluedot_hash_cache_count = (uint64_t)timeout_count;
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d hashes addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
+
 
             bluedot_cache_clean_lock = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
         }
 
-    free(TmpSaganBluedotCache);
+    free(TmpSaganBluedotIPCache);
 }
 
 /***************************************************************************
@@ -284,11 +326,18 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * the bluedot_alertid value (0 if not found)
  ***************************************************************************/
 
-int Sagan_Bluedot_IP_Lookup(char *parseip)
+/* type
+ *
+ * 1 == IP
+ * 2 == Hash
+ * 3 == URL
+ */
+
+int Sagan_Bluedot_Lookup(char *data,  int type)
 {
 
-    char tmpurl[256] = { 0 };
-    char tmpauth[128] = { 0 };
+    char tmpurl[1024] = { 0 };
+//    char tmpauth[128] = { 0 };
     char tmpdeviceid[64] = { 0 };
 
     CURL *curl;
@@ -314,40 +363,80 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    ip = IP2Bit(parseip);
+    /************************************************************************/
+    /* Lookup types                                                         */
+    /************************************************************************/
 
-    if ( is_rfc1918(ip) )
+    /* IP Address Lookup */
+
+    if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-            if ( debug->debugbluedot )
-                {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] %s is RFC1918.", __FILE__, __LINE__, parseip);
-                }
+            ip = IP2Bit(data);
 
-            return(false);
-        }
-
-    for (i=0; i<counters->bluedot_cache_count; i++)
-        {
-
-            if ( ip == SaganBluedotCache[i].host)
+            if ( is_rfc1918(ip) )
                 {
 
-                    if (debug->debugbluedot)
+                    if ( debug->debugbluedot )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (%u) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, parseip, SaganBluedotCache[i].host, SaganBluedotCache[i].alertid);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] %s is RFC1918.", __FILE__, __LINE__, data);
                         }
 
-                    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                    counters->bluedot_cache_hit++;
-                    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
-
-                    return(SaganBluedotCache[i].alertid);
-
+                    return(false);
                 }
+
+            for (i=0; i<counters->bluedot_ip_cache_count; i++)
+                {
+
+                    if ( ip == SaganBluedotIPCache[i].host)
+                        {
+
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (%u) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotIPCache[i].host, SaganBluedotIPCache[i].alertid);
+                                }
+
+                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+                            counters->bluedot_ip_cache_hit++;
+                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+                            return(SaganBluedotIPCache[i].alertid);
+
+                        }
+                }
+
+            snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_IP_LOOKUP_URL, data);
+
         }
 
-    snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_IP_LOOKUP, parseip);
+    if ( type == BLUEDOT_LOOKUP_HASH )
+        {
+
+            for (i=0; i<counters->bluedot_hash_cache_count; i++)
+                {
+
+                    if (!strcmp(data, SaganBluedotHashCache[i].hash))
+                        {
+
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Pulled file hash '%s' from Bluedot hash cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotHashCache[i].alertid);
+                                }
+
+                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+                            counters->bluedot_hash_cache_hit++;
+                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+                            return(SaganBluedotHashCache[i].alertid);
+
+                        }
+
+
+                }
+
+            snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_HASH_LOOKUP_URL, data);
+        }
+
     snprintf(tmpdeviceid, sizeof(tmpdeviceid), "X-BLUEDOT-DEVICEID: %s", config->bluedot_device_id);
 
     curl = curl_easy_init();
@@ -359,7 +448,7 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
             curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);   /* WIll send SIGALRM if not set */
             headers = curl_slist_append (headers, BLUEDOT_PROCESSOR_USER_AGENT);
-            headers = curl_slist_append (headers, tmpauth);
+//            headers = curl_slist_append (headers, tmpauth);
             headers = curl_slist_append (headers, tmpdeviceid);
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER , headers );
@@ -373,7 +462,7 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
 
             if (!strcmp(response, "Authentication key is invalid"))
                 {
-                    Sagan_Log(S_WARN, "Got an \"invalid key\" from Bluedot Threatseeker! Processor disabled. ");
+                    Sagan_Log(S_WARN, "Got an \"invalid key\" from Bluedot! Processor disabled. ");
                     pthread_mutex_lock(&SaganProcBluedotWorkMutex);
                     counters->bluedot_error_count++;
                     config->bluedot_flag = 0;
@@ -385,25 +474,30 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
     else
         {
 
-            Sagan_Log(S_WARN, "[%s, line %d] Bluedot Threatseeker returned a empty \"response\".", __FILE__, __LINE__);
+            Sagan_Log(S_WARN, "[%s, line %d] Bluedot returned a empty \"response\".", __FILE__, __LINE__);
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_error_count++;
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
             return(false);
         }
 
-    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-    counters->bluedot_total++;
-    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
-
     json_in = json_tokener_parse(response);
-    cat  = json_object_get_string(json_object_object_get(json_in, "qipcode"));
+
+    if ( type == BLUEDOT_LOOKUP_IP )
+        {
+            cat  = json_object_get_string(json_object_object_get(json_in, "qipcode"));
+        }
+
+    if ( type == BLUEDOT_LOOKUP_HASH )
+        {
+            cat  = json_object_get_string(json_object_object_get(json_in, "qhashcode"));
+        }
 
     if ( cat == NULL )
         {
             Sagan_Log(S_WARN, "Bluedot return a bad category.");
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-            counters->bluedot_error_count++;
+            counters->bluedot_error_count++;						// DEBUG <- Total error count
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
             return(false);
         }
@@ -417,18 +511,52 @@ int Sagan_Bluedot_IP_Lookup(char *parseip)
 
     if ( debug->debugbluedot)
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s.", __FILE__, __LINE__, bluedot_alertid, parseip);
+            Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s.", __FILE__, __LINE__, bluedot_alertid, data);
         }
 
-    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
 
-    SaganBluedotCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotCache, (counters->bluedot_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
-    SaganBluedotCache[counters->bluedot_cache_count].host = ip;
-    SaganBluedotCache[counters->bluedot_cache_count].utime = atol(timet);                                                                                     /* store utime */
-    SaganBluedotCache[counters->bluedot_cache_count].alertid = bluedot_alertid;
-    counters->bluedot_cache_count++;
 
-    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+    /************************************************************************/
+    /* Add entries to cache                                                 */
+    /************************************************************************/
+
+    /* IP Address lookup */
+
+    if ( type == BLUEDOT_LOOKUP_IP )
+        {
+
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+
+            counters->bluedot_ip_total++;
+
+            SaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotIPCache, (counters->bluedot_ip_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
+            counters->bluedot_ip_cache_count++;
+
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+        }
+
+    if ( type == BLUEDOT_LOOKUP_HASH )
+        {
+
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+
+            counters->bluedot_hash_total++;
+
+            SaganBluedotHashCache = (_Sagan_Bluedot_Hash_Cache *) realloc(SaganBluedotHashCache, (counters->bluedot_hash_cache_count+1) * sizeof(_Sagan_Bluedot_Hash_Cache));
+            strlcpy(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash, data, sizeof(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash));
+            SaganBluedotHashCache[counters->bluedot_hash_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotHashCache[counters->bluedot_hash_cache_count].alertid = bluedot_alertid;
+            counters->bluedot_hash_cache_count++;
+
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+        }
+
+
 
     json_object_put(json_in);       /* Clear json_in as we're done with it */
 
@@ -452,7 +580,7 @@ int Sagan_Bluedot_Cat_Compare ( int bluedot_results, int rule_position )
                 {
 
                     pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                    counters->bluedot_postive_hit++;
+                    counters->bluedot_ip_positive_hit++;
                     pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                     return(true);
@@ -490,7 +618,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
                     return(false);
                 }
 
-            bluedot_results = Sagan_Bluedot_IP_Lookup(results);
+            bluedot_results = Sagan_Bluedot_Lookup(results, BLUEDOT_LOOKUP_IP);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position );
 
             if ( bluedot_flag == 1 )

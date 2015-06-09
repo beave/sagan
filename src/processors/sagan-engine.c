@@ -147,6 +147,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char *ptmp;
     char *tok2;
     char *username = NULL;
+    char *filehash = NULL;
 //  char *uid = NULL;
 
     char ip_src[MAXIP] = { 0 };
@@ -183,7 +184,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef WITH_BLUEDOT
     int bluedot_results;
-    sbool bluedot_flag;
+    sbool bluedot_ip_flag;
+    sbool bluedot_hash_flag;
 #endif
 
 
@@ -440,6 +442,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             dst_port=0;
                             src_port=0;
+
+                            filehash = NULL;
 //		   username=NULL;
 //		   uid=NULL;
 
@@ -486,6 +490,29 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             liblognorm_status = 1;
                                         }
 
+				    /* We want SHA256 over anthing else. */
+
+                                    if ( SaganNormalizeLiblognorm->filehash_sha256[0] != '\0' )
+                                        {
+                                            filehash = SaganNormalizeLiblognorm->filehash_sha256;
+                                            liblognorm_status = 1;
+                                        }
+
+                                    else if ( SaganNormalizeLiblognorm->filehash_sha1[0] != '\0' )
+                                        {
+
+                                            filehash = SaganNormalizeLiblognorm->filehash_sha1;
+                                            liblognorm_status = 1;
+
+                                        }
+
+                                    else if ( SaganNormalizeLiblognorm->filehash_md5[0] != '\0' )
+                                        {
+
+                                            filehash = SaganNormalizeLiblognorm->filehash_md5;
+                                            liblognorm_status = 1;
+
+                                        }
 
 //		  			 uid = SaganNormalizeLiblognorm->uid;
 
@@ -762,60 +789,69 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef WITH_BLUEDOT
 
-                            if ( config->bluedot_flag && rulestruct[b].bluedot_ipaddr_type )
+                            if ( config->bluedot_flag )
                                 {
-
-                                    bluedot_results = 0;
-
-                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
-
-                                    if ( rulestruct[b].bluedot_ipaddr_type == 1 )
-                                        {
-                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_src);
-                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
-                                        }
-
-                                    if ( rulestruct[b].bluedot_ipaddr_type == 2 )
-                                        {
-                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_dst);
-                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
-                                        }
-
-                                    if ( rulestruct[b].bluedot_ipaddr_type == 3 )
+                                    if ( rulestruct[b].bluedot_ipaddr_type )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_IP_Lookup(ip_src);
-                                            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                            bluedot_results = 0;
 
-                                            /* If the source isn't found,  then check the dst */
+                                            /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
-                                            if ( bluedot_flag != 0 )
+                                            if ( rulestruct[b].bluedot_ipaddr_type == 1 )
                                                 {
-                                                    bluedot_results = Sagan_Bluedot_IP_Lookup(ip_dst);
-                                                    bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
                                                 }
 
+                                            if ( rulestruct[b].bluedot_ipaddr_type == 2 )
+                                                {
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                }
+
+                                            if ( rulestruct[b].bluedot_ipaddr_type == 3 )
+                                                {
+
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+
+                                                    /* If the source isn't found,  then check the dst */
+
+                                                    if ( bluedot_ip_flag != 0 )
+                                                        {
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
+                                                            bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                        }
+
+                                                }
+
+                                            if ( rulestruct[b].bluedot_ipaddr_type == 4 )
+                                                {
+
+                                                    bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
+
+                                                }
+
+                                            /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
+                                             * "delete" an entry only to re-add it! */
                                         }
 
-                                    if ( rulestruct[b].bluedot_ipaddr_type == 4 )
+//                            if ( debug->debugbluedot )
+//                                {
+//                                    Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot IP reputation flag: %d", __FILE__, __LINE__, bluedot_ip_flag);
+//                                }
+
+
+                                    if ( rulestruct[b].bluedot_file_hash && filehash != NULL )
                                         {
 
-                                            bluedot_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
+                                            bluedot_hash_flag = Sagan_Bluedot_Lookup( filehash, BLUEDOT_LOOKUP_HASH);
 
                                         }
 
-                                    /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
-                                     * "delete" an entry only to re-add it! */
-
                                     Sagan_Bluedot_Check_Cache_Time();
-
                                 }
-
-                            if ( debug->debugbluedot )
-                                {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot flag: %d", __FILE__, __LINE__, bluedot_flag);
-                                }
-
 #endif
 
 
@@ -918,7 +954,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
 #ifdef WITH_BLUEDOT
-                                                                            if ( ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 ) ||  bluedot_flag == 1 )
+                                                                            if ( ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || rulestruct[b].bluedot_file_hash == 0) ||  bluedot_ip_flag == 1 || bluedot_hash_flag == 1 )
                                                                                 {
 #endif
 
