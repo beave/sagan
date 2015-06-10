@@ -1705,7 +1705,7 @@ void Load_Rules( const char *ruleset )
 
 				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-				    if ( tmptoken == NULL )
+				    if ( tok_tmp == NULL )
 				    	{
 					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
 					}
@@ -1719,7 +1719,7 @@ void Load_Rules( const char *ruleset )
 
 				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-				    if ( tmptoken == NULL )
+				    if ( tok_tmp == NULL )
 				    	{
 					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
 					}
@@ -1733,7 +1733,7 @@ void Load_Rules( const char *ruleset )
 
 				     tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-				     if ( tmptoken == NULL )
+				     if ( tok_tmp == NULL )
 				     	{
 					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
 					}
