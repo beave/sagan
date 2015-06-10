@@ -1693,51 +1693,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
 
-                                    while ( tmptoken != NULL )
-                                        {
-
-                                            strlcpy(tmp2, tmptoken, sizeof(tmp2));
-
-                                            Remove_Spaces(tmptoken);
-                                            To_LowerC(tmptoken);
-
-                                            found = 0;
-
-                                            for ( i = 0; i < counters->bluedot_cat_count; i++ )
-                                                {
-
-                                                    if (!strcmp(SaganBluedotCatList[i].cat, tmptoken))
-                                                        {
-
-                                                            found = 1;
-
-                                                            if ( rulestruct[counters->rulecount].bluedot_cat_count <= BLUEDOT_MAX_CAT )
-                                                                {
-
-                                                                    rulestruct[counters->rulecount].bluedot_cats[rulestruct[counters->rulecount].bluedot_cat_count] =  SaganBluedotCatList[i].cat_number;
-                                                                    rulestruct[counters->rulecount].bluedot_cat_count++;
-
-                                                                }
-                                                            else
-                                                                {
-
-                                                                    Sagan_Log(S_WARN, "[%s, line %d] To many Bluedot catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-
-                                                                }
-
-                                                        }
-                                                }
-
-                                            if ( found == 0 )
-                                                {
-
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Unknown Bluedot category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
-
-                                                }
-
-
-                                            tmptoken = strtok_r(NULL, "," , &saveptrrule3);
-                                        }
+				    Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP); 
 
                                     /* Bluedot configuration check here! */
 
@@ -1746,9 +1702,44 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tok_tmp, "file_hash"))
                                 {
                                     rulestruct[counters->rulecount].bluedot_file_hash = 1;
+
+				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+				    if ( tmptoken == NULL )
+				    	{
+					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+					}
+
+				    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
                                 }
 
+			    if (!strcmp(tok_tmp, "url")) 
+			    	{ 
+				    rulestruct[counters->rulecount].bluedot_url = 1;
 
+				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+				    if ( tmptoken == NULL )
+				    	{
+					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+					}
+				    
+				    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL); 
+				}
+
+			     if (!strcmp(tok_tmp, "filename"))
+			     	{
+				     rulestruct[counters->rulecount].bluedot_filename = 1;
+
+				     tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+				     if ( tmptoken == NULL )
+				     	{
+					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+					}
+				     
+				     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
+				}
 
                         }
 #endif

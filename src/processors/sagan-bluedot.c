@@ -56,6 +56,8 @@ struct _SaganDebug *debug;
 
 struct _Sagan_Bluedot_IP_Cache *SaganBluedotIPCache;
 struct _Sagan_Bluedot_Hash_Cache *SaganBluedotHashCache;
+struct _Sagan_Bluedot_URL_Cache *SaganBluedotURLCache;
+struct _Sagan_Bluedot_Filename_Cache *SaganBluedotFilenameCache;
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 struct _Rule_Struct *rulestruct;
 
@@ -86,6 +88,12 @@ void Sagan_Bluedot_Init(void)
 
     SaganBluedotHashCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
     memset(SaganBluedotHashCache, 0, sizeof(_Sagan_Bluedot_Hash_Cache));
+
+    SaganBluedotURLCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_URL_Cache));
+    memset(SaganBluedotURLCache, 0, sizeof(_Sagan_Bluedot_URL_Cache));
+
+    SaganBluedotFilenameCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
+    memset(SaganBluedotFilenameCache, 0, sizeof(_Sagan_Bluedot_Filename_Cache));
 
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
@@ -227,6 +235,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
     struct _Sagan_Bluedot_IP_Cache *TmpSaganBluedotIPCache = NULL;
     struct _Sagan_Bluedot_Hash_Cache *TmpSaganBluedotHashCache = NULL;
+    struct _Sagan_Bluedot_URL_Cache *TmpSaganBluedotURLCache = NULL;
+    struct _Sagan_Bluedot_Filename_Cache *TmpSaganBluedotFilenameCache = NULL;
 
     if ( bluedot_cache_clean_lock == 0 )	/* So no two threads try to "clean up" */
         {
@@ -276,6 +286,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d IP addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
+            /* Clean hash cache */
+
             timeout_count = 0;
 
             for (i=0; i<counters->bluedot_hash_cache_count; i++)
@@ -303,15 +315,88 @@ void Sagan_Bluedot_Clean_Cache ( void )
                 {
 
                     strlcpy(SaganBluedotHashCache[i].hash, TmpSaganBluedotHashCache[i].hash, sizeof(SaganBluedotHashCache[i].hash));
-                    SaganBluedotHashCache[i].utime = TmpSaganBluedotIPCache[i].utime;
-                    SaganBluedotHashCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
+                    SaganBluedotHashCache[i].utime = TmpSaganBluedotHashCache[i].utime;
+                    SaganBluedotHashCache[i].alertid = TmpSaganBluedotHashCache[i].alertid;
                 }
 
             deleted_count = counters->bluedot_hash_cache_count - (uint64_t)timeout_count;
             counters->bluedot_hash_cache_count = (uint64_t)timeout_count;
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d hashes addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
+            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d hashes from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
+            /* Clean URL cache */
+
+            timeout_count = 0;
+
+            for (i=0; i<counters->bluedot_url_cache_count; i++)
+                {
+
+                    if ( atol(timet) - SaganBluedotURLCache[i].utime > config->bluedot_timeout )
+                        {
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] == Deleting URL from cache -> %s",  __FILE__, __LINE__, SaganBluedotURLCache[i].url);
+                                }
+                        }
+                    else
+                        {
+
+                            TmpSaganBluedotURLCache = (_Sagan_Bluedot_URL_Cache *) realloc(TmpSaganBluedotURLCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_URL_Cache));
+                            strlcpy(TmpSaganBluedotURLCache[timeout_count].url, SaganBluedotURLCache[i].url, sizeof(TmpSaganBluedotURLCache[timeout_count].url));
+                            TmpSaganBluedotURLCache[timeout_count].utime = SaganBluedotURLCache[i].utime;
+                            TmpSaganBluedotURLCache[timeout_count].alertid = SaganBluedotURLCache[i].alertid;
+                            timeout_count++;
+                        }
+                }
+
+            for (i=0; i<timeout_count; i++)
+                {
+                    strlcpy(SaganBluedotURLCache[i].url, TmpSaganBluedotURLCache[i].url, sizeof(SaganBluedotURLCache[i].url));
+                    SaganBluedotURLCache[i].utime = TmpSaganBluedotURLCache[i].utime;
+                    SaganBluedotURLCache[i].alertid = TmpSaganBluedotURLCache[i].alertid;
+                }
+
+            deleted_count = counters->bluedot_url_cache_count - (uint64_t)timeout_count;
+            counters->bluedot_url_cache_count = (uint64_t)timeout_count;
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d URLs from Bluedot cache.",__FILE__, __LINE__, deleted_count);
+
+	    /* Clean Filename cache */
+
+	    timeout_count = 0;
+
+	    for (i=0; i<counters->bluedot_filename_cache_count; i++)
+	    	{
+			if ( atol(timet) - SaganBluedotFilenameCache[i].utime > config->bluedot_timeout )
+			{
+
+				if (debug->debugbluedot)
+					{
+						Sagan_Log(S_DEBUG, "[%s, line %d] == Deleting Filename from cache -> %s",  __FILE__, __LINE__, SaganBluedotFilenameCache[i].filename);
+					}
+				}
+				else
+				{
+
+				TmpSaganBluedotFilenameCache = (_Sagan_Bluedot_Filename_Cache *) realloc(TmpSaganBluedotFilenameCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_Filename_Cache));
+				strlcpy(TmpSaganBluedotFilenameCache[timeout_count].filename, SaganBluedotFilenameCache[i].filename, sizeof(TmpSaganBluedotFilenameCache[timeout_count].filename));
+				TmpSaganBluedotFilenameCache[timeout_count].utime = SaganBluedotFilenameCache[i].utime;
+				TmpSaganBluedotFilenameCache[timeout_count].alertid = SaganBluedotFilenameCache[i].alertid;
+				timeout_count++;
+			}
+		}
+
+		for (i=0; i<timeout_count; i++)
+			{
+			strlcpy(SaganBluedotFilenameCache[i].filename, TmpSaganBluedotFilenameCache[i].filename, sizeof(SaganBluedotFilenameCache[i].filename));
+			SaganBluedotFilenameCache[i].utime = TmpSaganBluedotFilenameCache[i].utime;
+			SaganBluedotFilenameCache[i].alertid = TmpSaganBluedotFilenameCache[i].alertid;
+			}
+
+		deleted_count = counters->bluedot_filename_cache_count - (uint64_t)timeout_count;
+		counters->bluedot_filename_cache_count = (uint64_t)timeout_count;
+
+		Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d filenames from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
             bluedot_cache_clean_lock = 0;
 
@@ -331,13 +416,13 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 1 == IP
  * 2 == Hash
  * 3 == URL
+ * 4 == Filename
  */
 
 int Sagan_Bluedot_Lookup(char *data,  int type)
 {
 
     char tmpurl[1024] = { 0 };
-//    char tmpauth[128] = { 0 };
     char tmpdeviceid[64] = { 0 };
 
     CURL *curl;
@@ -437,6 +522,60 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
             snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_HASH_LOOKUP_URL, data);
         }
 
+    if ( type == BLUEDOT_LOOKUP_URL )
+        {
+
+            for (i=0; i<counters->bluedot_url_cache_count; i++)
+                {
+
+                    if (!strcmp(data, SaganBluedotURLCache[i].url))
+                        {
+
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Pulled file URL '%s' from Bluedot URL cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotURLCache[i].alertid);
+                                }
+                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+                            counters->bluedot_url_cache_hit++;
+                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+                            return(SaganBluedotURLCache[i].alertid);
+
+                        }
+
+                }
+
+            snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_URL_LOOKUP_URL, data);
+
+        }
+
+    if ( type == BLUEDOT_LOOKUP_FILENAME ) 
+    	{
+
+		for (i=0; i<counters->bluedot_filename_cache_count; i++)
+			{
+			if (!strcmp(data, SaganBluedotFilenameCache[i].filename))
+				{
+
+				    if (debug->debugbluedot)
+				   	{
+					Sagan_Log(S_DEBUG, "[%s, line %d] Pulled file filename '%s' from Bluedot filename cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotFilenameCache[i].alertid);
+					}
+
+				pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+				counters->bluedot_filename_cache_hit++;
+				pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+				return(SaganBluedotFilenameCache[i].alertid);
+
+			     }
+		   }
+
+	     snprintf(tmpurl, sizeof(tmpurl), "%s%s%s", config->bluedot_url, BLUEDOT_FILENAME_LOOKUP_URL, data);
+
+	     }
+
+
     snprintf(tmpdeviceid, sizeof(tmpdeviceid), "X-BLUEDOT-DEVICEID: %s", config->bluedot_device_id);
 
     curl = curl_easy_init();
@@ -448,7 +587,6 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
             curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);   /* WIll send SIGALRM if not set */
             headers = curl_slist_append (headers, BLUEDOT_PROCESSOR_USER_AGENT);
-//            headers = curl_slist_append (headers, tmpauth);
             headers = curl_slist_append (headers, tmpdeviceid);
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER , headers );
@@ -488,10 +626,20 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
             cat  = json_object_get_string(json_object_object_get(json_in, "qipcode"));
         }
 
-    if ( type == BLUEDOT_LOOKUP_HASH )
+    else if ( type == BLUEDOT_LOOKUP_HASH )
         {
             cat  = json_object_get_string(json_object_object_get(json_in, "qhashcode"));
         }
+
+    else if ( type == BLUEDOT_LOOKUP_URL )
+        {
+            cat  = json_object_get_string(json_object_object_get(json_in, "qurlcode"));
+        }
+  
+    else if ( type == BLUEDOT_LOOKUP_FILENAME ) 
+    	{
+	    cat = json_object_get_string(json_object_object_get(json_in, "qfilenamecode")); 
+	}
 
     if ( cat == NULL )
         {
@@ -539,7 +687,10 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
 
         }
 
-    if ( type == BLUEDOT_LOOKUP_HASH )
+
+    /* File hash lookup */
+
+    else if ( type == BLUEDOT_LOOKUP_HASH )
         {
 
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
@@ -556,8 +707,40 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
 
         }
 
+    /* URL lookup */
 
+    else if ( type == BLUEDOT_LOOKUP_URL )
+        {
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
 
+            counters->bluedot_url_total++;
+
+            SaganBluedotURLCache = (_Sagan_Bluedot_URL_Cache *) realloc(SaganBluedotURLCache, (counters->bluedot_url_cache_count+1) * sizeof(_Sagan_Bluedot_URL_Cache));
+            strlcpy(SaganBluedotURLCache[counters->bluedot_url_cache_count].url, data, sizeof(SaganBluedotURLCache[counters->bluedot_url_cache_count].url));
+            SaganBluedotURLCache[counters->bluedot_url_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotURLCache[counters->bluedot_url_cache_count].alertid = bluedot_alertid;
+            counters->bluedot_url_cache_count++;
+
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+        }
+    
+    /* Filename Lookup */
+
+    else if ( type == BLUEDOT_LOOKUP_FILENAME )
+    	{
+	    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+
+	    counters->bluedot_filename_total++;
+
+	    SaganBluedotFilenameCache = (_Sagan_Bluedot_Filename_Cache *) realloc(SaganBluedotFilenameCache, (counters->bluedot_filename_cache_count+1) * sizeof(_Sagan_Bluedot_Filename_Cache));
+	    strlcpy(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename, data, sizeof(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename));
+	    SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].utime = atol(timet);
+	    SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].alertid = bluedot_alertid;
+	    counters->bluedot_filename_cache_count++;
+
+	    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+        }
+    
     json_object_put(json_in);       /* Clear json_in as we're done with it */
 
     return(bluedot_alertid);
@@ -568,27 +751,87 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
  * compares to what the rule is looking for
  ***************************************************************************/
 
-int Sagan_Bluedot_Cat_Compare ( int bluedot_results, int rule_position )
+int Sagan_Bluedot_Cat_Compare ( int bluedot_results, int rule_position, int type )
 {
 
     int i;
 
-    for ( i = 0; i < rulestruct[rule_position].bluedot_cat_count; i++ )
+    if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-            if ( bluedot_results == rulestruct[rule_position].bluedot_cats[i] )
+            for ( i = 0; i < rulestruct[rule_position].bluedot_ip_cat_count; i++ )
                 {
 
-                    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                    counters->bluedot_ip_positive_hit++;
-                    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                    if ( bluedot_results == rulestruct[rule_position].bluedot_ip_cats[i] )
+                        {
 
-                    return(true);
+                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+                            counters->bluedot_ip_positive_hit++;
+                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+                            return(true);
+                        }
+
                 }
 
+            return(false);
         }
 
-    return(false);
+     if ( type == BLUEDOT_LOOKUP_HASH )
+     	{
+		for ( i = 0; i < rulestruct[rule_position].bluedot_hash_cat_count; i++ )
+			{
+
+			if ( bluedot_results == rulestruct[rule_position].bluedot_hash_cats[i] )
+				{
+				pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+				counters->bluedot_hash_positive_hit++;
+				pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+				return(true);
+			}
+		}
+	return(false);
+	}
+
+     if ( type == BLUEDOT_LOOKUP_URL )
+        {
+		for ( i = 0; i < rulestruct[rule_position].bluedot_url_cat_count; i++ )
+			{
+
+			if ( bluedot_results == rulestruct[rule_position].bluedot_url_cats[i] )
+				{
+				pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+				counters->bluedot_url_positive_hit++;
+				pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+				return(true); 
+			}
+		}
+	return(false); 
+	}
+
+      if ( type == BLUEDOT_LOOKUP_FILENAME ) 
+      	{
+		for ( i = 0; i < rulestruct[rule_position].bluedot_filename_cat_count; i++ )
+			{
+
+			if ( bluedot_results == rulestruct[rule_position].bluedot_filename_cats[i] )
+				{
+				pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+				counters->bluedot_filename_positive_hit++;
+				pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+				return(true);
+
+			}
+		}
+	return(false);
+	}
+
+
+
+return(false);
 }
 
 /***************************************************************************
@@ -619,7 +862,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
                 }
 
             bluedot_results = Sagan_Bluedot_Lookup(results, BLUEDOT_LOOKUP_IP);
-            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position );
+            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )
                 {
@@ -629,5 +872,93 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
         }
 
 }
+
+void Sagan_Verify_Categories( char *categories, int rule_number, const char *ruleset, int linecount, int type )
+{
+
+    char tmp2[64];
+    char *tmptoken;
+    char *saveptrrule;
+
+    int i;
+
+    sbool found;
+
+    tmptoken = strtok_r(categories, "," , &saveptrrule);
+
+    while ( tmptoken != NULL )
+        {
+
+            strlcpy(tmp2, tmptoken, sizeof(tmp2));
+
+            Remove_Spaces(tmptoken);
+            To_LowerC(tmptoken);
+
+            found = 0;
+
+            for ( i = 0; i < counters->bluedot_cat_count; i++ )
+                {
+
+
+                    if (!strcmp(SaganBluedotCatList[i].cat, tmptoken))
+                        {
+                            found = 1;
+
+                            if ( type == BLUEDOT_LOOKUP_IP )
+                                {
+
+                                    if ( rulestruct[rule_number].bluedot_ip_cat_count <= BLUEDOT_MAX_CAT )
+                                        {
+                                            rulestruct[rule_number].bluedot_ip_cats[rulestruct[rule_number].bluedot_ip_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                            rulestruct[rule_number].bluedot_ip_cat_count++;
+                                        }
+                                    else
+                                        {
+                                            Sagan_Log(S_WARN, "[%s, line %d] To many Bluedot IP catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                        }
+                                }
+
+                            if ( type == BLUEDOT_LOOKUP_HASH )
+                                {
+                                    if ( rulestruct[rule_number].bluedot_hash_cat_count <= BLUEDOT_MAX_CAT )
+                                        {
+                                            rulestruct[rule_number].bluedot_hash_cats[rulestruct[rule_number].bluedot_hash_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                            rulestruct[rule_number].bluedot_hash_cat_count++;
+                                        }
+                                    else
+                                        {
+                                            Sagan_Log(S_WARN, "[%s, line %d] To many Bluedot hash catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                        }
+                                }
+
+                          if ( type == BLUEDOT_LOOKUP_URL )
+                                {   
+                                    if ( rulestruct[rule_number].bluedot_url_cat_count <= BLUEDOT_MAX_CAT )
+                                        {   
+                                            rulestruct[rule_number].bluedot_url_cats[rulestruct[rule_number].bluedot_url_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                            rulestruct[rule_number].bluedot_url_cat_count++;
+                                        }
+                                    else
+                                        {   
+                                            Sagan_Log(S_WARN, "[%s, line %d] To many Bluedot URL catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                        }
+                                }
+
+
+                        }
+                }
+
+            if ( found == 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Unknown Bluedot category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
+                }
+
+            tmptoken = strtok_r(NULL, "," , &saveptrrule);
+
+        }
+
+
+}
+
 
 #endif

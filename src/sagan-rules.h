@@ -166,10 +166,22 @@ struct _Rule_Struct
 #ifdef WITH_BLUEDOT
 
     int   bluedot_ipaddr_type;                 /* 1 == src,  2 == dst,  3 == both,  4 == all */
-    int   bluedot_cats[BLUEDOT_MAX_CAT];
-    int   bluedot_cat_count;
+
+    int   bluedot_ip_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_ip_cat_count;
+
+    int   bluedot_hash_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_hash_cat_count;
+
+    int   bluedot_url_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_url_cat_count;
+
+    int   bluedot_filename_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_filename_cat_count;
 
     sbool bluedot_file_hash;
+    sbool bluedot_url;
+    sbool bluedot_filename;
 
 #endif
 

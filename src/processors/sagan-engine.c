@@ -148,6 +148,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char *tok2;
     char *username = NULL;
     char *filehash = NULL;
+    char *url = NULL;
+    char *filename = NULL;
 //  char *uid = NULL;
 
     char ip_src[MAXIP] = { 0 };
@@ -186,6 +188,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int bluedot_results;
     sbool bluedot_ip_flag;
     sbool bluedot_hash_flag;
+    sbool bluedot_url_flag;
+    sbool bluedot_filename_flag;
 #endif
 
 
@@ -444,7 +448,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             src_port=0;
 
                             filehash = NULL;
-//		   username=NULL;
+			    url = NULL; 
+			    username = NULL;
+			    filename = NULL; 
 //		   uid=NULL;
 
 #ifdef HAVE_LIBLOGNORM
@@ -489,6 +495,18 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             username = SaganNormalizeLiblognorm->username;
                                             liblognorm_status = 1;
                                         }
+
+				    if ( SaganNormalizeLiblognorm->url[0] != '\0' ) 
+				    	{ 
+					     url = SaganNormalizeLiblognorm->url; 
+					     liblognorm_status = 1;
+					}
+
+				    if ( SaganNormalizeLiblognorm->filename[0] != '\0' )
+				    	{
+					     filename = SaganNormalizeLiblognorm->filename; 
+					     liblognorm_status = 1;
+					}
 
 				    /* We want SHA256 over anthing else. */
 
@@ -801,27 +819,27 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             if ( rulestruct[b].bluedot_ipaddr_type == 1 )
                                                 {
                                                     bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
-                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                 }
 
                                             if ( rulestruct[b].bluedot_ipaddr_type == 2 )
                                                 {
                                                     bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
-                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                 }
 
                                             if ( rulestruct[b].bluedot_ipaddr_type == 3 )
                                                 {
 
                                                     bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
-                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                    bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
 
                                                     /* If the source isn't found,  then check the dst */
 
                                                     if ( bluedot_ip_flag != 0 )
                                                         {
                                                             bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
-                                                            bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b);
+                                                            bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
                                                 }
@@ -833,25 +851,40 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                 }
 
-                                            /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
-                                             * "delete" an entry only to re-add it! */
                                         }
-
-//                            if ( debug->debugbluedot )
-//                                {
-//                                    Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot IP reputation flag: %d", __FILE__, __LINE__, bluedot_ip_flag);
-//                                }
 
 
                                     if ( rulestruct[b].bluedot_file_hash && filehash != NULL )
                                         {
 
-                                            bluedot_hash_flag = Sagan_Bluedot_Lookup( filehash, BLUEDOT_LOOKUP_HASH);
+                                            bluedot_results = Sagan_Bluedot_Lookup( filehash, BLUEDOT_LOOKUP_HASH);
+					    bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                         }
 
+				    if ( rulestruct[b].bluedot_url && url != NULL ) 
+				    	{ 
+
+					    bluedot_results = Sagan_Bluedot_Lookup( url, BLUEDOT_LOOKUP_URL); 
+					    bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
+
+					}
+
+				     if ( rulestruct[b].bluedot_filename && filename != NULL )
+				        {
+
+					    bluedot_results = Sagan_Bluedot_Lookup( url, BLUEDOT_LOOKUP_FILENAME);
+					    bluedot_filename_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_FILENAME);
+
+					}
+
+				     /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
+				      * "delete" an entry only to re-add it! */
+
                                     Sagan_Bluedot_Check_Cache_Time();
-                                }
+                                
+				
+				}
 #endif
 
 
@@ -954,8 +987,22 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
 #ifdef WITH_BLUEDOT
-                                                                            if ( ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || rulestruct[b].bluedot_file_hash == 0) ||  bluedot_ip_flag == 1 || bluedot_hash_flag == 1 )
-                                                                                {
+
+
+						    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 )) 
+						       { 
+
+						    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 ))
+						       {
+
+						    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 ))
+						       {
+
+						    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 ))
+						       { 
+
+
+
 #endif
 
 
@@ -1309,6 +1356,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef WITH_BLUEDOT
                                                                         } /* Bluedot */
+									}
+									}
+									}
 #endif
 
                                                                 } /* Bro Intel */

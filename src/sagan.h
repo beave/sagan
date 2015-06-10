@@ -171,8 +171,18 @@ struct _SaganCounters
 
     uint64_t bluedot_hash_cache_count;
     uint64_t bluedot_hash_cache_hit;
+    uint64_t bluedot_hash_positive_hit;
     uint64_t bluedot_hash_total;
 
+    uint64_t bluedot_url_cache_count;
+    uint64_t bluedot_url_cache_hit;
+    uint64_t bluedot_url_positive_hit;
+    uint64_t bluedot_url_total;
+
+    uint64_t bluedot_filename_cache_count; 
+    uint64_t bluedot_filename_cache_hit; 
+    uint64_t bluedot_filename_positive_hit;
+    uint64_t bluedot_filename_total;
 
     int bluedot_cat_count;
 

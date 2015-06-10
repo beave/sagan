@@ -118,6 +118,8 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     SaganNormalizeLiblognorm->filehash_sha1[0] = '\0';
     SaganNormalizeLiblognorm->filehash_md5[0] = '\0';
+    SaganNormalizeLiblognorm->filehash_sha256[0] = '\0';
+    SaganNormalizeLiblognorm->url[0] = '\0';
 
     SaganNormalizeLiblognorm->src_port = 0;
     SaganNormalizeLiblognorm->dst_port = 0;
@@ -231,6 +233,20 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             strlcpy(SaganNormalizeLiblognorm->filehash_sha256, tmp, sizeof(SaganNormalizeLiblognorm->filehash_sha256));
         }
 
+    tmp = json_object_get_string(json_object_object_get(json, "url")); 
+
+    if ( tmp != NULL ) 
+    	{
+	    strlcpy(SaganNormalizeLiblognorm->url, tmp, sizeof(SaganNormalizeLiblognorm->url));
+	}
+
+    tmp = json_object_get_string(json_object_object_get(json, "filename"));
+
+    if ( tmp != NULL ) 
+    	{ 
+	    strlcpy(SaganNormalizeLiblognorm->filename, tmp, sizeof(SaganNormalizeLiblognorm->filename));
+	}
+
     if ( debug->debugnormalize )
         {
             Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
@@ -247,6 +263,8 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "MD5 Filehash: %s", SaganNormalizeLiblognorm->filehash_md5);
             Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
             Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256);
+	    Sagan_Log(S_DEBUG, "URL: %s", SaganNormalizeLiblognorm->url); 
+	    Sagan_Log(S_DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
 
             Sagan_Log(S_DEBUG, "");
         }
