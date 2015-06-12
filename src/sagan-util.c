@@ -61,6 +61,7 @@ struct _SaganVar *var;
 struct _Sagan_Processor_Generator *generator;
 
 sbool daemonize;
+sbool quiet;
 
 /*****************************************************************************
  * This force Sagan to chroot.                                               *
@@ -229,7 +230,7 @@ void Sagan_Log (int type, const char *format,... )
     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
     fflush(config->sagan_log_stream);
 
-    if ( daemonize == 0)
+    if ( daemonize == 0 || quiet == 0 )
         {
             printf("[%s] %s\n", chr, buf);
         }

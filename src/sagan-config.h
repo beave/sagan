@@ -61,7 +61,6 @@ struct _SaganConfig
     sbool        sagan_ext_flag;
     sbool        disable_dns_warnings;
     sbool        syslog_src_lookup;
-    int          daemonize;
     int          sagan_proto;
 
     /*    sbool        home_any;  */                     /* 0 == no, 1 == yes */
