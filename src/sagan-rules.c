@@ -1693,7 +1693,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
 
-				    Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP); 
+                                    Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP);
 
                                     /* Bluedot configuration check here! */
 
@@ -1703,43 +1703,43 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].bluedot_file_hash = 1;
 
-				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-				    if ( tok_tmp == NULL )
-				    	{
-					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
-					}
+                                    if ( tok_tmp == NULL )
+                                        {
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                        }
 
-				    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
+                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
                                 }
 
-			    if (!strcmp(tok_tmp, "url")) 
-			    	{ 
-				    rulestruct[counters->rulecount].bluedot_url = 1;
+                            if (!strcmp(tok_tmp, "url"))
+                                {
+                                    rulestruct[counters->rulecount].bluedot_url = 1;
 
-				    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-				    if ( tok_tmp == NULL )
-				    	{
-					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
-					}
-				    
-				    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL); 
-				}
+                                    if ( tok_tmp == NULL )
+                                        {
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                        }
 
-			     if (!strcmp(tok_tmp, "filename"))
-			     	{
-				     rulestruct[counters->rulecount].bluedot_filename = 1;
+                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
+                                }
 
-				     tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                            if (!strcmp(tok_tmp, "filename"))
+                                {
+                                    rulestruct[counters->rulecount].bluedot_filename = 1;
 
-				     if ( tok_tmp == NULL )
-				     	{
-					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
-					}
-				     
-				     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
-				}
+                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+                                    if ( tok_tmp == NULL )
+                                        {
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                        }
+
+                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
+                                }
 
                         }
 #endif

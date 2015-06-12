@@ -229,8 +229,16 @@ void Sagan_Log (int type, const char *format,... )
     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
     fflush(config->sagan_log_stream);
 
-    if ( daemonize == 0) printf("[%s] %s\n", chr, buf);
-    if ( type == 1 ) exit(1);
+    if ( daemonize == 0)
+        {
+            printf("[%s] %s\n", chr, buf);
+        }
+
+    if ( type == 1 )
+        {
+            exit(1);
+        }
+
 }
 
 int Check_Endian()

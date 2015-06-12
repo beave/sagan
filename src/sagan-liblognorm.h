@@ -56,10 +56,10 @@ typedef struct _SaganNormalizeLiblognorm
 
     char filename[128];
 
-    char filehash_md5[33];			// DEBUG -> needs to be BLUEDOT_MAX_HASH_SIZE 
-    char filehash_sha1[41];			
+    char filehash_md5[33];			// DEBUG -> needs to be BLUEDOT_MAX_HASH_SIZE
+    char filehash_sha1[41];
     char filehash_sha256[257];
-    char url[8192]; 
+    char url[8192];
 
 } _SaganNormalizeLiblognorm;
 #endif
