@@ -104,7 +104,7 @@ struct _Sagan_Flowbit *flowbit;
 #endif
 
 sbool daemonize=0;
-sbool quiet=0; 
+sbool quiet=0;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
@@ -243,11 +243,11 @@ int main(int argc, char **argv)
     strlcpy(config->sagan_log_filepath, SAGANLOG, sizeof(config->sagan_log_filepath));
     config->sagan_runas = RUNAS;
 
-    /* "systemd" wants to start Sagan in the foreground,  but doesn't know what to 
+    /* "systemd" wants to start Sagan in the foreground,  but doesn't know what to
      * do with stdin/stdout.  Hence,  CPU goes to 100%.  This detects our terminal
-     * type ( >/dev/null </dev/null ) and tell's Sagan to ignore input and output. 
+     * type ( >/dev/null </dev/null ) and tell's Sagan to ignore input and output.
      *
-     * For more details, see:  
+     * For more details, see:
      *
      * https://groups.google.com/forum/#!topic/sagan-users/kgJvf1eyQcg
      *
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 
     if ( !isatty(0) || !isatty(1) || !isatty(2) )
         {
-        quiet = 1;
+            quiet = 1;
         }
 
 
@@ -706,17 +706,17 @@ int main(int argc, char **argv)
 
     if (!daemonize )
         {
-	if (!quiet)
-		{
-
-            rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL );
-
-            if ( rc != 0 )
+            if (!quiet)
                 {
-                    Remove_Lock_File();
-                    Sagan_Log(S_ERROR, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
+
+                    rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL );
+
+                    if ( rc != 0 )
+                        {
+                            Remove_Lock_File();
+                            Sagan_Log(S_ERROR, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
+                        }
                 }
-		}
 
         }
 
