@@ -1707,7 +1707,7 @@ void Load_Rules( const char *ruleset )
 
                                     if ( tok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
                                         }
 
                                     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
@@ -1721,7 +1721,7 @@ void Load_Rules( const char *ruleset )
 
                                     if ( tok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
                                         }
 
                                     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
@@ -1735,11 +1735,18 @@ void Load_Rules( const char *ruleset )
 
                                     if ( tok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
                                         }
 
                                     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
                                 }
+
+			    if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
+			    	{
+					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalud Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
+				}
+
+
 
                         }
 #endif
