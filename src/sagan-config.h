@@ -22,7 +22,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-
 /* Sagan configuration struct (global) */
 
 typedef struct _SaganConfig _SaganConfig;
@@ -166,12 +165,14 @@ struct _SaganConfig
     sbool	 brointel_flag;
     char	 brointel_files[2048];
 
-    /* For Maxmind GeoIP address lookup */
+    /* For Maxmind GeoIP2 address lookup */
 
-#ifdef HAVE_LIBGEOIP
-    GeoIP *geoip;
-    char        geoip_country_file[MAXPATH];
-    sbool have_geoip;
+#ifdef HAVE_LIBMAXMINDDB
+
+    MMDB_s 	geoip2;
+    char        geoip2_country_file[MAXPATH];
+    sbool 	have_geoip2;
+
 #endif
 
     /* Used for altering pipe size (if supported) */

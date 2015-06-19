@@ -26,7 +26,7 @@ sagan-ignore-list.c \
 sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
-sagan-geoip.c \
+sagan-geoip2.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-aetas.c \

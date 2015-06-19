@@ -61,8 +61,8 @@ void Sagan_Usage(void)
     fprintf(stderr, ", bluedot");
 #endif
 
-#ifdef HAVE_LIBGEOIP
-    fprintf(stderr, ", geoip");
+#ifdef HAVE_LIBMAXMINDDB
+    fprintf(stderr, ", geoip2");
 #endif
 
     fprintf(stderr, ".\n");
@@ -91,8 +91,8 @@ void Sagan_Usage(void)
     fprintf(stderr, "* libdnet (for unified2) support is included.\n");
 #endif
 
-#ifdef HAVE_LIBGEOIP
-    fprintf(stderr, "* libGeoIP support is included.\n");
+#ifdef HAVE_LIBMAXMINDDB
+    fprintf(stderr, "* Maxmind GeoIP2 support is included.\n");
 #endif
 
 #ifdef WITH_SNORTSAM

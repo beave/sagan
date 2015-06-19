@@ -75,9 +75,6 @@
 /* Define to 1 if you have the `estr' library (-lestr). */
 #undef HAVE_LIBESTR
 
-/* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-#undef HAVE_LIBGEOIP
-
 /* Define to 1 if you have the `json' library (-ljson). */
 #undef HAVE_LIBJSON
 
@@ -89,6 +86,9 @@
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
+
+/* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
+#undef HAVE_LIBMAXMINDDB
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 #undef HAVE_LIBPCAP

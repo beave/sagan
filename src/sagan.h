@@ -34,8 +34,8 @@
 #include <pcre.h>
 #include <time.h>
 
-#ifdef HAVE_LIBGEOIP
-#include <GeoIP.h>
+#ifdef HAVE_LIBMAXMINDDB
+#include <maxminddb.h>
 #endif
 
 #include "sagan-defs.h"
@@ -146,10 +146,10 @@ struct _SaganCounters
     int liblognormtoload_count;
 #endif
 
-#ifdef HAVE_LIBGEOIP
-    uint64_t geoip_hit;				/* GeoIP hit count */
-    uint64_t geoip_lookup;			/* Total lookups */
-    uint64_t geoip_miss;				/* Misses (country not found) */
+#ifdef HAVE_LIBMAXMINDDB
+    uint64_t geoip2_hit;				/* GeoIP2 hit count */
+    uint64_t geoip2_lookup;				/* Total lookups */
+    uint64_t geoip2_miss;				/* Misses (country not found) */
 #endif
 
 #ifdef WITH_WEBSENSE
@@ -211,8 +211,8 @@ struct _SaganDebug
     sbool debugmalformed;
     sbool debuglimits;
 
-#ifdef HAVE_LIBGEOIP
-    sbool debuggeoip;
+#ifdef HAVE_LIBMAXMINDDB
+    sbool debuggeoip2;
 #endif
 
 #ifdef HAVE_LIBLOGNORM

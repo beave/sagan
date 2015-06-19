@@ -749,13 +749,13 @@ enable_snortsam
 enable_websense
 enable_bluedot
 enable_esmtp
-enable_geoip
+enable_geoip2
 enable_syslog
 enable_system_strstr
 with_esmtp_includes
 with_esmtp_libraries
-with_geoip_includes
-with_geoip_libraries
+with_geoip2_includes
+with_geoip2_libraries
 enable_lognorm
 with_lognorm_includes
 with_lognorm_libraries
@@ -1417,7 +1417,7 @@ Optional Features:
   --enable-websense       Enable Websense Threatseeker network lookups.
   --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.
   --enable-esmtp	  Enable libesmtp support.
-  --enable-geoip          Enable Maxmind GeoIP support.
+  --enable-geoip2          Enable Maxmind GeoIP2 support.
   --disable-syslog        Disable syslog support.
   --enable-system-strstr  Enable system strstr.
   --disable-lognorm       Disable Lognorm (liblognorm) support.
@@ -1436,8 +1436,8 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-esmtp-includes=DIR    libesmtp include directory
   --with-esmtp-libraries=DIR   libesmtp library directory
-  --with-geoip-includes=DIR    Maxmind GeoIP include directory
-  --with-geoip-libraries=DIR   Maxmind GeoIP library directory
+  --with-geoip2-includes=DIR    Maxmind GeoIP2 include directory
+  --with-geoip2-libraries=DIR   Maxmind GeoIP2 library directory
   --with-lognorm-includes=DIR    liblognorm include directory
   --with-lognorm-libraries=DIR   liblognorm library directory
   --with-jsonc-includes=DIR    jsonc include directory
@@ -4177,11 +4177,11 @@ else
 fi
 
 
-# Check whether --enable-geoip was given.
-if test "${enable_geoip+set}" = set; then :
-  enableval=$enable_geoip;  GEOIP="$enableval"
+# Check whether --enable-geoip2 was given.
+if test "${enable_geoip2+set}" = set; then :
+  enableval=$enable_geoip2;  GEOIP2="$enableval"
 else
-   GEOIP="no"
+   GEOIP2="no"
 
 fi
 
@@ -4231,29 +4231,29 @@ if test "x$with_esmtp_libraries" != "xno"; then
 fi
 
 
-# Check whether --with-geoip_includes was given.
-if test "${with_geoip_includes+set}" = set; then :
-  withval=$with_geoip_includes; with_geoip_includes="$withval"
+# Check whether --with-geoip2_includes was given.
+if test "${with_geoip2_includes+set}" = set; then :
+  withval=$with_geoip2_includes; with_geoip2_includes="$withval"
 else
-  with_geoip_includes="no"
+  with_geoip2_includes="no"
 fi
 
 
 
-# Check whether --with-geoip_libraries was given.
-if test "${with_geoip_libraries+set}" = set; then :
-  withval=$with_geoip_libraries; with_geoip_libraries="$withval"
+# Check whether --with-geoip2_libraries was given.
+if test "${with_geoip2_libraries+set}" = set; then :
+  withval=$with_geoip2_libraries; with_geoip2_libraries="$withval"
 else
-  with_geoip_libraries="no"
+  with_geoip2_libraries="no"
 fi
 
 
-if test "x$with_geoip_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_geoip_includes}"
+if test "x$with_geoip2_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_geoip2_includes}"
    fi
 
-if test "x$with_geoip_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_geoip_libraries}"
+if test "x$with_geoip2_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_geoip2_libraries}"
 fi
 
 
@@ -7954,22 +7954,22 @@ $as_echo "#define WITH_SYSLOG 1" >>confdefs.h
 
 	fi
 
-if test "$GEOIP" = "yes"; then
-       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- Maxmind GeoIP support is enabled -------" >&5
-$as_echo "------- Maxmind GeoIP support is enabled -------" >&6; }
-       ac_fn_c_check_header_mongrel "$LINENO" "GeoIP.h" "ac_cv_header_GeoIP_h" "$ac_includes_default"
-if test "x$ac_cv_header_GeoIP_h" = xyes; then :
+if test "$GEOIP2" = "yes"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- Maxmind GeoIP2 support is enabled -------" >&5
+$as_echo "------- Maxmind GeoIP2 support is enabled -------" >&6; }
+       ac_fn_c_check_header_mongrel "$LINENO" "maxminddb.h" "ac_cv_header_maxminddb_h" "$ac_includes_default"
+if test "x$ac_cv_header_maxminddb_h" = xyes; then :
 
 fi
 
 
-       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lGeoIP" >&5
-$as_echo_n "checking for main in -lGeoIP... " >&6; }
-if ${ac_cv_lib_GeoIP_main+:} false; then :
+       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for main in -lmaxminddb" >&5
+$as_echo_n "checking for main in -lmaxminddb... " >&6; }
+if ${ac_cv_lib_maxminddb_main+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
-LIBS="-lGeoIP  $LIBS"
+LIBS="-lmaxminddb  $LIBS"
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -7983,26 +7983,26 @@ return main ();
 }
 _ACEOF
 if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_GeoIP_main=yes
+  ac_cv_lib_maxminddb_main=yes
 else
-  ac_cv_lib_GeoIP_main=no
+  ac_cv_lib_maxminddb_main=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_GeoIP_main" >&5
-$as_echo "$ac_cv_lib_GeoIP_main" >&6; }
-if test "x$ac_cv_lib_GeoIP_main" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_maxminddb_main" >&5
+$as_echo "$ac_cv_lib_maxminddb_main" >&6; }
+if test "x$ac_cv_lib_maxminddb_main" = xyes; then :
   cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGEOIP 1
+#define HAVE_LIBMAXMINDDB 1
 _ACEOF
 
-  LIBS="-lGeoIP $LIBS"
+  LIBS="-lmaxminddb $LIBS"
 
 else
-  as_fn_error $? "The Maxmind GeoIP  library cannot be found.
-If you're not interested in GeoIP support use the --disable-geoip flag." "$LINENO" 5
+  as_fn_error $? "The Maxmind GeoIP2 library cannot be found.
+If you're not interested in GeoIP2 support use the --disable-geoip2 flag." "$LINENO" 5
 fi
 
        fi

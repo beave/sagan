@@ -567,16 +567,16 @@ void Load_Rules( const char *ruleset )
 
                         }
 
-#ifdef HAVE_LIBGEOIP
+#ifdef HAVE_LIBMAXMINDDB
 
                     if (!strcmp(rulesplit, "country_code"))
                         {
 
-                            /* Have the requirements for GeoIP been loaded (Maxmind DB, etc) */
+                            /* Have the requirements for GeoIP2 been loaded (Maxmind DB, etc) */
 
-                            if (!config->have_geoip)
+                            if (!config->have_geoip2)
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Rule %s at line %d has GeoIP option,  but Sagan configuration lacks GeoIP!", __FILE__, __LINE__, ruleset, linecount);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Rule %s at line %d has GeoIP2 option,  but Sagan configuration lacks GeoIP2!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -594,8 +594,8 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
-                            if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip_src_or_dst = 1;
-                            if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip_src_or_dst = 2;
+                            if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip2_src_or_dst = 1;
+                            if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip2_src_or_dst = 2;
 
                             tmptoken = Remove_Spaces(strtok_r(NULL, " ", &saveptrrule2));
 
@@ -604,22 +604,22 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
-                            if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip_type = 1;
-                            if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip_type = 2;
+                            if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip2_type = 1;
+                            if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip2_type = 2;
 
                             tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab country codes */
                             Remove_Spaces(tmptoken);
 
-                            strlcpy(rulestruct[counters->rulecount].geoip_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip_country_codes));
-                            rulestruct[counters->rulecount].geoip_flag = 1;
+                            strlcpy(rulestruct[counters->rulecount].geoip2_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip2_country_codes));
+                            rulestruct[counters->rulecount].geoip2_flag = 1;
                         }
 #endif
 
-#ifndef HAVE_LIBGEOIP
+#ifndef HAVE_LIBMAXMINDDB
                     if (!strcmp(rulesplit, "country_code"))
                         {
-                            Sagan_Log(S_WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset);
-                            Sagan_Log(S_WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!");
+                            Sagan_Log(S_WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP2 support!", linecount, ruleset);
+                            Sagan_Log(S_WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip2\" or disable this rule!");
                         }
 #endif
 
@@ -1741,10 +1741,10 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
                                 }
 
-			    if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
-			    	{
-					Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalud Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
-				}
+                            if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalud Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
+                                }
 
 
 

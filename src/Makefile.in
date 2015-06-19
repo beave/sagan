@@ -109,7 +109,8 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-gen-msg.$(OBJEXT) sagan-sagan-liblognorm.$(OBJEXT) \
 	sagan-sagan-ignore-list.$(OBJEXT) \
 	sagan-sagan-send-alert.$(OBJEXT) sagan-sagan-credits.$(OBJEXT) \
-	sagan-sagan-protocol-map.$(OBJEXT) sagan-sagan-geoip.$(OBJEXT) \
+	sagan-sagan-protocol-map.$(OBJEXT) \
+	sagan-sagan-geoip2.$(OBJEXT) \
 	sagan-sagan-meta-content.$(OBJEXT) \
 	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-aetas.$(OBJEXT) \
 	sagan-parse-ip.$(OBJEXT) sagan-parse-port.$(OBJEXT) \
@@ -333,7 +334,7 @@ sagan-ignore-list.c \
 sagan-send-alert.c \
 sagan-credits.c \
 sagan-protocol-map.c \
-sagan-geoip.c \
+sagan-geoip2.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-aetas.c \
@@ -461,7 +462,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-external.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-flowbit.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-gen-msg.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-geoip.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-geoip2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-ignore-list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-key.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-liblognorm.Po@am__quote@
@@ -856,19 +857,19 @@ sagan-sagan-protocol-map.obj: sagan-protocol-map.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-protocol-map.obj `if test -f 'sagan-protocol-map.c'; then $(CYGPATH_W) 'sagan-protocol-map.c'; else $(CYGPATH_W) '$(srcdir)/sagan-protocol-map.c'; fi`
 
-sagan-sagan-geoip.o: sagan-geoip.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip.o -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip.Tpo -c -o sagan-sagan-geoip.o `test -f 'sagan-geoip.c' || echo '$(srcdir)/'`sagan-geoip.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip.Tpo $(DEPDIR)/sagan-sagan-geoip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-geoip.c' object='sagan-sagan-geoip.o' libtool=no @AMDEPBACKSLASH@
+sagan-sagan-geoip2.o: sagan-geoip2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip2.o -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip2.Tpo -c -o sagan-sagan-geoip2.o `test -f 'sagan-geoip2.c' || echo '$(srcdir)/'`sagan-geoip2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip2.Tpo $(DEPDIR)/sagan-sagan-geoip2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-geoip2.c' object='sagan-sagan-geoip2.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip.o `test -f 'sagan-geoip.c' || echo '$(srcdir)/'`sagan-geoip.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip2.o `test -f 'sagan-geoip2.c' || echo '$(srcdir)/'`sagan-geoip2.c
 
-sagan-sagan-geoip.obj: sagan-geoip.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip.Tpo -c -o sagan-sagan-geoip.obj `if test -f 'sagan-geoip.c'; then $(CYGPATH_W) 'sagan-geoip.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip.c'; fi`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip.Tpo $(DEPDIR)/sagan-sagan-geoip.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-geoip.c' object='sagan-sagan-geoip.obj' libtool=no @AMDEPBACKSLASH@
+sagan-sagan-geoip2.obj: sagan-geoip2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-geoip2.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-geoip2.Tpo -c -o sagan-sagan-geoip2.obj `if test -f 'sagan-geoip2.c'; then $(CYGPATH_W) 'sagan-geoip2.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-geoip2.Tpo $(DEPDIR)/sagan-sagan-geoip2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-geoip2.c' object='sagan-sagan-geoip2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip.obj `if test -f 'sagan-geoip.c'; then $(CYGPATH_W) 'sagan-geoip.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip.c'; fi`
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-geoip2.obj `if test -f 'sagan-geoip2.c'; then $(CYGPATH_W) 'sagan-geoip2.c'; else $(CYGPATH_W) '$(srcdir)/sagan-geoip2.c'; fi`
 
 sagan-sagan-meta-content.o: sagan-meta-content.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-meta-content.o -MD -MP -MF $(DEPDIR)/sagan-sagan-meta-content.Tpo -c -o sagan-sagan-meta-content.o `test -f 'sagan-meta-content.c' || echo '$(srcdir)/'`sagan-meta-content.c

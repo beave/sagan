@@ -72,10 +72,10 @@ void Sagan_Perfmonitor_Handler( void )
     uint64_t last_sagan_processor_drop = 0;
     uint64_t last_ignore_count = 0;
 
-#ifdef HAVE_LIBGEOIP
-    uint64_t last_geoip_lookup = 0;
-    uint64_t last_geoip_hit = 0;
-    uint64_t last_geoip_miss = 0;
+#ifdef HAVE_LIBMAXMINDDB
+    uint64_t last_geoip2_lookup = 0;
+    uint64_t last_geoip2_hit = 0;
+    uint64_t last_geoip2_miss = 0;
 #endif
 
 #ifdef WITH_WEBSENSE
@@ -133,20 +133,20 @@ void Sagan_Perfmonitor_Handler( void )
 
                     fprintf(config->perfmonitor_file_stream, "%lu,", total);
 
-#ifdef HAVE_LIBGEOIP
+#ifdef HAVE_LIBMAXMINDDB
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_lookup - last_geoip_lookup);
-                    last_geoip_lookup = counters->geoip_lookup;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_lookup - last_geoip2_lookup);
+                    last_geoip2_lookup = counters->geoip2_lookup;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_hit - last_geoip_hit);
-                    last_geoip_hit = counters->geoip_hit;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_hit - last_geoip2_hit);
+                    last_geoip2_hit = counters->geoip2_hit;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip_miss - last_geoip_miss);
-                    last_geoip_miss = counters->geoip_miss;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_miss - last_geoip2_miss);
+                    last_geoip2_miss = counters->geoip2_miss;
 
 #endif
 
-#ifndef HAVE_LIBGEOIP
+#ifndef HAVE_LIBMAXMINDDB
 
                     fprintf(config->perfmonitor_file_stream, "0,0,0,");
 
@@ -273,7 +273,7 @@ void Sagan_Perfmonitor_Open(void)
         }
 
     fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);
-    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip.lookup.total,geoip.hits,geoip.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.websense.cache_count,processor.websense.hits,processor.websense.errors,processor.websense.found\n");
+    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip2.lookup.total,geoip2.hits,geoip2.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.websense.cache_count,processor.websense.hits,processor.websense.errors,processor.websense.found\n");
     fflush(config->perfmonitor_file_stream);
 
 }

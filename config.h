@@ -62,7 +62,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `curl' library (-lcurl). */
-#define HAVE_LIBCURL 1
+/* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
@@ -76,9 +76,6 @@
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1
 
-/* Define to 1 if you have the `GeoIP' library (-lGeoIP). */
-/* #undef HAVE_LIBGEOIP */
-
 /* Define to 1 if you have the `json' library (-ljson). */
 #define HAVE_LIBJSON 1
 
@@ -90,6 +87,9 @@
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
+
+/* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
+#define HAVE_LIBMAXMINDDB 1
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 /* #undef HAVE_LIBPCAP */
@@ -337,7 +337,7 @@
 #define VERSION "1.0.0-RC5"
 
 /* With Bluedot */
-#define WITH_BLUEDOT 1
+/* #undef WITH_BLUEDOT */
 
 /* With Snortsam */
 #define WITH_SNORTSAM 1

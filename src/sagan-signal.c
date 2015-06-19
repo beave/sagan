@@ -72,8 +72,8 @@ int liblognorm_count;
 sbool sagan_unified2_flag;
 #endif
 
-#ifdef HAVE_LIBGEOIP
-#include <GeoIP.h>
+#ifdef HAVE_LIBMAXMINDDB
+#include <maxminddb.h>
 #endif
 
 struct _SaganCounters *counters;
@@ -144,6 +144,12 @@ void Sig_Handler( _SaganSigArgs *args )
                         {
                             Unified2CleanExit();
                         }
+#endif
+
+#ifdef HAVE_LIBMAXMINDDB
+
+                    MMDB_close(&config->geoip2);
+
 #endif
 
                     fflush(config->sagan_alert_stream);
@@ -398,9 +404,9 @@ void Sig_Handler( _SaganSigArgs *args )
                             Sagan_Log(S_NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
                         }
 
-#ifdef HAVE_LIBGEOIP
-                    Sagan_Log(S_NORMAL, "Reloading GeoIP data.");
-                    Sagan_Open_GeoIP_Database();
+#ifdef HAVE_LIBMAXMINDDB
+                    Sagan_Log(S_NORMAL, "Reloading GeoIP2 data.");
+                    Sagan_Open_GeoIP2_Database();
 #endif
 
 #ifdef HAVE_LIBLOGNORM

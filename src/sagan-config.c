@@ -368,15 +368,15 @@ void Load_Config( void )
 
 #endif
 
-#ifndef HAVE_LIBGEOIP
+#ifndef HAVE_LIBMAXMINDDB
             if (!strcmp(sagan_option, "country_database"))
                 {
-                    Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with Maxmind \"GeoIP\" support!");
-                    Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ GeoIP enabled!");
+                    Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with Maxmind \"GeoIP2\" support!");
+                    Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ GeoIP2 enabled!");
                 }
 #endif
 
-#ifdef HAVE_LIBGEOIP
+#ifdef HAVE_LIBMAXMINDDB
             if (!strcmp(sagan_option, "country_database:"))
                 {
                     sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
@@ -386,10 +386,10 @@ void Load_Config( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] country_database: is missing country codes!", __FILE__, __LINE__);
                         }
 
-                    strlcpy(config->geoip_country_file, sagan_var1, sizeof(config->geoip_country_file));
-                    Sagan_Log(S_NORMAL, "Loading GeoIP database. [%s]", config->geoip_country_file);
-                    Sagan_Open_GeoIP_Database();
-                    config->have_geoip = 1;
+                    strlcpy(config->geoip2_country_file, sagan_var1, sizeof(config->geoip2_country_file));
+                    Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+                    Sagan_Open_GeoIP2_Database();
+                    config->have_geoip2 = 1;
                 }
 #endif
 
@@ -1289,12 +1289,12 @@ void Load_Config( void )
             Sagan_Log(S_ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
         }
 
-#ifdef HAVE_LIBGEOIP
-    if ( config->have_geoip )
+#ifdef HAVE_LIBMAXMINDDB
+    if ( config->have_geoip2 )
         {
             if ( Sagan_Check_Var("$HOME_COUNTRY") == 0 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] GeoIP is in use,  but $HOME_COUNTRY was never set in your configuration. Abort.", __FILE__, __LINE__);
+                    Sagan_Log(S_ERROR, "[%s, line %d] GeoIP2 is in use,  but $HOME_COUNTRY was never set in your configuration. Abort.", __FILE__, __LINE__);
                 }
         }
 #endif

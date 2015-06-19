@@ -27,9 +27,9 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#ifdef HAVE_LIBGEOIP
-void Sagan_Open_GeoIP_Database( void );
-int Sagan_GeoIP_Lookup_Country( char *, int );
+#ifdef HAVE_LIBMAXMINDDB
+void Sagan_Open_GeoIP2_Database( void );
+int Sagan_GeoIP2_Lookup_Country( char *, int );
 #endif
 
 

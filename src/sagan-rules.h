@@ -186,12 +186,12 @@ struct _Rule_Struct
 #endif
 
 
-#ifdef HAVE_LIBGEOIP
+#ifdef HAVE_LIBMAXMINDDB
 
-    sbool geoip_flag;
-    int   geoip_type;           /* 1 == isnot, 2 == is */
-    char  geoip_country_codes[1024];
-    int   geoip_src_or_dst;             /* 1 == src, 2 == dst */
+    sbool geoip2_flag;
+    int   geoip2_type;           /* 1 == isnot, 2 == is */
+    char  geoip2_country_codes[1024];
+    int   geoip2_src_or_dst;             /* 1 == src, 2 == dst */
 
 #endif
 

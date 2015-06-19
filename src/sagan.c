@@ -340,10 +340,11 @@ int main(int argc, char **argv)
                             debugflag=1;
                         }
 
-#ifdef HAVE_LIBGEOIP
-                    if (Sagan_strstr(optarg, "geoip"))
+#ifdef HAVE_LIBMAXMINDDB
+
+                    if (Sagan_strstr(optarg, "geoip2"))
                         {
-                            debug->debuggeoip=1;
+                            debug->debuggeoip2=1;
                             debugflag=1;
                         }
 #endif

@@ -40,10 +40,10 @@ AC_ARG_ENABLE(esmtp,
   [ ESMTP="no" ]
 )
 
-AC_ARG_ENABLE(geoip,
-  [  --enable-geoip          Enable Maxmind GeoIP support.],
-  [ GEOIP="$enableval"],
-  [ GEOIP="no" ]
+AC_ARG_ENABLE(geoip2,
+  [  --enable-geoip2          Enable Maxmind GeoIP2 support.],
+  [ GEOIP2="$enableval"],
+  [ GEOIP2="no" ]
 )
 
 AC_ARG_ENABLE(syslog,
@@ -74,20 +74,20 @@ if test "x$with_esmtp_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_esmtp_libraries}"
 fi
 
-AC_ARG_WITH(geoip_includes,
-        [  --with-geoip-includes=DIR    Maxmind GeoIP include directory],
-        [with_geoip_includes="$withval"],[with_geoip_includes="no"])
+AC_ARG_WITH(geoip2_includes,
+        [  --with-geoip2-includes=DIR    Maxmind GeoIP2 include directory],
+        [with_geoip2_includes="$withval"],[with_geoip2_includes="no"])
 
-AC_ARG_WITH(geoip_libraries,
-        [  --with-geoip-libraries=DIR   Maxmind GeoIP library directory],
-        [with_geoip_libraries="$withval"],[with_geoip_libraries="no"])
+AC_ARG_WITH(geoip2_libraries,
+        [  --with-geoip2-libraries=DIR   Maxmind GeoIP2 library directory],
+        [with_geoip2_libraries="$withval"],[with_geoip2_libraries="no"])
 
-if test "x$with_geoip_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_geoip_includes}"
+if test "x$with_geoip2_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_geoip2_includes}"
    fi
 
-if test "x$with_geoip_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_geoip_libraries}"
+if test "x$with_geoip2_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_geoip2_libraries}"
 fi
 
 
@@ -271,11 +271,11 @@ if test "$SYSLOG" = "yes"; then
 	AC_DEFINE(WITH_SYSLOG, 1, With Syslog)
 	fi
 
-if test "$GEOIP" = "yes"; then
-       AC_MSG_RESULT([------- Maxmind GeoIP support is enabled -------])
-       AC_CHECK_HEADER([GeoIP.h])
-       AC_CHECK_LIB(GeoIP, main,,AC_MSG_ERROR(The Maxmind GeoIP  library cannot be found.
-If you're not interested in GeoIP support use the --disable-geoip flag.))
+if test "$GEOIP2" = "yes"; then
+       AC_MSG_RESULT([------- Maxmind GeoIP2 support is enabled -------])
+       AC_CHECK_HEADER([maxminddb.h])
+       AC_CHECK_LIB(maxminddb, main,,AC_MSG_ERROR(The Maxmind GeoIP2 library cannot be found.
+If you're not interested in GeoIP2 support use the --disable-geoip2 flag.))
        fi
 
 if test "$ESMTP" = "yes"; then
