@@ -1644,12 +1644,12 @@ void Load_Rules( const char *ruleset )
                             tmptok_tmp = strtok_r(NULL, ",", &saveptrrule2);	/* Support var's */
                             Remove_Spaces(tmptok_tmp);
 
-                            if (!strcmp(rmptok_tmp, "reputation"))
+                            if (!strcmp(tmptok_tmp, "reputation"))
                                 {
 
-                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));   /* Support var's */
+                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));   /* Support var's */
 
-                                    tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+                                    tmptoken = strtok_r(tmptok_tmp, "," , &saveptrrule3);
                                     Remove_Spaces(tmptoken);
 
                                     found = 0;
