@@ -1641,10 +1641,10 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'bluedot' option enabled,  but 'processor bluedot' is not configured!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
-                            tmptok_tmp = strtok_r(NULL, ",", &saveptrrule2);	/* Support var's */
-                            Remove_Spaces(tmptok_tmp);
+                            tok_tmp = strtok_r(NULL, ",", &saveptrrule2);	/* Support var's */
+                            Remove_Spaces(tok_tmp);
 
-                            if (!strcmp(tmptok_tmp, "reputation"))
+                            if (!strcmp(tok_tmp, "reputation"))
                                 {
 
                                     tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));   /* Support var's */
