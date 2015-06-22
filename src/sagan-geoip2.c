@@ -178,9 +178,11 @@ int Sagan_GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                     if (debug->debuggeoip2)
                         {
                             Sagan_Log(S_DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
-                            return(GEOIP_FOUND_WAS_USER_DEFINED);  /* GeoIP was found / there was a hit */
                         }
+
+			return(GEOIP_FOUND_WAS_USER_DEFINED);  /* GeoIP was found / there was a hit */
                 }
+
             ptmp = strtok_r(NULL, ",", &tok);
         }
 
