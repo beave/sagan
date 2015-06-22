@@ -1743,7 +1743,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalud Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalid Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
 
