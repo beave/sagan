@@ -1703,42 +1703,42 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].bluedot_file_hash = 1;
 
-                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-                                    if ( tok_tmp == NULL )
+                                    if ( tmptok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
                                         }
 
-                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
+                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
                                 }
 
                             if (!strcmp(tok_tmp, "url"))
                                 {
                                     rulestruct[counters->rulecount].bluedot_url = 1;
 
-                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-                                    if ( tok_tmp == NULL )
+                                    if ( tmptok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
                                         }
 
-                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
+                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
                                 }
 
                             if (!strcmp(tok_tmp, "filename"))
                                 {
                                     rulestruct[counters->rulecount].bluedot_filename = 1;
 
-                                    tok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
 
-                                    if ( tok_tmp == NULL )
+                                    if ( tmptok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tok_tmp);
+                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
                                         }
 
-                                    Sagan_Verify_Categories( tok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
+                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
                                 }
 
                             if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
