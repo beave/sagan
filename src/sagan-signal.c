@@ -54,11 +54,6 @@
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-bro-intel.h"
 
-#ifdef WITH_WEBSENSE
-#include <curl/curl.h>
-#include "processors/sagan-websense.h"
-#endif
-
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 #include <liblognorm.h>
@@ -97,11 +92,6 @@ struct _Sagan_BroIntel_Intel_User_Name *Sagan_BroIntel_Intel_User_Name;
 struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
 struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 
-#ifdef WITH_WEBSENSE
-struct _Sagan_Websense_Cache *SaganWebsenseCache;
-struct _Sagan_Websense_Cat_List *SaganWebsenseCatList;
-#endif
-
 pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
@@ -114,10 +104,6 @@ void Sig_Handler( _SaganSigArgs *args )
 
 #ifdef HAVE_LIBPCAP
     sbool orig_plog_value = 0;
-#endif
-
-#ifdef WITH_WEBSENSE
-    sbool orig_websense_value = 0;
 #endif
 
     for(;;)
@@ -274,23 +260,6 @@ void Sig_Handler( _SaganSigArgs *args )
                     counters->track_clients_client_count = 0;
                     counters->track_clients_down = 0;
 
-#ifdef WITH_WEBSENSE
-
-                    if ( config->websense_flag )
-                        {
-                            orig_websense_value = 1;
-                        }
-
-                    config->websense_flag = 0;
-                    counters->websense_cat_count = 0;
-                    counters->websense_error_count = 0;
-                    counters->websense_cache_count = 0;
-                    counters->websense_postive_hit = 0;
-                    counters->websense_cache_hit = 0;
-                    counters->websense_error_count = 0;
-
-#endif
-
                     /* Output formats */
 
                     config->sagan_ext_flag = 0;
@@ -354,24 +323,6 @@ void Sig_Handler( _SaganSigArgs *args )
                                     config->plog_flag = 0;
                                 }
                         }
-#endif
-
-#ifdef WITH_WEBSENSE
-
-                    if ( config->websense_flag == 1 )
-                        {
-                            if ( orig_websense_value == 1 )
-                                {
-                                    Sagan_Log(S_NORMAL, "Websense reloaded.");
-                                    config->websense_flag = 1;
-                                }
-                            else
-                                {
-                                    Sagan_Log(S_WARN, "** 'websense' must be loaded at runtime! NOT loading 'websense'!");
-                                    config->websense_flag = 0;
-                                }
-                        }
-
 #endif
 
                     /* Load Blacklist data */

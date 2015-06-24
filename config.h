@@ -89,7 +89,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
-#define HAVE_LIBMAXMINDDB 1
+/* #undef HAVE_LIBMAXMINDDB */
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 /* #undef HAVE_LIBPCAP */
@@ -347,9 +347,6 @@
 
 /* With system strstr */
 /* #undef WITH_SYSSTRSTR */
-
-/* With Websense Threatseeker */
-/* #undef WITH_WEBSENSE */
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */

@@ -22,10 +22,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#ifdef WITH_WEBSENSE
-#define WEBSENSE_MAX_CAT	10
-#endif
-
 #ifdef WITH_BLUEDOT
 #define BLUEDOT_MAX_CAT        10
 #endif
@@ -154,14 +150,6 @@ struct _Rule_Struct
     sbool blacklist_ipaddr_dst;
     sbool blacklist_ipaddr_both;
     sbool blacklist_ipaddr_all;
-
-#ifdef WITH_WEBSENSE
-
-    int	  websense_ipaddr_type; 		/* 1 == src,  2 == dst,  3 == both,  4 == all */
-    int   websense_cats[WEBSENSE_MAX_CAT];
-    int   websense_cat_count;
-
-#endif
 
 #ifdef WITH_BLUEDOT
 

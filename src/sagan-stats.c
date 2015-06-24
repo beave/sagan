@@ -60,10 +60,6 @@ void sagan_statistics( void )
     int uptime_minutes;
     int uptime_seconds;
 
-#ifdef WITH_WEBSENSE
-    unsigned long websense_total=0;
-#endif
-
 #ifdef WITH_BLUEDOT
     unsigned long bluedot_ip_total=0;
     unsigned long bluedot_hash_total=0;
@@ -85,10 +81,6 @@ void sagan_statistics( void )
     if ( seconds != 0 )
         {
             total = counters->sagantotal / seconds;
-
-#ifdef WITH_WEBSENSE
-            websense_total = counters->websense_total / seconds;
-#endif
 
 #ifdef WITH_BLUEDOT
             bluedot_ip_total = counters->bluedot_ip_total / seconds;
@@ -195,24 +187,6 @@ void sagan_statistics( void )
                     Sagan_Log(S_NORMAL, "           Cached                   : %" PRIu64 "", counters->dns_cache_count);
                     Sagan_Log(S_NORMAL, "           Missed                   : %" PRIu64 " (%.3f%%)", counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
                 }
-
-#ifdef WITH_WEBSENSE
-
-            if (config->websense_flag)
-                {
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          -[ Sagan Websense Processor ]-");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          Entries in cache          : %" PRIu64 " (%.3f%%)", counters->websense_cache_count, CalcPct(counters->websense_cache_count, config->websense_max_cache));
-                    Sagan_Log(S_NORMAL, "          Hits from cache           : %" PRIu64 " (%.3f%%)", counters->websense_cache_hit, CalcPct(counters->websense_cache_hit, counters->websense_cache_count));
-                    Sagan_Log(S_NORMAL, "          Errors                    : %" PRIu64 "", counters->websense_error_count);
-                    Sagan_Log(S_NORMAL, "          Websense hits in logs     : %" PRIu64 "", counters->websense_postive_hit);
-                    Sagan_Log(S_NORMAL, "          Queries per/second        : %lu", websense_total);
-
-//if ( config->websense_flag ) Sagan_Log(S_NORMAL, "Websense Cache Statistics - Cached: %" PRIu64 " Hits: %" PRIu64 " Total: %" PRIu64 " Queries Per/Sec: %lu", counters->websense_cache_count, counters->websense_cache_hit, counters->websense_total, websense_total );
-                }
-#endif
-
 
 #ifdef WITH_BLUEDOT
 

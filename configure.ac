@@ -22,12 +22,6 @@ AC_ARG_ENABLE(snortsam,
   [ SNORTSAM="yes" ]
 )
 
-AC_ARG_ENABLE(websense,
-  [  --enable-websense       Enable Websense Threatseeker network lookups.],
-  [ WEBSENSE="$enableval"],
-  [ WEBSENSE="no" ]
-)
-
 AC_ARG_ENABLE(bluedot,
   [  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.],
   [ BLUEDOT="$enableval"],
@@ -360,22 +354,11 @@ fi
 
 fi
 
-if test "$WEBSENSE" = "yes"; then
-        AC_MSG_RESULT([------- Websense Threatseeker is enabled -------])
-        AC_CHECK_LIB(curl, main,,AC_MSG_ERROR(The libcurl library cannot be found.
-This library is used for Sagan's / Websense Threatseeker  support.  Please see
-https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
-To disable this feature use the --disable-websense flag. ))
-        AC_DEFINE(WITH_WEBSENSE, 1, With Websense Threatseeker)
-        AC_CHECK_HEADER([curl/curl.h])
-	PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
-        fi
-
 if test "$BLUEDOT" = "yes"; then
         AC_MSG_RESULT([------- Quadrant "Bluedot" is enabled -------])
         AC_CHECK_LIB(curl, main,,AC_MSG_ERROR(The libcurl library cannot be found.
 This library is used for Sagan's / "Bluedot" support.  Please see
-https://wiki.quadrantsec.com/bin/view/Main/WebsenseThreatseeker for more information.
+https://quadrantsec.com for more information.
 To disable this feature use the --disable-bluedot flag. ))
         AC_DEFINE(WITH_BLUEDOT, 1, With Bluedot)
         AC_CHECK_HEADER([curl/curl.h])

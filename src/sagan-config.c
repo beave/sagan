@@ -70,10 +70,6 @@
 #include "processors/sagan-perfmon.h"
 #include "processors/sagan-bro-intel.h"
 
-#ifdef WITH_WEBSENSE
-#include "processors/sagan-websense.h"
-#endif
-
 #ifdef WITH_BLUEDOT
 #include "processors/sagan-bluedot.h"
 #endif
@@ -510,92 +506,6 @@ void Load_Config( void )
                             strlcpy(config->blacklist_files, ptmp, sizeof(config->blacklist_files));
 
                         }
-
-#ifdef WITH_WEBSENSE
-
-                    /******* Websense *******/
-
-                    if (!strcmp(sagan_var1, "websense:"))
-                        {
-
-                            config->websense_flag=1;
-
-                            /* Set defaults */
-
-                            strlcpy(config->websense_device_id, "NO_DEVICE_ID", sizeof(config->websense_device_id));
-                            config->websense_timeout = 120;
-
-                            config->websense_cat[0] = '\0';
-                            config->websense_auth[0] = '\0';
-                            config->websense_url[0] = '\0';
-
-                            ptmp = sagan_var1;
-
-                            while (ptmp != NULL )
-                                {
-
-                                    if (!strcmp(ptmp, "catagories"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->websense_cat, Remove_Return(ptmp), sizeof(config->websense_cat));
-                                        }
-
-                                    if (!strcmp(ptmp, "auth"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->websense_auth, Remove_Return(ptmp), sizeof(config->websense_auth));
-                                        }
-
-                                    if (!strcmp(ptmp, "url"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->websense_url, Remove_Return(ptmp), sizeof(config->websense_url));
-                                        }
-
-                                    if (!strcmp(ptmp, "max_cache"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_max_cache = strtoull(ptmp, NULL, 10);
-                                        }
-
-                                    if (!strcmp(ptmp, "cache_timeout"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            config->websense_timeout = atoi(ptmp) * 60;
-                                        }
-
-                                    if (!strcmp(ptmp, "device_id"))
-                                        {
-                                            ptmp = strtok_r(NULL, " ", &tok);
-                                            strlcpy(config->websense_device_id, Remove_Return(ptmp), sizeof(config->websense_device_id));
-                                        }
-
-                                    ptmp = strtok_r(NULL, "=", &tok);
-                                }
-
-
-                            /* Websense sanity checks */
-
-                            if ( config->websense_auth[0] == '\0' )
-                                {
-                                    Sagan_Log(S_ERROR,"[%s, line %d] Websense \"auth\" option is missing.", __FILE__, __LINE__);
-                                }
-
-                            if ( config->websense_cat[0] == '\0' )
-                                {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Websense \"catagories\" option is missing.", __FILE__, __LINE__);
-                                }
-
-                            if ( config->websense_url[0] == '\0' )
-                                {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Websense \"url\" optin is missing.", __FILE__, __LINE__);
-                                }
-
-                            Sagan_Websense_Load_Cat();
-
-                        }
-
-#endif
 
 #ifdef WITH_BLUEDOT
 

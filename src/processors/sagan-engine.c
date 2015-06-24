@@ -51,10 +51,6 @@
 #include "processors/sagan-bro-intel.h"
 #include "processors/sagan-blacklist.h"
 
-#ifdef WITH_WEBSENSE
-#include "processors/sagan-websense.h"
-#endif
-
 #ifdef WITH_BLUEDOT
 #include "processors/sagan-bluedot.h"
 #endif
@@ -147,6 +143,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char *tok2;
 
     char normalize_username[MAX_USERNAME_SIZE];
+    char normalize_filehash[MAX_HASH_SIZE];
+    char normalize_filename[MAX_FILENAME_SIZE];
+    char normalize_url[MAX_URL_SIZE];
     int  normalize_src_port;
     int  normalize_dst_port;
 
@@ -178,11 +177,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool brointel_results = 0;
     sbool blacklist_results = 0;
 
-#ifdef WITH_WEBSENSE
-    int websense_results;
-    sbool websense_flag;
-#endif
-
 #ifdef WITH_BLUEDOT
 
     int bluedot_results;
@@ -191,9 +185,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool bluedot_url_flag;
     sbool bluedot_filename_flag;
 
-    char normalize_filehash[MAX_HASH_SIZE];
-    char normalize_filename[MAX_FILENAME_SIZE];
-    char normalize_url[MAX_URL_SIZE];
 #endif
 
 
@@ -450,13 +441,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             normalize_dst_port=0;
                             normalize_src_port=0;
-
-#ifdef WITH_BLUEDOT
                             normalize_filehash[0] = '\0';
                             normalize_filename[0] = '\0';
                             normalize_url[0] = '\0';
-
-#endif
 
                             normalize_username[0] = '\0';
 
@@ -763,65 +750,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                         }
                                 }
 
-
-#ifdef WITH_WEBSENSE
-
-                            if ( config->websense_flag && rulestruct[b].websense_ipaddr_type )
-                                {
-
-                                    websense_results = 0;
-
-                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
-
-                                    if ( rulestruct[b].websense_ipaddr_type == 1 )
-                                        {
-                                            websense_results = Sagan_Websense_Lookup(ip_src);
-                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
-                                        }
-
-                                    if ( rulestruct[b].websense_ipaddr_type == 2 )
-                                        {
-                                            websense_results = Sagan_Websense_Lookup(ip_dst);
-                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
-                                        }
-
-                                    if ( rulestruct[b].websense_ipaddr_type == 3 )
-                                        {
-
-                                            websense_results = Sagan_Websense_Lookup(ip_src);
-                                            websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
-
-                                            /* If the source isn't found,  then check the dst */
-
-                                            if ( websense_flag != 0 )
-                                                {
-                                                    websense_results = Sagan_Websense_Lookup(ip_dst);
-                                                    websense_flag = Sagan_Websense_Cat_Compare( websense_results, b);
-                                                }
-
-                                        }
-
-                                    if ( rulestruct[b].websense_ipaddr_type == 4 )
-                                        {
-
-                                            websense_flag = Sagan_Websense_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b);
-
-                                        }
-
-                                    /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
-                                     * "delete" an entry only to re-add it! */
-
-                                    Sagan_Websene_Check_Cache_Time();
-
-                                }
-
-                            if ( debug->debugwebsense )
-                                {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] Websense flag: %d", __FILE__, __LINE__, websense_flag);
-                                }
-
-#endif
-
 #ifdef WITH_BLUEDOT
 
                             if ( config->bluedot_flag )
@@ -998,379 +926,370 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                             if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1)
                                                                 {
-#ifdef WITH_WEBSENSE
-                                                                    if ( ( config->websense_flag == 0 || rulestruct[b].websense_ipaddr_type == 0 ) ||  websense_flag == 1 )
-                                                                        {
-#endif
-
 #ifdef WITH_BLUEDOT
 
 
-                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 ))
+                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 ))
+                                                                        {
+
+                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 ))
                                                                                 {
 
-                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 ))
+                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 ))
                                                                                         {
 
-                                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 ))
+                                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 ))
                                                                                                 {
-
-                                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 ))
-                                                                                                        {
 
 
 
 #endif
 
 
-                                                                                                            after_log_flag=0;
+                                                                                                    after_log_flag=0;
 
-                                                                                                            /*********************************************************/
-                                                                                                            /* After - Similar to thresholding,  but the opposite    */
-                                                                                                            /* direction - ie - alert _after_ X number of events     */
-                                                                                                            /*********************************************************/
+                                                                                                    /*********************************************************/
+                                                                                                    /* After - Similar to thresholding,  but the opposite    */
+                                                                                                    /* direction - ie - alert _after_ X number of events     */
+                                                                                                    /*********************************************************/
 
-                                                                                                            if ( rulestruct[b].after_src_or_dst != 0 )
+                                                                                                    if ( rulestruct[b].after_src_or_dst != 0 )
+                                                                                                        {
+
+                                                                                                            after_log_flag=1;
+
+                                                                                                            t = time(NULL);
+                                                                                                            now=localtime(&t);
+                                                                                                            strftime(timet, sizeof(timet), "%s",  now);
+
+                                                                                                            /* After by source IP address */
+
+                                                                                                            if ( rulestruct[b].after_src_or_dst == 1 )
+                                                                                                                {
+                                                                                                                    after_flag = 0;
+
+                                                                                                                    for (i = 0; i < after_count_by_src; i++ )
+                                                                                                                        {
+                                                                                                                            if ( afterbysrc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                {
+
+                                                                                                                                    after_flag=1;
+
+                                                                                                                                    pthread_mutex_lock(&AfterMutexSrc);
+
+                                                                                                                                    afterbysrc[i].count++;
+                                                                                                                                    after_oldtime_src = atol(timet) - afterbysrc[i].utime;
+                                                                                                                                    afterbysrc[i].utime = atol(timet);
+
+                                                                                                                                    if ( after_oldtime_src > rulestruct[b].after_seconds )
+                                                                                                                                        {
+                                                                                                                                            afterbysrc[i].count=1;
+                                                                                                                                            afterbysrc[i].utime = atol(timet);
+                                                                                                                                            after_log_flag=1;
+                                                                                                                                        }
+
+                                                                                                                                    pthread_mutex_unlock(&AfterMutexSrc);
+
+                                                                                                                                    if ( rulestruct[b].after_count < afterbysrc[i].count )
+                                                                                                                                        {
+                                                                                                                                            after_log_flag = 0;
+
+                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                                {
+                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+                                                                                                                                                }
+
+
+                                                                                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                                                                                            counters->after_total++;
+                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                        }
+
+                                                                                                                                }
+                                                                                                                        }
+                                                                                                                }
+
+
+                                                                                                            /* If not found,  add it to the array */
+
+                                                                                                            if ( after_flag == 0 )
                                                                                                                 {
 
-                                                                                                                    after_log_flag=1;
+                                                                                                                    pthread_mutex_lock(&AfterMutexSrc);
 
-                                                                                                                    t = time(NULL);
-                                                                                                                    now=localtime(&t);
-                                                                                                                    strftime(timet, sizeof(timet), "%s",  now);
+                                                                                                                    afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
+                                                                                                                    afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                    strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
+                                                                                                                    afterbysrc[after_count_by_src].count = 1;
+                                                                                                                    afterbysrc[after_count_by_src].utime = atol(timet);
+                                                                                                                    after_count_by_src++;
 
-                                                                                                                    /* After by source IP address */
+                                                                                                                    pthread_mutex_unlock(&AfterMutexSrc);
+                                                                                                                }
 
-                                                                                                                    if ( rulestruct[b].after_src_or_dst == 1 )
+                                                                                                            /* After by destination IP address */
+
+                                                                                                            if ( rulestruct[b].after_src_or_dst == 2 )
+                                                                                                                {
+
+                                                                                                                    after_flag = 0;
+
+                                                                                                                    /* Check array for matching src / sid */
+
+                                                                                                                    for (i = 0; i < after_count_by_dst; i++ )
                                                                                                                         {
-                                                                                                                            after_flag = 0;
-
-                                                                                                                            for (i = 0; i < after_count_by_src; i++ )
+                                                                                                                            if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
-                                                                                                                                    if ( afterbysrc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                    after_flag=1;
+
+                                                                                                                                    pthread_mutex_lock(&AfterMutexDst);
+
+                                                                                                                                    afterbydst[i].count++;
+                                                                                                                                    after_oldtime_src = atol(timet) - afterbydst[i].utime;
+                                                                                                                                    afterbydst[i].utime = atol(timet);
+                                                                                                                                    if ( after_oldtime_src > rulestruct[b].after_seconds )
                                                                                                                                         {
+                                                                                                                                            afterbydst[i].count=1;
+                                                                                                                                            afterbydst[i].utime = atol(timet);
+                                                                                                                                            after_log_flag=1;
+                                                                                                                                        }
 
-                                                                                                                                            after_flag=1;
+                                                                                                                                    pthread_mutex_unlock(&AfterMutexDst);
 
-                                                                                                                                            pthread_mutex_lock(&AfterMutexSrc);
+                                                                                                                                    if ( rulestruct[b].after_count < afterbydst[i].count )
+                                                                                                                                        {
+                                                                                                                                            after_log_flag = 0;
 
-                                                                                                                                            afterbysrc[i].count++;
-                                                                                                                                            after_oldtime_src = atol(timet) - afterbysrc[i].utime;
-                                                                                                                                            afterbysrc[i].utime = atol(timet);
-
-                                                                                                                                            if ( after_oldtime_src > rulestruct[b].after_seconds )
+                                                                                                                                            if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    afterbysrc[i].count=1;
-                                                                                                                                                    afterbysrc[i].utime = atol(timet);
-                                                                                                                                                    after_log_flag=1;
+                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
                                                                                                                                                 }
 
-                                                                                                                                            pthread_mutex_unlock(&AfterMutexSrc);
 
-                                                                                                                                            if ( rulestruct[b].after_count < afterbysrc[i].count )
-                                                                                                                                                {
-                                                                                                                                                    after_log_flag = 0;
-
-                                                                                                                                                    if ( debug->debuglimits )
-                                                                                                                                                        {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
-                                                                                                                                                        }
-
-
-                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                                                                                                    counters->after_total++;
-                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                                }
-
+                                                                                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                                                                                            counters->after_total++;
+                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
                                                                                                                                         }
                                                                                                                                 }
                                                                                                                         }
-
 
                                                                                                                     /* If not found,  add it to the array */
 
                                                                                                                     if ( after_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&AfterMutexSrc);
+                                                                                                                            pthread_mutex_lock(&AfterMutexDst);
 
-                                                                                                                            afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
-                                                                                                                            afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                            strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
-                                                                                                                            afterbysrc[after_count_by_src].count = 1;
-                                                                                                                            afterbysrc[after_count_by_src].utime = atol(timet);
-                                                                                                                            after_count_by_src++;
+                                                                                                                            afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
+                                                                                                                            afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                            strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
+                                                                                                                            afterbydst[after_count_by_dst].count = 1;
+                                                                                                                            afterbydst[after_count_by_dst].utime = atol(timet);
+                                                                                                                            after_count_by_dst++;
 
-                                                                                                                            pthread_mutex_unlock(&AfterMutexSrc);
+                                                                                                                            pthread_mutex_unlock(&AfterMutexDst);
                                                                                                                         }
+                                                                                                                }
 
-                                                                                                                    /* After by destination IP address */
+                                                                                                        } /* End of After */
 
-                                                                                                                    if ( rulestruct[b].after_src_or_dst == 2 )
-                                                                                                                        {
+                                                                                                    thresh_log_flag = 0;
 
-                                                                                                                            after_flag = 0;
+                                                                                                    /*********************************************************/
+                                                                                                    /* Thresh holding                                        */
+                                                                                                    /*********************************************************/
 
-                                                                                                                            /* Check array for matching src / sid */
+                                                                                                    if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0)
+                                                                                                        {
 
-                                                                                                                            for (i = 0; i < after_count_by_dst; i++ )
-                                                                                                                                {
-                                                                                                                                    if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                        {
-                                                                                                                                            after_flag=1;
+                                                                                                            t = time(NULL);
+                                                                                                            now=localtime(&t);
+                                                                                                            strftime(timet, sizeof(timet), "%s",  now);
 
-                                                                                                                                            pthread_mutex_lock(&AfterMutexDst);
+                                                                                                            /* Thresholding by source IP address */
 
-                                                                                                                                            afterbydst[i].count++;
-                                                                                                                                            after_oldtime_src = atol(timet) - afterbydst[i].utime;
-                                                                                                                                            afterbydst[i].utime = atol(timet);
-                                                                                                                                            if ( after_oldtime_src > rulestruct[b].after_seconds )
-                                                                                                                                                {
-                                                                                                                                                    afterbydst[i].count=1;
-                                                                                                                                                    afterbydst[i].utime = atol(timet);
-                                                                                                                                                    after_log_flag=1;
-                                                                                                                                                }
-
-                                                                                                                                            pthread_mutex_unlock(&AfterMutexDst);
-
-                                                                                                                                            if ( rulestruct[b].after_count < afterbydst[i].count )
-                                                                                                                                                {
-                                                                                                                                                    after_log_flag = 0;
-
-                                                                                                                                                    if ( debug->debuglimits )
-                                                                                                                                                        {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
-                                                                                                                                                        }
-
-
-                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                                                                                                    counters->after_total++;
-                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                                }
-                                                                                                                                        }
-                                                                                                                                }
-
-                                                                                                                            /* If not found,  add it to the array */
-
-                                                                                                                            if ( after_flag == 0 )
-                                                                                                                                {
-
-                                                                                                                                    pthread_mutex_lock(&AfterMutexDst);
-
-                                                                                                                                    afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
-                                                                                                                                    afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                                    strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
-                                                                                                                                    afterbydst[after_count_by_dst].count = 1;
-                                                                                                                                    afterbydst[after_count_by_dst].utime = atol(timet);
-                                                                                                                                    after_count_by_dst++;
-
-                                                                                                                                    pthread_mutex_unlock(&AfterMutexDst);
-                                                                                                                                }
-                                                                                                                        }
-
-                                                                                                                } /* End of After */
-
-                                                                                                            thresh_log_flag = 0;
-
-                                                                                                            /*********************************************************/
-                                                                                                            /* Thresh holding                                        */
-                                                                                                            /*********************************************************/
-
-                                                                                                            if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0)
+                                                                                                            if ( rulestruct[b].threshold_src_or_dst == 1 )
                                                                                                                 {
+                                                                                                                    thresh_flag = 0;
 
-                                                                                                                    t = time(NULL);
-                                                                                                                    now=localtime(&t);
-                                                                                                                    strftime(timet, sizeof(timet), "%s",  now);
+                                                                                                                    /* Check array for matching src / sid */
 
-                                                                                                                    /* Thresholding by source IP address */
-
-                                                                                                                    if ( rulestruct[b].threshold_src_or_dst == 1 )
+                                                                                                                    for (i = 0; i < thresh_count_by_src; i++ )
                                                                                                                         {
-                                                                                                                            thresh_flag = 0;
-
-                                                                                                                            /* Check array for matching src / sid */
-
-                                                                                                                            for (i = 0; i < thresh_count_by_src; i++ )
+                                                                                                                            if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
-                                                                                                                                    if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                        {
 
-                                                                                                                                            thresh_flag=1;
-
-                                                                                                                                            pthread_mutex_lock(&ThreshMutexSrc);
-
-                                                                                                                                            threshbysrc[i].count++;
-                                                                                                                                            thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
-
-                                                                                                                                            threshbysrc[i].utime = atol(timet);
-
-                                                                                                                                            if ( thresh_oldtime_src > rulestruct[b].threshold_seconds )
-                                                                                                                                                {
-                                                                                                                                                    threshbysrc[i].count=1;
-                                                                                                                                                    threshbysrc[i].utime = atol(timet);
-                                                                                                                                                    thresh_log_flag=0;
-                                                                                                                                                }
-
-                                                                                                                                            pthread_mutex_unlock(&ThreshMutexSrc);
-
-                                                                                                                                            if ( rulestruct[b].threshold_count < threshbysrc[i].count )
-                                                                                                                                                {
-                                                                                                                                                    thresh_log_flag = 1;
-
-                                                                                                                                                    if ( debug->debuglimits )
-                                                                                                                                                        {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
-                                                                                                                                                        }
-
-                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                                                                                                    counters->threshold_total++;
-                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                                }
-
-                                                                                                                                        }
-                                                                                                                                }
-
-                                                                                                                            /* If not found,  add it to the array */
-
-                                                                                                                            if ( thresh_flag == 0 )
-                                                                                                                                {
+                                                                                                                                    thresh_flag=1;
 
                                                                                                                                     pthread_mutex_lock(&ThreshMutexSrc);
 
-                                                                                                                                    threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
-                                                                                                                                    threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                                    strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
-                                                                                                                                    threshbysrc[thresh_count_by_src].count = 1;
-                                                                                                                                    threshbysrc[thresh_count_by_src].utime = atol(timet);
-                                                                                                                                    thresh_count_by_src++;
+                                                                                                                                    threshbysrc[i].count++;
+                                                                                                                                    thresh_oldtime_src = atol(timet) - threshbysrc[i].utime;
+
+                                                                                                                                    threshbysrc[i].utime = atol(timet);
+
+                                                                                                                                    if ( thresh_oldtime_src > rulestruct[b].threshold_seconds )
+                                                                                                                                        {
+                                                                                                                                            threshbysrc[i].count=1;
+                                                                                                                                            threshbysrc[i].utime = atol(timet);
+                                                                                                                                            thresh_log_flag=0;
+                                                                                                                                        }
 
                                                                                                                                     pthread_mutex_unlock(&ThreshMutexSrc);
 
+                                                                                                                                    if ( rulestruct[b].threshold_count < threshbysrc[i].count )
+                                                                                                                                        {
+                                                                                                                                            thresh_log_flag = 1;
+
+                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                                {
+                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+                                                                                                                                                }
+
+                                                                                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                                                                                            counters->threshold_total++;
+                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                        }
+
                                                                                                                                 }
                                                                                                                         }
 
-                                                                                                                    /* Thresholding by destination IP address */
+                                                                                                                    /* If not found,  add it to the array */
 
-                                                                                                                    if ( rulestruct[b].threshold_src_or_dst == 2 )
+                                                                                                                    if ( thresh_flag == 0 )
                                                                                                                         {
-                                                                                                                            thresh_flag = 0;
 
-                                                                                                                            /* Check array for matching src / sid */
+                                                                                                                            pthread_mutex_lock(&ThreshMutexSrc);
 
-                                                                                                                            for (i = 0; i < thresh_count_by_dst; i++ )
+                                                                                                                            threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
+                                                                                                                            threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                            strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
+                                                                                                                            threshbysrc[thresh_count_by_src].count = 1;
+                                                                                                                            threshbysrc[thresh_count_by_src].utime = atol(timet);
+                                                                                                                            thresh_count_by_src++;
+
+                                                                                                                            pthread_mutex_unlock(&ThreshMutexSrc);
+
+                                                                                                                        }
+                                                                                                                }
+
+                                                                                                            /* Thresholding by destination IP address */
+
+                                                                                                            if ( rulestruct[b].threshold_src_or_dst == 2 )
+                                                                                                                {
+                                                                                                                    thresh_flag = 0;
+
+                                                                                                                    /* Check array for matching src / sid */
+
+                                                                                                                    for (i = 0; i < thresh_count_by_dst; i++ )
+                                                                                                                        {
+                                                                                                                            if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
-                                                                                                                                    if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                        {
 
-                                                                                                                                            thresh_flag=1;
-
-                                                                                                                                            pthread_mutex_lock(&ThreshMutexDst);
-
-                                                                                                                                            threshbydst[i].count++;
-                                                                                                                                            thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
-                                                                                                                                            threshbydst[i].utime = atol(timet);
-                                                                                                                                            if ( thresh_oldtime_src > rulestruct[b].threshold_seconds )
-                                                                                                                                                {
-                                                                                                                                                    threshbydst[i].count=1;
-                                                                                                                                                    threshbydst[i].utime = atol(timet);
-                                                                                                                                                    thresh_log_flag=0;
-                                                                                                                                                }
-
-                                                                                                                                            pthread_mutex_unlock(&ThreshMutexDst);
-
-                                                                                                                                            if ( rulestruct[b].threshold_count < threshbydst[i].count )
-                                                                                                                                                {
-                                                                                                                                                    thresh_log_flag = 1;
-
-                                                                                                                                                    if ( debug->debuglimits )
-                                                                                                                                                        {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
-                                                                                                                                                        }
-
-                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                                                                                                    counters->threshold_total++;
-                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                                }
-                                                                                                                                        }
-                                                                                                                                }
-
-                                                                                                                            /* If not found,  add it to the array */
-
-                                                                                                                            if ( thresh_flag == 0 )
-                                                                                                                                {
+                                                                                                                                    thresh_flag=1;
 
                                                                                                                                     pthread_mutex_lock(&ThreshMutexDst);
 
-                                                                                                                                    threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-                                                                                                                                    threshbydst[thresh_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                                    strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
-                                                                                                                                    threshbydst[thresh_count_by_dst].count = 1;
-                                                                                                                                    threshbydst[thresh_count_by_dst].utime = atol(timet);
-                                                                                                                                    thresh_count_by_dst++;
+                                                                                                                                    threshbydst[i].count++;
+                                                                                                                                    thresh_oldtime_src = atol(timet) - threshbydst[i].utime;
+                                                                                                                                    threshbydst[i].utime = atol(timet);
+                                                                                                                                    if ( thresh_oldtime_src > rulestruct[b].threshold_seconds )
+                                                                                                                                        {
+                                                                                                                                            threshbydst[i].count=1;
+                                                                                                                                            threshbydst[i].utime = atol(timet);
+                                                                                                                                            thresh_log_flag=0;
+                                                                                                                                        }
 
                                                                                                                                     pthread_mutex_unlock(&ThreshMutexDst);
+
+                                                                                                                                    if ( rulestruct[b].threshold_count < threshbydst[i].count )
+                                                                                                                                        {
+                                                                                                                                            thresh_log_flag = 1;
+
+                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                                {
+                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
+                                                                                                                                                }
+
+                                                                                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                                                                                            counters->threshold_total++;
+                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                        }
                                                                                                                                 }
                                                                                                                         }
-                                                                                                                }  /* End of thresholding */
+
+                                                                                                                    /* If not found,  add it to the array */
+
+                                                                                                                    if ( thresh_flag == 0 )
+                                                                                                                        {
+
+                                                                                                                            pthread_mutex_lock(&ThreshMutexDst);
+
+                                                                                                                            threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
+                                                                                                                            threshbydst[thresh_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                            strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
+                                                                                                                            threshbydst[thresh_count_by_dst].count = 1;
+                                                                                                                            threshbydst[thresh_count_by_dst].utime = atol(timet);
+                                                                                                                            thresh_count_by_dst++;
+
+                                                                                                                            pthread_mutex_unlock(&ThreshMutexDst);
+                                                                                                                        }
+                                                                                                                }
+                                                                                                        }  /* End of thresholding */
 
 
-                                                                                                            pthread_mutex_lock(&CounterMutex);
-                                                                                                            counters->saganfound++;
-                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                                    counters->saganfound++;
+                                                                                                    pthread_mutex_unlock(&CounterMutex);
 
-                                                                                                            /* Check for thesholding & "after" */
+                                                                                                    /* Check for thesholding & "after" */
 
-                                                                                                            if ( thresh_log_flag == 0 && after_log_flag == 0 )
+                                                                                                    if ( thresh_log_flag == 0 && after_log_flag == 0 )
+                                                                                                        {
+
+                                                                                                            if ( debug->debugengine )
                                                                                                                 {
 
-                                                                                                                    if ( debug->debugengine )
-                                                                                                                        {
+                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
+                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
-                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
-                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                }
 
-                                                                                                                        }
+                                                                                                            if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
+                                                                                                                Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
-                                                                                                                    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
-                                                                                                                        Sagan_Flowbit_Set(b, ip_src, ip_dst);
+                                                                                                            threadid++;
+                                                                                                            if ( threadid >= MAX_THREADS ) threadid=0;
 
-                                                                                                                    threadid++;
-                                                                                                                    if ( threadid >= MAX_THREADS ) threadid=0;
+                                                                                                            /* We can't use the pointers from our syslog data.  If two (or more) event's
+                                                                                                             * fire at the same time,  the two alerts will have corrupted information
+                                                                                                             * (due to threading).   So we populate the SaganEvent[threadid] with the
+                                                                                                             * var[msgslot] information. - Champ Clark 02/02/2011
+                                                                                                             */
 
-                                                                                                                    /* We can't use the pointers from our syslog data.  If two (or more) event's
-                                                                                                                     * fire at the same time,  the two alerts will have corrupted information
-                                                                                                                     * (due to threading).   So we populate the SaganEvent[threadid] with the
-                                                                                                                     * var[msgslot] information. - Champ Clark 02/02/2011
-                                                                                                                     */
+                                                                                                            processor_info_engine->processor_name          =       s_msg;
+                                                                                                            processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                                                            processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                                                            processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                                                            processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                                                            processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                                                            processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                                                            processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                                                                                    processor_info_engine->processor_name          =       s_msg;
-                                                                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+                                                                                                            processor_info_engine_dst_port                 =       normalize_dst_port;
+                                                                                                            processor_info_engine_src_port                 =       normalize_src_port;
+                                                                                                            processor_info_engine_proto                    =       proto;
+                                                                                                            processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-                                                                                                                    processor_info_engine_dst_port                 =       normalize_dst_port;
-                                                                                                                    processor_info_engine_src_port                 =       normalize_src_port;
-                                                                                                                    processor_info_engine_proto                    =       proto;
-                                                                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
-
-                                                                                                                    if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
-                                                                                                                        {
-                                                                                                                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
-                                                                                                                        }
+                                                                                                            if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
+                                                                                                                {
+                                                                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
+                                                                                                                }
 
 
-                                                                                                                } /* Threshold / After */
-#ifdef WITH_WEBSENSE
-                                                                                                        } /* Websense */
-#endif
-
+                                                                                                        } /* Threshold / After */
 #ifdef WITH_BLUEDOT
                                                                                                 } /* Bluedot */
                                                                                         }

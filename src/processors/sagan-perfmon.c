@@ -78,10 +78,21 @@ void Sagan_Perfmonitor_Handler( void )
     uint64_t last_geoip2_miss = 0;
 #endif
 
-#ifdef WITH_WEBSENSE
-    uint64_t last_websense_cache_hit = 0;
-    uint64_t last_websense_error_count = 0;
-    uint64_t last_websense_positive_hit = 0;
+#ifdef WITH_BLUEDOT
+    uint64_t last_bluedot_ip_cache_hit = 0;
+    uint64_t last_bluedot_ip_positive_hit = 0;
+    uint64_t last_bluedot_hash_cache_hit = 0;
+    uint64_t last_bluedot_hash_positive_hit = 0;
+    uint64_t last_bluedot_url_cache_hit = 0;
+    uint64_t last_bluedot_url_positive_hit = 0;
+    uint64_t last_bluedot_filename_cache_hit = 0;
+    uint64_t last_bluedot_filename_positive_hit = 0;
+    uint64_t last_bluedot_error_count = 0;
+
+    unsigned long bluedot_ip_total;
+    unsigned long bluedot_url_total;
+    unsigned long bluedot_hash_total;
+    unsigned long bluedot_filename_total;
 #endif
 
 #ifdef HAVE_LIBESMTP
@@ -98,6 +109,12 @@ void Sagan_Perfmonitor_Handler( void )
         {
 
             sleep(config->perfmonitor_time);
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
+            seconds = atol(curtime_utime) - atol(config->sagan_startutime);
+
 
             if ( config->perfmonitor_flag )
                 {
@@ -125,12 +142,7 @@ void Sagan_Perfmonitor_Handler( void )
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->ignore_count - last_ignore_count);
                     last_ignore_count = counters->ignore_count;
 
-                    t = time(NULL);
-                    now=localtime(&t);
-                    strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
-                    seconds = atol(curtime_utime) - atol(config->sagan_startutime);
                     total = counters->sagantotal / seconds;
-
                     fprintf(config->perfmonitor_file_stream, "%lu,", total);
 
 #ifdef HAVE_LIBMAXMINDDB
@@ -193,33 +205,87 @@ void Sagan_Perfmonitor_Handler( void )
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_miss_count - last_dns_miss_count);
                     last_dns_miss_count = counters->dns_miss_count;
 
-#ifdef WITH_WEBSENSE
 
-                    if (config->websense_flag)
+
+#ifdef WITH_BLUEDOT
+
+                    if ( config->bluedot_flag )
                         {
 
-                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_count);
+                            /* IP Reputation */
 
-                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_cache_hit - last_websense_cache_hit);
-                            last_websense_cache_hit = counters->websense_cache_hit;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_cache_count);
 
-                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->websense_error_count - last_websense_error_count);
-                            last_websense_error_count = counters->websense_error_count;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_cache_hit - last_bluedot_ip_cache_hit);
+                            last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
 
-                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 "", counters->websense_postive_hit - last_websense_positive_hit); 	/* Don't need , here */
-                            last_websense_positive_hit = counters->websense_postive_hit;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_positive_hit - last_bluedot_ip_positive_hit);
+                            last_bluedot_ip_positive_hit = counters->bluedot_ip_positive_hit;
+
+                            bluedot_ip_total = counters->bluedot_ip_total / seconds;
+                            fprintf(config->perfmonitor_file_stream, "%lu,", bluedot_ip_total);
+
+                            /* Hash */
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_cache_count);
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_cache_hit - last_bluedot_hash_cache_hit);
+                            last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_positive_hit - last_bluedot_hash_positive_hit);
+                            last_bluedot_hash_positive_hit = counters->bluedot_hash_positive_hit;
+
+                            bluedot_hash_total = counters->bluedot_hash_total / seconds;
+                            fprintf(config->perfmonitor_file_stream, "%lu,", total);
+
+                            /* URL */
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_cache_count);
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_cache_hit - last_bluedot_url_cache_hit);
+                            last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_positive_hit - last_bluedot_url_positive_hit);
+                            last_bluedot_url_positive_hit = counters->bluedot_url_positive_hit;
+
+                            bluedot_url_total = counters->bluedot_url_total / seconds;
+                            fprintf(config->perfmonitor_file_stream, "%lu,", bluedot_url_total);
+
+                            /* Filename */
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_cache_count);
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_cache_hit - last_bluedot_filename_cache_hit);
+                            last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_positive_hit - last_bluedot_filename_positive_hit);
+                            last_bluedot_filename_positive_hit = counters->bluedot_filename_positive_hit;
+
+                            bluedot_filename_total = counters->bluedot_filename_total / seconds;
+                            fprintf(config->perfmonitor_file_stream, "%lu,", bluedot_filename_total);		/* Last comma here! */
+
+                            /* Error count */
+
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_error_count - last_bluedot_error_count);
+                            last_bluedot_error_count = counters->bluedot_error_count;
+
+                            fprintf(config->perfmonitor_file_stream, "%lu", bluedot_ip_total + bluedot_hash_total + bluedot_url_total + bluedot_filename_total);
+
+
+
 
                         }
                     else
                         {
 
-                            fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
+                            fprintf(config->perfmonitor_file_stream, "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
                         }
 
 #endif
 
-#ifndef WITH_WEBSENSE
-                    fprintf(config->perfmonitor_file_stream, "0,0,0,0,0");
+#ifndef WITH_BLUEDOT
+
+                    fprintf(config->perfmonitor_file_stream, "0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0");
 #endif
 
                     fprintf(config->perfmonitor_file_stream, "\n");
@@ -273,7 +339,7 @@ void Sagan_Perfmonitor_Open(void)
         }
 
     fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);
-    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip2.lookup.total,geoip2.hits,geoip2.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.websense.cache_count,processor.websense.hits,processor.websense.errors,processor.websense.found\n");
+    fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip2.lookup.total,geoip2.hits,geoip2.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.bluedot_ip_cache_count,processor.bluedot_ip_cache_hit,processor.bluedot_ip_positive_hit,processor.bluedot_ip_qps,processor.bluedot_hash_cache_count,processor.bluedot_hash_cache_hit,processor.bluedot_hash_positive_hit,processor.bluedot_hash_qps,processor.bluedot_url_cache_count,processor.bluedot_url_cache_hit,processor.bluedot_url_positive_hit,processor.bluedot_url_qps,processor.bluedot_filename_cache_count,processor.bluedot_filename_cache_hit,processor.bluedot_filename_positive_hit,processor.bluedot_filename_qps,processor.bluedot_error_count,processor.bluedot_total_qps\n");
     fflush(config->perfmonitor_file_stream);
 
 }

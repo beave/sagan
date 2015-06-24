@@ -93,11 +93,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Flowbit *flowbit;
 
-#ifdef WITH_WEBSENSE
-#include <curl/curl.h>
-#include "processors/sagan-websense.h"
-#endif
-
 #ifdef WITH_BLUEDOT
 #include <curl/curl.h>
 #include "processors/sagan-bluedot.h"
@@ -373,14 +368,6 @@ int main(int argc, char **argv)
                         }
 #endif
 
-#ifdef WITH_WEBSENSE
-                    if (Sagan_strstr(optarg, "websense"))
-                        {
-                            debug->debugwebsense=1;
-                            debugflag=1;
-                        }
-#endif
-
 #ifdef WITH_BLUEDOT
                     if (Sagan_strstr(optarg, "bluedot"))
                         {
@@ -537,28 +524,6 @@ int main(int argc, char **argv)
             Sagan_Blacklist_Init();
             Sagan_Blacklist_Load();
         }
-
-    /* Sagan Websense processor ************************************************/
-
-#ifdef WITH_WEBSENSE
-    if ( config->websense_flag )
-        {
-
-            curl_global_init(CURL_GLOBAL_ALL);
-            Sagan_Websense_Init();
-
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "Websense URL: %s", config->websense_url);
-            Sagan_Log(S_NORMAL, "Websense Auth: %s", config->websense_auth);
-            Sagan_Log(S_NORMAL, "Websense Device ID: %s", config->websense_device_id);
-            Sagan_Log(S_NORMAL, "Websense Categories File: %s", config->websense_cat);
-            Sagan_Log(S_NORMAL, "Websense Max Cache: %d", config->websense_max_cache);
-            Sagan_Log(S_NORMAL, "Websense Cache Timeout: %d minutes.", config->websense_timeout  / 60);
-            Sagan_Log(S_NORMAL, "Websense loaded %d categories.", counters->websense_cat_count);
-
-        }
-
-#endif
 
 #ifdef WITH_BLUEDOT
     if ( config->bluedot_flag )

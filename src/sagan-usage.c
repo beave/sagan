@@ -53,10 +53,6 @@ void Sagan_Usage(void)
     fprintf(stderr, ", plog");
 #endif
 
-#ifdef WITH_WEBSENSE
-    fprintf(stderr, ", websense");
-#endif
-
 #ifdef WITH_BLUEDOT
     fprintf(stderr, ", bluedot");
 #endif

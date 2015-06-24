@@ -133,20 +133,7 @@ struct _SaganConfig
     sbool        sagan_unified2_flag;
 #endif
 
-    /* Websense Threatseeker */
-
-#ifdef WITH_WEBSENSE
-    sbool        websense_flag;
-    char         websense_device_id[64];
-    char         websense_url[256];
-    char         websense_auth[64];
-    char	 websense_cat[MAXPATH];
-    int          websense_timeout;
-    uint64_t     websense_max_cache;
-    uint64_t     websense_last_time;                    /* For cache cleaning */
-#endif
-
-    /* Bluedot Threatseeker */
+    /* Bluedot */
 
 #ifdef WITH_BLUEDOT
     sbool        bluedot_flag;

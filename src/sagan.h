@@ -152,15 +152,6 @@ struct _SaganCounters
     uint64_t geoip2_miss;				/* Misses (country not found) */
 #endif
 
-#ifdef WITH_WEBSENSE
-    uint64_t websense_cache_count;			/* Websense cache processor */
-    uint64_t websense_cache_hit;			/* Websense hit's from Cache */
-    uint64_t websense_postive_hit;
-    uint64_t websense_total;
-    uint64_t websense_error_count;
-    int websense_cat_count;
-#endif
-
 #ifdef WITH_BLUEDOT
     uint64_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
     uint64_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
@@ -225,10 +216,6 @@ struct _SaganDebug
 
 #ifdef HAVE_LIBPCAP
     sbool debugplog;
-#endif
-
-#ifdef WITH_WEBSENSE
-    sbool debugwebsense;
 #endif
 
 #ifdef WITH_BLUEDOT
