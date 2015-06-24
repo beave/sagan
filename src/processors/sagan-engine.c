@@ -140,17 +140,16 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int sagan_match=0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
     int rc=0;
     int ovector[PCRE_OVECCOUNT];
-    int  src_port;
-    int  dst_port;
+
     int  alter_num;
 
     char *ptmp;
     char *tok2;
-    char *username = NULL;
-    char *filehash = NULL;
-    char *url = NULL;
-    char *filename = NULL;
-//  char *uid = NULL;
+
+    char normalize_username[MAX_USERNAME_SIZE];
+    int  normalize_src_port;
+    int  normalize_dst_port;
+
 
     char ip_src[MAXIP] = { 0 };
     sbool ip_src_flag = 0;
@@ -185,11 +184,16 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 #endif
 
 #ifdef WITH_BLUEDOT
+
     int bluedot_results;
     sbool bluedot_ip_flag;
     sbool bluedot_hash_flag;
     sbool bluedot_url_flag;
     sbool bluedot_filename_flag;
+
+    char normalize_filehash[MAX_HASH_SIZE];
+    char normalize_filename[MAX_FILENAME_SIZE];
+    char normalize_url[MAX_URL_SIZE];
 #endif
 
 
@@ -444,14 +448,17 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             ip_src_flag = 0;
                             ip_dst_flag = 0;
 
-                            dst_port=0;
-                            src_port=0;
+                            normalize_dst_port=0;
+                            normalize_src_port=0;
 
-                            filehash = NULL;
-                            url = NULL;
-                            username = NULL;
-                            filename = NULL;
-//		   uid=NULL;
+#ifdef WITH_BLUEDOT
+                            normalize_filehash[0] = '\0';
+                            normalize_filename[0] = '\0';
+                            normalize_url[0] = '\0';
+
+#endif
+
+                            normalize_username[0] = '\0';
 
 #ifdef HAVE_LIBLOGNORM
                             if ( rulestruct[b].normalize == 1 && counters->liblognormtoload_count != 0 )
@@ -480,59 +487,58 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( SaganNormalizeLiblognorm->src_port != 0 )
                                         {
-                                            src_port = SaganNormalizeLiblognorm->src_port;
+                                            normalize_src_port = SaganNormalizeLiblognorm->src_port;
                                             liblognorm_status = 1;
                                         }
 
                                     if ( SaganNormalizeLiblognorm->dst_port != 0 )
                                         {
-                                            dst_port = SaganNormalizeLiblognorm->dst_port;
+                                            normalize_dst_port = SaganNormalizeLiblognorm->dst_port;
                                             liblognorm_status = 1;
                                         }
 
                                     if ( SaganNormalizeLiblognorm->username[0] != '\0' )
                                         {
-                                            username = SaganNormalizeLiblognorm->username;
+                                            strlcpy(normalize_username, SaganNormalizeLiblognorm->username, sizeof(normalize_username));
                                             liblognorm_status = 1;
                                         }
 
                                     if ( SaganNormalizeLiblognorm->url[0] != '\0' )
                                         {
-                                            url = SaganNormalizeLiblognorm->url;
+                                            strlcpy(normalize_url, SaganNormalizeLiblognorm->url, sizeof(normalize_url));
                                             liblognorm_status = 1;
                                         }
 
                                     if ( SaganNormalizeLiblognorm->filename[0] != '\0' )
                                         {
-                                            filename = SaganNormalizeLiblognorm->filename;
+                                            strlcpy(normalize_filename, SaganNormalizeLiblognorm->filename, sizeof(normalize_filename));
                                             liblognorm_status = 1;
                                         }
 
-                                    /* We want SHA256 over anthing else. */
+                                    /* We want MD5.  Maybe SHA 256 in the future? */
 
-                                    if ( SaganNormalizeLiblognorm->filehash_sha256[0] != '\0' )
+                                    /*
+                                                                        if ( SaganNormalizeLiblognorm->filehash_sha256[0] != '\0' )
+                                                                            {
+                                                                                filehash = SaganNormalizeLiblognorm->filehash_sha256;
+                                                                                liblognorm_status = 1;
+                                                                            }
+
+                                                                        else if ( SaganNormalizeLiblognorm->filehash_sha1[0] != '\0' )
+                                                                            {
+
+                                                                                filehash = SaganNormalizeLiblognorm->filehash_sha1;
+                                                                                liblognorm_status = 1;
+
+                                                                            }
+                                    */
+                                    if ( SaganNormalizeLiblognorm->filehash_md5[0] != '\0' )
                                         {
-                                            filehash = SaganNormalizeLiblognorm->filehash_sha256;
-                                            liblognorm_status = 1;
-                                        }
 
-                                    else if ( SaganNormalizeLiblognorm->filehash_sha1[0] != '\0' )
-                                        {
-
-                                            filehash = SaganNormalizeLiblognorm->filehash_sha1;
+                                            strlcpy(normalize_filehash, SaganNormalizeLiblognorm->filehash_md5, sizeof(normalize_filehash));
                                             liblognorm_status = 1;
 
                                         }
-
-                                    else if ( SaganNormalizeLiblognorm->filehash_md5[0] != '\0' )
-                                        {
-
-                                            filehash = SaganNormalizeLiblognorm->filehash_md5;
-                                            liblognorm_status = 1;
-
-                                        }
-
-//		  			 uid = SaganNormalizeLiblognorm->uid;
 
                                     pthread_mutex_unlock(&Lognorm_Mutex);
 
@@ -566,11 +572,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( rulestruct[b].s_find_port == 1 )
                                         {
-                                            src_port = Sagan_Parse_Port(SaganProcSyslog_LOCAL->syslog_message);
+                                            normalize_src_port = Sagan_Parse_Port(SaganProcSyslog_LOCAL->syslog_message);
                                         }
                                     else
                                         {
-                                            src_port = config->sagan_port;
+                                            normalize_src_port = config->sagan_port;
                                         }
                                 }
 
@@ -607,9 +613,20 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                                 }
 
-                            if ( src_port == 0 ) src_port=config->sagan_port;
-                            if ( dst_port == 0 ) dst_port=rulestruct[b].dst_port;
-                            if ( proto == 0 ) proto = config->sagan_proto;		/* Rule didn't specify proto,  use sagan default! */
+                            if ( normalize_src_port == 0 )
+                                {
+                                    normalize_src_port=config->sagan_port;
+                                }
+
+                            if ( normalize_dst_port == 0 )
+                                {
+                                    normalize_dst_port=rulestruct[b].dst_port;
+                                }
+
+                            if ( proto == 0 )
+                                {
+                                    proto = config->sagan_proto;		/* Rule didn't specify proto,  use sagan default! */
+                                }
 
                             /* If the "source" is 127.0.0.1 that is not useful.  Replace with config->sagan_host
                              * (defined by user in sagan.conf */
@@ -854,26 +871,26 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                         }
 
 
-                                    if ( rulestruct[b].bluedot_file_hash && filehash != NULL )
+                                    if ( rulestruct[b].bluedot_file_hash && normalize_filehash[0] != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( filehash, BLUEDOT_LOOKUP_HASH);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filehash, BLUEDOT_LOOKUP_HASH);
                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                         }
 
-                                    if ( rulestruct[b].bluedot_url && url != NULL )
+                                    if ( rulestruct[b].bluedot_url && normalize_url != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( url, BLUEDOT_LOOKUP_URL);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_url, BLUEDOT_LOOKUP_URL);
                                             bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
 
                                         }
 
-                                    if ( rulestruct[b].bluedot_filename && filename != NULL )
+                                    if ( rulestruct[b].bluedot_filename && normalize_filename[0] != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( url, BLUEDOT_LOOKUP_FILENAME);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME);
                                             bluedot_filename_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_FILENAME);
 
                                         }
@@ -1338,8 +1355,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
                                                                                                                     processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                                                                                    processor_info_engine_dst_port                 =       dst_port;
-                                                                                                                    processor_info_engine_src_port                 =       src_port;
+                                                                                                                    processor_info_engine_dst_port                 =       normalize_dst_port;
+                                                                                                                    processor_info_engine_src_port                 =       normalize_src_port;
                                                                                                                     processor_info_engine_proto                    =       proto;
                                                                                                                     processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 

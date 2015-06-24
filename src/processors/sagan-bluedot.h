@@ -42,9 +42,6 @@
 #define BLUEDOT_LOOKUP_URL 3
 #define BLUEDOT_LOOKUP_FILENAME 4
 
-
-#define BLUEDOT_MAX_HASH_SIZE	257			/* This can handle MD5,  SHA1 and SHA256 */
-
 int Sagan_Bluedot_Cat_Compare ( int, int, int );
 int Sagan_Bluedot ( _SaganProcSyslog *, int  );
 int Sagan_Bluedot_Lookup(char *, int);			/* what to lookup,  lookup type */
@@ -77,7 +74,7 @@ struct _Sagan_Bluedot_IP_Cache
 typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
 struct _Sagan_Bluedot_Hash_Cache
 {
-    char hash[BLUEDOT_MAX_HASH_SIZE];
+    char hash[MAX_HASH_SIZE];
     uint64_t utime;
     int alertid;
 };

@@ -26,6 +26,10 @@
 
 #include "sagan-defs.h"
 
+//#ifdef WITH_BLUEDOT
+//#include "processors/sagan-bluedot.h"
+//#endif
+
 /* liblognorm struct */
 typedef struct liblognorm_struct liblognorm_struct;
 struct liblognorm_struct
@@ -52,14 +56,10 @@ typedef struct _SaganNormalizeLiblognorm
     int  src_port;
     int  dst_port;
 
-    char username[256];
-
-    char filename[128];
-
-    char filehash_md5[33];			// DEBUG -> needs to be BLUEDOT_MAX_HASH_SIZE
-    char filehash_sha1[41];
-    char filehash_sha256[257];
-    char url[8192];
+    char username[MAX_USERNAME_SIZE];
+    char filename[MAX_FILENAME_SIZE];
+    char filehash_md5[MAX_HASH_SIZE];			// CHAMP -> needs to be BLUEDOT_MAX_HASH_SIZE
+    char url[MAX_URL_SIZE];
 
 } _SaganNormalizeLiblognorm;
 #endif

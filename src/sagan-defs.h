@@ -118,3 +118,10 @@
 #define SAGAN_LOG	0
 #define ALERT_LOG	1
 #define ALL_LOGS	100
+
+#define MAX_HASH_SIZE		33                      /* This only handles MD5 */
+#define MAX_FILENAME_SIZE	256
+#define MAX_URL_SIZE		8192
+#define MAX_USERNAME_SIZE	512
+
+
