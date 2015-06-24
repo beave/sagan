@@ -100,7 +100,7 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
                       "Subject: %s%s\r\n"
                       "\r\n\n"
                       "[**] [%lu:%s] %s [**]\n"
-                      "[Classification: %s] [Priority: %d]\n"
+                      "[Classification: %s] [Priority: %d] [%s]\n"
                       "%s %s %s:%d -> %s:%d %s %s\n"
                       "Syslog message: %s\r\n%s\n\r",
                       config->sagan_esmtp_from,
@@ -112,6 +112,7 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
                       Event->f_msg,
                       Event->class,
                       Event->pri,
+		      Event->host,
                       Event->date,
                       Event->time,
                       Event->ip_src,
