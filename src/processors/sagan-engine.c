@@ -649,10 +649,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef HAVE_LIBMAXMINDDB
 
+			    geoip2_isset = 0;           /* Reset,  so we dont use previous value */
+
                             if ( rulestruct[b].geoip2_flag )
                                 {
-
-                                    geoip2_isset = 0; 		/* Reset,  so we dont use previous value */
 
                                     if ( rulestruct[b].geoip2_src_or_dst == 1 )
                                         {
