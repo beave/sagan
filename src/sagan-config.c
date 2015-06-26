@@ -103,7 +103,6 @@ void Load_Config( void )
 
     char *filename;
     char ruleset[MAXPATH];
-    char normfile[MAXPATH];
 
     char tmpbuf[CONFBUF];
     char tmpbuf2[CONFBUF];
@@ -119,6 +118,10 @@ void Load_Config( void )
     char *tok2=NULL;
 
     int i,check;
+
+#ifdef HAVE_LIBLOGNORM
+    char normfile[MAXPATH];
+#endif
 
     /* Set some system defaults */
 

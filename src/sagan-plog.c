@@ -78,7 +78,6 @@ void plog_handler(_SaganSigArgs *args )
     struct  bpf_program     filtr;
     char 			*iface=NULL;
     char                    eb[PCAP_ERRBUF_SIZE];
-    char 			filterstr[128];
 
     iface = config->plog_interface;
 

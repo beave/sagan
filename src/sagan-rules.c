@@ -145,7 +145,6 @@ void Load_Rules( const char *ruleset )
     int pcreoptions=0;
 
     int i=0;
-    int a=0;
 
     int rc=0;
 
@@ -162,6 +161,7 @@ void Load_Rules( const char *ruleset )
 
 #ifdef HAVE_LIBLOGNORM
     sbool liblognorm_flag=0;
+    int norm_count;
 #endif
 
     if (( rulesfile = fopen(ruleset, "r" )) == NULL )
@@ -859,9 +859,9 @@ void Load_Rules( const char *ruleset )
 
                                                     liblognorm_flag=1;
 
-                                                    for (a=0; a < counters->liblognormtoload_count; a++)
+                                                    for (norm_count=0; norm_count < counters->liblognormtoload_count; norm_count++)
                                                         {
-                                                            if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[a].type ))
+                                                            if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[norm_count].type ))
                                                                 {
                                                                     liblognorm_flag=0;
                                                                 }
