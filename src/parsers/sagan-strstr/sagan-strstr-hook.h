@@ -34,11 +34,13 @@
 #endif
 
 #ifdef HAVE_SSE2
+#ifndef WITH_SYSSTRSTR
 
 int __strstr_sse2_unaligned();
 int __strstr_sse42();
 static void* function_func[]= {  __strstr_sse2_unaligned, __strstr_sse42, NULL};
 
+#endif
 #endif
 
 char *Sagan_strstr(const char *, const char *);
