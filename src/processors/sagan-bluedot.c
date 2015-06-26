@@ -435,7 +435,7 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
     const char *cat=NULL;
     char cattmp[128] = { 0 };
     char *saveptr=NULL;
-    int bluedot_alertid = 0;
+    signed char bluedot_alertid = 0;		/* -128 to 127 */
     int i;
 
     char  timet[20] = { 0 };
@@ -595,23 +595,8 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
 
     curl_easy_cleanup(curl);
 
-    if ( response != NULL )
+    if ( response == NULL )
         {
-
-            if (!strcmp(response, "Authentication key is invalid"))
-                {
-                    Sagan_Log(S_WARN, "Got an \"invalid key\" from Bluedot! Processor disabled. ");
-                    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                    counters->bluedot_error_count++;
-                    config->bluedot_flag = 0;
-                    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
-                    return(false);
-                }
-
-        }
-    else
-        {
-
             Sagan_Log(S_WARN, "[%s, line %d] Bluedot returned a empty \"response\".", __FILE__, __LINE__);
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_error_count++;
@@ -662,6 +647,12 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
             Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s.", __FILE__, __LINE__, bluedot_alertid, data);
         }
 
+    if ( bluedot_alertid == -1 ) 
+    	{ 
+	    Sagan_Log(S_WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
+	    counters->bluedot_error_count++;
+	    return(false);
+	}
 
 
     /************************************************************************/
