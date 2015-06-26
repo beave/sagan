@@ -652,8 +652,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef HAVE_LIBMAXMINDDB
 
-                            geoip2_isset = 0;           /* Reset,  so we dont use previous value */
-
                             if ( rulestruct[b].geoip2_flag )
                                 {
 
@@ -1314,6 +1312,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                 } /* End of pcre match */
 
+#ifdef WITH_BLUEDOT
+	   geoip2_isset = 0;
+#endif
             match=0;  		/* Reset match! */
             sagan_match=0;	/* Reset pcre/meta_content/content match! */
             rc=0;		/* Return code */

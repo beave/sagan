@@ -58,7 +58,7 @@ typedef struct _SaganNormalizeLiblognorm
 
     char username[MAX_USERNAME_SIZE];
     char filename[MAX_FILENAME_SIZE];
-    char filehash_md5[MAX_HASH_SIZE];			// CHAMP -> needs to be BLUEDOT_MAX_HASH_SIZE
+    char filehash_md5[MAX_HASH_SIZE];		
     char url[MAX_URL_SIZE];
 
 } _SaganNormalizeLiblognorm;
