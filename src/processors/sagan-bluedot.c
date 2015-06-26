@@ -425,7 +425,7 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
     char tmpdeviceid[64] = { 0 };
 
     CURL *curl;
-    CURLcode res;
+    CURLcode res = NULL;
     struct curl_slist *headers = NULL;
     char *response=NULL;
 

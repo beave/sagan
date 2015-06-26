@@ -142,13 +142,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char *ptmp;
     char *tok2;
 
+    /* These are only used by liblognorm */
+
+#ifdef HAVE_LIBLOGNORM
     char normalize_username[MAX_USERNAME_SIZE];
     char normalize_filehash[MAX_HASH_SIZE];
     char normalize_filename[MAX_FILENAME_SIZE];
     char normalize_url[MAX_URL_SIZE];
+#endif
+
+    /* These are used by both liblognorm & parse_src_ip/parse_dst_ip */
+
     int  normalize_src_port;
     int  normalize_dst_port;
-
 
     char ip_src[MAXIP] = { 0 };
     sbool ip_src_flag = 0;
