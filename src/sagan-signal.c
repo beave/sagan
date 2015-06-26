@@ -69,6 +69,7 @@ sbool sagan_unified2_flag;
 
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
+#include "sagan-geoip2.h"
 #endif
 
 struct _SaganCounters *counters;

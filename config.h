@@ -71,7 +71,7 @@
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-/* #undef HAVE_LIBESMTP */
+#define HAVE_LIBESMTP 1
 
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1

@@ -34,11 +34,21 @@
 #include "sagan-rules.h"
 #include "sagan-config.h"
 
-#include "output-plugins/sagan-snortsam.h"
 #include "output-plugins/sagan-unified2.h"
 #include "output-plugins/sagan-alert.h"
 #include "output-plugins/sagan-external.h"
+
+#ifdef WITH_SNORTSAM
+#include "output-plugins/sagan-snortsam.h"
+#endif
+
+#ifdef WITH_SYSLOG
 #include "output-plugins/sagan-syslog.h"
+#endif
+
+#ifdef HAVE_LIBESMTP
+#include "output-plugins/sagan-esmtp.h"
+#endif
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;

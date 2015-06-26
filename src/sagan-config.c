@@ -64,6 +64,10 @@
 #include "sagan-references.h"
 #include "parsers/parsers.h"
 
+#ifdef HAVE_LIBMAXMINDDB
+#include "sagan-geoip2.h"
+#endif
+
 /* Processors */
 
 #include "processors/sagan-blacklist.h"

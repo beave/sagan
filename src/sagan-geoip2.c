@@ -64,7 +64,6 @@ pthread_mutex_t SaganGeoIP2Mutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Open_GeoIP2_Database( void )
 {
 
-    char country[10] = { };
     int status;
 
     /*

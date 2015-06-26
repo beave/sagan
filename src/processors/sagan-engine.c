@@ -179,11 +179,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef WITH_BLUEDOT
 
-    int bluedot_results;
-    sbool bluedot_ip_flag;
-    sbool bluedot_hash_flag;
-    sbool bluedot_url_flag;
-    sbool bluedot_filename_flag;
+    int bluedot_results = 0;
+    sbool bluedot_ip_flag = 0;
+    sbool bluedot_hash_flag = 0;
+    sbool bluedot_url_flag = 0;
+    sbool bluedot_filename_flag = 0;
 
 #endif
 
@@ -649,7 +649,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef HAVE_LIBMAXMINDDB
 
-			    geoip2_isset = 0;           /* Reset,  so we dont use previous value */
+                            geoip2_isset = 0;           /* Reset,  so we dont use previous value */
 
                             if ( rulestruct[b].geoip2_flag )
                                 {

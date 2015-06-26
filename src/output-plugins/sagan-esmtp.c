@@ -112,7 +112,7 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
                       Event->f_msg,
                       Event->class,
                       Event->pri,
-		      Event->host,
+                      Event->host,
                       Event->date,
                       Event->time,
                       Event->ip_src,

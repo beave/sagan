@@ -116,7 +116,6 @@ void Sagan_Bluedot_Load_Cat(void)
 
     char *bluedot_tok1 = NULL;
     char *bluedot_tok2 = NULL;
-    char *trash = NULL;
 
     if (( bluedot_cat_file = fopen(config->bluedot_cat, "r" )) == NULL )
         {
@@ -442,7 +441,7 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
     time_t t;
     struct tm *now=NULL;
 
-    uint64_t ip;
+    uint64_t ip = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -647,12 +646,12 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
             Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s.", __FILE__, __LINE__, bluedot_alertid, data);
         }
 
-    if ( bluedot_alertid == -1 ) 
-    	{ 
-	    Sagan_Log(S_WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
-	    counters->bluedot_error_count++;
-	    return(false);
-	}
+    if ( bluedot_alertid == -1 )
+        {
+            Sagan_Log(S_WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
+            counters->bluedot_error_count++;
+            return(false);
+        }
 
 
     /************************************************************************/
@@ -862,6 +861,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
 
         }
 
+    return(false);
 }
 
 void Sagan_Verify_Categories( char *categories, int rule_number, const char *ruleset, int linecount, int type )
