@@ -26,10 +26,6 @@
 
 #include "sagan-defs.h"
 
-//#ifdef WITH_BLUEDOT
-//#include "processors/sagan-bluedot.h"
-//#endif
-
 /* liblognorm struct */
 typedef struct liblognorm_struct liblognorm_struct;
 struct liblognorm_struct

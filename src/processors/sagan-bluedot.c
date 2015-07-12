@@ -118,7 +118,7 @@ void Sagan_Bluedot_Init(void)
  * happens a lot with IP address looks
  ****************************************************************************/
 
-int Sagan_Bluedot_Clean_Queue ( uint32_t ip_u32, int type )
+int Sagan_Bluedot_Clean_Queue ( uint32_t ip_u32, unsigned char type )
 {
 
     int i=0;
@@ -481,7 +481,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-int Sagan_Bluedot_Lookup(char *data,  int type)
+int Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 {
 
     char tmpurl[1024] = { 0 };
@@ -804,7 +804,7 @@ int Sagan_Bluedot_Lookup(char *data,  int type)
  * compares to what the rule is looking for
  ***************************************************************************/
 
-int Sagan_Bluedot_Cat_Compare ( int bluedot_results, int rule_position, int type )
+int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position, unsigned char type )
 {
 
     int i;
@@ -898,7 +898,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
     int i;
     char results[64];
 
-    int bluedot_results;
+    unsigned char bluedot_results;
     sbool bluedot_flag;
 
     for ( i = 1; i < MAX_PARSE_IP; i++ )
@@ -927,7 +927,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
     return(false);
 }
 
-void Sagan_Verify_Categories( char *categories, int rule_number, const char *ruleset, int linecount, int type )
+void Sagan_Verify_Categories( char *categories, int rule_number, const char *ruleset, int linecount, unsigned char type )
 {
 
     char tmp2[64];
