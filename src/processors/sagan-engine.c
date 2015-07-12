@@ -142,8 +142,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char *ptmp;
     char *tok2;
 
-    /* We don't tie these to HAVE_LIBMAXMINDDB because we might have other 
-     * methods to extract the informaton */ 
+    /* We don't tie these to HAVE_LIBMAXMINDDB because we might have other
+     * methods to extract the informaton */
 
     char normalize_username[MAX_USERNAME_SIZE];
     char normalize_filehash[MAX_HASH_SIZE];
@@ -153,11 +153,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int  normalize_src_port;
     int  normalize_dst_port;
 
-    char ip_src[MAXIP] = { 0 };
+    char ip_src[MAXIP];
     sbool ip_src_flag = 0;
     uint32_t ip_src_u32;
 
-    char ip_dst[MAXIP] = { 0 };
+    char ip_dst[MAXIP];
     sbool ip_dst_flag = 0;
     uint32_t ip_dst_u32;
 
@@ -408,9 +408,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     rc = pcre_exec( rulestruct[b].re_pcre[z], rulestruct[b].pcre_extra[z], SaganProcSyslog_LOCAL->syslog_message, (int)strlen(SaganProcSyslog_LOCAL->syslog_message), 0, 0, ovector, PCRE_OVECCOUNT);
 
                                     if ( rc > 0 )
-				    	{
-					sagan_match++;
-					}
+                                        {
+                                            sagan_match++;
+                                        }
 
                                 }  /* End of pcre if */
                         }
@@ -425,10 +425,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     rc = Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
 
-                                    if ( rc == 1 ) 
-				    	{
-					sagan_match++;
-					}
+                                    if ( rc == 1 )
+                                        {
+                                            sagan_match++;
+                                        }
 
                                 }
                         }
@@ -1319,7 +1319,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                 } /* End of pcre match */
 
 #ifdef WITH_BLUEDOT
-	   geoip2_isset = 0;
+            geoip2_isset = 0;
 #endif
             match=0;  		/* Reset match! */
             sagan_match=0;	/* Reset pcre/meta_content/content match! */

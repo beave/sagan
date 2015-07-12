@@ -59,12 +59,17 @@ struct _Sagan_Bluedot_Hash_Cache *SaganBluedotHashCache;
 struct _Sagan_Bluedot_URL_Cache *SaganBluedotURLCache;
 struct _Sagan_Bluedot_Filename_Cache *SaganBluedotFilenameCache;
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
+
+struct _Sagan_Bluedot_IP_Queue *SaganBluedotIPQueue;
+
 struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
+pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+
 sbool bluedot_cache_clean_lock=0;
-int bluedot_queue=0;
+int bluedot_ip_queue=0;
 
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
@@ -98,9 +103,63 @@ void Sagan_Bluedot_Init(void)
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
 
+    SaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
+    memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
+
     config->bluedot_last_time = atol(timet);
 
 }
+
+
+/****************************************************************************
+ * Sagan_Bluedot_Clean_Queue - Clean's the "queue" of the type of lookup
+ * that happened.  This is called after a successful lookup.  We do this to
+ * prevent multiple lookups (at the same time!) of the same item!  This 
+ * happens a lot with IP address looks
+ ****************************************************************************/
+
+int Sagan_Bluedot_Clean_Queue ( uint32_t ip_u32, int type )
+{
+
+    int i=0;
+    int new_bluedot_ip_queue=0;
+
+    if ( type == BLUEDOT_LOOKUP_IP )
+        {
+
+            struct _Sagan_Bluedot_IP_Queue *TmpSaganBluedotIPQueue;
+            TmpSaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
+            memset(TmpSaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
+
+            for (i=0; i<bluedot_ip_queue; i++)
+                {
+                    if ( ip_u32 == SaganBluedotIPQueue[i].host )
+                        {
+                            TmpSaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(TmpSaganBluedotIPQueue, (new_bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
+                            TmpSaganBluedotIPQueue[new_bluedot_ip_queue].host = ip_u32;
+                            new_bluedot_ip_queue++;
+                        }
+                }
+
+
+            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+            memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
+            bluedot_ip_queue=0;
+
+            for (i=0; i<new_bluedot_ip_queue; i++)
+                {
+                    SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
+                    SaganBluedotIPQueue[bluedot_ip_queue].host = TmpSaganBluedotIPQueue[i].host;
+                    bluedot_ip_queue++;
+                }
+
+            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+            free(TmpSaganBluedotIPQueue);
+
+        }
+
+}
+
 
 
 /****************************************************************************
@@ -405,7 +464,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
     free(TmpSaganBluedotIPCache);
     free(TmpSaganBluedotHashCache);
     free(TmpSaganBluedotURLCache);
-    free(TmpSaganBluedotFilenameCache); 
+    free(TmpSaganBluedotFilenameCache);
 
 }
 

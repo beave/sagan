@@ -53,6 +53,8 @@ void Sagan_Bluedot_Load_Cat(void);
 void Sagan_Verify_Categories( char *, int , const char *, int, int);
 void Sagan_Bluedot_Check_Cache_Time (void);
 
+int Sagan_Bluedot_Clean_Queue ( uint32_t, int );
+
 
 
 
@@ -97,6 +99,11 @@ struct _Sagan_Bluedot_Filename_Cache
     int alertid;
 };
 
+typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
+struct _Sagan_Bluedot_IP_Queue 
+{
+	uint32_t host;
+}; 
 
 #endif
 
