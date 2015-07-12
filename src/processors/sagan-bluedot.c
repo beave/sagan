@@ -403,6 +403,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
         }
 
     free(TmpSaganBluedotIPCache);
+    free(TmpSaganBluedotHashCache);
+    free(TmpSaganBluedotURLCache);
+    free(TmpSaganBluedotFilenameCache); 
+
 }
 
 /***************************************************************************
