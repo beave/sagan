@@ -89,7 +89,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
-/* #undef HAVE_LIBMAXMINDDB */
+#define HAVE_LIBMAXMINDDB 1
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 /* #undef HAVE_LIBPCAP */

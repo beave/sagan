@@ -53,7 +53,7 @@ void Sagan_Bluedot_Load_Cat(void);
 void Sagan_Verify_Categories( char *, int , const char *, int, unsigned char );
 void Sagan_Bluedot_Check_Cache_Time (void);
 
-int Sagan_Bluedot_Clean_Queue ( uint32_t, unsigned char );
+int Sagan_Bluedot_Clean_Queue ( char *, unsigned char );
 
 
 typedef struct _Sagan_Bluedot_Cat_List _Sagan_Bluedot_Cat_List;
@@ -92,16 +92,35 @@ struct _Sagan_Bluedot_URL_Cache
 typedef struct _Sagan_Bluedot_Filename_Cache _Sagan_Bluedot_Filename_Cache;
 struct _Sagan_Bluedot_Filename_Cache
 {
-    char filename[128];
+    char filename[256];
     uint64_t utime;
     int alertid;
 };
 
 typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
-struct _Sagan_Bluedot_IP_Queue 
+struct _Sagan_Bluedot_IP_Queue
 {
-	uint32_t host;
-}; 
+    uint32_t host;
+};
+
+typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;
+struct _Sagan_Bluedot_Hash_Queue
+{
+    char hash[MAX_HASH_SIZE];
+};
+
+typedef struct _Sagan_Bluedot_URL_Queue _Sagan_Bluedot_URL_Queue;
+struct _Sagan_Bluedot_URL_Queue
+{
+    char url[8192];
+};
+
+typedef struct _Sagan_Bluedot_Filename_Queue _Sagan_Bluedot_Filename_Queue;
+struct _Sagan_Bluedot_Filename_Queue
+{
+    char filename[256];
+};
+
 
 #endif
 
