@@ -93,16 +93,6 @@ struct thresh_by_dst *threshbydst = NULL;
 int  thresh_count_by_src=0;
 int  thresh_count_by_dst=0;
 
-sbool flowbit_return = 0;
-sbool geoip2_isset = 0;
-
-int   alert_time_return = 0;
-int   alert_time_trigger = 0;
-
-#ifdef HAVE_LIBMAXMINDDB
-int   geoip2_return = 0;
-#endif
-
 void Sagan_Engine_Init ( void )
 {
 
@@ -138,6 +128,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int ovector[PCRE_OVECCOUNT];
 
     int  alter_num;
+
+    sbool geoip2_isset = 0;
+    sbool flowbit_return = 0;
+    sbool alert_time_trigger = 0; 
 
     char *ptmp;
     char *tok2;
@@ -179,6 +173,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     sbool brointel_results = 0;
     sbool blacklist_results = 0;
+
+#ifdef HAVE_LIBMAXMINDDB
+int   geoip2_return = 0;
+#endif
 
 #ifdef WITH_BLUEDOT
 
@@ -1318,9 +1316,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                 } /* End of pcre match */
 
-#ifdef WITH_BLUEDOT
+#ifdef HAVE_LIBMAXMINDDB
             geoip2_isset = 0;
 #endif
+
             match=0;  		/* Reset match! */
             sagan_match=0;	/* Reset pcre/meta_content/content match! */
             rc=0;		/* Return code */
