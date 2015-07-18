@@ -198,7 +198,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                         }
                 }
 
-            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+            pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
             memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
 
             bluedot_hash_queue=0;
