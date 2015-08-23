@@ -455,15 +455,37 @@ char *Get_Filename(char *file)
 sbool is_rfc1918 ( uint32_t ipint )
 {
 
-    if ( ipint > 167772160 && ipint < 184549375 ) return(true); 	// 10.X.X.X
-    if ( ipint > 3232235520 && ipint < 3232301055 ) return(true);    	// 192.168.X.X
-    if ( ipint > 2886729728 && ipint < 2887778303 ) return(true);    	// 172.16/31.X.X
-    if ( ipint > 2851995648 && ipint < 2852061183 ) return(true); 	// 169.254.X.X Local Link
-    if ( ipint == 2130706433 ) return(true);			 	// 127.0.0.1
+    if ( ipint > 167772160 && ipint < 184549375 ) 	/* 10.X.X.X */
+        {
+            return(true);
+        }
+
+    if ( ipint > 3232235520 && ipint < 3232301055 )   	/* 192.168.X.X */
+        {
+            return(true);
+        }
+
+    if ( ipint > 2886729728 && ipint < 2887778303 )    	/* 172.16/31.X.X */
+        {
+            return(true);
+        }
+
+    if ( ipint > 2851995648 && ipint < 2852061183 )	/* 169.254.X.X Link Local */
+        {
+            return(true);
+        }
+
+    if ( ipint == 2130706433 ) 			 	/* 127.0.0.1 */
+        {
+            return(true);
+        }
 
     /* Invalid IP addresses */
 
-    if ( ipint < 16777216 ) return(false); 				 // Larger than 1.0.0.0
+    if ( ipint < 16777216 )  				/* Must be larger than than 1.0.0.0 */
+        {
+            return(false);
+        }
 
     return(false);
 

@@ -131,7 +131,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     sbool geoip2_isset = 0;
     sbool flowbit_return = 0;
-    sbool alert_time_trigger = 0; 
+    sbool alert_time_trigger = 0;
 
     char *ptmp;
     char *tok2;
@@ -175,7 +175,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool blacklist_results = 0;
 
 #ifdef HAVE_LIBMAXMINDDB
-int   geoip2_return = 0;
+    int   geoip2_return = 0;
 #endif
 
 #ifdef WITH_BLUEDOT

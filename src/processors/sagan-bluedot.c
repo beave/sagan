@@ -657,7 +657,7 @@ int Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 
                     if ( debug->debugbluedot )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] %s is RFC1918.", __FILE__, __LINE__, data);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] %s is RFC1918, link local or invalid.", __FILE__, __LINE__, data);
                         }
 
                     return(false);

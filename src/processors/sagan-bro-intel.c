@@ -443,7 +443,7 @@ sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
 
             if ( debug->debugbrointel )
                 {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918.", __FILE__, __LINE__, ip);
+                    Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918, link local or invalid.", __FILE__, __LINE__, ip);
                 }
 
             return(false);
