@@ -774,6 +774,7 @@ void Sagan_Open_Log_File( sbool state, int type )
     int ret;
 
     pw = getpwnam(config->sagan_runas);
+
     if( pw == NULL)
         {
 	    fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);

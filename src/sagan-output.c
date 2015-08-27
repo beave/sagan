@@ -61,12 +61,11 @@ pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Output( _SaganEvent *Event )
 {
 
+    /******************************/
     /* Single threaded operations */
+    /******************************/
 
-    /* Should this be a pthread_cond_wait ?? */
-
-    if ( nonthread_alert_lock == 0 )
-        {
+    /* Single threaded */
 
             pthread_mutex_lock(&SaganOutputNonThreadMutex);
             nonthread_alert_lock = 1;
@@ -83,9 +82,8 @@ void Sagan_Output( _SaganEvent *Event )
 
             nonthread_alert_lock = 0;
             pthread_mutex_unlock(&SaganOutputNonThreadMutex);
-        }
 
-    /* Are any "External" output formats enabled? */
+    /* End single threaded */
 
     /****************************************************************************/
     /* Syslog output                                                            */
