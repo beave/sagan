@@ -1052,6 +1052,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                     afterbydst[i].count++;
                                                                                                                                     after_oldtime_src = atol(timet) - afterbydst[i].utime;
                                                                                                                                     afterbydst[i].utime = atol(timet);
+
                                                                                                                                     if ( after_oldtime_src > rulestruct[b].after_seconds )
                                                                                                                                         {
                                                                                                                                             afterbydst[i].count=1;
@@ -1266,7 +1267,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
                                                                                                             threadid++;
-                                                                                                            if ( threadid >= MAX_THREADS ) threadid=0;
+
+                                                                                                            if ( threadid >= MAX_THREADS )
+                                                                                                                {
+                                                                                                                    threadid=0;
+                                                                                                                }
 
                                                                                                             /* We can't use the pointers from our syslog data.  If two (or more) event's
                                                                                                              * fire at the same time,  the two alerts will have corrupted information

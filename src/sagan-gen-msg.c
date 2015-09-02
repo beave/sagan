@@ -81,7 +81,10 @@ void Load_Gen_Map( const char *genmap )
             gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
             gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 
-            if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
+            if ( gen1 == NULL || gen2 == NULL || gen3 == NULL )
+                {
+                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
+                }
 
             generator[counters->genmapcount].generatorid=atoi(gen1);
             generator[counters->genmapcount].alertid=atoi(gen2);
@@ -108,7 +111,10 @@ char *Sagan_Generator_Lookup(int processor_id, int alert_id)
 
     for (z=0; z<counters->genmapcount; z++)
         {
-            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) msg=generator[z].generator_msg;
+            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id)
+                {
+                    msg=generator[z].generator_msg;
+                }
         }
 
     return(msg);

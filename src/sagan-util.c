@@ -95,7 +95,10 @@ void Sagan_Droppriv(void)
 
     pw = getpwnam(config->sagan_runas);
 
-    if (!pw) Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
+    if (!pw)
+        {
+            Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
+        }
 
     if ( getuid() == 0 )
         {
@@ -109,16 +112,21 @@ void Sagan_Droppriv(void)
                  * Champ Clark (04/14/2015)
                  */
 
-            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 )
+            if ( config->sagan_is_file == 0 )	/* Don't change ownsership/etc if we're processing a file */
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
-                }
 
-            if (stat(config->sagan_fifo, &fifocheck) != 0 )
-                {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
+                    ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+                    if ( ret < 0 )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                        }
+
+                    if (stat(config->sagan_fifo, &fifocheck) != 0 )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
+                        }
+
                 }
 
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
@@ -222,9 +230,20 @@ void Sagan_Log (int type, const char *format,... )
     now=localtime(&t);
     strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
-    if ( type == 1 ) chr="E";
-    if ( type == 2 ) chr="W";
-    if ( type == 3 ) chr="D";
+    if ( type == 1 )
+        {
+            chr="E";
+        }
+
+    if ( type == 2 )
+        {
+            chr="W";
+        }
+
+    if ( type == 3 )
+        {
+            chr="D";
+        }
 
     vsnprintf(buf, sizeof(buf), format, ap);
     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
@@ -319,7 +338,11 @@ char *Between_Quotes(char *instring)
     for ( i=0; i<strlen(instring); i++)
         {
 
-            if ( flag == 1 && instring[i] == '\"' ) flag = 0;
+            if ( flag == 1 && instring[i] == '\"' )
+                {
+                    flag = 0;
+                }
+
             if ( flag == 1 )
                 {
                     snprintf(tmp1, sizeof(tmp1), "%c", instring[i]);
@@ -417,7 +440,10 @@ char *Replace_String(char *str, char *orig, char *rep)
     static char buffer[4096];
     char *p;
 
-    if(!(p = strstr(str, orig)))  return str;
+    if(!(p = strstr(str, orig)))
+        {
+            return str;
+        }
 
     strlcpy(buffer, str, p-str);
     buffer[p-str] = '\0';
@@ -607,7 +633,10 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
         {
 
 
-            if ( tmp2[i] == '|' && pipe_flag == 0 ) pipe_flag = 1;              /* First | has been found */
+            if ( tmp2[i] == '|' && pipe_flag == 0 )
+                {
+                    pipe_flag = 1;              /* First | has been found */
+                }
 
             /* If we haven't found any |'s,  just copy the content verbatium */
 
@@ -622,11 +651,17 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
             if ( pipe_flag == 1 )
                 {
 
-                    if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
+                    if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' )
+                        {
+                            Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
+                        }
 
                     snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
 
-                    if (!Sagan_Validate_HEX(final_content_tmp)) Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+                    if (!Sagan_Validate_HEX(final_content_tmp))
+                        {
+                            Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+                        }
 
                     sscanf(final_content_tmp, "%x", &x);                                                        /* Convert hex to dec */
                     snprintf(tmp, sizeof(tmp), "%c", x);                                                        /* Convert dec to ASCII */
@@ -748,16 +783,25 @@ int Sagan_Character_Count ( char *string_in, char *char_to_count)
 sbool Sagan_Wildcard( char *first, char *second )
 {
     if (*first == '\0' && *second == '\0')
-        return true;
+        {
+            return true;
+        }
 
     if (*first == '*' && *(first+1) != '\0' && *second == '\0')
-        return false;
+        {
+            return false;
+        }
 
     if (*first == '?' || *first == *second)
-        return Sagan_Wildcard(first+1, second+1);
+        {
+            return Sagan_Wildcard(first+1, second+1);
+        }
 
     if (*first == '*')
-        return Sagan_Wildcard(first+1, second) || Sagan_Wildcard(first, second+1);
+        {
+            return Sagan_Wildcard(first+1, second) || Sagan_Wildcard(first, second+1);
+        }
+
     return false;
 }
 
@@ -777,8 +821,8 @@ void Sagan_Open_Log_File( sbool state, int type )
 
     if( pw == NULL)
         {
-	    fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);
-	    exit(1);
+            fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);
+            exit(1);
         }
 
     if ( type == SAGAN_LOG || type == ALL_LOGS )

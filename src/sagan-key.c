@@ -54,7 +54,7 @@ void key_handler( void )
             key=getchar();
             if ( key != 0 )
                 {
-                    sagan_statistics();
+                    Sagan_Statistics();
                 }
 
         }

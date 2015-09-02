@@ -71,7 +71,11 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
 
             if ( Event->pri > config->min_email_priority )
                 {
-                    if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "Event priority (%d) is not < min_email_priority (%d)", Event->pri, config->min_email_priority);
+                    if ( debug->debugesmtp )
+                        {
+                            Sagan_Log(S_DEBUG, "Event priority (%d) is not < min_email_priority (%d)", Event->pri, config->min_email_priority);
+                        }
+
                     return(0);
                 }
         }
@@ -82,13 +86,25 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
 
     if ( rulestruct[Event->found].email_flag )
         {
-            if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
+            if ( debug->debugesmtp )
+                {
+                    Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
+                }
+
             snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
         }
     else
         {
-            if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
-            if ( config->sagan_sendto_flag ) snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
+            if ( debug->debugesmtp )
+                {
+                    Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
+                }
+
+            if ( config->sagan_sendto_flag )
+                {
+                    snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
+                }
+
         }
 
     if ((r = snprintf(tmpa, sizeof(tmpa),
@@ -224,7 +240,9 @@ fixlf( _SaganConfig *config, char *d, char *s)
     int j=0;
 
     if(d == NULL)
-        return 0;
+        {
+            return 0;
+        }
 
     if(s == NULL)
         {
@@ -255,7 +273,9 @@ fixlf( _SaganConfig *config, char *d, char *s)
         }
 
     if(j<MAX_EMAILSIZE)
-        d[j++] = '\0';
+        {
+            d[j++] = '\0';
+        }
 
     return j;
 }

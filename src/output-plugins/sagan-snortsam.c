@@ -262,7 +262,9 @@ int FWsamBlock(char *arg)
                                     if(!error)
                                         {
                                             if( debug->debugfwsam )
-                                                Sagan_Log(S_DEBUG, "[FWsamBlock] Connected to host %s. %s IP %s", inet_ntoa(station.stationip),blockmode==FWSAM_STATUS_BLOCK?"Blocking":"Unblocking",inettoa(blockip[ipidx]));
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[FWsamBlock] Connected to host %s. %s IP %s", inet_ntoa(station.stationip),blockmode==FWSAM_STATUS_BLOCK?"Blocking":"Unblocking",inettoa(blockip[ipidx]));
+                                                }
 
                                             /* now build the packet */
                                             station.myseqno+=station.stationseqno; /* increase my seqno by adding agent seq no */
@@ -545,7 +547,9 @@ int FWsamCheckIn(FWsamStation *station)
             else
                 {
                     if ( debug->debugfwsam )
-                        Sagan_Log(S_WARN, "[FWsamCheckIn] Connected to host %s", inet_ntoa(station->stationip));
+                        {
+                            Sagan_Log(S_WARN, "[FWsamCheckIn] Connected to host %s", inet_ntoa(station->stationip));
+                        }
 
                     /* now build the packet */
                     sampacket.endiancheck=1;

@@ -347,8 +347,15 @@ int Sagan_Flowbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_c
                                 } /* End of "while tmp_flowbit_name" */
                         } /* End of "for a" */
 
-                    if ( and_or == 1 && flowbit_match == 1 ) flowbit_total_match = rulestruct[rule_position].flowbit_condition_count;	/* Do we even need this for OR? */
-                    if ( and_or == 0 && flowbit_match == 0 ) flowbit_total_match = rulestruct[rule_position].flowbit_condition_count;
+                    if ( and_or == 1 && flowbit_match == 1 )
+                        {
+                            flowbit_total_match = rulestruct[rule_position].flowbit_condition_count;	/* Do we even need this for OR? */
+                        }
+
+                    if ( and_or == 0 && flowbit_match == 0 )
+                        {
+                            flowbit_total_match = rulestruct[rule_position].flowbit_condition_count;
+                        }
 
                 } /* End of "flowbit_type[i] == 4" */
 
@@ -674,19 +681,29 @@ int Sagan_Flowbit_Type ( char *type, int linecount, const char *ruleset )
 {
 
     if (!strcmp(type, "none"))
-        return(0);
+        {
+            return(0);
+        }
 
     if (!strcmp(type, "both"))
-        return(1);
+        {
+            return(1);
+        }
 
     if (!strcmp(type, "by_src"))
-        return(2);
+        {
+            return(2);
+        }
 
     if (!strcmp(type, "by_dst"))
-        return(3);
+        {
+            return(3);
+        }
 
     if (!strcmp(type, "reverse"))
-        return(4);
+        {
+            return(4);
+        }
 
     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst' or 'reverse'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
 

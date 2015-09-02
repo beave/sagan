@@ -99,18 +99,27 @@ void Load_Reference( const char *ruleset )
 
             laststring = strtok_r(tmptoken, ",", &saveptr);
 
-            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
 
             strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
 
             laststring = strtok_r(NULL, ",", &saveptr);
 
-            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
 
             strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl));
             refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
 
-            if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
+            if (debug->debugload)
+                {
+                    Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
+                }
 
             counters->refcount++;
 
@@ -179,8 +188,16 @@ char *Reference_Lookup( int rulemem, int type )
 
                     if (!strcmp(refstruct[b].s_refid,  reftype))
                         {
-                            if ( type == 0 ) snprintf(refinfo2, sizeof(refinfo2)-1, "[Xref => %s%s]",  refstruct[b].s_refurl, url);
-                            if ( type == 1 ) snprintf(refinfo2, sizeof(refinfo2)-1, "Reference:%s%s\n", refstruct[b].s_refurl, url);
+                            if ( type == 0 )
+                                {
+                                    snprintf(refinfo2, sizeof(refinfo2)-1, "[Xref => %s%s]",  refstruct[b].s_refurl, url);
+                                }
+
+                            if ( type == 1 )
+                                {
+                                    snprintf(refinfo2, sizeof(refinfo2)-1, "Reference:%s%s\n", refstruct[b].s_refurl, url);
+                                }
+
                             strlcat(reftmp,  refinfo2,  sizeof(reftmp));
                         }
                 }

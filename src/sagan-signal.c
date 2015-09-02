@@ -124,7 +124,7 @@ void Sig_Handler( _SaganSigArgs *args )
                 case SIGABRT:
 
                     Sagan_Log(S_NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
-                    sagan_statistics();
+                    Sagan_Statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
                     if ( sagan_unified2_flag )
@@ -380,7 +380,7 @@ void Sig_Handler( _SaganSigArgs *args )
                     break;
 
                 case SIGUSR1:
-                    sagan_statistics();
+                    Sagan_Statistics();
                     break;
 
                 default:

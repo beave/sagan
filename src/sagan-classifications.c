@@ -97,22 +97,43 @@ void Load_Classifications( const char *ruleset )
             tmptoken = strtok_r(NULL, ":" , &saveptr);
 
             laststring = strtok_r(tmptoken, ",", &saveptr);
-            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
+
             Remove_Spaces(laststring);
             strlcpy(classstruct[counters->classcount].s_shortname, laststring, sizeof(classstruct[counters->classcount].s_shortname));
 
             laststring = strtok_r(NULL, ",", &saveptr);
-            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
+
             strlcpy(classstruct[counters->classcount].s_desc, laststring, sizeof(classstruct[counters->classcount].s_desc));
 
             laststring = strtok_r(NULL, ",", &saveptr);
-            if ( laststring == NULL ) Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
+
             strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2));
             classstruct[counters->classcount].s_priority=atoi(tmpbuf2);
 
-            if ( classstruct[counters->classcount].s_priority == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+            if ( classstruct[counters->classcount].s_priority == 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                }
 
-            if (debug->debugload) Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
+            if (debug->debugload)
+                {
+                    Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
+                }
 
             counters->classcount++;
 

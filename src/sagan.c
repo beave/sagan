@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     };
 
     static const char *short_options =
-        "l:f:u:d:c:pDhC";
+        "l:f:u:F:d:c:pDhC";
 
     int option_index = 0;
 
@@ -231,6 +231,10 @@ int main(int argc, char **argv)
     strftime(config->sagan_startutime, sizeof(config->sagan_startutime), "%s",  run);
 
     strlcpy(config->sagan_config, CONFIG_FILE_PATH, sizeof(config->sagan_config));
+
+    config->sagan_fifo[0] = '\0';	/* Set this here.  This could be a file via
+    					   comamnd line or FIFO via configuration
+					   file */
 
     /* We set the config->sagan_log_filepath to the system default.  It'll be fopen'ed
        shortly - 06/03/2011 - Champ Clark III */
@@ -401,7 +405,7 @@ int main(int argc, char **argv)
                     break;
 
                 case 'F':
-                    config->sagan_fifo_flag=1;
+                    config->sagan_is_file=1;
                     strlcpy(config->sagan_fifo,optarg,sizeof(config->sagan_fifo) - 1);
                     break;
 
@@ -512,7 +516,11 @@ int main(int argc, char **argv)
 
     if ( config->sagan_track_clients_flag)
         {
-            if ( config->pp_sagan_track_clients ) Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
+            if ( config->pp_sagan_track_clients )
+                {
+                    Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
+                }
+
             Sagan_Track_Clients_Init();
             Sagan_Load_Tracking_Cache();
         }
@@ -578,7 +586,12 @@ int main(int argc, char **argv)
     if ( config->sagan_esmtp_flag )
         {
             Sagan_Log(S_NORMAL, "");
-            if ( config->min_email_priority ) Sagan_Log(S_NORMAL, "E-mail on priority %d or higher.", config->min_email_priority);
+
+            if ( config->min_email_priority )
+                {
+                    Sagan_Log(S_NORMAL, "E-mail on priority %d or higher.", config->min_email_priority);
+                }
+
             Sagan_Log(S_NORMAL, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
             Sagan_Log(S_NORMAL, "SMTP server is set to: %s", config->sagan_esmtp_server);
         }
@@ -709,7 +722,7 @@ int main(int argc, char **argv)
 
     Sagan_Log(S_NORMAL, "");
 
-    if ( config->sagan_fifo_flag == 0 )
+    if ( config->sagan_is_file == 0 )
         {
             Sagan_Log(S_NORMAL, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
         }
@@ -725,9 +738,12 @@ int main(int argc, char **argv)
 
             FILE *fd;
 
-            fd = fopen(config->sagan_fifo, "r");
+            if (( fd = fopen(config->sagan_fifo, "r" )) == NULL )
+                {
+                    Sagan_Log(S_ERROR, "Error opening %s. Abort!", config->sagan_fifo);
+                }
 
-            if ( config->sagan_fifo_flag == 0 )
+            if ( config->sagan_is_file == 0 )
                 {
                     Sagan_Log(S_NORMAL, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
@@ -838,8 +854,6 @@ int main(int argc, char **argv)
 
                                         }
                                 }
-
-//	        if ( config->home_any == 1) {
 
                             /* We know check the rest of the values */
 
@@ -974,7 +988,9 @@ int main(int argc, char **argv)
                             /* Strip any \n or \r from the syslog_msg */
 
                             if ( strcspn ( syslog_msg, "\n" ) < strlen(syslog_msg) )
-                                syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
+                                {
+                                    syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
+                                }
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
@@ -1002,7 +1018,10 @@ int main(int argc, char **argv)
                                     counters->sagan_log_drop++;
                                 }
 
-                            if (debug->debugthreads) Sagan_Log(S_DEBUG, "Current \"proc_msgslot\": %d", proc_msgslot);
+                            if (debug->debugthreads)
+                                {
+                                    Sagan_Log(S_DEBUG, "Current \"proc_msgslot\": %d", proc_msgslot);
+                                }
 
                             if (debug->debugsyslog)
                                 {
@@ -1023,11 +1042,21 @@ int main(int argc, char **argv)
 
                     if ( fifoerr == 0 )
                         {
-                            if ( config->sagan_fifo_flag != 0 )
+                            if ( config->sagan_is_file != 0 )
                                 {
-                                    Sagan_Log(S_NORMAL, "EOF reached. Waiting for threads to catch up");
-                                    sleep(5);
+                                    Sagan_Log(S_NORMAL, "EOF reached. Waiting for threads to catch up....");
+                                    Sagan_Log(S_NORMAL, "");
+
+                                    while(proc_msgslot != 0)
+                                        {
+                                            Sagan_Log(S_NORMAL, "Waiting on %d threads....", proc_msgslot);
+                                            sleep(1);
+                                        }
+
                                     fclose(fd);
+                                    Sagan_Statistics();
+                                    Remove_Lock_File();
+
                                     Sagan_Log(S_NORMAL, "Exiting.");		/* DEBUG: Rejoin threads */
                                     exit(0);
                                 }

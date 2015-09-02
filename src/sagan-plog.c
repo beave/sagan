@@ -101,18 +101,26 @@ void plog_handler(_SaganSigArgs *args )
         }
 
     bp = pcap_open_live(iface,4096,config->plog_promiscuous,0,eb);
+
     if(bp == (pcap_t *)0)
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
+        }
 
     /* Apply user defined filter */
 
     if(pcap_compile(bp,&filtr,config->plog_filter,1,0))
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
+        }
 
     if(pcap_setfilter(bp,&filtr))
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
+        }
 
     /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
+
     if(wiredevlog(config))
         {
             Remove_Lock_File();
@@ -120,6 +128,7 @@ void plog_handler(_SaganSigArgs *args )
         }
 
     /* endless loop */
+
     (void)pcap_loop(bp,-1,logpkt, (u_char*)args);
 
     pcap_close(bp);
@@ -128,6 +137,7 @@ void plog_handler(_SaganSigArgs *args )
 
 
 /* take a raw packet and write it to /dev/log... we are evil! */
+
 static  void
 logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 {
@@ -153,20 +163,29 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 
             /* short packet */
             if(len > p->len)
-                goto bad;
+                {
+                    goto bad;
+                }
 
             /* frags we don't deal with */
             if((off & 0x1fff) != 0)
-                goto bad;
+                {
+                    goto bad;
+                }
+
             /* weird - we ASKED for UDP */
             if(ih->ip_p != IPPROTO_UDP)
-                goto bad;
+                {
+                    goto bad;
+                }
 
             /* line the UDP header up */
             u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
 
             if(ntohs(u->uh_ulen < 8))
-                goto bad;
+                {
+                    goto bad;
+                }
 
             /* our log message ought to be just past the UDP header now... */
             l = (char *)u + sizeof(struct udphdr);
@@ -197,7 +216,9 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
 
             /* send it! */
             if(send(outf,l,len,0) < 0)
-                Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
+                }
 
             return;
 bad:
@@ -218,9 +239,15 @@ wiredevlog( _SaganConfig *config )
      * Right now,  the syslog server must use SOCK_DGRAM */
 
     if((outf = socket(AF_UNIX,SOCK_DGRAM,0)) < 0)
-        return(true);
+        {
+            return(true);
+        }
+
     if(connect(outf,&s,sizeof(s)))
-        return(true);
+        {
+            return(true);
+        }
+
     return(false);
 }
 

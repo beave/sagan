@@ -83,7 +83,10 @@ void Load_Protocol_Map( const char *map )
                     map3 = Remove_Spaces(Remove_Return(strtok_r(NULL, "|", &saveptr)));
                     map4 = Remove_Return(strtok_r(NULL, "|", &saveptr));
 
-                    if ( map1 == NULL || map2 == NULL || map3 == NULL || map4 == NULL) Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", map);
+                    if ( map1 == NULL || map2 == NULL || map3 == NULL || map4 == NULL)
+                        {
+                            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", map);
+                        }
 
                     if (!strcmp(map1, "message"))
                         {

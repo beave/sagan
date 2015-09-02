@@ -62,7 +62,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `curl' library (-lcurl). */
-/* #undef HAVE_LIBCURL */
+#define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
 #define HAVE_LIBDNET 1
@@ -71,7 +71,7 @@
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-/* #undef HAVE_LIBESMTP */
+#define HAVE_LIBESMTP 1
 
 /* Define to 1 if you have the `estr' library (-lestr). */
 #define HAVE_LIBESTR 1
@@ -89,7 +89,7 @@
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
-/* #undef HAVE_LIBMAXMINDDB */
+#define HAVE_LIBMAXMINDDB 1
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 /* #undef HAVE_LIBPCAP */
@@ -337,7 +337,7 @@
 #define VERSION "1.0.0-RC5"
 
 /* With Bluedot */
-/* #undef WITH_BLUEDOT */
+#define WITH_BLUEDOT 1
 
 /* With Snortsam */
 #define WITH_SNORTSAM 1

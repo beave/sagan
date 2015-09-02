@@ -193,23 +193,70 @@ void Load_Rules( const char *ruleset )
             /****************************************/
 
             if (!strchr(rulebuf, ';') || !strchr(rulebuf, ':') ||
-                    !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
+                    !strchr(rulebuf, '(') || !strchr(rulebuf, ')'))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset, linecount);
+                }
 
-            if (!Sagan_strstr(rulebuf, "sid:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
-            if (!Sagan_strstr(rulebuf, "rev:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
-            if (!Sagan_strstr(rulebuf, "msg:")) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
+            if (!Sagan_strstr(rulebuf, "sid:"))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset, linecount);
+                }
+
+            if (!Sagan_strstr(rulebuf, "rev:"))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset, linecount);
+                }
+
+            if (!Sagan_strstr(rulebuf, "msg:"))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset, linecount);
+                }
+
 
             rc=0;
-            if (!Sagan_strstr(rulebuf, "alert")) rc++;
-            if (!Sagan_strstr(rulebuf, "drop")) rc++;
-            if ( rc == 2 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
+
+            if (!Sagan_strstr(rulebuf, "alert"))
+                {
+                    rc++;
+                }
+
+            if (!Sagan_strstr(rulebuf, "drop"))
+                {
+                    rc++;
+                }
+
+            if ( rc == 2 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset, linecount);
+                }
 
             rc=0;
-            if (!Sagan_strstr(rulebuf, "tcp")) rc++;
-            if (!Sagan_strstr(rulebuf, "udp")) rc++;
-            if (!Sagan_strstr(rulebuf, "icmp")) rc++;
-            if (!Sagan_strstr(rulebuf, "syslog")) rc++;
-            if ( rc == 4 ) Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
+
+            if (!Sagan_strstr(rulebuf, "tcp"))
+                {
+                    rc++;
+                }
+
+            if (!Sagan_strstr(rulebuf, "udp"))
+                {
+                    rc++;
+                }
+
+            if (!Sagan_strstr(rulebuf, "icmp"))
+                {
+                    rc++;
+                }
+
+            if (!Sagan_strstr(rulebuf, "syslog"))
+                {
+                    rc++;
+                }
+
+            if ( rc == 4 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset, linecount);
+                }
 
             /* Parse forward for the first '(' */
 
@@ -281,9 +328,20 @@ void Load_Rules( const char *ruleset )
                     if ( netcount == 1 )
                         {
                             ip_proto = config->sagan_proto;
-                            if (!strcmp(tokennet, "icmp" )) ip_proto = 1;
-                            if (!strcmp(tokennet, "tcp"  )) ip_proto = 6;
-                            if (!strcmp(tokennet, "udp"  )) ip_proto = 17;
+                            if (!strcmp(tokennet, "icmp" ))
+                                {
+                                    ip_proto = 1;
+                                }
+
+                            if (!strcmp(tokennet, "tcp"  ))
+                                {
+                                    ip_proto = 6;
+                                }
+
+                            if (!strcmp(tokennet, "udp"  ))
+                                {
+                                    ip_proto = 17;
+                                }
                         }
 
                     rulestruct[counters->rulecount].ip_proto = ip_proto;
@@ -294,8 +352,15 @@ void Load_Rules( const char *ruleset )
 
                             src_port = config->sagan_port;                            /* Set to default */
 
-                            if (strcmp(nettmp, "any")) src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
-                            if (Is_Numeric(nettmp)) src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                            if (strcmp(nettmp, "any"))
+                                {
+                                    src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
+                                }
+
+                            if (Is_Numeric(nettmp))
+                                {
+                                    src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                                }
 
                             if ( src_port == 0 )
                                 {
@@ -311,8 +376,15 @@ void Load_Rules( const char *ruleset )
 
                             dst_port = config->sagan_port;				/* Set to default */
 
-                            if (strcmp(nettmp, "any")) dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
-                            if (Is_Numeric(nettmp)) dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                            if (strcmp(nettmp, "any"))
+                                {
+                                    dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
+                                }
+
+                            if (Is_Numeric(nettmp))
+                                {
+                                    dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                                }
 
                             if ( dst_port == 0 )
                                 {
@@ -402,8 +474,10 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] Expect 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                 }
 
-                            if (!strcmp(tmptoken, "noalert")) rulestruct[counters->rulecount].flowbit_noalert=1;
-
+                            if (!strcmp(tmptoken, "noalert"))
+                                {
+                                    rulestruct[counters->rulecount].flowbit_noalert=1;
+                                }
 
                             /* SET */
 
@@ -586,8 +660,15 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
-                            if (!strcmp(tmptoken, "by_src")) rulestruct[counters->rulecount].geoip2_src_or_dst = 1;
-                            if (!strcmp(tmptoken, "by_dst")) rulestruct[counters->rulecount].geoip2_src_or_dst = 2;
+                            if (!strcmp(tmptoken, "by_src"))
+                                {
+                                    rulestruct[counters->rulecount].geoip2_src_or_dst = 1;
+                                }
+
+                            if (!strcmp(tmptoken, "by_dst"))
+                                {
+                                    rulestruct[counters->rulecount].geoip2_src_or_dst = 2;
+                                }
 
                             tmptoken = Remove_Spaces(strtok_r(NULL, " ", &saveptrrule2));
 
@@ -596,8 +677,15 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
-                            if (!strcmp(tmptoken, "isnot")) rulestruct[counters->rulecount].geoip2_type = 1;
-                            if (!strcmp(tmptoken, "is" )) rulestruct[counters->rulecount].geoip2_type = 2;
+                            if (!strcmp(tmptoken, "isnot"))
+                                {
+                                    rulestruct[counters->rulecount].geoip2_type = 1;
+                                }
+
+                            if (!strcmp(tmptoken, "is" ))
+                                {
+                                    rulestruct[counters->rulecount].geoip2_type = 2;
+                                }
 
                             tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab country codes */
                             Remove_Spaces(tmptoken);
@@ -649,7 +737,11 @@ void Load_Rules( const char *ruleset )
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                             not = strtok_r(arg, "\"", &savenot);
-                            if (Sagan_strstr(not, "!")) rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
+
+                            if (Sagan_strstr(not, "!"))
+                                {
+                                    rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
+                                }
 
                             meta_content_count++;
                             rulestruct[counters->rulecount].meta_content_count=meta_content_count;
@@ -921,7 +1013,11 @@ void Load_Rules( const char *ruleset )
                             /* For content: ! "something" */
 
                             not = strtok_r(arg, "\"", &savenot);
-                            if (Sagan_strstr(not, "!")) rulestruct[counters->rulecount].content_not[content_count] = 1;
+
+                            if (Sagan_strstr(not, "!"))
+                                {
+                                    rulestruct[counters->rulecount].content_not[content_count] = 1;
+                                }
 
                             strlcpy(rulestruct[counters->rulecount].s_content[content_count], final_content, sizeof(rulestruct[counters->rulecount].s_content[content_count]));
                             final_content[0] = '\0';
@@ -1007,10 +1103,14 @@ void Load_Rules( const char *ruleset )
 
                             pcreflag=0;
                             strlcpy(pcrerule, "", sizeof(pcrerule));
+
                             for ( i = 1; i < strlen(tmp2); i++)
                                 {
 
-                                    if ( tmp2[i] == '/' && tmp2[i-1] != '\\' ) pcreflag++;
+                                    if ( tmp2[i] == '/' && tmp2[i-1] != '\\' )
+                                        {
+                                            pcreflag++;
+                                        }
 
                                     if ( pcreflag == 0 )
                                         {
@@ -1069,7 +1169,10 @@ void Load_Rules( const char *ruleset )
                                         }
                                 }
 
-                            if ( pcreflag == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                            if ( pcreflag == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                }
 
                             /* We store the compiled/study results.  This saves us some CPU time during searching - Champ Clark III - 02/01/2011 */
 
@@ -1102,8 +1205,15 @@ void Load_Rules( const char *ruleset )
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
                             tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
 
-                            if (Sagan_strstr(tmptoken, "src")) rulestruct[counters->rulecount].fwsam_src_or_dst=1;
-                            if (Sagan_strstr(tmptoken, "dst")) rulestruct[counters->rulecount].fwsam_src_or_dst=2;
+                            if (Sagan_strstr(tmptoken, "src"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_src_or_dst=1;
+                                }
+
+                            if (Sagan_strstr(tmptoken, "dst"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_src_or_dst=2;
+                                }
 
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
@@ -1114,13 +1224,41 @@ void Load_Rules( const char *ruleset )
 
                             /* Covers both plural and non-plural (ie - minute/minutes) */
 
-                            if (Sagan_strstr(tmptok_tmp, "second")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
-                            if (Sagan_strstr(tmptok_tmp, "minute")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
-                            if (Sagan_strstr(tmptok_tmp, "hour")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60;
-                            if (Sagan_strstr(tmptok_tmp, "day")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
-                            if (Sagan_strstr(tmptok_tmp, "week")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
-                            if (Sagan_strstr(tmptok_tmp, "month")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
-                            if (Sagan_strstr(tmptok_tmp, "year")) rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365;
+                            if (Sagan_strstr(tmptok_tmp, "second"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "minute"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "hour"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "day"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "week"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "month"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
+                                }
+
+                            if (Sagan_strstr(tmptok_tmp, "year"))
+                                {
+                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365;
+                                }
+
 
                         }
 
@@ -1156,6 +1294,7 @@ void Load_Rules( const char *ruleset )
                                             for (i=0; i<strlen(alert_time_tmp); i++)
                                                 {
                                                     snprintf(tmp, sizeof(tmp), "%c", alert_time_tmp[i]);
+
                                                     if (!Is_Numeric(tmp))
                                                         {
                                                             Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp[i], ruleset, linecount);
@@ -1249,14 +1388,28 @@ void Load_Rules( const char *ruleset )
 
                                     if (Sagan_strstr(tmptoken, "type"))
                                         {
-                                            if (Sagan_strstr(tmptoken, "limit")) rulestruct[counters->rulecount].threshold_type = 1;
-                                            if (Sagan_strstr(tmptoken, "threshold")) rulestruct[counters->rulecount].threshold_type = 2;
+                                            if (Sagan_strstr(tmptoken, "limit"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_type = 1;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "threshold"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_type = 2;
+                                                }
                                         }
 
                                     if (Sagan_strstr(tmptoken, "track"))
                                         {
-                                            if (Sagan_strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].threshold_src_or_dst = 1;
-                                            if (Sagan_strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].threshold_src_or_dst = 2;
+                                            if (Sagan_strstr(tmptoken, "by_src"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_src_or_dst = 1;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_dst"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_src_or_dst = 2;
+                                                }
                                         }
 
                                     if (Sagan_strstr(tmptoken, "count"))
@@ -1290,8 +1443,15 @@ void Load_Rules( const char *ruleset )
 
                                     if (Sagan_strstr(tmptoken, "track"))
                                         {
-                                            if (Sagan_strstr(tmptoken, "by_src")) rulestruct[counters->rulecount].after_src_or_dst = 1;
-                                            if (Sagan_strstr(tmptoken, "by_dst")) rulestruct[counters->rulecount].after_src_or_dst = 2;
+                                            if (Sagan_strstr(tmptoken, "by_src"))
+                                                {
+                                                    rulestruct[counters->rulecount].after_src_or_dst = 1;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_dst"))
+                                                {
+                                                    rulestruct[counters->rulecount].after_src_or_dst = 2;
+                                                }
                                         }
 
                                     if (Sagan_strstr(tmptoken, "count"))
@@ -1657,8 +1817,15 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
                     Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
 
-                    if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )   Sagan_Log(S_DEBUG, "= parse_src_ip");
-                    if ( rulestruct[counters->rulecount].s_find_port != 0 ) Sagan_Log(S_DEBUG, "= parse_port");
+                    if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )
+                        {
+                            Sagan_Log(S_DEBUG, "= parse_src_ip");
+                        }
+
+                    if ( rulestruct[counters->rulecount].s_find_port != 0 )
+                        {
+                            Sagan_Log(S_DEBUG, "= parse_port");
+                        }
 
                     for (i=0; i<content_count; i++)
                         {

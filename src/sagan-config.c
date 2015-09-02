@@ -130,14 +130,16 @@ void Load_Config( void )
     strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
     strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
 
-    config->sagan_fifo[0] = '\0';
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
+
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;
 #endif
 
-    if ( config->sagan_fifo_flag != 1 )
+    /* Copy default FIFO */
+
+    if ( config->sagan_is_file == 0 )
         {
             strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
         }
@@ -157,9 +159,6 @@ void Load_Config( void )
     strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
     strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev));
 #endif
-
-//config->home_any = 0;
-//config->external_any = 0;
 
     /* Start loading configuration */
 
@@ -1120,10 +1119,25 @@ void Load_Config( void )
 
                     /* Required var's - all others are optional */
 
-                    if (!strcmp(sagan_var1, "FIFO") && config->sagan_fifo_flag != 1) strlcpy(config->sagan_fifo, sagan_var2, sizeof(config->sagan_fifo));
-                    if (!strcmp(sagan_var1, "LOCKFILE" )) strlcpy(config->sagan_lockfile, sagan_var2, sizeof(config->sagan_lockfile));
-                    if (!strcmp(sagan_var1, "ALERTLOG" )) strlcpy(config->sagan_alert_filepath, sagan_var2, sizeof(config->sagan_alert_filepath));
-                    if (!strcmp(sagan_var1, "SAGANLOGPATH" )) strlcpy(config->sagan_log_path, sagan_var2, sizeof(config->sagan_log_path));
+                    if (!strcmp(sagan_var1, "FIFO") && config->sagan_is_file == 0)
+                        {
+                            strlcpy(config->sagan_fifo, sagan_var2, sizeof(config->sagan_fifo));
+                        }
+
+                    if (!strcmp(sagan_var1, "LOCKFILE" ))
+                        {
+                            strlcpy(config->sagan_lockfile, sagan_var2, sizeof(config->sagan_lockfile));
+                        }
+
+                    if (!strcmp(sagan_var1, "ALERTLOG" ))
+                        {
+                            strlcpy(config->sagan_alert_filepath, sagan_var2, sizeof(config->sagan_alert_filepath));
+                        }
+
+                    if (!strcmp(sagan_var1, "SAGANLOGPATH" ))
+                        {
+                            strlcpy(config->sagan_log_path, sagan_var2, sizeof(config->sagan_log_path));
+                        }
 
 
                     /*
@@ -1151,10 +1165,25 @@ void Load_Config( void )
 
                     filename=Get_Filename(ruleset);   /* Get the file name to figure out "what" we're loading */
 
-                    if (!strcmp(filename, "classification.config")) Load_Classifications(ruleset);
-                    if (!strcmp(filename, "reference.config")) Load_Reference(ruleset);
-                    if (!strcmp(filename, "gen-msg.map")) Load_Gen_Map(ruleset);
-                    if (!strcmp(filename, "protocol.map")) Load_Protocol_Map(ruleset);
+                    if (!strcmp(filename, "classification.config"))
+                        {
+                            Load_Classifications(ruleset);
+                        }
+
+                    if (!strcmp(filename, "reference.config"))
+                        {
+                            Load_Reference(ruleset);
+                        }
+
+                    if (!strcmp(filename, "gen-msg.map"))
+                        {
+                            Load_Gen_Map(ruleset);
+                        }
+
+                    if (!strcmp(filename, "protocol.map"))
+                        {
+                            Load_Protocol_Map(ruleset);
+                        }
 
                     /* It's not reference.config, classification.config, gen-msg.map or protocol.map, it must be a ruleset */
 
@@ -1196,7 +1225,7 @@ void Load_Config( void )
 
 #endif
 
-    if ( config->sagan_fifo[0] == '\0' )
+    if ( config->sagan_is_file == 0 && config->sagan_fifo[0] == '\0' )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
         }

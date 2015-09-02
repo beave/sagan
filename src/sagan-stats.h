@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void sagan_statistics( void );
+void Sagan_Statistics( void );

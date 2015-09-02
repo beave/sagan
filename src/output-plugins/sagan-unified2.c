@@ -89,7 +89,10 @@ void Unified2InitFile( void )
     char filepath[1024];
     char *fname_ptr;
 
-    if (config == NULL) Sagan_Log(S_ERROR, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ );
+    if (config == NULL)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ );
+        }
 
     config->unified2_timestamp = (uint32_t)time(NULL);
 
@@ -107,7 +110,9 @@ void Unified2InitFile( void )
         }
 
     if ((config->unified2_stream = fopen(fname_ptr, "wb")) == NULL)
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open file %s.", __FILE__, __LINE__, fname_ptr);
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open file %s.", __FILE__, __LINE__, fname_ptr);
+        }
 }
 
 
@@ -154,7 +159,9 @@ void Sagan_Unified2( _SaganEvent *Event )
     /* Rotate if log has gotten to big */
 
     if ((config->unified2_current + write_len) > config->unified2_limit)
-        Unified2RotateFile();
+        {
+            Unified2RotateFile();
+        }
 
 
     hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
@@ -432,7 +439,9 @@ int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...)
     int ret;
 
     if (buf == NULL || buf_size <= 0 || format == NULL)
-        return SAGAN_SNPRINTF_ERROR;
+        {
+            return SAGAN_SNPRINTF_ERROR;
+        }
 
     /* zero first byte in case an error occurs with
      * vsnprintf, so buffer is null terminated with
@@ -448,7 +457,9 @@ int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...)
     va_end(ap);
 
     if (ret < 0)
-        return SAGAN_SNPRINTF_ERROR;
+        {
+            return SAGAN_SNPRINTF_ERROR;
+        }
 
     if (buf[buf_size - 1] != '\0' || (size_t)ret >= buf_size)
         {
@@ -508,7 +519,9 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 
     /* Nothing to write or nothing to write to */
     if ((buf == NULL) || (config == NULL) || (config->unified2_stream == NULL))
-        return;
+        {
+            return;
+        }
 
     /* Don't use fsync().  It is a total performance killer */
     if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) != 1) ||
@@ -625,7 +638,10 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                         }
                 }
 
-            if ((max_retries == 0) && (error != 0)) Sagan_Log(S_ERROR, "[%s, line %d] Maximum number of interrupts exceeded.", __FILE__, __LINE__);
+            if ((max_retries == 0) && (error != 0))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Maximum number of interrupts exceeded.", __FILE__, __LINE__);
+                }
         }
     config->unified2_current += buf_len;
 }

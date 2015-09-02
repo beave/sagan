@@ -75,10 +75,18 @@ void checklockfile ( void )
                 }
             else
                 {
-                    if (!fgets(buf, sizeof(buf), lck)) Sagan_Log(S_ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile);
+                    if (!fgets(buf, sizeof(buf), lck))
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile);
+                        }
+
                     fclose(lck);
                     pid = atoi(buf);
-                    if ( pid == 0 ) Sagan_Log(S_ERROR, "[%s, line %d] Lock file read but pid value is zero.  Aborting.....", __FILE__, __LINE__);
+
+                    if ( pid == 0 )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Lock file read but pid value is zero.  Aborting.....", __FILE__, __LINE__);
+                        }
 
                     /* Check to see if process is running.  We use kill with 0 signal
                      * to determine this.  We check this return value.  Signal 0

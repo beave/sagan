@@ -76,7 +76,10 @@ void Sagan_Processor ( void )
 
             while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
 
-            if ( config->sagan_reload == 1 ) pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
+            if ( config->sagan_reload == 1 )
+                {
+                    pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
+                }
 
             proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
 					 * original value */

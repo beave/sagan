@@ -43,7 +43,7 @@
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 
-void sagan_statistics( void )
+void Sagan_Statistics( void )
 {
 
     char timet[20];
@@ -132,7 +132,7 @@ void sagan_statistics( void )
 
             /* If processing from a file,  don't display events per/second */
 
-            if ( config->sagan_fifo_flag == 0 )
+            if ( config->sagan_is_file == 0 )
                 {
 
                     if ( seconds < 60 || seconds == 0 )
@@ -144,6 +144,13 @@ void sagan_statistics( void )
                             Sagan_Log(S_NORMAL, "           Avg. events per/second   : %lu", total);
                         }
                 }
+            else
+                {
+
+                    Sagan_Log(S_NORMAL, "           Avg. events per/second   : %lu", total);
+
+                }
+
 
             Sagan_Log(S_NORMAL, "");
             Sagan_Log(S_NORMAL, "          -[ Sagan Processor Statistics ]-");

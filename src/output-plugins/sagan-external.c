@@ -64,7 +64,10 @@ void Sagan_Ext_Thread ( _SaganEvent *Event, char *execute_script )
     char *tmpref = NULL;
     char tmp[6];
 
-    if ( debug->debugexternal ) Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+    if ( debug->debugexternal )
+        {
+            Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+        }
 
     tmpref = Reference_Lookup( Event->found, 1 );
 
@@ -168,7 +171,10 @@ Syslog Priority:%s\n\
 
     pthread_mutex_unlock( &ext_mutex );
 
-    if ( debug->debugexternal == 1 ) Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+    if ( debug->debugexternal == 1 )
+        {
+            Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+        }
 
 }
 

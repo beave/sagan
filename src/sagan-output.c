@@ -67,21 +67,21 @@ void Sagan_Output( _SaganEvent *Event )
 
     /* Single threaded */
 
-            pthread_mutex_lock(&SaganOutputNonThreadMutex);
-            nonthread_alert_lock = 1;
+    pthread_mutex_lock(&SaganOutputNonThreadMutex);
+    nonthread_alert_lock = 1;
 
-            Sagan_Alert_File(Event);
+    Sagan_Alert_File(Event);
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-            if ( config->sagan_unified2_flag )
-                {
-                    Sagan_Unified2( Event );
-                    Sagan_Unified2LogPacketAlert( Event );
-                }
+    if ( config->sagan_unified2_flag )
+        {
+            Sagan_Unified2( Event );
+            Sagan_Unified2LogPacketAlert( Event );
+        }
 #endif
 
-            nonthread_alert_lock = 0;
-            pthread_mutex_unlock(&SaganOutputNonThreadMutex);
+    nonthread_alert_lock = 0;
+    pthread_mutex_unlock(&SaganOutputNonThreadMutex);
 
     /* End single threaded */
 

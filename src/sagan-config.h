@@ -40,7 +40,7 @@ struct _SaganConfig
     FILE         *sagan_log_stream;
     char         sagan_lockfile[MAXPATH];
     char         sagan_fifo[MAXPATH];
-    sbool        sagan_fifo_flag;                       /* FIFO or FILE */
+    sbool        sagan_is_file;                       /* FIFO or FILE */
     char         sagan_log_path[MAXPATH];
     char         sagan_rule_path[MAXPATH];
     char         sagan_host[MAXHOST];
