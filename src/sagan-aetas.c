@@ -152,37 +152,58 @@ int Sagan_Check_Day(unsigned char day, int day_current)
 
     if ( day_current == 0 )
         {
-            if (( day & SUNDAY ) == SUNDAY ) return(true);
+            if (( day & SUNDAY ) == SUNDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 1 )
         {
-            if (( day & MONDAY ) == MONDAY ) return(true);
+            if (( day & MONDAY ) == MONDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 2 )
         {
-            if (( day & TUESDAY ) == TUESDAY ) return(true);
+            if (( day & TUESDAY ) == TUESDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 3 )
         {
-            if (( day & WEDNESDAY ) == WEDNESDAY ) return(true);
+            if (( day & WEDNESDAY ) == WEDNESDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 4 )
         {
-            if (( day & THURSDAY ) == THURSDAY ) return(true);
+            if (( day & THURSDAY ) == THURSDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 5 )
         {
-            if (( day & FRIDAY ) == FRIDAY ) return(true);
+            if (( day & FRIDAY ) == FRIDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     if ( day_current == 6 )
         {
-            if (( day & SATURDAY ) == SATURDAY ) return(true);
+            if (( day & SATURDAY ) == SATURDAY ) 
+	    	{
+		return(true);
+		}
         }
 
     return(false);
