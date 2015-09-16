@@ -612,7 +612,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-int Sagan_Bluedot_Lookup(char *data,  unsigned char type)
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 {
 
     char tmpurl[1024] = { 0 };

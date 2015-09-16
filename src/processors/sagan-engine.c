@@ -180,7 +180,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 #ifdef WITH_BLUEDOT
 
-    int bluedot_results = 0;
+    unsigned char bluedot_results = 0;
     sbool bluedot_ip_flag = 0;
     sbool bluedot_hash_flag = 0;
     sbool bluedot_url_flag = 0;
