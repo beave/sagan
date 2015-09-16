@@ -800,7 +800,8 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] The \"program\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
-                            strlcpy(rulestruct[counters->rulecount].s_program, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_program));
+                            strlcpy(rulestruct[counters->rulecount].s_program, Remove_Spaces(Sagan_Var_To_Value(arg)), sizeof(rulestruct[counters->rulecount].s_program));
+
                         }
 
                     if (!strcmp(rulesplit, "reference" ))
