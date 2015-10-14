@@ -65,7 +65,6 @@ struct _Sagan_Bluedot_Hash_Queue *SaganBluedotHashQueue;
 struct _Sagan_Bluedot_URL_Queue *SaganBluedotURLQueue;
 struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue;
 
-
 struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -100,26 +99,104 @@ void Sagan_Bluedot_Init(void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
+    /* Bluedot IP Cache */
+
     SaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+
+    if ( SaganBluedotIPCache == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
 
+    /* Bluedot Hash Cache */
+
     SaganBluedotHashCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
+
+    if ( SaganBluedotHashCache == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashCache. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotHashCache, 0, sizeof(_Sagan_Bluedot_Hash_Cache));
 
+    /* Bluedot URL Cache */
+
     SaganBluedotURLCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_URL_Cache));
+
+    if ( SaganBluedotURLCache == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotURLCache. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotURLCache, 0, sizeof(_Sagan_Bluedot_URL_Cache));
 
+    /* Bluedot Filename Cache */
+
     SaganBluedotFilenameCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
+
+    if ( SaganBluedotFilenameCache == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotFilenameCache, 0, sizeof(_Sagan_Bluedot_Filename_Cache));
 
+    /* Bluedot Catlist */
+
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
+
+    if ( SaganBluedotCatList == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotCatList. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
 
+    /* Bluedot IP Queue */
+
     SaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
+
+    if ( SaganBluedotIPQueue == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
+    /* Bluedot Hash Queue */
+
     SaganBluedotHashQueue = malloc(sizeof(_Sagan_Bluedot_Hash_Queue));
+
+    if ( SaganBluedotHashQueue == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
+        }
+
+
     memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
+
+    /* Bluedot Filename Queue */
+
+    SaganBluedotFilenameQueue = malloc(sizeof(_Sagan_Bluedot_Filename_Queue));
+
+    if ( SaganBluedotFilenameQueue == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+        }
+
+
+    memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
+
+    /* Bluedot URL Queue */
+
+    SaganBluedotURLQueue = malloc(sizeof(_Sagan_Bluedot_URL_Queue));
+
+    if ( SaganBluedotURLQueue == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+        }
 
     config->bluedot_last_time = atol(timet);
 
@@ -151,6 +228,12 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
             struct _Sagan_Bluedot_IP_Queue *TmpSaganBluedotIPQueue;
             TmpSaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
+
+            if ( TmpSaganBluedotIPQueue  == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for TmpSaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+                }
+
             memset(TmpSaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
             for (i=0; i<bluedot_ip_queue; i++)
@@ -186,6 +269,12 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
             struct _Sagan_Bluedot_Hash_Queue *TmpSaganBluedotHashQueue;
             TmpSaganBluedotHashQueue = malloc(sizeof(_Sagan_Bluedot_Hash_Queue));
+
+            if ( TmpSaganBluedotHashQueue  == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for TmpSaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
+                }
+
             memset(TmpSaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
 
             for (i=0; i<bluedot_hash_queue; i++)
@@ -221,6 +310,12 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
             struct _Sagan_Bluedot_URL_Queue *TmpSaganBluedotURLQueue;
             TmpSaganBluedotURLQueue = malloc(sizeof(_Sagan_Bluedot_URL_Queue));
+
+            if ( TmpSaganBluedotURLQueue == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for TmpSaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
+                }
+
             memset(TmpSaganBluedotURLQueue, 0, sizeof(_Sagan_Bluedot_URL_Queue));
 
             for (i=0; i<bluedot_url_queue; i++)
@@ -256,6 +351,12 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
             struct _Sagan_Bluedot_Filename_Queue *TmpSaganBluedotFilenameQueue;
             TmpSaganBluedotFilenameQueue = malloc(sizeof(_Sagan_Bluedot_Filename_Queue));
+
+            if ( TmpSaganBluedotFilenameQueue == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for TmpSaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+                }
+
             memset(TmpSaganBluedotFilenameQueue, 0, sizeof(_Sagan_Bluedot_Filename_Queue));
 
             for (i=0; i<bluedot_filename_queue; i++)

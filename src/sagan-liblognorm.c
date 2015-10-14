@@ -77,6 +77,12 @@ void Sagan_Liblognorm_Load(void)
     int i;
 
     SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+
+    if ( SaganNormalizeLiblognorm == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganNormalizeLiblognorm. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
     if((ctx = ln_initCtx()) == NULL)

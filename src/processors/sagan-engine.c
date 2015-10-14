@@ -97,8 +97,16 @@ void Sagan_Engine_Init ( void )
 {
 
 #ifdef HAVE_LIBLOGNORM
+
     SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+
+    if ( SaganNormalizeLiblognorm == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganNormalizeLiblognorm. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
+
 #endif
 
 }
@@ -108,6 +116,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
     struct _Sagan_Processor_Info *processor_info_engine = NULL;
     processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
+
+    if ( processor_info_engine == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for processor_info_engine. Abort!", __FILE__, __LINE__);
+        }
+
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
     int processor_info_engine_src_port = 0;

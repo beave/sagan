@@ -62,6 +62,12 @@ void Sagan_Blacklist_Init ( void )
     counters->blacklist_count=0;
 
     SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
+
+    if ( SaganBlacklist == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
 
 }

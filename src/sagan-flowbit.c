@@ -427,6 +427,12 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
     struct _Sagan_Flowbit_Track *flowbit_track;
 
     flowbit_track = malloc(sizeof(_Sagan_Flowbit_Track));
+
+    if ( flowbit_track  == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for flowbit_track. Abort!", __FILE__, __LINE__);
+        }
+
     memset(flowbit_track, 0, sizeof(_Sagan_Flowbit_Track));
 
     int flowbit_track_count = 0;

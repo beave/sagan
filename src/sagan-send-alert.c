@@ -46,6 +46,12 @@ void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processo
 
     struct _Sagan_Event *SaganProcessorEvent = NULL;
     SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
+
+    if ( SaganProcessorEvent == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
+        }
+
     memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
 
     if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID )

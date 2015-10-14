@@ -56,6 +56,13 @@ void Sagan_Track_Clients_Init ( void )
 
     SaganTrackClients = malloc(sizeof(_Sagan_Track_Clients));
 
+    if ( SaganTrackClients == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganTrackClients. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SaganTrackClients, 0, sizeof(_Sagan_Track_Clients));
+
 }
 
 void Sagan_Load_Tracking_Cache ( void )
@@ -74,6 +81,12 @@ void Sagan_Load_Tracking_Cache ( void )
     strftime(timet, sizeof(timet), "%s",  now);
 
     processor_info_track_client = malloc(sizeof(struct _Sagan_Processor_Info));
+
+    if ( processor_info_track_client == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for processor_info_track_client. Abort!", __FILE__, __LINE__);
+        }
+
     memset(processor_info_track_client, 0, sizeof(_Sagan_Processor_Info));
 
     processor_info_track_client->processor_name         =       PROCESSOR_NAME;

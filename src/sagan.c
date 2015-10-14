@@ -205,25 +205,63 @@ int main(int argc, char **argv)
     /* Allocate and clear memory for global structs */
 
     /* Allocate memory for global struct _SaganDebug */
+
     debug = malloc(sizeof(_SaganDebug));
+
+    if ( debug == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for debug. Abort!", __FILE__, __LINE__);
+        }
+
     memset(debug, 0, sizeof(_SaganDebug));
 
     /* Allocate memroy for global struct _SaganConfig */
+
     config = malloc(sizeof(_SaganConfig));
+
+    if ( config == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for config. Abort!", __FILE__, __LINE__);
+        }
+
     memset(config, 0, sizeof(_SaganConfig));
 
     struct _SaganSigArgs *sigargs;
     sigargs = malloc(sizeof(_SaganSigArgs));
+
+    if ( sigargs == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for sigargs. Abort!", __FILE__, __LINE__);
+        }
+
     memset(sigargs, 0, sizeof(_SaganSigArgs));
 
     struct _SaganDNSCache *dnscache;
     dnscache = malloc(sizeof(_SaganDNSCache));
+
+    if ( dnscache == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for dnscache. Abort!", __FILE__, __LINE__);
+        }
+
     memset(dnscache, 0, sizeof(_SaganDNSCache));
 
     counters = malloc(sizeof(_SaganCounters));
+
+    if ( counters == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for counters. Abort!", __FILE__, __LINE__);
+        }
+
     memset(counters, 0, sizeof(_SaganCounters));
 
     flowbit = malloc(sizeof(_Sagan_Flowbit));
+
+    if ( flowbit == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for flowbit. Abort!", __FILE__, __LINE__);
+        }
+
     memset(flowbit, 0, sizeof(_Sagan_Flowbit));
 
     t = time(NULL);
@@ -444,6 +482,14 @@ int main(int argc, char **argv)
      */
 
     SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
+
+    if ( SaganProcSyslog == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SaganProcSyslog, 0, sizeof(struct _Sagan_Proc_Syslog));
+
     pthread_t processor_id[config->max_processor_threads];
     pthread_attr_t thread_processor_attr;
     pthread_attr_init(&thread_processor_attr);

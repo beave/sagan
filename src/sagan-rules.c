@@ -782,22 +782,22 @@ void Load_Rules( const char *ruleset )
 
                             strlcpy(rulestruct[counters->rulecount].s_classtype, Remove_Spaces(arg), sizeof(rulestruct[counters->rulecount].s_classtype));
 
-			    found = 0; 
+                            found = 0;
 
                             for(i=0; i < counters->classcount; i++)
                                 {
                                     if (!strcmp(classstruct[i].s_shortname, rulestruct[counters->rulecount].s_classtype))
                                         {
                                             rulestruct[counters->rulecount].s_pri = classstruct[i].s_priority;
-					    found = 1; 
+                                            found = 1;
                                         }
                                 }
 
-			     if ( found == 0 ) 
-			     	{
-				Sagan_Log(S_ERROR, "[%s, line %d] The classtype \"%s\" was not found on line %d in %s! "
-						   "Are you attempting loading a rule set before loading the classification.config?", __FILE__, __LINE__, rulestruct[counters->rulecount].s_classtype, linecount, ruleset);
-				}
+                            if ( found == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The classtype \"%s\" was not found on line %d in %s! "
+                                              "Are you attempting loading a rule set before loading the classification.config?", __FILE__, __LINE__, rulestruct[counters->rulecount].s_classtype, linecount, ruleset);
+                                }
 
                         }
 
