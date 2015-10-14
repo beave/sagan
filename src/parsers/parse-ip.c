@@ -58,11 +58,13 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
     int notfound=0;
 
     char ctmp[2] = { 0 };
-    char lastgood[16] = { 0 };
+
+    static __thread char lastgood[16] = { 0 };
+
     char msg[MAX_SYSLOGMSG] = { 0 };
     char tmpmsg[MAX_SYSLOGMSG] = { 0 };
 
-    char *retbuf = NULL;
+    char *retbuf=(char*)malloc(16); 
     char *tok=NULL;
     char *ptmp=NULL;
 
@@ -126,8 +128,12 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
 
                                                     if ( current_pos == pos )
                                                         {
-                                                            if (!strcmp(lastgood, "127.0.0.1")) return(config->sagan_host);
-                                                            retbuf=lastgood;
+                                                            if (!strcmp(lastgood, "127.0.0.1")) 
+							    	{
+								return(config->sagan_host);
+								}
+
+							    retbuf = (char*)&lastgood; 
                                                             return(retbuf);
                                                         }
 

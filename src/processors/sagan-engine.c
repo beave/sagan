@@ -79,8 +79,6 @@ pthread_mutex_t ThreshMutexDst=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t CounterMutex=PTHREAD_MUTEX_INITIALIZER;
 
-/* Global? Was local */
-
 struct after_by_src *afterbysrc = NULL;
 struct after_by_dst *afterbydst = NULL;
 

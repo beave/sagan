@@ -56,13 +56,15 @@ struct _SaganConfig *config;
 int Sagan_Parse_Port (char *msg)
 {
 
+    int port;
+
     char *portstring=NULL;
     char *saveptr1=NULL;
     char *saveptr2=NULL;
     char *str=NULL;
     char *token=NULL;
     char *tmpport=NULL;
-    int port;
+
     int i;
     struct sockaddr_in sa;
     int result;

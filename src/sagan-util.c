@@ -308,7 +308,6 @@ uint32_t IP2Bit (char *ipaddr)
         }
 
     return(ip);
-
 }
 
 int Is_Numeric (char *str)
@@ -334,12 +333,8 @@ char *Between_Quotes(char *instring)
     int i;
     char tmp1[2];
 
-    /* quick and dirty fix added by drforbin....this function really should be reworked
-    fix added to make tmp2 presistent (non-automatic) so once the function returns it is presistent */
-
-    static char tmp2[512];
+    static __thread char tmp2[512];
     memset(tmp2,0,sizeof(tmp2));
-    char *ret;
 
     for ( i=0; i<strlen(instring); i++)
         {
@@ -359,8 +354,7 @@ char *Between_Quotes(char *instring)
 
         }
 
-    ret=tmp2;
-    return(ret);
+    return(tmp2);
 }
 
 /* CalcPct (Taken from Snort) */
@@ -443,7 +437,9 @@ char *DNS_Lookup( char *host )
 char *Replace_String(char *str, char *orig, char *rep)
 {
 
-    static char buffer[4096];
+    static __thread char buffer[4096];
+    memset(buffer,0,sizeof(buffer));
+
     char *p;
 
     if(!(p = strstr(str, orig)))
@@ -463,7 +459,8 @@ char *Replace_String(char *str, char *orig, char *rep)
 char *Get_Filename(char *file)
 {
 
-    char *pfile;
+    char *pfile = NULL;
+
     pfile = file + strlen(file);
     for (; pfile > file; pfile--)
         {
@@ -533,15 +530,19 @@ char *Sagan_Var_To_Value(char *instring)
 
     char *ptmp = NULL;
     char *tok = NULL;
-    char tmp[1024] = { 0 };
     char tmp2[1024] = { 0 };
     char tmp3[1024] = { 0 };
     char tmp_result[1024] = { 0 };
-    char *tmpbuf = NULL;
+
+    static __thread char tmp[1024] = { 0 };
+
+    char *tmpbuf = (char*)malloc(1024); 
+    memset(tmpbuf,0,sizeof(tmpbuf));
+
     int i=0;
 
     snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
-    tmpbuf = tmp;
+    tmpbuf = (char*)&tmp; 
 
     for (i=0; i<counters->var_count; i++)
         {
@@ -557,7 +558,7 @@ char *Sagan_Var_To_Value(char *instring)
                 }
 
             strlcpy(tmp, tmp_result, sizeof(tmp));
-            tmpbuf = tmp;
+	    tmpbuf = (char*)&tmp;
             strlcpy(tmp_result, "", sizeof(tmp_result));
         }
 
@@ -617,19 +618,20 @@ int Sagan_Check_Var(const char *string)
 * Move to this function 05/05/2014 - Champ Clark
 *************************************************************************************************/
 
-
 char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 {
 
     int pipe_flag = 0;
-    char final_content[512] = { 0 };
+
+    static char final_content[512] = { 0 };
+    memset(final_content,0,sizeof(final_content));
+
     char final_content_tmp[512] = { 0 };
-    char *ret_buf = NULL;
+//    char *ret_buf = NULL;
     char tmp2[512];
     int i;
     int x;
     char tmp[2];
-
 
     strlcpy(tmp2, in_string, sizeof(tmp2));
 
@@ -637,7 +639,6 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 
     for ( i=0; i<strlen(tmp2); i++)
         {
-
 
             if ( tmp2[i] == '|' && pipe_flag == 0 )
                 {
@@ -688,8 +689,9 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 
         }
 
-    ret_buf = final_content;
-    return(ret_buf);
+    //ret_buf = (char*)&final_content; 
+    //return(ret_buf);
+    return(final_content); 
 }
 
 /****************************************************************************
@@ -701,10 +703,10 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
 {
 
     char string[1024] = { 0 };
-    char new_string[1024] = { 0 };
     char tmp[2] = { 0 };
 
-    char *buf = NULL;
+    char *buf = (char*)malloc(1024);
+    static __thread char new_string[1024] = { 0 };
 
     int i;
 
@@ -738,7 +740,7 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
                 }
         }
 
-    buf = new_string;
+    buf = (char*)&new_string; 
     return(buf);
 }
 
