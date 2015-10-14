@@ -124,6 +124,12 @@ void Sagan_Load_Tracking_Cache ( void )
                             pthread_mutex_lock(&SaganProcTrackClientsMutex);
 
                             SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
+
+			    if ( SaganTrackClients == NULL )
+                            {
+			    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganTrackClients. Abort!", __FILE__, __LINE__);
+			    }
+
                             strlcpy(SaganTrackClients[counters->track_clients_client_count].host, Remove_Return(track_buf), sizeof(SaganTrackClients[counters->track_clients_client_count].host));
                             SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
                             SaganTrackClients[counters->track_clients_client_count].status = 0;
@@ -216,6 +222,12 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
         {
 
             SaganTrackClients = (_Sagan_Track_Clients *) realloc(SaganTrackClients, (counters->track_clients_client_count+1) * sizeof(_Sagan_Track_Clients));
+
+	    if ( SaganTrackClients == NULL )
+            {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganTrackClients. Abort!", __FILE__, __LINE__);
+            }
+
             strlcpy(SaganTrackClients[counters->track_clients_client_count].host, SaganProcSyslog_LOCAL->syslog_host, sizeof(SaganTrackClients[counters->track_clients_client_count].host));
             SaganTrackClients[counters->track_clients_client_count].utime = atol(timet);
             SaganTrackClients[counters->track_clients_client_count].status = 0;

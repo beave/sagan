@@ -92,6 +92,11 @@ void Load_Reference( const char *ruleset )
                 {
                     /* Allocate memory for references,  not comments */
                     refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
+
+                    if ( refstruct == NULL )
+                    {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
+                    }
                 }
 
             strtok_r(refbuf, ":", &saveptr);

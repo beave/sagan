@@ -870,6 +870,12 @@ int main(int argc, char **argv)
                                                     /* Add entry to DNS Cache */
 
                                                     dnscache = (_SaganDNSCache *) realloc(dnscache, (counters->dns_cache_count+1) * sizeof(_SaganDNSCache));
+
+			                            if ( dnscache == NULL )
+                       				    {
+			                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for dnscache. Abort!", __FILE__, __LINE__);
+                       				    }
+
                                                     strlcpy(dnscache[counters->dns_cache_count].hostname, syslog_host, sizeof(dnscache[counters->dns_cache_count].hostname));
                                                     strlcpy(dnscache[counters->dns_cache_count].src_ip, src_dns_lookup, sizeof(dnscache[counters->dns_cache_count].src_ip));
                                                     counters->dns_cache_count++;

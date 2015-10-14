@@ -1037,6 +1037,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     pthread_mutex_lock(&AfterMutexSrc);
 
                                                                                                                     afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
+														    if ( afterbysrc == NULL )
+  			  							                                    {
+											                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for afterbysrc. Abort!", __FILE__, __LINE__);
+														    }
+
                                                                                                                     afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
                                                                                                                     strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
                                                                                                                     afterbysrc[after_count_by_src].count = 1;
@@ -1101,6 +1106,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             pthread_mutex_lock(&AfterMutexDst);
 
                                                                                                                             afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
+
+															    if ( afterbydst == NULL )
+	    										                                    {
+															    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for afterbydst. Abort!", __FILE__, __LINE__);
+															    }
+
                                                                                                                             afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
                                                                                                                             strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
                                                                                                                             afterbydst[after_count_by_dst].count = 1;
@@ -1182,6 +1193,12 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             pthread_mutex_lock(&ThreshMutexSrc);
 
                                                                                                                             threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
+
+															    if ( threshbysrc == NULL )
+ 										                                	    {
+															    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for threshbysrc. Abort!", __FILE__, __LINE__);
+															    }
+
                                                                                                                             threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
                                                                                                                             strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
                                                                                                                             threshbysrc[thresh_count_by_src].count = 1;
@@ -1246,6 +1263,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             pthread_mutex_lock(&ThreshMutexDst);
 
                                                                                                                             threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
+															    if ( threshbydst == NULL )
+  											                                    {
+ 												                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for threshbydst. Abort!", __FILE__, __LINE__);
+   											                                    }
+
                                                                                                                             threshbydst[thresh_count_by_dst].ipdst = ip_dst_u32;
                                                                                                                             strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
                                                                                                                             threshbydst[thresh_count_by_dst].count = 1;

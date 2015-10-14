@@ -75,6 +75,12 @@ void Load_Gen_Map( const char *genmap )
                 {
                     /* Allocate memory for references,  not comments */
                     generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
+
+                    if ( generator == NULL )
+                    {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);                    
+		    }
+
                 }
 
             gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));

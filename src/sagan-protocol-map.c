@@ -91,6 +91,12 @@ void Load_Protocol_Map( const char *map )
                     if (!strcmp(map1, "message"))
                         {
                             map_message = (_Sagan_Protocol_Map_Message *) realloc(map_message, (counters->mapcount_message+1) * sizeof(_Sagan_Protocol_Map_Message));
+
+                            if ( map_message == NULL )
+                            {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for map_message. Abort!", __FILE__, __LINE__);
+                            }
+
                             map_message[counters->mapcount_message].proto = atoi(map2);
                             if (!strcmp(map3, "nocase")) map_message[counters->mapcount_message].nocase = 1;
                             strlcpy(map_message[counters->mapcount_message].search, map4, sizeof(map_message[counters->mapcount_message].search));
@@ -100,6 +106,12 @@ void Load_Protocol_Map( const char *map )
                     if (!strcmp(map1, "program"))
                         {
                             map_program = (_Sagan_Protocol_Map_Program *) realloc(map_program, (counters->mapcount_program+1) * sizeof(_Sagan_Protocol_Map_Program));
+
+                            if ( map_program == NULL )
+                            {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for map_program. Abort!", __FILE__, __LINE__);
+                            }
+
                             map_program[counters->mapcount_program].proto = atoi(map2);
                             if (!strcmp(map3, "nocase")) map_program[counters->mapcount_program].nocase = 1;
                             strlcpy(map_program[counters->mapcount_program].program, map4, sizeof(map_program[counters->mapcount_program].program));

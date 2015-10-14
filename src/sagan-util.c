@@ -157,6 +157,12 @@ char *fasthex(char *xdata, int length)
     index = xdata;
     end = xdata + length;
     retbuf = (char *) calloc((length*2)+1, sizeof(char));
+
+    if ( retbuf == NULL )
+       {
+       Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for retbuf. Abort!", __FILE__, __LINE__);
+       }
+
     ridx = retbuf;
 
     while(index < end)

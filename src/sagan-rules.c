@@ -184,6 +184,12 @@ void Load_Rules( const char *ruleset )
                 {
                     /* Allocate memory for rules, but not comments */
                     rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
+
+                    if ( rulestruct == NULL )
+                       {
+                       Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
+                       }
+
                 }
 
             Remove_Return(rulebuf);
@@ -939,6 +945,12 @@ void Load_Rules( const char *ruleset )
                                         {
 
                                             liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+
+		                            if ( liblognormtoloadstruct == NULL )
+               			            {
+                            	   	    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognormtoloadstruct. Abort!", __FILE__, __LINE__);
+		                            }
+
                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
                                             counters->liblognormtoload_count++;
@@ -973,6 +985,12 @@ void Load_Rules( const char *ruleset )
                                                     if ( liblognorm_flag == 1 )
                                                         {
                                                             liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
+
+				                            if ( liblognormtoloadstruct == NULL )
+                            				    {
+			                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognomrtoloadstruct. Abort!", __FILE__, __LINE__);
+                            				    }
+
                                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
                                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
                                                             counters->liblognormtoload_count++;
