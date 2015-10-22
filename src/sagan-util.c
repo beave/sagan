@@ -537,7 +537,7 @@ char *Sagan_Var_To_Value(char *instring)
     static __thread char tmp[1024] = { 0 };
 
     char *tmpbuf = (char*)malloc(1024); 
-    memset(tmpbuf,0,sizeof(tmpbuf));
+    memset(tmpbuf,0,sizeof((char*)tmpbuf));
 
     int i=0;
 

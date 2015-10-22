@@ -17,7 +17,7 @@
 #define HAVE_ARPA_INET_H 1
 
 /* Support AVX (Advanced Vector Extensions) instructions */
-/* #undef HAVE_AVX */
+#define HAVE_AVX /**/
 
 /* Define to 1 if you have the `connect' function. */
 #define HAVE_CONNECT 1
@@ -26,7 +26,7 @@
 #define HAVE_CTYPE_H 1
 
 /* Define to 1 if you have the <dnet.h> header file. */
-#define HAVE_DNET_H 1
+/* #undef HAVE_DNET_H */
 
 /* Define to 1 if you have the <dumbnet.h> header file. */
 /* #undef HAVE_DUMBNET_H */
@@ -53,7 +53,7 @@
 #define HAVE_GETOPT_LONG 1
 
 /* F_GETPIPE_SZ is supported */
-#define HAVE_GETPIPE_SZ /**/
+/* #undef HAVE_GETPIPE_SZ */
 
 /* Define to 1 if you have the `htons' function. */
 #define HAVE_HTONS 1
@@ -62,34 +62,34 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `curl' library (-lcurl). */
-#define HAVE_LIBCURL 1
+/* #undef HAVE_LIBCURL */
 
 /* Define to 1 if you have the `dnet' library (-ldnet). */
-#define HAVE_LIBDNET 1
+/* #undef HAVE_LIBDNET */
 
 /* Define to 1 if you have the `dumbnet' library (-ldumbnet). */
 /* #undef HAVE_LIBDUMBNET */
 
 /* Define to 1 if you have the `esmtp' library (-lesmtp). */
-#define HAVE_LIBESMTP 1
+/* #undef HAVE_LIBESMTP */
 
 /* Define to 1 if you have the `estr' library (-lestr). */
-#define HAVE_LIBESTR 1
+/* #undef HAVE_LIBESTR */
 
 /* Define to 1 if you have the `json' library (-ljson). */
-#define HAVE_LIBJSON 1
+/* #undef HAVE_LIBJSON */
 
 /* Define to 1 if you have the `json-c' library (-ljson-c). */
-/* #undef HAVE_LIBJSON_C */
+#define HAVE_LIBJSON_C 1
 
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
-#define HAVE_LIBLOGNORM 1
+/* #undef HAVE_LIBLOGNORM */
 
 /* Define to 1 if you have the `m' library (-lm). */
 #define HAVE_LIBM 1
 
 /* Define to 1 if you have the `maxminddb' library (-lmaxminddb). */
-#define HAVE_LIBMAXMINDDB 1
+/* #undef HAVE_LIBMAXMINDDB */
 
 /* Define to 1 if you have the `pcap' library (-lpcap). */
 /* #undef HAVE_LIBPCAP */
@@ -139,7 +139,7 @@
 #define HAVE_SEND 1
 
 /* F_SETPIPE_SZ is supported */
-#define HAVE_SETPIPE_SZ /**/
+/* #undef HAVE_SETPIPE_SZ */
 
 /* Define to 1 if you have the `sizeof' function. */
 /* #undef HAVE_SIZEOF */
@@ -163,7 +163,7 @@
 #define HAVE_SSE4_1 /**/
 
 /* Support SSSE4.2 (Streaming SIMD Extensions 4.2) instructions */
-/* #undef HAVE_SSE4_2 */
+#define HAVE_SSE4_2 /**/
 
 /* Support SSSE3 (Supplemental Streaming SIMD Extensions 3) instructions */
 #define HAVE_SSSE3 /**/
@@ -206,10 +206,10 @@
 #define HAVE_STRING_H 1
 
 /* Define to 1 if you have the `strlcat' function. */
-/* #undef HAVE_STRLCAT */
+#define HAVE_STRLCAT 1
 
 /* Define to 1 if you have the `strlcpy' function. */
-/* #undef HAVE_STRLCPY */
+#define HAVE_STRLCPY 1
 
 /* Define to 1 if you have the `strlen' function. */
 #define HAVE_STRLEN 1
@@ -264,7 +264,7 @@
 
 /* Define to 1 if `lstat' dereferences a symlink specified with a trailing
    slash. */
-#define LSTAT_FOLLOWS_SLASHED_SYMLINK 1
+/* #undef LSTAT_FOLLOWS_SLASHED_SYMLINK */
 
 /* Name of package */
 #define PACKAGE "sagan"
@@ -337,7 +337,7 @@
 #define VERSION "1.0.0-RC5"
 
 /* With Bluedot */
-#define WITH_BLUEDOT 1
+/* #undef WITH_BLUEDOT */
 
 /* With Snortsam */
 #define WITH_SNORTSAM 1
@@ -346,7 +346,7 @@
 #define WITH_SYSLOG 1
 
 /* With system strstr */
-/* #undef WITH_SYSSTRSTR */
+#define WITH_SYSSTRSTR 1
 
 /* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
    significant byte first (like Motorola and SPARC, unlike Intel). */
