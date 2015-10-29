@@ -288,45 +288,63 @@ typedef struct _Sagan_Event
 typedef struct thresh_by_src thresh_by_src;
 struct thresh_by_src
 {
-    unsigned s_size_thresh_by_src;
     uint32_t ipsrc;
     int  count;
     uint64_t utime;
-    char sid[512];
+    char sid[32];
 };
 
 /* Thresholding structure by destination */
 typedef struct thresh_by_dst thresh_by_dst;
 struct thresh_by_dst
 {
-    unsigned s_size_thresh_by_dst;
     uint32_t ipdst;
     int  count;
     uint64_t utime;
-    char sid[512];
+    char sid[32];
 };
+
+/* Thesholding structure by username */
+typedef struct thresh_by_username thresh_by_username;
+struct thresh_by_username
+{
+    char username[128];
+    int  count;
+    uint64_t utime;
+    char sid[32];
+};
+
 
 /* After structure by source */
 typedef struct after_by_src after_by_src;
 struct after_by_src
 {
-    unsigned s_size_afterh_by_src;
     uint32_t ipsrc;
     int  count;
     uint64_t utime;
-    char sid[512];
+    char sid[32];
 };
 
 /* After structure by destination */
 typedef struct after_by_dst after_by_dst;
 struct after_by_dst
 {
-    unsigned s_size_after_by_dst;
     uint32_t ipdst;
     int  count;
     uint64_t utime;
-    char sid[512];
+    char sid[32];
 };
+
+/* After structure by username */
+typedef struct after_by_username after_by_username;
+struct after_by_username
+{
+    char username[128];
+    int  count;
+    uint64_t utime;
+    char sid[32];
+};
+
 
 typedef struct _SaganVar _SaganVar;
 struct _SaganVar

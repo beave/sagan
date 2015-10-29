@@ -77,9 +77,9 @@ void Load_Gen_Map( const char *genmap )
                     generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
 
                     if ( generator == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);                    
-		    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
+                        }
 
                 }
 

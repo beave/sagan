@@ -139,9 +139,9 @@ void Sagan_Blacklist_Load ( void )
                             SaganBlacklist = (_Sagan_Blacklist *) realloc(SaganBlacklist, (counters->blacklist_count+1) * sizeof(_Sagan_Blacklist));
 
                             if ( SaganBlacklist == NULL )
-                            {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+                                }
 
                             Remove_Return(blacklistbuf);
 

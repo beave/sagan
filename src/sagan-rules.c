@@ -186,9 +186,9 @@ void Load_Rules( const char *ruleset )
                     rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 
                     if ( rulestruct == NULL )
-                       {
-                       Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
-                       }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
+                        }
 
                 }
 
@@ -946,10 +946,10 @@ void Load_Rules( const char *ruleset )
 
                                             liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
 
-		                            if ( liblognormtoloadstruct == NULL )
-               			            {
-                            	   	    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognormtoloadstruct. Abort!", __FILE__, __LINE__);
-		                            }
+                                            if ( liblognormtoloadstruct == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognormtoloadstruct. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
@@ -986,10 +986,10 @@ void Load_Rules( const char *ruleset )
                                                         {
                                                             liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
 
-				                            if ( liblognormtoloadstruct == NULL )
-                            				    {
-			                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognomrtoloadstruct. Abort!", __FILE__, __LINE__);
-                            				    }
+                                                            if ( liblognormtoloadstruct == NULL )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognomrtoloadstruct. Abort!", __FILE__, __LINE__);
+                                                                }
 
                                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
                                                             strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
@@ -1432,12 +1432,17 @@ void Load_Rules( const char *ruleset )
                                         {
                                             if (Sagan_strstr(tmptoken, "by_src"))
                                                 {
-                                                    rulestruct[counters->rulecount].threshold_src_or_dst = 1;
+                                                    rulestruct[counters->rulecount].threshold_method = 1;
                                                 }
 
                                             if (Sagan_strstr(tmptoken, "by_dst"))
                                                 {
-                                                    rulestruct[counters->rulecount].threshold_src_or_dst = 2;
+                                                    rulestruct[counters->rulecount].threshold_method = 2;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_username"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_method = 3;
                                                 }
                                         }
 
@@ -1474,13 +1479,19 @@ void Load_Rules( const char *ruleset )
                                         {
                                             if (Sagan_strstr(tmptoken, "by_src"))
                                                 {
-                                                    rulestruct[counters->rulecount].after_src_or_dst = 1;
+                                                    rulestruct[counters->rulecount].after_method = 1;
                                                 }
 
                                             if (Sagan_strstr(tmptoken, "by_dst"))
                                                 {
-                                                    rulestruct[counters->rulecount].after_src_or_dst = 2;
+                                                    rulestruct[counters->rulecount].after_method = 2;
                                                 }
+
+                                            if (Sagan_strstr(tmptoken, "by_username"))
+                                                {
+                                                    rulestruct[counters->rulecount].after_method = 3;
+                                                }
+
                                         }
 
                                     if (Sagan_strstr(tmptoken, "count"))

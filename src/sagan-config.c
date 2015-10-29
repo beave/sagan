@@ -165,9 +165,9 @@ void Load_Config( void )
     rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 
     if ( rulestruct == NULL )
-    {
-    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
-    }
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
+        }
 
     /* Gather information for the master configuration file */
 
@@ -358,10 +358,10 @@ void Load_Config( void )
                 {
                     liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
 
-		        if ( liblognormstruct == NULL )
-		        {
-		        Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
-		        }
+                    if ( liblognormstruct == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
+                        }
 
                     sagan_var1 = strtok_r(NULL, ",", &tok);
                     Remove_Spaces(sagan_var1);
@@ -1090,12 +1090,12 @@ void Load_Config( void )
                     sagan_var1 = strtok_r(NULL, " ", &tok);
                     var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
 
-		        if ( var == NULL )
-    			{
-		        Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
-    			}
-                    
-		    snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
+                    if ( var == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
+                        }
+
+                    snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
 
 
                     /* Test for multiple values via [ ] or signle value */

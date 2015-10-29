@@ -143,10 +143,13 @@ void Sagan_Unified2( _SaganEvent *Event )
 
     for(i=0; i < counters->classcount; i++)
         {
-            if (!strcmp(Event->class, classstruct[i].s_shortname)) alertdata.classification_id = htonl(i + 1);
+            if (!strcmp(Event->class, classstruct[i].s_shortname)) 
+	    	{
+		alertdata.classification_id = htonl(i + 1);
+		}
         }
 
-    alertdata.priority_id = htonl(Event->pri);					//P riority
+    alertdata.priority_id = htonl(Event->pri);					// Priority
     alertdata.protocol = Event->ip_proto;					// Protocol
     alertdata.generator_id = htonl(Event->generatorid); 			// From gen-msg.map
 
@@ -165,7 +168,7 @@ void Sagan_Unified2( _SaganEvent *Event )
 
 
     hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
-    hdr.type = htonl(UNIFIED2_IDS_EVENT);
+    hdr.type = htonl(UNIFIED2_IDS_EVENT);				// EXTRA DATA type 
 
     if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
                    write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)

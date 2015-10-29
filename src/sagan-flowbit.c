@@ -630,10 +630,10 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                                     flowbit_track = ( _Sagan_Flowbit_Track * ) realloc(flowbit_track, (flowbit_track_count+1) * sizeof(_Sagan_Flowbit_Track));
 
-				    if ( flowbit_track == NULL )
-	                            {
-	                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for flow_track. Abort!", __FILE__, __LINE__);
-	                            }
+                                    if ( flowbit_track == NULL )
+                                        {
+                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for flow_track. Abort!", __FILE__, __LINE__);
+                                        }
 
                                     strlcpy(flowbit_track[flowbit_track_count].flowbit_name, tmp_flowbit_name, sizeof(flowbit_track[flowbit_track_count].flowbit_name));
                                     flowbit_track[flowbit_track_count].flowbit_timeout = rulestruct[rule_position].flowbit_timeout[i];
@@ -662,9 +662,9 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                     flowbit = ( _Sagan_Flowbit * ) realloc(flowbit, (counters->flowbit_count+1) * sizeof(_Sagan_Flowbit));
 
                     if ( flowbit == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for flowbit. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for flowbit. Abort!", __FILE__, __LINE__);
+                        }
 
                     flowbit[counters->flowbit_count].ip_src = ip_src;
                     flowbit[counters->flowbit_count].ip_dst = ip_dst;

@@ -93,11 +93,11 @@ struct _Rule_Struct
     int drop;                   /* inline DROP for ext. */
 
     int threshold_type;         /* 1 = limit,  2 = thresh */
-    int threshold_src_or_dst;   /* 1 ==  src,  2 == dst */
+    int threshold_method;       /* 1 ==  src,  2 == dst,  3 == username */
     int threshold_count;
     int threshold_seconds;
 
-    int after_src_or_dst;               /* 1 ==  src,  2 == dst */
+    int after_method;               /* 1 ==  src,  2 == dst, 3 == username */
     int after_count;
     int after_seconds;
 
@@ -113,8 +113,7 @@ struct _Rule_Struct
     sbool alert_time_flag;
     unsigned char alert_days;
     sbool aetas_next_day;
-//    int  alert_start_hour;
-//    int  alert_start_minute;
+
     int	 aetas_start;
     int  aetas_end;
 

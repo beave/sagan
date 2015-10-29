@@ -159,9 +159,9 @@ char *fasthex(char *xdata, int length)
     retbuf = (char *) calloc((length*2)+1, sizeof(char));
 
     if ( retbuf == NULL )
-       {
-       Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for retbuf. Abort!", __FILE__, __LINE__);
-       }
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for retbuf. Abort!", __FILE__, __LINE__);
+        }
 
     ridx = retbuf;
 
@@ -536,13 +536,13 @@ char *Sagan_Var_To_Value(char *instring)
 
     static __thread char tmp[1024] = { 0 };
 
-    char *tmpbuf = (char*)malloc(1024); 
+    char *tmpbuf = (char*)malloc(1024);
     memset(tmpbuf,0,sizeof((char*)tmpbuf));
 
     int i=0;
 
     snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
-    tmpbuf = (char*)&tmp; 
+    tmpbuf = (char*)&tmp;
 
     for (i=0; i<counters->var_count; i++)
         {
@@ -558,7 +558,7 @@ char *Sagan_Var_To_Value(char *instring)
                 }
 
             strlcpy(tmp, tmp_result, sizeof(tmp));
-	    tmpbuf = (char*)&tmp;
+            tmpbuf = (char*)&tmp;
             strlcpy(tmp_result, "", sizeof(tmp_result));
         }
 
@@ -689,9 +689,9 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 
         }
 
-    //ret_buf = (char*)&final_content; 
+    //ret_buf = (char*)&final_content;
     //return(ret_buf);
-    return(final_content); 
+    return(final_content);
 }
 
 /****************************************************************************
@@ -740,7 +740,7 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
                 }
         }
 
-    buf = (char*)&new_string; 
+    buf = (char*)&new_string;
     return(buf);
 }
 

@@ -249,10 +249,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_Addr = (_Sagan_BroIntel_Intel_Addr *) realloc(Sagan_BroIntel_Intel_Addr, (counters->brointel_addr_count+1) * sizeof(_Sagan_BroIntel_Intel_Addr));
 
-					    if ( Sagan_BroIntel_Intel_Addr == NULL )
-	                                    {
-	                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
-	                                    }
+                                            if ( Sagan_BroIntel_Intel_Addr == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             Sagan_BroIntel_Intel_Addr[counters->brointel_addr_count].u32_ip = IP2Bit(value);
                                             counters->brointel_addr_count++;
@@ -282,10 +282,10 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             Sagan_BroIntel_Intel_Domain = (_Sagan_BroIntel_Intel_Domain *) realloc(Sagan_BroIntel_Intel_Domain, (counters->brointel_domain_count+1) * sizeof(_Sagan_BroIntel_Intel_Domain));
 
-					    if ( Sagan_BroIntel_Intel_Domain == NULL )
-                            		    {
-		                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
-                	                    }
+                                            if ( Sagan_BroIntel_Intel_Domain == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain, value, sizeof(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain));
                                             counters->brointel_domain_count++;
@@ -315,10 +315,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_File_Hash = (_Sagan_BroIntel_Intel_File_Hash *) realloc(Sagan_BroIntel_Intel_File_Hash, (counters->brointel_file_hash_count+1) * sizeof(_Sagan_BroIntel_Intel_File_Hash));
 
-					    if ( Sagan_BroIntel_Intel_File_Hash == NULL )
-		                            {
-               			            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
-                            		    }
+                                            if ( Sagan_BroIntel_Intel_File_Hash == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_File_Hash[counters->brointel_file_hash_count].hash, value, sizeof(Sagan_BroIntel_Intel_File_Hash[counters->brointel_file_hash_count].hash));
                                             counters->brointel_file_hash_count++;
@@ -350,10 +350,10 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             Sagan_BroIntel_Intel_URL = (_Sagan_BroIntel_Intel_URL *) realloc(Sagan_BroIntel_Intel_URL, (counters->brointel_url_count+1) * sizeof(_Sagan_BroIntel_Intel_URL));
 
-					    if ( Sagan_BroIntel_Intel_URL == NULL )
-                            		    {
-		                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
-               		                    }
+                                            if ( Sagan_BroIntel_Intel_URL == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url, value, sizeof(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url));
                                             counters->brointel_url_count++;
@@ -386,10 +386,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_Software = (_Sagan_BroIntel_Intel_Software *) realloc(Sagan_BroIntel_Intel_Software, (counters->brointel_software_count+1) * sizeof(_Sagan_BroIntel_Intel_Software));
 
-					    if ( Sagan_BroIntel_Intel_Software == NULL )
-                            		    {
-		                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
-               			            }
+                                            if ( Sagan_BroIntel_Intel_Software == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software, value, sizeof(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software));
                                             counters->brointel_software_count++;
@@ -419,10 +419,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_Email = (_Sagan_BroIntel_Intel_Email *) realloc(Sagan_BroIntel_Intel_Email, (counters->brointel_email_count+1) * sizeof(_Sagan_BroIntel_Intel_Email));
 
-					    if ( Sagan_BroIntel_Intel_Email == NULL )
-		                            {
-               		                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
-                            		    }
+                                            if ( Sagan_BroIntel_Intel_Email == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email, value, sizeof(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email));
                                             counters->brointel_email_count++;
@@ -455,10 +455,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_User_Name = (_Sagan_BroIntel_Intel_User_Name *) realloc(Sagan_BroIntel_Intel_User_Name, (counters->brointel_user_name_count+1) * sizeof(_Sagan_BroIntel_Intel_User_Name));
 
-					    if ( Sagan_BroIntel_Intel_User_Name == NULL )
-                            		    {
-	                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
-               			            }
+                                            if ( Sagan_BroIntel_Intel_User_Name == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username, value, sizeof(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username));
                                             counters->brointel_user_name_count++;
@@ -489,10 +489,10 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             Sagan_BroIntel_Intel_File_Name = (_Sagan_BroIntel_Intel_File_Name *) realloc(Sagan_BroIntel_Intel_File_Name, (counters->brointel_file_name_count+1) * sizeof(_Sagan_BroIntel_Intel_File_Name));
 
-					    if ( Sagan_BroIntel_Intel_File_Name == NULL )
-		                            {
-               		                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
-                            		    }
+                                            if ( Sagan_BroIntel_Intel_File_Name == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name, value, sizeof(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name));
                                             counters->brointel_file_name_count++;
@@ -521,10 +521,10 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             Sagan_BroIntel_Intel_Cert_Hash = (_Sagan_BroIntel_Intel_Cert_Hash *) realloc(Sagan_BroIntel_Intel_Cert_Hash, (counters->brointel_cert_hash_count+1) * sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
 
-				            if ( Sagan_BroIntel_Intel_Cert_Hash == NULL )
-		                            {
-               			            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
-                            		    }
+                                            if ( Sagan_BroIntel_Intel_Cert_Hash == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
+                                                }
 
                                             strlcpy(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash, value, sizeof(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash));
                                             counters->brointel_cert_hash_count++;

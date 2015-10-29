@@ -78,9 +78,9 @@ void Load_Ignore_List ( void )
                             SaganIgnorelist = (_Sagan_Ignorelist *) realloc(SaganIgnorelist, (counters->droplist_count+1) * sizeof(_Sagan_Ignorelist));
 
                             if ( SaganIgnorelist == NULL )
-	                    {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, Remove_Return(droplistbuf), sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
                             counters->droplist_count++;

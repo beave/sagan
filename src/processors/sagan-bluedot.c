@@ -243,9 +243,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                             TmpSaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(TmpSaganBluedotIPQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
                             if ( TmpSaganBluedotIPQueue == NULL )
-                            {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+                                }
 
                             TmpSaganBluedotIPQueue[tmp_bluedot_queue_count].host = ip_u32;
                             tmp_bluedot_queue_count++;
@@ -263,9 +263,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                     SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
                     if ( SaganBluedotIPQueue == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+                        }
 
                     SaganBluedotIPQueue[bluedot_ip_queue].host = TmpSaganBluedotIPQueue[i].host;
                     bluedot_ip_queue++;
@@ -296,9 +296,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                             TmpSaganBluedotHashQueue = (_Sagan_Bluedot_Hash_Queue *) realloc(TmpSaganBluedotHashQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_Hash_Queue));
 
                             if ( TmpSaganBluedotHashQueue == NULL )
-                            {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotHashQueue[tmp_bluedot_queue_count].hash, data, sizeof(TmpSaganBluedotHashQueue[tmp_bluedot_queue_count].hash));
                             tmp_bluedot_queue_count++;
@@ -315,9 +315,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                     SaganBluedotHashQueue = (_Sagan_Bluedot_Hash_Queue *) realloc(SaganBluedotHashQueue, (bluedot_hash_queue+1) * sizeof(_Sagan_Bluedot_Hash_Queue));
 
                     if ( SaganBluedotHashQueue == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(SaganBluedotHashQueue[bluedot_hash_queue].hash, TmpSaganBluedotHashQueue[i].hash, sizeof(SaganBluedotHashQueue[bluedot_hash_queue].hash));
                     bluedot_hash_queue++;
@@ -349,9 +349,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                             TmpSaganBluedotURLQueue = (_Sagan_Bluedot_URL_Queue *) realloc(TmpSaganBluedotURLQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_URL_Queue));
 
                             if ( TmpSaganBluedotURLQueue == NULL )
-                            {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotURLQueue[tmp_bluedot_queue_count].url, data, sizeof(TmpSaganBluedotURLQueue[tmp_bluedot_queue_count].url));
                             tmp_bluedot_queue_count++;
@@ -368,9 +368,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                     SaganBluedotURLQueue = (_Sagan_Bluedot_URL_Queue *) realloc(SaganBluedotURLQueue, (bluedot_url_queue+1) * sizeof(_Sagan_Bluedot_URL_Queue));
 
                     if ( SaganBluedotURLQueue == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(SaganBluedotURLQueue[bluedot_url_queue].url, TmpSaganBluedotURLQueue[i].url, sizeof(SaganBluedotURLQueue[bluedot_url_queue].url));
                     bluedot_url_queue++;
@@ -402,9 +402,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                             TmpSaganBluedotFilenameQueue = (_Sagan_Bluedot_Filename_Queue *) realloc(TmpSaganBluedotFilenameQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_Filename_Queue));
 
                             if ( TmpSaganBluedotFilenameQueue == NULL )
-                            {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
-                            }
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotFilenameQueue[tmp_bluedot_queue_count].filename, data, sizeof(TmpSaganBluedotFilenameQueue[tmp_bluedot_queue_count].filename));
                             tmp_bluedot_queue_count++;
@@ -421,9 +421,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                     SaganBluedotFilenameQueue = (_Sagan_Bluedot_Filename_Queue *) realloc(SaganBluedotFilenameQueue, (bluedot_filename_queue+1) * sizeof(_Sagan_Bluedot_Filename_Queue));
 
                     if ( SaganBluedotFilenameQueue == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+                        }
 
                     strlcpy(SaganBluedotFilenameQueue[bluedot_filename_queue].filename, TmpSaganBluedotFilenameQueue[i].filename, sizeof(SaganBluedotFilenameQueue[bluedot_filename_queue].filename));
                     bluedot_filename_queue++;
@@ -476,9 +476,9 @@ void Sagan_Bluedot_Load_Cat(void)
                     SaganBluedotCatList = (_Sagan_Bluedot_Cat_List *) realloc(SaganBluedotCatList, (counters->bluedot_cat_count+1) * sizeof(_Sagan_Bluedot_Cat_List));
 
                     if ( SaganBluedotCatList == NULL )
-                    {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotCatList. Abort!", __FILE__, __LINE__);
-                    }
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotCatList. Abort!", __FILE__, __LINE__);
+                        }
 
                     /* Normalize the list for later use.  Better to do this here than when processing rules */
 
@@ -610,10 +610,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
                             TmpSaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(TmpSaganBluedotIPCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
 
-	                    if ( TmpSaganBluedotIPCache == NULL )
-       		            {
-                	    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-                    	    }
+                            if ( TmpSaganBluedotIPCache == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+                                }
 
                             TmpSaganBluedotIPCache[timeout_count].host = SaganBluedotIPCache[i].host;
                             TmpSaganBluedotIPCache[timeout_count].utime = SaganBluedotIPCache[i].utime;                                                                                 /* store utime */
@@ -653,10 +653,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
                             TmpSaganBluedotHashCache = (_Sagan_Bluedot_Hash_Cache *) realloc(TmpSaganBluedotHashCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_Hash_Cache));
 
-	                    if ( TmpSaganBluedotHashCache == NULL )
-                            {
-	                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotHashCache. Abort!", __FILE__, __LINE__);
-                            }
+                            if ( TmpSaganBluedotHashCache == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotHashCache. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotHashCache[timeout_count].hash, SaganBluedotHashCache[i].hash, sizeof(TmpSaganBluedotHashCache[timeout_count].hash));
                             TmpSaganBluedotHashCache[timeout_count].utime = SaganBluedotHashCache[i].utime;                                                                                 /* store utime */
@@ -697,10 +697,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
                             TmpSaganBluedotURLCache = (_Sagan_Bluedot_URL_Cache *) realloc(TmpSaganBluedotURLCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_URL_Cache));
 
-                    	    if ( TmpSaganBluedotURLCache == NULL )
-                    	    {
-	                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotURLCache. Abort!", __FILE__, __LINE__);
-       		            }
+                            if ( TmpSaganBluedotURLCache == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotURLCache. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotURLCache[timeout_count].url, SaganBluedotURLCache[i].url, sizeof(TmpSaganBluedotURLCache[timeout_count].url));
                             TmpSaganBluedotURLCache[timeout_count].utime = SaganBluedotURLCache[i].utime;
@@ -740,10 +740,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
                             TmpSaganBluedotFilenameCache = (_Sagan_Bluedot_Filename_Cache *) realloc(TmpSaganBluedotFilenameCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_Filename_Cache));
 
-	                    if ( TmpSaganBluedotFilenameCache == NULL )
-       		            {
-                	    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
-                    	    }
+                            if ( TmpSaganBluedotFilenameCache == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
+                                }
 
                             strlcpy(TmpSaganBluedotFilenameCache[timeout_count].filename, SaganBluedotFilenameCache[i].filename, sizeof(TmpSaganBluedotFilenameCache[timeout_count].filename));
                             TmpSaganBluedotFilenameCache[timeout_count].utime = SaganBluedotFilenameCache[i].utime;
@@ -881,9 +881,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
             if ( SaganBluedotIPQueue == NULL )
-            {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
-            }
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+                }
 
             SaganBluedotIPQueue[bluedot_ip_queue].host = ip;
             bluedot_ip_queue++;
@@ -1085,9 +1085,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             SaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotIPCache, (counters->bluedot_ip_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
 
             if ( SaganBluedotIPCache == NULL )
-            {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-            }
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+                }
 
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].utime = atol(timet);                                                                                     /* store utime */
@@ -1111,9 +1111,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             SaganBluedotHashCache = (_Sagan_Bluedot_Hash_Cache *) realloc(SaganBluedotHashCache, (counters->bluedot_hash_cache_count+1) * sizeof(_Sagan_Bluedot_Hash_Cache));
 
             if ( SaganBluedotHashCache == NULL )
-            {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotHashCache. Abort!", __FILE__, __LINE__);
-            }
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotHashCache. Abort!", __FILE__, __LINE__);
+                }
 
             strlcpy(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash, data, sizeof(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash));
             SaganBluedotHashCache[counters->bluedot_hash_cache_count].utime = atol(timet);                                                                                     /* store utime */
@@ -1135,9 +1135,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             SaganBluedotURLCache = (_Sagan_Bluedot_URL_Cache *) realloc(SaganBluedotURLCache, (counters->bluedot_url_cache_count+1) * sizeof(_Sagan_Bluedot_URL_Cache));
 
             if ( SaganBluedotURLCache == NULL )
-            {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotURLCache. Abort!", __FILE__, __LINE__);
-            }
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotURLCache. Abort!", __FILE__, __LINE__);
+                }
 
             strlcpy(SaganBluedotURLCache[counters->bluedot_url_cache_count].url, data, sizeof(SaganBluedotURLCache[counters->bluedot_url_cache_count].url));
             SaganBluedotURLCache[counters->bluedot_url_cache_count].utime = atol(timet);                                                                                     /* store utime */
@@ -1159,9 +1159,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             SaganBluedotFilenameCache = (_Sagan_Bluedot_Filename_Cache *) realloc(SaganBluedotFilenameCache, (counters->bluedot_filename_cache_count+1) * sizeof(_Sagan_Bluedot_Filename_Cache));
 
             if ( SaganBluedotFilenameCache == NULL )
-            {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
-            }
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
+                }
 
 
             strlcpy(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename, data, sizeof(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename));
