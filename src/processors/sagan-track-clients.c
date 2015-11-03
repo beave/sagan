@@ -192,7 +192,7 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             alertid=101;
                             SaganTrackClients[i].status = 0;
-                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                            Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, NULL, NULL, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
                         }
 
                     tracking_flag=1;
@@ -213,7 +213,7 @@ int Sagan_Track_Clients ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                     alertid=100;
                     SaganTrackClients[i].status = 1;
 
-                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
+                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_track_client, SaganTrackClients[i].host, config->sagan_host, NULL, NULL, config->sagan_proto, alertid, config->sagan_port, config->sagan_port, 0);
                 }
 
         }

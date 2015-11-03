@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, int, int, int, int, int );
+void Sagan_Send_Alert ( _SaganProcSyslog *, _Sagan_Processor_Info *, char *, char *, char *, char *, int, int, int, int, int );
 

@@ -33,6 +33,7 @@
 
 #define UNIFIED2_PACKET              2
 #define UNIFIED2_IDS_EVENT           7
+#define UNIFIED2_EXTRA_DATA	     110
 
 #define SAGAN_SNPRINTF_ERROR -1
 #define SAGAN_SNPRINTF_TRUNCATION 1
@@ -45,13 +46,20 @@
 
 #define ERRORRET return SAFEMEM_ERROR;
 
+#define MAX_XFF_WRITE_BUF_LENGTH (sizeof(Serial_Unified2_Header) + \
+        sizeof(Unified2ExtraDataHdr) + sizeof(SerialUnified2ExtraData) \
+	        + sizeof(struct in6_addr))
+
+#define DECODE_BLEN 65535
+#define EVENT_TYPE_EXTRA_DATA   4
+
 void Sagan_Unified2( _SaganEvent * );
 void Sagan_Unified2LogPacketAlert( _SaganEvent * );
 void Unified2InitFile( void );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc( unsigned long );
-
 void Unified2CleanExit( void );
+void Sagan_WriteExtraData( _SaganEvent *, int );
 
 /* Data structure used for serialization of Unified2 Records */
 typedef struct _Serial_Unified2_Header
@@ -147,7 +155,48 @@ typedef struct _Event
 } Event;
 
 
-#endif
+typedef enum _EventDataType
+{
+    EVENT_DATA_TYPE_BLOB = 1,
+    EVENT_DATA_TYPE_MAX
+}EventDataType;
 
+//UNIFIED2_EXTRA_DATA - type 110
+typedef struct _SerialUnified2ExtraData
+{
+    uint32_t sensor_id;
+    uint32_t event_id;
+    uint32_t event_second;
+    uint32_t type;              /* EventInfo */
+    uint32_t data_type;         /*EventDataType */
+    uint32_t blob_length;       /* Length of the data + sizeof(blob_length) + sizeof(data_type)*/
+} SerialUnified2ExtraData;
+
+typedef struct _Unified2ExtraDataHdr
+{    
+    uint32_t event_type;
+    uint32_t event_length;
+
+} Unified2ExtraDataHdr;
+
+typedef enum _EventInfoEnum
+{
+    EVENT_INFO_XFF_IPV4 = 1,
+    EVENT_INFO_XFF_IPV6,
+    EVENT_INFO_REVIEWED_BY,
+    EVENT_INFO_GZIP_DATA,
+    EVENT_INFO_SMTP_FILENAME,
+    EVENT_INFO_SMTP_MAILFROM,
+    EVENT_INFO_SMTP_RCPTTO,
+    EVENT_INFO_SMTP_EMAIL_HDRS,
+    EVENT_INFO_HTTP_URI,
+    EVENT_INFO_HTTP_HOSTNAME,
+    EVENT_INFO_IPV6_SRC,
+    EVENT_INFO_IPV6_DST,
+    EVENT_INFO_JSNORM_DATA
+}EventInfoEnum;
+
+
+#endif
 
 

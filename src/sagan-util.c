@@ -288,7 +288,7 @@ uint32_t IP2Bit (char *ipaddr)
 {
 
     struct sockaddr_in ipv4;
-    uint32_t ip;
+    static __thread uint32_t ip;
 
     /* Change to AF_UNSPEC for future ipv6 */
     /* Champ Clark III - 01/18/2011 */

@@ -40,7 +40,7 @@
 #define CONFBUF		1024
 
 #define MAXPATH 	255		/* Max path for files/directories */
-#define MAXHOST         128		/* Max host length */
+#define MAXHOST         255		/* Max host length */
 #define MAXPROGRAM	32		/* Max syslog 'program' length */
 #define MAXDATE		25		/* Max syslog 'date' length */
 #define MAXTIME		10		/* Max syslog 'time length */
@@ -123,5 +123,6 @@
 #define MAX_FILENAME_SIZE	256
 #define MAX_URL_SIZE		8192
 #define MAX_USERNAME_SIZE	512
+#define MAX_HOSTNAME_SIZE	255
 
 

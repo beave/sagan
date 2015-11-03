@@ -77,6 +77,10 @@ static uint8_t write_pkt_buffer[sizeof(Serial_Unified2_Header) +
 
 #define write_pkt_end (write_pkt_buffer + sizeof(write_pkt_buffer))
 
+#define MAX_XDATA_WRITE_BUF_LEN (MAX_XFF_WRITE_BUF_LENGTH - \
+        sizeof(struct in6_addr) + DECODE_BLEN)
+
+
 char *eth_addr="00:11:22:33:44:55";	/* Bogus ethernet address for ethernet frame */
 
 /*********************************************************/
@@ -143,10 +147,10 @@ void Sagan_Unified2( _SaganEvent *Event )
 
     for(i=0; i < counters->classcount; i++)
         {
-            if (!strcmp(Event->class, classstruct[i].s_shortname)) 
-	    	{
-		alertdata.classification_id = htonl(i + 1);
-		}
+            if (!strcmp(Event->class, classstruct[i].s_shortname))
+                {
+                    alertdata.classification_id = htonl(i + 1);
+                }
         }
 
     alertdata.priority_id = htonl(Event->pri);					// Priority
@@ -168,7 +172,7 @@ void Sagan_Unified2( _SaganEvent *Event )
 
 
     hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
-    hdr.type = htonl(UNIFIED2_IDS_EVENT);				// EXTRA DATA type 
+    hdr.type = htonl(UNIFIED2_IDS_EVENT);				// EXTRA DATA type
 
     if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
                    write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
@@ -383,18 +387,30 @@ void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
      * the packet for use */
 
     /* Ethernet */
-    for ( i = 0; i < len_eth; i++ ) packet_data[i] = eth_buf[i];
+    for ( i = 0; i < len_eth; i++ )
+        {
+            packet_data[i] = eth_buf[i];
+        }
 
     /* IP header */
 
-    for ( i = 0; i < len_iphdr; i++ ) packet_data[i + len_eth] = iphdr_buf[i];
+    for ( i = 0; i < len_iphdr; i++ )
+        {
+            packet_data[i + len_eth] = iphdr_buf[i];
+        }
 
     /* UDP/TCP/ICMP header */
-    for ( i = 0; i < p_len-1; i++ ) packet_data[i + len_eth + len_iphdr] = packet_buf[i];
+    for ( i = 0; i < p_len-1; i++ )
+        {
+            packet_data[i + len_eth + len_iphdr] = packet_buf[i];
+        }
 
     /* Payload ( Syslog message ) */
 
-    for ( i = 0; i < len_payload; i++ ) packet_data[i + len_eth + len_iphdr + p_len ] = Event->message[i];
+    for ( i = 0; i < len_payload; i++ )
+        {
+            packet_data[i + len_eth + len_iphdr + p_len ] = Event->message[i];
+        }
 
     /* Copy it to our Unified2/write_pkt_buffer */
 
@@ -409,7 +425,6 @@ void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
 
 
     Unified2Write(write_pkt_buffer, write_len);
-    unified_event_id++;
 
 }
 
@@ -647,6 +662,117 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                 }
         }
     config->unified2_current += buf_len;
+}
+
+
+/*****************************************************************************/
+/* Sagan_WriteExtraData - Writes any "extra data" that might be useful for   */
+/* for analysis.  For example,  we always write the syslog source IP as the  */
+/* XFF or "original IP" address.
+/*****************************************************************************/
+
+void Sagan_WriteExtraData( _SaganEvent *Event, int type )
+{
+
+    Serial_Unified2_Header hdr;
+    SerialUnified2ExtraData alertdata;
+    Unified2ExtraDataHdr alertHdr;
+
+    uint8_t write_buffer[MAX_XDATA_WRITE_BUF_LEN];
+    uint8_t *write_end = NULL;
+    uint8_t *ptr = NULL;
+
+    uint32_t ip;
+    uint8_t *buffer = NULL;
+
+    uint32_t len;
+    uint32_t write_len;
+
+    int i;
+
+    switch(type)
+        {
+
+        case EVENT_INFO_XFF_IPV4:
+
+            ip = htonl(IP2Bit(Event->host));
+            buffer = (void *)&ip;
+            break;
+
+        case EVENT_INFO_HTTP_URI:
+
+            buffer = Event->normalize_http_uri;
+            break;
+
+        case EVENT_INFO_HTTP_HOSTNAME:
+
+            buffer = Event->normalize_http_hostname;
+            break;
+
+        default:
+
+            Sagan_Log(S_ERROR,"[%s, line %d] Whoa. Unknown Unified2 Extra Data type passed! Abort!!", __FILE__, __LINE__);
+            break;
+
+        }
+
+    len = sizeof(buffer);
+
+    write_len = sizeof(Serial_Unified2_Header) + sizeof(Unified2ExtraDataHdr);
+
+    alertdata.sensor_id = 0;
+    alertdata.event_id = htonl(unified_event_id);
+    alertdata.event_second = htonl(Event->event_time_sec);
+    alertdata.data_type = htonl(EVENT_DATA_TYPE_BLOB);
+
+    alertdata.type = htonl(type);
+    alertdata.blob_length = htonl(sizeof(alertdata.data_type) + sizeof(alertdata.blob_length) + len);
+
+    write_len = write_len + sizeof(alertdata) + len;
+
+    alertHdr.event_type = htonl(EVENT_TYPE_EXTRA_DATA);
+    alertHdr.event_length = htonl(write_len - sizeof(Serial_Unified2_Header));
+
+    if ((config->unified2_current + write_len) > config->unified2_limit)
+        {
+            Unified2RotateFile();
+        }
+
+    hdr.length = htonl(write_len - sizeof(Serial_Unified2_Header));
+    hdr.type = htonl(UNIFIED2_EXTRA_DATA);
+
+    write_end = write_buffer + sizeof(write_buffer);
+
+    ptr = write_buffer;
+
+    if (SafeMemcpy(ptr, &hdr, sizeof(hdr), write_buffer, write_end) != SAFEMEM_SUCCESS)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
+        }
+
+    ptr = ptr +  sizeof(hdr);
+
+    if (SafeMemcpy(ptr, &alertHdr, sizeof(alertHdr), write_buffer, write_end) != SAFEMEM_SUCCESS)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Unified2ExtraDataHdr.", __FILE__, __LINE__);
+        }
+
+    ptr = ptr + sizeof(alertHdr);
+
+    if (SafeMemcpy(ptr, &alertdata, sizeof(alertdata), write_buffer, write_end) != SAFEMEM_SUCCESS)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy SerialUnified2ExtraData.", __FILE__, __LINE__);
+        }
+
+    ptr = ptr + sizeof(alertdata);
+
+    if (SafeMemcpy(ptr, buffer, len, write_buffer, write_end) != SAFEMEM_SUCCESS)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy extra data buffer.", __FILE__, __LINE__);
+        }
+
+    Unified2Write(write_buffer, write_len);
+
 }
 
 #endif

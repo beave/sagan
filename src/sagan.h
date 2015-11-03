@@ -269,7 +269,7 @@ typedef struct _Sagan_Event
     char *level;
     char *tag;
     char *program;
-    char *message;          /* msg + sysmsg? */
+    char *message;
 
     char *sid;
     char *rev;
@@ -277,6 +277,8 @@ typedef struct _Sagan_Event
     int pri;
     int ip_proto;
 
+    char *normalize_http_uri;
+    char *normalize_http_hostname;
 
     unsigned long generatorid;
     unsigned long alertid;

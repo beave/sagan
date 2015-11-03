@@ -4245,7 +4245,6 @@ if test "x$with_geoip2_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_geoip2_libraries}"
 fi
 
-
 # Check whether --enable-lognorm was given.
 if test "${enable_lognorm+set}" = set; then :
   enableval=$enable_lognorm;  LOGNORM="$enableval"

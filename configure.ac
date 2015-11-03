@@ -84,7 +84,6 @@ if test "x$with_geoip2_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_geoip2_libraries}"
 fi
 
-
 AC_ARG_ENABLE(lognorm,
   [  --disable-lognorm       Disable Lognorm (liblognorm) support.],
   [ LOGNORM="$enableval"],

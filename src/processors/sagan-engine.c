@@ -157,10 +157,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     /* We don't tie these to HAVE_LIBMAXMINDDB because we might have other
      * methods to extract the informaton */
 
-    char normalize_username[MAX_USERNAME_SIZE];
-    char normalize_filehash[MAX_HASH_SIZE];
-    char normalize_filename[MAX_FILENAME_SIZE];
-    char normalize_url[MAX_URL_SIZE];
+    char normalize_username[MAX_USERNAME_SIZE] = { 0 };
+    char normalize_filehash[MAX_HASH_SIZE] = { 0 };
+    char normalize_filename[MAX_FILENAME_SIZE] = { 0 };
+    char normalize_http_uri[MAX_URL_SIZE] = { 0 };
+    char normalize_http_hostname[MAX_HOSTNAME_SIZE] = { 0 };
 
     int  normalize_src_port;
     int  normalize_dst_port;
@@ -468,7 +469,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             normalize_src_port=0;
                             normalize_filehash[0] = '\0';
                             normalize_filename[0] = '\0';
-                            normalize_url[0] = '\0';
+                            normalize_http_uri[0] = '\0';
+                            normalize_http_hostname[0] = '\0';
 
                             normalize_username[0] = '\0';
 
@@ -515,9 +517,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             liblognorm_status = 1;
                                         }
 
-                                    if ( SaganNormalizeLiblognorm->url[0] != '\0' )
+                                    if ( SaganNormalizeLiblognorm->http_uri[0] != '\0' )
                                         {
-                                            strlcpy(normalize_url, SaganNormalizeLiblognorm->url, sizeof(normalize_url));
+                                            strlcpy(normalize_http_uri, SaganNormalizeLiblognorm->http_uri, sizeof(normalize_http_uri));
                                             liblognorm_status = 1;
                                         }
 
@@ -830,10 +832,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                         }
 
-                                    if ( rulestruct[b].bluedot_url && normalize_url != '\0' )
+                                    if ( rulestruct[b].bluedot_url && normalize_http_uri != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_url, BLUEDOT_LOOKUP_URL);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL);
                                             bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
 
                                         }
@@ -1484,7 +1486,20 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                             if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
                                                                                                                 {
-                                                                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL, processor_info_engine, ip_src, ip_dst, processor_info_engine_proto, processor_info_engine_alertid, processor_info_engine_src_port, processor_info_engine_dst_port, b );
+                                                                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL,
+                                                                                                                                     processor_info_engine,
+
+                                                                                                                                     ip_src,
+                                                                                                                                     ip_dst,
+
+                                                                                                                                     normalize_http_uri,
+                                                                                                                                     normalize_http_hostname,
+
+                                                                                                                                     processor_info_engine_proto,
+                                                                                                                                     processor_info_engine_alertid,
+                                                                                                                                     processor_info_engine_src_port,
+                                                                                                                                     processor_info_engine_dst_port,
+                                                                                                                                     b );
                                                                                                                 }
 
 

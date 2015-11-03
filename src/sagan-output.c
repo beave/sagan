@@ -50,6 +50,10 @@
 #include "output-plugins/sagan-esmtp.h"
 #endif
 
+#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
+uint64_t unified_event_id;
+#endif
+
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
@@ -73,11 +77,34 @@ void Sagan_Output( _SaganEvent *Event )
     Sagan_Alert_File(Event);
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
+
     if ( config->sagan_unified2_flag )
         {
             Sagan_Unified2( Event );
             Sagan_Unified2LogPacketAlert( Event );
+
+            if ( Event->host[0] != '\0' )
+                {
+                    Sagan_WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
+                }
+
+            /* These get normalized in sagan-engine.c and passed via
+             * sagan-send-alert.c.  When adding more,  remember to add
+             * them there! */
+
+            if ( Event->normalize_http_uri[0] != '\0' )
+                {
+                    Sagan_WriteExtraData( Event, EVENT_INFO_HTTP_URI );
+                }
+
+            if ( Event->normalize_http_hostname[0] != '\0' )
+                {
+                    Sagan_WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
+                }
+
+            unified_event_id++;
         }
+
 #endif
 
     nonthread_alert_lock = 0;
