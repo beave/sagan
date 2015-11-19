@@ -1,5 +1,12 @@
 
-Please see :
+10/23/2015 -	Sagan 1.0.0 released.
 
-https://wiki.quadrantsec.com/bin/view/Main/SaganChangeLog
+11/19/2015 - 	Sagan 1.0.1 released.
+
+		* Add unified2 "extra data" field to store the orignal syslog
+		  source.
+		* Added threshold by "username". 
+		* Minor code clean up. 
+
+
 
