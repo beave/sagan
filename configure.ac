@@ -190,7 +190,7 @@ AC_PROG_MAKE_SET
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h])
 
 AC_CHECK_SIZEOF([size_t])
 
@@ -247,11 +247,12 @@ AC_STRUCT_TM
 AX_EXT
 AM_PROG_AS
 
-AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat strlcat strlcpy getopt_long gethostbyname socket htons connect send recv dup2 strspn strdup memset access])
+AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat strlcat strlcpy getopt_long gethostbyname socket htons connect send recv dup2 strspn strdup memset access ftruncate strerror mmap shm_open])
 
 AC_CHECK_LIB(pcre, main,,AC_MSG_ERROR(Sagan needs PCRE installed.  Please see http://www.pcre.org.))
 AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
+AC_CHECK_LIB(rt, main,,AC_MSG_ERROR(Sagan needs librt!))
 
 if test "$SYSSTRSTR" = "yes"; then
 	AC_MSG_RESULT([using build in strstr()...])

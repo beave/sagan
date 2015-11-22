@@ -36,6 +36,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 #include "sagan.h"
 #include "sagan-aetas.h"
@@ -44,6 +45,7 @@
 #include "sagan-flowbit.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
+#include "sagan-ipc.h"
 
 #include "parsers/parsers.h"
 
@@ -71,31 +73,37 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _Sagan_Flowbits *flowbits;
 
-pthread_mutex_t AfterMutexSrc=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t AfterMutexDst=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t AfterMutexUsername=PTHREAD_MUTEX_INITIALIZER;
+struct _Sagan_IPC_Counters *counters_ipc;
 
-pthread_mutex_t ThreshMutexSrc=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t ThreshMutexDst=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t ThreshMutexUsername=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t AfterMutexSrc=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t AfterMutexDst=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t AfterMutexUsername=PTHREAD_MUTEX_INITIALIZER;
+
+//pthread_mutex_t ThreshMutexSrc=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t ThreshMutexDst=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t ThreshMutexUsername=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t CounterMutex=PTHREAD_MUTEX_INITIALIZER;
 
-struct after_by_src *afterbysrc = NULL;
-struct after_by_dst *afterbydst = NULL;
-struct after_by_username *afterbyusername = NULL;
+//struct after_by_dst *afterbydst = NULL;
+//struct after_by_username *afterbyusername = NULL;
 
-int after_count_by_src=0;
-int after_count_by_dst=0;
-int after_count_by_username=0;
+//int after_count_by_username=0;
 
-struct thresh_by_src *threshbysrc = NULL;
-struct thresh_by_dst *threshbydst = NULL;
-struct thresh_by_username *threshbyusername = NULL;
+//struct thresh_by_dst *threshbydst = NULL;
+//struct thresh_by_username *threshbyusername = NULL;
 
-int thresh_count_by_src=0;
-int thresh_count_by_dst=0;
-int thresh_count_by_username=0;
+struct thresh_by_src_ipc *threshbysrc_ipc;
+struct thresh_by_dst_ipc *threshbydst_ipc;
+struct thresh_by_username_ipc *threshbyusername_ipc;
+
+struct after_by_src_ipc *afterbysrc_ipc;
+struct after_by_dst_ipc *afterbydst_ipc;
+struct after_by_username_ipc *afterbyusername_ipc;
+
+//int thresh_count_by_src=0;
+//int thresh_count_by_dst=0;
+//int thresh_count_by_username=0;
 
 void Sagan_Engine_Init ( void )
 {
@@ -993,37 +1001,35 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                 {
                                                                                                                     after_flag = 0;
 
-                                                                                                                    for (i = 0; i < after_count_by_src; i++ )
+                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_src; i++ )
                                                                                                                         {
-                                                                                                                            if ( afterbysrc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
 
                                                                                                                                     after_flag=1;
 
-                                                                                                                                    pthread_mutex_lock(&AfterMutexSrc);
-
-                                                                                                                                    afterbysrc[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbysrc[i].utime;
-                                                                                                                                    afterbysrc[i].utime = atol(timet);
+                                                                                                                                    afterbysrc_ipc[i].count++;
+                                                                                                                                    after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
+                                                                                                                                    afterbysrc_ipc[i].utime = atol(timet);
 
                                                                                                                                     if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                         {
-                                                                                                                                            afterbysrc[i].count=1;
-                                                                                                                                            afterbysrc[i].utime = atol(timet);
+                                                                                                                                            afterbysrc_ipc[i].count=1;
+                                                                                                                                            afterbysrc_ipc[i].utime = atol(timet);
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&AfterMutexSrc);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbysrc[i].count )
+                                                                                                                                    if ( rulestruct[b].after_count < afterbysrc_ipc[i].count )
                                                                                                                                         {
                                                                                                                                             after_log_flag = 0;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc[i].sid, ip_src);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
                                                                                                                                                 }
 
+
+//                                                                                                                                            counters_ipc->after_total++;
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->after_total++;
@@ -1040,21 +1046,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( after_flag == 0 )
                                                                                                                 {
 
-                                                                                                                    pthread_mutex_lock(&AfterMutexSrc);
+                                                                                                                    mremap(afterbysrc_ipc, sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src, (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                    afterbysrc = (after_by_src *) realloc(afterbysrc, (after_count_by_src+1) * sizeof(after_by_src));
-                                                                                                                    if ( afterbysrc == NULL )
-                                                                                                                        {
-                                                                                                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for afterbysrc. Abort!", __FILE__, __LINE__);
-                                                                                                                        }
+                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                    strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
+                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
+                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
+                                                                                                                    counters_ipc->after_count_by_src++;
 
-                                                                                                                    afterbysrc[after_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                    strlcpy(afterbysrc[after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc[after_count_by_src].sid));
-                                                                                                                    afterbysrc[after_count_by_src].count = 1;
-                                                                                                                    afterbysrc[after_count_by_src].utime = atol(timet);
-                                                                                                                    after_count_by_src++;
-
-                                                                                                                    pthread_mutex_unlock(&AfterMutexSrc);
                                                                                                                 }
 
                                                                                                             /* After by destination IP address */
@@ -1066,36 +1065,34 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     /* Check array for matching src / sid */
 
-                                                                                                                    for (i = 0; i < after_count_by_dst; i++ )
+                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_dst; i++ )
                                                                                                                         {
-                                                                                                                            if ( afterbydst[i].ipdst == ip_dst_u32 && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
                                                                                                                                     after_flag=1;
 
-                                                                                                                                    pthread_mutex_lock(&AfterMutexDst);
-
-                                                                                                                                    afterbydst[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbydst[i].utime;
-                                                                                                                                    afterbydst[i].utime = atol(timet);
+                                                                                                                                    afterbydst_ipc[i].count++;
+                                                                                                                                    after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
+                                                                                                                                    afterbydst_ipc[i].utime = atol(timet);
 
                                                                                                                                     if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                         {
-                                                                                                                                            afterbydst[i].count=1;
-                                                                                                                                            afterbydst[i].utime = atol(timet);
+                                                                                                                                            afterbydst_ipc[i].count=1;
+                                                                                                                                            afterbydst_ipc[i].utime = atol(timet);
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&AfterMutexDst);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbydst[i].count )
+                                                                                                                                    if ( rulestruct[b].after_count < afterbydst_ipc[i].count )
                                                                                                                                         {
                                                                                                                                             after_log_flag = 0;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst[i].sid, ip_dst);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
                                                                                                                                                 }
 
+
+//                                                                                                                                            counters_ipc->after_total++;
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->after_total++;
@@ -1109,22 +1106,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( after_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&AfterMutexDst);
+                                                                                                                            mremap(afterbydst_ipc, sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst, (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                            afterbydst = (after_by_dst *) realloc(afterbydst, (after_count_by_dst+1) * sizeof(after_by_dst));
+                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                            strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
+                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
+                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
+                                                                                                                            counters_ipc->after_count_by_dst++;
 
-                                                                                                                            if ( afterbydst == NULL )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for afterbydst. Abort!", __FILE__, __LINE__);
-                                                                                                                                }
-
-                                                                                                                            afterbydst[after_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                            strlcpy(afterbydst[after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst[after_count_by_dst].sid));
-                                                                                                                            afterbydst[after_count_by_dst].count = 1;
-                                                                                                                            afterbydst[after_count_by_dst].utime = atol(timet);
-                                                                                                                            after_count_by_dst++;
-
-                                                                                                                            pthread_mutex_unlock(&AfterMutexDst);
                                                                                                                         }
                                                                                                                 }
 
@@ -1137,35 +1126,33 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     /* Check array for matching username / sid */
 
-                                                                                                                    for (i = 0; i < after_count_by_username; i++ )
+                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_username; i++ )
                                                                                                                         {
-                                                                                                                            if ( !strcmp(afterbyusername[i].username, normalize_username) && !strcmp(afterbydst[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
                                                                                                                                     after_flag = 1;
 
-                                                                                                                                    pthread_mutex_lock(&AfterMutexUsername);
-
-                                                                                                                                    afterbyusername[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbyusername[i].utime;
-                                                                                                                                    afterbyusername[i].utime = atol(timet);
+                                                                                                                                    afterbyusername_ipc[i].count++;
+                                                                                                                                    after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
+                                                                                                                                    afterbyusername_ipc[i].utime = atol(timet);
 
                                                                                                                                     if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                         {
-                                                                                                                                            afterbyusername[i].count=1;
-                                                                                                                                            afterbyusername[i].utime = atol(timet);
+                                                                                                                                            afterbyusername_ipc[i].count=1;
+                                                                                                                                            afterbyusername_ipc[i].utime = atol(timet);
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&AfterMutexUsername);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbyusername[i].count )
+                                                                                                                                    if ( rulestruct[b].after_count < afterbyusername_ipc[i].count )
                                                                                                                                         {
                                                                                                                                             after_log_flag = 0;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by username. [%s]", afterbydst[i].sid, normalize_username);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by username. [%s]", afterbydst_ipc[i].sid, normalize_username);
                                                                                                                                                 }
+
+//                                                                                                                                            counters_ipc->after_total++;
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->after_total++;
@@ -1180,22 +1167,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( after_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&AfterMutexUsername);
+                                                                                                                            mremap(afterbyusername_ipc, sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username, (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                            afterbyusername = (after_by_username *) realloc(afterbyusername, (after_count_by_username+1) * sizeof(after_by_username));
+                                                                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
+                                                                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
+                                                                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
+                                                                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
+                                                                                                                            counters_ipc->after_count_by_username++;
 
-                                                                                                                            if ( afterbyusername == NULL )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for afterbyusername. Abort!", __FILE__, __LINE__);
-                                                                                                                                }
-
-                                                                                                                            strlcpy(afterbyusername[after_count_by_username].username, normalize_username, sizeof(afterbyusername[after_count_by_username].username));
-                                                                                                                            strlcpy(afterbyusername[after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername[after_count_by_username].sid));
-                                                                                                                            afterbyusername[after_count_by_username].count = 1;
-                                                                                                                            afterbyusername[after_count_by_username].utime = atol(timet);
-                                                                                                                            after_count_by_username++;
-
-                                                                                                                            pthread_mutex_unlock(&AfterMutexUsername);
 
                                                                                                                         }
                                                                                                                 }
@@ -1223,37 +1202,35 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     /* Check array for matching src / sid */
 
-                                                                                                                    for (i = 0; i < thresh_count_by_src; i++ )
+                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_src; i++ )
                                                                                                                         {
-                                                                                                                            if ( threshbysrc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
 
                                                                                                                                     thresh_flag=1;
 
-                                                                                                                                    pthread_mutex_lock(&ThreshMutexSrc);
+                                                                                                                                    threshbysrc_ipc[i].count++;
+                                                                                                                                    thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
 
-                                                                                                                                    threshbysrc[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbysrc[i].utime;
-
-                                                                                                                                    threshbysrc[i].utime = atol(timet);
+                                                                                                                                    threshbysrc_ipc[i].utime = atol(timet);
 
                                                                                                                                     if ( thresh_oldtime > rulestruct[b].threshold_seconds )
                                                                                                                                         {
-                                                                                                                                            threshbysrc[i].count=1;
-                                                                                                                                            threshbysrc[i].utime = atol(timet);
+                                                                                                                                            threshbysrc_ipc[i].count=1;
+                                                                                                                                            threshbysrc_ipc[i].utime = atol(timet);
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&ThreshMutexSrc);
-
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbysrc[i].count )
+                                                                                                                                    if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count )
                                                                                                                                         {
                                                                                                                                             thresh_log_flag = 1;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc[i].sid, ip_src);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
                                                                                                                                                 }
+
+//                                                                                                                                            counters_ipc->threshold_total++;
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->threshold_total++;
@@ -1268,22 +1245,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&ThreshMutexSrc);
 
-                                                                                                                            threshbysrc = (thresh_by_src *) realloc(threshbysrc, (thresh_count_by_src+1) * sizeof(thresh_by_src));
+                                                                                                                            mremap(threshbysrc_ipc, sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src, (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                            if ( threshbysrc == NULL )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for threshbysrc. Abort!", __FILE__, __LINE__);
-                                                                                                                                }
-
-                                                                                                                            threshbysrc[thresh_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                            strlcpy(threshbysrc[thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc[thresh_count_by_src].sid));
-                                                                                                                            threshbysrc[thresh_count_by_src].count = 1;
-                                                                                                                            threshbysrc[thresh_count_by_src].utime = atol(timet);
-                                                                                                                            thresh_count_by_src++;
-
-                                                                                                                            pthread_mutex_unlock(&ThreshMutexSrc);
+                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
+                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
+                                                                                                                            counters_ipc->thresh_count_by_src++;
 
                                                                                                                         }
                                                                                                                 }
@@ -1296,35 +1265,34 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     /* Check array for matching src / sid */
 
-                                                                                                                    for (i = 0; i < thresh_count_by_dst; i++ )
+                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ )
                                                                                                                         {
-                                                                                                                            if ( threshbydst[i].ipdst == ip_dst_u32 && !strcmp(threshbydst[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
 
                                                                                                                                     thresh_flag=1;
 
-                                                                                                                                    pthread_mutex_lock(&ThreshMutexDst);
-
-                                                                                                                                    threshbydst[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbydst[i].utime;
-                                                                                                                                    threshbydst[i].utime = atol(timet);
+                                                                                                                                    threshbydst_ipc[i].count++;
+                                                                                                                                    thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
+                                                                                                                                    threshbydst_ipc[i].utime = atol(timet);
                                                                                                                                     if ( thresh_oldtime > rulestruct[b].threshold_seconds )
                                                                                                                                         {
-                                                                                                                                            threshbydst[i].count=1;
-                                                                                                                                            threshbydst[i].utime = atol(timet);
+                                                                                                                                            threshbydst_ipc[i].count=1;
+                                                                                                                                            threshbydst_ipc[i].utime = atol(timet);
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&ThreshMutexDst);
-
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbydst[i].count )
+                                                                                                                                    if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count )
                                                                                                                                         {
                                                                                                                                             thresh_log_flag = 1;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst[i].sid, ip_dst);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
                                                                                                                                                 }
+
+//                                                                                                                                           counters_ipc->threshold_total++;
+																	    
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->threshold_total++;
@@ -1338,21 +1306,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&ThreshMutexDst);
+                                                                                                                            mremap(threshbydst_ipc, sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst, (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                            threshbydst = (thresh_by_dst *) realloc(threshbydst, (thresh_count_by_dst+1) * sizeof(thresh_by_dst));
-                                                                                                                            if ( threshbydst == NULL )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for threshbydst. Abort!", __FILE__, __LINE__);
-                                                                                                                                }
+                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
+                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
+                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
+                                                                                                                            counters_ipc->thresh_count_by_dst++;
 
-                                                                                                                            threshbydst[thresh_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                            strlcpy(threshbydst[thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst[thresh_count_by_dst].sid));
-                                                                                                                            threshbydst[thresh_count_by_dst].count = 1;
-                                                                                                                            threshbydst[thresh_count_by_dst].utime = atol(timet);
-                                                                                                                            thresh_count_by_dst++;
-
-                                                                                                                            pthread_mutex_unlock(&ThreshMutexDst);
                                                                                                                         }
                                                                                                                 }
 
@@ -1364,38 +1325,37 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     /* Check array fror matching username / sid */
 
-                                                                                                                    for (i = 0; i < thresh_count_by_username; i++)
+                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_username; i++)
                                                                                                                         {
 
-                                                                                                                            if ( !strcmp(threshbyusername[i].username, normalize_username) && !strcmp(threshbyusername[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            if ( !strcmp(threshbyusername_ipc[i].username, normalize_username) && !strcmp(threshbyusername_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                 {
 
                                                                                                                                     thresh_flag=1;
 
-                                                                                                                                    pthread_mutex_lock(&ThreshMutexUsername);
-
-                                                                                                                                    threshbyusername[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbyusername[i].utime;
-                                                                                                                                    threshbyusername[i].utime = atol(timet);
+                                                                                                                                    threshbyusername_ipc[i].count++;
+                                                                                                                                    thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
+                                                                                                                                    threshbyusername_ipc[i].utime = atol(timet);
 
                                                                                                                                     if ( thresh_oldtime > rulestruct[b].threshold_seconds )
                                                                                                                                         {
-                                                                                                                                            threshbyusername[i].count=1;
-                                                                                                                                            threshbyusername[i].utime = atol(timet);
+                                                                                                                                            threshbyusername_ipc[i].count=1;
+                                                                                                                                            threshbyusername_ipc[i].utime = atol(timet);
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-                                                                                                                                    pthread_mutex_unlock(&ThreshMutexUsername);
 
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbyusername[i].count )
+                                                                                                                                    if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count )
                                                                                                                                         {
 
                                                                                                                                             thresh_log_flag = 1;
 
                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by username. [%s]", threshbyusername[i].sid, normalize_username);
+                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
                                                                                                                                                 }
+
+//                                                                                                                                            counters_ipc->threshold_total++;
 
                                                                                                                                             pthread_mutex_lock(&CounterMutex);
                                                                                                                                             counters->threshold_total++;
@@ -1411,21 +1371,14 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 
-                                                                                                                            pthread_mutex_lock(&ThreshMutexUsername);
+                                                                                                                            mremap(threshbyusername_ipc, sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username, (sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username) + 1, MREMAP_MAYMOVE);
 
-                                                                                                                            threshbyusername = (thresh_by_username *) realloc(threshbyusername, (thresh_count_by_username+1) * sizeof(thresh_by_username));
-                                                                                                                            if ( threshbyusername == NULL )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for threshbyusername. Abort!", __FILE__, __LINE__);
-                                                                                                                                }
+                                                                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
+                                                                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
+                                                                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
+                                                                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
+                                                                                                                            counters_ipc->thresh_count_by_username++;
 
-                                                                                                                            strlcpy(threshbyusername[thresh_count_by_username].username, normalize_username, sizeof(threshbyusername[thresh_count_by_username].username));
-                                                                                                                            strlcpy(threshbyusername[thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername[thresh_count_by_username].sid));
-                                                                                                                            threshbyusername[thresh_count_by_username].count = 1;
-                                                                                                                            threshbyusername[thresh_count_by_username].utime = atol(timet);
-                                                                                                                            thresh_count_by_username++;
-
-                                                                                                                            pthread_mutex_unlock(&ThreshMutexUsername);
 
 
                                                                                                                         }

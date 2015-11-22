@@ -43,6 +43,9 @@
 /* Define to 1 if you have the `fork' function. */
 #define HAVE_FORK 1
 
+/* Define to 1 if you have the `ftruncate' function. */
+#define HAVE_FTRUNCATE 1
+
 /* Define to 1 if you have the `gethostbyname' function. */
 #define HAVE_GETHOSTBYNAME 1
 
@@ -100,6 +103,9 @@
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
 
+/* Define to 1 if you have the `rt' library (-lrt). */
+#define HAVE_LIBRT 1
+
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
 
@@ -112,6 +118,9 @@
 
 /* Define to 1 if you have the `memset' function. */
 #define HAVE_MEMSET 1
+
+/* Define to 1 if you have the `mmap' function. */
+#define HAVE_MMAP 1
 
 /* Support mmx instructions */
 #define HAVE_MMX /**/
@@ -140,6 +149,9 @@
 
 /* F_SETPIPE_SZ is supported */
 #define HAVE_SETPIPE_SZ /**/
+
+/* Define to 1 if you have the `shm_open' function. */
+/* #undef HAVE_SHM_OPEN */
 
 /* Define to 1 if you have the `sizeof' function. */
 /* #undef HAVE_SIZEOF */
@@ -196,6 +208,9 @@
 /* Define to 1 if you have the `strdup' function. */
 #define HAVE_STRDUP 1
 
+/* Define to 1 if you have the `strerror' function. */
+#define HAVE_STRERROR 1
+
 /* Define to 1 if you have the `strftime' function. */
 #define HAVE_STRFTIME 1
 
@@ -222,6 +237,9 @@
 
 /* Define to 1 if you have the `strstr' function. */
 #define HAVE_STRSTR 1
+
+/* Define to 1 if you have the <sys/mmap.h> header file. */
+/* #undef HAVE_SYS_MMAP_H */
 
 /* Define to 1 if you have the <sys/select.h> header file. */
 #define HAVE_SYS_SELECT_H 1

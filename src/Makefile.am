@@ -30,6 +30,7 @@ sagan-geoip2.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
 sagan-aetas.c \
+sagan-ipc.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \

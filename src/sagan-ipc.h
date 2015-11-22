@@ -1,3 +1,5 @@
+
+/* $Id$ */
 /*
 ** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
 ** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
@@ -18,46 +20,18 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+/* sagan-ipc.c
+ *
+ * This allows Sagan to share data with other Sagan processes. This is for
+ * Inter-process communications (IPC).
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Flowbit_Set( int, char *, char * );
-int Sagan_Flowbit_Condition ( int, char *, char * );
-int Sagan_Flowbit_Type ( char *, int, const char *);
-void Sagan_Flowbit_Cleanup(void);
-
-typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
-struct _Sagan_Flowbit_Track
-{
-    char	flowbit_name[64];
-    int		flowbit_timeout;
-};
-
-
-
-typedef struct _Sagan_IPC_Flowbit _Sagan_IPC_Flowbit;
-struct _Sagan_IPC_Flowbit
-{
-    char flowbit_name[64];
-    sbool flowbit_state;
-    uint32_t ip_src;
-    uint32_t ip_dst;
-    uint64_t flowbit_expire;
-};
-
-
-/*
-typedef struct _Sagan_Flowbit _Sagan_Flowbit;
-struct _Sagan_Flowbit
-{
-    char flowbit_name[64];
-    sbool flowbit_state;
-    uint32_t ip_src;
-    uint32_t ip_dst;
-    uint64_t flowbit_expire;
-};
-
-*/
+void Sagan_IPC_Init(void);
+void Sagan_IPC_Check_Object(char *, sbool, char *);
 
 

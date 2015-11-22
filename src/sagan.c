@@ -256,15 +256,6 @@ int main(int argc, char **argv)
 
     memset(counters, 0, sizeof(_SaganCounters));
 
-    flowbit = malloc(sizeof(_Sagan_Flowbit));
-
-    if ( flowbit == NULL )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for flowbit. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(flowbit, 0, sizeof(_Sagan_Flowbit));
-
     t = time(NULL);
     run=localtime(&t);
     strftime(config->sagan_startutime, sizeof(config->sagan_startutime), "%s",  run);
@@ -534,6 +525,8 @@ int main(int argc, char **argv)
 
     Sagan_Droppriv();              /* Become the Sagan user */
     Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
+
+    Sagan_IPC_Init();
 
 
     if ( config->perfmonitor_flag )

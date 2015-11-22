@@ -93,6 +93,16 @@ struct _SaganConfig
     int		sagan_syslog_priority;
     int		sagan_syslog_options;
 
+    int		shm_counters;
+    int		shm_flowbit;
+    int 	shm_thresh_by_src;
+    int		shm_thresh_by_dst;
+    int		shm_thresh_by_username;
+
+    int		shm_after_by_src;
+    int		shm_after_by_dst;
+    int		shm_after_by_username;
+
 
 #ifdef HAVE_LIBPCAP
     char        plog_interface[50];

@@ -72,6 +72,24 @@ struct _SaganDNSCache
     char src_ip[20];
 };
 
+typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
+struct _Sagan_IPC_Counters
+{
+
+    int  flowbit_count;
+    int	 thresh_count_by_src;
+    int	 thresh_count_by_dst;
+    int	 thresh_count_by_username;
+    int	 after_count_by_src;
+    int	 after_count_by_dst;
+    int	 after_count_by_username;
+
+    //uint64_t after_total;
+    //uint64_t threshold_total;
+
+};
+
+
 typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters
 {
@@ -287,66 +305,67 @@ typedef struct _Sagan_Event
 } _SaganEvent;
 
 /* Thresholding structure by source */
-typedef struct thresh_by_src thresh_by_src;
-struct thresh_by_src
+typedef struct thresh_by_src_ipc thresh_by_src_ipc;
+struct thresh_by_src_ipc
 {
     uint32_t ipsrc;
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
 
+
 /* Thresholding structure by destination */
-typedef struct thresh_by_dst thresh_by_dst;
-struct thresh_by_dst
+typedef struct thresh_by_dst_ipc thresh_by_dst_ipc;
+struct thresh_by_dst_ipc
 {
     uint32_t ipdst;
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
 
+
 /* Thesholding structure by username */
-typedef struct thresh_by_username thresh_by_username;
-struct thresh_by_username
+typedef struct thresh_by_username_ipc thresh_by_username_ipc;
+struct thresh_by_username_ipc
 {
     char username[128];
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
 
-
 /* After structure by source */
-typedef struct after_by_src after_by_src;
-struct after_by_src
+typedef struct after_by_src_ipc after_by_src_ipc;
+struct after_by_src_ipc
 {
     uint32_t ipsrc;
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
 
 /* After structure by destination */
-typedef struct after_by_dst after_by_dst;
-struct after_by_dst
+typedef struct after_by_dst_ipc after_by_dst_ipc;
+struct after_by_dst_ipc
 {
     uint32_t ipdst;
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
 
+
 /* After structure by username */
-typedef struct after_by_username after_by_username;
-struct after_by_username
+typedef struct after_by_username_ipc after_by_username_ipc;
+struct after_by_username_ipc
 {
     char username[128];
     int  count;
     uint64_t utime;
-    char sid[32];
+    char sid[20];
 };
-
 
 typedef struct _SaganVar _SaganVar;
 struct _SaganVar

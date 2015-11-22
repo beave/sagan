@@ -80,7 +80,9 @@ struct _Class_Struct *classstruct;
 struct _Sagan_Processor_Generator *generator;
 struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
-struct _Sagan_Flowbit *flowbit;
+
+struct _Sagan_IPC_Flowbit *flowbit;
+
 struct _Sagan_Ignorelist *SaganIgnorelist;
 
 struct _Sagan_BroIntel_Intel_Addr *Sagan_BroIntel_Intel_Addr;
@@ -145,6 +147,14 @@ void Sig_Handler( _SaganSigArgs *args )
                     fflush(config->sagan_log_stream);               /* Close the sagan.log */
                     fclose(config->sagan_log_stream);
 
+                    close(config->shm_counters);			    /* IPC Shared memory */
+                    close(config->shm_flowbit);
+                    close(config->shm_thresh_by_src);
+                    close(config->shm_thresh_by_dst);
+                    close(config->shm_after_by_src);
+                    close(config->shm_after_by_username);
+
+
                     if ( config->perfmonitor_flag )
                         {
                             Sagan_Perfmonitor_Close();
@@ -183,8 +193,6 @@ void Sig_Handler( _SaganSigArgs *args )
                     memset(rulestruct, 0, sizeof(_Rule_Struct));
                     memset(classstruct, 0, sizeof(_Class_Struct));
                     memset(generator, 0, sizeof(_Sagan_Processor_Generator));
-                    memset(flowbit, 0, sizeof(_Sagan_Flowbit));
-
 
                     /**********************************/
                     /* Disabled and reset processors. */
