@@ -129,10 +129,11 @@ Syslog Priority:%s\n\
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
         }
 
-
-    if (( pid = fork()) == 0 )
+    pid=fork();
+    if ( pid < 0 ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
+    } else if ( pid == 0 )
         {
-
             /* Causes problems with alert.log */
 
             close(0);
