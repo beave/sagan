@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <pthread.h>
 
 #include "version.h"
 #include "sagan.h"
@@ -58,6 +59,17 @@ struct after_by_src_ipc *afterbysrc_ipc;
 struct after_by_dst_ipc *afterbydst_ipc;
 struct after_by_username_ipc *afterbyusername_ipc;
 
+pthread_mutex_t ThreshMutexSrc_IPC;
+pthread_mutex_t ThreshMutexDst_IPC;
+pthread_mutex_t ThreshMutexUsername_IPC;
+
+pthread_mutex_t AfterMutexSrc_IPC;
+pthread_mutex_t AfterMutexDst_IPC;
+pthread_mutex_t AfterMutexUsername_IPC;
+
+pthread_mutex_t FlowbitMutex_IPC;
+
+pthread_mutex_t CountersMutex_IPC;
 
 void Sagan_IPC_Check_Object(char *tmp_object_check, sbool new_counters, char *object_name)
 {
@@ -79,13 +91,15 @@ void Sagan_IPC_Check_Object(char *tmp_object_check, sbool new_counters, char *ob
 void Sagan_IPC_Init(void)
 {
 
+    pthread_mutexattr_t IPC_Attr;
+    pthread_mutexattr_setpshared(&IPC_Attr, PTHREAD_PROCESS_SHARED);
+
     /* If we have a "new" counters shared memory object,  but other "old" data,  we need to remove
      * the "old" data!  The counters need to stay in sync with the other data objects! */
 
     sbool new_counters = 0;
     sbool new_object = 0; 
 
-//    struct stat object_check;
     char tmp_object_check[255];
 
     Sagan_Log(S_NORMAL, "Initializing shared memory objects.");
@@ -112,11 +126,12 @@ void Sagan_IPC_Init(void)
 
     ftruncate(config->shm_counters, sizeof(_Sagan_IPC_Counters));
 
+    pthread_mutex_init(&CountersMutex_IPC, &IPC_Attr);
+
     if (( counters_ipc = mmap(0, sizeof(_Sagan_IPC_Counters) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_counters, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
-
 
     /* Flowbit memory object */
 
@@ -136,6 +151,8 @@ void Sagan_IPC_Init(void)
         }
 
     ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit));
+
+    pthread_mutex_init(&FlowbitMutex_IPC, &IPC_Attr);
 
     if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED )
         {
@@ -168,6 +185,8 @@ void Sagan_IPC_Init(void)
 
     ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc));
 
+    pthread_mutex_init(&ThreshMutexSrc_IPC, &IPC_Attr);
+
     if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
@@ -198,6 +217,8 @@ void Sagan_IPC_Init(void)
         }
 
     ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc));
+
+    pthread_mutex_init(&ThreshMutexSrc_IPC, &IPC_Attr);
 
     if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
         {
@@ -230,6 +251,8 @@ void Sagan_IPC_Init(void)
 
     ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc));
 
+    pthread_mutex_init(&ThreshMutexSrc_IPC, &IPC_Attr);
+
     if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_username object! [%s]", __FILE__, __LINE__, strerror(errno));
@@ -260,6 +283,8 @@ void Sagan_IPC_Init(void)
         }
 
     ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc));
+
+    pthread_mutex_init(&AfterMutexSrc_IPC, &IPC_Attr);
 
     if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
         {
@@ -292,6 +317,8 @@ void Sagan_IPC_Init(void)
 
     ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc));
 
+    pthread_mutex_init(&AfterMutexDst_IPC, &IPC_Attr);
+
     if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
@@ -322,6 +349,8 @@ void Sagan_IPC_Init(void)
         }
 
     ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc));
+
+    pthread_mutex_init(&AfterMutexUsername_IPC, &IPC_Attr);
 
     if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
         {

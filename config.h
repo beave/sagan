@@ -294,7 +294,7 @@
 #define PACKAGE_NAME "sagan"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Sagan 1.0.1"
+#define PACKAGE_STRING "Sagan 1.1.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "sagan"
@@ -303,7 +303,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.0.1"
+#define PACKAGE_VERSION "1.1.0"
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
@@ -352,7 +352,7 @@
 
 
 /* Version number of package */
-#define VERSION "1.0.1"
+#define VERSION "1.1.0"
 
 /* With Bluedot */
 #define WITH_BLUEDOT 1
