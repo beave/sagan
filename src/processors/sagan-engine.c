@@ -75,7 +75,7 @@ struct _Sagan_Flowbits *flowbits;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
-pthread_mutex_t CountersMutex_IPC;
+pthread_mutex_t *CountersMutex_IPC;
 
 pthread_mutex_t AfterMutexSrc_IPC; 
 pthread_mutex_t AfterMutexDst_IPC;
@@ -1071,9 +1071,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 														    
 														    pthread_mutex_unlock(&AfterMutexSrc_IPC);
 
-														    pthread_mutex_lock(&CountersMutex_IPC);
+														    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                     counters_ipc->after_count_by_src++;
-														    pthread_mutex_unlock(&CountersMutex_IPC);
+														    pthread_mutex_unlock(CountersMutex_IPC);
 
                                                                                                                 }
 
@@ -1142,9 +1142,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 															    pthread_mutex_unlock(&AfterMutexDst_IPC);
 															    
-															    pthread_mutex_lock(&CounterMutex);
+															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->after_count_by_dst++;
-															    pthread_mutex_unlock(&CounterMutex);
+															    pthread_mutex_unlock(CountersMutex_IPC);
 
                                                                                                                         }
                                                                                                                 }
@@ -1212,9 +1212,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
 															    pthread_mutex_unlock(&AfterMutexUsername_IPC);
 
-															    pthread_mutex_lock(&CounterMutex);
+															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->after_count_by_username++;
-															    pthread_mutex_unlock(&CounterMutex);
+															    pthread_mutex_unlock(CountersMutex_IPC);
 
 
                                                                                                                         }
@@ -1301,9 +1301,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    pthread_mutex_unlock(&ThreshMutexSrc_IPC);
 
 
-															    pthread_mutex_lock(&CounterMutex);
+															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->thresh_count_by_src++;
-															    pthread_mutex_unlock(&CounterMutex);
+															    pthread_mutex_unlock(CountersMutex_IPC);
 
                                                                                                                         }
                                                                                                                 }
@@ -1371,9 +1371,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
 															    pthread_mutex_unlock(&ThreshMutexDst_IPC);
 
-															    pthread_mutex_lock(&CounterMutex);
+															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->thresh_count_by_dst++;
-															    pthread_mutex_unlock(&CounterMutex);
+															    pthread_mutex_unlock(CountersMutex_IPC);
 
                                                                                                                         }
                                                                                                                 }
@@ -1446,9 +1446,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    pthread_mutex_unlock(&ThreshMutexUsername_IPC);
 
 
-															    pthread_mutex_lock(&CounterMutex);
+															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->thresh_count_by_username++;
-															    pthread_mutex_unlock(&CounterMutex);
+															    pthread_mutex_unlock(CountersMutex_IPC);
 
                                                                                                                         }
 
