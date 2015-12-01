@@ -152,9 +152,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for flowbit (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit));
+    //ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit));
+    ftruncate(config->shm_flowbit, (sizeof(_Sagan_IPC_Flowbit) * 5000)); 
 
-    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED )
+//    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED )
+     if (( flowbit_ipc = mmap(0, (sizeof(_Sagan_IPC_Flowbit) * 5000) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for flowbit object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -186,9 +188,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc));
+//    ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc) );
+    ftruncate(config->shm_thresh_by_src, ( sizeof(thresh_by_src_ipc) * 5000 ));
 
-    if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
+//    if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
+	if (( threshbysrc_ipc = mmap(0, (sizeof(thresh_by_src_ipc) * 5000) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -220,9 +224,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc));
+    //ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc));
+    ftruncate(config->shm_thresh_by_dst, ( sizeof(thresh_by_dst_ipc) * 5000));
 
-    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
+//    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
+	if (( threshbydst_ipc = mmap(0, (sizeof(thresh_by_dst_ipc) * 5000) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_dst object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -254,9 +260,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc));
+    //ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc));
+    ftruncate(config->shm_thresh_by_username, (sizeof(thresh_by_username_ipc) * 5000));
 
-    if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
+//    if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
+	if (( threshbyusername_ipc = mmap(0, (sizeof(thresh_by_username_ipc) * 5000), (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_username object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -288,9 +296,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc));
+    //ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc));
+    ftruncate(config->shm_after_by_src, ( sizeof(after_by_src_ipc) * 5000 ));
 
-    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
+//    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
+	if (( afterbysrc_ipc = mmap(0, (sizeof(after_by_src_ipc) * 5000), (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -322,9 +332,12 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc));
+    //ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc));
+    ftruncate(config->shm_after_by_dst, (sizeof(after_by_dst_ipc) * 5000));
 
-    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
+
+//    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
+	if (( afterbydst_ipc = mmap(0, (sizeof(after_by_dst_ipc) * 5000)  , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
@@ -356,9 +369,11 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc));
+    //ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc));
+    ftruncate(config->shm_after_by_username, ( sizeof(after_by_username_ipc) * 5000));
 
-    if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
+//    if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
+	if (( afterbyusername_ipc = mmap(0, (sizeof(after_by_username_ipc) * 5000) , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
