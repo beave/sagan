@@ -77,13 +77,13 @@ struct _Sagan_IPC_Counters *counters_ipc;
 
 pthread_mutex_t *CountersMutex_IPC;
 
-pthread_mutex_t AfterMutexSrc_IPC; 
-pthread_mutex_t AfterMutexDst_IPC;
-pthread_mutex_t AfterMutexUsername_IPC;
+pthread_mutex_t *AfterMutexSrc_IPC; 
+pthread_mutex_t *AfterMutexDst_IPC;
+pthread_mutex_t *AfterMutexUsername_IPC;
 
-pthread_mutex_t ThreshMutexSrc_IPC;
-pthread_mutex_t ThreshMutexDst_IPC;
-pthread_mutex_t ThreshMutexUsername_IPC;
+pthread_mutex_t *ThreshMutexSrc_IPC;
+pthread_mutex_t *ThreshMutexDst_IPC;
+pthread_mutex_t *ThreshMutexUsername_IPC;
 
 //pthread_mutex_t AfterMutexSrc=PTHREAD_MUTEX_INITIALIZER;
 //pthread_mutex_t AfterMutexDst=PTHREAD_MUTEX_INITIALIZER;
@@ -1018,7 +1018,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                     after_flag=1;
 
-																    pthread_mutex_lock(&AfterMutexSrc_IPC);
+																    pthread_mutex_lock(AfterMutexSrc_IPC);
 
                                                                                                                                     afterbysrc_ipc[i].count++;
                                                                                                                                     after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
@@ -1031,7 +1031,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-																    pthread_mutex_unlock(&AfterMutexSrc_IPC);
+																    pthread_mutex_unlock(AfterMutexSrc_IPC);
 
                                                                                                                                     if ( rulestruct[b].after_count < afterbysrc_ipc[i].count )
                                                                                                                                         {
@@ -1060,7 +1060,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                             if ( after_flag == 0 )
                                                                                                                 {
 
-														    pthread_mutex_lock(&AfterMutexSrc_IPC);
+														    pthread_mutex_lock(AfterMutexSrc_IPC);
 
                                                                                                                     mremap(afterbysrc_ipc, sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src, (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src) + 1, MREMAP_MAYMOVE);
 
@@ -1069,7 +1069,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
                                                                                                                     afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
 														    
-														    pthread_mutex_unlock(&AfterMutexSrc_IPC);
+														    pthread_mutex_unlock(AfterMutexSrc_IPC);
 
 														    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                     counters_ipc->after_count_by_src++;
@@ -1092,7 +1092,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                 {
                                                                                                                                     after_flag=1;
 
-																    pthread_mutex_lock(&AfterMutexDst_IPC);
+																    pthread_mutex_lock(AfterMutexDst_IPC);
 
                                                                                                                                     afterbydst_ipc[i].count++;
                                                                                                                                     after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
@@ -1105,7 +1105,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-															            pthread_mutex_unlock(&AfterMutexDst_IPC);
+															            pthread_mutex_unlock(AfterMutexDst_IPC);
 
                                                                                                                                     if ( rulestruct[b].after_count < afterbydst_ipc[i].count )
                                                                                                                                         {
@@ -1131,7 +1131,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( after_flag == 0 )
                                                                                                                         {
 															    
-															    pthread_mutex_lock(&AfterMutexDst_IPC);
+															    pthread_mutex_lock(AfterMutexDst_IPC);
 
                                                                                                                             mremap(afterbydst_ipc, sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst, (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst) + 1, MREMAP_MAYMOVE);
 
@@ -1140,7 +1140,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
                                                                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
 
-															    pthread_mutex_unlock(&AfterMutexDst_IPC);
+															    pthread_mutex_unlock(AfterMutexDst_IPC);
 															    
 															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->after_count_by_dst++;
@@ -1164,7 +1164,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                 {
                                                                                                                                     after_flag = 1;
 
-																    pthread_mutex_lock(&AfterMutexUsername_IPC); 
+																    pthread_mutex_lock(AfterMutexUsername_IPC); 
 
                                                                                                                                     afterbyusername_ipc[i].count++;
                                                                                                                                     after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
@@ -1177,7 +1177,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             after_log_flag=1;
                                                                                                                                         }
 
-																    pthread_mutex_unlock(&AfterMutexUsername_IPC);
+																    pthread_mutex_unlock(AfterMutexUsername_IPC);
 
                                                                                                                                     if ( rulestruct[b].after_count < afterbyusername_ipc[i].count )
                                                                                                                                         {
@@ -1202,7 +1202,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     if ( after_flag == 0 )
                                                                                                                         {
-															    pthread_mutex_lock(&AfterMutexUsername_IPC);
+															    pthread_mutex_lock(AfterMutexUsername_IPC);
 
                                                                                                                             mremap(afterbyusername_ipc, sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username, (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username) + 1, MREMAP_MAYMOVE);
 
@@ -1210,7 +1210,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
                                                                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
                                                                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
-															    pthread_mutex_unlock(&AfterMutexUsername_IPC);
+															    pthread_mutex_unlock(AfterMutexUsername_IPC);
 
 															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->after_count_by_username++;
@@ -1250,7 +1250,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                     thresh_flag=1;
 
-																    pthread_mutex_lock(&ThreshMutexSrc_IPC);
+																    pthread_mutex_lock(ThreshMutexSrc_IPC);
 
                                                                                                                                     threshbysrc_ipc[i].count++;
                                                                                                                                     thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
@@ -1264,7 +1264,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-																    pthread_mutex_unlock(&ThreshMutexSrc_IPC);
+																    pthread_mutex_unlock(ThreshMutexSrc_IPC);
 
                                                                                                                                     if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count )
                                                                                                                                         {
@@ -1290,7 +1290,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 															    
-															    pthread_mutex_lock(&ThreshMutexSrc_IPC);
+															    pthread_mutex_lock(ThreshMutexSrc_IPC);
 
                                                                                                                             mremap(threshbysrc_ipc, sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src, (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src) + 1, MREMAP_MAYMOVE);
 
@@ -1298,7 +1298,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
                                                                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
                                                                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
-															    pthread_mutex_unlock(&ThreshMutexSrc_IPC);
+															    pthread_mutex_unlock(ThreshMutexSrc_IPC);
 
 
 															    pthread_mutex_lock(CountersMutex_IPC);
@@ -1323,7 +1323,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                     thresh_flag=1;
 
-																    pthread_mutex_lock(&ThreshMutexDst_IPC);
+																    pthread_mutex_lock(ThreshMutexDst_IPC);
 
                                                                                                                                     threshbydst_ipc[i].count++;
                                                                                                                                     thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
@@ -1335,7 +1335,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-																    pthread_mutex_unlock(&ThreshMutexDst_IPC);
+																    pthread_mutex_unlock(ThreshMutexDst_IPC);
 
                                                                                                                                     if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count )
                                                                                                                                         {
@@ -1361,7 +1361,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 															    
-															    pthread_mutex_lock(&ThreshMutexDst_IPC);
+															    pthread_mutex_lock(ThreshMutexDst_IPC);
 
                                                                                                                             mremap(threshbydst_ipc, sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst, (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) + 1, MREMAP_MAYMOVE);
 
@@ -1369,7 +1369,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
-															    pthread_mutex_unlock(&ThreshMutexDst_IPC);
+															    pthread_mutex_unlock(ThreshMutexDst_IPC);
 
 															    pthread_mutex_lock(CountersMutex_IPC);
                                                                                                                             counters_ipc->thresh_count_by_dst++;
@@ -1394,7 +1394,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                     thresh_flag=1;
 
-																    pthread_mutex_lock(&ThreshMutexUsername_IPC); 
+																    pthread_mutex_lock(ThreshMutexUsername_IPC); 
 
                                                                                                                                     threshbyusername_ipc[i].count++;
                                                                                                                                     thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
@@ -1407,7 +1407,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                             thresh_log_flag=0;
                                                                                                                                         }
 
-																    pthread_mutex_unlock(&ThreshMutexUsername_IPC);
+																    pthread_mutex_unlock(ThreshMutexUsername_IPC);
 
                                                                                                                                     if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count )
                                                                                                                                         {
@@ -1435,7 +1435,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     if ( thresh_flag == 0 )
                                                                                                                         {
 															    
-															    pthread_mutex_lock(&ThreshMutexUsername_IPC);
+															    pthread_mutex_lock(ThreshMutexUsername_IPC);
 
                                                                                                                             mremap(threshbyusername_ipc, sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username, (sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username) + 1, MREMAP_MAYMOVE);
 
@@ -1443,7 +1443,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
                                                                                                                             threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
                                                                                                                             threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
-															    pthread_mutex_unlock(&ThreshMutexUsername_IPC);
+															    pthread_mutex_unlock(ThreshMutexUsername_IPC);
 
 
 															    pthread_mutex_lock(CountersMutex_IPC);

@@ -37,7 +37,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "\n--[Sagan version %s | Credits]--------------------------------\n\n", VERSION);
     fprintf(stderr, "Champ Clark III (cclark@quadrantsec.com)\tLead developer.\n");
     fprintf(stderr, "Robert Nunley (rnunley@quadrantsec.com)\t\tRules/Ideas.\n");
-    fprintf(stderr, "Brian Echeverry (becheverry@quadrantsec.com)\tRules.\n");
+    fprintf(stderr, "Brian Echeverry (becheverry@quadrantsec.com)\tRules/testing/bug report.\n");
     fprintf(stderr, "Marcus Ranum\t\t\t\t\tsagan-plog.c code.\n");
     fprintf(stderr, "\"DrForbin\"\t\t\t\t\tPatches/testing/bug fixes.\n");
     fprintf(stderr, "Rainer Gerhards\t\t\t\t\tRsyslog/Liblognorm author.\n");
@@ -70,8 +70,9 @@ void Sagan_Credits(void)
     fprintf(stderr, "DonPiekarz (Github)\t\t\t\tBug reports & fixes.\n");
     fprintf(stderr, "rtkkdeng (Github)\t\t\t\tRules fixes.\n");
     fprintf(stderr, "Adam Hall (ahall@quadrantsec.com)\t\tAetas & other bug fixes.\n");
-    fprintf(stderr, "Brian Echeverry (<becheverry@quadrantsec.com)\tRules/bug reports/testing.\n");
     fprintf(stderr, "Bruno Coudoin (Github:bdoin)\t\t\tBug fixes.\n");
+    fprintf(stderr, "Nuno Fernandes (Github)\t\t\t\tBug fixes & rule corrections.\n");
+
 
     fprintf(stderr, "\n");
 
