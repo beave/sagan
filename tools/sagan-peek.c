@@ -168,15 +168,14 @@ int main(int argc, char **argv)
 
             printf("\n                      ***  Threshold by source ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("SRC IP\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "SRC IP", "Counter","Date added/modified", "SID" ); 
             printf("-----------------------------------------------------------------------------\n");
-
 
             for ( i = 0; i < counters_ipc->thresh_count_by_src; i++)
                 {
 
                     ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
-                    printf("%s\t| %d\t\t| %s\t| %s\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid);
+		      printf("%-16s| %-15d| %-23s| %s\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid);
 
                 }
         }
@@ -209,13 +208,13 @@ int main(int argc, char **argv)
 
             printf("\n                    ***  Threshold by destination ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("SRC IP\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "DST IP", " Counter"," Date added/modified", " SID" );
             printf("-----------------------------------------------------------------------------\n");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
                 {
                     ip_addr_src.s_addr = htonl(threshbydst_ipc[i].ipdst);
-                    printf("%s\t| %d\t\t| %s\t| %s\n", inet_ntoa(ip_addr_src), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid);
+	    	    printf("%-16s| %-15d| %-23s| %s\n", inet_ntoa(ip_addr_src), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid);
                 }
 
         }
@@ -248,13 +247,13 @@ int main(int argc, char **argv)
 
             printf("\n                      ***  Threshold by username ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("Username\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "Username", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
 
 
             for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
                 {
-                    printf("%s\t| %d\t\t| %s\t| %s\n", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid);
+	    	      printf("%-16s| %-15d| %-23s| %s\n", inet_ntoa(ip_addr_src), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid);
                 }
         }
 
@@ -284,13 +283,13 @@ int main(int argc, char **argv)
 
             printf("\n                        ***  After by source ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("SRC IP\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "SRC IP", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
 
             for ( i = 0; i < counters_ipc->after_count_by_src; i++)
                 {
                     ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-                    printf("%s\t| %d\t\t| %s\t| %s\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid);
+		    printf("%-16s| %-15d| %-23s| %s\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid);
                 }
         }
 
@@ -321,13 +320,13 @@ int main(int argc, char **argv)
 
             printf("\n                     ***  After by destination ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("DST IP\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "DST IP", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
 
             for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
                 {
                     ip_addr_src.s_addr = htonl(afterbydst_ipc[i].ipdst);
-                    printf("%s\t| %d\t\t| %s\t| %s\n", inet_ntoa(ip_addr_src), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid);
+	    	    printf("%-16s| %-15d| %-23s| %s\n", inet_ntoa(ip_addr_src), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid);
                 }
         }
 
@@ -358,13 +357,13 @@ int main(int argc, char **argv)
 
             printf("\n                        ***  After by username ***\n");
             printf("-----------------------------------------------------------------------------\n");
-            printf("Username\t\t| Count\t\t| Date added/modified\t| Signature ID\n");
+	    printf("%-16s| %-15s| %-23s| %s\n", "Username", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
 
 
             for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                 {
-                    printf("%s\t| %d\t\t| %s\t| %s\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid);
+		      printf("%-16s| %-15d| %-23s| %s\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid);
                 }
         }
 
@@ -393,8 +392,11 @@ int main(int argc, char **argv)
     if ( counters_ipc->flowbit_count >= 1 )
         {
 
-            printf("\nFlowbits.\n");
-            printf("-----------------------------------------------------------------------------\n");
+            printf("\n                          *** Flowbits ****\n");
+            printf("--------------------------------------------------------------------------------------\n");
+	    printf("%-2s| %-25s| %-16s| %-16s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified"); 
+	    printf("--------------------------------------------------------------------------------------\n");
+
 
 
             for ( i = 0; i < counters_ipc->flowbit_count; i++)
@@ -405,7 +407,8 @@ int main(int argc, char **argv)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            printf("%s [%d] | Src: %s | Dst: %s | %s\n", flowbit_ipc[i].flowbit_name, flowbit_ipc[i].flowbit_state, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire));
+            //                printf("%s [%d] | Src: %s | Dst: %s | %s\n", flowbit_ipc[i].flowbit_name, flowbit_ipc[i].flowbit_state, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire));
+	    		      printf("%-2d| %-25s| %-16s| %-16s| %s\n", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire));
                         }
 
 
