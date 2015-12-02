@@ -1043,7 +1043,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
 														    pthread_mutex_lock(AfterMutexSrc_IPC);
 
-                                                                                                                    //mremap(afterbysrc_ipc, sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src, (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src) + 1, MREMAP_MAYMOVE);
+						    								    ftruncate(config->shm_after_by_src, ( sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src + 1) );
+
+                                                                                                                    mremap(afterbysrc_ipc, sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src, (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src + 1), MREMAP_MAYMOVE);
 
                                                                                                                     afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
                                                                                                                     strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
@@ -1114,7 +1116,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    
 															    pthread_mutex_lock(AfterMutexDst_IPC);
 
-                                                                                                                            //mremap(afterbydst_ipc, sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst, (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst) + 1, MREMAP_MAYMOVE);
+															    ftruncate(config->shm_after_by_dst, ( sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst + 1) );
+
+                                                                                                                            mremap(afterbydst_ipc, sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst, (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst + 1), MREMAP_MAYMOVE);
 
                                                                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
                                                                                                                             strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
@@ -1185,7 +1189,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                         {
 															    pthread_mutex_lock(AfterMutexUsername_IPC);
 
-                                                                                                                            //mremap(afterbyusername_ipc, sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username, (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username) + 1, MREMAP_MAYMOVE);
+															    ftruncate(config->shm_after_by_username, ( sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username + 1) );															   
+                                                                                                                            mremap(afterbyusername_ipc, sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username, (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username + 1), MREMAP_MAYMOVE);
 
                                                                                                                             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
                                                                                                                             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
@@ -1273,7 +1278,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    
 															    pthread_mutex_lock(ThreshMutexSrc_IPC);
 
-                                                                                                                            //mremap(threshbysrc_ipc, sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src, (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src) + 1, MREMAP_MAYMOVE);
+														            ftruncate(config->shm_thresh_by_src, ( sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src + 1) );
+                                                                                                                            mremap(threshbysrc_ipc, sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src, (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src + 1), MREMAP_MAYMOVE);
 
                                                                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
                                                                                                                             strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
@@ -1344,7 +1350,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    
 															    pthread_mutex_lock(ThreshMutexDst_IPC);
 
-                                                                                                                            //mremap(threshbydst_ipc, sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst, (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) + 1, MREMAP_MAYMOVE);
+															    ftruncate(config->shm_thresh_by_dst, ( sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst + 1) );															    
+                                                                                                                            mremap(threshbydst_ipc, sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst, (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst + 1), MREMAP_MAYMOVE);
 
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
                                                                                                                             strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
@@ -1418,7 +1425,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 															    
 															    pthread_mutex_lock(ThreshMutexUsername_IPC);
 
-                                                                                                                            //mremap(threshbyusername_ipc, sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username, (sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username) + 1, MREMAP_MAYMOVE);
+															    ftruncate(config->shm_thresh_by_username, ( sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username + 1) ); 
+                                                                                                                            mremap(threshbyusername_ipc, sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username, (sizeof(thresh_by_username_ipc) * counters_ipc->thresh_count_by_username + 1), MREMAP_MAYMOVE);
 
                                                                                                                             strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
                                                                                                                             strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
