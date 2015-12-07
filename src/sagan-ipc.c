@@ -372,4 +372,6 @@ void Sagan_IPC_Init(void)
 	Sagan_Log(S_NORMAL, "- After_by_username shared object reloaded (%d usernames loaded).", counters_ipc->after_count_by_username);
 	}
 
+//pthread_mutexattr_destroy(&Counters_IPC_Attr);
+
 }
