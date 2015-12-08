@@ -129,16 +129,17 @@
 
 /* Locations of IPC/Share memory "files" */
 
-#define SHM_LOCATION "/dev/shm"
+//#define SHM_LOCATION "/dev/shm"
+#define SHM_LOCATION "/var/run/sagan"
 
-#define COUNTERS_IPC_FILE "/sagan-counters.shared"
-#define FLOWBIT_IPC_FILE "/sagan-flowbits.shared"
+#define COUNTERS_IPC_FILE "sagan-counters.shared"
+#define FLOWBIT_IPC_FILE "sagan-flowbits.shared"
 
-#define THRESH_BY_SRC_IPC_FILE "/sagan-thresh-by-source.shared"
-#define THRESH_BY_DST_IPC_FILE "/sagan-thresh-by-destination.shared"
-#define THRESH_BY_USERNAME_IPC_FILE "/sagan-thresh-by-username.shared"
+#define THRESH_BY_SRC_IPC_FILE "sagan-thresh-by-source.shared"
+#define THRESH_BY_DST_IPC_FILE "sagan-thresh-by-destination.shared"
+#define THRESH_BY_USERNAME_IPC_FILE "sagan-thresh-by-username.shared"
 
-#define AFTER_BY_SRC_IPC_FILE "/sagan-after-by-source.shared"
-#define AFTER_BY_DST_IPC_FILE "/sagan-after-by-destination.shared"
-#define AFTER_BY_USERNAME_IPC_FILE "/sagan-after-by-username.shared"
+#define AFTER_BY_SRC_IPC_FILE "sagan-after-by-source.shared"
+#define AFTER_BY_DST_IPC_FILE "sagan-after-by-destination.shared"
+#define AFTER_BY_USERNAME_IPC_FILE "sagan-after-by-username.shared"
 

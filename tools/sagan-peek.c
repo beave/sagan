@@ -43,21 +43,21 @@
 #include "../src/sagan-flowbit.h"
 
 /****************************************************************************
- * object_check - Verifies a memory object exists before doing an shm_open.
+ * object_check - Verifies a memory object exists before doing an open.
  * This way,  we don't mistakingly "create" the object!
  ****************************************************************************/
 
 void object_check( char *object )
 {
 
-    char tmp_object_check[255];
+    //char tmp_object_check[255];
     struct stat object_check;
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, COUNTERS_IPC_FILE);
+    //snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, COUNTERS_IPC_FILE);
 
-    if ( ( stat(tmp_object_check, &object_check) == -1 ))
+    if ( ( stat(object, &object_check) == -1 ))
         {
-            fprintf(stderr, "Error.  The Sagan IPC object file '%s' was not found!\n", tmp_object_check);
+            fprintf(stderr, "Error.  The Sagan IPC object file '%s' was not found!\n", object);
             exit(1);
         }
 }
@@ -124,12 +124,12 @@ int main(int argc, char **argv)
     /* Load the "counters" first.  The "counters" keep track of the number of elements on the
      * other arrays */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, COUNTERS_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, COUNTERS_IPC_FILE);
     object_check(tmp_object_check);
 
-    if (( shm_counters = shm_open(COUNTERS_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) == -1 )
+    if (( shm_counters = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) == -1 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() for counters (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() for counters (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -143,12 +143,12 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by source" data ****/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_SRC_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(THRESH_BY_SRC_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() for thresh_by_src (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() for thresh_by_src (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -182,12 +182,12 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by destination" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_DST_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(THRESH_BY_DST_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -221,12 +221,12 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by username" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_USERNAME_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(THRESH_BY_USERNAME_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -259,12 +259,12 @@ int main(int argc, char **argv)
 
     /*** Get "after by source" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_SRC_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(AFTER_BY_SRC_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -296,12 +296,12 @@ int main(int argc, char **argv)
 
     /*** Get "After by destination" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_DST_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(AFTER_BY_DST_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -332,12 +332,12 @@ int main(int argc, char **argv)
 
     /*** Get "after by username" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_USERNAME_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(AFTER_BY_USERNAME_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 
@@ -369,12 +369,12 @@ int main(int argc, char **argv)
 
     /*** Get "flowbit" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, FLOWBIT_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, FLOWBIT_IPC_FILE);
     object_check(tmp_object_check);
 
-    if ((shm = shm_open(FLOWBIT_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    if ((shm = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            fprintf(stderr, "[%s, line %d] Cannot shm_open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
         }
 

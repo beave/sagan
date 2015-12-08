@@ -106,16 +106,18 @@ void Sagan_IPC_Init(void)
 
     /* Init counters first.  Need to track all other share memory objects */
 
-    if ((config->shm_counters = shm_open(COUNTERS_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, COUNTERS_IPC_FILE);
+
+    if ((config->shm_counters = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ Counters shared object (new).");
             new_counters = 1;
 
         }
 
-    else if ((config->shm_counters = shm_open(COUNTERS_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_counters = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for counters (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for counters. [%s]", __FILE__, __LINE__, strerror(errno)); // strerror(errno));
         }
     else
         {
@@ -137,19 +139,19 @@ void Sagan_IPC_Init(void)
 
     /* Flowbit memory object */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, FLOWBIT_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, FLOWBIT_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "flowbit");
 
-    if ((config->shm_flowbit = shm_open(FLOWBIT_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_flowbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ Flowbit shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_flowbit = shm_open(FLOWBIT_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_flowbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for flowbit (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for flowbit (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit));
@@ -171,19 +173,19 @@ void Sagan_IPC_Init(void)
 
     /* Threshold by source */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_SRC_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "thresh_by_src");
 
-    if ((config->shm_thresh_by_src = shm_open(THRESH_BY_SRC_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_thresh_by_src = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ Thresh_by_src shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_thresh_by_src = shm_open(THRESH_BY_SRC_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_thresh_by_src = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_src (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc) );
@@ -205,19 +207,19 @@ void Sagan_IPC_Init(void)
 
     /* Threshold by destination */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_DST_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "thresh_by_dst");
 
-    if ((config->shm_thresh_by_dst = shm_open(THRESH_BY_DST_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_thresh_by_dst = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ Thresh_by_dst shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_thresh_by_dst = shm_open(THRESH_BY_DST_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_thresh_by_dst = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc));
@@ -239,19 +241,19 @@ void Sagan_IPC_Init(void)
 
     /* Threshold by username */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, THRESH_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, THRESH_BY_USERNAME_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "thresh_by_username");
 
-    if ((config->shm_thresh_by_username = shm_open(THRESH_BY_USERNAME_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_thresh_by_username = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ Thresh_by_username shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_thresh_by_username = shm_open(THRESH_BY_USERNAME_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_thresh_by_username = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for thresh_by_username (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc));
@@ -273,19 +275,19 @@ void Sagan_IPC_Init(void)
 
     /* After by source */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_SRC_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "after_by_src");
 
-    if ((config->shm_after_by_src = shm_open(AFTER_BY_SRC_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_after_by_src = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ After_by_src shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_after_by_src = shm_open(AFTER_BY_SRC_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_after_by_src = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_src (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc));
@@ -307,19 +309,19 @@ void Sagan_IPC_Init(void)
 
     /* After by destination */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_DST_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "after_by_dst");
 
-    if ((config->shm_after_by_dst = shm_open(AFTER_BY_DST_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_after_by_dst = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ After_by_dst shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_after_by_dst = shm_open(AFTER_BY_DST_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_after_by_dst = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc));
@@ -342,19 +344,19 @@ void Sagan_IPC_Init(void)
 
     /* After by username */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s%s", SHM_LOCATION, AFTER_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", SHM_LOCATION, AFTER_BY_USERNAME_IPC_FILE);
 
     Sagan_IPC_Check_Object(tmp_object_check, new_counters, "after_by_username");
 
-    if ((config->shm_after_by_username = shm_open(AFTER_BY_USERNAME_IPC_FILE, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+    if ((config->shm_after_by_username = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
             Sagan_Log(S_NORMAL, "+ After_by_username shared object (new).");
 	    new_object=1;
         }
 
-    else if ((config->shm_after_by_username = shm_open(AFTER_BY_USERNAME_IPC_FILE, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+    else if ((config->shm_after_by_username = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot shm_open() for after_by_username (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc));
