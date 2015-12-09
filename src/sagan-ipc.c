@@ -34,6 +34,8 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 #include <inttypes.h>
+#include <unistd.h>
+#include <string.h>
 
 #include "version.h"
 #include "sagan.h"
@@ -130,7 +132,10 @@ void Sagan_IPC_Init(void)
         }
 
 
-    ftruncate(config->shm_counters, sizeof(_Sagan_IPC_Counters));
+    if ( ftruncate(config->shm_counters, sizeof(_Sagan_IPC_Counters)) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate counters. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( counters_ipc = mmap(0, sizeof(_Sagan_IPC_Counters), (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_counters, 0)) == MAP_FAILED )
         {
@@ -154,7 +159,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for flowbit (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit) * TEMP_MAX);
+    if ( ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate flowbit. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED )
         {
@@ -210,7 +218,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc) * TEMP_MAX );
+    if ( ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc) * TEMP_MAX ) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) * TEMP_MAX , (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
         {
@@ -259,7 +270,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc) * TEMP_MAX);
+    if ( ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
         {
@@ -309,7 +323,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc) * TEMP_MAX);
+    if ( ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
         {
@@ -354,7 +371,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_src (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc) * TEMP_MAX);
+    if ( ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
         {
@@ -403,7 +423,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_dst (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc) * TEMP_MAX);
+    if ( ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
         {
@@ -451,7 +474,10 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_username (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
-    ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc) * TEMP_MAX);
+    if ( ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc) * TEMP_MAX) != 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
 
     if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) * TEMP_MAX, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
         {

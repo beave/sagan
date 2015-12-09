@@ -665,11 +665,11 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 }
 
 
-/*****************************************************************************/
-/* Sagan_WriteExtraData - Writes any "extra data" that might be useful for   */
-/* for analysis.  For example,  we always write the syslog source IP as the  */
-/* XFF or "original IP" address.
-/*****************************************************************************/
+/*****************************************************************************
+ * Sagan_WriteExtraData - Writes any "extra data" that might be useful for   
+ * for analysis.  For example,  we always write the syslog source IP as the  
+ * XFF or "original IP" address.
+ *****************************************************************************/
 
 void Sagan_WriteExtraData( _SaganEvent *Event, int type )
 {
@@ -687,8 +687,6 @@ void Sagan_WriteExtraData( _SaganEvent *Event, int type )
 
     uint32_t len;
     uint32_t write_len;
-
-    int i;
 
     switch(type)
         {

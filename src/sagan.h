@@ -404,6 +404,8 @@ sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
 char *Sagan_u32_Time_To_Human ( uint64_t );
+sbool Sagan_File_Lock ( int );
+sbool Sagan_File_Unlock ( int );
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );

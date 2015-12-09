@@ -65,6 +65,7 @@
 #include "sagan-signal.h"
 #include "sagan-usage.h"
 #include "sagan-stats.h"
+#include "sagan-ipc.h"
 #include "parsers/parsers.h"
 
 #ifdef HAVE_LIBPCAP
