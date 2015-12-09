@@ -939,7 +939,7 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 #endif
 
 /****************************************************************************
- * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human 
+ * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
  * "readable" format.
  ****************************************************************************/
 
@@ -962,35 +962,44 @@ char *Sagan_u32_Time_To_Human ( uint64_t utime )
     return(return_time);
 }
 
+/****************************************************************************
+ * Sagan_File_Lock - Takes in a file descriptor and "locks" the file.  Used
+ * with IPC/memory mapped files.
+ ****************************************************************************/
+
 sbool Sagan_File_Lock ( int fd )
 {
 
-struct flock fl = {F_WRLCK, SEEK_SET,   0,      0,     0 };
-fl.l_pid = getpid();
+    struct flock fl = {F_WRLCK, SEEK_SET,   0,      0,     0 };
+    fl.l_pid = getpid();
 
-if (fcntl(fd, F_SETLKW, &fl) == -1) 
-	{
-	perror("fcntl");
-	exit(1);
-	}
+    if (fcntl(fd, F_SETLKW, &fl) == -1)
+        {
+            perror("fcntl");
+            exit(1);
+        }
 
-return(0);
+    return(0);
 }
 
+/****************************************************************************
+ * Sagan_File_Unlock - Takes in a file descriptor and "unlocks" the file.
+ * Used with IPC/memory mapped files.
+ ****************************************************************************/
 
 sbool Sagan_File_Unlock( int fd )
 {
 
-struct flock fl = {F_UNLCK, SEEK_SET,   0,      0,     0 };
-fl.l_pid = getpid();
+    struct flock fl = {F_UNLCK, SEEK_SET,   0,      0,     0 };
+    fl.l_pid = getpid();
 
-if (fcntl(fd, F_SETLK, &fl) == -1) 
-	{
-	perror("fcntl");
-	exit(1);
-	}
+    if (fcntl(fd, F_SETLK, &fl) == -1)
+        {
+            perror("fcntl");
+            exit(1);
+        }
 
-return(0);
+    return(0);
 }
 
 

@@ -368,12 +368,12 @@ int main(int argc, char **argv)
                             debug->debugbrointel=1;
                             debugflag=1;
                         }
-		    
-		    if (Sagan_strstr(optarg, "ipc"))
-		    	{
-			    debug->debugipc=1;
-			    debugflag=1;
-			}
+
+                    if (Sagan_strstr(optarg, "ipc"))
+                        {
+                            debug->debugipc=1;
+                            debugflag=1;
+                        }
 
 #ifdef HAVE_LIBMAXMINDDB
 
