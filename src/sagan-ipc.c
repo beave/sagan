@@ -64,6 +64,7 @@ struct after_by_username_ipc *afterbyusername_ipc;
 
 struct _SaganDebug *debug;
 
+/*
 pthread_mutex_t *ThreshMutexSrc_IPC;
 pthread_mutex_t *ThreshMutexDst_IPC;
 pthread_mutex_t *ThreshMutexUsername_IPC;
@@ -74,6 +75,7 @@ pthread_mutex_t *AfterMutexUsername_IPC;
 
 pthread_mutex_t *FlowbitMutex_IPC;
 pthread_mutex_t *CountersMutex_IPC;
+*/
 
 void Sagan_IPC_Check_Object(char *tmp_object_check, sbool new_counters, char *object_name)
 {
@@ -143,9 +145,9 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    CountersMutex_IPC = (pthread_mutex_t *)(counters_ipc + sizeof(pthread_mutex_t));
+//    CountersMutex_IPC = (pthread_mutex_t *)(counters_ipc + sizeof(pthread_mutex_t));
 //    pthread_mutexattr_setpshared(&IPC_Attr, PTHREAD_PROCESS_SHARED);
-    pthread_mutex_init(CountersMutex_IPC, &IPC_Attr);
+//    pthread_mutex_init(CountersMutex_IPC, &IPC_Attr);
 //    pthread_mutexattr_destroy(&Counters_IPC_Attr);
 
     /* Flowbit memory object */
@@ -172,8 +174,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for flowbit object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    FlowbitMutex_IPC = (pthread_mutex_t *)(flowbit_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(FlowbitMutex_IPC, &IPC_Attr);
+//    FlowbitMutex_IPC = (pthread_mutex_t *)(flowbit_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(FlowbitMutex_IPC, &IPC_Attr);
 
     if ( new_object == 0) 
     	{
@@ -231,8 +233,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    ThreshMutexSrc_IPC = (pthread_mutex_t *)(threshbysrc_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(ThreshMutexSrc_IPC, &IPC_Attr);
+//    ThreshMutexSrc_IPC = (pthread_mutex_t *)(threshbysrc_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(ThreshMutexSrc_IPC, &IPC_Attr);
 
     if ( new_object == 0)
         {
@@ -283,8 +285,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_dst object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    ThreshMutexDst_IPC = (pthread_mutex_t *)(threshbydst_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(ThreshMutexDst_IPC, &IPC_Attr);
+//    ThreshMutexDst_IPC = (pthread_mutex_t *)(threshbydst_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(ThreshMutexDst_IPC, &IPC_Attr);
 
     if ( new_object == 0)
         {
@@ -336,8 +338,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_username object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    ThreshMutexUsername_IPC = (pthread_mutex_t *)(threshbyusername_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(ThreshMutexUsername_IPC, &IPC_Attr);
+//    ThreshMutexUsername_IPC = (pthread_mutex_t *)(threshbyusername_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(ThreshMutexUsername_IPC, &IPC_Attr);
 
     if ( new_object == 0 )
         {
@@ -384,8 +386,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    AfterMutexSrc_IPC = (pthread_mutex_t *)(afterbysrc_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(AfterMutexSrc_IPC, &IPC_Attr);
+//    AfterMutexSrc_IPC = (pthread_mutex_t *)(afterbysrc_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(AfterMutexSrc_IPC, &IPC_Attr);
 
     if ( new_object == 0 )
         {
@@ -436,8 +438,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    AfterMutexDst_IPC = (pthread_mutex_t *)(afterbydst_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(AfterMutexDst_IPC, &IPC_Attr);
+//    AfterMutexDst_IPC = (pthread_mutex_t *)(afterbydst_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(AfterMutexDst_IPC, &IPC_Attr);
 
     if ( new_object == 0 )
         {
@@ -487,8 +489,8 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    AfterMutexUsername_IPC = (pthread_mutex_t *)(afterbydst_ipc + sizeof(pthread_mutex_t));
-    pthread_mutex_init(AfterMutexUsername_IPC, &IPC_Attr);
+//    AfterMutexUsername_IPC = (pthread_mutex_t *)(afterbydst_ipc + sizeof(pthread_mutex_t));
+//    pthread_mutex_init(AfterMutexUsername_IPC, &IPC_Attr);
 
     if ( new_object == 0 )
         {

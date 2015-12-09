@@ -961,3 +961,36 @@ char *Sagan_u32_Time_To_Human ( uint64_t utime )
 
     return(return_time);
 }
+
+sbool Sagan_File_Lock ( int fd )
+{
+
+struct flock fl = {F_WRLCK, SEEK_SET,   0,      0,     0 };
+fl.l_pid = getpid();
+
+if (fcntl(fd, F_SETLKW, &fl) == -1) 
+	{
+	perror("fcntl");
+	exit(1);
+	}
+
+return(0);
+}
+
+
+sbool Sagan_File_Unlock( int fd )
+{
+
+struct flock fl = {F_UNLCK, SEEK_SET,   0,      0,     0 };
+fl.l_pid = getpid();
+
+if (fcntl(fd, F_SETLK, &fl) == -1) 
+	{
+	perror("fcntl");
+	exit(1);
+	}
+
+return(0);
+}
+
+
