@@ -219,6 +219,7 @@ struct _SaganDebug
     sbool debugbrointel;
     sbool debugmalformed;
     sbool debuglimits;
+    sbool debugipc;
 
 #ifdef HAVE_LIBMAXMINDDB
     sbool debuggeoip2;
@@ -402,6 +403,7 @@ int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
+char *Sagan_u32_Time_To_Human ( uint64_t );
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );

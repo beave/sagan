@@ -937,3 +937,27 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 }
 
 #endif
+
+/****************************************************************************
+ * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human 
+ * "readable" format.
+ ****************************************************************************/
+
+char *Sagan_u32_Time_To_Human ( uint64_t utime )
+{
+    struct tm tm;
+    static char time_buf[80];
+    char tmp[80];
+
+    char *return_time = NULL;
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%b %d %H:%M %Y", &tm);
+
+    return_time = (char*)&time_buf;
+
+    return(return_time);
+}
