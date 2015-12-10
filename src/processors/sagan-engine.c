@@ -85,7 +85,6 @@ struct after_by_src_ipc *afterbysrc_ipc;
 struct after_by_dst_ipc *afterbydst_ipc;
 struct after_by_username_ipc *afterbyusername_ipc;
 
-
 void Sagan_Engine_Init ( void )
 {
 
@@ -1038,9 +1037,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                     Sagan_File_Unlock(config->shm_after_by_src);
 
-                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                    counters_ipc->after_count_by_src++;
-                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                    if ( config->max_after_by_src < counters_ipc->after_count_by_src )
+                                                                                                                        {
+                                                                                                                            Sagan_Log(S_WARN, "[%s, line %d] Max 'after_by_src' of %d has been reached! Consider increasing 'after_by_src'!", __FILE__, __LINE__, counters_ipc->after_count_by_src );
+
+                                                                                                                        }
+                                                                                                                    else
+                                                                                                                        {
+
+                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                            counters_ipc->after_count_by_src++;
+                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                        }
 
                                                                                                                 }
 
@@ -1107,9 +1116,18 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                             Sagan_File_Unlock(config->shm_after_by_dst);
 
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->after_count_by_dst++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                                                                            if ( config->max_after_by_dst < counters_ipc->after_count_by_dst )
+                                                                                                                                {
+                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'after_by_dst' of %d has been reached! Consider increasing 'after_by_dst'!", __FILE__, __LINE__, config->max_after_by_dst);
+
+                                                                                                                                }
+                                                                                                                            else
+                                                                                                                                {
+
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->after_count_by_dst++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                }
 
                                                                                                                         }
                                                                                                                 }
@@ -1176,9 +1194,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                             Sagan_File_Unlock(config->shm_after_by_username);
 
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->after_count_by_username++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                                                                            if ( config->max_after_by_username < counters_ipc->after_count_by_username )
+                                                                                                                                {
+                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'after_by_username' of %d has been reached! Consider increasing 'after_by_username'!", __FILE__, __LINE__, config->max_after_by_username );
+
+                                                                                                                                }
+                                                                                                                            else
+                                                                                                                                {
+
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->after_count_by_username++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                }
 
                                                                                                                         }
                                                                                                                 }
@@ -1262,9 +1290,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_src);
 
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->thresh_count_by_src++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                                                                            if ( config->max_threshold_by_src < counters_ipc->thresh_count_by_src )
+                                                                                                                                {
+                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'thresh_by_src' of %d has been reached! Consider increasing 'thresh_by_src'!", __FILE__, __LINE__, config->max_threshold_by_src );
+
+                                                                                                                                }
+                                                                                                                            else
+                                                                                                                                {
+
+
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->thresh_count_by_src++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                }
 
                                                                                                                         }
                                                                                                                 }
@@ -1328,11 +1366,20 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_dst);
-//
 
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->thresh_count_by_dst++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                                                                            if ( config->max_threshold_by_dst < counters_ipc->thresh_count_by_dst )
+                                                                                                                                {
+                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_dst' of %d has been reached! Consider increasing 'threshold_by_dst'!", __FILE__, __LINE__, config->max_threshold_by_dst );
+
+                                                                                                                                }
+                                                                                                                            else
+                                                                                                                                {
+
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->thresh_count_by_dst++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                }
 
                                                                                                                         }
                                                                                                                 }
@@ -1403,9 +1450,19 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_username);
 
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->thresh_count_by_username++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                                                                            if ( config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
+                                                                                                                                {
+                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_username' of %d has been reached! Consider increasing 'threshold_by_username'!", __FILE__, __LINE__, config->max_threshold_by_username );
+
+                                                                                                                                }
+                                                                                                                            else
+                                                                                                                                {
+
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->thresh_count_by_username++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                }
 
                                                                                                                         }
 

@@ -130,9 +130,11 @@ Syslog Priority:%s\n\
         }
 
     pid=fork();
-    if ( pid < 0 ) {
+    if ( pid < 0 )
+        {
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
-    } else if ( pid == 0 )
+        }
+    else if ( pid == 0 )
         {
             /* Causes problems with alert.log */
 

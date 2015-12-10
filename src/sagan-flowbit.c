@@ -659,8 +659,6 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
             for (i = 0; i < flowbit_track_count; i++)
                 {
 
-//                    mremap(flowbit_ipc, sizeof(_Sagan_IPC_Flowbit) * counters_ipc->flowbit_count, (sizeof(_Sagan_IPC_Flowbit) * counters_ipc->flowbit_count) + 1, MREMAP_MAYMOVE);
-
                     Sagan_File_Lock(config->shm_flowbit);
 
                     flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
@@ -677,9 +675,20 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created flowbit \"%s\" via \"set\" [%s -> %s],", __FILE__, __LINE__, counters_ipc->flowbit_count, flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, ip_src_char, ip_dst_char);
                         }
 
-                    Sagan_File_Lock(config->shm_counters);
-                    counters_ipc->flowbit_count++;
-                    Sagan_File_Unlock(config->shm_counters);
+                    if ( config->max_flowbits < counters_ipc->flowbit_count )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Max 'flowbits' of %d has been reached! Consider increasing 'flowbits'!", __FILE__, __LINE__, config->max_flowbits);
+
+                        }
+                    else
+                        {
+
+                            Sagan_File_Lock(config->shm_counters);
+                            counters_ipc->flowbit_count++;
+                            Sagan_File_Unlock(config->shm_counters);
+                        }
+
+
                 }
 
         }

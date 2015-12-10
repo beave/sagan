@@ -535,7 +535,6 @@ int main(int argc, char **argv)
 
     Sagan_IPC_Init();
 
-
     if ( config->perfmonitor_flag )
         {
 
@@ -674,6 +673,7 @@ int main(int argc, char **argv)
 
 #endif
 
+
     /***************************************************************************
      * Non-Processor/Output option
      ***************************************************************************/
@@ -715,6 +715,7 @@ int main(int argc, char **argv)
                     exit(0);
                 }
         }
+
 
     /* Create the signal handlers thread _after_ the fork() so it can properly
      * handly signals - Champ Clark III - 06/13/2011 */

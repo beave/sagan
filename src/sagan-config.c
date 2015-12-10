@@ -129,9 +129,20 @@ void Load_Config( void )
     strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
     strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
     strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
+    strlcpy(config->ipc_directory, IPC_DIRECTORY, sizeof(config->ipc_directory));
 
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
+
+    config->max_flowbits = DEFAULT_IPC_SIZE;
+
+    config->max_threshold_by_src = DEFAULT_IPC_SIZE;
+    config->max_threshold_by_dst = DEFAULT_IPC_SIZE;
+    config->max_threshold_by_username = DEFAULT_IPC_SIZE;
+
+    config->max_after_by_src = DEFAULT_IPC_SIZE;
+    config->max_after_by_dst = DEFAULT_IPC_SIZE;
+    config->max_after_by_username = DEFAULT_IPC_SIZE;
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;
@@ -236,6 +247,111 @@ void Load_Config( void )
                         }
 
                     config->sagan_port = atoi(sagan_var1);
+                }
+
+            /* IPC configurations! */
+
+            if (!strcmp(sagan_option, "ipc_directory"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"ipc_directory\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    strlcpy(config->ipc_directory, sagan_var1, sizeof(config->ipc_directory));
+                }
+
+
+            if (!strcmp(sagan_option, "flowbits"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"flowbits\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_flowbits = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "threshold_by_src"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"threshold_by_src\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_threshold_by_src = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "threshold_by_dst"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"threshold_by_dst\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_threshold_by_dst = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "threshold_by_username"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"threshold_by_username\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_threshold_by_username = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "after_by_username"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"after_by_username\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_after_by_username = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "after_by_src"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"after_by_src\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_after_by_src = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "after_by_dst"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"after_by_dst\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_after_by_dst = atoi(sagan_var1);
                 }
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)

@@ -159,7 +159,7 @@ typedef enum _EventDataType
 {
     EVENT_DATA_TYPE_BLOB = 1,
     EVENT_DATA_TYPE_MAX
-}EventDataType;
+} EventDataType;
 
 //UNIFIED2_EXTRA_DATA - type 110
 typedef struct _SerialUnified2ExtraData
@@ -173,7 +173,7 @@ typedef struct _SerialUnified2ExtraData
 } SerialUnified2ExtraData;
 
 typedef struct _Unified2ExtraDataHdr
-{    
+{
     uint32_t event_type;
     uint32_t event_length;
 
@@ -194,7 +194,7 @@ typedef enum _EventInfoEnum
     EVENT_INFO_IPV6_SRC,
     EVENT_INFO_IPV6_DST,
     EVENT_INFO_JSNORM_DATA
-}EventInfoEnum;
+} EventInfoEnum;
 
 
 #endif

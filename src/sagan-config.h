@@ -103,6 +103,19 @@ struct _SaganConfig
     int		shm_after_by_dst;
     int		shm_after_by_username;
 
+    /* IPC sizes for threshold, after, etc */
+
+    char	ipc_directory[MAXPATH];
+
+    int		max_flowbits;
+
+    int		max_threshold_by_src;
+    int		max_threshold_by_dst;
+    int		max_threshold_by_username;
+
+    int		max_after_by_src;
+    int		max_after_by_dst;
+    int		max_after_by_username;
 
 #ifdef HAVE_LIBPCAP
     char        plog_interface[50];
