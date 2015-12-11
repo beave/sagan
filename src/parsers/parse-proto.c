@@ -58,17 +58,17 @@ int Sagan_Parse_Proto( char *msg )
 
             if ( map_message[i].nocase == 1 )
                 {
-                    if (Sagan_stristr(msg, map_message[i].search, true)) 
-		    	{
-			return(map_message[i].proto);
-			}
+                    if (Sagan_stristr(msg, map_message[i].search, true))
+                        {
+                            return(map_message[i].proto);
+                        }
                 }
             else
                 {
-                    if (Sagan_strstr(msg, map_message[i].search)) 
-		    	{
-			return(map_message[i].proto);
-			}
+                    if (Sagan_strstr(msg, map_message[i].search))
+                        {
+                            return(map_message[i].proto);
+                        }
                 }
         }
     return(0);
@@ -89,17 +89,17 @@ int Sagan_Parse_Proto_Program( char *program )
 
             if ( map_program[i].nocase == 1 )
                 {
-                    if (Sagan_stristr(program, map_program[i].program, true)) 
-		    	{
-			return(map_program[i].proto);
-			}
+                    if (Sagan_stristr(program, map_program[i].program, true))
+                        {
+                            return(map_program[i].proto);
+                        }
                 }
             else
                 {
-                    if (Sagan_strstr(program, map_program[i].program)) 
-		    	{
-			return(map_program[i].proto);
-			}
+                    if (Sagan_strstr(program, map_program[i].program))
+                        {
+                            return(map_program[i].proto);
+                        }
                 }
         }
     return(0);

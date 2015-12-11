@@ -970,13 +970,17 @@ char *Sagan_u32_Time_To_Human ( uint64_t utime )
 sbool Sagan_File_Lock ( int fd )
 {
 
-    struct flock fl = {F_WRLCK, SEEK_SET,   0,      0,     0 };
+    struct flock fl;
+
+    fl.l_type = F_WRLCK;
+    fl.l_whence = SEEK_SET;
+    fl.l_start = 0;
+    fl.l_len = 0;
     fl.l_pid = getpid();
 
     if (fcntl(fd, F_SETLKW, &fl) == -1)
         {
-            perror("fcntl");
-            exit(1);
+            Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     return(0);
@@ -990,13 +994,17 @@ sbool Sagan_File_Lock ( int fd )
 sbool Sagan_File_Unlock( int fd )
 {
 
-    struct flock fl = {F_UNLCK, SEEK_SET,   0,      0,     0 };
+    struct flock fl;
+
+    fl.l_type = F_UNLCK;
+    fl.l_whence = SEEK_SET;
+    fl.l_start = 0;
+    fl.l_len = 0;
     fl.l_pid = getpid();
 
     if (fcntl(fd, F_SETLK, &fl) == -1)
         {
-            perror("fcntl");
-            exit(1);
+            Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     return(0);
