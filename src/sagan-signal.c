@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include "version.h"
 
@@ -148,12 +149,47 @@ void Sig_Handler( _SaganSigArgs *args )
                     fflush(config->sagan_log_stream);               /* Close the sagan.log */
                     fclose(config->sagan_log_stream);
 
-                    close(config->shm_counters);			    /* IPC Shared memory */
-                    close(config->shm_flowbit);
-                    close(config->shm_thresh_by_src);
-                    close(config->shm_thresh_by_dst);
-                    close(config->shm_after_by_src);
-                    close(config->shm_after_by_username);
+                    /* IPC Shared Memory */
+
+                    if ( close(config->shm_counters) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_flowbit) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC flowbit! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_thresh_by_src) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_thresh_by_dst) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_thresh_by_username) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_after_by_src) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_after_by_dst) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
+
+                    if ( close(config->shm_after_by_username) != 0 )
+                        {
+                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
 
 
                     if ( config->perfmonitor_flag )
