@@ -259,7 +259,7 @@ int main(int argc, char **argv)
             exit(1);
         }
 
-    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) + (sizeof(after_by_src_ipc) +  counters_ipc->after_count_by_src ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) + (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src ),  PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
         {
             fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
