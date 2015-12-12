@@ -161,7 +161,7 @@ int main(int argc, char **argv)
         {
 
 
-            printf("\n                      ***  Threshold by source ***\n");
+            printf("\n***  Threshold by source (%d) ***\n", counters_ipc->thresh_count_by_src);
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "SRC IP", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -186,7 +186,7 @@ int main(int argc, char **argv)
             exit(1);
         }
 
-    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) + (sizeof(thresh_by_dst_ipc)*counters_ipc->thresh_count_by_dst) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) + (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
         {
             fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
         {
 
 
-            printf("\n                    ***  Threshold by destination ***\n");
+            printf("\n***  Threshold by destination (%d)***\n", counters_ipc->thresh_count_by_dst );
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "DST IP", " Counter"," Date added/modified", " SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
         {
 
 
-            printf("\n                      ***  Threshold by username ***\n");
+            printf("\n***  Threshold by username (%d) ***\n", counters_ipc->thresh_count_by_username);
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "Username", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_src >= 1 )
         {
 
-            printf("\n                        ***  After by source ***\n");
+            printf("\n***  After by source (%d) ***\n", counters_ipc->after_count_by_src);
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "SRC IP", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -294,7 +294,7 @@ int main(int argc, char **argv)
             exit(1);
         }
 
-    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) + (sizeof(after_by_dst_ipc) *counters_ipc->after_count_by_dst ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) + (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
         {
             fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
             exit(1);
@@ -305,7 +305,7 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_dst >= 1 )
         {
 
-            printf("\n                     ***  After by destination ***\n");
+            printf("\n***  After by destination (%d)***\n", counters_ipc->after_count_by_dst);
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "DST IP", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -340,7 +340,7 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_username >= 1 )
         {
 
-            printf("\n                        ***  After by username ***\n");
+            printf("\n***  After by username ***(%d)\n", counters_ipc->after_count_by_username);
             printf("-----------------------------------------------------------------------------\n");
             printf("%-16s| %-15s| %-23s| %s\n", "Username", "Counter","Date added/modified", "SID" );
             printf("-----------------------------------------------------------------------------\n");
@@ -375,7 +375,7 @@ int main(int argc, char **argv)
     if ( counters_ipc->flowbit_count >= 1 )
         {
 
-            printf("\n                          *** Flowbits ****\n");
+            printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
             printf("--------------------------------------------------------------------------------------\n");
             printf("%-2s| %-25s| %-16s| %-16s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified");
             printf("--------------------------------------------------------------------------------------\n");
