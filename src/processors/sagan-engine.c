@@ -1034,6 +1034,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                     strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
                                                                                                                     afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
                                                                                                                     afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
+														    afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
+
 
                                                                                                                     Sagan_File_Unlock(config->shm_after_by_src);
 
@@ -1113,6 +1115,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
                                                                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
                                                                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
+															    afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
+
 
                                                                                                                             Sagan_File_Unlock(config->shm_after_by_dst);
 
@@ -1191,6 +1195,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
                                                                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
                                                                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
+															    afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
+
 
                                                                                                                             Sagan_File_Unlock(config->shm_after_by_username);
 
@@ -1287,6 +1293,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
                                                                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
                                                                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
+															    threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_src);
 
@@ -1364,6 +1371,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
                                                                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
+															    threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_dst);
 
@@ -1447,6 +1455,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                             strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
                                                                                                                             threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
                                                                                                                             threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
+															    threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
+
 
                                                                                                                             Sagan_File_Unlock(config->shm_thresh_by_username);
 

@@ -179,9 +179,9 @@ void Sagan_IPC_Init(void)
 
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Flowbits ***");
-            Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %s", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified");
-            Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "-----------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-20s| %s", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+            Sagan_Log(S_DEBUG, "-----------------------------------------------------------------------------------------------");
 
 
             for (i= 0; i < counters_ipc->flowbit_count; i++ )
@@ -192,7 +192,7 @@ void Sagan_IPC_Init(void)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %s", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(flowbit_ipc[i].flowbit_expire));
+                            Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-20s| %d", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire );
                         }
 
                 }
@@ -239,13 +239,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by source ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "SRC IP", " Counter"," Date added/modified", " SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_src; i++)
                 {
                     ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -291,13 +291,14 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by destination ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "DST IP", " Counter"," Date added/modified", " SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
                 {
                     ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -343,12 +344,12 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by username ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "Username", "Counter","Date added/modified", "SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
                 {
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s\n", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
                 }
         }
 
@@ -392,13 +393,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by source ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "SRC IP", " Counter"," Date added/modified", " SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
                 {
                     ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -443,13 +444,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by destination ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "DST IP", " Counter"," Date added/modified", " SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
                 {
                     ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -494,12 +495,12 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by username ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-15s| %-23s| %s", "Username", "Counter","Date added/modified", "SID" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                 {
-                    Sagan_Log(S_DEBUG, "%-16s| %-15d| %-23s| %s\n", afterbyusername_ipc[i].username,afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");

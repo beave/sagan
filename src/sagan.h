@@ -313,6 +313,7 @@ struct thresh_by_src_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 
@@ -324,6 +325,7 @@ struct thresh_by_dst_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 
@@ -335,6 +337,7 @@ struct thresh_by_username_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 /* After structure by source */
@@ -345,6 +348,7 @@ struct after_by_src_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 /* After structure by destination */
@@ -355,6 +359,7 @@ struct after_by_dst_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 
@@ -366,6 +371,7 @@ struct after_by_username_ipc
     int  count;
     uint64_t utime;
     char sid[20];
+    int expire;
 };
 
 typedef struct _SaganVar _SaganVar;

@@ -663,8 +663,9 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                     flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
                     flowbit_ipc[counters_ipc->flowbit_count].ip_dst = ip_dst;
-                    flowbit_ipc[counters_ipc->flowbit_count].flowbit_expire = atol(timet) + flowbit_track[i].flowbit_timeout;;
+                    flowbit_ipc[counters_ipc->flowbit_count].flowbit_expire = atol(timet) + flowbit_track[i].flowbit_timeout;
                     flowbit_ipc[counters_ipc->flowbit_count].flowbit_state = 1;
+                    flowbit_ipc[counters_ipc->flowbit_count].expire = flowbit_track[i].flowbit_timeout;
 
                     strlcpy(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, flowbit_track[i].flowbit_name, sizeof(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name));
 
