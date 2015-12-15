@@ -84,7 +84,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     if ( debug->debugipc )
         {
-            Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data.", __FILE__, __LINE__);
+            Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
         }
 
     /* Afterbysrc_IPC */
@@ -159,7 +159,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     /* Afterbydst_IPC */
 
-    if ( type == AFTER_BY_DST && config->max_after_by_dst < counters_ipc->after_count_by_dst )
+    else if ( type == AFTER_BY_DST && config->max_after_by_dst < counters_ipc->after_count_by_dst )
         {
 
             t = time(NULL);
@@ -167,8 +167,8 @@ sbool Sagan_Clean_IPC_Object( int type )
             strftime(timet, sizeof(timet), "%s",  now);
             utime = atol(timet);
 
-	    new_count = 0;
-	    old_count = 0;
+            new_count = 0;
+            old_count = 0;
 
             Sagan_File_Lock(config->shm_after_by_dst);
 
@@ -232,7 +232,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     /* AfterbyUsername_IPC */
 
-    if ( type == AFTER_BY_USERNAME && config->max_after_by_username < counters_ipc->after_count_by_username )
+    else if ( type == AFTER_BY_USERNAME && config->max_after_by_username < counters_ipc->after_count_by_username )
         {
 
             t = time(NULL);
@@ -240,8 +240,8 @@ sbool Sagan_Clean_IPC_Object( int type )
             strftime(timet, sizeof(timet), "%s",  now);
             utime = atol(timet);
 
-	    new_count = 0;
-	    old_count = 0;
+            new_count = 0;
+            old_count = 0;
 
             Sagan_File_Lock(config->shm_after_by_username);
 
@@ -305,7 +305,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     /* Threshbysrc_IPC */
 
-    if ( type == THRESH_BY_SRC && config->max_threshold_by_src < counters_ipc->thresh_count_by_src )
+    else if ( type == THRESH_BY_SRC && config->max_threshold_by_src < counters_ipc->thresh_count_by_src )
         {
 
             t = time(NULL);
@@ -313,8 +313,8 @@ sbool Sagan_Clean_IPC_Object( int type )
             strftime(timet, sizeof(timet), "%s",  now);
             utime = atol(timet);
 
-	    new_count = 0;
-	    old_count = 0;
+            new_count = 0;
+            old_count = 0;
 
             Sagan_File_Lock(config->shm_thresh_by_src);
 
@@ -379,7 +379,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     /* Threshbydst_IPC */
 
-    if ( type == THRESH_BY_SRC && config->max_threshold_by_dst < counters_ipc->thresh_count_by_dst )
+    else if ( type == THRESH_BY_SRC && config->max_threshold_by_dst < counters_ipc->thresh_count_by_dst )
         {
 
             t = time(NULL);
@@ -387,8 +387,8 @@ sbool Sagan_Clean_IPC_Object( int type )
             strftime(timet, sizeof(timet), "%s",  now);
             utime = atol(timet);
 
-	    new_count = 0;
-	    old_count = 0;
+            new_count = 0;
+            old_count = 0;
 
             Sagan_File_Lock(config->shm_thresh_by_dst);
 
@@ -452,7 +452,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     /* ThreshbyUsername_IPC */
 
-    if ( type == THRESH_BY_USERNAME && config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
+    else if ( type == THRESH_BY_USERNAME && config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
         {
 
             t = time(NULL);
@@ -460,8 +460,8 @@ sbool Sagan_Clean_IPC_Object( int type )
             strftime(timet, sizeof(timet), "%s",  now);
             utime = atol(timet);
 
-	    new_count = 0;
-	    old_count = 0;
+            new_count = 0;
+            old_count = 0;
 
             Sagan_File_Lock(config->shm_thresh_by_username);
 
@@ -521,6 +521,81 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_File_Unlock(config->shm_thresh_by_username);
             return(0);
+        }
+
+    /* Flowbit_IPC */
+
+    else if ( type == FLOWBIT && config->max_flowbits < counters_ipc->flowbit_count )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+            new_count = 0;
+            old_count = 0;
+
+            Sagan_File_Lock(config->shm_flowbit);
+
+            struct _Sagan_IPC_Flowbit *temp_flowbit_ipc;
+            temp_flowbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flowbit) * config->max_flowbits);
+
+            memset(temp_flowbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flowbit) * config->max_flowbits));
+
+            old_count = counters_ipc->flowbit_count;
+
+            for (i = 0; i < counters_ipc->flowbit_count; i++)
+                {
+                    if ( (utime - flowbit_ipc[i].flowbit_expire) < flowbit_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping '%s'.", __FILE__, __LINE__, flowbit_ipc[i].ip_src, flowbit_ipc[i].ip_dst);
+                                }
+
+                            temp_flowbit_ipc[new_count].flowbit_state = flowbit_ipc[i].flowbit_state;
+                            temp_flowbit_ipc[new_count].ip_src = flowbit_ipc[i].ip_src;
+                            temp_flowbit_ipc[new_count].ip_dst = flowbit_ipc[i].ip_dst;
+                            temp_flowbit_ipc[new_count].flowbit_expire = flowbit_ipc[i].flowbit_expire;
+                            temp_flowbit_ipc[new_count].expire = flowbit_ipc[i].expire;
+                            strlcpy(temp_flowbit_ipc[new_count].flowbit_name, flowbit_ipc[i].flowbit_name, sizeof(temp_flowbit_ipc[new_count].flowbit_name));
+
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            flowbit_ipc[i].flowbit_state = temp_flowbit_ipc[i].flowbit_state;
+                            flowbit_ipc[i].ip_src = temp_flowbit_ipc[i].ip_src;
+                            flowbit_ipc[i].ip_dst = temp_flowbit_ipc[i].ip_dst;
+                            flowbit_ipc[i].flowbit_expire = temp_flowbit_ipc[i].flowbit_expire;
+                            flowbit_ipc[i].expire = temp_flowbit_ipc[i].expire;
+                            strlcpy(flowbit_ipc[i].flowbit_name, temp_flowbit_ipc[i].flowbit_name, sizeof(flowbit_ipc[i].flowbit_name));
+                        }
+
+                    counters_ipc->flowbit_count = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flowbit.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_flowbit_ipc);
+                    Sagan_File_Unlock(config->shm_flowbit);
+                    return(1);
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flowbit.", __FILE__, __LINE__, new_count, old_count);
+            free(temp_flowbit_ipc);
+
+            Sagan_File_Unlock(config->shm_flowbit);
+            return(0);
+
         }
 
     return(0);

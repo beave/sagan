@@ -38,6 +38,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
+#include "sagan-ipc.h"
 #include "sagan-flowbit.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
@@ -659,39 +660,31 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
             for (i = 0; i < flowbit_track_count; i++)
                 {
 
-                    Sagan_File_Lock(config->shm_flowbit);
-
-                    flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
-                    flowbit_ipc[counters_ipc->flowbit_count].ip_dst = ip_dst;
-                    flowbit_ipc[counters_ipc->flowbit_count].flowbit_expire = atol(timet) + flowbit_track[i].flowbit_timeout;
-                    flowbit_ipc[counters_ipc->flowbit_count].flowbit_state = 1;
-                    flowbit_ipc[counters_ipc->flowbit_count].expire = flowbit_track[i].flowbit_timeout;
-
-                    strlcpy(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, flowbit_track[i].flowbit_name, sizeof(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name));
-
-                    Sagan_File_Unlock(config->shm_flowbit);
-
-                    if ( debug->debugflowbit)
+                    if ( Sagan_Clean_IPC_Object(FLOWBIT) == 0 )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created flowbit \"%s\" via \"set\" [%s -> %s],", __FILE__, __LINE__, counters_ipc->flowbit_count, flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, ip_src_char, ip_dst_char);
-                        }
 
-                    if ( config->max_flowbits < counters_ipc->flowbit_count )
-                        {
-                            Sagan_Log(S_WARN, "[%s, line %d] Max 'flowbits' of %d has been reached! Consider increasing 'flowbits'!", __FILE__, __LINE__, config->max_flowbits);
+                            Sagan_File_Lock(config->shm_flowbit);
 
-                        }
-                    else
-                        {
+                            flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
+                            flowbit_ipc[counters_ipc->flowbit_count].ip_dst = ip_dst;
+                            flowbit_ipc[counters_ipc->flowbit_count].flowbit_expire = atol(timet) + flowbit_track[i].flowbit_timeout;
+                            flowbit_ipc[counters_ipc->flowbit_count].flowbit_state = 1;
+                            flowbit_ipc[counters_ipc->flowbit_count].expire = flowbit_track[i].flowbit_timeout;
+
+                            strlcpy(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, flowbit_track[i].flowbit_name, sizeof(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name));
+
+                            Sagan_File_Unlock(config->shm_flowbit);
 
                             Sagan_File_Lock(config->shm_counters);
                             counters_ipc->flowbit_count++;
                             Sagan_File_Unlock(config->shm_counters);
+
+                            if ( debug->debugflowbit)
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created flowbit \"%s\" via \"set\" [%s -> %s],", __FILE__, __LINE__, counters_ipc->flowbit_count, flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, ip_src_char, ip_dst_char);
+                                }
                         }
-
-
                 }
-
         }
 
     free(flowbit_track);

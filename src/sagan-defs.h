@@ -140,7 +140,7 @@
 #define AFTER_BY_DST_IPC_FILE "sagan-after-by-destination.shared"
 #define AFTER_BY_USERNAME_IPC_FILE "sagan-after-by-username.shared"
 
-#define DEFAULT_IPC_SIZE 	5000
+#define DEFAULT_IPC_SIZE 	10000
 
 #define AFTER_BY_SRC		1
 #define AFTER_BY_DST		2
