@@ -36,6 +36,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
 
 #include "version.h"
 #include "sagan.h"
@@ -63,6 +64,468 @@ struct after_by_username_ipc *afterbyusername_ipc;
 
 struct _SaganDebug *debug;
 
+/*****************************************************************************
+ * Sagan_Clean_IPC_Object - If the max IPC is hit,  we attempt to "clean" out
+ * any stale IPC entries.
+ *****************************************************************************/
+
+sbool Sagan_Clean_IPC_Object( int type )
+{
+
+    time_t t;
+    struct tm *now;
+
+    int i;
+    int utime = 0;
+    int new_count = 0;
+    int old_count = 0;
+
+    char timet[20];
+
+    if ( debug->debugipc )
+        {
+            Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data.", __FILE__, __LINE__);
+        }
+
+    /* Afterbysrc_IPC */
+
+    if ( type == AFTER_BY_SRC && config->max_after_by_src < counters_ipc->after_count_by_src )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+            Sagan_File_Lock(config->shm_after_by_src);
+
+            struct after_by_src_ipc *temp_afterbysrc_ipc;
+            temp_afterbysrc_ipc = malloc(sizeof(struct after_by_src_ipc) * config->max_after_by_src);
+
+            memset(temp_afterbysrc_ipc, 0, sizeof(sizeof(struct after_by_src_ipc) * config->max_after_by_src));
+
+            old_count = counters_ipc->after_count_by_src;
+
+            for (i = 0; i < counters_ipc->after_count_by_src; i++)
+                {
+                    if ( (utime - afterbysrc_ipc[i].utime) < afterbysrc_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrc_IPC : Keeping %u.", __FILE__, __LINE__, afterbysrc_ipc[i].ipsrc);
+                                }
+
+                            temp_afterbysrc_ipc[new_count].ipsrc = afterbysrc_ipc[i].ipsrc;
+                            temp_afterbysrc_ipc[new_count].count = afterbysrc_ipc[i].count;
+                            temp_afterbysrc_ipc[new_count].utime = afterbysrc_ipc[i].utime;
+                            temp_afterbysrc_ipc[new_count].expire = afterbysrc_ipc[i].expire;
+                            strlcpy(temp_afterbysrc_ipc[new_count].sid, afterbysrc_ipc[i].sid, sizeof(temp_afterbysrc_ipc[new_count].sid));
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            afterbysrc_ipc[i].ipsrc = temp_afterbysrc_ipc[i].ipsrc;
+                            afterbysrc_ipc[i].count = temp_afterbysrc_ipc[i].count;
+                            afterbysrc_ipc[i].utime = temp_afterbysrc_ipc[i].utime;
+                            afterbysrc_ipc[i].expire = temp_afterbysrc_ipc[i].expire;
+                            strlcpy(afterbysrc_ipc[i].sid, temp_afterbysrc_ipc[i].sid, sizeof(afterbysrc_ipc[i].sid));
+                        }
+
+                    counters_ipc->after_count_by_src = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_src.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_afterbysrc_ipc);
+                    Sagan_File_Unlock(config->shm_after_by_src);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_src", __FILE__, __LINE__, new_count, old_count);
+            free(temp_afterbysrc_ipc);
+
+            Sagan_File_Unlock(config->shm_after_by_src);
+            return(0);
+
+        }
+
+    /* Afterbydst_IPC */
+
+    if ( type == AFTER_BY_DST && config->max_after_by_dst < counters_ipc->after_count_by_dst )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+	    new_count = 0;
+	    old_count = 0;
+
+            Sagan_File_Lock(config->shm_after_by_dst);
+
+            struct after_by_dst_ipc *temp_afterbydst_ipc;
+            temp_afterbydst_ipc = malloc(sizeof(struct after_by_dst_ipc) * config->max_after_by_dst);
+
+            memset(temp_afterbydst_ipc, 0, sizeof(sizeof(struct after_by_dst_ipc) * config->max_after_by_dst));
+
+            old_count = counters_ipc->after_count_by_dst;
+
+            for (i = 0; i < counters_ipc->after_count_by_dst; i++)
+                {
+                    if ( (utime - afterbydst_ipc[i].utime) < afterbydst_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbydst_IPC : Keeping %u.", __FILE__, __LINE__, afterbydst_ipc[i].ipdst);
+                                }
+
+                            temp_afterbydst_ipc[new_count].ipdst = afterbydst_ipc[i].ipdst;
+                            temp_afterbydst_ipc[new_count].count = afterbydst_ipc[i].count;
+                            temp_afterbydst_ipc[new_count].utime = afterbydst_ipc[i].utime;
+                            temp_afterbydst_ipc[new_count].expire = afterbydst_ipc[i].expire;
+                            strlcpy(temp_afterbydst_ipc[new_count].sid, afterbydst_ipc[i].sid, sizeof(temp_afterbydst_ipc[new_count].sid));
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            afterbydst_ipc[i].ipdst = temp_afterbydst_ipc[i].ipdst;
+                            afterbydst_ipc[i].count = temp_afterbydst_ipc[i].count;
+                            afterbydst_ipc[i].utime = temp_afterbydst_ipc[i].utime;
+                            afterbydst_ipc[i].expire = temp_afterbydst_ipc[i].expire;
+                            strlcpy(afterbydst_ipc[i].sid, temp_afterbydst_ipc[i].sid, sizeof(afterbydst_ipc[i].sid));
+                        }
+
+                    counters_ipc->after_count_by_dst = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dst.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_afterbydst_ipc);
+                    Sagan_File_Unlock(config->shm_after_by_dst);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dst", __FILE__, __LINE__, new_count, old_count);
+            free(temp_afterbydst_ipc);
+
+            Sagan_File_Unlock(config->shm_after_by_dst);
+            return(0);
+
+        }
+
+    /* AfterbyUsername_IPC */
+
+    if ( type == AFTER_BY_USERNAME && config->max_after_by_username < counters_ipc->after_count_by_username )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+	    new_count = 0;
+	    old_count = 0;
+
+            Sagan_File_Lock(config->shm_after_by_username);
+
+            struct after_by_username_ipc *temp_afterbyusername_ipc;
+            temp_afterbyusername_ipc = malloc(sizeof(struct after_by_username_ipc) * config->max_after_by_username);
+
+            memset(temp_afterbyusername_ipc, 0, sizeof(sizeof(struct after_by_username_ipc) * config->max_after_by_username));
+
+            old_count = counters_ipc->after_count_by_username;
+
+            for (i = 0; i < counters_ipc->after_count_by_username; i++)
+                {
+                    if ( (utime - afterbyusername_ipc[i].utime) < afterbyusername_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, afterbyusername_ipc[i].username);
+                                }
+
+                            temp_afterbyusername_ipc[new_count].count = afterbyusername_ipc[i].count;
+                            temp_afterbyusername_ipc[new_count].utime = afterbyusername_ipc[i].utime;
+                            temp_afterbyusername_ipc[new_count].expire = afterbyusername_ipc[i].expire;
+                            strlcpy(temp_afterbyusername_ipc[new_count].sid, afterbyusername_ipc[i].sid, sizeof(temp_afterbyusername_ipc[new_count].sid));
+                            strlcpy(temp_afterbyusername_ipc[new_count].username, afterbyusername_ipc[i].username, sizeof(temp_afterbyusername_ipc[new_count].username));
+
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            afterbyusername_ipc[i].count = temp_afterbyusername_ipc[i].count;
+                            afterbyusername_ipc[i].utime = temp_afterbyusername_ipc[i].utime;
+                            afterbyusername_ipc[i].expire = temp_afterbyusername_ipc[i].expire;
+                            strlcpy(afterbyusername_ipc[i].sid, temp_afterbyusername_ipc[i].sid, sizeof(afterbyusername_ipc[i].sid));
+                            strlcpy(afterbyusername_ipc[i].username, temp_afterbyusername_ipc[i].username, sizeof(afterbyusername_ipc[i].username));
+                        }
+
+                    counters_ipc->after_count_by_username = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_username.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_afterbyusername_ipc);
+                    Sagan_File_Unlock(config->shm_after_by_username);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_username", __FILE__, __LINE__, new_count, old_count);
+            free(temp_afterbyusername_ipc);
+
+            Sagan_File_Unlock(config->shm_after_by_username);
+            return(0);
+        }
+
+    /* Threshbysrc_IPC */
+
+    if ( type == THRESH_BY_SRC && config->max_threshold_by_src < counters_ipc->thresh_count_by_src )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+	    new_count = 0;
+	    old_count = 0;
+
+            Sagan_File_Lock(config->shm_thresh_by_src);
+
+            struct thresh_by_src_ipc *temp_threshbysrc_ipc;
+            temp_threshbysrc_ipc = malloc(sizeof(struct thresh_by_src_ipc) * config->max_threshold_by_src);
+
+            memset(temp_threshbysrc_ipc, 0, sizeof(sizeof(struct thresh_by_src_ipc) * config->max_threshold_by_src));
+
+            old_count = counters_ipc->thresh_count_by_src;
+
+            for (i = 0; i < counters_ipc->thresh_count_by_src; i++)
+                {
+                    if ( (utime - threshbysrc_ipc[i].utime) < threshbysrc_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrc_IPC : Keeping %u.", __FILE__, __LINE__, threshbysrc_ipc[i].ipsrc);
+                                }
+
+                            temp_threshbysrc_ipc[new_count].ipsrc = threshbysrc_ipc[i].ipsrc;
+                            temp_threshbysrc_ipc[new_count].count = threshbysrc_ipc[i].count;
+                            temp_threshbysrc_ipc[new_count].utime = threshbysrc_ipc[i].utime;
+                            temp_threshbysrc_ipc[new_count].expire = threshbysrc_ipc[i].expire;
+                            strlcpy(temp_threshbysrc_ipc[new_count].sid, threshbysrc_ipc[i].sid, sizeof(temp_threshbysrc_ipc[new_count].sid));
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            threshbysrc_ipc[i].ipsrc = temp_threshbysrc_ipc[i].ipsrc;
+                            threshbysrc_ipc[i].count = temp_threshbysrc_ipc[i].count;
+                            threshbysrc_ipc[i].utime = temp_threshbysrc_ipc[i].utime;
+                            threshbysrc_ipc[i].expire = temp_threshbysrc_ipc[i].expire;
+                            strlcpy(threshbysrc_ipc[i].sid, temp_threshbysrc_ipc[i].sid, sizeof(threshbysrc_ipc[i].sid));
+                        }
+
+                    counters_ipc->thresh_count_by_src = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_src.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_threshbysrc_ipc);
+                    Sagan_File_Unlock(config->shm_thresh_by_src);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_src", __FILE__, __LINE__, new_count, old_count);
+            free(temp_threshbysrc_ipc);
+
+            Sagan_File_Unlock(config->shm_thresh_by_src);
+            return(0);
+
+        }
+
+
+    /* Threshbydst_IPC */
+
+    if ( type == THRESH_BY_SRC && config->max_threshold_by_dst < counters_ipc->thresh_count_by_dst )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+	    new_count = 0;
+	    old_count = 0;
+
+            Sagan_File_Lock(config->shm_thresh_by_dst);
+
+            struct thresh_by_dst_ipc *temp_threshbydst_ipc;
+            temp_threshbydst_ipc = malloc(sizeof(struct thresh_by_dst_ipc) * config->max_threshold_by_dst);
+
+            memset(temp_threshbydst_ipc, 0, sizeof(sizeof(struct thresh_by_dst_ipc) * config->max_threshold_by_dst));
+
+            old_count = counters_ipc->thresh_count_by_dst;
+
+            for (i = 0; i < counters_ipc->thresh_count_by_dst; i++)
+                {
+                    if ( (utime - threshbydst_ipc[i].utime) < threshbydst_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping %u.", __FILE__, __LINE__, threshbydst_ipc[i].ipdst);
+                                }
+
+                            temp_threshbydst_ipc[new_count].ipdst = threshbydst_ipc[i].ipdst;
+                            temp_threshbydst_ipc[new_count].count = threshbydst_ipc[i].count;
+                            temp_threshbydst_ipc[new_count].utime = threshbydst_ipc[i].utime;
+                            temp_threshbydst_ipc[new_count].expire = threshbydst_ipc[i].expire;
+                            strlcpy(temp_threshbydst_ipc[new_count].sid, threshbydst_ipc[i].sid, sizeof(temp_threshbydst_ipc[new_count].sid));
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            threshbydst_ipc[i].ipdst = temp_threshbydst_ipc[i].ipdst;
+                            threshbydst_ipc[i].count = temp_threshbydst_ipc[i].count;
+                            threshbydst_ipc[i].utime = temp_threshbydst_ipc[i].utime;
+                            threshbydst_ipc[i].expire = temp_threshbydst_ipc[i].expire;
+                            strlcpy(threshbydst_ipc[i].sid, temp_threshbydst_ipc[i].sid, sizeof(threshbydst_ipc[i].sid));
+                        }
+
+                    counters_ipc->thresh_count_by_dst = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dst.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_threshbydst_ipc);
+                    Sagan_File_Unlock(config->shm_thresh_by_dst);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dst", __FILE__, __LINE__, new_count, old_count);
+            free(temp_threshbydst_ipc);
+
+            Sagan_File_Unlock(config->shm_thresh_by_dst);
+            return(0);
+
+        }
+
+    /* ThreshbyUsername_IPC */
+
+    if ( type == THRESH_BY_USERNAME && config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
+        {
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+	    new_count = 0;
+	    old_count = 0;
+
+            Sagan_File_Lock(config->shm_thresh_by_username);
+
+            struct thresh_by_username_ipc *temp_threshbyusername_ipc;
+            temp_threshbyusername_ipc = malloc(sizeof(struct thresh_by_username_ipc) * config->max_threshold_by_username);
+
+            memset(temp_threshbyusername_ipc, 0, sizeof(sizeof(struct thresh_by_username_ipc) * config->max_threshold_by_username));
+
+            old_count = counters_ipc->thresh_count_by_username;
+
+            for (i = 0; i < counters_ipc->thresh_count_by_username; i++)
+                {
+                    if ( (utime - threshbyusername_ipc[i].utime) < threshbyusername_ipc[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, threshbyusername_ipc[i].username);
+                                }
+
+                            temp_threshbyusername_ipc[new_count].count = threshbyusername_ipc[i].count;
+                            temp_threshbyusername_ipc[new_count].utime = threshbyusername_ipc[i].utime;
+                            temp_threshbyusername_ipc[new_count].expire = threshbyusername_ipc[i].expire;
+                            strlcpy(temp_threshbyusername_ipc[new_count].sid, threshbyusername_ipc[i].sid, sizeof(temp_threshbyusername_ipc[new_count].sid));
+                            strlcpy(temp_threshbyusername_ipc[new_count].username, threshbyusername_ipc[i].username, sizeof(temp_threshbyusername_ipc[new_count].username));
+
+                            new_count++;
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            threshbyusername_ipc[i].count = temp_threshbyusername_ipc[i].count;
+                            threshbyusername_ipc[i].utime = temp_threshbyusername_ipc[i].utime;
+                            threshbyusername_ipc[i].expire = temp_threshbyusername_ipc[i].expire;
+                            strlcpy(threshbyusername_ipc[i].sid, temp_threshbyusername_ipc[i].sid, sizeof(threshbyusername_ipc[i].sid));
+                            strlcpy(threshbyusername_ipc[i].username, temp_threshbyusername_ipc[i].username, sizeof(threshbyusername_ipc[i].username));
+                        }
+
+                    counters_ipc->thresh_count_by_username = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_username.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_threshbyusername_ipc);
+                    Sagan_File_Unlock(config->shm_thresh_by_username);
+                    return(1);
+
+                }
+
+            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_username", __FILE__, __LINE__, new_count, old_count);
+            free(temp_threshbyusername_ipc);
+
+            Sagan_File_Unlock(config->shm_thresh_by_username);
+            return(0);
+        }
+
+    return(0);
+
+}
 /*****************************************************************************
  * Sagan_IPC_Check_Object - If "counters" have been reset,   we want to
  * recreate the other objects (hence the unlink).  This function tests for
@@ -179,9 +642,9 @@ void Sagan_IPC_Init(void)
 
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Flowbits ***");
-            Sagan_Log(S_DEBUG, "-----------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-20s| %s", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-            Sagan_Log(S_DEBUG, "-----------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
 
 
             for (i= 0; i < counters_ipc->flowbit_count; i++ )
@@ -192,7 +655,7 @@ void Sagan_IPC_Init(void)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-20s| %d", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire );
+                            Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire );
                         }
 
                 }
@@ -239,13 +702,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by source ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_src; i++)
                 {
                     ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -291,13 +754,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by destination ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
                 {
                     ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
 
                 }
 
@@ -344,12 +807,12 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Threshold by username ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
                 {
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
                 }
         }
 
@@ -393,13 +856,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by source ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
                 {
                     ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -444,13 +907,13 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by destination ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
                 {
                     ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");
@@ -495,12 +958,12 @@ void Sagan_IPC_Init(void)
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** After by username ***");
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-20s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
             Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                 {
-                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-20s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+                    Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                 }
 
             Sagan_Log(S_DEBUG, "");

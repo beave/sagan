@@ -955,7 +955,7 @@ char *Sagan_u32_Time_To_Human ( uint64_t utime )
     snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
 
     strptime(tmp, "%s", &tm);
-    strftime(time_buf, sizeof(time_buf), "%b %d %H:%M %Y", &tm);
+    strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);
 
     return_time = (char*)&time_buf;
 
