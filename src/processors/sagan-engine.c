@@ -71,7 +71,6 @@ struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
-struct _Sagan_Flowbits *flowbits;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
