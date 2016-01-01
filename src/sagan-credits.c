@@ -54,7 +54,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "\"DigiAngel\" (Github)\t\t\t\t'content:!' idea.\n");
     fprintf(stderr, "Robert Bridge (RobbieAB - Github)\t\t'flowbit' idea.\n");
     fprintf(stderr, "Mathieu Parent (sathieu - Github)\t\tOld MySQL port fix.\n");
-    fprintf(stderr, "Pierre Chifflier (chifflier - Githib)\t\tPatches/bug fixes/man page.\n");
+    fprintf(stderr, "Pierre Chifflier (chifflier - Github)\t\tPatches/bug fixes/man page.\n");
     fprintf(stderr, "Pierre Chifflier \t\t\t\tDebian/Ubuntu packages.\n");
     fprintf(stderr, "\"miverson\" (Github)\t\t\t\tOSSEC converter/bug fixes.\n");
     fprintf(stderr, "\"ekse\" (Github)\t\t\t\t\tBug reports & testing.\n");
@@ -72,6 +72,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "Adam Hall (ahall@quadrantsec.com)\t\tAetas & other bug fixes.\n");
     fprintf(stderr, "Bruno Coudoin (Github:bdoin)\t\t\tBug fixes.\n");
     fprintf(stderr, "Nuno Fernandes (Github)\t\t\t\tBug fixes & rule corrections.\n");
+    fprintf(stderr, "Alexandre Carrol Perales (Github:acabrol)\tBugs fixes & features.\n"); 
 
 
     fprintf(stderr, "\n");
