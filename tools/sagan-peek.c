@@ -378,7 +378,7 @@ int main(int argc, char **argv)
 
             printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
             printf("-----------------------------------------------------------------------------------------------\n");
-            printf("%-2s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+            printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
             printf("-----------------------------------------------------------------------------------------------\n");
 
 
@@ -391,8 +391,13 @@ int main(int argc, char **argv)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            printf("%-2d| %-25s| %-16s| %-16s| %-21s| %d\n", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire);
+                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %d\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire);
                         }
+                    else
+                        {
+                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %d\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire);
+                        }
+
 
 
                 }

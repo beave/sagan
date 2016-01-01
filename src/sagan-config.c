@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -143,6 +143,8 @@ void Load_Config( void )
     config->max_after_by_src = DEFAULT_IPC_SIZE;
     config->max_after_by_dst = DEFAULT_IPC_SIZE;
     config->max_after_by_username = DEFAULT_IPC_SIZE;
+
+    config->max_track_clients = DEFAULT_IPC_SIZE;
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;
@@ -354,6 +356,20 @@ void Load_Config( void )
                     config->max_after_by_dst = atoi(sagan_var1);
                 }
 
+
+            if (!strcmp(sagan_option, "track_clients"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"track_clients\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_track_clients = atoi(sagan_var1);
+                }
+
+
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 
             if (!strcmp(sagan_option, "sagan_fifo_size"))
@@ -551,7 +567,6 @@ void Load_Config( void )
                             /* Set defaults */
 
                             config->pp_sagan_track_clients = TRACK_TIME;
-                            strlcpy(config->sagan_track_client_host_cache, TRACK_CACHE, sizeof(config->sagan_track_client_host_cache));
 
                             config->sagan_track_clients_flag = 1;
 
@@ -564,12 +579,6 @@ void Load_Config( void )
                                         {
                                             ptmp = strtok_r(NULL," ", &tok);
                                             config->pp_sagan_track_clients = atoi(ptmp);
-                                        }
-
-                                    if (!strcmp(ptmp, "host_cache"))
-                                        {
-                                            ptmp = strtok_r(NULL," ", &tok);
-                                            strlcpy(config->sagan_track_client_host_cache, Remove_Return(ptmp), sizeof(config->sagan_track_client_host_cache));
                                         }
 
                                     ptmp = strtok_r(NULL, "=", &tok);

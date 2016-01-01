@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -84,8 +84,9 @@ struct _Sagan_IPC_Counters
     int	 after_count_by_dst;
     int	 after_count_by_username;
 
-    //uint64_t after_total;
-    //uint64_t threshold_total;
+    int	 track_client_count;
+    int  track_clients_client_count;
+    int  track_clients_down;
 
 };
 
@@ -120,9 +121,6 @@ struct _SaganCounters
     uint64_t malformed_message;
 
     uint64_t worker_thread_exhaustion;
-
-    uint64_t track_clients_client_count;                /* sagan-track-clients processor */
-    uint64_t track_clients_down;
 
     uint64_t blacklist_hit_count;
     uint64_t blacklist_lookup_count;
@@ -256,6 +254,7 @@ typedef struct _Sagan_Proc_Syslog
     char syslog_time[50];
     char syslog_program[50];
     char syslog_message[MAX_SYSLOGMSG];
+
 } _SaganProcSyslog;
 
 typedef struct _Sagan_Event
@@ -400,7 +399,11 @@ void Sagan_Log( int, const char *, ... );
 void Sagan_Droppriv( void );
 char *DNS_Lookup( char * );
 char *Sagan_Var_To_Value(char *);
+
 uint32_t IP2Bit (char * );
+char *Bit2IP(uint32_t);
+
+
 int Sagan_Validate_HEX (const char *);
 char *Sagan_Content_Pipe(char *, int, const char *);
 sbool is_rfc1918 ( uint32_t );

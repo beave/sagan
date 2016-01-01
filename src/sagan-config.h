@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -72,8 +72,6 @@ struct _SaganConfig
 
     int         pp_sagan_track_clients;
     sbool       sagan_track_clients_flag;
-    char        sagan_track_client_host_cache[MAXPATH];
-    FILE        *sagan_track_client_file;
 
     sbool       blacklist_flag;
     char        blacklist_files[2048];
@@ -103,6 +101,8 @@ struct _SaganConfig
     int		shm_after_by_dst;
     int		shm_after_by_username;
 
+    int		shm_track_clients;
+
     /* IPC sizes for threshold, after, etc */
 
     char	ipc_directory[MAXPATH];
@@ -116,6 +116,8 @@ struct _SaganConfig
     int		max_after_by_src;
     int		max_after_by_dst;
     int		max_after_by_username;
+
+    int		max_track_clients;
 
 #ifdef HAVE_LIBPCAP
     char        plog_interface[50];

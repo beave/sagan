@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -41,6 +41,8 @@
 #include "sagan-config.h"
 
 struct _SaganCounters *counters;
+struct _Sagan_IPC_Counters *counters_ipc;
+
 struct _SaganConfig *config;
 
 void Sagan_Statistics( void )
@@ -166,7 +168,7 @@ void Sagan_Statistics( void )
 
             if (config->sagan_track_clients_flag)
                 {
-                    Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters->track_clients_client_count, counters->track_clients_down, config->pp_sagan_track_clients);
+                    Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters_ipc->track_clients_client_count, counters_ipc->track_clients_down, config->pp_sagan_track_clients);
                 }
 
 

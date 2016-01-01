@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -82,8 +82,7 @@
 #define PLOG_FILTER	"port 514"
 #define PLOG_LOGDEV	"/dev/log"
 
-#define TRACK_TIME	360
-#define TRACK_CACHE	"/var/run/sagan/sagan.cache"
+#define TRACK_TIME	1440
 
 #define S_NORMAL	0
 #define S_ERROR		1
@@ -139,6 +138,8 @@
 #define AFTER_BY_SRC_IPC_FILE "sagan-after-by-source.shared"
 #define AFTER_BY_DST_IPC_FILE "sagan-after-by-destination.shared"
 #define AFTER_BY_USERNAME_IPC_FILE "sagan-after-by-username.shared"
+
+#define CLIENT_TRACK_IPC_FILE "sagan-track-clients.shared"
 
 #define DEFAULT_IPC_SIZE 	10000
 

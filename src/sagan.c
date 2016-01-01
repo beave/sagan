@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -560,15 +560,17 @@ int main(int argc, char **argv)
 
     /* Sagan_Track_Clients processor ********************************************/
 
-    if ( config->sagan_track_clients_flag)
+    if ( config->sagan_track_clients_flag )
         {
+
+            Sagan_Track_Clients_Init();
+
             if ( config->pp_sagan_track_clients )
                 {
+                    Sagan_Log(S_NORMAL, "");
                     Sagan_Log(S_NORMAL, "Client Tracking Processor: %d minute(s)", config->pp_sagan_track_clients);
                 }
 
-            Sagan_Track_Clients_Init();
-            Sagan_Load_Tracking_Cache();
         }
 
     /* Sagan Blacklist IP processor *********************************************/
@@ -695,7 +697,7 @@ int main(int argc, char **argv)
     Sagan_Log(S_NORMAL, " ,-._,-. 	-*> Sagan! <*-");
     Sagan_Log(S_NORMAL, " \\/)\"(\\/	Version %s", VERSION);
     Sagan_Log(S_NORMAL, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-    Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2015 Quadrant Information Security, et al.");
+    Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2016 Quadrant Information Security, et al.");
     Sagan_Log(S_NORMAL, " (|| ||) 	Using PCRE version: %s", pcre_version());
     Sagan_Log(S_NORMAL, "  oo-oo     Sagan is processing events.....");
     Sagan_Log(S_NORMAL, "");

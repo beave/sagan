@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -44,6 +44,8 @@
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
+struct _Sagan_IPC_Counters *counters_ipc;
+
 
 /*****************************************************************************
  * Sagan_Perfmonitor_Handler - This becomes the thread to write out
@@ -174,8 +176,11 @@ void Sagan_Perfmonitor_Handler( void )
 
                     /* DEBUG: CONSTANT? */
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_client_count);
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->track_clients_down);
+//                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters_ipc->track_clients_client_count);
+//                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters_ipc->track_clients_down);
+
+                    fprintf(config->perfmonitor_file_stream, "%d,", counters_ipc->track_clients_client_count);
+                    fprintf(config->perfmonitor_file_stream, "%d,", counters_ipc->track_clients_down);
 
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_output_drop - last_sagan_output_drop);
                     last_sagan_output_drop = counters->sagan_output_drop;

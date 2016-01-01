@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -26,6 +26,11 @@
  *
  */
 
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
+
 #include <stdio.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -45,9 +50,7 @@
 #include "sagan-ipc.h"
 #include "sagan-flowbit.h"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"             /* From autoconf */
-#endif
+#include "processors/sagan-track-clients.h"
 
 struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_IPC_Flowbit *flowbit_ipc;
@@ -61,6 +64,8 @@ struct thresh_by_username_ipc *threshbyusername_ipc;
 struct after_by_src_ipc *afterbysrc_ipc;
 struct after_by_dst_ipc *afterbydst_ipc;
 struct after_by_username_ipc *afterbyusername_ipc;
+
+struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 
 struct _SaganDebug *debug;
 
@@ -1042,6 +1047,75 @@ void Sagan_IPC_Init(void)
                 }
 
             Sagan_Log(S_DEBUG, "");
+        }
+
+    /* Client tracking */
+
+    if ( config->sagan_track_clients_flag )
+        {
+
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, CLIENT_TRACK_IPC_FILE);
+
+            Sagan_IPC_Check_Object(tmp_object_check, new_counters, "_Sagan_Track_Clients_IPC");
+
+            if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+                {
+                    Sagan_Log(S_NORMAL, "+ Sagan_track_clients shared object (new).");
+                    new_object=1;
+
+                    /* Reset any track_clients_client_count's to 0! */
+
+                    Sagan_File_Lock(config->shm_counters);
+                    counters_ipc->track_clients_client_count = 0;
+                    counters_ipc->track_clients_down = 0;
+                    Sagan_File_Unlock(config->shm_counters);
+
+                }
+
+            else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s)", __FILE__, __LINE__, strerror(errno));
+                }
+
+
+            if ( ftruncate(config->shm_track_clients, sizeof(_Sagan_Track_Clients_IPC) * config->max_track_clients ) != 0 )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate _Sagan_Track_Clients_IPC. [%s]", __FILE__, __LINE__, strerror(errno));
+                }
+
+            if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) * config->max_track_clients, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_track_clients, 0)) == MAP_FAILED )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for _Sagan_Track_Clients_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                }
+
+
+            if ( new_object == 0 )
+                {
+                    Sagan_Log(S_NORMAL, "- Sagan_track_clients shared object reloaded (%d clients loaded / max: %d).", counters_ipc->track_clients_client_count, config->max_track_clients);
+                }
+
+            new_object = 0;
+            /*
+                if ( debug->debugipc && counters_ipc->track_client_count >= 1 )
+                    {
+                        Sagan_Log(S_DEBUG, "");
+                        Sagan_Log(S_DEBUG, "*** After by username ***");
+                        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+                        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
+                        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+
+                        for ( i = 0; i < counters_ipc->after_count_by_username; i++)
+                            {
+                                Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+                            }
+
+                        Sagan_Log(S_DEBUG, "");
+                    }
+
+            */
+
+
+
         }
 
 }

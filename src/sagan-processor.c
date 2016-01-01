@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -134,14 +134,10 @@ outside_loop:
 
                     Sagan_Engine(SaganProcSyslog_LOCAL);
 
-                    if ( config->sagan_track_clients_flag)
+                    if ( config->sagan_track_clients_flag )
                         {
 
-                            /* Essentially becomes a signle threaded operation */
-
-                            pthread_mutex_lock(&SaganClientTracker);
-                            Sagan_Track_Clients(SaganProcSyslog_LOCAL);
-                            pthread_mutex_unlock(&SaganClientTracker);
+                            Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
 
                         }
 

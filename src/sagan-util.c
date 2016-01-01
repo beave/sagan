@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -946,7 +946,7 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 char *Sagan_u32_Time_To_Human ( uint64_t utime )
 {
     struct tm tm;
-    static char time_buf[80];
+    static __thread char time_buf[80];
     char tmp[80];
 
     char *return_time = NULL;
@@ -1010,4 +1010,25 @@ sbool Sagan_File_Unlock( int fd )
     return(0);
 }
 
+/****************************************************************************
+ * Bit2IP - Takes a 32 bit IP address and returns an octet notation
+ ****************************************************************************/
+
+char *Bit2IP(uint32_t ip_u32)
+{
+
+    char *return_ip = NULL;
+
+    struct in_addr ip_addr_convert;
+
+    static __thread char retbuf[20];
+    memset(retbuf,0,sizeof(retbuf));
+
+    ip_addr_convert.s_addr = htonl(ip_u32);
+    strlcpy(retbuf, inet_ntoa(ip_addr_convert), sizeof(retbuf));
+
+    return_ip = (char*)&retbuf;
+
+    return(return_ip);
+}
 

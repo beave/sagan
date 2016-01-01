@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -36,16 +36,14 @@
 #define PROCESSOR_TAG NULL
 #define PROCESSOR_GENERATOR_ID 100
 
-typedef struct _Sagan_Track_Clients _Sagan_Track_Clients;
-struct _Sagan_Track_Clients
+typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
+struct _Sagan_Track_Clients_IPC
 {
-    char    host[64];
+    uint32_t host_u32;
     uint64_t utime;
     sbool   status;
 };
 
-
-int Sagan_Track_Clients ( _SaganProcSyslog * );
-void Sagan_Load_Tracking_Cache ( void );
-void Sagan_Track_Clients_Init ( void );
+//int Sagan_Track_Clients ( _SaganProcSyslog * );
+int Sagan_Track_Clients ( uint32_t );
 

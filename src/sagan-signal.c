@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2015 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2015 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -207,6 +207,18 @@ void Sig_Handler( _SaganSigArgs *args )
                             Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
+                    if ( config->sagan_track_clients_flag )
+                        {
+
+                            Sagan_File_Unlock(config->shm_track_clients);
+
+                            if ( close(config->shm_track_clients) != 0 )
+                                {
+                                    Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC _Sagan_Track_Clients! [%s]", __FILE__, __LINE__, strerror(errno));
+                                }
+
+                        }
+
 
                     if ( config->perfmonitor_flag )
                         {
@@ -315,12 +327,11 @@ void Sig_Handler( _SaganSigArgs *args )
                     if ( config->sagan_track_clients_flag )
                         {
                             free(SaganTrackClients);
-                            fclose(config->sagan_track_client_file);
                         }
 
-                    config->sagan_track_clients_flag = 0;
-                    counters->track_clients_client_count = 0;
-                    counters->track_clients_down = 0;
+//                    config->sagan_track_clients_flag = 0;
+//                    counters_ipc->track_clients_client_count = 0;
+//                    counters_ipc->track_clients_down = 0;
 
                     /* Output formats */
 
@@ -404,7 +415,6 @@ void Sig_Handler( _SaganSigArgs *args )
 
                     if ( config->sagan_track_clients_flag )
                         {
-                            Sagan_Load_Tracking_Cache();
                             Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
                         }
 
