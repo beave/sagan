@@ -72,7 +72,8 @@ void Sagan_Credits(void)
     fprintf(stderr, "Adam Hall (ahall@quadrantsec.com)\t\tAetas & other bug fixes.\n");
     fprintf(stderr, "Bruno Coudoin (Github:bdoin)\t\t\tBug fixes.\n");
     fprintf(stderr, "Nuno Fernandes (Github)\t\t\t\tBug fixes & rule corrections.\n");
-    fprintf(stderr, "Alexandre Carrol Perales (Github:acabrol)\tBugs fixes & features.\n"); 
+    fprintf(stderr, "Alexandre Carrol Perales (Github:acabrol)\tBug fixes & features.\n"); 
+    fprintf(stderr, "Bruno Coudoin\t\t\t\t\tBug fixes & features.\n");
 
 
     fprintf(stderr, "\n");
