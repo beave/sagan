@@ -793,16 +793,16 @@ int main(int argc, char **argv)
                     /* try to create it */
                     if (mkfifo(config->sagan_fifo, 0700) == -1)
                         {
-                          Sagan_Log(S_ERROR, "Could not create fifo %s. Abort!", config->sagan_fifo);
+                            Sagan_Log(S_ERROR, "Could not create fifo %s. Abort!", config->sagan_fifo);
                         }
                     else
                         {
-                          Sagan_Log(S_NORMAL, "Fifo not found, creating it (%s).", config->sagan_fifo);
+                            Sagan_Log(S_NORMAL, "Fifo not found, creating it (%s).", config->sagan_fifo);
                         }
                     fd = fopen(config->sagan_fifo, "r");
                     if ( fd == NULL )
                         {
-                          Sagan_Log(S_ERROR, "Error opening %s. Abort!", config->sagan_fifo);
+                            Sagan_Log(S_ERROR, "Error opening %s. Abort!", config->sagan_fifo);
                         }
                 }
 

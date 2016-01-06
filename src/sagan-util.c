@@ -627,7 +627,6 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
     memset(final_content,0,sizeof(final_content));
 
     char final_content_tmp[512] = { 0 };
-//    char *ret_buf = NULL;
     char tmp2[512];
     int i;
     int x;
@@ -689,8 +688,6 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 
         }
 
-    //ret_buf = (char*)&final_content;
-    //return(ret_buf);
     return(final_content);
 }
 
@@ -937,6 +934,47 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 }
 
 #endif
+
+char *Sagan_Return_Date( uint64_t utime )
+{
+
+    struct tm tm;
+    static __thread char time_buf[80];
+    char tmp[80];
+
+    char *return_date = NULL;
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%F", &tm);
+
+    return_date = (char*)&time_buf;
+    return(return_date);
+
+}
+
+char *Sagan_Return_Time( uint64_t utime )
+{
+
+    struct tm tm;
+    static __thread char time_buf[80];
+    char tmp[80];
+
+    char *return_date = NULL;
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%T", &tm);
+
+    return_date = (char*)&time_buf;
+    return(return_date);
+
+}
+
 
 /****************************************************************************
  * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
