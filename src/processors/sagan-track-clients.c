@@ -251,6 +251,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
+	    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = config->pp_sagan_track_clients * 60;
             Sagan_File_Unlock(config->shm_track_clients);
 
             Sagan_File_Lock(config->shm_counters);

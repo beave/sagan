@@ -41,9 +41,9 @@ struct _Sagan_Track_Clients_IPC
 {
     uint32_t host_u32;
     uint64_t utime;
-    sbool   status;
+    int	     expire;
+    sbool    status;
 };
 
-//int Sagan_Track_Clients ( _SaganProcSyslog * );
 int Sagan_Track_Clients ( uint32_t );
 
