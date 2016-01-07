@@ -50,6 +50,11 @@ struct _SaganConfig *config;
 struct _Sagan_Processor_Info *processor_info_track_client = NULL;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 
+/****************************************************************************
+ * Sagan_Track_Clients_Init - Initialize shared memory object for the
+ * tracking client processor to use
+ ****************************************************************************/
+
 void Sagan_Track_Clients_Init ( void )
 {
 
@@ -74,11 +79,15 @@ void Sagan_Track_Clients_Init ( void )
 
 }
 
+/****************************************************************************
+ * Sagan_Track_Clients - Main routine to "tracks" via IPC/memory IPs that
+ * are reporting or not.
+ ****************************************************************************/
+
 int Sagan_Track_Clients ( uint32_t host_u32 )
 {
 
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
-
 
     int alertid;
     int i;
@@ -101,6 +110,8 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
 
     struct in_addr ip_addr_syslog;
 
+    /* We populate this later for output plugins */
+
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
 
     if ( SaganProcSyslog_LOCAL == NULL )
@@ -108,29 +119,39 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
         }
 
+    /* Look through "known" system */
+
     for (i=0; i<counters_ipc->track_clients_client_count; i++)
         {
 
             if ( SaganTrackClients_ipc[i].host_u32 == host_u32 )
                 {
 
-                    Sagan_File_Lock(config->shm_track_clients);
-                    SaganTrackClients_ipc[i].utime = utime_u64;
-                    Sagan_File_Unlock(config->shm_track_clients);
+                    tracking_flag = 1;
 
                     /* Logs being received */
 
                     if ( SaganTrackClients_ipc[i].status == 1 )
                         {
 
+                            /* Update status and seen time */
+
+                            Sagan_File_Lock(config->shm_track_clients);
+                            SaganTrackClients_ipc[i].utime = utime_u64;
+                            SaganTrackClients_ipc[i].status = 0;
+                            Sagan_File_Unlock(config->shm_track_clients);
+
+                            /* Update counters */
 
                             Sagan_File_Lock(config->shm_counters);
                             counters_ipc->track_clients_down--;
                             Sagan_File_Unlock(config->shm_counters);
 
-                            tmp_ip = Bit2IP(host_u32);
+                            tmp_ip = Bit2IP(host_u32);	/* Call this here,  so we don't repeatedly */
 
                             Sagan_Log(S_WARN, "[Processor: %s] Logs being received from %s again.",  PROCESSOR_NAME, tmp_ip );
+
+                            /* Populate SaganProcSyslog_LOCAL for output plugins */
 
                             strlcpy(SaganProcSyslog_LOCAL->syslog_host, tmp_ip, sizeof(SaganProcSyslog_LOCAL->syslog_host));
                             strlcpy(SaganProcSyslog_LOCAL->syslog_facility, PROCESSOR_FACILITY, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
@@ -143,11 +164,9 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
                             snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
                             snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not sending logs.  The system appears to be sending logs again", tmp_ip );
 
-                            alertid=101;
+                            alertid=101;		/* See gen-msg.map */
 
-                            Sagan_File_Lock(config->shm_track_clients);
-                            SaganTrackClients_ipc[i].status = 0;
-                            Sagan_File_Unlock(config->shm_track_clients);
+                            /* Send alert to output plugins */
 
                             Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                                              processor_info_track_client,
@@ -162,67 +181,76 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
                                              0);
 
                         }
+                    else
+                        {
 
-                    tracking_flag=1;
-                }
+                            /**** System is found but hasn't been seen! ****/
 
-            utimetmp = SaganTrackClients_ipc[i].utime ;
+                            if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) > config->pp_sagan_track_clients * 60 )
+                                {
 
-            /* Logs stop being received */
+                                    /* Update status and utime */
 
-            if ( ( SaganTrackClients_ipc[i].status == 0 && utime_u64 - utimetmp >  config->pp_sagan_track_clients * 60 ) )
-                {
+                                    Sagan_File_Lock(config->shm_track_clients);
+                                    SaganTrackClients_ipc[i].utime = utime_u64;
+                                    SaganTrackClients_ipc[i].status = 1;
+                                    Sagan_File_Unlock(config->shm_track_clients);
 
-                    Sagan_File_Lock(config->shm_track_clients);
-                    SaganTrackClients_ipc[i].status = 1;
-                    Sagan_File_Unlock(config->shm_track_clients);
+                                    /* Update counters */
 
-                    Sagan_File_Lock(config->shm_counters);
-                    counters_ipc->track_clients_down++;
-                    Sagan_File_Unlock(config->shm_counters);
+                                    Sagan_File_Lock(config->shm_counters);
+                                    counters_ipc->track_clients_down++;
+                                    Sagan_File_Unlock(config->shm_counters);
 
-                    tmp_ip = Bit2IP(host_u32);
+                                    tmp_ip = Bit2IP(host_u32);	/* Do this now,  so we don't have to keep recalling Bit2IP */
 
-                    Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
+                                    Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
 
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, tmp_ip, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, PROCESSOR_FACILITY, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, PROCESSOR_PRIORITY, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, "info", sizeof(SaganProcSyslog_LOCAL->syslog_level));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                                    /* Populate SaganProcSyslog_LOCAL for output plugins */
 
-                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients);
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, tmp_ip, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, PROCESSOR_FACILITY, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, PROCESSOR_PRIORITY, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, "info", sizeof(SaganProcSyslog_LOCAL->syslog_level));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
-                    alertid=100;
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients);
 
-                    Sagan_Send_Alert(SaganProcSyslog_LOCAL,
-                                     processor_info_track_client,
-                                     SaganProcSyslog_LOCAL->syslog_host,
-                                     config->sagan_host,
-                                     "\0",
-                                     "\0",
-                                     config->sagan_proto,
-                                     alertid,
-                                     config->sagan_port,
-                                     config->sagan_port,
-                                     0);
+                                    alertid=100;	/* See gen-msg.map  */
 
-                }
+                                    /* Send alert to output plugins */
 
-        }
+                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL,
+                                                     processor_info_track_client,
+                                                     SaganProcSyslog_LOCAL->syslog_host,
+                                                     config->sagan_host,
+                                                     "\0",
+                                                     "\0",
+                                                     config->sagan_proto,
+                                                     alertid,
+                                                     config->sagan_port,
+                                                     config->sagan_port,
+                                                     0);
+
+                                }  /* End of existing utime check */
+
+                        } /* End of else */
+                } /* End of "if" */
+        }  /* End for 'for' loop */
+
+
+    /**** If the system is not in the array,  this is the first time we've seen it.  Add it to the array ****/
 
     if ( tracking_flag == 0)
         {
 
             Sagan_File_Lock(config->shm_track_clients);
-
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
-
             Sagan_File_Unlock(config->shm_track_clients);
 
             Sagan_File_Lock(config->shm_counters);
@@ -231,7 +259,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
 
         }
 
+    free(SaganProcSyslog_LOCAL);
     return(0);
+
 }
-
-

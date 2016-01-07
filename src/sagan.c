@@ -1061,6 +1061,13 @@ int main(int argc, char **argv)
                                     syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
                                 }
 
+
+                            /*
+                            	                    if ( config->sagan_track_clients_flag )
+                                   		                {
+                                                        	Sagan_Track_Clients( IP2Bit(syslog_host) );
+                                                    	}
+                            */
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
