@@ -244,19 +244,31 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
 
     /**** If the system is not in the array,  this is the first time we've seen it.  Add it to the array ****/
 
-    if ( tracking_flag == 0)
+
+    if ( tracking_flag == 0 )
         {
 
-            Sagan_File_Lock(config->shm_track_clients);
-            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
-            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
-            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
-	    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = config->pp_sagan_track_clients * 60;
-            Sagan_File_Unlock(config->shm_track_clients);
+            if ( counters_ipc->track_clients_client_count < config->max_track_clients )
+                {
 
-            Sagan_File_Lock(config->shm_counters);
-            counters_ipc->track_clients_client_count++;
-            Sagan_File_Unlock(config->shm_counters);
+                    Sagan_File_Lock(config->shm_track_clients);
+                    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
+                    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
+                    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
+                    SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = config->pp_sagan_track_clients * 60;
+                    Sagan_File_Unlock(config->shm_track_clients);
+
+                    Sagan_File_Lock(config->shm_counters);
+                    counters_ipc->track_clients_client_count++;
+                    Sagan_File_Unlock(config->shm_counters);
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
+
+                }
 
         }
 
