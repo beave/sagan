@@ -78,8 +78,9 @@ struct _Rule_Struct
     sbool s_find_dst_ip;
     int   s_find_dst_pos;
 
-    int flowbit_flag;                   	/* Does the rule contain a flowbit? */
-    int flowbit_noalert;			/* Do we want to suppress "alerts" from the flowbit? */
+    sbool flowbit_flag;                   	/* Does the rule contain a flowbit? */
+    sbool flowbit_noalert;			/* Do we want to suppress "alerts" from flowbits in ALL output plugins? */
+    sbool flowbit_nounified2;	 		/* Do we want to suppress "unified2" from flowbits in unified2 output */
 
     int flowbit_type[MAX_FLOWBITS];		/* 1 == set, 2 == unset,  3 == isset, 4 == isnotset */
     int flowbit_direction[MAX_FLOWBITS];	/* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */

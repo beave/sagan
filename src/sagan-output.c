@@ -78,7 +78,7 @@ void Sagan_Output( _SaganEvent *Event )
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-    if ( config->sagan_unified2_flag )
+    if ( config->sagan_unified2_flag && rulestruct[Event->found].flowbit_nounified2 == 0 )
         {
             Sagan_Unified2( Event );
             Sagan_Unified2LogPacketAlert( Event );

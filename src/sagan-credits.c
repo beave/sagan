@@ -74,6 +74,8 @@ void Sagan_Credits(void)
     fprintf(stderr, "Nuno Fernandes (Github)\t\t\t\tBug fixes & rule corrections.\n");
     fprintf(stderr, "Alexandre Carrol Perales (Github:acabrol)\tBug fixes & features.\n");
     fprintf(stderr, "Bruno Coudoin\t\t\t\t\tBug fixes & features.\n");
+    fprintf(stderr, "Steve Rawls (srawls@quadrantsec.com)\t\tBug reports & features.\n");
+
 
 
     fprintf(stderr, "\n");

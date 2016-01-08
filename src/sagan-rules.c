@@ -475,15 +475,20 @@ void Load_Rules( const char *ruleset )
                             arg = strtok_r(NULL, ":", &saveptrrule2);
                             tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
-                            if (strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset"))
+                            if (strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset"))
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Expect 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                 }
 
                             if (!strcmp(tmptoken, "noalert"))
                                 {
                                     rulestruct[counters->rulecount].flowbit_noalert=1;
                                 }
+
+			    if (!strcmp(tmptoken, "nounified2"))
+			    	{
+				    rulestruct[counters->rulecount].flowbit_nounified2=1; 
+				}
 
                             /* SET */
 
