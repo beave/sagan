@@ -141,6 +141,8 @@ int main(int argc, char **argv)
             exit(1);
         }
 
+    close(shm_counters); 
+
     /*** Get "threshold by source" data ****/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, THRESH_BY_SRC_IPC_FILE);
@@ -173,6 +175,7 @@ int main(int argc, char **argv)
                 {
 
                     ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
+
                     printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
                 }
@@ -209,8 +212,9 @@ int main(int argc, char **argv)
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
                 {
-                    ip_addr_src.s_addr = htonl(threshbydst_ipc[i].ipdst);
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+                    ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
+
+                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
                 }
 
         }
@@ -315,8 +319,9 @@ int main(int argc, char **argv)
 
             for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
                 {
-                    ip_addr_src.s_addr = htonl(afterbydst_ipc[i].ipdst);
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+                    ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
+
+                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
                 }
         }
 
