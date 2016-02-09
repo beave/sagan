@@ -573,7 +573,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     if ( rulestruct[b].s_find_port == 1 )
                                         {
-                                            normalize_src_port = Sagan_Parse_Port(SaganProcSyslog_LOCAL->syslog_message);
+                                            normalize_src_port = Sagan_Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
+                                            normalize_dst_port = Sagan_Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
                                         }
                                     else
                                         {

@@ -53,7 +53,7 @@
 
 struct _SaganConfig *config;
 
-int Sagan_Parse_Port (char *msg)
+int Sagan_Parse_Src_Port (char *msg)
 {
 
     int port;
@@ -110,6 +110,36 @@ int Sagan_Parse_Port (char *msg)
                                         }
                                 }
 
+                        }
+                }
+        }
+
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
+    To_UpperC(tmpmsg);
+
+    /* See if the word " spt" (source port) is in the string */
+    /* We accept " spt[any char except space][a port number]" */
+
+    if ( Sagan_strstr(tmpmsg, " SPT"))
+        {
+
+            portstring = strtok_r(tmpmsg, " ", &saveptr1);
+            for ( i = 0, str = portstring; ; i++, str == NULL )
+                {
+
+                    token = strtok_r(NULL, " ", &saveptr1);
+                    if ( token == NULL ) break;
+
+                    /* tokenize by " ",  grab string after "spt".  */
+
+                    if (!strncmp(token, "SPT", 3))
+                        {
+                            if (token[3] == '\0') break;
+                            /* if it's a number, set it.  If not,  default */
+                            if (Is_Numeric(token + 4))
+                                {
+                                    port=atoi(token + 4);
+                                }
                         }
                 }
         }
@@ -196,6 +226,58 @@ int Sagan_Parse_Port (char *msg)
                                                     return(port);
                                                 }
                                         }
+                                }
+                        }
+                }
+        }
+
+    return(port);
+}
+
+int Sagan_Parse_Dst_Port (char *msg)
+{
+
+    int port;
+
+    char *portstring=NULL;
+    char *saveptr1=NULL;
+    char *saveptr2=NULL;
+    char *str=NULL;
+    char *token=NULL;
+    char *tmpport=NULL;
+
+    int i;
+    struct sockaddr_in sa;
+    int result;
+
+    port = config->sagan_port;
+
+    char tmpmsg[MAX_SYSLOGMSG];
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", msg);
+    To_UpperC(tmpmsg);
+
+    /* See if the word " dpt" (destination port) is in the string */
+    /* We accept " dpt[any char except space][a port number]" */
+
+    if ( Sagan_strstr(tmpmsg, " DPT"))
+        {
+
+            portstring = strtok_r(tmpmsg, " ", &saveptr1);
+            for ( i = 0, str = portstring; ; i++, str == NULL )
+                {
+
+                    token = strtok_r(NULL, " ", &saveptr1);
+                    if ( token == NULL ) break;
+
+                    /* tokenize by " ",  grab string after "dpt".  */
+
+                    if (!strncmp(token, "DPT", 3))
+                        {
+                            if (token[3] == '\0') break;
+                            /* if it's a number, set it.  If not,  default */
+                            if (Is_Numeric(token + 4))
+                                {
+                                    port=atoi(token + 4);
                                 }
                         }
                 }
