@@ -1638,6 +1638,11 @@ void Load_Rules( const char *ruleset )
                                                 {
                                                     rulestruct[counters->rulecount].threshold_method = 3;
                                                 }
+
+                                            if (Sagan_strstr(tmptoken, "by_dstport"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold_method = 4;
+                                                }
                                         }
 
                                     if (Sagan_strstr(tmptoken, "count"))
@@ -1684,6 +1689,11 @@ void Load_Rules( const char *ruleset )
                                             if (Sagan_strstr(tmptoken, "by_username"))
                                                 {
                                                     rulestruct[counters->rulecount].after_method = 3;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_dstport"))
+                                                {
+                                                    rulestruct[counters->rulecount].after_method = 4;
                                                 }
 
                                         }
