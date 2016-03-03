@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <pcre.h>
 #include <time.h>
+#include <arpa/inet.h>
 
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>

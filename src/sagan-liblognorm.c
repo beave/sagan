@@ -36,7 +36,6 @@
 #include <pthread.h>
 
 #include <liblognorm.h>
-#include <ptree.h>
 #include <json.h>
 #include <lognorm.h>
 
