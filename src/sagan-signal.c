@@ -51,6 +51,7 @@
 #include "processors/sagan-perfmon.h"
 #include "sagan-rules.h"
 #include "sagan-ignore-list.h"
+#include "sagan-check-flow.h"
 
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
@@ -327,11 +328,13 @@ void Sig_Handler( _SaganSigArgs *args )
                     if ( config->sagan_track_clients_flag )
                         {
                             free(SaganTrackClients);
-                        }
+
 
 //                    config->sagan_track_clients_flag = 0;
-//                    counters_ipc->track_clients_client_count = 0;
-//                    counters_ipc->track_clients_down = 0;
+//                      counters_ipc->track_clients_client_count = 0;
+//                      counters_ipc->track_clients_down = 0;
+//
+                        }
 
                     /* Output formats */
 

@@ -62,6 +62,8 @@
 #define MAX_META_CONTENT	10		/* Max 'meta_content' within a rule */
 #define MAX_FLOWBITS		20		/* Max 'flowbits' within a rule */
 
+#define MAX_CHECK_FLOWS		50		/* Max amount of IP addresses to be checked in a flow */
+
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 

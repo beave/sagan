@@ -158,6 +158,9 @@ struct _SaganCounters
     int      brointel_cert_hash_count;
     int      brointel_dups;
 
+    uint64_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
+    uint64_t follow_flow_drop;			/* Amount of flows that did not match and were dropped */
+
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
 #endif
@@ -380,6 +383,12 @@ struct _SaganVar
     char var_value[MAX_VAR_VALUE_SIZE];
 };
 
+typedef struct network_addr
+{
+    in_addr_t addr;
+    int pfx;
+} network_addr_t;
+
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
 struct _Sagan_Processor_Info
 {
@@ -394,7 +403,6 @@ struct _Sagan_Processor_Info
     int   processor_generator_id;
 };
 
-
 void Sagan_Log( int, const char *, ... );
 void Sagan_Droppriv( void );
 char *DNS_Lookup( char * );
@@ -402,7 +410,6 @@ char *Sagan_Var_To_Value(char *);
 
 uint32_t IP2Bit (char * );
 char *Bit2IP(uint32_t);
-
 
 int Sagan_Validate_HEX (const char *);
 char *Sagan_Content_Pipe(char *, int, const char *);
@@ -413,13 +420,15 @@ sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
 char *Sagan_u32_Time_To_Human ( uint64_t );
+char *Netaddr_To_Range( char * );
+char *Strip_Chars(const char *string, const char *chars);
+sbool Is_IP (char *str);
 
 char *Sagan_Return_Date( uint64_t );
 char *Sagan_Return_Time( uint64_t );
 
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );
-
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );

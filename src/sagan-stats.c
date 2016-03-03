@@ -197,6 +197,15 @@ void Sagan_Statistics( void )
                     Sagan_Log(S_NORMAL, "           Missed                   : %" PRIu64 " (%.3f%%)", counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
                 }
 
+            if (config->follow_flow_flag)
+                {
+                    Sagan_Log(S_NORMAL, "");
+                    Sagan_Log(S_NORMAL, "          -[ Sagan follow_flow Statistics ]-");
+                    Sagan_Log(S_NORMAL, "");
+                    Sagan_Log(S_NORMAL, "           Total                    : %" PRIu64 "", counters->follow_flow_total);
+                    Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->follow_flow_drop, CalcPct(counters->follow_flow_drop, counters->follow_flow_total));
+                }
+
 #ifdef WITH_BLUEDOT
 
             if (config->bluedot_flag)

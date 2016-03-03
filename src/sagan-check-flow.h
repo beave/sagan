@@ -1,6 +1,6 @@
 /*
 ** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Adam Hall <ahall@quadrantsec.com>
+** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -18,23 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-track-clients.h
-*
-* Simple pre-processors that keeps track of reporting syslog clients/agents.
-* This is based off the IP address the clients,  not based on normalization.
-* If a client/agent hasn't sent a syslog/event message in X minutes,  then
-* generate an alert.
-*
-*/
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
 
-typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
-
-struct _Sagan_Track_Clients_IPC
-{
-    uint32_t host_u32;
-    uint64_t utime;
-    int	     expire;
-    sbool    status;
-};
-
-int Sagan_Track_Clients ( uint32_t host_u32 );
+sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32);

@@ -26,6 +26,20 @@
 #define BLUEDOT_MAX_CAT        10
 #endif
 
+typedef struct arr_flow_1 arr_flow_1;
+struct arr_flow_1
+{
+    uint32_t lo;
+    uint32_t hi;
+};
+
+typedef struct arr_flow_2 arr_flow_2;
+struct arr_flow_2
+{
+    uint32_t lo;
+    uint32_t hi;
+};
+
 typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
@@ -49,6 +63,19 @@ struct _Rule_Struct
 
     char email[255];
     sbool email_flag;
+
+    /* Check Flow */
+    struct arr_flow_1 flow_1[MAX_CHECK_FLOWS];
+    struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];
+
+    int direction;
+    sbool s_follow_flow;
+    sbool flow_1_var;
+    sbool flow_2_var;
+    int flow_1_type[MAX_CHECK_FLOWS];
+    int flow_2_type[MAX_CHECK_FLOWS];
+    int  flow_1_counter;
+    int  flow_2_counter;
 
     sbool s_nocase[MAX_CONTENT];
     int s_offset[MAX_CONTENT];

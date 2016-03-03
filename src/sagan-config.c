@@ -130,6 +130,9 @@ void Load_Config( void )
     strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
     strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
     strlcpy(config->ipc_directory, IPC_DIRECTORY, sizeof(config->ipc_directory));
+    strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
+    strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
+
 
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
@@ -226,6 +229,12 @@ void Load_Config( void )
                     config->syslog_src_lookup = 1;
                 }
 
+            // This is on until such time we decide whether to leave it or not 2016-02-12
+            /*if (!strcmp(Remove_Return(sagan_option), "follow_flow"))
+                {
+                    Sagan_Log(S_NORMAL, "All directional flows will be followed for all events");*/
+            config->follow_flow_flag = 1;
+            /*}*/
 
             if (!strcmp(Remove_Return(sagan_option), "sagan_host"))
                 {
@@ -1223,7 +1232,7 @@ void Load_Config( void )
                     snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
 
 
-                    /* Test for multiple values via [ ] or signle value */
+                    /* Test for multiple values via [ ] or single value */
 
                     if ((Sagan_strstr(tmpbuf2, "[") && !Sagan_strstr(tmpbuf2, "]")) || (!Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]")))
                         {
@@ -1243,7 +1252,6 @@ void Load_Config( void )
 
                             strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
 
-
                         }
                     else
                         {
@@ -1254,7 +1262,6 @@ void Load_Config( void )
                             strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
 
                         }
-
 
                     counters->var_count++;
 
@@ -1279,19 +1286,18 @@ void Load_Config( void )
                         {
                             strlcpy(config->sagan_log_path, sagan_var2, sizeof(config->sagan_log_path));
                         }
+                }
 
-
-                    /*
-                    	if (!strcmp(sagan_var1, "HOME_NET" ))
-                    {
-                                  	   if (Sagan_strstr(sagan_var2, "any" )) config->home_any = 1;
-                                  	   }
-
-                                  	if (!strcmp(sagan_var1, "EXTERNAL_NET" ))
-                    	   {
-                                  	   if (Sagan_strstr(sagan_var2, "any" )) config->external_any = 1;
-                                  	   }
-                                  */
+            /* Check for duplicate VAR's */
+            for (i = 0; i < counters->var_count; i++)
+                {
+                    for ( check = i+1; check < counters->var_count; check ++)
+                        {
+                            if (!strcmp (var[check].var_name, var[i].var_name ))
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate var '%s' & '%s'.  Please correct this.", __FILE__, __LINE__, var[check].var_name, var[i].var_name);
+                                }
+                        }
                 }
 
             /* "include */

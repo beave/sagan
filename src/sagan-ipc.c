@@ -1071,8 +1071,7 @@ void Sagan_IPC_Init(void)
                     Sagan_File_Unlock(config->shm_counters);
 
                 }
-
-            else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+            else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 1 )
                 {
                     Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s)", __FILE__, __LINE__, strerror(errno));
                 }

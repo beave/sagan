@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-track-clients.h
+/* sagan-report-clients.h
 *
 * Simple pre-processors that keeps track of reporting syslog clients/agents.
 * This is based off the IP address the clients,  not based on normalization.
@@ -27,14 +27,14 @@
 *
 */
 
-typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
+#define PROCESSOR_NAME "Sagan_Track_Clients"
+#define PROCESSOR_FACILITY "daemon"
+#define PROCESSOR_PRIORITY "warning"
+#define PROCESSOR_PRI 1
+#define PROCESSOR_CLASS "None"
+#define PROCESSOR_REV "0"
+#define PROCESSOR_TAG NULL
+#define PROCESSOR_GENERATOR_ID 100
 
-struct _Sagan_Track_Clients_IPC
-{
-    uint32_t host_u32;
-    uint64_t utime;
-    int	     expire;
-    sbool    status;
-};
-
-int Sagan_Track_Clients ( uint32_t host_u32 );
+void Sagan_Track_Clients_Init ( void );
+void Sagan_Report_Clients ( void );

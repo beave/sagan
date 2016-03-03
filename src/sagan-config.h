@@ -46,6 +46,8 @@ struct _SaganConfig
     char         sagan_host[MAXHOST];
     char         sagan_extern[MAXPATH];
     char         sagan_startutime[20];                  /* Records utime at startup */
+    char         home_net[MAXPATH];
+    char         external_net[MAXPATH];
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     sbool        sagan_droplist_flag;
@@ -176,6 +178,10 @@ struct _SaganConfig
 
     sbool	 brointel_flag;
     char	 brointel_files[2048];
+
+    /* For Follow Flow */
+
+    sbool	follow_flow_flag;
 
     /* For Maxmind GeoIP2 address lookup */
 

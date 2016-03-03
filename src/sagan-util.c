@@ -310,6 +310,8 @@ uint32_t IP2Bit (char *ipaddr)
     return(ip);
 }
 
+/* Check if string contains only numbers */
+
 int Is_Numeric (char *str)
 {
 
@@ -1042,7 +1044,7 @@ sbool Sagan_File_Unlock( int fd )
 
     if (fcntl(fd, F_SETLK, &fl) == -1)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(S_WARN, "[%s, line %d] Unable to get UNLOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     return(0);
@@ -1070,3 +1072,203 @@ char *Bit2IP(uint32_t ip_u32)
     return(return_ip);
 }
 
+/****************************************/
+/* Compute netmask address given prefix */
+/****************************************/
+in_addr_t Netmask( int prefix )
+{
+
+    if ( prefix == 0 || prefix == 32 )
+        return( ~((in_addr_t) -1) );
+    else
+        return( ~((1 << (32 - prefix)) - 1) );
+
+} /* netmask() */
+
+
+/******************************************************/
+/* Compute broadcast address given address and prefix */
+/******************************************************/
+in_addr_t Broadcast( in_addr_t addr, int prefix )
+{
+
+    return( addr | ~Netmask(prefix) );
+
+} /* broadcast() */
+
+
+/****************************************************/
+/* Compute network address given address and prefix */
+/****************************************************/
+in_addr_t Network( in_addr_t addr, int prefix )
+{
+
+    return( addr & Netmask(prefix) );
+
+} /* network() */
+
+/*************************************************************/
+/* Convert an A.B.C.D address into a 32-bit host-order value */
+/*************************************************************/
+in_addr_t A_To_Hl( char *ipstr )
+{
+
+    struct in_addr in;
+
+    if ( !inet_aton(ipstr, &in) )
+        {
+            Sagan_Log(S_ERROR, "[E] Invalid address %s!\n", ipstr );
+        }
+
+    return( ntohl(in.s_addr) );
+
+} /* a_to_hl() */
+
+/*******************************************************************/
+/* convert a network address char string into a host-order network */
+/* address and an integer prefix value                             */
+/*******************************************************************/
+network_addr_t Str_To_Netaddr( char *ipstr )
+{
+
+    long int prefix = 32;
+    char *prefixstr;
+    network_addr_t netaddr;
+
+    if ( (prefixstr = strchr(ipstr, '/')) )
+        {
+            *prefixstr = '\0';
+            prefixstr++;
+            prefix = strtol( prefixstr, (char **) NULL, 10 );
+            if ( errno || (*prefixstr == '\0') || (prefix < 1) || (prefix > 32) )
+                {
+                    Sagan_Log(S_ERROR, "[E]: Invalid IP %s/%s in your config file var declaration!\n", ipstr, prefixstr );
+                }
+            if ( (prefix < 8) )
+                {
+                    Sagan_Log(S_WARN, "[W]: Your wildcard for '%s' is less than 8, is this really what you want?", ipstr );
+                }
+        }
+
+    netaddr.pfx = (int) prefix;
+    netaddr.addr = Network( A_To_Hl(ipstr), prefix );
+
+    return( netaddr );
+
+} /* str_to_netaddr() */
+
+/***************************************************************************/
+/* Convert an IP or IP/CIDR into 32bit decimal single IP or 32bit decimal  */
+/* IP low and high range                                                   */
+/***************************************************************************/
+char *Netaddr_To_Range( char ipstr[21] )
+{
+
+    network_addr_t *netaddrs = NULL;
+    uint32_t lo, hi;
+    char *t;
+    char my_str[50];
+    char my_str2[101];
+    static __thread char result[101];
+    char tmp[512];
+    char tmp2[512];
+
+    if ( t = strchr(ipstr, '/') )
+        {
+            netaddrs = realloc( netaddrs, 2 * sizeof(network_addr_t) );
+            netaddrs[0] = Str_To_Netaddr( ipstr );
+
+            lo = netaddrs[0].addr;
+            hi = Broadcast( netaddrs[0].addr, netaddrs[0].pfx );
+
+            if(lo != hi)
+                {
+
+                    snprintf(tmp , sizeof(tmp), "%lu-", (unsigned long)lo);
+                    snprintf(tmp2 , sizeof(tmp2), "%lu", (unsigned long)hi);
+                    strlcpy(my_str, tmp, sizeof(my_str));
+                    strlcpy(my_str2, tmp2, sizeof(my_str2));
+                    strcat(my_str, my_str2);
+                    sprintf( result, "%s", my_str);
+
+                    return result;
+                }
+            else
+                {
+                    snprintf( result, sizeof(result), "%lu", (unsigned long)lo);
+                    return result;
+                }
+        }
+    else
+        {
+            snprintf( result, sizeof(result), "%lu", (unsigned long)IP2Bit(ipstr));
+            return result;
+        }
+} /* netaddr_to_range() */
+
+/* Strip characters from a string */
+char *Strip_Chars(const char *string, const char *chars)
+{
+    char * newstr = malloc(strlen(string) + 1);
+    int counter = 0;
+
+    for ( ; *string; string++)
+        {
+            if (!strchr(chars, *string))
+                {
+                    newstr[ counter ] = *string;
+                    ++ counter;
+                }
+        }
+
+    newstr[counter] = 0;
+    return newstr;
+}
+
+/* Check if str is valid IP from decimal or dotted quad ( 167772160, 1.1.1.1, 192.168.192.168/28 )*/
+sbool Is_IP (char *str)
+{
+
+    char *tmp;
+    char *ip;
+    int prefix;
+    struct in_addr addr;
+
+    if(strlen(str) == strspn(str, "0123456789./"))
+        {
+
+            if(strspn(str, "./") == 0)
+                {
+                    if ( inet_aton(Bit2IP(atol(str)), &addr) == 0 )
+                        {
+                            return(false);
+                        }
+                }
+
+            if ( strchr(str, '/') )
+                {
+                    ip = strtok_r(str, "/", &tmp);
+                    prefix = atoi(strtok_r(NULL, "/", &tmp));
+                    if(inet_aton(ip, &addr) == 0 || prefix < 1 || prefix > 32)
+                        {
+                            return(false);
+                        }
+                }
+            else
+                {
+                    if ( inet_aton(str, &addr) == 0 )
+                        {
+                            return(false);
+                        }
+                }
+
+            return(true);
+
+        }
+    else
+        {
+
+            return(false);
+        }
+
+}

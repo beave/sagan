@@ -46,6 +46,7 @@
 #include "sagan-rules.h"
 #include "sagan-config.h"
 #include "sagan-ipc.h"
+#include "sagan-check-flow.h"
 
 #include "parsers/parsers.h"
 
@@ -137,6 +138,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     sbool geoip2_isset = 0;
     sbool flowbit_return = 0;
     sbool alert_time_trigger = 0;
+    sbool check_flow_return = 1;  /* 1 = match, 0 = no match */
 
     char *ptmp;
     char *tok2;
@@ -325,7 +327,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                 }
 
-
                                         }
                                     else
                                         {
@@ -436,7 +437,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                 }
                         }
-
 
 
                 } /* End of content: & pcre */
@@ -632,7 +632,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             /* If the "source" is 127.0.0.1 that is not useful.  Replace with config->sagan_host
                              * (defined by user in sagan.conf */
 
-                            if ( !strcmp(ip_src, "127.0.0.1") || !strcmp(ip_dst, "::1") )
+                            if ( !strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "::1") )
                                 {
                                     strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
                                 }
@@ -646,6 +646,27 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             ip_dst_u32 = IP2Bit(ip_dst);
 
                             strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
+
+                            /****************************/
+                            /*  Check for flow of rule  */
+                            /*  0 = any    1 = set var  */
+                            /* if any any we dont check */
+                            /****************************/
+
+                            /*if ( rulestruct[b].s_follow_flow || config->follow_flow_flag )
+                            {*/
+                            counters->follow_flow_total++;
+                            if ( rulestruct[b].flow_1_var != 0 && rulestruct[b].flow_2_var != 0 )
+                                {
+
+                                    check_flow_return = Sagan_Check_Flow( b, ip_src_u32, ip_dst_u32);
+                                    if(check_flow_return == 0)
+                                        {
+                                            counters->follow_flow_drop++;
+                                        }
+
+                                }
+                            /*}*/
 
 
                             /****************************************************************************
@@ -919,628 +940,631 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             /* will be passed to the threads.  No need to populate it _if_ we're in a   */
                             /* threshold state.                                                         */
                             /****************************************************************************/
-
-                            if ( rulestruct[b].flowbit_flag == 0 ||
-                                    ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count == 0 ) ||
-                                    ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count && flowbit_return ) ||
-                                    ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count == 0 && rulestruct[b].flowbit_condition_count && flowbit_return ))
+                            if ( check_flow_return == 1 )
                                 {
 
-                                    if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )
+                                    if ( rulestruct[b].flowbit_flag == 0 ||
+                                            ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count == 0 ) ||
+                                            ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count && flowbit_return ) ||
+                                            ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count == 0 && rulestruct[b].flowbit_condition_count && flowbit_return ))
                                         {
 
-#ifdef HAVE_LIBMAXMINDDB
-                                            if ( rulestruct[b].geoip2_flag == 0 || geoip2_isset == 1 )
+                                            if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 )
                                                 {
-#endif
-                                                    if ( rulestruct[b].blacklist_flag == 0 || blacklist_results == 1 )
-                                                        {
 
-                                                            if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1)
+#ifdef HAVE_LIBMAXMINDDB
+                                                    if ( rulestruct[b].geoip2_flag == 0 || geoip2_isset == 1 )
+                                                        {
+#endif
+                                                            if ( rulestruct[b].blacklist_flag == 0 || blacklist_results == 1 )
                                                                 {
+
+                                                                    if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1)
+                                                                        {
 #ifdef WITH_BLUEDOT
 
 
-                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 ))
-                                                                        {
-
-                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 ))
+                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 ))
                                                                                 {
 
-                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 ))
+                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 ))
                                                                                         {
 
-                                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 ))
+                                                                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 ))
                                                                                                 {
+
+                                                                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 ))
+                                                                                                        {
 
 
 
 #endif
 
+                                                                                                            after_log_flag=0;
 
-                                                                                                    after_log_flag=0;
+                                                                                                            /*********************************************************/
+                                                                                                            /* After - Similar to thresholding,  but the opposite    */
+                                                                                                            /* direction - ie - alert _after_ X number of events     */
+                                                                                                            /*********************************************************/
 
-                                                                                                    /*********************************************************/
-                                                                                                    /* After - Similar to thresholding,  but the opposite    */
-                                                                                                    /* direction - ie - alert _after_ X number of events     */
-                                                                                                    /*********************************************************/
-
-                                                                                                    if ( rulestruct[b].after_method != 0 )
-                                                                                                        {
-
-                                                                                                            after_log_flag=1;
-
-                                                                                                            t = time(NULL);
-                                                                                                            now=localtime(&t);
-                                                                                                            strftime(timet, sizeof(timet), "%s",  now);
-
-                                                                                                            /* After by source IP address */
-
-                                                                                                            if ( rulestruct[b].after_method == AFTER_BY_SRC )
+                                                                                                            if ( rulestruct[b].after_method != 0 )
                                                                                                                 {
 
-                                                                                                                    after_flag = 0;
+                                                                                                                    after_log_flag=1;
 
-                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_src; i++ )
+                                                                                                                    t = time(NULL);
+                                                                                                                    now=localtime(&t);
+                                                                                                                    strftime(timet, sizeof(timet), "%s",  now);
+
+                                                                                                                    /* After by source IP address */
+
+                                                                                                                    if ( rulestruct[b].after_method == AFTER_BY_SRC )
                                                                                                                         {
-                                                                                                                            if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                {
 
-                                                                                                                                    after_flag=1;
+                                                                                                                            after_flag = 0;
+
+                                                                                                                            for (i = 0; i < counters_ipc->after_count_by_src; i++ )
+                                                                                                                                {
+                                                                                                                                    if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                        {
+
+                                                                                                                                            after_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_src);
+
+                                                                                                                                            afterbysrc_ipc[i].count++;
+                                                                                                                                            after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
+                                                                                                                                            afterbysrc_ipc[i].utime = atol(timet);
+
+                                                                                                                                            if ( after_oldtime > rulestruct[b].after_seconds )
+                                                                                                                                                {
+                                                                                                                                                    afterbysrc_ipc[i].count=1;
+                                                                                                                                                    afterbysrc_ipc[i].utime = atol(timet);
+                                                                                                                                                    after_log_flag=1;
+                                                                                                                                                }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_src);
+
+                                                                                                                                            if ( rulestruct[b].after_count < afterbysrc_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    after_log_flag = 0;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
+                                                                                                                                                        }
+
+
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                                                                                    counters->after_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                }
+
+                                                                                                                                        }
+                                                                                                                                }
+                                                                                                                        }
+
+
+                                                                                                                    /* If not found,  add it to the array */
+
+                                                                                                                    if ( after_flag == 0 )
+                                                                                                                        {
+
+                                                                                                                            if ( Sagan_Clean_IPC_Object(AFTER_BY_SRC) == 0 )
+                                                                                                                                {
 
                                                                                                                                     Sagan_File_Lock(config->shm_after_by_src);
 
-                                                                                                                                    afterbysrc_ipc[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
-                                                                                                                                    afterbysrc_ipc[i].utime = atol(timet);
-
-                                                                                                                                    if ( after_oldtime > rulestruct[b].after_seconds )
-                                                                                                                                        {
-                                                                                                                                            afterbysrc_ipc[i].count=1;
-                                                                                                                                            afterbysrc_ipc[i].utime = atol(timet);
-                                                                                                                                            after_log_flag=1;
-                                                                                                                                        }
+                                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                                    strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
+                                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
+                                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
+                                                                                                                                    afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
 
                                                                                                                                     Sagan_File_Unlock(config->shm_after_by_src);
 
-                                                                                                                                    if ( rulestruct[b].after_count < afterbysrc_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            after_log_flag = 0;
-
-                                                                                                                                            if ( debug->debuglimits )
-                                                                                                                                                {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
-                                                                                                                                                }
-
-
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);
-                                                                                                                                            counters->after_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                        }
-
+                                                                                                                                    Sagan_File_Lock(config->shm_counters);
+                                                                                                                                    counters_ipc->after_count_by_src++;
+                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
                                                                                                                                 }
-                                                                                                                        }
-                                                                                                                }
 
-
-                                                                                                            /* If not found,  add it to the array */
-
-                                                                                                            if ( after_flag == 0 )
-                                                                                                                {
-
-                                                                                                                    if ( Sagan_Clean_IPC_Object(AFTER_BY_SRC) == 0 )
-                                                                                                                        {
-
-                                                                                                                            Sagan_File_Lock(config->shm_after_by_src);
-
-                                                                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                            strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
-                                                                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
-                                                                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
-                                                                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
-
-                                                                                                                            Sagan_File_Unlock(config->shm_after_by_src);
-
-                                                                                                                            Sagan_File_Lock(config->shm_counters);
-                                                                                                                            counters_ipc->after_count_by_src++;
-                                                                                                                            Sagan_File_Unlock(config->shm_counters);
                                                                                                                         }
 
-                                                                                                                }
+                                                                                                                    /* After by destination IP address */
 
-                                                                                                            /* After by destination IP address */
-
-                                                                                                            if ( rulestruct[b].after_method == 2 )
-                                                                                                                {
-
-                                                                                                                    after_flag = 0;
-
-                                                                                                                    /* Check array for matching src / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_dst; i++ )
+                                                                                                                    if ( rulestruct[b].after_method == 2 )
                                                                                                                         {
-                                                                                                                            if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
+
+                                                                                                                            after_flag = 0;
+
+                                                                                                                            /* Check array for matching src / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->after_count_by_dst; i++ )
                                                                                                                                 {
-                                                                                                                                    after_flag=1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_dst);
-
-                                                                                                                                    afterbydst_ipc[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
-                                                                                                                                    afterbydst_ipc[i].utime = atol(timet);
-
-                                                                                                                                    if ( after_oldtime > rulestruct[b].after_seconds )
+                                                                                                                                    if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                         {
-                                                                                                                                            afterbydst_ipc[i].count=1;
+                                                                                                                                            after_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_dst);
+
+                                                                                                                                            afterbydst_ipc[i].count++;
+                                                                                                                                            after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
                                                                                                                                             afterbydst_ipc[i].utime = atol(timet);
-                                                                                                                                            after_log_flag=1;
-                                                                                                                                        }
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_dst);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbydst_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            after_log_flag = 0;
-
-                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                            if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
+                                                                                                                                                    afterbydst_ipc[i].count=1;
+                                                                                                                                                    afterbydst_ipc[i].utime = atol(timet);
+                                                                                                                                                    after_log_flag=1;
                                                                                                                                                 }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_dst);
+
+                                                                                                                                            if ( rulestruct[b].after_count < afterbydst_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    after_log_flag = 0;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
+                                                                                                                                                        }
 
 
 //                                                                                                                                            counters_ipc->after_total++;
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);
-                                                                                                                                            counters->after_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                                                                                    counters->after_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                }
                                                                                                                                         }
                                                                                                                                 }
-                                                                                                                        }
 
-                                                                                                                    /* If not found,  add it to the array */
+                                                                                                                            /* If not found,  add it to the array */
 
-                                                                                                                    if ( after_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 )
+                                                                                                                            if ( after_flag == 0 )
                                                                                                                                 {
 
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_dst);
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 )
+                                                                                                                                        {
 
-                                                                                                                                    afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                                    strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
-                                                                                                                                    afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
-                                                                                                                                    afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
-                                                                                                                                    afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_dst);
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_dst);
+                                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                                            strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
+                                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
+                                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
+                                                                                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
 
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->after_count_by_dst++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_dst);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->after_count_by_dst++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
 
                                                                                                                                 }
-
                                                                                                                         }
-                                                                                                                }
 
-                                                                                                            /* After by username */
+                                                                                                                    /* After by username */
 
-                                                                                                            if ( rulestruct[b].after_method == 3 && normalize_username[0] != '\0' )
-                                                                                                                {
-
-                                                                                                                    after_flag = 0;
-
-                                                                                                                    /* Check array for matching username / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_username; i++ )
+                                                                                                                    if ( rulestruct[b].after_method == 3 && normalize_username[0] != '\0' )
                                                                                                                         {
-                                                                                                                            if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
+
+                                                                                                                            after_flag = 0;
+
+                                                                                                                            /* Check array for matching username / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->after_count_by_username; i++ )
                                                                                                                                 {
-                                                                                                                                    after_flag = 1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_username);
-
-                                                                                                                                    afterbyusername_ipc[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
-                                                                                                                                    afterbyusername_ipc[i].utime = atol(timet);
-
-                                                                                                                                    if ( after_oldtime > rulestruct[b].after_seconds )
+                                                                                                                                    if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                         {
-                                                                                                                                            afterbyusername_ipc[i].count=1;
+                                                                                                                                            after_flag = 1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_username);
+
+                                                                                                                                            afterbyusername_ipc[i].count++;
+                                                                                                                                            after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
                                                                                                                                             afterbyusername_ipc[i].utime = atol(timet);
-                                                                                                                                            after_log_flag=1;
-                                                                                                                                        }
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_username);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbyusername_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            after_log_flag = 0;
-
-                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                            if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by username. [%s]", afterbydst_ipc[i].sid, normalize_username);
+                                                                                                                                                    afterbyusername_ipc[i].count=1;
+                                                                                                                                                    afterbyusername_ipc[i].utime = atol(timet);
+                                                                                                                                                    after_log_flag=1;
                                                                                                                                                 }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_username);
+
+                                                                                                                                            if ( rulestruct[b].after_count < afterbyusername_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    after_log_flag = 0;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by username. [%s]", afterbydst_ipc[i].sid, normalize_username);
+                                                                                                                                                        }
 
 //                                                                                                                                            counters_ipc->after_total++;
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);;
-                                                                                                                                            counters->after_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                                                                                    counters->after_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
 
-                                                                                                                                        }
-                                                                                                                                }
-                                                                                                                        }
-
-                                                                                                                    /* If not found, add to the username array */
-
-                                                                                                                    if ( after_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 )
-                                                                                                                                {
-
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_username);
-
-                                                                                                                                    strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
-                                                                                                                                    strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
-                                                                                                                                    afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
-                                                                                                                                    afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
-                                                                                                                                    afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
-
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_username);
-
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->after_count_by_username++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
-
-                                                                                                                                }
-
-                                                                                                                        }
-                                                                                                                }
-
-                                                                                                        } /* End of After */
-
-                                                                                                    thresh_log_flag = 0;
-
-                                                                                                    /*********************************************************/
-                                                                                                    /* Thresh holding                                        */
-                                                                                                    /*********************************************************/
-
-                                                                                                    if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0)
-                                                                                                        {
-
-                                                                                                            t = time(NULL);
-                                                                                                            now=localtime(&t);
-                                                                                                            strftime(timet, sizeof(timet), "%s",  now);
-
-                                                                                                            /* Thresholding by source IP address */
-
-                                                                                                            if ( rulestruct[b].threshold_method == 1 )
-                                                                                                                {
-                                                                                                                    thresh_flag = 0;
-
-                                                                                                                    /* Check array for matching src / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_src; i++ )
-                                                                                                                        {
-                                                                                                                            if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                {
-
-                                                                                                                                    thresh_flag=1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_src);
-
-                                                                                                                                    threshbysrc_ipc[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
-
-                                                                                                                                    threshbysrc_ipc[i].utime = atol(timet);
-
-                                                                                                                                    if ( thresh_oldtime > rulestruct[b].threshold_seconds )
-                                                                                                                                        {
-                                                                                                                                            threshbysrc_ipc[i].count=1;
-                                                                                                                                            threshbysrc_ipc[i].utime = atol(timet);
-                                                                                                                                            thresh_log_flag=0;
-                                                                                                                                        }
-
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_src);
-
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            thresh_log_flag = 1;
-
-                                                                                                                                            if ( debug->debuglimits )
-                                                                                                                                                {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
                                                                                                                                                 }
+                                                                                                                                        }
+                                                                                                                                }
+
+                                                                                                                            /* If not found, add to the username array */
+
+                                                                                                                            if ( after_flag == 0 )
+                                                                                                                                {
+
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 )
+                                                                                                                                        {
+
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_username);
+
+                                                                                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
+                                                                                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
+                                                                                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
+                                                                                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
+                                                                                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_username);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->after_count_by_username++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
+
+                                                                                                                                }
+                                                                                                                        }
+
+                                                                                                                } /* End of After */
+
+                                                                                                            thresh_log_flag = 0;
+
+                                                                                                            /*********************************************************/
+                                                                                                            /* Thresh holding                                        */
+                                                                                                            /*********************************************************/
+
+                                                                                                            if ( rulestruct[b].threshold_type != 0 && after_log_flag == 0)
+                                                                                                                {
+
+                                                                                                                    t = time(NULL);
+                                                                                                                    now=localtime(&t);
+                                                                                                                    strftime(timet, sizeof(timet), "%s",  now);
+
+                                                                                                                    /* Thresholding by source IP address */
+
+                                                                                                                    if ( rulestruct[b].threshold_method == 1 )
+                                                                                                                        {
+                                                                                                                            thresh_flag = 0;
+
+                                                                                                                            /* Check array for matching src / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->thresh_count_by_src; i++ )
+                                                                                                                                {
+                                                                                                                                    if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                        {
+
+                                                                                                                                            thresh_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_src);
+
+                                                                                                                                            threshbysrc_ipc[i].count++;
+                                                                                                                                            thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
+
+                                                                                                                                            threshbysrc_ipc[i].utime = atol(timet);
+
+                                                                                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds )
+                                                                                                                                                {
+                                                                                                                                                    threshbysrc_ipc[i].count=1;
+                                                                                                                                                    threshbysrc_ipc[i].utime = atol(timet);
+                                                                                                                                                    thresh_log_flag=0;
+                                                                                                                                                }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_src);
+
+                                                                                                                                            if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    thresh_log_flag = 1;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
+                                                                                                                                                        }
 
 //                                                                                                                                            counters_ipc->threshold_total++;
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);;
-                                                                                                                                            counters->threshold_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
-                                                                                                                                        }
-
-                                                                                                                                }
-                                                                                                                        }
-
-                                                                                                                    /* If not found,  add it to the array */
-
-                                                                                                                    if ( thresh_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(THRESH_BY_SRC) == 0 )
-                                                                                                                                {
-
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_src);
-
-                                                                                                                                    threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
-                                                                                                                                    strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
-                                                                                                                                    threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
-                                                                                                                                    threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
-                                                                                                                                    threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
-
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_src);
-
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->thresh_count_by_src++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
-
-                                                                                                                                }
-
-                                                                                                                        }
-                                                                                                                }
-
-                                                                                                            /* Thresholding by destination IP address */
-
-                                                                                                            if ( rulestruct[b].threshold_method == 2 )
-                                                                                                                {
-                                                                                                                    thresh_flag = 0;
-
-                                                                                                                    /* Check array for matching src / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ )
-                                                                                                                        {
-                                                                                                                            if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[b].s_sid ))
-                                                                                                                                {
-
-                                                                                                                                    thresh_flag=1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_dst);
-
-                                                                                                                                    threshbydst_ipc[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
-                                                                                                                                    threshbydst_ipc[i].utime = atol(timet);
-                                                                                                                                    if ( thresh_oldtime > rulestruct[b].threshold_seconds )
-                                                                                                                                        {
-                                                                                                                                            threshbydst_ipc[i].count=1;
-                                                                                                                                            threshbydst_ipc[i].utime = atol(timet);
-                                                                                                                                            thresh_log_flag=0;
-                                                                                                                                        }
-
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_dst);
-
-
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            thresh_log_flag = 1;
-
-                                                                                                                                            if ( debug->debuglimits )
-                                                                                                                                                {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                                                                                    counters->threshold_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
                                                                                                                                                 }
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);;
-                                                                                                                                            counters->threshold_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
                                                                                                                                         }
                                                                                                                                 }
-                                                                                                                        }
 
-                                                                                                                    /* If not found,  add it to the array */
+                                                                                                                            /* If not found,  add it to the array */
 
-                                                                                                                    if ( thresh_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(THRESH_BY_DST) == 0 )
+                                                                                                                            if ( thresh_flag == 0 )
                                                                                                                                 {
 
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_dst);
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(THRESH_BY_SRC) == 0 )
+                                                                                                                                        {
 
-                                                                                                                                    threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
-                                                                                                                                    strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
-                                                                                                                                    threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
-                                                                                                                                    threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
-                                                                                                                                    threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_src);
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_dst);
+                                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
+                                                                                                                                            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+                                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
+                                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
+                                                                                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
 
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->thresh_count_by_dst++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_src);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->thresh_count_by_src++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
 
                                                                                                                                 }
-
                                                                                                                         }
-                                                                                                                }
 
+                                                                                                                    /* Thresholding by destination IP address */
 
-                                                                                                            if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' )
-                                                                                                                {
-
-                                                                                                                    thresh_flag = 0;
-
-                                                                                                                    /* Check array fror matching username / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_username; i++)
+                                                                                                                    if ( rulestruct[b].threshold_method == 2 )
                                                                                                                         {
+                                                                                                                            thresh_flag = 0;
 
-                                                                                                                            if ( !strcmp(threshbyusername_ipc[i].username, normalize_username) && !strcmp(threshbyusername_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            /* Check array for matching src / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ )
+                                                                                                                                {
+                                                                                                                                    if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                        {
+
+                                                                                                                                            thresh_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_dst);
+
+                                                                                                                                            threshbydst_ipc[i].count++;
+                                                                                                                                            thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
+                                                                                                                                            threshbydst_ipc[i].utime = atol(timet);
+                                                                                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds )
+                                                                                                                                                {
+                                                                                                                                                    threshbydst_ipc[i].count=1;
+                                                                                                                                                    threshbydst_ipc[i].utime = atol(timet);
+                                                                                                                                                    thresh_log_flag=0;
+                                                                                                                                                }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_dst);
+
+
+                                                                                                                                            if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    thresh_log_flag = 1;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                                                                                                                                        }
+
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                                                                                    counters->threshold_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                }
+                                                                                                                                        }
+                                                                                                                                }
+
+                                                                                                                            /* If not found,  add it to the array */
+
+                                                                                                                            if ( thresh_flag == 0 )
                                                                                                                                 {
 
-                                                                                                                                    thresh_flag=1;
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(THRESH_BY_DST) == 0 )
+                                                                                                                                        {
+
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_dst);
+
+                                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
+                                                                                                                                            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
+                                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
+                                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
+                                                                                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_dst);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->thresh_count_by_dst++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
+
+                                                                                                                                }
+                                                                                                                        }
+
+
+                                                                                                                    if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' )
+                                                                                                                        {
+
+                                                                                                                            thresh_flag = 0;
+
+                                                                                                                            /* Check array fror matching username / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->thresh_count_by_username; i++)
+                                                                                                                                {
+
+                                                                                                                                    if ( !strcmp(threshbyusername_ipc[i].username, normalize_username) && !strcmp(threshbyusername_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                                        {
+
+                                                                                                                                            thresh_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_username);
+
+                                                                                                                                            threshbyusername_ipc[i].count++;
+                                                                                                                                            thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
+                                                                                                                                            threshbyusername_ipc[i].utime = atol(timet);
+
+                                                                                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds )
+                                                                                                                                                {
+                                                                                                                                                    threshbyusername_ipc[i].count=1;
+                                                                                                                                                    threshbyusername_ipc[i].utime = atol(timet);
+                                                                                                                                                    thresh_log_flag=0;
+                                                                                                                                                }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_username);
+
+                                                                                                                                            if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count )
+                                                                                                                                                {
+
+                                                                                                                                                    thresh_log_flag = 1;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
+                                                                                                                                                        }
+
+//                                                                                                                                            counters_ipc->threshold_total++;
+
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                                                                                    counters->threshold_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+
+                                                                                                                                                }
+
+                                                                                                                                        }
+                                                                                                                                }
+
+                                                                                                                            /* Username not found, add it to array */
+
+                                                                                                                            if ( thresh_flag == 0 )
+                                                                                                                                {
 
                                                                                                                                     Sagan_File_Lock(config->shm_thresh_by_username);
 
-                                                                                                                                    threshbyusername_ipc[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
-                                                                                                                                    threshbyusername_ipc[i].utime = atol(timet);
+                                                                                                                                    strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
+                                                                                                                                    strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
+                                                                                                                                    threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
+                                                                                                                                    threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
+                                                                                                                                    threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
 
-                                                                                                                                    if ( thresh_oldtime > rulestruct[b].threshold_seconds )
-                                                                                                                                        {
-                                                                                                                                            threshbyusername_ipc[i].count=1;
-                                                                                                                                            threshbyusername_ipc[i].utime = atol(timet);
-                                                                                                                                            thresh_log_flag=0;
-                                                                                                                                        }
 
                                                                                                                                     Sagan_File_Unlock(config->shm_thresh_by_username);
 
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count )
+                                                                                                                                    if ( config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
+                                                                                                                                        {
+                                                                                                                                            Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_username' of %d has been reached! Consider increasing 'threshold_by_username'!", __FILE__, __LINE__, config->max_threshold_by_username );
+
+                                                                                                                                        }
+                                                                                                                                    else
                                                                                                                                         {
 
-                                                                                                                                            thresh_log_flag = 1;
-
-                                                                                                                                            if ( debug->debuglimits )
-                                                                                                                                                {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
-                                                                                                                                                }
-
-//                                                                                                                                            counters_ipc->threshold_total++;
-
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);;
-                                                                                                                                            counters->threshold_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->thresh_count_by_username++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
 
                                                                                                                                         }
 
                                                                                                                                 }
+
                                                                                                                         }
 
-                                                                                                                    /* Username not found, add it to array */
+                                                                                                                }  /* End of thresholding */
 
-                                                                                                                    if ( thresh_flag == 0 )
+
+                                                                                                            pthread_mutex_lock(&CounterMutex);
+                                                                                                            counters->saganfound++;
+                                                                                                            pthread_mutex_unlock(&CounterMutex);
+
+                                                                                                            /* Check for thesholding & "after" */
+
+                                                                                                            if ( thresh_log_flag == 0 && after_log_flag == 0 )
+                                                                                                                {
+
+                                                                                                                    if ( debug->debugengine )
                                                                                                                         {
 
-                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_username);
-
-                                                                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
-                                                                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
-                                                                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
-                                                                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
-                                                                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
-
-
-                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_username);
-
-                                                                                                                            if ( config->max_threshold_by_username < counters_ipc->thresh_count_by_username )
-                                                                                                                                {
-                                                                                                                                    Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_username' of %d has been reached! Consider increasing 'threshold_by_username'!", __FILE__, __LINE__, config->max_threshold_by_username );
-
-                                                                                                                                }
-                                                                                                                            else
-                                                                                                                                {
-
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->thresh_count_by_username++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
-
-                                                                                                                                }
+                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
+                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                                                                         }
 
-                                                                                                                }
+                                                                                                                    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
+                                                                                                                        Sagan_Flowbit_Set(b, ip_src, ip_dst);
 
-                                                                                                        }  /* End of thresholding */
+                                                                                                                    threadid++;
 
+                                                                                                                    if ( threadid >= MAX_THREADS )
+                                                                                                                        {
+                                                                                                                            threadid=0;
+                                                                                                                        }
 
-                                                                                                    pthread_mutex_lock(&CounterMutex);
-                                                                                                    counters->saganfound++;
-                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                    /* We can't use the pointers from our syslog data.  If two (or more) event's
+                                                                                                                     * fire at the same time,  the two alerts will have corrupted information
+                                                                                                                     * (due to threading).   So we populate the SaganEvent[threadid] with the
+                                                                                                                     * var[msgslot] information. - Champ Clark 02/02/2011
+                                                                                                                     */
 
-                                                                                                    /* Check for thesholding & "after" */
+                                                                                                                    /* The above is wrong.  Need to use static __thread - Champ Clark 12/21/2015 */
 
-                                                                                                    if ( thresh_log_flag == 0 && after_log_flag == 0 )
-                                                                                                        {
+                                                                                                                    processor_info_engine->processor_name          =       s_msg;
+                                                                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                                                                            if ( debug->debugengine )
-                                                                                                                {
+                                                                                                                    processor_info_engine_dst_port                 =       normalize_dst_port;
+                                                                                                                    processor_info_engine_src_port                 =       normalize_src_port;
+                                                                                                                    processor_info_engine_proto                    =       proto;
+                                                                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
-                                                                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                    if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
+                                                                                                                        {
+                                                                                                                            Sagan_Send_Alert(SaganProcSyslog_LOCAL,
+                                                                                                                                             processor_info_engine,
 
-                                                                                                                }
+                                                                                                                                             ip_src,
+                                                                                                                                             ip_dst,
 
-                                                                                                            if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
-                                                                                                                Sagan_Flowbit_Set(b, ip_src, ip_dst);
+                                                                                                                                             normalize_http_uri,
+                                                                                                                                             normalize_http_hostname,
 
-                                                                                                            threadid++;
-
-                                                                                                            if ( threadid >= MAX_THREADS )
-                                                                                                                {
-                                                                                                                    threadid=0;
-                                                                                                                }
-
-                                                                                                            /* We can't use the pointers from our syslog data.  If two (or more) event's
-                                                                                                             * fire at the same time,  the two alerts will have corrupted information
-                                                                                                             * (due to threading).   So we populate the SaganEvent[threadid] with the
-                                                                                                             * var[msgslot] information. - Champ Clark 02/02/2011
-                                                                                                             */
-
-                                                                                                            /* The above is wrong.  Need to use static __thread - Champ Clark 12/21/2015 */
-
-                                                                                                            processor_info_engine->processor_name          =       s_msg;
-                                                                                                            processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                                                                            processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                                                                            processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                                                                            processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                                                                            processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                                                                            processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                                                                            processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
-
-                                                                                                            processor_info_engine_dst_port                 =       normalize_dst_port;
-                                                                                                            processor_info_engine_src_port                 =       normalize_src_port;
-                                                                                                            processor_info_engine_proto                    =       proto;
-                                                                                                            processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
-
-                                                                                                            if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 )
-                                                                                                                {
-                                                                                                                    Sagan_Send_Alert(SaganProcSyslog_LOCAL,
-                                                                                                                                     processor_info_engine,
-
-                                                                                                                                     ip_src,
-                                                                                                                                     ip_dst,
-
-                                                                                                                                     normalize_http_uri,
-                                                                                                                                     normalize_http_hostname,
-
-                                                                                                                                     processor_info_engine_proto,
-                                                                                                                                     processor_info_engine_alertid,
-                                                                                                                                     processor_info_engine_src_port,
-                                                                                                                                     processor_info_engine_dst_port,
-                                                                                                                                     b );
-                                                                                                                }
+                                                                                                                                             processor_info_engine_proto,
+                                                                                                                                             processor_info_engine_alertid,
+                                                                                                                                             processor_info_engine_src_port,
+                                                                                                                                             processor_info_engine_dst_port,
+                                                                                                                                             b );
+                                                                                                                        }
 
 
-                                                                                                        } /* Threshold / After */
+                                                                                                                } /* Threshold / After */
 #ifdef WITH_BLUEDOT
-                                                                                                } /* Bluedot */
+                                                                                                        } /* Bluedot */
+                                                                                                }
                                                                                         }
                                                                                 }
-                                                                        }
 #endif
 
-                                                                } /* Bro Intel */
+                                                                        } /* Bro Intel */
 
-                                                        } /* Blacklist */
+                                                                } /* Blacklist */
 #ifdef HAVE_LIBMAXMINDDB
-                                                } /* GeoIP2 */
+                                                        } /* GeoIP2 */
 #endif
-                                        } /* Time based alerts */
+                                                } /* Time based alerts */
 
-                                } /* Flowbit */
+                                        } /* Flowbit */
+
+                                } /* Check Rule Flow */
 
                         } /* End of match */
 
@@ -1550,10 +1574,11 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
             geoip2_isset = 0;
 #endif
 
-            match=0;  		/* Reset match! */
-            sagan_match=0;	/* Reset pcre/meta_content/content match! */
-            rc=0;		/* Return code */
-            flowbit_return=0;	/* Flowbit reset */
+            match=0;  		  /* Reset match! */
+            sagan_match=0;	  /* Reset pcre/meta_content/content match! */
+            rc=0;		  /* Return code */
+            flowbit_return=0;	  /* Flowbit reset */
+            check_flow_return=1;  /* Rule flow direction reset */
 
 
         } /* End for for loop */

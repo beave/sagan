@@ -97,12 +97,17 @@ int Sagan_Parse_Port (char *msg)
                             if (Is_Numeric(tmpport))
                                 {
                                     port=atoi(tmpport);
+                                    return(port);
                                 }
                             else
                                 {
                                     /* drop last char.  Sometimes port ends in port "#." */
                                     tmpport[strlen(tmpport) - 1] = '\0';
-                                    if (Is_Numeric(tmpport)) port=atoi(tmpport);
+                                    if (Is_Numeric(tmpport))
+                                        {
+                                            port=atoi(tmpport);
+                                            return(port);
+                                        }
                                 }
 
                         }
@@ -132,12 +137,17 @@ int Sagan_Parse_Port (char *msg)
                             if (Is_Numeric(portstring))
                                 {
                                     port=atoi(portstring);
+                                    return(port);
                                 }
                             else
                                 {
                                     /* IP:PORT string or IP::PORT */
                                     token = strtok_r(portstring, " ", &saveptr1);
-                                    if (Is_Numeric(token)) port=atoi(portstring);
+                                    if (Is_Numeric(token))
+                                        {
+                                            port=atoi(portstring);
+                                            return(port);
+                                        }
                                 }
                         }
                 }
@@ -166,6 +176,7 @@ int Sagan_Parse_Port (char *msg)
                             if (Is_Numeric(portstring))
                                 {
                                     port=atoi(portstring);
+                                    return(port);
                                 }
                             else
                                 {
@@ -174,11 +185,16 @@ int Sagan_Parse_Port (char *msg)
                                     if (Is_Numeric(token))
                                         {
                                             port=atoi(token);
+                                            return(port);
                                         }
                                     else
                                         {
                                             token[strlen(token) - 1] = '\0';
-                                            if (Is_Numeric(token)) port=atoi(token);
+                                            if (Is_Numeric(token))
+                                                {
+                                                    port=atoi(token);
+                                                    return(port);
+                                                }
                                         }
                                 }
                         }
@@ -187,4 +203,3 @@ int Sagan_Parse_Port (char *msg)
 
     return(port);
 }
-

@@ -112,16 +112,17 @@ am_sagan_OBJECTS = sagan-sagan.$(OBJEXT) \
 	sagan-sagan-protocol-map.$(OBJEXT) \
 	sagan-sagan-geoip2.$(OBJEXT) \
 	sagan-sagan-meta-content.$(OBJEXT) \
-	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-aetas.$(OBJEXT) \
-	sagan-sagan-ipc.$(OBJEXT) sagan-parse-ip.$(OBJEXT) \
-	sagan-parse-port.$(OBJEXT) sagan-parse-proto.$(OBJEXT) \
-	sagan-sagan-strstr-hook.$(OBJEXT) sagan-strstr_sse2.$(OBJEXT) \
-	sagan-strstr_sse4_2.$(OBJEXT) sagan-sagan-alert.$(OBJEXT) \
-	sagan-sagan-esmtp.$(OBJEXT) sagan-sagan-external.$(OBJEXT) \
-	sagan-sagan-unified2.$(OBJEXT) sagan-sagan-twofish.$(OBJEXT) \
-	sagan-sagan-snortsam.$(OBJEXT) sagan-sagan-syslog.$(OBJEXT) \
-	sagan-sagan-engine.$(OBJEXT) \
+	sagan-sagan-flowbit.$(OBJEXT) sagan-sagan-check-flow.$(OBJEXT) \
+	sagan-sagan-aetas.$(OBJEXT) sagan-sagan-ipc.$(OBJEXT) \
+	sagan-parse-ip.$(OBJEXT) sagan-parse-port.$(OBJEXT) \
+	sagan-parse-proto.$(OBJEXT) sagan-sagan-strstr-hook.$(OBJEXT) \
+	sagan-strstr_sse2.$(OBJEXT) sagan-strstr_sse4_2.$(OBJEXT) \
+	sagan-sagan-alert.$(OBJEXT) sagan-sagan-esmtp.$(OBJEXT) \
+	sagan-sagan-external.$(OBJEXT) sagan-sagan-unified2.$(OBJEXT) \
+	sagan-sagan-twofish.$(OBJEXT) sagan-sagan-snortsam.$(OBJEXT) \
+	sagan-sagan-syslog.$(OBJEXT) sagan-sagan-engine.$(OBJEXT) \
 	sagan-sagan-track-clients.$(OBJEXT) \
+	sagan-sagan-report-clients.$(OBJEXT) \
 	sagan-sagan-bluedot.$(OBJEXT) sagan-sagan-blacklist.$(OBJEXT) \
 	sagan-sagan-perfmon.$(OBJEXT) sagan-sagan-bro-intel.$(OBJEXT)
 sagan_OBJECTS = $(am_sagan_OBJECTS)
@@ -337,6 +338,7 @@ sagan-protocol-map.c \
 sagan-geoip2.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
+sagan-check-flow.c\
 sagan-aetas.c \
 sagan-ipc.c \
 parsers/parse-ip.c \
@@ -354,6 +356,7 @@ output-plugins/sagan-snortsam.c \
 output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
+processors/sagan-report-clients.c \
 processors/sagan-bluedot.c \
 processors/sagan-blacklist.c \
 processors/sagan-perfmon.c \
@@ -454,6 +457,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-blacklist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-bluedot.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-bro-intel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-check-flow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-classifications.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-credits.Po@am__quote@
@@ -475,6 +479,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-processor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-protocol-map.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-references.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-report-clients.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-rules.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-send-alert.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sagan-sagan-signal.Po@am__quote@
@@ -899,6 +904,20 @@ sagan-sagan-flowbit.obj: sagan-flowbit.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-flowbit.obj `if test -f 'sagan-flowbit.c'; then $(CYGPATH_W) 'sagan-flowbit.c'; else $(CYGPATH_W) '$(srcdir)/sagan-flowbit.c'; fi`
 
+sagan-sagan-check-flow.o: sagan-check-flow.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-check-flow.o -MD -MP -MF $(DEPDIR)/sagan-sagan-check-flow.Tpo -c -o sagan-sagan-check-flow.o `test -f 'sagan-check-flow.c' || echo '$(srcdir)/'`sagan-check-flow.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-check-flow.Tpo $(DEPDIR)/sagan-sagan-check-flow.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-check-flow.c' object='sagan-sagan-check-flow.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-check-flow.o `test -f 'sagan-check-flow.c' || echo '$(srcdir)/'`sagan-check-flow.c
+
+sagan-sagan-check-flow.obj: sagan-check-flow.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-check-flow.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-check-flow.Tpo -c -o sagan-sagan-check-flow.obj `if test -f 'sagan-check-flow.c'; then $(CYGPATH_W) 'sagan-check-flow.c'; else $(CYGPATH_W) '$(srcdir)/sagan-check-flow.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-check-flow.Tpo $(DEPDIR)/sagan-sagan-check-flow.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sagan-check-flow.c' object='sagan-sagan-check-flow.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-check-flow.obj `if test -f 'sagan-check-flow.c'; then $(CYGPATH_W) 'sagan-check-flow.c'; else $(CYGPATH_W) '$(srcdir)/sagan-check-flow.c'; fi`
+
 sagan-sagan-aetas.o: sagan-aetas.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-aetas.o -MD -MP -MF $(DEPDIR)/sagan-sagan-aetas.Tpo -c -o sagan-sagan-aetas.o `test -f 'sagan-aetas.c' || echo '$(srcdir)/'`sagan-aetas.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-aetas.Tpo $(DEPDIR)/sagan-sagan-aetas.Po
@@ -1108,6 +1127,20 @@ sagan-sagan-track-clients.obj: processors/sagan-track-clients.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-track-clients.c' object='sagan-sagan-track-clients.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-track-clients.obj `if test -f 'processors/sagan-track-clients.c'; then $(CYGPATH_W) 'processors/sagan-track-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-track-clients.c'; fi`
+
+sagan-sagan-report-clients.o: processors/sagan-report-clients.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-report-clients.o -MD -MP -MF $(DEPDIR)/sagan-sagan-report-clients.Tpo -c -o sagan-sagan-report-clients.o `test -f 'processors/sagan-report-clients.c' || echo '$(srcdir)/'`processors/sagan-report-clients.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-report-clients.Tpo $(DEPDIR)/sagan-sagan-report-clients.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-report-clients.c' object='sagan-sagan-report-clients.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-report-clients.o `test -f 'processors/sagan-report-clients.c' || echo '$(srcdir)/'`processors/sagan-report-clients.c
+
+sagan-sagan-report-clients.obj: processors/sagan-report-clients.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-report-clients.obj -MD -MP -MF $(DEPDIR)/sagan-sagan-report-clients.Tpo -c -o sagan-sagan-report-clients.obj `if test -f 'processors/sagan-report-clients.c'; then $(CYGPATH_W) 'processors/sagan-report-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-report-clients.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sagan-sagan-report-clients.Tpo $(DEPDIR)/sagan-sagan-report-clients.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='processors/sagan-report-clients.c' object='sagan-sagan-report-clients.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o sagan-sagan-report-clients.obj `if test -f 'processors/sagan-report-clients.c'; then $(CYGPATH_W) 'processors/sagan-report-clients.c'; else $(CYGPATH_W) '$(srcdir)/processors/sagan-report-clients.c'; fi`
 
 sagan-sagan-bluedot.o: processors/sagan-bluedot.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(sagan_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT sagan-sagan-bluedot.o -MD -MP -MF $(DEPDIR)/sagan-sagan-bluedot.Tpo -c -o sagan-sagan-bluedot.o `test -f 'processors/sagan-bluedot.c' || echo '$(srcdir)/'`processors/sagan-bluedot.c

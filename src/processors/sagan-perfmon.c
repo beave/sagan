@@ -277,8 +277,6 @@ void Sagan_Perfmonitor_Handler( void )
                             fprintf(config->perfmonitor_file_stream, "%lu", bluedot_ip_total + bluedot_hash_total + bluedot_url_total + bluedot_filename_total);
 
 
-
-
                         }
                     else
                         {

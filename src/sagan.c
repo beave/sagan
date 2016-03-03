@@ -75,6 +75,7 @@
 #include "processors/sagan-engine.h"
 #include "processors/sagan-blacklist.h"
 #include "processors/sagan-track-clients.h"
+#include "processors/sagan-report-clients.h"
 #include "processors/sagan-perfmon.h"
 #include "processors/sagan-bro-intel.h"
 
@@ -174,6 +175,14 @@ int main(int argc, char **argv)
     pthread_attr_t key_thread_attr;
     pthread_attr_init(&key_thread_attr);
     pthread_attr_setdetachstate(&key_thread_attr,  PTHREAD_CREATE_DETACHED);
+
+    /* client_tracker_report_handler thread */
+
+    pthread_t ct_report_thread;
+    pthread_attr_t ct_report_thread_attr;
+    pthread_attr_init(&ct_report_thread_attr);
+    pthread_attr_setdetachstate(&ct_report_thread_attr,  PTHREAD_CREATE_DETACHED);
+
 
     struct sockaddr_in sa;
     char src_dns_lookup[20];
@@ -565,6 +574,16 @@ int main(int argc, char **argv)
 
             Sagan_Track_Clients_Init();
 
+            /* We run a thread for client_tracker_report */
+
+            rc = pthread_create( &ct_report_thread, NULL, (void *)Sagan_Report_Clients, NULL );
+
+            if ( rc != 0 )
+                {
+                    Remove_Lock_File();
+                    Sagan_Log(S_ERROR, "[%s, line %d] Error creating client_tracker_report_client thread. [error: %d]", __FILE__, __LINE__, rc);
+                }
+
             if ( config->pp_sagan_track_clients )
                 {
                     Sagan_Log(S_NORMAL, "");
@@ -924,7 +943,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            /* We know check the rest of the values */
+                            /* We now check the rest of the values */
 
                             syslog_facility=strtok_r(NULL, "|", &tok);
                             if ( syslog_facility == NULL )

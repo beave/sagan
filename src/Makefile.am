@@ -29,6 +29,7 @@ sagan-protocol-map.c \
 sagan-geoip2.c \
 sagan-meta-content.c \
 sagan-flowbit.c \
+sagan-check-flow.c\
 sagan-aetas.c \
 sagan-ipc.c \
 parsers/parse-ip.c \
@@ -46,6 +47,7 @@ output-plugins/sagan-snortsam.c \
 output-plugins/sagan-syslog.c \
 processors/sagan-engine.c \
 processors/sagan-track-clients.c \
+processors/sagan-report-clients.c \
 processors/sagan-bluedot.c \
 processors/sagan-blacklist.c \
 processors/sagan-perfmon.c \
