@@ -43,22 +43,7 @@ struct _Sagan_IPC_Flowbit
     sbool flowbit_state;
     uint32_t ip_src;
     uint32_t ip_dst;
-    uint64_t flowbit_expire;
+    uintmax_t flowbit_expire;
     int expire;
 };
-
-
-/*
-typedef struct _Sagan_Flowbit _Sagan_Flowbit;
-struct _Sagan_Flowbit
-{
-    char flowbit_name[64];
-    sbool flowbit_state;
-    uint32_t ip_src;
-    uint32_t ip_dst;
-    uint64_t flowbit_expire;
-};
-
-*/
-
 

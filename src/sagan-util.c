@@ -361,7 +361,7 @@ char *Between_Quotes(char *instring)
 
 /* CalcPct (Taken from Snort) */
 
-double CalcPct(uint64_t cnt, uint64_t total)
+double CalcPct(uintmax_t cnt, uintmax_t total)
 {
     double pct = 0.0;
 
@@ -937,7 +937,7 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 
 #endif
 
-char *Sagan_Return_Date( uint64_t utime )
+char *Sagan_Return_Date( uintmax_t utime )
 {
 
     struct tm tm;
@@ -957,7 +957,7 @@ char *Sagan_Return_Date( uint64_t utime )
 
 }
 
-char *Sagan_Return_Time( uint64_t utime )
+char *Sagan_Return_Time( uintmax_t utime )
 {
 
     struct tm tm;
@@ -983,7 +983,7 @@ char *Sagan_Return_Time( uint64_t utime )
  * "readable" format.
  ****************************************************************************/
 
-char *Sagan_u32_Time_To_Human ( uint64_t utime )
+char *Sagan_u32_Time_To_Human ( uintmax_t utime )
 {
     struct tm tm;
     static __thread char time_buf[80];

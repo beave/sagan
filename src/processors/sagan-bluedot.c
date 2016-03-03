@@ -629,8 +629,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     SaganBluedotIPCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
                 }
 
-            deleted_count = counters->bluedot_ip_cache_count - (uint64_t)timeout_count;
-            counters->bluedot_ip_cache_count = (uint64_t)timeout_count;
+            deleted_count = counters->bluedot_ip_cache_count - (uintmax_t)timeout_count;
+            counters->bluedot_ip_cache_count = (uintmax_t)timeout_count;
 
             Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d IP addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -673,8 +673,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     SaganBluedotHashCache[i].alertid = TmpSaganBluedotHashCache[i].alertid;
                 }
 
-            deleted_count = counters->bluedot_hash_cache_count - (uint64_t)timeout_count;
-            counters->bluedot_hash_cache_count = (uint64_t)timeout_count;
+            deleted_count = counters->bluedot_hash_cache_count - (uintmax_t)timeout_count;
+            counters->bluedot_hash_cache_count = (uintmax_t)timeout_count;
 
             Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d hashes from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -716,8 +716,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     SaganBluedotURLCache[i].alertid = TmpSaganBluedotURLCache[i].alertid;
                 }
 
-            deleted_count = counters->bluedot_url_cache_count - (uint64_t)timeout_count;
-            counters->bluedot_url_cache_count = (uint64_t)timeout_count;
+            deleted_count = counters->bluedot_url_cache_count - (uintmax_t)timeout_count;
+            counters->bluedot_url_cache_count = (uintmax_t)timeout_count;
 
             Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d URLs from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -759,8 +759,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     SaganBluedotFilenameCache[i].alertid = TmpSaganBluedotFilenameCache[i].alertid;
                 }
 
-            deleted_count = counters->bluedot_filename_cache_count - (uint64_t)timeout_count;
-            counters->bluedot_filename_cache_count = (uint64_t)timeout_count;
+            deleted_count = counters->bluedot_filename_cache_count - (uintmax_t)timeout_count;
+            counters->bluedot_filename_cache_count = (uintmax_t)timeout_count;
 
             Sagan_Log(S_NORMAL, "[%s, line %d] Deleted %d filenames from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -812,7 +812,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
     time_t t;
     struct tm *now=NULL;
 
-    uint64_t ip = 0;
+    uintmax_t ip = 0;
 
     t = time(NULL);
     now=localtime(&t);

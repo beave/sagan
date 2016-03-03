@@ -171,8 +171,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     struct tm *now;
     char  timet[20];
 
-    uint64_t thresh_oldtime;
-    uint64_t after_oldtime;
+    uintmax_t thresh_oldtime;
+    uintmax_t after_oldtime;
 
     sbool thresh_flag=0;
     sbool thresh_log_flag=0;

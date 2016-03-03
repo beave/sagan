@@ -31,7 +31,7 @@ typedef struct _SaganSigArgs _SaganSigArgs;
 struct _SaganSigArgs
 {
     int daemonize;
-    uint64_t cid;
+    uintmax_t cid;
 };
 
 

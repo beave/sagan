@@ -60,7 +60,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     struct tm *now;
     int i;
     int tracking_flag=0;
-    uint64_t utime_u64;
+    uintmax_t utime_u64;
 
     t = time(NULL);
     now=localtime(&t);

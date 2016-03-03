@@ -60,7 +60,7 @@ void    Sagan_Chroot( const char * );
 char   *Remove_Return(char *);
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
-double CalcPct(uint64_t, uint64_t);
+double CalcPct(uintmax_t, uintmax_t);
 char   *Replace_String(char *, char *, char *);
 char   *Get_Filename(char *);
 
@@ -95,35 +95,35 @@ typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters
 {
 
-    uint64_t threshold_total;
-    uint64_t after_total;
-    uint64_t sagantotal;
-    uint64_t saganfound;
-    uint64_t sagan_output_drop;
-    uint64_t sagan_processor_drop;
-    uint64_t sagan_log_drop;
-    uint64_t dns_cache_count;
-    uint64_t dns_miss_count;
-    uint64_t fwsam_count;
-    uint64_t ignore_count;
-    uint64_t blacklist_count;
+    uintmax_t threshold_total;
+    uintmax_t after_total;
+    uintmax_t sagantotal;
+    uintmax_t saganfound;
+    uintmax_t sagan_output_drop;
+    uintmax_t sagan_processor_drop;
+    uintmax_t sagan_log_drop;
+    uintmax_t dns_cache_count;
+    uintmax_t dns_miss_count;
+    uintmax_t fwsam_count;
+    uintmax_t ignore_count;
+    uintmax_t blacklist_count;
 
-    uint64_t alert_total;
+    uintmax_t alert_total;
 
-    uint64_t malformed_host;
-    uint64_t malformed_facility;
-    uint64_t malformed_priority;
-    uint64_t malformed_level;
-    uint64_t malformed_tag;
-    uint64_t malformed_date;
-    uint64_t malformed_time;
-    uint64_t malformed_program;
-    uint64_t malformed_message;
+    uintmax_t malformed_host;
+    uintmax_t malformed_facility;
+    uintmax_t malformed_priority;
+    uintmax_t malformed_level;
+    uintmax_t malformed_tag;
+    uintmax_t malformed_date;
+    uintmax_t malformed_time;
+    uintmax_t malformed_program;
+    uintmax_t malformed_message;
 
-    uint64_t worker_thread_exhaustion;
+    uintmax_t worker_thread_exhaustion;
 
-    uint64_t blacklist_hit_count;
-    uint64_t blacklist_lookup_count;
+    uintmax_t blacklist_hit_count;
+    uintmax_t blacklist_lookup_count;
 
     int	     thread_output_counter;
     int	     thread_processor_counter;
@@ -158,41 +158,41 @@ struct _SaganCounters
     int      brointel_cert_hash_count;
     int      brointel_dups;
 
-    uint64_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
-    uint64_t follow_flow_drop;			/* Amount of flows that did not match and were dropped */
+    uintmax_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
+    uintmax_t follow_flow_drop;			/* Amount of flows that did not match and were dropped */
 
 #ifdef HAVE_LIBLOGNORM
     int liblognormtoload_count;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-    uint64_t geoip2_hit;				/* GeoIP2 hit count */
-    uint64_t geoip2_lookup;				/* Total lookups */
-    uint64_t geoip2_miss;				/* Misses (country not found) */
+    uintmax_t geoip2_hit;				/* GeoIP2 hit count */
+    uintmax_t geoip2_lookup;				/* Total lookups */
+    uintmax_t geoip2_miss;				/* Misses (country not found) */
 #endif
 
 #ifdef WITH_BLUEDOT
-    uint64_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
-    uint64_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
-    uint64_t bluedot_ip_positive_hit;
-    uint64_t bluedot_ip_total;
+    uintmax_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
+    uintmax_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
+    uintmax_t bluedot_ip_positive_hit;
+    uintmax_t bluedot_ip_total;
 
-    uint64_t bluedot_error_count;
+    uintmax_t bluedot_error_count;
 
-    uint64_t bluedot_hash_cache_count;
-    uint64_t bluedot_hash_cache_hit;
-    uint64_t bluedot_hash_positive_hit;
-    uint64_t bluedot_hash_total;
+    uintmax_t bluedot_hash_cache_count;
+    uintmax_t bluedot_hash_cache_hit;
+    uintmax_t bluedot_hash_positive_hit;
+    uintmax_t bluedot_hash_total;
 
-    uint64_t bluedot_url_cache_count;
-    uint64_t bluedot_url_cache_hit;
-    uint64_t bluedot_url_positive_hit;
-    uint64_t bluedot_url_total;
+    uintmax_t bluedot_url_cache_count;
+    uintmax_t bluedot_url_cache_hit;
+    uintmax_t bluedot_url_positive_hit;
+    uintmax_t bluedot_url_total;
 
-    uint64_t bluedot_filename_cache_count;
-    uint64_t bluedot_filename_cache_hit;
-    uint64_t bluedot_filename_positive_hit;
-    uint64_t bluedot_filename_total;
+    uintmax_t bluedot_filename_cache_count;
+    uintmax_t bluedot_filename_cache_hit;
+    uintmax_t bluedot_filename_positive_hit;
+    uintmax_t bluedot_filename_total;
 
     int bluedot_cat_count;
 
@@ -200,8 +200,8 @@ struct _SaganCounters
 
 
 #ifdef HAVE_LIBESMTP
-    uint64_t esmtp_count_success;
-    uint64_t esmtp_count_failed;
+    uintmax_t esmtp_count_success;
+    uintmax_t esmtp_count_failed;
 #endif
 
 };
@@ -313,7 +313,7 @@ struct thresh_by_src_ipc
 {
     uint32_t ipsrc;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -325,7 +325,7 @@ struct thresh_by_dst_ipc
 {
     uint32_t ipdst;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -337,7 +337,7 @@ struct thresh_by_username_ipc
 {
     char username[128];
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -348,7 +348,7 @@ struct after_by_src_ipc
 {
     uint32_t ipsrc;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -359,7 +359,7 @@ struct after_by_dst_ipc
 {
     uint32_t ipdst;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -371,7 +371,7 @@ struct after_by_username_ipc
 {
     char username[128];
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -419,13 +419,13 @@ int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
-char *Sagan_u32_Time_To_Human ( uint64_t );
+char *Sagan_u32_Time_To_Human ( uintmax_t );
 char *Netaddr_To_Range( char * );
 char *Strip_Chars(const char *string, const char *chars);
 sbool Is_IP (char *str);
 
-char *Sagan_Return_Date( uint64_t );
-char *Sagan_Return_Time( uint64_t );
+char *Sagan_Return_Date( uintmax_t );
+char *Sagan_Return_Time( uintmax_t );
 
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );
