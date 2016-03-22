@@ -37,7 +37,7 @@
 
 #define CLASSBUF	1024
 #define RULEBUF		5128
-#define CONFBUF		1024
+#define CONFBUF		4096
 
 #define MAXPATH 	255		/* Max path for files/directories */
 #define MAXHOST         255		/* Max host length */
