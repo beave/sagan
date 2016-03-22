@@ -705,7 +705,9 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
     char tmp[2] = { 0 };
 
     char *buf = (char*)malloc(1024);
-    static __thread char new_string[1024] = { 0 };
+    memset(&buf, 0, sizeof(buf));
+
+    char new_string[1024] = { 0 }; 
 
     int i;
 
