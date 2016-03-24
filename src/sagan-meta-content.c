@@ -51,7 +51,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
     char *ptmp = NULL;
     char *tok = NULL;
-    char tmp[1024] = { 0 };
+    char tmp[CONFBUF] = { 0 };
     char tmp_search[512] = { 0 };
     int results = 0;
     int match = 0;
