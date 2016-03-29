@@ -532,19 +532,19 @@ char *Sagan_Var_To_Value(char *instring)
 
     char *ptmp = NULL;
     char *tok = NULL;
-    char tmp2[1024] = { 0 };
-    char tmp3[1024] = { 0 };
-    char tmp_result[1024] = { 0 };
+    char tmp2[MAX_VAR_VALUE_SIZE] = { 0 };
+    char tmp3[MAX_VAR_VALUE_SIZE] = { 0 };
+    char tmp_result[MAX_VAR_VALUE_SIZE] = { 0 };
 
-    static __thread char tmp[1024] = { 0 };
+    static __thread char tmp[MAX_VAR_VALUE_SIZE] = { 0 };
 
-    char *tmpbuf = (char*)malloc(1024);
+    char *tmpbuf = (char*)malloc(MAX_VAR_VALUE_SIZE);
     memset(tmpbuf,0,sizeof((char*)tmpbuf));
 
     int i=0;
 
     snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
-    tmpbuf = (char*)&tmp;
+//    tmpbuf = (char*)&tmp;
 
     for (i=0; i<counters->var_count; i++)
         {

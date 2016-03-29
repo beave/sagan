@@ -136,17 +136,17 @@ void Load_Config( void )
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
 
-    config->max_flowbits = DEFAULT_IPC_SIZE;
+    config->max_flowbits = DEFAULT_IPC_FLOWBITS; 
 
-    config->max_threshold_by_src = DEFAULT_IPC_SIZE;
-    config->max_threshold_by_dst = DEFAULT_IPC_SIZE;
-    config->max_threshold_by_username = DEFAULT_IPC_SIZE;
+    config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
+    config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
+    config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
 
-    config->max_after_by_src = DEFAULT_IPC_SIZE;
-    config->max_after_by_dst = DEFAULT_IPC_SIZE;
-    config->max_after_by_username = DEFAULT_IPC_SIZE;
+    config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
+    config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
+    config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
 
-    config->max_track_clients = DEFAULT_IPC_SIZE;
+    config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;

@@ -54,7 +54,7 @@
 #define MAX_THREADS     4096            /* Max system threads */
 #define MAX_SYSLOGMSG   10240		/* Max length of a syslog message */
 
-#define MAX_VAR_NAME_SIZE  	64	/* Max "var" name size */
+#define MAX_VAR_NAME_SIZE  64		/* Max "var" name size */
 #define MAX_VAR_VALUE_SIZE 4096		/* Max "var" value size */
 
 #define MAX_PCRE		10		/* Max PCRE within a rule */
@@ -67,7 +67,7 @@
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
-#define MAXIP		16		/* Max IP length.  Change to 64 for future IPv6 support */
+#define MAXIP			16		/* Max IP length.  Change to 64 for future IPv6 support */
 
 #define LOCKFILE 	"/var/run/sagan/sagan.pid"
 #define SAGANLOG	"/var/log/sagan/sagan.log"
@@ -132,25 +132,29 @@
 
 #define COUNTERS_IPC_FILE "sagan-counters.shared"
 #define FLOWBIT_IPC_FILE "sagan-flowbits.shared"
-
 #define THRESH_BY_SRC_IPC_FILE "sagan-thresh-by-source.shared"
 #define THRESH_BY_DST_IPC_FILE "sagan-thresh-by-destination.shared"
 #define THRESH_BY_USERNAME_IPC_FILE "sagan-thresh-by-username.shared"
-
 #define AFTER_BY_SRC_IPC_FILE "sagan-after-by-source.shared"
 #define AFTER_BY_DST_IPC_FILE "sagan-after-by-destination.shared"
 #define AFTER_BY_USERNAME_IPC_FILE "sagan-after-by-username.shared"
-
 #define CLIENT_TRACK_IPC_FILE "sagan-track-clients.shared"
 
-#define DEFAULT_IPC_SIZE 	10000
+/* Default IPC/mmap sizes */
+
+#define DEFAULT_IPC_CLIENT_TRACK_IPC	10000
+#define DEFAULT_IPC_AFTER_BY_SRC	1000000
+#define DEFAULT_IPC_AFTER_BY_DST	1000000
+#define DEFAULT_IPC_AFTER_BY_USERNAME	10000
+#define DEFAULT_IPC_THRESH_BY_SRC	1000000
+#define DEFAULT_IPC_THRESH_BY_DST	1000000
+#define DEFAULT_IPC_THRESH_BY_USERNAME	10000
+#define DEFAULT_IPC_FLOWBITS		10000
 
 #define AFTER_BY_SRC		1
 #define AFTER_BY_DST		2
 #define AFTER_BY_USERNAME	3
-
 #define THRESH_BY_SRC		4
 #define THRESH_BY_DST		5
 #define THRESH_BY_USERNAME	6
-
 #define FLOWBIT			7
