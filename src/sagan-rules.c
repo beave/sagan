@@ -419,12 +419,12 @@ void Load_Rules( const char *ruleset )
                                                     if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3))
                                                         {
                                                             rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* 2 = not match ip */
-                                                            rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(Strip_Chars(flow_a, "not!"));
+                                                            rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(Strip_Chars(tmptoken, "not!"));
                                                         }
                                                     else
                                                         {
                                                             rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* 3 = match ip */
-                                                            rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(flow_a);
+                                                            rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tmptoken);
                                                         }
                                                 }
                                             flow_1_count++;
@@ -502,7 +502,7 @@ void Load_Rules( const char *ruleset )
                                                 {
                                                     Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tmptoken);
                                                 }
-                                            f1++;
+                                            f2++;
                                             if(strchr(tmptoken, '/'))
                                                 {
                                                     if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3))
