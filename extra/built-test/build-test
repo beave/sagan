@@ -3,7 +3,7 @@
 # Simple shell script that compiles Sagan with multiple flags.  This helps 
 # hunt down compile time bugs. 
 # 
-# - Public releated (06/28/2015) 
+# - Public release (06/28/2015) 
 
 # Champ Clark III 
 
