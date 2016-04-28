@@ -110,6 +110,7 @@ void Sagan_Report_Clients ( void )
             utime_u64 = atol(utime_tmp);
 
             struct in_addr ip_addr_syslog;
+	    int expired_time = config->pp_sagan_track_clients * 60;
 
             /* We populate this later for output plugins */
 
@@ -133,13 +134,12 @@ void Sagan_Report_Clients ( void )
 
                             /* If host was done, verify host last seen time is still not an expired time */
 
-                            if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) < config->pp_sagan_track_clients * 60 )
+                            if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) < expired_time )
                                 {
 
                                     /* Update status and seen time */
 
                                     Sagan_File_Lock(config->shm_track_clients);
-                                    SaganTrackClients_ipc[i].utime = utime_u64;
                                     SaganTrackClients_ipc[i].status = 0;
                                     Sagan_File_Unlock(config->shm_track_clients);
 
@@ -164,7 +164,7 @@ void Sagan_Report_Clients ( void )
 
                                     snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
                                     snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
-                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previous reported as being down or not sending logs.  The system appears to be sending logs again", tmp_ip );
+				    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previously not sending logs. The system appears to be sending logs again at %s", tmp_ip, ctime(&SaganTrackClients_ipc[i].utime) );
 
                                     alertid=101;		/* See gen-msg.map */
 
@@ -189,12 +189,11 @@ void Sagan_Report_Clients ( void )
 
                             /**** Check if last seen time of host has exceeded track time meaning it's down! ****/
 
-                            if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) >= config->pp_sagan_track_clients * 60 )
+                            if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) >= expired_time )
                                 {
                                     /* Update status and utime */
 
                                     Sagan_File_Lock(config->shm_track_clients);
-                                    SaganTrackClients_ipc[i].utime = utime_u64;
                                     SaganTrackClients_ipc[i].status = 1;
                                     Sagan_File_Unlock(config->shm_track_clients);
 
@@ -219,7 +218,7 @@ void Sagan_Report_Clients ( void )
 
                                     snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
                                     snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
-                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients);
+				    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). Last log was seen at %s. This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients, ctime(&SaganTrackClients_ipc[i].utime) );
 
                                     alertid=100;	/* See gen-msg.map  */
 

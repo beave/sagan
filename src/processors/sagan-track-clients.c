@@ -66,6 +66,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     now=localtime(&t);
     strftime(utime_tmp, sizeof(utime_tmp), "%s",  now);
     utime_u64 = atol(utime_tmp);
+    int expired_time = config->pp_sagan_track_clients * 60;
 
     /*************************/
     /** Record Clients Here **/
@@ -78,7 +79,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
 
                     Sagan_File_Lock(config->shm_track_clients);
                     SaganTrackClients_ipc[i].utime = utime_u64;
-                    SaganTrackClients_ipc[i].expire = config->pp_sagan_track_clients * 60;
+                    SaganTrackClients_ipc[i].expire = expired_time;
                     Sagan_File_Unlock(config->shm_track_clients);
                     return(0);
                 }
@@ -90,7 +91,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
             SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
-            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = config->pp_sagan_track_clients * 60;
+            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
             Sagan_File_Unlock(config->shm_track_clients);
 
             Sagan_File_Lock(config->shm_counters);
