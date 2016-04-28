@@ -108,26 +108,26 @@ fi
 
 # -- 
 
-AC_ARG_ENABLE(jsonc,
-  [  --disable-jsonc         Disable jsonc (liblognorm) support.],
-  [ JSONC="$enableval"],
-  [ JSONC="yes" ]
+AC_ARG_ENABLE(libfastjson,
+  [  --disable-libfastjson         Disable libfastjson support.],
+  [ FASTJSON="$enableval"],
+  [ FASTJSON="yes" ]
 )
 
-AC_ARG_WITH(json_c_includes,
-        [  --with-jsonc-includes=DIR    jsonc include directory],
-        [with_jsonc_includes="$withval"],[with_jsonc_includes="no"])
+AC_ARG_WITH(libfastjson_includes,
+        [  --with-libfastjson-includes=DIR    libfastjson include directory],
+        [with_libfastjson_includes="$withval"],[with_libfastjson_includes="no"])
 
-AC_ARG_WITH(json_c_libraries,
-        [  --with-jsonc-libraries=DIR   jsonc library directory],
-        [with_jsonc_libraries="$withval"],[with_jsonc_libraries="no"])
+AC_ARG_WITH(libfastjson_c_libraries,
+        [  --with-libfastjson-libraries=DIR   libfastjson library directory],
+        [with_libfastjson_libraries="$withval"],[with_libfastjson_libraries="no"])
 
-if test "x$with_jsonc_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_jsonc_includes}"
+if test "x$with_libfastjson_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_libfastjson_includes}"
    fi
 
-if test "x$with_jsonc_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_jsonc_libraries}"
+if test "x$with_libfastjson_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_libfastjson_libraries}"
 fi
 
 # --
@@ -280,24 +280,16 @@ If you're not interested in libesmtp support use the --disable-esmtp flag.))
        fi
 
 
-if test "$JSONC" = "yes"; then
-	AC_MSG_RESULT([------- jsonc support is enabled -------])
-        PKG_CHECK_MODULES(JSONC, json-c,, [PKG_CHECK_MODULES(JSONC, json)])
-	
-AC_CHECK_LIB([json], [json_object_new_string],,
-	[AC_CHECK_LIB([json-c], [json_object_new_string],,
-	[AC_MSG_ERROR([
-Cannot find required library: libjson-c (aka libjson0, libjson)
-	])])])
-
-
+if test "$FASTJSON" = "yes"; then
+	AC_MSG_RESULT([------- libfastjson support is enabled -------])
+	PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
 	fi
 
 if test "$LOGNORM" = "yes"; then
        AC_MSG_RESULT([------- liblognorm support is enabled -------])
        PKG_CHECK_MODULES(LIBESTR, libestr >= 0.0.0)
        PKG_CHECK_MODULES(LIBLOGNORM, lognorm >= 1.0.0)
-       PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
+       PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
        AC_CHECK_HEADER([liblognorm.h])
        AC_CHECK_HEADER([libestr.h])
        AC_CHECK_LIB(estr, main,,AC_MSG_ERROR(The libestr library cannot be found.
@@ -362,7 +354,7 @@ https://quadrantsec.com for more information.
 To disable this feature use the --disable-bluedot flag. ))
         AC_DEFINE(WITH_BLUEDOT, 1, With Bluedot)
         AC_CHECK_HEADER([curl/curl.h])
-        PKG_CHECK_MODULES(JSON_C, json-c,, [PKG_CHECK_MODULES(JSON_C, json)])
+	PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
         fi
 
 if test "$SNORTSAM" = "yes"; then

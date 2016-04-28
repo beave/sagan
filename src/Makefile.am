@@ -1,8 +1,8 @@
 AUTOMAKE_OPIONS=foreign no-dependencies
 
 bin_PROGRAMS = sagan
-sagan_CPPFLAGS = -I$(top_srcdir) $(JSON_C_CFLAGS) $(LIBESTR_CFLAGS)
-sagan_LDADD = $(JSON_C_LIBS) $(LIBLOGNORM_LIBS) $(LIBESTR_LIBS)
+sagan_CPPFLAGS = -I$(top_srcdir) $(LIBFASTJSON_CFLAGS) $(LIBESTR_CFLAGS)
+sagan_LDADD = $(LIBFASTJSON_LIBS) $(LIBLOGNORM_LIBS) $(LIBESTR_LIBS)
 
 sagan_SOURCES = sagan.c \
 sagan-classifications.c \

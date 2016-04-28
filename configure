@@ -622,14 +622,12 @@ ac_includes_default="\
 ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
-JSON_C_LIBS
-JSON_C_CFLAGS
 LIBLOGNORM_LIBS
 LIBLOGNORM_CFLAGS
 LIBESTR_LIBS
 LIBESTR_CFLAGS
-JSONC_LIBS
-JSONC_CFLAGS
+LIBFASTJSON_LIBS
+LIBFASTJSON_CFLAGS
 PKG_CONFIG_LIBDIR
 PKG_CONFIG_PATH
 PKG_CONFIG
@@ -758,9 +756,9 @@ with_geoip2_libraries
 enable_lognorm
 with_lognorm_includes
 with_lognorm_libraries
-enable_jsonc
-with_json_c_includes
-with_json_c_libraries
+enable_libfastjson
+with_libfastjson_includes
+with_libfastjson_c_libraries
 enable_libpcap
 with_libpcap_includes
 with_libpcap_libraries
@@ -784,14 +782,12 @@ CCASFLAGS
 PKG_CONFIG
 PKG_CONFIG_PATH
 PKG_CONFIG_LIBDIR
-JSONC_CFLAGS
-JSONC_LIBS
+LIBFASTJSON_CFLAGS
+LIBFASTJSON_LIBS
 LIBESTR_CFLAGS
 LIBESTR_LIBS
 LIBLOGNORM_CFLAGS
-LIBLOGNORM_LIBS
-JSON_C_CFLAGS
-JSON_C_LIBS'
+LIBLOGNORM_LIBS'
 
 
 # Initialize some variables set by options.
@@ -1419,7 +1415,7 @@ Optional Features:
   --disable-syslog        Disable syslog support.
   --enable-system-strstr  Enable system strstr.
   --disable-lognorm       Disable Lognorm (liblognorm) support.
-  --disable-jsonc         Disable jsonc (liblognorm) support.
+  --disable-libfastjson         Disable libfastjson support.
   --disable-libpcap       Disable libpcap (plog) support.
   --disable-libdnet       Disable libdnet (unified2) support.
   --enable-dependency-tracking
@@ -1438,8 +1434,8 @@ Optional Packages:
   --with-geoip2-libraries=DIR   Maxmind GeoIP2 library directory
   --with-lognorm-includes=DIR    liblognorm include directory
   --with-lognorm-libraries=DIR   liblognorm library directory
-  --with-jsonc-includes=DIR    jsonc include directory
-  --with-jsonc-libraries=DIR   jsonc library directory
+  --with-libfastjson-includes=DIR    libfastjson include directory
+  --with-libfastjson-libraries=DIR   libfastjson library directory
   --with-libpcap-includes=DIR    libpcap include directory
   --with-libpcap-libraries=DIR   libpcap library directory
   --with-libdnet-includes=DIR    libdnet include directory
@@ -1461,9 +1457,10 @@ Some influential environment variables:
               directories to add to pkg-config's search path
   PKG_CONFIG_LIBDIR
               path overriding pkg-config's built-in search path
-  JSONC_CFLAGS
-              C compiler flags for JSONC, overriding pkg-config
-  JSONC_LIBS  linker flags for JSONC, overriding pkg-config
+  LIBFASTJSON_CFLAGS
+              C compiler flags for LIBFASTJSON, overriding pkg-config
+  LIBFASTJSON_LIBS
+              linker flags for LIBFASTJSON, overriding pkg-config
   LIBESTR_CFLAGS
               C compiler flags for LIBESTR, overriding pkg-config
   LIBESTR_LIBS
@@ -1472,9 +1469,6 @@ Some influential environment variables:
               C compiler flags for LIBLOGNORM, overriding pkg-config
   LIBLOGNORM_LIBS
               linker flags for LIBLOGNORM, overriding pkg-config
-  JSON_C_CFLAGS
-              C compiler flags for JSON_C, overriding pkg-config
-  JSON_C_LIBS linker flags for JSON_C, overriding pkg-config
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -2633,6 +2627,9 @@ test -n "$target_alias" &&
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
 
+# Expand $ac_aux_dir to an absolute path.
+am_aux_dir=`cd "$ac_aux_dir" && pwd`
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3421,6 +3418,65 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC understands -c and -o together" >&5
+$as_echo_n "checking whether $CC understands -c and -o together... " >&6; }
+if ${am_cv_prog_cc_c_o+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+  # Make sure it works both with $CC and with simple cc.
+  # Following AC_PROG_CC_C_O, we do the test twice because some
+  # compilers refuse to overwrite an existing .o file with -o,
+  # though they will create one.
+  am_cv_prog_cc_c_o=yes
+  for am_i in 1 2; do
+    if { echo "$as_me:$LINENO: $CC -c conftest.$ac_ext -o conftest2.$ac_objext" >&5
+   ($CC -c conftest.$ac_ext -o conftest2.$ac_objext) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); } \
+         && test -f conftest2.$ac_objext; then
+      : OK
+    else
+      am_cv_prog_cc_c_o=no
+      break
+    fi
+  done
+  rm -f core conftest*
+  unset am_i
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_prog_cc_c_o" >&5
+$as_echo "$am_cv_prog_cc_c_o" >&6; }
+if test "$am_cv_prog_cc_c_o" != yes; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 
 ac_ext=c
@@ -4282,39 +4338,39 @@ fi
 
 # --
 
-# Check whether --enable-jsonc was given.
-if test "${enable_jsonc+set}" = set; then :
-  enableval=$enable_jsonc;  JSONC="$enableval"
+# Check whether --enable-libfastjson was given.
+if test "${enable_libfastjson+set}" = set; then :
+  enableval=$enable_libfastjson;  FASTJSON="$enableval"
 else
-   JSONC="yes"
+   FASTJSON="yes"
 
 fi
 
 
 
-# Check whether --with-json_c_includes was given.
-if test "${with_json_c_includes+set}" = set; then :
-  withval=$with_json_c_includes; with_jsonc_includes="$withval"
+# Check whether --with-libfastjson_includes was given.
+if test "${with_libfastjson_includes+set}" = set; then :
+  withval=$with_libfastjson_includes; with_libfastjson_includes="$withval"
 else
-  with_jsonc_includes="no"
+  with_libfastjson_includes="no"
 fi
 
 
 
-# Check whether --with-json_c_libraries was given.
-if test "${with_json_c_libraries+set}" = set; then :
-  withval=$with_json_c_libraries; with_jsonc_libraries="$withval"
+# Check whether --with-libfastjson_c_libraries was given.
+if test "${with_libfastjson_c_libraries+set}" = set; then :
+  withval=$with_libfastjson_c_libraries; with_libfastjson_libraries="$withval"
 else
-  with_jsonc_libraries="no"
+  with_libfastjson_libraries="no"
 fi
 
 
-if test "x$with_jsonc_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_jsonc_includes}"
+if test "x$with_libfastjson_includes" != "xno"; then
+   CPPFLAGS="${CPPFLAGS} -I${with_libfastjson_includes}"
    fi
 
-if test "x$with_jsonc_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_jsonc_libraries}"
+if test "x$with_libfastjson_libraries" != "xno"; then
+   LDFLAGS="${LDFLAGS}  -L${with_libfastjson_libraries}"
 fi
 
 # --
@@ -4390,7 +4446,7 @@ if test "x$with_libdnet_libraries" != "xno"; then
 fi
 
 
-am__api_version='1.13'
+am__api_version='1.14'
 
 # Find a good install program.  We prefer a C program (faster),
 # so one script is as good as another.  But avoid the broken or
@@ -4561,9 +4617,6 @@ test "$program_suffix" != NONE &&
 # By default was `s,x,x', remove it if useless.
 ac_script='s/[\\$]/&&/g;s/;s,x,x,$//'
 program_transform_name=`$as_echo "$program_transform_name" | sed "$ac_script"`
-
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
 
 if test x"${MISSING+set}" != xset; then
   case $am_aux_dir in
@@ -5119,6 +5172,48 @@ fi
 
 
 
+# POSIX will say in a future version that running "rm -f" with no argument
+# is OK; and we want to be able to make that assumption in our Makefile
+# recipes.  So use an aggressive probe to check that the usage we want is
+# actually supported "in the wild" to an acceptable degree.
+# See automake bug#10828.
+# To make any issue more visible, cause the running configure to be aborted
+# by default if the 'rm' program in use doesn't match our expectations; the
+# user can still override this though.
+if rm -f && rm -fr && rm -rf; then : OK; else
+  cat >&2 <<'END'
+Oops!
+
+Your 'rm' program seems unable to run without file operands specified
+on the command line, even when the '-f' option is present.  This is contrary
+to the behaviour of most rm programs out there, and not conforming with
+the upcoming POSIX standard: <http://austingroupbugs.net/view.php?id=542>
+
+Please tell bug-automake@gnu.org about your system, including the value
+of your $PATH and any error possibly output before this message.  This
+can help us improve future automake versions.
+
+END
+  if test x"$ACCEPT_INFERIOR_RM_PROGRAM" = x"yes"; then
+    echo 'Configuration will proceed anyway, since you have set the' >&2
+    echo 'ACCEPT_INFERIOR_RM_PROGRAM variable to "yes"' >&2
+    echo >&2
+  else
+    cat >&2 <<'END'
+Aborting the configuration process, to ensure you take notice of the issue.
+
+You can download and install GNU coreutils to get an 'rm' implementation
+that behaves properly: <http://www.gnu.org/software/coreutils/>.
+
+If you want to complete the configuration process using your problematic
+'rm' anyway, export the environment variable ACCEPT_INFERIOR_RM_PROGRAM
+to "yes", and re-run configure.
+
+END
+    as_fn_error $? "Your 'rm' program is bad, sorry." "$LINENO" 5
+  fi
+fi
+
 ac_config_headers="$ac_config_headers config.h"
 
 
@@ -5661,6 +5756,65 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC understands -c and -o together" >&5
+$as_echo_n "checking whether $CC understands -c and -o together... " >&6; }
+if ${am_cv_prog_cc_c_o+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+  # Make sure it works both with $CC and with simple cc.
+  # Following AC_PROG_CC_C_O, we do the test twice because some
+  # compilers refuse to overwrite an existing .o file with -o,
+  # though they will create one.
+  am_cv_prog_cc_c_o=yes
+  for am_i in 1 2; do
+    if { echo "$as_me:$LINENO: $CC -c conftest.$ac_ext -o conftest2.$ac_objext" >&5
+   ($CC -c conftest.$ac_ext -o conftest2.$ac_objext) >&5 2>&5
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); } \
+         && test -f conftest2.$ac_objext; then
+      : OK
+    else
+      am_cv_prog_cc_c_o=no
+      break
+    fi
+  done
+  rm -f core conftest*
+  unset am_i
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $am_cv_prog_cc_c_o" >&5
+$as_echo "$am_cv_prog_cc_c_o" >&6; }
+if test "$am_cv_prog_cc_c_o" != yes; then
+   # Losing compiler, so override with the script.
+   # FIXME: It is wrong to rewrite CC.
+   # But if we don't then we get into trouble of one sort or another.
+   # A longer-term fix would be to have automake use am__CC in this case,
+   # and then we could set am__CC="\$(top_srcdir)/compile \$(CC)"
+   CC="$am_aux_dir/compile $CC"
+fi
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
 
 
 ac_ext=c
@@ -8090,9 +8244,9 @@ fi
        fi
 
 
-if test "$JSONC" = "yes"; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- jsonc support is enabled -------" >&5
-$as_echo "------- jsonc support is enabled -------" >&6; }
+if test "$FASTJSON" = "yes"; then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: ------- libfastjson support is enabled -------" >&5
+$as_echo "------- libfastjson support is enabled -------" >&6; }
 
 
 
@@ -8215,19 +8369,19 @@ $as_echo "no" >&6; }
 fi
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSONC" >&5
-$as_echo_n "checking for JSONC... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBFASTJSON" >&5
+$as_echo_n "checking for LIBFASTJSON... " >&6; }
 
-if test -n "$JSONC_CFLAGS"; then
-    pkg_cv_JSONC_CFLAGS="$JSONC_CFLAGS"
+if test -n "$LIBFASTJSON_CFLAGS"; then
+    pkg_cv_LIBFASTJSON_CFLAGS="$LIBFASTJSON_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSONC_CFLAGS=`$PKG_CONFIG --cflags "json-c" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_CFLAGS=`$PKG_CONFIG --cflags "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -8235,75 +8389,16 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$JSONC_LIBS"; then
-    pkg_cv_JSONC_LIBS="$JSONC_LIBS"
+if test -n "$LIBFASTJSON_LIBS"; then
+    pkg_cv_LIBFASTJSON_LIBS="$LIBFASTJSON_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSONC_LIBS=`$PKG_CONFIG --libs "json-c" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json-c" 2>&1`
-        else
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json-c" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSONC_PKG_ERRORS" >&5
-
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSONC" >&5
-$as_echo_n "checking for JSONC... " >&6; }
-
-if test -n "$JSONC_CFLAGS"; then
-    pkg_cv_JSONC_CFLAGS="$JSONC_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSONC_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSONC_LIBS"; then
-    pkg_cv_JSONC_LIBS="$JSONC_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSONC_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_LIBS=`$PKG_CONFIG --libs "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -8324,22 +8419,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         else
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$JSONC_PKG_ERRORS" >&5
+	echo "$LIBFASTJSON_PKG_ERRORS" >&5
 
-	as_fn_error $? "Package requirements (json) were not met:
+	as_fn_error $? "Package requirements (libfastjson >= 0.0.0) were not met:
 
-$JSONC_PKG_ERRORS
+$LIBFASTJSON_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables JSONC_CFLAGS
-and JSONC_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -8350,218 +8445,19 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables JSONC_CFLAGS
-and JSONC_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
 else
-	JSONC_CFLAGS=$pkg_cv_JSONC_CFLAGS
-	JSONC_LIBS=$pkg_cv_JSONC_LIBS
+	LIBFASTJSON_CFLAGS=$pkg_cv_LIBFASTJSON_CFLAGS
+	LIBFASTJSON_LIBS=$pkg_cv_LIBFASTJSON_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
 fi
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSONC" >&5
-$as_echo_n "checking for JSONC... " >&6; }
-
-if test -n "$JSONC_CFLAGS"; then
-    pkg_cv_JSONC_CFLAGS="$JSONC_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSONC_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSONC_LIBS"; then
-    pkg_cv_JSONC_LIBS="$JSONC_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSONC_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
-        else
-	        JSONC_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSONC_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (json) were not met:
-
-$JSONC_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables JSONC_CFLAGS
-and JSONC_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables JSONC_CFLAGS
-and JSONC_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	JSONC_CFLAGS=$pkg_cv_JSONC_CFLAGS
-	JSONC_LIBS=$pkg_cv_JSONC_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-else
-	JSONC_CFLAGS=$pkg_cv_JSONC_CFLAGS
-	JSONC_LIBS=$pkg_cv_JSONC_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for json_object_new_string in -ljson" >&5
-$as_echo_n "checking for json_object_new_string in -ljson... " >&6; }
-if ${ac_cv_lib_json_json_object_new_string+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-ljson  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char json_object_new_string ();
-int
-main ()
-{
-return json_object_new_string ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_json_json_object_new_string=yes
-else
-  ac_cv_lib_json_json_object_new_string=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_json_json_object_new_string" >&5
-$as_echo "$ac_cv_lib_json_json_object_new_string" >&6; }
-if test "x$ac_cv_lib_json_json_object_new_string" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBJSON 1
-_ACEOF
-
-  LIBS="-ljson $LIBS"
-
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for json_object_new_string in -ljson-c" >&5
-$as_echo_n "checking for json_object_new_string in -ljson-c... " >&6; }
-if ${ac_cv_lib_json_c_json_object_new_string+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-ljson-c  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char json_object_new_string ();
-int
-main ()
-{
-return json_object_new_string ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_json_c_json_object_new_string=yes
-else
-  ac_cv_lib_json_c_json_object_new_string=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_json_c_json_object_new_string" >&5
-$as_echo "$ac_cv_lib_json_c_json_object_new_string" >&6; }
-if test "x$ac_cv_lib_json_c_json_object_new_string" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBJSON_C 1
-_ACEOF
-
-  LIBS="-ljson-c $LIBS"
-
-else
-  as_fn_error $? "
-Cannot find required library: libjson-c (aka libjson0, libjson)
-	" "$LINENO" 5
-fi
-
-fi
-
-
-
 	fi
 
 if test "$LOGNORM" = "yes"; then
@@ -8751,19 +8647,19 @@ $as_echo "yes" >&6; }
 fi
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBFASTJSON" >&5
+$as_echo_n "checking for LIBFASTJSON... " >&6; }
 
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
+if test -n "$LIBFASTJSON_CFLAGS"; then
+    pkg_cv_LIBFASTJSON_CFLAGS="$LIBFASTJSON_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json-c" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_CFLAGS=`$PKG_CONFIG --cflags "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -8771,75 +8667,16 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
+if test -n "$LIBFASTJSON_LIBS"; then
+    pkg_cv_LIBFASTJSON_LIBS="$LIBFASTJSON_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json-c" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json-c" 2>&1`
-        else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json-c" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
-
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
-
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_LIBS=`$PKG_CONFIG --libs "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -8860,22 +8697,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
+	echo "$LIBFASTJSON_PKG_ERRORS" >&5
 
-	as_fn_error $? "Package requirements (json) were not met:
+	as_fn_error $? "Package requirements (libfastjson >= 0.0.0) were not met:
 
-$JSON_C_PKG_ERRORS
+$LIBFASTJSON_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -8886,116 +8723,15 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
 else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
-
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
-        else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (json) were not met:
-
-$JSON_C_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
+	LIBFASTJSON_CFLAGS=$pkg_cv_LIBFASTJSON_CFLAGS
+	LIBFASTJSON_LIBS=$pkg_cv_LIBFASTJSON_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 
@@ -9399,19 +9135,19 @@ fi
 
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for LIBFASTJSON" >&5
+$as_echo_n "checking for LIBFASTJSON... " >&6; }
 
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
+if test -n "$LIBFASTJSON_CFLAGS"; then
+    pkg_cv_LIBFASTJSON_CFLAGS="$LIBFASTJSON_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json-c" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_CFLAGS=`$PKG_CONFIG --cflags "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -9419,75 +9155,16 @@ fi
  else
     pkg_failed=untried
 fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
+if test -n "$LIBFASTJSON_LIBS"; then
+    pkg_cv_LIBFASTJSON_LIBS="$LIBFASTJSON_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json-c\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json-c") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"libfastjson >= 0.0.0\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "libfastjson >= 0.0.0") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json-c" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json-c" 2>&1`
-        else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json-c" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
-
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
-
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
+  pkg_cv_LIBFASTJSON_LIBS=`$PKG_CONFIG --libs "libfastjson >= 0.0.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -9508,22 +9185,22 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
+	        LIBFASTJSON_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "libfastjson >= 0.0.0" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
+	echo "$LIBFASTJSON_PKG_ERRORS" >&5
 
-	as_fn_error $? "Package requirements (json) were not met:
+	as_fn_error $? "Package requirements (libfastjson >= 0.0.0) were not met:
 
-$JSON_C_PKG_ERRORS
+$LIBFASTJSON_PKG_ERRORS
 
 Consider adjusting the PKG_CONFIG_PATH environment variable if you
 installed software in a non-standard prefix.
 
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details." "$LINENO" 5
 elif test $pkg_failed = untried; then
      	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
@@ -9534,116 +9211,15 @@ as_fn_error $? "The pkg-config script could not be found or is too old.  Make su
 is in your PATH or set the PKG_CONFIG environment variable to the full
 path to pkg-config.
 
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
+Alternatively, you may set the environment variables LIBFASTJSON_CFLAGS
+and LIBFASTJSON_LIBS to avoid the need to call pkg-config.
 See the pkg-config man page for more details.
 
 To get pkg-config, see <http://pkg-config.freedesktop.org/>.
 See \`config.log' for more details" "$LINENO" 5; }
 else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for JSON_C" >&5
-$as_echo_n "checking for JSON_C... " >&6; }
-
-if test -n "$JSON_C_CFLAGS"; then
-    pkg_cv_JSON_C_CFLAGS="$JSON_C_CFLAGS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_CFLAGS=`$PKG_CONFIG --cflags "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-if test -n "$JSON_C_LIBS"; then
-    pkg_cv_JSON_C_LIBS="$JSON_C_LIBS"
- elif test -n "$PKG_CONFIG"; then
-    if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"json\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "json") 2>&5
-  ac_status=$?
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; }; then
-  pkg_cv_JSON_C_LIBS=`$PKG_CONFIG --libs "json" 2>/dev/null`
-		      test "x$?" != "x0" && pkg_failed=yes
-else
-  pkg_failed=yes
-fi
- else
-    pkg_failed=untried
-fi
-
-
-
-if test $pkg_failed = yes; then
-   	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-
-if $PKG_CONFIG --atleast-pkgconfig-version 0.20; then
-        _pkg_short_errors_supported=yes
-else
-        _pkg_short_errors_supported=no
-fi
-        if test $_pkg_short_errors_supported = yes; then
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "json" 2>&1`
-        else
-	        JSON_C_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "json" 2>&1`
-        fi
-	# Put the nasty error message in config.log where it belongs
-	echo "$JSON_C_PKG_ERRORS" >&5
-
-	as_fn_error $? "Package requirements (json) were not met:
-
-$JSON_C_PKG_ERRORS
-
-Consider adjusting the PKG_CONFIG_PATH environment variable if you
-installed software in a non-standard prefix.
-
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details." "$LINENO" 5
-elif test $pkg_failed = untried; then
-     	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	{ { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-$as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "The pkg-config script could not be found or is too old.  Make sure it
-is in your PATH or set the PKG_CONFIG environment variable to the full
-path to pkg-config.
-
-Alternatively, you may set the environment variables JSON_C_CFLAGS
-and JSON_C_LIBS to avoid the need to call pkg-config.
-See the pkg-config man page for more details.
-
-To get pkg-config, see <http://pkg-config.freedesktop.org/>.
-See \`config.log' for more details" "$LINENO" 5; }
-else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-
-fi
-else
-	JSON_C_CFLAGS=$pkg_cv_JSON_C_CFLAGS
-	JSON_C_LIBS=$pkg_cv_JSON_C_LIBS
+	LIBFASTJSON_CFLAGS=$pkg_cv_LIBFASTJSON_CFLAGS
+	LIBFASTJSON_LIBS=$pkg_cv_LIBFASTJSON_LIBS
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }
 

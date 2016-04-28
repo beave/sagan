@@ -39,7 +39,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <curl/curl.h>
-#include <json/json.h>
+#include <json.h>
 #include <stdbool.h>
 
 #include "sagan.h"
