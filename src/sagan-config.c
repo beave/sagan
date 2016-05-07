@@ -263,7 +263,7 @@ void Load_Config( void )
 
             if (!strcmp(sagan_option, "ipc_directory"))
                 {
-                    sagan_var1 = strtok_r(NULL, " ", &tok);
+                    sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));
 
                     if ( sagan_var1 == NULL )
                         {

@@ -275,7 +275,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         {
             Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
             Sagan_Log(S_DEBUG, "---------------------------------------------------");
-            Sagan_Log(S_DEBUG, "Log message to normalize: %s", syslog_msg);
+            Sagan_Log(S_DEBUG, "Log message to normalize: |%s|", syslog_msg);
             Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
             Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
             Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
