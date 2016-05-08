@@ -120,6 +120,10 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     struct json_object *json = NULL;
 
+
+    json_object *string_obj;
+
+
     SaganNormalizeLiblognorm->ip_src[0] = '0';
     SaganNormalizeLiblognorm->ip_src[1] = '\0';
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
@@ -148,14 +152,16 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     /* Get source address information */
 
-    tmp = json_object_get_string(json_object_object_get(json, "src-ip"));
+    json_object_object_get_ex(json, "src-ip", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL)
         {
             snprintf(SaganNormalizeLiblognorm->ip_src, sizeof(SaganNormalizeLiblognorm->ip_src), "%s", tmp);
         }
 
-    tmp = json_object_get_string(json_object_object_get(json, "dst-ip"));
+    json_object_object_get_ex(json, "dst-ip", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
@@ -164,16 +170,19 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     /* Get username information - Will be used in the future */
 
-    tmp = json_object_get_string(json_object_object_get(json, "username"));
+    json_object_object_get_ex(json, "username", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
-        {
-            snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
-        }
+	{
+	    snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+	}
+    
 
     /* Do DNS lookup for source hostname */
 
-    tmp = json_object_get_string(json_object_object_get(json, "src-host"));
+    json_object_object_get_ex(json, "src-host", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
@@ -192,7 +201,8 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
         }
 
-    tmp = json_object_get_string(json_object_object_get(json, "dst-host"));
+    json_object_object_get_ex(json, "dst-host", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
@@ -212,14 +222,16 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     /* Get port information */
 
-    tmp = json_object_get_string(json_object_object_get(json, "src-port"));
+    json_object_object_get_ex(json, "src-port", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
             SaganNormalizeLiblognorm->src_port = atoi(tmp);
         }
 
-    tmp = json_object_get_string(json_object_object_get(json, "dst-port"));
+    json_object_object_get_ex(json, "dst-port", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
@@ -227,22 +239,25 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         }
 
 
-    tmp = json_object_get_string(json_object_object_get(json, "filehash-md5"));
+    json_object_object_get_ex(json, "filehash-md5", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->filehash_md5, tmp, sizeof(SaganNormalizeLiblognorm->filehash_md5));
         }
-
-    /*
-        tmp = json_object_get_string(json_object_object_get(json, "filehash-sha1"));
-
+    
+    /* 
+    json_object_object_get_ex(json, "filehash-sha1", &string_obj);
+    tmp = json_object_get_string(string_obj);
+ 
         if ( tmp != NULL )
             {
                 strlcpy(SaganNormalizeLiblognorm->filehash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->filehash_sha1));
             }
 
-        tmp = json_object_get_string(json_object_object_get(json, "filehash-sha256"));
+     json_object_object_get_ex(json, "filehash-sha256", &string_obj);
+     tmp = json_object_get_string(string_obj);
 
         if ( tmp != NULL )
             {
@@ -250,21 +265,24 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             }
     */
 
-    tmp = json_object_get_string(json_object_object_get(json, "http_uri"));
+    json_object_object_get_ex(json, "http_uri", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->http_uri, tmp, sizeof(SaganNormalizeLiblognorm->http_uri));
         }
 
-    tmp = json_object_get_string(json_object_object_get(json, "http_hostname"));
+    json_object_object_get_ex(json, "http_hostname", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->http_hostname, tmp, sizeof(SaganNormalizeLiblognorm->http_hostname));
         }
 
-    tmp = json_object_get_string(json_object_object_get(json, "filename"));
+    json_object_object_get_ex(json, "filename", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
         {
@@ -285,8 +303,8 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
             Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
             Sagan_Log(S_DEBUG, "MD5 Filehash: %s", SaganNormalizeLiblognorm->filehash_md5);
-//            Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
-//            Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256);
+/*            Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
+            Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256); */
             Sagan_Log(S_DEBUG, "HTTP URI: %s", SaganNormalizeLiblognorm->http_uri);
             Sagan_Log(S_DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
             Sagan_Log(S_DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
