@@ -136,7 +136,7 @@ void Load_Config( void )
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
 
-    config->max_flowbits = DEFAULT_IPC_FLOWBITS; 
+    config->max_flowbits = DEFAULT_IPC_FLOWBITS;
 
     config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
     config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;

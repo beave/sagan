@@ -110,7 +110,7 @@ void Sagan_Report_Clients ( void )
             utime_u64 = atol(utime_tmp);
 
             struct in_addr ip_addr_syslog;
-	    int expired_time = config->pp_sagan_track_clients * 60;
+            int expired_time = config->pp_sagan_track_clients * 60;
 
             /* We populate this later for output plugins */
 
@@ -164,7 +164,7 @@ void Sagan_Report_Clients ( void )
 
                                     snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
                                     snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
-				    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previously not sending logs. The system appears to be sending logs again at %s", tmp_ip, ctime(&SaganTrackClients_ipc[i].utime) );
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previously not sending logs. The system appears to be sending logs again at %s", tmp_ip, ctime(&SaganTrackClients_ipc[i].utime) );
 
                                     alertid=101;		/* See gen-msg.map */
 
@@ -218,7 +218,7 @@ void Sagan_Report_Clients ( void )
 
                                     snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
                                     snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
-				    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). Last log was seen at %s. This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients, ctime(&SaganTrackClients_ipc[i].utime) );
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). Last log was seen at %s. This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients, ctime(&SaganTrackClients_ipc[i].utime) );
 
                                     alertid=100;	/* See gen-msg.map  */
 

@@ -120,9 +120,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
     struct json_object *json = NULL;
 
-
     json_object *string_obj;
-
 
     SaganNormalizeLiblognorm->ip_src[0] = '0';
     SaganNormalizeLiblognorm->ip_src[1] = '\0';
@@ -174,10 +172,10 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL )
-	{
-	    snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
-	}
-    
+        {
+            snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
+        }
+
 
     /* Do DNS lookup for source hostname */
 
@@ -246,11 +244,11 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
         {
             strlcpy(SaganNormalizeLiblognorm->filehash_md5, tmp, sizeof(SaganNormalizeLiblognorm->filehash_md5));
         }
-    
-    /* 
+
+    /*
     json_object_object_get_ex(json, "filehash-sha1", &string_obj);
     tmp = json_object_get_string(string_obj);
- 
+
         if ( tmp != NULL )
             {
                 strlcpy(SaganNormalizeLiblognorm->filehash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->filehash_sha1));
@@ -303,8 +301,8 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
             Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
             Sagan_Log(S_DEBUG, "MD5 Filehash: %s", SaganNormalizeLiblognorm->filehash_md5);
-/*            Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
-            Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256); */
+            /*            Sagan_Log(S_DEBUG, "SHA1 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha1);
+                        Sagan_Log(S_DEBUG, "SHA265 Filehash: %s", SaganNormalizeLiblognorm->filehash_sha256); */
             Sagan_Log(S_DEBUG, "HTTP URI: %s", SaganNormalizeLiblognorm->http_uri);
             Sagan_Log(S_DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
             Sagan_Log(S_DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);

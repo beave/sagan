@@ -801,6 +801,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
     char *response=NULL;
 
     struct json_object *json_in = NULL;
+    json_object *string_obj;
 
     const char *cat=NULL;
     char cattmp[128] = { 0 };
@@ -1018,23 +1019,28 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-            cat  = json_object_get_string(json_object_object_get(json_in, "qipcode"));
+            json_object_object_get_ex(json_in, "qipcode", &string_obj);
+            cat = json_object_get_string(string_obj);
         }
 
     else if ( type == BLUEDOT_LOOKUP_HASH )
         {
-            cat  = json_object_get_string(json_object_object_get(json_in, "qhashcode"));
+            json_object_object_get_ex(json_in, "qhashcode", &string_obj);
+            cat = json_object_get_string(string_obj);
         }
 
     else if ( type == BLUEDOT_LOOKUP_URL )
         {
-            cat  = json_object_get_string(json_object_object_get(json_in, "qurlcode"));
+            json_object_object_get_ex(json_in, "qurlcode", &string_obj);
+            cat = json_object_get_string(string_obj);
         }
 
     else if ( type == BLUEDOT_LOOKUP_FILENAME )
         {
-            cat = json_object_get_string(json_object_object_get(json_in, "qfilenamecode"));
+            json_object_object_get_ex(json_in, "qfilenamecode", &string_obj);
+            cat = json_object_get_string(string_obj);
         }
+
 
     if ( cat == NULL )
         {
