@@ -434,11 +434,6 @@ void Sig_Handler( _SaganSigArgs *args )
                     Sagan_Open_GeoIP2_Database();
 #endif
 
-#ifdef HAVE_LIBLOGNORM
-                    Sagan_Liblognorm_Load();
-#endif
-
-
                     pthread_cond_signal(&SaganReloadCond);
                     pthread_mutex_unlock(&SaganReloadMutex);
 

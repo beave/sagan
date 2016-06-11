@@ -70,7 +70,7 @@ struct _SaganCounters *counters;
  * Load in the normalization files into memory
  ************************************************************************/
 
-void Sagan_Liblognorm_Load(void)
+void Sagan_Liblognorm_Load(char *infile)
 {
 
     int i;
@@ -89,17 +89,17 @@ void Sagan_Liblognorm_Load(void)
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
         }
 
-    for (i=0; i < counters->liblognormtoload_count; i++)
+//    for (i=0; i < counters->liblognormtoload_count; i++)
+//        {
+    Sagan_Log(S_NORMAL, "Loading %s for normalization.", infile);
+
+    if (stat(infile, &liblognorm_fileinfo))
         {
-            Sagan_Log(S_NORMAL, "Loading %s for normalization.", liblognormtoloadstruct[i].filepath);
-
-            if (stat(liblognormtoloadstruct[i].filepath, &liblognorm_fileinfo))
-                {
-                    Sagan_Log(S_ERROR, "%s was not fonnd.", liblognormtoloadstruct[i].filepath);
-                }
-
-            ln_loadSamples(ctx, liblognormtoloadstruct[i].filepath);
+            Sagan_Log(S_ERROR, "%s was not fonnd.", infile);
         }
+
+    ln_loadSamples(ctx, infile);
+//       }
 
 }
 

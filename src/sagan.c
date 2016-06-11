@@ -477,18 +477,6 @@ int main(int argc, char **argv)
 
     Sagan_Engine_Init();
 
-#ifdef HAVE_LIBLOGNORM
-    Sagan_Liblognorm_Load();
-#endif
-
-
-    /* Load/init liblognorm definitions.  I tried to move this into a subroutine,
-     * but that ended up causing segfaults on ln_normalize() or causing
-     * liblognorm not to function correctly (not parsing fields).  Make reloading
-     * a SIGHUP a issue as well.
-     * 12/17/2010 - Champ
-     */
-
     SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
 
     if ( SaganProcSyslog == NULL )

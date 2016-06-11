@@ -610,6 +610,13 @@ void Load_Rules( const char *ruleset )
 
                     /* single flag options.  (nocase, find_port, etc) */
 
+                    /*
+                    		    if (!strcmp(rulesplit, "normalize"))
+                    			{
+                    		            rulestruct[counters->rulecount].normalize = 1;
+                    			}
+                    */
+
                     if (!strcmp(rulesplit, "follow_flow"))
                         {
                             rulestruct[counters->rulecount].s_follow_flow = 1;
@@ -1113,88 +1120,25 @@ void Load_Rules( const char *ruleset )
                         }
 #endif
 
+
 #ifdef HAVE_LIBLOGNORM
+
+                    /* Our Liblognorm friends changed the way it works!  We use to load normalization rule base files
+                       as they were needed. ln_loadSample no longer accepts multiple calls.  This means that _all_
+                       liblognorm rules need to be loaded from one file at one time.  This depreciates "normalize: type;"
+                               in favor of a simple "normalize"; */
 
                     if (!strcmp(rulesplit, "normalize" ))
                         {
                             rulestruct[counters->rulecount].normalize = 1;
+
+                            /* Test for old liblognorm/Sagan usage.  If old method is found,  produce a warning */
+
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
-                            if (arg == NULL )
+                            if (arg != NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"normalize\" appears to be incomplete at line %d in %s", __LINE__, __FILE__, linecount, ruleset);
-                                }
-
-                            Remove_Spaces(arg);
-
-
-                            /* If the rule specifies "all",  then we load the "liblognormtoloadstruct" with all
-                             * normalization files.  We then set the config->lognorm_all = 1 to short circuit the
-                             * individual normalization file loading */
-
-                            if (!strcmp(arg, "all") && config->lognorm_all == 0)
-                                {
-
-                                    counters->liblognormtoload_count=0;
-
-                                    for (i=0; i < liblognorm_count; i++)
-                                        {
-
-                                            liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
-
-                                            if ( liblognormtoloadstruct == NULL )
-                                                {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognormtoloadstruct. Abort!", __FILE__, __LINE__);
-                                                }
-
-                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
-                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
-                                            counters->liblognormtoload_count++;
-
-                                            config->lognorm_all = 1;
-
-                                        }
-                                }
-
-                            /* If we aren't loading "all",  then store in the array the specific normalization
-                             * files the rule specifies */
-
-                            if ( config->lognorm_all == 0 )
-                                {
-
-                                    for (i=0; i < liblognorm_count; i++)
-                                        {
-
-                                            if (!strcmp(liblognormstruct[i].type, arg))
-                                                {
-
-                                                    liblognorm_flag=1;
-
-                                                    for (norm_count=0; norm_count < counters->liblognormtoload_count; norm_count++)
-                                                        {
-                                                            if (!strcmp(liblognormstruct[i].type, liblognormtoloadstruct[norm_count].type ))
-                                                                {
-                                                                    liblognorm_flag=0;
-                                                                }
-                                                        }
-
-                                                    if ( liblognorm_flag == 1 )
-                                                        {
-                                                            liblognormtoloadstruct = (liblognorm_toload_struct *) realloc(liblognormtoloadstruct, (counters->liblognormtoload_count+1) * sizeof(liblognorm_toload_struct));
-
-                                                            if ( liblognormtoloadstruct == NULL )
-                                                                {
-                                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for liblognomrtoloadstruct. Abort!", __FILE__, __LINE__);
-                                                                }
-
-                                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].type, liblognormstruct[i].type, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].type));
-                                                            strlcpy(liblognormtoloadstruct[counters->liblognormtoload_count].filepath, liblognormstruct[i].filepath, sizeof(liblognormtoloadstruct[counters->liblognormtoload_count].filepath));
-                                                            counters->liblognormtoload_count++;
-                                                        }
-
-                                                }
-
-                                        }
+                                    Sagan_Log(S_WARN, "Detected a rule that uses the older \'normalize\' method.  Please consider updating \'%s\' at line %d", ruleset, linecount);
                                 }
                         }
 

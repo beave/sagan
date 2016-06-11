@@ -162,9 +162,9 @@ struct _SaganCounters
     uintmax_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
     uintmax_t follow_flow_drop;			/* Amount of flows that did not match and were dropped */
 
-#ifdef HAVE_LIBLOGNORM
-    int liblognormtoload_count;
-#endif
+//#ifdef HAVE_LIBLOGNORM
+//    int liblognormtoload_count;
+//#endif
 
 #ifdef HAVE_LIBMAXMINDDB
     uintmax_t geoip2_hit;				/* GeoIP2 hit count */

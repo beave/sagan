@@ -50,6 +50,9 @@
 #include <liblognorm.h>
 #include <lognorm.h>
 #include "sagan-liblognorm.h"
+
+static ln_ctx ctx;
+
 #endif
 
 #include "version.h"
@@ -480,6 +483,8 @@ void Load_Config( void )
 #endif
 
 #ifndef HAVE_LIBLOGNORM
+
+
             if (!strcmp(sagan_option, "normalize:"))
                 {
                     Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
@@ -488,14 +493,10 @@ void Load_Config( void )
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-            /*
-             We load the location for liblognorm's 'rule base/samples'.  We don't want to
-             load them quiet yet.  We only want to load samples we need,  so we do the
-             actual ln_loadSamples() after the configuration file and all rules have
-             been analyzed */
 
-            if (!strcmp(sagan_option, "normalize:"))
+            if (!strcmp(sagan_option, "normalize_file:"))
                 {
+
                     liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
 
                     if ( liblognormstruct == NULL )
@@ -503,19 +504,13 @@ void Load_Config( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
                         }
 
-                    sagan_var1 = strtok_r(NULL, ",", &tok);
+
+                    sagan_var1 = strtok_r(NULL, ":", &tok);
                     Remove_Spaces(sagan_var1);
-                    strlcpy(liblognormstruct[liblognorm_count].type, sagan_var1, sizeof(liblognormstruct[liblognorm_count].type));
+                    Remove_Return(sagan_var1);
 
-                    strlcpy(tmpstring, strtok_r(NULL, ",", &tok), sizeof(tmpstring));
-                    Remove_Spaces(tmpstring);
-                    Remove_Return(tmpstring);
+                    Sagan_Liblognorm_Load(sagan_var1);
 
-                    strlcpy(normfile, Sagan_Var_To_Value(tmpstring), sizeof(normfile));
-                    Remove_Spaces(normfile);
-
-                    strlcpy(liblognormstruct[liblognorm_count].filepath, normfile, sizeof(liblognormstruct[liblognorm_count].filepath));
-                    liblognorm_count++;
                 }
 
 #endif

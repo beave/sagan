@@ -64,5 +64,5 @@ typedef struct _SaganNormalizeLiblognorm
 #endif
 
 
-void Sagan_Liblognorm_Load( void );
-void Sagan_Normalize_Liblognorm( char *);
+void Sagan_Liblognorm_Load( char * );
+void Sagan_Normalize_Liblognorm( char * );
