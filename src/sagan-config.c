@@ -230,13 +230,6 @@ void Load_Config( void )
                     config->syslog_src_lookup = 1;
                 }
 
-            // This is on until such time we decide whether to leave it or not 2016-02-12
-            /*if (!strcmp(Remove_Return(sagan_option), "follow_flow"))
-                {
-                    Sagan_Log(S_NORMAL, "All directional flows will be followed for all events");*/
-            config->follow_flow_flag = 1;
-            /*}*/
-
             if (!strcmp(Remove_Return(sagan_option), "sagan_host"))
                 {
                     sagan_var1 = Remove_Return(strtok_r(NULL, " ", &tok));

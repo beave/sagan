@@ -652,27 +652,22 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
-                            /****************************/
-                            /*  Check for flow of rule  */
-                            /*  0 = any    1 = set var  */
-                            /* if any any we dont check */
-                            /****************************/
+                            /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
+                            the rule has some sort of flow.  It 0,  rule is set any/any */
 
-                            /*if ( rulestruct[b].s_follow_flow || config->follow_flow_flag )
-                            {*/
-                            counters->follow_flow_total++;
-                            if ( rulestruct[b].flow_1_var != 0 && rulestruct[b].flow_2_var != 0 )
+                            if ( rulestruct[counters->rulecount].has_flow == 1 )
                                 {
 
                                     check_flow_return = Sagan_Check_Flow( b, ip_src_u32, ip_dst_u32);
+
                                     if(check_flow_return == 0)
                                         {
                                             counters->follow_flow_drop++;
                                         }
 
-                                }
-                            /*}*/
+                                    counters->follow_flow_total++;
 
+                                }
 
                             /****************************************************************************
                              * Flowbit
@@ -1151,83 +1146,83 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                 }
                                                                                                                         }
 
-                                                                                                            /* After by destination IP port */
+                                                                                                                    /* After by destination IP port */
 
-                                                                                                            if ( rulestruct[b].after_method == 4 )
-                                                                                                                {
-
-                                                                                                                    after_flag = 0;
-
-                                                                                                                    /* Check array for matching src / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->after_count_by_dstport; i++ )
+                                                                                                                    if ( rulestruct[b].after_method == 4 )
                                                                                                                         {
-                                                                                                                            if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(afterbydstport_ipc[i].sid, rulestruct[b].s_sid ))
+
+                                                                                                                            after_flag = 0;
+
+                                                                                                                            /* Check array for matching src / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->after_count_by_dstport; i++ )
                                                                                                                                 {
-                                                                                                                                    after_flag=1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_dstport);
-
-                                                                                                                                    afterbydstport_ipc[i].count++;
-                                                                                                                                    after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
-                                                                                                                                    afterbydstport_ipc[i].utime = atol(timet);
-
-                                                                                                                                    if ( after_oldtime > rulestruct[b].after_seconds )
+                                                                                                                                    if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(afterbydstport_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                         {
-                                                                                                                                            afterbydstport_ipc[i].count=1;
+                                                                                                                                            after_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_dstport);
+
+                                                                                                                                            afterbydstport_ipc[i].count++;
+                                                                                                                                            after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
                                                                                                                                             afterbydstport_ipc[i].utime = atol(timet);
-                                                                                                                                            after_log_flag=1;
-                                                                                                                                        }
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_dstport);
-
-                                                                                                                                    if ( rulestruct[b].after_count < afterbydstport_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            after_log_flag = 0;
-
-                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                            if ( after_oldtime > rulestruct[b].after_seconds )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP PORT. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                                                                                    afterbydstport_ipc[i].count=1;
+                                                                                                                                                    afterbydstport_ipc[i].utime = atol(timet);
+                                                                                                                                                    after_log_flag=1;
                                                                                                                                                 }
+
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_dstport);
+
+                                                                                                                                            if ( rulestruct[b].after_count < afterbydstport_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    after_log_flag = 0;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by destination IP PORT. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                                                                                        }
 
 
 //                                                                                                                                            counters_ipc->after_total++;
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);
-                                                                                                                                            counters->after_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                                                                                    counters->after_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                }
                                                                                                                                         }
                                                                                                                                 }
-                                                                                                                        }
 
-                                                                                                                    /* If not found,  add it to the array */
+                                                                                                                            /* If not found,  add it to the array */
 
-                                                                                                                    if ( after_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 )
+                                                                                                                            if ( after_flag == 0 )
                                                                                                                                 {
 
-                                                                                                                                    Sagan_File_Lock(config->shm_after_by_dstport);
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 )
+                                                                                                                                        {
 
-                                                                                                                                    afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
-                                                                                                                                    strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid));
-                                                                                                                                    afterbydstport_ipc[counters_ipc->after_count_by_dstport].count = 1;
-                                                                                                                                    afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
-                                                                                                                                    afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[b].after_seconds;
+                                                                                                                                            Sagan_File_Lock(config->shm_after_by_dstport);
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_after_by_dstport);
+                                                                                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
+                                                                                                                                            strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid));
+                                                                                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].count = 1;
+                                                                                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
+                                                                                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[b].after_seconds;
 
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->after_count_by_dstport++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                            Sagan_File_Unlock(config->shm_after_by_dstport);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->after_count_by_dstport++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
 
                                                                                                                                 }
-
                                                                                                                         }
-                                                                                                                }
 
-                                                                                                            /* After by username */
+                                                                                                                    /* After by username */
 
                                                                                                                     if ( rulestruct[b].after_method == 3 && normalize_username[0] != '\0' )
                                                                                                                         {
@@ -1469,82 +1464,82 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                         }
 
 
-                                                                                                            /* Thresholding by destination IP port */
+                                                                                                                    /* Thresholding by destination IP port */
 
-                                                                                                            if ( rulestruct[b].threshold_method == 4 )
-                                                                                                                {
-                                                                                                                    thresh_flag = 0;
-
-                                                                                                                    /* Check array for matching src / sid */
-
-                                                                                                                    for (i = 0; i < counters_ipc->thresh_count_by_dstport; i++ )
+                                                                                                                    if ( rulestruct[b].threshold_method == 4 )
                                                                                                                         {
-                                                                                                                            if ( threshbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[i].sid, rulestruct[b].s_sid ))
+                                                                                                                            thresh_flag = 0;
+
+                                                                                                                            /* Check array for matching src / sid */
+
+                                                                                                                            for (i = 0; i < counters_ipc->thresh_count_by_dstport; i++ )
                                                                                                                                 {
-
-                                                                                                                                    thresh_flag=1;
-
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_dstport);
-
-                                                                                                                                    threshbydstport_ipc[i].count++;
-                                                                                                                                    thresh_oldtime = atol(timet) - threshbydstport_ipc[i].utime;
-                                                                                                                                    threshbydstport_ipc[i].utime = atol(timet);
-                                                                                                                                    if ( thresh_oldtime > rulestruct[b].threshold_seconds )
+                                                                                                                                    if ( threshbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                         {
-                                                                                                                                            threshbydstport_ipc[i].count=1;
+
+                                                                                                                                            thresh_flag=1;
+
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_dstport);
+
+                                                                                                                                            threshbydstport_ipc[i].count++;
+                                                                                                                                            thresh_oldtime = atol(timet) - threshbydstport_ipc[i].utime;
                                                                                                                                             threshbydstport_ipc[i].utime = atol(timet);
-                                                                                                                                            thresh_log_flag=0;
-                                                                                                                                        }
-
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_dstport);
-
-
-                                                                                                                                    if ( rulestruct[b].threshold_count < threshbydstport_ipc[i].count )
-                                                                                                                                        {
-                                                                                                                                            thresh_log_flag = 1;
-
-                                                                                                                                            if ( debug->debuglimits )
+                                                                                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds )
                                                                                                                                                 {
-                                                                                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP PORT. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                                                                                    threshbydstport_ipc[i].count=1;
+                                                                                                                                                    threshbydstport_ipc[i].utime = atol(timet);
+                                                                                                                                                    thresh_log_flag=0;
                                                                                                                                                 }
 
-                                                                                                                                            pthread_mutex_lock(&CounterMutex);;
-                                                                                                                                            counters->threshold_total++;
-                                                                                                                                            pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_dstport);
+
+
+                                                                                                                                            if ( rulestruct[b].threshold_count < threshbydstport_ipc[i].count )
+                                                                                                                                                {
+                                                                                                                                                    thresh_log_flag = 1;
+
+                                                                                                                                                    if ( debug->debuglimits )
+                                                                                                                                                        {
+                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP PORT. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                                                                                        }
+
+                                                                                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                                                                                    counters->threshold_total++;
+                                                                                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                                                                                }
                                                                                                                                         }
                                                                                                                                 }
-                                                                                                                        }
 
-                                                                                                                    /* If not found,  add it to the array */
+                                                                                                                            /* If not found,  add it to the array */
 
-                                                                                                                    if ( thresh_flag == 0 )
-                                                                                                                        {
-
-                                                                                                                            if ( Sagan_Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 )
+                                                                                                                            if ( thresh_flag == 0 )
                                                                                                                                 {
 
-                                                                                                                                    Sagan_File_Lock(config->shm_thresh_by_dstport);
+                                                                                                                                    if ( Sagan_Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 )
+                                                                                                                                        {
 
-                                                                                                                                    threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
-                                                                                                                                    strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
-                                                                                                                                    threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
-                                                                                                                                    threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
-                                                                                                                                    threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[b].threshold_seconds;
+                                                                                                                                            Sagan_File_Lock(config->shm_thresh_by_dstport);
 
-                                                                                                                                    Sagan_File_Unlock(config->shm_thresh_by_dstport);
+                                                                                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
+                                                                                                                                            strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
+                                                                                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
+                                                                                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
+                                                                                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[b].threshold_seconds;
 
-                                                                                                                                    Sagan_File_Lock(config->shm_counters);
-                                                                                                                                    counters_ipc->thresh_count_by_dstport++;
-                                                                                                                                    Sagan_File_Unlock(config->shm_counters);
+                                                                                                                                            Sagan_File_Unlock(config->shm_thresh_by_dstport);
+
+                                                                                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                                                                                            counters_ipc->thresh_count_by_dstport++;
+                                                                                                                                            Sagan_File_Unlock(config->shm_counters);
+
+                                                                                                                                        }
 
                                                                                                                                 }
-
                                                                                                                         }
-                                                                                                                }
 
 
-                                                                                                            if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' )
-                                                                                                                {
+                                                                                                                    if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' )
+                                                                                                                        {
 
                                                                                                                             thresh_flag = 0;
 

@@ -555,6 +555,14 @@ void Load_Rules( const char *ruleset )
                                 }
                         }
 
+                    /* Used later for a single check to determine if a rule has a flow or not
+                       - Champ Clark III (06/12/2016) */
+
+                    if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 )
+                        {
+                            rulestruct[counters->rulecount].has_flow = 1;
+                        }
+
                     /* Destination Port */
                     if ( netcount == 6 )
                         {

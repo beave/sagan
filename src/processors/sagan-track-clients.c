@@ -36,6 +36,7 @@
 #include <time.h>
 #include <pthread.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"

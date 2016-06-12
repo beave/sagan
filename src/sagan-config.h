@@ -182,10 +182,6 @@ struct _SaganConfig
     sbool	 brointel_flag;
     char	 brointel_files[2048];
 
-    /* For Follow Flow */
-
-    sbool	follow_flow_flag;
-
     /* For Maxmind GeoIP2 address lookup */
 
 #ifdef HAVE_LIBMAXMINDDB

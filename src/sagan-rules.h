@@ -69,9 +69,13 @@ struct _Rule_Struct
     struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];
 
     int direction;
+
     sbool s_follow_flow;
     sbool flow_1_var;
     sbool flow_2_var;
+
+    sbool has_flow;
+
     int flow_1_type[MAX_CHECK_FLOWS];
     int flow_2_type[MAX_CHECK_FLOWS];
     int  flow_1_counter;
