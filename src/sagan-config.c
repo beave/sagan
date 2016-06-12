@@ -139,11 +139,14 @@ void Load_Config( void )
 
     config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
     config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
+    config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
     config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
 
     config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
     config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
+    config->max_after_by_dstport = DEFAULT_IPC_AFTER_BY_DST_PORT;
     config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
+
 
     config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
 
@@ -312,6 +315,19 @@ void Load_Config( void )
                 }
 
 
+            if (!strcmp(sagan_option, "threshold_by_dstport"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"threshold_by_dstport\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_threshold_by_dstport = atoi(sagan_var1);
+                }
+
+
             if (!strcmp(sagan_option, "threshold_by_username"))
                 {
                     sagan_var1 = strtok_r(NULL, " ", &tok);
@@ -361,6 +377,19 @@ void Load_Config( void )
                         }
 
                     config->max_after_by_dst = atoi(sagan_var1);
+                }
+
+
+            if (!strcmp(sagan_option, "after_by_dstport"))
+                {
+                    sagan_var1 = strtok_r(NULL, " ", &tok);
+
+                    if ( sagan_var1 == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] \"after_by_dstport\" is incomplete!", __FILE__, __LINE__);
+                        }
+
+                    config->max_after_by_dstport = atoi(sagan_var1);
                 }
 
 

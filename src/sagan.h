@@ -80,9 +80,11 @@ struct _Sagan_IPC_Counters
     int  flowbit_count;
     int	 thresh_count_by_src;
     int	 thresh_count_by_dst;
+    int	 thresh_count_by_dstport;
     int	 thresh_count_by_username;
     int	 after_count_by_src;
     int	 after_count_by_dst;
+    int	 after_count_by_dstport;
     int	 after_count_by_username;
 
     int	 track_client_count;
@@ -332,6 +334,18 @@ struct thresh_by_dst_ipc
 };
 
 
+/* Thresholding structure by destination port */
+typedef struct thresh_by_dstport_ipc thresh_by_dstport_ipc;
+struct thresh_by_dstport_ipc
+{
+    uint32_t ipdstport;
+    int  count;
+    uint64_t utime;
+    char sid[20];
+    int expire;
+};
+
+
 /* Thesholding structure by username */
 typedef struct thresh_by_username_ipc thresh_by_username_ipc;
 struct thresh_by_username_ipc
@@ -361,6 +375,18 @@ struct after_by_dst_ipc
     uint32_t ipdst;
     int  count;
     uintmax_t utime;
+    char sid[20];
+    int expire;
+};
+
+
+/* After structure by destination port */
+typedef struct after_by_dstport_ipc after_by_dstport_ipc;
+struct after_by_dstport_ipc
+{
+    uint32_t ipdstport;
+    int  count;
+    uint64_t utime;
     char sid[20];
     int expire;
 };
