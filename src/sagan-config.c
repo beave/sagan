@@ -500,10 +500,17 @@ void Load_Config( void )
 
 #endif
 
+            /* Detect and abort on deperciated "normalize" value */
+
+            if (!strcmp(sagan_option, "normalize:"))
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Usage of deperciated 'normalize:' is no longer supported. Use 'normalize_file:' instead!", __FILE__, __LINE__);
+                }
+
 #ifndef HAVE_LIBLOGNORM
 
 
-            if (!strcmp(sagan_option, "normalize:"))
+            if (!strcmp(sagan_option, "normalize_file:"))
                 {
                     Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
                     Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ liblognorm!");
