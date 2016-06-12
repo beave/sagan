@@ -435,6 +435,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
+    return(true);
 }
 
 

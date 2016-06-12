@@ -165,13 +165,6 @@ void Load_Rules( const char *ruleset )
     int dst_port=0;
     int src_port=0;
 
-    config->lognorm_all = 0;
-
-#ifdef HAVE_LIBLOGNORM
-    sbool liblognorm_flag=0;
-    int norm_count;
-#endif
-
     if (( rulesfile = fopen(ruleset, "r" )) == NULL )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s - %s)", __FILE__, __LINE__, ruleset, strerror(errno));

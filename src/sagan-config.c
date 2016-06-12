@@ -50,9 +50,6 @@
 #include <liblognorm.h>
 #include <lognorm.h>
 #include "sagan-liblognorm.h"
-
-static ln_ctx ctx;
-
 #endif
 
 #include "version.h"
@@ -122,7 +119,6 @@ void Load_Config( void )
     int i,check;
 
 #ifdef HAVE_LIBLOGNORM
-    char normfile[MAXPATH];
 #endif
 
     /* Set some system defaults */

@@ -462,7 +462,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             normalize_username[0] = '\0';
 
 #ifdef HAVE_LIBLOGNORM
-                            if ( rulestruct[b].normalize == 1 ) // && counters->liblognormtoload_count != 0 )
+                            if ( rulestruct[b].normalize == 1 )
                                 {
 
                                     pthread_mutex_lock(&Lognorm_Mutex);

@@ -227,7 +227,7 @@ int Sagan_ESMTP_Thread (_SaganEvent *Event)
         }
 
 failure:
-    if(session != NULL)
+    if (session != NULL)
         smtp_destroy_session (session);
     return(0);
 }

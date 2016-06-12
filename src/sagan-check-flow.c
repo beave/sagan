@@ -75,10 +75,10 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
     int ne1=0;
     int eq1_val=0;
     int ne1_val=0;
-    char *tmptoken1;
-    char *saveptrflow1;
-    char *tmp1;
-    char tmp_flow_1[512];
+//    char *tmptoken1;
+//    char *saveptrflow1;
+//    char *tmp1;
+//    char tmp_flow_1[512];
     int f1;
 
     /*flow 2*/
@@ -88,14 +88,14 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
     int ne2=0;
     int eq2_val=0;
     int ne2_val=0;
-    char *tmptoken2;
-    char *saveptrflow2;
-    char *tmp2;
-    char tmp_flow_2[512];
+//    char *tmptoken2;
+//    char *saveptrflow2;
+//    char *tmp2;
+//    char tmp_flow_2[512];
     int f2;
 
-    uint32_t lo;
-    uint32_t hi;
+//    uint32_t lo;
+//    uint32_t hi;
 
     int i;
     int failed=0;

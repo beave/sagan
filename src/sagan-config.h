@@ -67,7 +67,6 @@ struct _SaganConfig
     /*    sbool        home_any;  */                     /* 0 == no, 1 == yes */
     /*    sbool        external_any;  */
 
-    sbool 	 lognorm_all; 				/* Flag to load all normalization files or not */
     sbool        endian;
 
     /* Processors */

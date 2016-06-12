@@ -73,8 +73,6 @@ struct _SaganCounters *counters;
 void Sagan_Liblognorm_Load(char *infile)
 {
 
-    int i;
-
     SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
 
     if ( SaganNormalizeLiblognorm == NULL )

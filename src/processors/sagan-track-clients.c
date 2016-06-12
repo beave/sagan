@@ -59,7 +59,6 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     time_t t;
     struct tm *now;
     int i;
-    int tracking_flag=0;
     uintmax_t utime_u64;
 
     t = time(NULL);
@@ -81,7 +80,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
                     SaganTrackClients_ipc[i].utime = utime_u64;
                     SaganTrackClients_ipc[i].expire = expired_time;
                     Sagan_File_Unlock(config->shm_track_clients);
-                    return(0);
+                    return(true);
                 }
         }
 
@@ -97,7 +96,7 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             Sagan_File_Lock(config->shm_counters);
             counters_ipc->track_clients_client_count++;
             Sagan_File_Unlock(config->shm_counters);
-            return(0);
+            return(false);
 
         }
     else
@@ -106,4 +105,6 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
 
         }
+
+    return(true);
 } /* CLose sagan_track_clients */
