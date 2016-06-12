@@ -655,7 +655,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
                             the rule has some sort of flow.  It 0,  rule is set any/any */
 
-                            if ( rulestruct[counters->rulecount].has_flow == 1 )
+                            if ( rulestruct[b].has_flow == 1 )
                                 {
 
                                     check_flow_return = Sagan_Check_Flow( b, ip_src_u32, ip_dst_u32);
