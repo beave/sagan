@@ -529,12 +529,11 @@ void Load_Config( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
                         }
 
+                    strlcpy(tmpstring, Remove_Return(strtok_r(NULL, ":", &tok)), sizeof(tmpstring));
+                    strlcpy(ruleset, Sagan_Var_To_Value(tmpstring), sizeof(ruleset));
+                    Remove_Spaces(ruleset);
 
-                    sagan_var1 = strtok_r(NULL, ":", &tok);
-                    Remove_Spaces(sagan_var1);
-                    Remove_Return(sagan_var1);
-
-                    Sagan_Liblognorm_Load(sagan_var1);
+                    Sagan_Liblognorm_Load(ruleset);
 
                 }
 
