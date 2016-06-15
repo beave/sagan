@@ -79,8 +79,7 @@ void Sagan_Open_GeoIP2_Database( void )
         {
             Sagan_Log(S_WARN, "Cannot open '%s' [%s]!",  config->geoip2_country_file, strerror(errno));
             Sagan_Log(S_WARN, "Make sure the GeoIP database '%s' is readable by '%s'.", config->geoip2_country_file, config->sagan_runas);
-            Sagan_Log(S_WARN, "Sagan is NOT loading the GeoIP database data!");
-	    Sagan_Log(S_ERROR, "Sagan is aborting!"); 
+            Sagan_Log(S_ERROR, "Sagan is NOT loading the GeoIP database data! Abort!");
         }
 
     status = MMDB_open(config->geoip2_country_file, MMDB_MODE_MMAP, &config->geoip2);
