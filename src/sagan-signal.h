@@ -22,18 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-
-/****************************************************************************/
-/* 'Signal' thread options                                                  */
-/****************************************************************************/
-
-typedef struct _SaganSigArgs _SaganSigArgs;
-struct _SaganSigArgs
-{
-    int daemonize;
-    uintmax_t cid;
-};
-
-
-void Sig_Handler( _SaganSigArgs * );
+void Sig_Handler( void );
 

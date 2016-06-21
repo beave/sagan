@@ -101,9 +101,6 @@ struct _Sagan_Flowbit *flowbit;
 #include "processors/sagan-bluedot.h"
 #endif
 
-sbool daemonize=0;
-sbool quiet=0;
-
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
 int proc_msgslot=0;
@@ -130,11 +127,12 @@ int main(int argc, char **argv)
         { "config",       required_argument,    NULL,   'f' },
         { "log",          required_argument,    NULL,   'l' },
         { "file",	  required_argument,    NULL,   'F' },
+        { "quiet", 	  no_argument, 		NULL, 	'Q' },
         {0, 0, 0, 0}
     };
 
     static const char *short_options =
-        "l:f:u:F:d:c:pDhC";
+        "l:f:u:F:d:c:pDhCQ";
 
     int option_index = 0;
 
@@ -237,16 +235,6 @@ int main(int argc, char **argv)
 
     memset(config, 0, sizeof(_SaganConfig));
 
-    struct _SaganSigArgs *sigargs;
-    sigargs = malloc(sizeof(_SaganSigArgs));
-
-    if ( sigargs == NULL )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for sigargs. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(sigargs, 0, sizeof(_SaganSigArgs));
-
     struct _SaganDNSCache *dnscache;
     dnscache = malloc(sizeof(_SaganDNSCache));
 
@@ -294,7 +282,7 @@ int main(int argc, char **argv)
 
     if ( !isatty(0) || !isatty(1) || !isatty(2) )
         {
-            quiet = 1;
+            config->quiet = 1;
         }
 
 
@@ -310,6 +298,10 @@ int main(int argc, char **argv)
                 case 'h':
                     Sagan_Usage();
                     exit(0);
+                    break;
+
+                case 'Q':
+                    config->quiet = 1;
                     break;
 
                 case 'C':
@@ -439,7 +431,7 @@ int main(int argc, char **argv)
                     break;
 
                 case 'D':
-                    daemonize=1;
+                    config->daemonize=1;
                     break;
 
                 case 'u':
@@ -495,12 +487,6 @@ int main(int argc, char **argv)
     Sagan_Log(S_NORMAL, "Out of %d rules, %d Flowbit(s) are in use.", counters->rulecount, counters->flowbit_total_counter);
     Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
 
-    /* We go ahead and assign values to SaganSigArgs (struct sig_thread_args).  This
-     * struct is always used by the sig_handler thread,  and sometimes used by the
-     * plog_handler (below).  So we assign values now */
-
-    sigargs->daemonize = daemonize;
-
 #ifdef HAVE_LIBPCAP
 
     /* Spawn a thread to 'sniff' syslog traffic (sagan-plog.c).  This redirects syslog
@@ -510,7 +496,7 @@ int main(int argc, char **argv)
     if ( config->plog_flag )
         {
 
-            rc = pthread_create( &pcap_thread, NULL, (void *)plog_handler, sigargs );
+            rc = pthread_create( &pcap_thread, NULL, (void *)plog_handler, NULL );
 
             if ( rc != 0 )
                 {
@@ -537,7 +523,7 @@ int main(int argc, char **argv)
 
             Sagan_Perfmonitor_Open();
 
-            rc = pthread_create( &perfmonitor_thread, NULL, (void *)Sagan_Perfmonitor_Handler, sigargs );
+            rc = pthread_create( &perfmonitor_thread, NULL, (void *)Sagan_Perfmonitor_Handler, NULL );
 
             if ( rc != 0 )
                 {
@@ -711,7 +697,7 @@ int main(int argc, char **argv)
 
     /* Become a daemon if requested */
 
-    if ( daemonize )
+    if ( config->daemonize )
         {
             Sagan_Log(S_NORMAL, "Becoming a daemon!");
 
@@ -729,7 +715,7 @@ int main(int argc, char **argv)
     /* Create the signal handlers thread _after_ the fork() so it can properly
      * handly signals - Champ Clark III - 06/13/2011 */
 
-    rc = pthread_create( &sig_thread, NULL, (void *)Sig_Handler, sigargs );
+    rc = pthread_create( &sig_thread, NULL, (void *)Sig_Handler, NULL );
 
     if ( rc != 0  )
         {
@@ -740,9 +726,9 @@ int main(int argc, char **argv)
 
     /* We don't want the key_handler() if we're in daemon mode! */
 
-    if (!daemonize )
+    if (!config->daemonize )
         {
-            if (!quiet)
+            if (!config->quiet)
                 {
 
                     rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL );

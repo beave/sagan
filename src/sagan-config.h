@@ -31,6 +31,9 @@ struct _SaganConfig
     /* Non-dependent var's */
 
     sbool 	 sagan_reload;
+    sbool	 daemonize;
+    sbool	 quiet;
+
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
     char         sagan_alert_filepath[MAXPATH];

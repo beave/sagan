@@ -100,7 +100,7 @@ struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
-void Sig_Handler( _SaganSigArgs *args )
+void Sig_Handler( void )
 {
 
     sigset_t signal_set;
