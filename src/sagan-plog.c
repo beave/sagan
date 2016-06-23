@@ -71,12 +71,12 @@ static  int   wiredevlog( _SaganConfig *);
 static  int   outf;
 
 
-void plog_handler(_SaganSigArgs *args )
+void plog_handler( void )
 {
 
     pcap_t                  *bp;
     struct  bpf_program     filtr;
-    char 			*iface=NULL;
+    char 		    *iface=NULL;
     char                    eb[PCAP_ERRBUF_SIZE];
 
     iface = config->plog_interface;
@@ -129,7 +129,7 @@ void plog_handler(_SaganSigArgs *args )
 
     /* endless loop */
 
-    (void)pcap_loop(bp,-1,logpkt, (u_char*)args);
+    (void)pcap_loop(bp,-1,logpkt, NULL);
 
     pcap_close(bp);
     exit(0);
