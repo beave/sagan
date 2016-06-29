@@ -796,27 +796,27 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                             if ( rulestruct[b].bluedot_ipaddr_type == 1 )
                                                 {
-                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b);
                                                     bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                 }
 
                                             if ( rulestruct[b].bluedot_ipaddr_type == 2 )
                                                 {
-                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b);
                                                     bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                 }
 
                                             if ( rulestruct[b].bluedot_ipaddr_type == 3 )
                                                 {
 
-                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP);
+                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b);
                                                     bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
 
                                                     /* If the source isn't found,  then check the dst */
 
                                                     if ( bluedot_ip_flag != 0 )
                                                         {
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP);
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b);
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
@@ -835,7 +835,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].bluedot_file_hash && normalize_filehash[0] != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filehash, BLUEDOT_LOOKUP_HASH);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filehash, BLUEDOT_LOOKUP_HASH, b);
                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                         }
@@ -843,7 +843,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].bluedot_url && normalize_http_uri != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b);
                                             bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
 
                                         }
@@ -851,7 +851,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     if ( rulestruct[b].bluedot_filename && normalize_filename[0] != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b);
                                             bluedot_filename_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_FILENAME);
 
                                         }

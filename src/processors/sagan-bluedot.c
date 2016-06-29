@@ -597,7 +597,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotIPCache[i].utime > config->bluedot_timeout )
+                    if ( atol(timet) - SaganBluedotIPCache[i].cache_utime > config->bluedot_timeout )
                         {
 
                             if (debug->debugbluedot)
@@ -617,7 +617,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                                 }
 
                             TmpSaganBluedotIPCache[timeout_count].host = SaganBluedotIPCache[i].host;
-                            TmpSaganBluedotIPCache[timeout_count].utime = SaganBluedotIPCache[i].utime;                                                                                 /* store utime */
+                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cache_utime;                                                                                 /* store utime */
                             TmpSaganBluedotIPCache[timeout_count].alertid = SaganBluedotIPCache[i].alertid;
                             timeout_count++;
                         }
@@ -626,7 +626,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<timeout_count; i++)
                 {
                     SaganBluedotIPCache[i].host = TmpSaganBluedotIPCache[i].host;
-                    SaganBluedotIPCache[i].utime = TmpSaganBluedotIPCache[i].utime;
+                    SaganBluedotIPCache[i].cache_utime = TmpSaganBluedotIPCache[i].cache_utime;
                     SaganBluedotIPCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
                 }
 
@@ -642,7 +642,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<counters->bluedot_hash_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotHashCache[i].utime > config->bluedot_timeout )
+                    if ( atol(timet) - SaganBluedotHashCache[i].cache_utime > config->bluedot_timeout )
                         {
                             if (debug->debugbluedot)
                                 {
@@ -660,7 +660,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                                 }
 
                             strlcpy(TmpSaganBluedotHashCache[timeout_count].hash, SaganBluedotHashCache[i].hash, sizeof(TmpSaganBluedotHashCache[timeout_count].hash));
-                            TmpSaganBluedotHashCache[timeout_count].utime = SaganBluedotHashCache[i].utime;                                                                                 /* store utime */
+                            TmpSaganBluedotHashCache[timeout_count].cache_utime = SaganBluedotHashCache[i].cache_utime;                                                                                 /* store utime */
                             TmpSaganBluedotHashCache[timeout_count].alertid = SaganBluedotHashCache[i].alertid;
                             timeout_count++;
                         }
@@ -670,7 +670,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                 {
 
                     strlcpy(SaganBluedotHashCache[i].hash, TmpSaganBluedotHashCache[i].hash, sizeof(SaganBluedotHashCache[i].hash));
-                    SaganBluedotHashCache[i].utime = TmpSaganBluedotHashCache[i].utime;
+                    SaganBluedotHashCache[i].cache_utime = TmpSaganBluedotHashCache[i].cache_utime;
                     SaganBluedotHashCache[i].alertid = TmpSaganBluedotHashCache[i].alertid;
                 }
 
@@ -686,7 +686,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<counters->bluedot_url_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotURLCache[i].utime > config->bluedot_timeout )
+                    if ( atol(timet) - SaganBluedotURLCache[i].cache_utime > config->bluedot_timeout )
                         {
                             if (debug->debugbluedot)
                                 {
@@ -704,7 +704,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                                 }
 
                             strlcpy(TmpSaganBluedotURLCache[timeout_count].url, SaganBluedotURLCache[i].url, sizeof(TmpSaganBluedotURLCache[timeout_count].url));
-                            TmpSaganBluedotURLCache[timeout_count].utime = SaganBluedotURLCache[i].utime;
+                            TmpSaganBluedotURLCache[timeout_count].cache_utime = SaganBluedotURLCache[i].cache_utime;
                             TmpSaganBluedotURLCache[timeout_count].alertid = SaganBluedotURLCache[i].alertid;
                             timeout_count++;
                         }
@@ -713,7 +713,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<timeout_count; i++)
                 {
                     strlcpy(SaganBluedotURLCache[i].url, TmpSaganBluedotURLCache[i].url, sizeof(SaganBluedotURLCache[i].url));
-                    SaganBluedotURLCache[i].utime = TmpSaganBluedotURLCache[i].utime;
+                    SaganBluedotURLCache[i].cache_utime = TmpSaganBluedotURLCache[i].cache_utime;
                     SaganBluedotURLCache[i].alertid = TmpSaganBluedotURLCache[i].alertid;
                 }
 
@@ -728,7 +728,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             for (i=0; i<counters->bluedot_filename_cache_count; i++)
                 {
-                    if ( atol(timet) - SaganBluedotFilenameCache[i].utime > config->bluedot_timeout )
+                    if ( atol(timet) - SaganBluedotFilenameCache[i].cache_utime > config->bluedot_timeout )
                         {
 
                             if (debug->debugbluedot)
@@ -747,7 +747,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                                 }
 
                             strlcpy(TmpSaganBluedotFilenameCache[timeout_count].filename, SaganBluedotFilenameCache[i].filename, sizeof(TmpSaganBluedotFilenameCache[timeout_count].filename));
-                            TmpSaganBluedotFilenameCache[timeout_count].utime = SaganBluedotFilenameCache[i].utime;
+                            TmpSaganBluedotFilenameCache[timeout_count].cache_utime = SaganBluedotFilenameCache[i].cache_utime;
                             TmpSaganBluedotFilenameCache[timeout_count].alertid = SaganBluedotFilenameCache[i].alertid;
                             timeout_count++;
                         }
@@ -756,7 +756,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<timeout_count; i++)
                 {
                     strlcpy(SaganBluedotFilenameCache[i].filename, TmpSaganBluedotFilenameCache[i].filename, sizeof(SaganBluedotFilenameCache[i].filename));
-                    SaganBluedotFilenameCache[i].utime = TmpSaganBluedotFilenameCache[i].utime;
+                    SaganBluedotFilenameCache[i].cache_utime = TmpSaganBluedotFilenameCache[i].cache_utime;
                     SaganBluedotFilenameCache[i].alertid = TmpSaganBluedotFilenameCache[i].alertid;
                 }
 
@@ -790,7 +790,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position)
 {
 
     char tmpurl[1024] = { 0 };
@@ -805,10 +805,19 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
     json_object *string_obj;
 
     const char *cat=NULL;
-    char cattmp[128] = { 0 };
+    const char *cdate_utime=NULL;
+    const char *mdate_utime=NULL;
+
+    uintmax_t cdate_utime_u32;
+    uintmax_t mdate_utime_u32;
+
+    char cattmp[64] = { 0 };
     char *saveptr=NULL;
     signed char bluedot_alertid = 0;		/* -128 to 127 */
     int i;
+
+    char tmp[64] = { 0 };
+    const char ptrtmp = NULL;
 
     char  timet[20] = { 0 };
     time_t t;
@@ -850,7 +859,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 
                             if (debug->debugbluedot)
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (%u) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotIPCache[i].host, SaganBluedotIPCache[i].alertid);
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (u32 IP: %u / cdate: %d / mdate: %d) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotIPCache[i].host, SaganBluedotIPCache[i].cdate_utime, SaganBluedotIPCache[i].mdate_utime, SaganBluedotIPCache[i].alertid);
                                 }
 
                             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
@@ -1022,6 +1031,43 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
         {
             json_object_object_get_ex(json_in, "qipcode", &string_obj);
             cat = json_object_get_string(string_obj);
+
+            json_object_object_get_ex(json_in, "qcdate", &string_obj);
+            cdate_utime = json_object_get_string(string_obj);
+
+            if ( cdate_utime != NULL )
+                {
+
+                    snprintf(tmp, sizeof(tmp), "%s", cdate_utime);
+                    strtok_r(tmp, "\"", &saveptr);
+                    cdate_utime_u32 = atol(strtok_r(NULL, "\"", &saveptr));
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "Bluedot return a bad qcdate.");
+
+                }
+
+            json_object_object_get_ex(json_in, "qmdate", &string_obj);
+            mdate_utime = json_object_get_string(string_obj);
+
+            if ( mdate_utime != NULL )
+                {
+
+                    snprintf(tmp, sizeof(tmp), "%s", mdate_utime);
+                    strtok_r(tmp, "\"", &saveptr);
+                    mdate_utime_u32 = atol(strtok_r(NULL, "\"", &saveptr));
+
+                }
+            else
+                {
+
+                    Sagan_Log(S_WARN, "Bluedot return a bad qmdate.");
+
+                }
+
         }
 
     else if ( type == BLUEDOT_LOOKUP_HASH )
@@ -1042,10 +1088,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
             cat = json_object_get_string(string_obj);
         }
 
-
     if ( cat == NULL )
         {
-            Sagan_Log(S_WARN, "Bluedot return a bad category.");
+            Sagan_Log(S_WARN, "Bluedot return a qipcode category.");
 
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_error_count++;						// DEBUG <- Total error count
@@ -1065,7 +1110,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 
     if ( debug->debugbluedot)
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s.", __FILE__, __LINE__, bluedot_alertid, data);
+            Sagan_Log(S_DEBUG, "[%s, line %d] Bluedot return category \"%d\" [cdate: %d / mdate: %d] for %s.", __FILE__, __LINE__, bluedot_alertid, cdate_utime_u32, mdate_utime_u32, data);
         }
 
     if ( bluedot_alertid == -1 )
@@ -1096,8 +1141,50 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
                 }
 
+
+            /* Check effected period based on creation date */
+
+            if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+                {
+
+                    if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
+                        {
+
+                            if ( debug->debugbluedot )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
+                                }
+
+                            bluedot_alertid = 0;
+
+                        }
+                }
+
+            /* Check effected period based on modification date */
+
+            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+                {
+
+                    if ( ( atol(timet) - mdate_utime_u32 ) > rulestruct[rule_position].bluedot_mdate_effective_period )
+                        {
+
+                            if ( debug->debugbluedot )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
+                                }
+
+                            bluedot_alertid = 0;
+
+                        }
+                }
+
+
+            /* Store data into cache */
+
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
             counters->bluedot_ip_cache_count++;
 
@@ -1123,7 +1210,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
                 }
 
             strlcpy(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash, data, sizeof(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash));
-            SaganBluedotHashCache[counters->bluedot_hash_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotHashCache[counters->bluedot_hash_cache_count].cache_utime = atol(timet);                                                                                     /* store utime */
             SaganBluedotHashCache[counters->bluedot_hash_cache_count].alertid = bluedot_alertid;
             counters->bluedot_hash_cache_count++;
 
@@ -1147,7 +1234,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
                 }
 
             strlcpy(SaganBluedotURLCache[counters->bluedot_url_cache_count].url, data, sizeof(SaganBluedotURLCache[counters->bluedot_url_cache_count].url));
-            SaganBluedotURLCache[counters->bluedot_url_cache_count].utime = atol(timet);                                                                                     /* store utime */
+            SaganBluedotURLCache[counters->bluedot_url_cache_count].cache_utime = atol(timet);                                                                                     /* store utime */
             SaganBluedotURLCache[counters->bluedot_url_cache_count].alertid = bluedot_alertid;
             counters->bluedot_url_cache_count++;
 
@@ -1172,7 +1259,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type)
 
 
             strlcpy(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename, data, sizeof(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename));
-            SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].utime = atol(timet);
+            SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].cache_utime = atol(timet);
             SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].alertid = bluedot_alertid;
             counters->bluedot_filename_cache_count++;
 
@@ -1302,7 +1389,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
                     return(false);
                 }
 
-            bluedot_results = Sagan_Bluedot_Lookup(results, BLUEDOT_LOOKUP_IP);
+            bluedot_results = Sagan_Bluedot_Lookup(results, BLUEDOT_LOOKUP_IP, rule_position);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )

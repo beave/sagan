@@ -65,6 +65,10 @@ double CalcPct(uintmax_t, uintmax_t);
 char   *Replace_String(char *, char *, char *);
 char   *Get_Filename(char *);
 
+uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);
+
+
+
 typedef struct _SaganDNSCache _SaganDNSCache;
 struct _SaganDNSCache
 {

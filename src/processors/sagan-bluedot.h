@@ -44,7 +44,7 @@
 
 int Sagan_Bluedot_Cat_Compare ( unsigned char, int, unsigned char );
 int Sagan_Bluedot ( _SaganProcSyslog *, int  );
-unsigned char Sagan_Bluedot_Lookup(char *, unsigned char);			/* what to lookup,  lookup type */
+unsigned char Sagan_Bluedot_Lookup(char *, unsigned char, int);			/* what to lookup,  lookup type */
 int Sagan_Bluedot_IP_Lookup_All(char *, int);
 
 void Sagan_Bluedot_Clean_Cache ( void );
@@ -68,7 +68,9 @@ typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
 struct _Sagan_Bluedot_IP_Cache
 {
     uint32_t host;
-    uintmax_t utime;
+    uintmax_t mdate_utime;
+    uintmax_t cdate_utime;
+    uintmax_t cache_utime;
     int	alertid;
 };
 
@@ -76,7 +78,7 @@ typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
 struct _Sagan_Bluedot_Hash_Cache
 {
     char hash[MAX_HASH_SIZE];
-    uintmax_t utime;
+    uintmax_t cache_utime;
     int alertid;
 };
 
@@ -84,7 +86,7 @@ typedef struct _Sagan_Bluedot_URL_Cache _Sagan_Bluedot_URL_Cache;
 struct _Sagan_Bluedot_URL_Cache
 {
     char url[8192];
-    uintmax_t utime;
+    uintmax_t cache_utime;
     int alertid;
 };
 
@@ -93,7 +95,7 @@ typedef struct _Sagan_Bluedot_Filename_Cache _Sagan_Bluedot_Filename_Cache;
 struct _Sagan_Bluedot_Filename_Cache
 {
     char filename[256];
-    uintmax_t utime;
+    uintmax_t cache_utime;
     int alertid;
 };
 

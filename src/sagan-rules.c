@@ -112,7 +112,8 @@ void Load_Rules( const char *ruleset )
     char *tok_tmp;
     char *tmptok_tmp;
 
-    unsigned char fwsam_time_tmp;
+    uintmax_t fwsam_time_tmp;
+    uintmax_t mctime_tmp;
 
     char netstr[RULEBUF];
 
@@ -1385,50 +1386,15 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].fwsam_src_or_dst=2;
                                 }
 
+                            /* Error checking?!!? */
+
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
 
-                            fwsam_time_tmp=atoi(tmptok_tmp);	/* Digit/time */
+                            fwsam_time_tmp=atol(tmptok_tmp);	/* Digit/time */
                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3); /* Type - hour/minute */
 
-
-                            /* Covers both plural and non-plural (ie - minute/minutes) */
-
-                            if (Sagan_strstr(tmptok_tmp, "second"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "minute"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "hour"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "day"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "week"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "month"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 7 * 4;
-                                }
-
-                            if (Sagan_strstr(tmptok_tmp, "year"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_seconds = fwsam_time_tmp * 60 * 60 * 24 * 365;
-                                }
-
+                            rulestruct[counters->rulecount].fwsam_seconds = Sagan_Value_To_Seconds(tmptok_tmp, fwsam_time_tmp);
 
                         }
 
@@ -1920,6 +1886,60 @@ void Load_Rules( const char *ruleset )
 
                                     Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP);
 
+                                    tmptoken = strtok_r(NULL, " " , &saveptrrule3);
+
+                                    if ( tmptoken != NULL )
+                                        {
+                                            Remove_Spaces(tmptoken);
+
+                                            if (!strcmp(tmptoken, "mdate_effective_period"))
+                                                {
+
+                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( tmptok_tmp == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] Got invalid numerical time for mdate!", __FILE__, __LINE__);
+                                                        }
+
+                                                    Remove_Spaces(tmptok_tmp);
+                                                    mctime_tmp = atol(tmptok_tmp);
+
+                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( tmptok_tmp == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d Got invalid time frame!", __FILE__, __LINE__);
+                                                        }
+
+                                                    rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(tmptok_tmp, mctime_tmp);
+
+                                                }
+                                            else if (!strcmp(tmptoken, "cdate_effective_period"))
+                                                {
+
+                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( tmptok_tmp == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] Got invalid numerical time for cdate!", __FILE__, __LINE__);
+                                                        }
+
+                                                    Remove_Spaces(tmptok_tmp);
+                                                    mctime_tmp = atol(tmptok_tmp);
+
+                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( tmptok_tmp == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d Got invalid time frame!", __FILE__, __LINE__);
+                                                        }
+
+                                                    rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(tmptok_tmp, mctime_tmp);
+                                                }
+
+                                        }
+
                                     /* Bluedot configuration check here! */
 
                                 }
@@ -1970,7 +1990,6 @@ void Load_Rules( const char *ruleset )
                                 {
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalid Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
                                 }
-
 
                         }
 #endif

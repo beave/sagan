@@ -1192,22 +1192,25 @@ char *Netaddr_To_Range( char ipstr[21] )
                     strcat(my_str, my_str2);
                     sprintf( result, "%s", my_str);
 
-                    return result;
+                    return(result);
                 }
             else
                 {
                     snprintf( result, sizeof(result), "%lu", (unsigned long)lo);
-                    return result;
+                    return(result);
                 }
         }
     else
         {
             snprintf( result, sizeof(result), "%lu", (unsigned long)IP2Bit(ipstr));
-            return result;
+            return(result);
         }
 } /* netaddr_to_range() */
 
+/**********************************/
 /* Strip characters from a string */
+/**********************************/
+
 char *Strip_Chars(const char *string, const char *chars)
 {
     char * newstr = malloc(strlen(string) + 1);
@@ -1226,7 +1229,11 @@ char *Strip_Chars(const char *string, const char *chars)
     return newstr;
 }
 
-/* Check if str is valid IP from decimal or dotted quad ( 167772160, 1.1.1.1, 192.168.192.168/28 )*/
+/***************************************************/
+/* Check if str is valid IP from decimal or dotted */
+/* quad ( 167772160, 1.1.1.1, 192.168.192.168/28 ) */
+/***************************************************/
+
 sbool Is_IP (char *str)
 {
 
@@ -1271,5 +1278,55 @@ sbool Is_IP (char *str)
 
             return(false);
         }
+
+}
+
+/*************************************************************/
+/* Returns the numbers of seconds.  For example, "1 hour" == */
+/* 3600                                                      */
+/*************************************************************/
+
+uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
+{
+
+    /* Covers both plural and non-plural (ie - minute/minutes) */
+
+    if (Sagan_strstr(type, "second"))
+        {
+            return(number);
+        }
+
+    if (Sagan_strstr(type, "minute"))
+        {
+            return(number * 60);
+        }
+
+    if (Sagan_strstr(type, "hour"))
+        {
+            return(number * 60 * 60);
+        }
+
+    if (Sagan_strstr(type, "day"))
+        {
+            return(number * 60 * 60 * 24);
+        }
+
+    if (Sagan_strstr(type, "week"))
+        {
+            return(number * 60 * 60 * 24 * 7);
+        }
+
+    if (Sagan_strstr(type, "month"))
+        {
+            return(number * 60 * 60 * 24 * 7 * 4);
+        }
+
+    if (Sagan_strstr(type, "year"))
+        {
+            return(number * 60 * 60 * 24 * 365);
+        }
+
+    Sagan_Log(S_WARN, "'%s' type is unknown!", type);
+    return(0);
 
 }
