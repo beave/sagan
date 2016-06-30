@@ -63,7 +63,14 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 #ifdef WITH_BLUEDOT
+
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
+
+char *bluedot_time = NULL;
+char *bluedot_type = NULL;
+
+uintmax_t bluedot_time_u32 = 0;
+
 #endif
 
 #ifdef HAVE_LIBLOGNORM
@@ -1832,166 +1839,182 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'bluedot' option enabled,  but 'processor bluedot' is not configured!", __FILE__, __LINE__, ruleset, linecount);
                                 }
 
-                            tok_tmp = strtok_r(NULL, ",", &saveptrrule2);	/* Support var's */
-                            Remove_Spaces(tok_tmp);
+                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-                            if (!strcmp(tok_tmp, "reputation"))
+                            if (!Sagan_strstr(tmptoken, "type"))
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'type' found in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                }
+
+                            if ( Sagan_strstr(tmptoken, "type" ))
                                 {
 
-                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ":", &saveptrrule2));   /* Support var's */
-
-                                    tmptoken = strtok_r(tmptok_tmp, "," , &saveptrrule3);
-                                    Remove_Spaces(tmptoken);
-
-                                    found = 0;
-
-                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
-
-                                    if (!strcmp(tmptoken, "by_src"))
+                                    if ( Sagan_strstr(tmptoken, "ip_reputation" ))
                                         {
-                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 1;
-                                        }
 
-                                    if (!strcmp(tmptoken, "by_dst") && found == 0 )
-                                        {
-                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 2;
-                                        }
+                                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-                                    if (!strcmp(tmptoken, "both") && found == 0)
-                                        {
-                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 3;
-                                        }
+                                            if ( Sagan_strstr(tmptoken, "track" ))
+                                                {
 
-                                    if (!strcmp(tmptoken, "all") && found == 0)
-                                        {
-                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 4;
-                                        }
+                                                    /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
-                                    /* Invalid direction - abort */
+                                                    if ( Sagan_strstr(tmptoken, "by_src" ))
+                                                        {
+                                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 1;
+                                                        }
 
-                                    if ( rulestruct[counters->rulecount].bluedot_ipaddr_type == 0 )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has an invalid option of '%s'.", __FILE__, __LINE__, ruleset, linecount, tmptoken);
-                                        }
+                                                    if ( Sagan_strstr(tmptoken, "by_dst" ))
+                                                        {
+                                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 2;
+                                                        }
 
-                                    /* Start collecting "what" we want to "look for" from Bluedot */
+                                                    if ( Sagan_strstr(tmptoken, "both" ))
+                                                        {
+                                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 3;
+                                                        }
 
-                                    tmptoken = strtok_r(NULL, "," , &saveptrrule3);
+                                                    if ( Sagan_strstr(tmptoken, "all" ))
+                                                        {
+                                                            rulestruct[counters->rulecount].bluedot_ipaddr_type  = 4;
+                                                        }
 
-                                    if ( tmptoken == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptoken);
-                                        }
+                                                    if ( rulestruct[counters->rulecount].bluedot_ipaddr_type == 0 )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot by_src, by_dst, both or all specified in %s at line %d.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
 
+                                                }
 
-                                    Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP);
+                                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-                                    tmptoken = strtok_r(NULL, " " , &saveptrrule3);
+                                            if (!Sagan_strstr(tmptoken, "mdate_effective_period" ) && !Sagan_strstr(tmptoken, "cdate_effective_period" ))
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'mdate_effective_period' or 'cdate_effective_period' not specified in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                                }
 
-                                    if ( tmptoken != NULL )
-                                        {
+                                            tok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+
+                                            if (Sagan_strstr(tmptoken, "mdate_effective_period" ))
+                                                {
+
+                                                    bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( bluedot_time == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( bluedot_type == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    Remove_Spaces(bluedot_time);
+                                                    Remove_Spaces(bluedot_type);
+
+                                                    bluedot_time_u32 = atol(bluedot_time);
+
+                                                    if ( bluedot_time_u32 == 0 )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
+                                                }
+                                            else if (Sagan_strstr(tmptoken, "cdate_effective_period" ))
+                                                {
+                                                    bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( bluedot_time == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                    if ( bluedot_type == NULL )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    Remove_Spaces(bluedot_time);
+                                                    Remove_Spaces(bluedot_type);
+
+                                                    bluedot_time_u32 = atol(bluedot_time);
+
+                                                    if ( bluedot_time_u32 == 0 )
+                                                        {
+                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
+                                                        }
+
+                                                    rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
+                                                }
+
+                                            tmptoken = strtok_r(NULL, ";", &saveptrrule2);
+
+                                            if ( tmptoken == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount);
+                                                }
+
                                             Remove_Spaces(tmptoken);
 
-                                            if (!strcmp(tmptoken, "mdate_effective_period"))
+                                            Sagan_Verify_Categories( tmptoken, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_IP);
+
+
+                                        }
+
+                                    if ( Sagan_strstr(tmptoken, "file_hash" ))
+                                        {
+                                            rulestruct[counters->rulecount].bluedot_file_hash = 1;
+
+                                            tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+                                            if ( tmptok_tmp == NULL )
                                                 {
-
-                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( tmptok_tmp == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] Got invalid numerical time for mdate!", __FILE__, __LINE__);
-                                                        }
-
-                                                    Remove_Spaces(tmptok_tmp);
-                                                    mctime_tmp = atol(tmptok_tmp);
-
-                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( tmptok_tmp == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d Got invalid time frame!", __FILE__, __LINE__);
-                                                        }
-
-                                                    rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(tmptok_tmp, mctime_tmp);
-
-                                                }
-                                            else if (!strcmp(tmptoken, "cdate_effective_period"))
-                                                {
-
-                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( tmptok_tmp == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] Got invalid numerical time for cdate!", __FILE__, __LINE__);
-                                                        }
-
-                                                    Remove_Spaces(tmptok_tmp);
-                                                    mctime_tmp = atol(tmptok_tmp);
-
-                                                    tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( tmptok_tmp == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d Got invalid time frame!", __FILE__, __LINE__);
-                                                        }
-
-                                                    rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(tmptok_tmp, mctime_tmp);
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
                                                 }
 
+                                            Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
                                         }
 
-                                    /* Bluedot configuration check here! */
+                                    if ( Sagan_strstr(tmptoken, "url" ))
 
-                                }
-
-                            if (!strcmp(tok_tmp, "file_hash"))
-                                {
-                                    rulestruct[counters->rulecount].bluedot_file_hash = 1;
-
-                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
-
-                                    if ( tmptok_tmp == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
+                                            rulestruct[counters->rulecount].bluedot_url = 1;
+
+                                            tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+                                            if ( tmptok_tmp == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
+                                                }
+
+                                            Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
                                         }
 
-                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_HASH);
-                                }
 
-                            if (!strcmp(tok_tmp, "url"))
-                                {
-                                    rulestruct[counters->rulecount].bluedot_url = 1;
-
-                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
-
-                                    if ( tmptok_tmp == NULL )
+                                    if ( Sagan_strstr(tmptoken, "filename" ))
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
+                                            rulestruct[counters->rulecount].bluedot_filename = 1;
+
+                                            tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
+
+                                            if ( tmptok_tmp == NULL )
+                                                {
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
+                                                }
+
+                                            Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
                                         }
 
-                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_URL);
+                                    /* Error  check (  set flag? */
                                 }
-
-                            if (!strcmp(tok_tmp, "filename"))
-                                {
-                                    rulestruct[counters->rulecount].bluedot_filename = 1;
-
-                                    tmptok_tmp = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));   /* Support var's */
-
-                                    if ( tmptok_tmp == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset, linecount, tmptok_tmp);
-                                        }
-
-                                    Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset, linecount, BLUEDOT_LOOKUP_FILENAME);
-                                }
-
-                            if ( strcmp(tok_tmp, "file_hash") && strcmp(tok_tmp, "url") && strcmp(tok_tmp, "filename") && strcmp(tok_tmp, "reputation") )
-                                {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has a invalid Bluedot option!", __FILE__, __LINE__, ruleset, linecount);
-                                }
-
                         }
+
 #endif
 
 #ifndef WITH_BLUEDOT
