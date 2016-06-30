@@ -881,7 +881,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                 }
 			
 					    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-					    counters->bluedot_mdate++; 
+					    counters->bluedot_mdate_cache++; 
 					    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                                             bluedot_alertid = 0;
@@ -900,7 +900,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                 }
 
 					    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-					    counters->bluedot_cdate++;
+					    counters->bluedot_cdate_cache++;
 					    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                                             bluedot_alertid = 0;
