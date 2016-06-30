@@ -862,11 +862,44 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (u32 IP: %u / cdate: %d / mdate: %d) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotIPCache[i].host, SaganBluedotIPCache[i].cdate_utime, SaganBluedotIPCache[i].mdate_utime, SaganBluedotIPCache[i].alertid);
                                 }
 
+                            bluedot_alertid = SaganBluedotIPCache[i].alertid;
+
+                            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+                                {
+
+                                    if ( ( atol(timet) - SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime ) > rulestruct[rule_position].bluedot_mdate_effective_period )
+                                        {
+
+                                            if ( debug->debugbluedot )
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] From Bluedot Cache - qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
+                                                }
+
+                                            bluedot_alertid = 0;
+                                        }
+                                }
+
+                            else if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+                                {
+
+                                    if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
+                                        {
+
+                                            if ( debug->debugbluedot )
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
+                                                }
+
+                                            bluedot_alertid = 0;
+                                        }
+                                }
+
+
                             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
                             counters->bluedot_ip_cache_hit++;
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-                            return(SaganBluedotIPCache[i].alertid);
+                            return(bluedot_alertid);
 
                         }
                 }
@@ -1141,28 +1174,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
                 }
 
+            /* Store data into cache */
 
-            /* Check effected period based on creation date */
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = atol(timet);                   /* store utime */
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
+            SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
 
-            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
-                {
-
-                    if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
-                        {
-
-                            if ( debug->debugbluedot )
-                                {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
-                                }
-
-                            bluedot_alertid = 0;
-
-                        }
-                }
-
-            /* Check effected period based on modification date */
-
-            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                 {
 
                     if ( ( atol(timet) - mdate_utime_u32 ) > rulestruct[rule_position].bluedot_mdate_effective_period )
@@ -1174,20 +1194,25 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                 }
 
                             bluedot_alertid = 0;
-
                         }
                 }
 
+            else if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+                {
 
-            /* Store data into cache */
+                    if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
+                        {
 
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = atol(timet);                                                                                     /* store utime */
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
-            SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
+                            if ( debug->debugbluedot )
+                                {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
+                                }
+
+                            bluedot_alertid = 0;
+                        }
+                }
+
             counters->bluedot_ip_cache_count++;
-
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
         }
@@ -1268,9 +1293,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
 
     Sagan_Bluedot_Clean_Queue(data, type);	/* Remove item for "queue" */
-
-    json_object_put(json_in);       /* Clear json_in as we're done with it */
-
+    json_object_put(json_in);       		/* Clear json_in as we're done with it */
     return(bluedot_alertid);
 }
 
