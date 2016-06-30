@@ -1144,7 +1144,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             /* Check effected period based on creation date */
 
-            if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
                 {
 
                     if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
@@ -1162,7 +1162,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             /* Check effected period based on modification date */
 
-            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                 {
 
                     if ( ( atol(timet) - mdate_utime_u32 ) > rulestruct[rule_position].bluedot_mdate_effective_period )
