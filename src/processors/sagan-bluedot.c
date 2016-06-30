@@ -879,6 +879,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                 {
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] From Bluedot Cache - qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                                 }
+			
+					    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+					    counters->bluedot_mdate++; 
+					    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                                             bluedot_alertid = 0;
                                         }
@@ -894,6 +898,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                 {
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                                 }
+
+					    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+					    counters->bluedot_cdate++;
+					    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                                             bluedot_alertid = 0;
                                         }
@@ -1188,6 +1196,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
 
             counters->bluedot_ip_cache_count++;
+
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
@@ -1200,6 +1209,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                 {
                                     Sagan_Log(S_DEBUG, "[%s, line %d] qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                 }
+		            
+			    pthread_mutex_lock(&SaganProcBluedotWorkMutex);	
+			    counters->bluedot_mdate++; 
+			    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                             bluedot_alertid = 0;
                         }
@@ -1215,6 +1228,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                 {
                                     Sagan_Log(S_DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                 }
+
+			    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+		            counters->bluedot_cdate++;
+			    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
                             bluedot_alertid = 0;
                         }
