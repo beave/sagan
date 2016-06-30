@@ -869,7 +869,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             bluedot_alertid = SaganBluedotIPCache[i].alertid;
 
-                            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+                            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                                 {
 
                                     if ( ( atol(timet) - SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime ) > rulestruct[rule_position].bluedot_mdate_effective_period )
@@ -884,7 +884,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                         }
                                 }
 
-                            else if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+                            else if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
                                 {
 
                                     if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
@@ -1190,8 +1190,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_ip_cache_count++;
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-
-            if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
+            if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                 {
 
                     if ( ( atol(timet) - mdate_utime_u32 ) > rulestruct[rule_position].bluedot_mdate_effective_period )
@@ -1206,7 +1205,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                         }
                 }
 
-            else if ( rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
+            else if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_cdate_effective_period != 0 )
                 {
 
                     if ( ( atol(timet) - cdate_utime_u32 ) > rulestruct[rule_position].bluedot_cdate_effective_period )
