@@ -617,8 +617,11 @@ void Sagan_Bluedot_Clean_Cache ( void )
                                 }
 
                             TmpSaganBluedotIPCache[timeout_count].host = SaganBluedotIPCache[i].host;
-                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cache_utime;                                                                                 /* store utime */
+                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cache_utime;
+                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].mdate_utime;
+                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cdate_utime;
                             TmpSaganBluedotIPCache[timeout_count].alertid = SaganBluedotIPCache[i].alertid;
+
                             timeout_count++;
                         }
                 }
@@ -627,6 +630,8 @@ void Sagan_Bluedot_Clean_Cache ( void )
                 {
                     SaganBluedotIPCache[i].host = TmpSaganBluedotIPCache[i].host;
                     SaganBluedotIPCache[i].cache_utime = TmpSaganBluedotIPCache[i].cache_utime;
+                    SaganBluedotIPCache[i].mdate_utime = TmpSaganBluedotIPCache[i].mdate_utime;
+                    SaganBluedotIPCache[i].cdate_utime = TmpSaganBluedotIPCache[i].cdate_utime;
                     SaganBluedotIPCache[i].alertid = TmpSaganBluedotIPCache[i].alertid;
                 }
 
@@ -1182,6 +1187,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
 
+            counters->bluedot_ip_cache_count++;
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+
             if ( rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                 {
 
@@ -1211,9 +1220,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             bluedot_alertid = 0;
                         }
                 }
-
-            counters->bluedot_ip_cache_count++;
-            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
         }
 
