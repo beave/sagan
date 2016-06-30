@@ -1888,69 +1888,81 @@ void Load_Rules( const char *ruleset )
 
                                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
-                                            if (!Sagan_strstr(tmptoken, "mdate_effective_period" ) && !Sagan_strstr(tmptoken, "cdate_effective_period" ))
+                                            if (!Sagan_strstr(tmptoken, "mdate_effective_period" ) && !Sagan_strstr(tmptoken, "cdate_effective_period" ) && !Sagan_strstr(tmptoken, "none" ))
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'mdate_effective_period' or 'cdate_effective_period' not specified in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                                    Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'mdate_effective_period', 'cdate_effective_period' or 'none' not specified in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
                                                 }
 
-                                            tok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-
-                                            if (Sagan_strstr(tmptoken, "mdate_effective_period" ))
+                                            if (!Sagan_strstr(tmptoken, "none"))
                                                 {
 
-                                                    bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
+                                                    tok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
 
-                                                    if ( bluedot_time == NULL )
+                                                    if (Sagan_strstr(tmptoken, "mdate_effective_period" ))
                                                         {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
+
+                                                            bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                            if ( bluedot_time == NULL )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                            if ( bluedot_type == NULL )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            Remove_Spaces(bluedot_time);
+                                                            Remove_Spaces(bluedot_type);
+
+                                                            bluedot_time_u32 = atol(bluedot_time);
+
+                                                            if ( bluedot_time_u32 == 0 )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
+                                                        }
+                                                    else if (Sagan_strstr(tmptoken, "cdate_effective_period" ))
+                                                        {
+                                                            bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                            if ( bluedot_time == NULL )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
+
+                                                            if ( bluedot_type == NULL )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            Remove_Spaces(bluedot_time);
+                                                            Remove_Spaces(bluedot_type);
+
+                                                            bluedot_time_u32 = atol(bluedot_time);
+
+                                                            if ( bluedot_time_u32 == 0 )
+                                                                {
+                                                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
+                                                                }
+
+                                                            rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
                                                         }
 
-                                                    bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( bluedot_type == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
-                                                        }
-
-                                                    Remove_Spaces(bluedot_time);
-                                                    Remove_Spaces(bluedot_type);
-
-                                                    bluedot_time_u32 = atol(bluedot_time);
-
-                                                    if ( bluedot_time_u32 == 0 )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
-                                                        }
-
-                                                    rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
                                                 }
-                                            else if (Sagan_strstr(tmptoken, "cdate_effective_period" ))
+                                            else
                                                 {
-                                                    bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
 
-                                                    if ( bluedot_time == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset, linecount);
-                                                        }
+                                                    rulestruct[counters->rulecount].bluedot_mdate_effective_period = 0;
+                                                    rulestruct[counters->rulecount].bluedot_cdate_effective_period = 0;
 
-                                                    bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
-
-                                                    if ( bluedot_type == NULL )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset, linecount);
-                                                        }
-
-                                                    Remove_Spaces(bluedot_time);
-                                                    Remove_Spaces(bluedot_type);
-
-                                                    bluedot_time_u32 = atol(bluedot_time);
-
-                                                    if ( bluedot_time_u32 == 0 )
-                                                        {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset, linecount);
-                                                        }
-
-                                                    rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
                                                 }
 
                                             tmptoken = strtok_r(NULL, ";", &saveptrrule2);
