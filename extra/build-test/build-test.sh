@@ -5,26 +5,27 @@
 # 
 # - Public release (06/28/2015) 
 
+#   07/05/2016 - Champ Clark - Replaced jsonc -> libfastjson
+
 # Champ Clark III 
 
 #  --disable-snortsam      Disable Snortsam support.
 #  --disable-syslog        Disable syslog support.
 #  --disable-lognorm       Disable Lognorm (liblognorm) support.
-#  --disable-jsonc         Disable jsonc (liblognorm) support.
+#  --disable-libfastjson   Disable libfastjson.
 #  --disable-libpcap       Disable libpcap (plog) support.
 #  --disable-libdnet       Disable libdnet (unified2) support.
-
 #  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.  
 #  --enable-esmtp          Enable libesmtp support.  
-#  --enable-geoip2          Enable Maxmind GeoIP2 support.  
+#  --enable-geoip2         Enable Maxmind GeoIP2 support.  
 #  --enable-system-strstr  Enable system strstr.  
 
 
 STANDARD="--disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet"
-ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip2 --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet"
-NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr"
+ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip2 --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson"
+NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --disable-system-strstr --disable-libfastjson"
 
-$LOG="output.log" 
+LOG="output.log" 
 
 #autoreconf -vfi
 
