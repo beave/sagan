@@ -37,7 +37,6 @@
 
 #include <liblognorm.h>
 #include <json.h>
-#include <lognorm.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"

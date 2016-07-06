@@ -60,7 +60,6 @@
 #ifdef HAVE_LIBLOGNORM
 #include "sagan-liblognorm.h"
 #include <liblognorm.h>
-#include <lognorm.h>
 int liblognorm_count;
 #endif
 
