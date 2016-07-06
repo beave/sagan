@@ -19,6 +19,7 @@
 		* Threholding based on 'dstport' merged,  thanks to Bruno Coudoin.  See:  https://github.com/beave/sagan/commit/44d6752acf27d61bcd57e35f930b0f6e11dadbc7
 		* Added parsing for IPTables "SPT" and "DPT"t port for iptables, thanks to Bruno Coudoin.  https://github.com/beave/sagan/commit/9de9cffd224a44f93c80eca62e6ead617a4b97a6
 		* Added "qdee" to the "extra" directory.  This allows Sagan to parse older style Cisco IDS output.  This polls using the SDEE protocol. See https://github.com/beave/sagan/commit/61c4a7dd611161697785c889630dd3c8333ec8b5
+		* Removed support for libjsonc (json-c) and moved to libfastjson.
 
 		The Bugs Fixed:
 		---------------
