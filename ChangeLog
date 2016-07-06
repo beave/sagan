@@ -1,4 +1,39 @@
+07/06/2016 -    Sagan 1.1.0 released.
 
+		The Basics:
+		-----------
+
+		* Sagan now "remembers" where it left off between restarts/reboots/etc.
+		* You can now create rules that focus on certain IP address or IP address ranges (ie - $EXTERNAL_NET/$HOME_NET).
+		* Sagan can treat "old" Bluedot IP reputation threat Intel differently than "new" threat intel.
+		* We added "qdee.pl",  a SDEE poll routine to the "extra" directory.
+		* A lot of bugs were fixed 
+
+		The Details:
+		------------
+
+		* Moved all "threshold", "after", "flowbits", and "client tracking" to mmap files.  This means that Sagan "remembers" between restarts where it "left off"! 
+		* Introduced "tools/sagan-peek.c" which allows you to exmaine Sagan mmap files.  Useful in debugging or just "seeing" what Sagan is "tracking".
+		* $EXTERNAL_NET and $HOME_NET now function as expected.  Previous versions of Sagan did not have any concept of $EXTERNAL_NET/$HOME_NET and were ignored.  Adam Hall @ Quadrant made Sagan "aware" of "traffic flow".  Values in a rule for source/destination are tested _after_ normalization.
+		* Added "mdate" (modification date) and "cdate" (creation data) to Bluedot. This allows Sagan to not trigger "aged" Bluedot Threat Intel.  For example, do _not_ alert if an IP address is seen and the Intel is over X hours/days/months/years old.
+		* Threholding based on 'dstport' merged,  thanks to Bruno Coudoin.  See:  https://github.com/beave/sagan/commit/44d6752acf27d61bcd57e35f930b0f6e11dadbc7
+		* Added parsing for IPTables "SPT" and "DPT"t port for iptables, thanks to Bruno Coudoin.  https://github.com/beave/sagan/commit/9de9cffd224a44f93c80eca62e6ead617a4b97a6
+		* Added "qdee" to the "extra" directory.  This allows Sagan to parse older style Cisco IDS output.  This polls using the SDEE protocol. See https://github.com/beave/sagan/commit/61c4a7dd611161697785c889630dd3c8333ec8b5
+
+		The Bugs Fixed:
+		---------------
+
+		* Correct issue for when Sagan cannot open a file (-F/--file) due to permissions.
+		* Removed unused "SigArgs" array.
+		* Clean exit when Sagan cannot load Maxmind GeoIP2 data file.
+		* Change "normalize: {type}" to "normalize;".  All normalization rules now come from one file.  This keeps Sagan in line with liblognorm development.
+		* Sagan now "warns" the user if old style "normalize" is encountered. See: https://github.com/beave/sagan/commit/ba3de9e43bc8623b361e34ce06a2e7808e045f88 and https://github.com/rsyslog/liblognorm/issues/206
+		* Fix json_object_object_get_e) compile time warnings. See: https://github.com/beave/sagan/commit/e9bdea5b7fa5b25c1d7e740a4c856c70a1046d1d
+		* Minor ARM CPU fixes.
+		* Various "meta_content" fixes.  When using "meta_content" with large amounts of search data would sometimes cause failures. 
+		* Major bug fixes involving "client tracking".  Thanks to Adam Hall @ Quadrant Information Security!
+		* Sagan now attempts to create the FIFO if it is not detected.  Thanks to Cabrol Perales.
+		* A lot of smaller bug fixes.  See: https://github.com/beave/sagan/commits/master
 
 11/19/2015 - 	Sagan 1.0.1 released.
 
