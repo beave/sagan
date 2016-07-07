@@ -84,6 +84,7 @@
 #ifdef HAVE_LIBLOGNORM
 struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
+sbool liblognorm_load = 0; 
 #endif
 
 struct _Rule_Struct *rulestruct;
@@ -511,6 +512,8 @@ void Load_Config( void )
 
             if (!strcmp(sagan_option, "normalize_file:"))
                 {
+		    liblognorm_load = true;
+
                     Sagan_Log(S_WARN, "WARNING: Sagan was not compiled with \"liblognorm\" support!");
                     Sagan_Log(S_WARN, "WARNING: Sagan will continue,  but _without_ liblognorm!");
                 }
@@ -520,6 +523,8 @@ void Load_Config( void )
 
             if (!strcmp(sagan_option, "normalize_file:"))
                 {
+   		    
+		    liblognorm_load = true; 
 
                     liblognormstruct = (liblognorm_struct *) realloc(liblognormstruct, (liblognorm_count+1) * sizeof(liblognorm_struct));
 
@@ -1407,6 +1412,13 @@ void Load_Config( void )
                     Sagan_Log(S_ERROR, "[%s, line %d] GeoIP2 is in use,  but $HOME_COUNTRY was never set in your configuration. Abort.", __FILE__, __LINE__);
                 }
         }
+#endif
+
+#ifdef HAVE_LIBLOGNORM
+    if ( liblognorm_load == 0 ) 
+	{
+		Sagan_Log(S_ERROR, "[%s, line %d] liblognorm is in use but 'normalize_file' is not set.  Abort.", __FILE__, __LINE__); 
+	}
 #endif
 
 }
