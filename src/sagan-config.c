@@ -45,6 +45,7 @@
 #include <arpa/inet.h>
 #include <math.h>
 #include <syslog.h>
+#include <stdbool.h>
 
 #ifdef HAVE_LIBLOGNORM
 #include <liblognorm.h>
