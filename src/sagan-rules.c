@@ -1226,6 +1226,19 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_offset[content_count - 1] = atoi(arg);
                         }
 
+                    if (!strcmp(rulesplit, "meta_offset"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if (arg == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_offset\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                }
+
+                            rulestruct[counters->rulecount].meta_offset[meta_content_count - 1] = atoi(arg);
+                        }
+
+
                     if (!strcmp(rulesplit, "depth"))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -1236,6 +1249,18 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             rulestruct[counters->rulecount].s_depth[content_count - 1] = atoi(arg);
+                        }
+
+                    if (!strcmp(rulesplit, "meta_depth"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if (arg == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_depth\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                }
+
+                            rulestruct[counters->rulecount].meta_depth[meta_content_count - 1] = atoi(arg);
                         }
 
 
@@ -1251,6 +1276,19 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_distance[content_count - 1] = atoi(arg);
                         }
 
+                    if (!strcmp(rulesplit, "meta_distance"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if (arg == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_distance\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                }
+
+                            rulestruct[counters->rulecount].meta_distance[meta_content_count - 1] = atoi(arg);
+                        }
+
+
                     if (!strcmp(rulesplit, "within"))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -1260,6 +1298,18 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] The \"within\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
                             rulestruct[counters->rulecount].s_within[content_count - 1] = atoi(arg);
+                        }
+
+
+                    if (!strcmp(rulesplit, "meta_within"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if (arg == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_within\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                }
+                            rulestruct[counters->rulecount].meta_within[meta_content_count - 1] = atoi(arg);
                         }
 
 

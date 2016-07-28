@@ -215,9 +215,9 @@ void Sagan_Statistics( void )
                     Sagan_Log(S_NORMAL, "          IP addresses in cache         : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
                     Sagan_Log(S_NORMAL, "          IP hits from cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
                     Sagan_Log(S_NORMAL, "          IP/Bluedot hits in logs       : %" PRIu64 "", counters->bluedot_ip_positive_hit);
-		    Sagan_Log(S_NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate); 
-		    Sagan_Log(S_NORMAL, "          IP with date > cdate          : %" PRIu64 "", counters->bluedot_cdate);
-                    Sagan_Log(S_NORMAL, "          IP with date > mdate [cache]  : %" PRIu64 "", counters->bluedot_mdate_cache);        
+                    Sagan_Log(S_NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate);
+                    Sagan_Log(S_NORMAL, "          IP with date > cdate          : %" PRIu64 "", counters->bluedot_cdate);
+                    Sagan_Log(S_NORMAL, "          IP with date > mdate [cache]  : %" PRIu64 "", counters->bluedot_mdate_cache);
                     Sagan_Log(S_NORMAL, "          IP with date > cdate [cache]  : %" PRIu64 "", counters->bluedot_cdate_cache);
                     Sagan_Log(S_NORMAL, "          IP queries per/second         : %lu", bluedot_ip_total);
 

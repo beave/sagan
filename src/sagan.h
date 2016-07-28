@@ -177,9 +177,9 @@ struct _SaganCounters
     uintmax_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
     uintmax_t bluedot_ip_positive_hit;
     uintmax_t bluedot_ip_total;
-	
+
     uintmax_t bluedot_mdate;					   /* Hits , but where over a modification date */
-    uintmax_t bluedot_cdate;            	                   /* Hits , but where over a creation date */ 
+    uintmax_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
     uintmax_t bluedot_mdate_cache;                                 /* Hits from cache , but where over a modification date */
     uintmax_t bluedot_cdate_cache;      			   /* Hits from cache , but where over a create date */
 

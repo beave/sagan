@@ -136,6 +136,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     int ovector[PCRE_OVECCOUNT];
 
     int  alter_num;
+    int  meta_alter_num;
 
     sbool geoip2_isset = 0;
     sbool flowbit_return = 0;
@@ -169,6 +170,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
     char tmpbuf[128];
     char s_msg[1024];
     char alter_content[MAX_SYSLOGMSG];
+    char meta_alter_content[MAX_SYSLOGMSG];
 
     time_t t;
     struct tm *now;
@@ -431,7 +433,66 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                             for (z=0; z<rulestruct[b].meta_content_count; z++)
                                 {
 
-                                    rc = Sagan_Meta_Content_Search(SaganProcSyslog_LOCAL->syslog_message, b);
+                                    meta_alter_num = 0;
+
+                                    /* Meta_content: OFFSET */
+
+                                    if ( rulestruct[b].meta_offset[z] != 0 )
+                                        {
+
+                                            if ( strlen(SaganProcSyslog_LOCAL->syslog_message) > rulestruct[b].meta_offset[z] )
+                                                {
+
+                                                    meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].meta_offset[z];
+                                                    strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - meta_alter_num), meta_alter_num + 1);
+
+                                                }
+                                            else
+                                                {
+
+                                                    meta_alter_content[0] = '\0';    /* The offset is larger than the message.  Set meta_content too NULL */
+
+                                                }
+
+                                        }
+                                    else
+                                        {
+
+                                            strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message, sizeof(meta_alter_content));
+
+                                        }
+
+
+                                    /* Meta_content: DEPTH */
+
+                                    if ( rulestruct[b].meta_depth[z] != 0 )
+                                        {
+
+                                            /* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
+
+                                            strlcpy(meta_alter_content, meta_alter_content, rulestruct[b].meta_depth[z] + 2);
+
+                                        }
+
+                                    /* Meta_content: DISTANCE */
+
+                                    if ( z > 0 && rulestruct[b].meta_distance[z] != 0 && rulestruct[b].meta_depth[z-1] != 0 )
+                                        {
+
+                                            meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].meta_depth[z-1] + rulestruct[b].meta_distance[z] + 1);
+                                            strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - meta_alter_num), meta_alter_num + 1);
+
+                                            /* Meta_ontent: WITHIN */
+
+                                            if ( rulestruct[b].meta_within[z] != 0 )
+                                                {
+                                                    strlcpy(meta_alter_content, meta_alter_content, rulestruct[b].meta_within[z] + 1);
+
+                                                }
+
+                                        }
+
+                                    rc = Sagan_Meta_Content_Search(meta_alter_content, b);
 
                                     if ( rc == 1 )
                                         {

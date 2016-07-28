@@ -87,6 +87,12 @@ struct _Rule_Struct
     int s_distance[MAX_CONTENT];
     int s_within[MAX_CONTENT];
 
+    sbool meta_nocase[MAX_CONTENT];
+    int meta_offset[MAX_CONTENT];
+    int meta_depth[MAX_CONTENT];
+    int meta_distance[MAX_CONTENT];
+    int meta_within[MAX_CONTENT];
+
     int pcre_count;
     int content_count;
     int meta_content_count;
