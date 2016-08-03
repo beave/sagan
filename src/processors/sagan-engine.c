@@ -353,7 +353,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     /* Content: DISTANCE */
 
-                                    if ( z > 0 && rulestruct[b].s_distance[z] != 0 && rulestruct[b].s_depth[z-1] != 0 )
+				    if ( rulestruct[b].s_distance[z] != 0 )
                                         {
 
                                             alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].s_depth[z-1] + rulestruct[b].s_distance[z] + 1);
@@ -476,10 +476,18 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                     /* Meta_content: DISTANCE */
 
-                                    if ( z > 0 && rulestruct[b].meta_distance[z] != 0 && rulestruct[b].meta_depth[z-1] != 0 )
+                                    //if ( z > 0 && rulestruct[b].meta_distance[z] != 0 && rulestruct[b].meta_depth[z-1] != 0 )
+				     if ( rulestruct[b].meta_distance[z] != 0 )
                                         {
+					    //if ( rulestruct[b].meta_depth[z-1] != 0 )
+					      // {
+                                            meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].meta_depth[z-1] + rulestruct[b].meta_distance[z] + 1 );
+					       //}
+                                           //else
+					     //  {
+						//	meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].meta_distance[z] + 1 );
+					       //}
 
-                                            meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].meta_depth[z-1] + rulestruct[b].meta_distance[z] + 1);
                                             strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - meta_alter_num), meta_alter_num + 1);
 
                                             /* Meta_ontent: WITHIN */
@@ -492,7 +500,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                         }
 
-                                    rc = Sagan_Meta_Content_Search(meta_alter_content, b);
+                                    rc = Sagan_Meta_Content_Search(meta_alter_content, b, z);
 
                                     if ( rc == 1 )
                                         {

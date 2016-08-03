@@ -46,7 +46,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
+int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_count)
 {
 
     char *ptmp = NULL;
@@ -55,12 +55,9 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
     char tmp_search[512] = { 0 };
     int results = 0;
     int match = 0;
-    int z;
+    int z = meta_content_count;
 
     /* Normal "meta_content" search */
-
-    for(z=0; z<rulestruct[rule_position].meta_content_count; z++)
-        {
 
             if ( rulestruct[rule_position].meta_content_not[z] == 0 )
                 {
@@ -80,7 +77,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, false))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, true))
                                         {
                                             results++;
                                         }
@@ -114,7 +111,7 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                             if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, false))
+                                    if (Sagan_stristr(syslog_msg, tmp_search, true))
                                         {
                                             match++;
                                         }
@@ -141,10 +138,8 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position )
 
                 } /* End of "else" meta_content_not[z] == 0 */
 
-        } /* End of "for" z */
 
-
-    if ( results == rulestruct[rule_position].meta_content_count)
+      if ( results > 0)
         {
             return(true);
         }
