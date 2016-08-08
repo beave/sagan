@@ -118,6 +118,8 @@ void Load_Rules( const char *ruleset )
 
     char *tok_tmp;
     char *tmptok_tmp;
+    char *ptmp=NULL;
+    char *tok = NULL;
 
     uintmax_t fwsam_time_tmp;
     uintmax_t mctime_tmp;
@@ -151,6 +153,7 @@ void Load_Rules( const char *ruleset )
 
     int content_count=0;
     int meta_content_count=0;
+    int meta_content_converted_count=0;
     int pcre_count=0;
     int flowbit_count;
     int flow_1_count=0;
@@ -949,7 +952,21 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(tmptoken);
 
-                            strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count], tmptoken, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count]));
+                            strlcpy(tmp2, tmptoken, sizeof(tmp2));
+                            ptmp = strtok_r(tmp2, ",", &tok);
+                            meta_content_converted_count = 0;
+
+                            while (ptmp != NULL)
+                                {
+                                    strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp), sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
+
+                                    meta_content_converted_count++;
+
+                                    ptmp = strtok_r(NULL, ",", &tok);
+                                }
+
+                            rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_counter = meta_content_converted_count;
+
                             rulestruct[counters->rulecount].meta_content_flag = 1;
 
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
@@ -2134,6 +2151,7 @@ void Load_Rules( const char *ruleset )
             pcre_count=0;
             content_count=0;
             meta_content_count=0;
+            meta_content_converted_count=0;
             flowbit_count=0;
             netcount=0;
             ref_count=0;

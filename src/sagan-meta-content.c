@@ -56,94 +56,58 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_con
     int results = 0;
     int match = 0;
     int z = meta_content_count;
+    int i;
 
     /* Normal "meta_content" search */
 
-            if ( rulestruct[rule_position].meta_content_not[z] == 0 )
+    if ( rulestruct[rule_position].meta_content_not[z] == 0 )
+        {
+            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
                 {
+                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                        {
+                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
+                                {
+                                    return(true);
+                                }
+                        }
+                    else
+                        {
+                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
+                                {
+                                    return(true);
+                                }
+                        }
+                }
 
-                    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
+            return(false);
 
-                    ptmp = strtok_r(tmp, ",", &tok);
+        }
+    else
+        {
 
-                    while (ptmp != NULL )
+            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
+                {
+                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                        {
+                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
+                                {
+                                    return(false);
+                                }
+                        }
+                    else
                         {
 
-                            /* Search for "content help" + "content" */
-
-                            /* This needs to happen in sagan-rules.c,  not here - FIXME */
-
-                            strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
-
-                            if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
                                 {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, true))
-                                        {
-                                            results++;
-                                        }
+                                    return(false);
                                 }
-                            else
-                                {
-                                    if (Sagan_strstr(syslog_msg, tmp_search))
-                                        {
-                                            results++;
-                                        }
-                                }
-
-                            ptmp = strtok_r(NULL, ",", &tok);
-
                         }
 
                 }
-            else
-                {
 
-
-                    strlcpy(tmp, rulestruct[rule_position].meta_content[z], sizeof(tmp));
-                    ptmp = strtok_r(tmp, ",", &tok);
-
-                    while (ptmp != NULL )
-                        {
-
-                            /* This needs to happen in sagan-rules.c,  not here - FIXME */
-
-                            strlcpy(tmp_search, Sagan_Replace_Sagan(rulestruct[rule_position].meta_content_help[z], ptmp), sizeof(tmp_search));
-
-                            if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-                                {
-                                    if (Sagan_stristr(syslog_msg, tmp_search, true))
-                                        {
-                                            match++;
-                                        }
-                                }
-                            else
-                                {
-
-                                    if (Sagan_strstr(syslog_msg, tmp_search))
-                                        {
-                                            match++;
-                                        }
-                                }
-
-                            ptmp = strtok_r(NULL, ",", &tok);
-
-                        } /* End of while(ptmp) */
-
-                    /* content! we do NOT want "match".  Zero means nothing matches! */
-
-                    if ( match == 0 )
-                        {
-                            results++;
-                        }
-
-                } /* End of "else" meta_content_not[z] == 0 */
-
-
-      if ( results > 0)
-        {
             return(true);
-        }
 
-    return(false);
+        } /* End of "else" meta_content_not[z] == 0 */
 
 } /* End of Sagan_Meta_Content_Search() */
