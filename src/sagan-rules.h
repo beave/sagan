@@ -43,7 +43,7 @@ struct arr_flow_2
 typedef struct meta_content_conversion meta_content_conversion;
 struct meta_content_conversion
 {
-    char meta_content_converted[50][CONFBUF];
+    char meta_content_converted[MAX_META_CONTENT][CONFBUF];
     int  meta_counter;
 };
 
@@ -74,9 +74,8 @@ struct _Rule_Struct
     /* Check Flow */
     struct arr_flow_1 flow_1[MAX_CHECK_FLOWS];
     struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];
-
-    struct meta_content_conversion meta_content_containers[50];
-    struct meta_content_conversion meta_counter;
+    
+    struct meta_content_conversion meta_content_containers[MAX_META_CONTENT];
 
     int direction;
 
@@ -97,11 +96,11 @@ struct _Rule_Struct
     int s_distance[MAX_CONTENT];
     int s_within[MAX_CONTENT];
 
-    sbool meta_nocase[MAX_CONTENT];
-    int meta_offset[MAX_CONTENT];
-    int meta_depth[MAX_CONTENT];
-    int meta_distance[MAX_CONTENT];
-    int meta_within[MAX_CONTENT];
+    sbool meta_nocase[MAX_META_CONTENT];
+    int meta_offset[MAX_META_CONTENT];
+    int meta_depth[MAX_META_CONTENT];
+    int meta_distance[MAX_META_CONTENT];
+    int meta_within[MAX_META_CONTENT];
 
     int pcre_count;
     int content_count;
@@ -157,7 +156,6 @@ struct _Rule_Struct
     sbool meta_content_case[MAX_META_CONTENT];
     sbool meta_content_not[MAX_META_CONTENT];
     char meta_content[1024][CONFBUF];
-    //char meta_content_converted[1024][CONFBUF];
     char meta_content_help[512][CONFBUF];
 
     sbool alert_time_flag;
@@ -236,6 +234,5 @@ struct _Rule_Struct
 #endif
 
 };
-
 
 void Load_Rules ( const char * );
