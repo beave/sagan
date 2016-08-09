@@ -51,18 +51,18 @@ typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
     unsigned s_size_rule;
-    char s_msg[512];
+    char s_msg[256];
 
     pcre *re_pcre[MAX_PCRE];
     pcre_extra *pcre_extra[MAX_PCRE];
 
-    char s_content[MAX_CONTENT][512];
-    char s_reference[MAX_REFERENCE][512];
-    char s_classtype[512];
-    char s_sid[512];
-    char s_rev[512];
+    char s_content[MAX_CONTENT][256];
+    char s_reference[MAX_REFERENCE][256];
+    char s_classtype[32];
+    char s_sid[32];
+    char s_rev[5];
     int  s_pri;
-    char s_program[512];
+    char s_program[256];
     char s_facility[50];
     char s_syspri[25];
     char s_level[25];
@@ -229,7 +229,7 @@ struct _Rule_Struct
 
     sbool geoip2_flag;
     int   geoip2_type;           /* 1 == isnot, 2 == is */
-    char  geoip2_country_codes[1024];
+    char  geoip2_country_codes[256];
     int   geoip2_src_or_dst;             /* 1 == src, 2 == dst */
 
 #endif
