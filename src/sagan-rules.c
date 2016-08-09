@@ -100,7 +100,7 @@ void Load_Rules( const char *ruleset )
     char *netstring;
     char *nettmp = NULL;
 
-    char tolower_tmp[512] = { 0 };
+    char tolower_tmp[512];
 
     char *tokenrule;
     char *tokennet;
@@ -122,12 +122,11 @@ void Load_Rules( const char *ruleset )
     char *tok = NULL;
 
     uintmax_t fwsam_time_tmp;
-//    uintmax_t mctime_tmp;
 
-    char netstr[RULEBUF];
+    char netstr[512];
     char rulestr[RULEBUF];
     char rulebuf[RULEBUF];
-    char pcrerule[RULEBUF];
+    char pcrerule[MAX_PCRE_SIZE];
 
     char tmp3[MAX_CHECK_FLOWS * 21];
     char tmp2[512];

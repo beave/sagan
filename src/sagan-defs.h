@@ -49,6 +49,8 @@
 #define MAXTAG		32		/* Max syslog 'tag' length */
 #define MAXLEVEL	15		/* Max syslog 'level' length */
 
+#define MAX_PCRE_SIZE	1024		/* Max pcre length in a rule */
+
 #define MAX_FIFO_SIZE	1048576		/* Max pipe/FIFO size in bytes/pages */
 
 #define MAX_THREADS     4096            /* Max system threads */

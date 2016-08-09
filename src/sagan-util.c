@@ -560,7 +560,7 @@ char *Sagan_Var_To_Value(char *instring)
 
             strlcpy(tmp, tmp_result, sizeof(tmp));
             tmpbuf = (char*)&tmp;
-            strlcpy(tmp_result, "", sizeof(tmp_result));
+	    memset(tmp_result, 0, sizeof(tmp_result)); 
         }
 
     return(tmpbuf);
