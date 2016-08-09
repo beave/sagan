@@ -937,7 +937,7 @@ void Load_Rules( const char *ruleset )
                             strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
                             strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count]));
 
-                            tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ",", &saveptrrule2));           /* Grab Search data */
+                            tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab Search data */
 
                             if ( tmptoken == NULL )
                                 {
