@@ -122,15 +122,10 @@ void Load_Rules( const char *ruleset )
     char *tok = NULL;
 
     uintmax_t fwsam_time_tmp;
-    uintmax_t mctime_tmp;
+//    uintmax_t mctime_tmp;
 
     char netstr[RULEBUF];
-
-    /* line added by drforbin array should be initialized */
-    memset(netstr, 0, RULEBUF);
     char rulestr[RULEBUF];
-
-    memset(rulestr, 0, RULEBUF);
     char rulebuf[RULEBUF];
     char pcrerule[RULEBUF];
 
@@ -1347,7 +1342,8 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             pcreflag=0;
-                            strlcpy(pcrerule, "", sizeof(pcrerule));
+		            memset(pcrerule, 0, sizeof(pcrerule));
+
 
                             for ( i = 1; i < strlen(tmp2); i++)
                                 {
@@ -2157,8 +2153,8 @@ void Load_Rules( const char *ruleset )
             ref_count=0;
             flow_1_count=0;
             flow_2_count=0;
-            strlcpy(netstr, "", 1);
-            strlcpy(rulestr, "", 1);
+            memset(netstr, 0, sizeof(netstr));
+            memset(rulestr, 0, sizeof(rulestr));
 
             counters->rulecount++;
 
