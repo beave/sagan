@@ -1,3 +1,11 @@
+XX/XX/2016 -	Sagan 1.1.1 released.
+
+		* Added meta_offset, meta_depth, meta_within and meta_distince Champ Clark (cclark@quadrantsec.com)
+		* Major changes/restructuring to sagan-meta-content.c - Adam Hall (ahall@quadrantse.com)
+		* Minor build fix when liblognorm is disabled - Champ Clark (cclark@quadrantsec.com)
+		* Minor stdbool.h issue & added PKG_PROG_PKG_CONFIG to configure.ac
+		* Remove old unneeded liblognorm headers.
+
 07/06/2016 -    Sagan 1.1.0 released.
 
 		The Basics:
