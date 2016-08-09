@@ -85,8 +85,9 @@
 #ifdef HAVE_LIBLOGNORM
 struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
-sbool liblognorm_load = 0;
 #endif
+
+sbool liblognorm_load = 0;		/* Need to stay outside of HAVE_LIBLOGNORM */
 
 struct _Rule_Struct *rulestruct;
 struct _SaganCounters *counters;
