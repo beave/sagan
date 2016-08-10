@@ -703,8 +703,7 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
     char string[1024] = { 0 };
     char tmp[2] = { 0 };
 
-    char *buf = (char*)malloc(1024);
-    memset(&buf, 0, sizeof(buf));
+    static char *buf;
 
     char new_string[1024] = { 0 };
 
