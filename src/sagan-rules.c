@@ -113,6 +113,7 @@ void Load_Rules( const char *ruleset )
     char *saveptrflow;
     char *saveptrrange;
     char *tmptoken;
+    char *meta_tmptoken;
     char *not;
     char *savenot=NULL;
 
@@ -952,7 +953,10 @@ void Load_Rules( const char *ruleset )
 
                             while (ptmp != NULL)
                                 {
-                                    strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp), sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
+
+                                    meta_tmptoken = Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp);
+
+                                    strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], meta_tmptoken, sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
 
                                     meta_content_converted_count++;
 
@@ -1341,7 +1345,7 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             pcreflag=0;
-		            memset(pcrerule, 0, sizeof(pcrerule));
+                            memset(pcrerule, 0, sizeof(pcrerule));
 
 
                             for ( i = 1; i < strlen(tmp2); i++)

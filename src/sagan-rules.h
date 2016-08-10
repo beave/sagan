@@ -74,7 +74,7 @@ struct _Rule_Struct
     /* Check Flow */
     struct arr_flow_1 flow_1[MAX_CHECK_FLOWS];
     struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];
-    
+
     struct meta_content_conversion meta_content_containers[MAX_META_CONTENT];
 
     int direction;
