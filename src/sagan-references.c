@@ -146,6 +146,9 @@ void Load_Reference( const char *ruleset )
 char *Reference_Lookup( int rulemem, int type )
 {
 
+    static __thread char reftmp[1024];
+    memset(&reftmp, 0, sizeof(reftmp));
+
     int i=0;
     int b=0;
 
@@ -157,7 +160,7 @@ char *Reference_Lookup( int rulemem, int type )
 
     char refinfo[512];
     char refinfo2[512];
-    char reftmp[2048];
+
     char *ret=NULL;
 
     for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ )
@@ -208,7 +211,6 @@ char *Reference_Lookup( int rulemem, int type )
                 }
         }
 
-    ret=reftmp;
-
+    ret = (char*)&reftmp;
     return(ret);
 }
