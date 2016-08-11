@@ -152,12 +152,12 @@ char *Reference_Lookup( int rulemem, int type )
     char *tmptok=NULL;
     char *tmp=NULL;
 
-    char reftype[25]="";
-    char url[255]="";
+    char reftype[25];
+    char url[255];
 
-    char refinfo[512]="";
-    char refinfo2[512]="";
-    char reftmp[2048]="";
+    char refinfo[512];
+    char refinfo2[512];
+    char reftmp[2048];
     char *ret=NULL;
 
     for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ )
