@@ -161,8 +161,6 @@ char *Reference_Lookup( int rulemem, int type )
     char refinfo[512];
     char refinfo2[512];
 
-    char *ret=NULL;
-
     for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ )
         {
 
@@ -211,6 +209,5 @@ char *Reference_Lookup( int rulemem, int type )
                 }
         }
 
-    ret = (char*)&reftmp;
-    return(ret);
+    return(rettmp);
 }

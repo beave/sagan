@@ -53,6 +53,8 @@
 #include "sagan-config.h"
 #include "sagan-lockfile.h"
 
+#include "parsers/sagan-strstr/sagan-strstr-hook.h"
+
 #include "version.h"
 
 struct _SaganConfig *config;
@@ -384,10 +386,12 @@ double CalcPct(uintmax_t cnt, uintmax_t total)
 
 char *DNS_Lookup( char *host )
 {
-    struct addrinfo hints, *res; //,// *p;
+
+    static __thread char ipstr[INET6_ADDRSTRLEN];
+    memset(ipstr,0,sizeof(ipstr));
+
+    struct addrinfo hints, *res;
     int status;
-    char ipstr[INET6_ADDRSTRLEN];
-    char *ret;
     void *addr;
 
     /* Short circuit if it's a "localhost" lookup */
@@ -429,8 +433,8 @@ char *DNS_Lookup( char *host )
 
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     free(res);
-    ret=ipstr;
-    return ret;
+
+    return(ipstr); 
 }
 
 
