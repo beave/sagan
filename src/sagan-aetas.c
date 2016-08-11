@@ -45,7 +45,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Check_Time(rule_number)
+int Sagan_Check_Time(int rule_number)
 {
 
     char ct[64] = { 0 };
