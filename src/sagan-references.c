@@ -209,5 +209,5 @@ char *Reference_Lookup( int rulemem, int type )
                 }
         }
 
-    return(rettmp);
+    return(reftmp);
 }

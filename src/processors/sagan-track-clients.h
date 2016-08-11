@@ -32,7 +32,7 @@ typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
 struct _Sagan_Track_Clients_IPC
 {
     uint32_t host_u32;
-    uintmax_t utime;
+    long     utime;
     int	     expire;
     sbool    status;
 };

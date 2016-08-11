@@ -241,14 +241,10 @@ int Sagan_Parse_Dst_Port (char *msg)
 
     char *portstring=NULL;
     char *saveptr1=NULL;
-    char *saveptr2=NULL;
     char *str=NULL;
     char *token=NULL;
-    char *tmpport=NULL;
 
     int i;
-    struct sockaddr_in sa;
-    int result;
 
     port = config->sagan_port;
 

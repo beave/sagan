@@ -49,12 +49,6 @@ struct _Rule_Struct *rulestruct;
 int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_count)
 {
 
-    char *ptmp = NULL;
-    char *tok = NULL;
-    char tmp[CONFBUF] = { 0 };
-    char tmp_search[512] = { 0 };
-    int results = 0;
-    int match = 0;
     int z = meta_content_count;
     int i;
 
