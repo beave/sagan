@@ -39,8 +39,7 @@ void Sagan_Usage(void)
     fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
     fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
     fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
-    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,\n\t\t\tmalformed, limits, flowbit, brointel, ipc\n");
-    fprintf(stderr, "-Q, --quiet\t\tRun Sagan in 'quiet' mode (no console output)\n");
+    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,\n\t\t\tmalformed, limits, flowbit, brointel, ipc");
 
 #ifdef HAVE_LIBESMTP
     fprintf(stderr, ", smtp");
@@ -71,6 +70,7 @@ void Sagan_Usage(void)
     fprintf(stderr, "-F, --file [file]\tFIFO over ride.  This reads a file in rather than reading\n");
     fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
     fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
+    fprintf(stderr, "-Q, --quiet\t\tRun Sagan in 'quiet' mode (no console output)\n");
 
 #ifdef HAVE_LIBESMTP
     fprintf(stderr, "* libesmtp (SMTP) support is included.\n");
