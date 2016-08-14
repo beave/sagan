@@ -129,7 +129,7 @@ void Load_Rules( const char *ruleset )
     char pcrerule[MAX_PCRE_SIZE];
 
     char tmp3[MAX_CHECK_FLOWS * 21];
-    char tmp2[512];
+    char tmp2[RULEBUF];
     char tmp[2];
     char final_content[512];
     char *flow_a;
@@ -935,6 +935,7 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
+
                             strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], Sagan_Content_Pipe(tmp2, linecount, ruleset), sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count]));
 
                             tmptoken = Sagan_Var_To_Value(strtok_r(NULL, ";", &saveptrrule2));           /* Grab Search data */
@@ -945,8 +946,9 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Remove_Spaces(tmptoken);
-
+		
                             strlcpy(tmp2, tmptoken, sizeof(tmp2));
+
                             ptmp = strtok_r(tmp2, ",", &tok);
                             meta_content_converted_count = 0;
 
