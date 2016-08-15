@@ -434,7 +434,7 @@ char *DNS_Lookup( char *host )
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     free(res);
 
-    return(ipstr); 
+    return(ipstr);
 }
 
 
@@ -707,7 +707,7 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
     char string[1024] = { 0 };
     char tmp[2] = { 0 };
 
-    char *buf; 
+    char *buf;
 
     static __thread char new_string[1024];
     memset(&new_string, 0, sizeof(new_string));

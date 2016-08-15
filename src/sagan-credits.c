@@ -75,8 +75,9 @@ void Sagan_Credits(void)
     fprintf(stderr, "Alexandre Carrol Perales (Github:acabrol)\tBug fixes & features.\n");
     fprintf(stderr, "Bruno Coudoin\t\t\t\t\tBug fixes & features.\n");
     fprintf(stderr, "Steve Rawls (srawls@quadrantsec.com)\t\tBug reports & features.\n");
-    fprintf(stderr, "\"bhennigar\" (Github)\t\t\t\tBug reporting & testing.\n"); 
-    fprintf(stderr, "Corey Fisher (cfisher@quadrantsec.com)\t\tCode testing & debugging.\n"); 
+    fprintf(stderr, "\"bhennigar\" (Github)\t\t\t\tBug reporting & testing.\n");
+    fprintf(stderr, "Corey Fisher (cfisher@quadrantsec.com)\t\tCode testing & debugging.\n");
+    fprintf(stderr, "\"Work-lako\" (Github)\t\t\t\tIdea/patch for sagan-syslog.c.\n");
 
 
     fprintf(stderr, "\n");

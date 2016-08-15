@@ -264,37 +264,37 @@ free slot for a blocking request */
 
 typedef struct _blockinfo		/* Block info structure */
 {
-unsigned long sig_id;			/* Snort Signature ID (for logging/presentation) */
-unsigned long blockip;			/* IP to be blocked */
-unsigned long peerip;			/* Peer IP (if connection) */
-time_t duration;			/* Duration of block */
-time_t blocktime;			/* Time when block started */
-unsigned short port;			/* Port (if connection) */
-unsigned short proto;			/* Protocol (if connection) */
-unsigned short mode;			/* Blocking mode (src, dst, connection) */
-short block;				/* block or unblock flag --- this flag is dynamically changed */
+    unsigned long sig_id;			/* Snort Signature ID (for logging/presentation) */
+    unsigned long blockip;			/* IP to be blocked */
+    unsigned long peerip;			/* Peer IP (if connection) */
+    time_t duration;			/* Duration of block */
+    time_t blocktime;			/* Time when block started */
+    unsigned short port;			/* Port (if connection) */
+    unsigned short proto;			/* Protocol (if connection) */
+    unsigned short mode;			/* Blocking mode (src, dst, connection) */
+    short block;				/* block or unblock flag --- this flag is dynamically changed */
 }	BLOCKINFO;
 
 typedef struct _oldblockinfo		/* Block info structure */
 {
-unsigned long blockip;			/* IP to be blocked */
-unsigned long peerip;			/* Peer IP (if connection) */
-time_t duration;			/* Duration of block */
-time_t blocktime;			/* Time when block started */
-unsigned short port;			/* Port (if connection) */
-unsigned short proto;			/* Protocol (if connection) */
-unsigned short mode;			/* Blocking mode (src, dst, connection) */
-short block;				/* block or unblock flag --- this flag is dynamically changed */
+    unsigned long blockip;			/* IP to be blocked */
+    unsigned long peerip;			/* Peer IP (if connection) */
+    time_t duration;			/* Duration of block */
+    time_t blocktime;			/* Time when block started */
+    unsigned short port;			/* Port (if connection) */
+    unsigned short proto;			/* Protocol (if connection) */
+    unsigned short mode;			/* Blocking mode (src, dst, connection) */
+    short block;				/* block or unblock flag --- this flag is dynamically changed */
 }	OLDBLOCKINFO;
 
 typedef struct _blockqueue		/* queue for blocking requests */
 {
-BLOCKINFO blockinfo;			/* COPY of block request (not just pointer) */
-volatile unsigned long processing;	/* how many plugins are processing this request */
-unsigned long originator;		/* Orignating IP address so that forwarder can skip sending a request back to another Snortsam if it received it from there. */
-int forceunblock;			/* Unblocking can be forced even if plugin does expiration itself. */
-int extension;				/* On devices that don't time-out, skip the repeated block. On devices that time-out themselves, block again. */
-int reload;				/* Set TRUE on a queue entry caused by a USR1 reload. */
+    BLOCKINFO blockinfo;			/* COPY of block request (not just pointer) */
+    volatile unsigned long processing;	/* how many plugins are processing this request */
+    unsigned long originator;		/* Orignating IP address so that forwarder can skip sending a request back to another Snortsam if it received it from there. */
+    int forceunblock;			/* Unblocking can be forced even if plugin does expiration itself. */
+    int extension;				/* On devices that don't time-out, skip the repeated block. On devices that time-out themselves, block again. */
+    int reload;				/* Set TRUE on a queue entry caused by a USR1 reload. */
 }	BLOCKQUEUE;
 
 typedef struct _datalist		/* List of plugin devices/parameters */

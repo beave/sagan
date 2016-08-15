@@ -946,7 +946,7 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Remove_Spaces(tmptoken);
-		
+
                             strlcpy(tmp2, tmptoken, sizeof(tmp2));
 
                             ptmp = strtok_r(tmp2, ",", &tok);
