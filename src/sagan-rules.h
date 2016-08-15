@@ -43,7 +43,7 @@ struct arr_flow_2
 typedef struct meta_content_conversion meta_content_conversion;
 struct meta_content_conversion
 {
-    char meta_content_converted[MAX_META_CONTENT][CONFBUF];
+    char meta_content_converted[MAX_META_CONTENT][256];
     int  meta_counter;
 };
 

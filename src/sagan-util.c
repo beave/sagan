@@ -227,7 +227,7 @@ char *To_LowerC(char *const s)
 void Sagan_Log (int type, const char *format,... )
 {
 
-    char buf[1024];
+    char buf[5128];
     va_list ap;
     va_start(ap, format);
     char *chr="*";
