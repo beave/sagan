@@ -1,4 +1,4 @@
-XX/XX/2016 -	Sagan 1.1.1 released.
+08/17/2016 -	Sagan 1.1.1 released.
 
 		* Added meta_offset, meta_depth, meta_within and meta_distince Champ Clark (cclark@quadrantsec.com)
 		* Major changes/restructuring to sagan-meta-content.c - Adam Hall (ahall@quadrantse.com)
