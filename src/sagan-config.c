@@ -101,6 +101,7 @@ void Load_Config( void )
     struct stat filecheck;
 
     FILE *sagancfg;
+    FILE *tmpcfg;
 
     char *filename;
     char ruleset[MAXPATH];
@@ -119,6 +120,8 @@ void Load_Config( void )
     char *tok2=NULL;
 
     int i,check;
+
+
 
 #ifdef HAVE_LIBLOGNORM
 #endif
@@ -1253,41 +1256,103 @@ void Load_Config( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
                         }
 
-                    snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
+                    /* Load var from file as suggested in https://github.com/beave/sagan/issues/75 */
 
-
-                    /* Test for multiple values via [ ] or single value */
-
-                    if ((Sagan_strstr(tmpbuf2, "[") && !Sagan_strstr(tmpbuf2, "]")) || (!Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]")))
-                        {
-                            Sagan_Log(S_ERROR, "[%s, line %d] A 'var' in the sagan.conf file contains mismatched [ ]!", __FILE__, __LINE__);
-                        }
-
-                    /* Multiple values */
-
-                    if (Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]"))
+                    if (Sagan_strstr(tmpbuf2, "file:/"))
                         {
 
-                            sagan_var2 = strtok_r(NULL, "[", &tok);
-                            sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
+                            sagan_var2 = strtok_r(NULL, " ", &tok);				/* file://path/file */
+                            strtok_r(sagan_var2, ":", &tok2);				/* skip paste file: */
+                            filename = Remove_Return(strtok_r(NULL, ":", &tok2)); 		/* Get path + filename */
 
-                            Remove_Spaces(sagan_var3);
-                            Remove_Return(sagan_var3);
+                            if ((tmpcfg = fopen(filename, "r")) == NULL)
+                                {
+                                    fprintf(stderr, "[%s, line %d] Cannot open var file:%s\n", __FILE__,  __LINE__, filename);
+                                    exit(1);
+                                }
 
-                            strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
+
+                            check = 0;
+
+                            while(fgets(tmpbuf2, sizeof(tmpbuf2), tmpcfg) != NULL)
+                                {
+
+                                    /* Stuff to skip */
+
+                                    if (tmpbuf2[0] == '#') continue;
+                                    if (tmpbuf2[0] == ';') continue;
+                                    if (tmpbuf2[0] == 10 ) continue;
+                                    if (tmpbuf2[0] == 32 ) continue;
+
+                                    /* Simple check to see if this is the first entry or not.  This is to keep our
+                                       "," on mark */
+
+                                    if ( check == 0 )
+                                        {
+
+                                            snprintf(tmpstring, sizeof(tmpstring), "%s", Remove_Return(tmpbuf2));
+                                            check = 1;
+
+                                        }
+                                    else
+                                        {
+
+                                            snprintf(tmpstring, sizeof(tmpstring), ",%s", Remove_Return(tmpbuf2));
+
+
+                                        }
+
+                                    /* Append to the var */
+
+                                    strlcat(var[counters->var_count].var_value, tmpstring, sizeof(var[counters->var_count].var_value));
+
+                                }
+
+
+                            fclose(tmpcfg);
 
                         }
                     else
                         {
 
-                            /* Single value */
+                            /* Non-file based var's */
 
-                            sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-                            strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+                            snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
+
+                            /* Test for multiple values via [ ] or single value */
+
+                            if ((Sagan_strstr(tmpbuf2, "[") && !Sagan_strstr(tmpbuf2, "]")) || (!Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]")))
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] A 'var' in the sagan.conf file contains mismatched [ ]!", __FILE__, __LINE__);
+                                }
+
+                            /* Multiple values */
+
+                            if (Sagan_strstr(tmpbuf2, "[") && Sagan_strstr(tmpbuf2, "]"))
+                                {
+
+                                    sagan_var2 = strtok_r(NULL, "[", &tok);
+                                    sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
+
+                                    Remove_Spaces(sagan_var3);
+                                    Remove_Return(sagan_var3);
+
+                                    strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
+
+                                }
+                            else
+                                {
+
+                                    /* Single value */
+
+                                    sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
+                                    strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+
+                                }
+
+                            counters->var_count++;
 
                         }
-
-                    counters->var_count++;
 
                     /* Required var's - all others are optional */
 
