@@ -142,7 +142,7 @@ int main(int argc, char **argv)
             exit(1);
         }
 
-    close(shm_counters); 
+    close(shm_counters);
 
     /*** Get "threshold by source" data ****/
 

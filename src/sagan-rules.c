@@ -667,44 +667,44 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_find_dst_pos = atoi(arg);
                         }
 
-		    if (!strcmp(rulesplit, "parse_hash")) 
-			    	{
+                    if (!strcmp(rulesplit, "parse_hash"))
+                        {
 
-				arg = strtok_r(NULL, ":", &saveptrrule2);
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
 
-				if ( arg == NULL ) 
-				   {
-					Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
-				   }
+                            if ( arg == NULL )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                }
 
-				Remove_Spaces(arg); 
+                            Remove_Spaces(arg);
 
-				if (!strcmp(arg, "md5")) 
-					{
-					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_MD5; 
-					}
+                            if (!strcmp(arg, "md5"))
+                                {
+                                    rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_MD5;
+                                }
 
-				else if (!strcmp(arg, "sha1"))
-					{
-					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA1;
-					}
+                            else if (!strcmp(arg, "sha1"))
+                                {
+                                    rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA1;
+                                }
 
-				else if (!strcmp(arg, "sha256")) 
-					{
-					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA256; 
-					}
-		
-				else if (!strcmp(arg, "all"))
-					{
-					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
-					}
+                            else if (!strcmp(arg, "sha256"))
+                                {
+                                    rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA256;
+                                }
 
-				if ( rulestruct[counters->rulecount].s_find_hash_type == 0 ) 
-					{
-					Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256'.", __FILE__, __LINE__, linecount, ruleset);
-					}
+                            else if (!strcmp(arg, "all"))
+                                {
+                                    rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
+                                }
 
-				}
+                            if ( rulestruct[counters->rulecount].s_find_hash_type == 0 )
+                                {
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256'.", __FILE__, __LINE__, linecount, ruleset);
+                                }
+
+                        }
 
                     /* Non-quoted information (sid, reference, etc) */
 

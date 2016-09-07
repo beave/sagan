@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* 
+/*
  * parse-hash.c
  */
 
@@ -41,60 +41,60 @@ struct _SaganConfig *config;
 
 char *Sagan_Parse_Hash(char *syslogmessage, int type)
 {
-	char tmpmsg[MAX_SYSLOGMSG];
-	char *ptmp=NULL;
-	char *tok=NULL;
+    char tmpmsg[MAX_SYSLOGMSG];
+    char *ptmp=NULL;
+    char *tok=NULL;
 
-	static __thread char ret[PARSE_HASH_SHA256+1];		/* Largest Hash */
+    static __thread char ret[PARSE_HASH_SHA256+1];		/* Largest Hash */
 
-        snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
+    snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
 
-        ptmp = strtok_r(tmpmsg, " ", &tok);
+    ptmp = strtok_r(tmpmsg, " ", &tok);
 
-	while (ptmp != NULL )
-		        {
+    while (ptmp != NULL )
+        {
 
-			if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL )
-					{
-					if ( strlen(ptmp) == MD5_HASH_SIZE ) 
-						{
-						if ( Sagan_Validate_HEX(ptmp) == true ) 
-							{
-							return(ptmp);
-							}
-						}
+            if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(ptmp) == MD5_HASH_SIZE )
+                        {
+                            if ( Sagan_Validate_HEX(ptmp) == true )
+                                {
+                                    return(ptmp);
+                                }
+                        }
 
-					}
+                }
 
-			else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL ) 
-					{ 
-					if ( strlen(ptmp) == SHA1_HASH_SIZE )
-						{
-						if ( Sagan_Validate_HEX(ptmp) == true )
-							{
-							strlcpy(ret, ptmp, sizeof(ret));
-							return(ret);
-							}
-						}
-					}
+            else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(ptmp) == SHA1_HASH_SIZE )
+                        {
+                            if ( Sagan_Validate_HEX(ptmp) == true )
+                                {
+                                    strlcpy(ret, ptmp, sizeof(ret));
+                                    return(ret);
+                                }
+                        }
+                }
 
-			else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL )
-					{
-					if ( strlen(ptmp) == SHA256_HASH_SIZE )
-						{
-						if ( Sagan_Validate_HEX(ptmp) == true )
-							{
-							strlcpy(ret, ptmp, sizeof(ret));
-							return(ret);
-							}
-						}
-					}
+            else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(ptmp) == SHA256_HASH_SIZE )
+                        {
+                            if ( Sagan_Validate_HEX(ptmp) == true )
+                                {
+                                    strlcpy(ret, ptmp, sizeof(ret));
+                                    return(ret);
+                                }
+                        }
+                }
 
-			
-			ptmp = strtok_r(NULL, " ", &tok);
 
-			}
+            ptmp = strtok_r(NULL, " ", &tok);
 
-return("\0"); 
+        }
+
+    return("\0");
 }
 

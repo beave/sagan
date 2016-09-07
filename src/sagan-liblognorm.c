@@ -242,23 +242,23 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
             strlcpy(SaganNormalizeLiblognorm->hash_md5, tmp, sizeof(SaganNormalizeLiblognorm->hash_md5));
         }
 
-    
+
     json_object_object_get_ex(json, "hash-sha1", &string_obj);
     tmp = json_object_get_string(string_obj);
 
-        if ( tmp != NULL )
-            {
-                strlcpy(SaganNormalizeLiblognorm->hash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha1));
-            }
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->hash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha1));
+        }
 
-     json_object_object_get_ex(json, "hash-sha256", &string_obj);
-     tmp = json_object_get_string(string_obj);
+    json_object_object_get_ex(json, "hash-sha256", &string_obj);
+    tmp = json_object_get_string(string_obj);
 
-        if ( tmp != NULL )
-            {
-                strlcpy(SaganNormalizeLiblognorm->hash_sha256, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha256));
-            }
-    
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->hash_sha256, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha256));
+        }
+
 
     json_object_object_get_ex(json, "http_uri", &string_obj);
     tmp = json_object_get_string(string_obj);
