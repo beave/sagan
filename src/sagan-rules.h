@@ -79,7 +79,6 @@ struct _Rule_Struct
 
     int direction;
 
-    sbool s_follow_flow;
     sbool flow_1_var;
     sbool flow_2_var;
 
@@ -124,6 +123,8 @@ struct _Rule_Struct
 
     sbool s_find_dst_ip;
     int   s_find_dst_pos;
+
+    int   s_find_hash_type; 
 
     sbool flowbit_flag;                   	/* Does the rule contain a flowbit? */
     sbool flowbit_noalert;			/* Do we want to suppress "alerts" from flowbits in ALL output plugins? */

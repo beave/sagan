@@ -122,7 +122,10 @@
 #define ALERT_LOG	1
 #define ALL_LOGS	100
 
-#define MAX_HASH_SIZE		33                      /* This only handles MD5 */
+#define MD5_HASH_SIZE		32
+#define SHA1_HASH_SIZE		40
+#define SHA256_HASH_SIZE	64
+
 #define MAX_FILENAME_SIZE	256
 #define MAX_URL_SIZE		8192
 #define MAX_USERNAME_SIZE	512
@@ -166,3 +169,9 @@
 #define THRESH_BY_DSTPORT	7
 #define THRESH_BY_USERNAME	8
 #define FLOWBIT			9
+
+#define PARSE_HASH_MD5		1
+#define	PARSE_HASH_SHA1		2
+#define PARSE_HASH_SHA256	3
+#define PARSE_HASH_ALL		4
+

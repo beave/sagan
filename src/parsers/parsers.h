@@ -28,6 +28,8 @@ char *Sagan_Parse_IP( char *, int );
 int   Sagan_Parse_Src_Port( char * );
 int   Sagan_Parse_Dst_Port( char * );
 int   Sagan_Parse_Proto( char * );
-int   Sagan_Parse_Proto_Program (char *);
+int   Sagan_Parse_Proto_Program( char * );
+char *Sagan_Parse_Hash(char *, int );
+
 
 

@@ -55,7 +55,9 @@ typedef struct _SaganNormalizeLiblognorm
     char username[MAX_USERNAME_SIZE];
     char filename[MAX_FILENAME_SIZE];
 
-    char filehash_md5[MAX_HASH_SIZE];
+    char hash_md5[MD5_HASH_SIZE+1];
+    char hash_sha1[SHA1_HASH_SIZE+1];
+    char hash_sha256[SHA256_HASH_SIZE+1];
 
     char http_uri[MAX_URL_SIZE];
     char http_hostname[MAX_HOSTNAME_SIZE];

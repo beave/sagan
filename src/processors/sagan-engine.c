@@ -150,7 +150,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
      * methods to extract the informaton */
 
     char normalize_username[MAX_USERNAME_SIZE] = { 0 };
-    char normalize_filehash[MAX_HASH_SIZE] = { 0 };
+    char normalize_md5_hash[MD5_HASH_SIZE+1] = { 0 };
+    char normalize_sha1_hash[SHA1_HASH_SIZE+1] = { 0 };
+    char normalize_sha256_hash[SHA256_HASH_SIZE+1] = { 0 };
+
     char normalize_filename[MAX_FILENAME_SIZE] = { 0 };
     char normalize_http_uri[MAX_URL_SIZE] = { 0 };
     char normalize_http_hostname[MAX_HOSTNAME_SIZE] = { 0 };
@@ -518,7 +521,9 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                             normalize_dst_port=0;
                             normalize_src_port=0;
-                            normalize_filehash[0] = '\0';
+                            normalize_md5_hash[0] = '\0';
+			    normalize_sha1_hash[0] = '\0'; 
+			    normalize_sha256_hash[0] = '\0'; 
                             normalize_filename[0] = '\0';
                             normalize_http_uri[0] = '\0';
                             normalize_http_hostname[0] = '\0';
@@ -580,27 +585,24 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                             liblognorm_status = 1;
                                         }
 
-                                    /* We want MD5.  Maybe SHA 256 in the future? */
+				    
+                                    if ( SaganNormalizeLiblognorm->hash_sha256[0] != '\0' )
+                                        {
+					    strlcpy(normalize_sha256_hash, SaganNormalizeLiblognorm->hash_sha256, sizeof(normalize_sha256_hash));
+                                            liblognorm_status = 1;
+                                        }
+				    
 
-                                    /*
-                                                                        if ( SaganNormalizeLiblognorm->filehash_sha256[0] != '\0' )
-                                                                            {
-                                                                                filehash = SaganNormalizeLiblognorm->filehash_sha256;
-                                                                                liblognorm_status = 1;
-                                                                            }
-
-                                                                        else if ( SaganNormalizeLiblognorm->filehash_sha1[0] != '\0' )
-                                                                            {
-
-                                                                                filehash = SaganNormalizeLiblognorm->filehash_sha1;
-                                                                                liblognorm_status = 1;
-
-                                                                            }
-                                    */
-                                    if ( SaganNormalizeLiblognorm->filehash_md5[0] != '\0' )
+                                     if ( SaganNormalizeLiblognorm->hash_sha1[0] != '\0' )
+                                        {
+					    strlcpy(normalize_sha1_hash, SaganNormalizeLiblognorm->hash_sha1, sizeof(normalize_sha1_hash));
+                                            liblognorm_status = 1;
+                                        }
+				    
+                                    if ( SaganNormalizeLiblognorm->hash_md5[0] != '\0' )
                                         {
 
-                                            strlcpy(normalize_filehash, SaganNormalizeLiblognorm->filehash_md5, sizeof(normalize_filehash));
+                                            strlcpy(normalize_md5_hash, SaganNormalizeLiblognorm->hash_md5, sizeof(normalize_md5_hash));
                                             liblognorm_status = 1;
 
                                         }
@@ -644,7 +646,33 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                         {
                                             normalize_src_port = config->sagan_port;
                                         }
-                                }
+
+				    /* parse_hash: md5 */
+
+				    if ( rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 )
+					{
+					    strlcpy(normalize_md5_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5), sizeof(normalize_md5_hash));
+					}
+
+				    else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 )
+				        {
+					    strlcpy(normalize_sha1_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1), sizeof(normalize_sha1_hash));
+				    	}
+
+			    	    else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
+					{
+					    strlcpy(normalize_sha256_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256), sizeof(normalize_sha256_hash));
+					} 
+
+				    /*  DEBUG
+				    else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
+				        {
+				            strlcpy(normalize_sha256_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256), sizeof(normalize_sha256_hash));
+					} 
+					*/
+
+				
+				}
 
 
                             /* If the rule calls for proto searching,  we do it now */
@@ -893,10 +921,10 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                         }
 
 
-                                    if ( rulestruct[b].bluedot_file_hash && normalize_filehash[0] != '\0' )
+                                    if ( rulestruct[b].bluedot_file_hash && normalize_md5_hash[0] != '\0' )
                                         {
 
-                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_filehash, BLUEDOT_LOOKUP_HASH, b);
+                                            bluedot_results = Sagan_Bluedot_Lookup( normalize_md5_hash, BLUEDOT_LOOKUP_HASH, b);
                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                         }

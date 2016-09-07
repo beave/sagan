@@ -623,11 +623,6 @@ void Load_Rules( const char *ruleset )
                     			}
                     */
 
-                    if (!strcmp(rulesplit, "follow_flow"))
-                        {
-                            rulestruct[counters->rulecount].s_follow_flow = 1;
-                        }
-
                     if (!strcmp(rulesplit, "parse_port"))
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
@@ -653,7 +648,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( arg == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_src_ip\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_src_ip\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
                             rulestruct[counters->rulecount].s_find_src_pos = atoi(arg);
@@ -666,11 +661,50 @@ void Load_Rules( const char *ruleset )
 
                             if ( arg == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_dst_ip\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_dst_ip\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
 
                             rulestruct[counters->rulecount].s_find_dst_pos = atoi(arg);
                         }
+
+		    if (!strcmp(rulesplit, "parse_hash")) 
+			    	{
+
+				arg = strtok_r(NULL, ":", &saveptrrule2);
+
+				if ( arg == NULL ) 
+				   {
+					Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+				   }
+
+				Remove_Spaces(arg); 
+
+				if (!strcmp(arg, "md5")) 
+					{
+					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_MD5; 
+					}
+
+				else if (!strcmp(arg, "sha1"))
+					{
+					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA1;
+					}
+
+				else if (!strcmp(arg, "sha256")) 
+					{
+					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA256; 
+					}
+		
+				else if (!strcmp(arg, "all"))
+					{
+					rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
+					}
+
+				if ( rulestruct[counters->rulecount].s_find_hash_type == 0 ) 
+					{
+					Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256'.", __FILE__, __LINE__, linecount, ruleset);
+					}
+
+				}
 
                     /* Non-quoted information (sid, reference, etc) */
 
@@ -1174,7 +1208,7 @@ void Load_Rules( const char *ruleset )
                             arg = strtok_r(NULL, ";", &saveptrrule2);
                             strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 
-                            if (tmp2 == NULL )
+                            if (tmp2[0] == '\0' )
                                 {
                                     Sagan_Log(S_ERROR, "[%s, line %d] The \"msg\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
@@ -1192,7 +1226,7 @@ void Load_Rules( const char *ruleset )
                             arg = strtok_r(NULL, ";", &saveptrrule2);
                             strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 
-                            if (tmp2 == NULL )
+                            if (tmp2[0] == '\0' )
                                 {
                                     Sagan_Log(S_ERROR, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }
@@ -1338,7 +1372,7 @@ void Load_Rules( const char *ruleset )
                             arg = strtok_r(NULL, ";", &saveptrrule2);
                             strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 
-                            if (tmp2 == NULL )
+                            if (tmp2[0] == '\0' )
                                 {
                                     Sagan_Log(S_ERROR, "The \"pcre\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                                 }

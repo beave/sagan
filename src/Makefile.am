@@ -32,9 +32,11 @@ sagan-flowbit.c \
 sagan-check-flow.c\
 sagan-aetas.c \
 sagan-ipc.c \
+sagan-redis.c \
 parsers/parse-ip.c \
 parsers/parse-port.c \
 parsers/parse-proto.c \
+parsers/parse-hash.c \
 parsers/sagan-strstr/sagan-strstr-hook.c \
 parsers/sagan-strstr/strstr_sse2.S \
 parsers/sagan-strstr/strstr_sse4_2.S \
