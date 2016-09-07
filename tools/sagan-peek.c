@@ -37,6 +37,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"

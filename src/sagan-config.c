@@ -1256,7 +1256,7 @@ void Load_Config( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
                         }
 
-		    snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
+                    snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", sagan_var1);
 
                     /* Load var from file as suggested in https://github.com/beave/sagan/issues/75 */
 

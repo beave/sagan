@@ -1171,8 +1171,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                                         }
 
 
-//                                                                                                                                            counters_ipc->after_total++;
-
                                                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                                                     counters->after_total++;
                                                                                                                                                     pthread_mutex_unlock(&CounterMutex);
@@ -1246,9 +1244,6 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                                                                                                                                             Sagan_Log(S_NORMAL, "After SID %s by destination IP PORT. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
                                                                                                                                                         }
 
-
-//                                                                                                                                            counters_ipc->after_total++;
-
                                                                                                                                                     pthread_mutex_lock(&CounterMutex);
                                                                                                                                                     counters->after_total++;
                                                                                                                                                     pthread_mutex_unlock(&CounterMutex);
@@ -1294,7 +1289,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                             for (i = 0; i < counters_ipc->after_count_by_username; i++ )
                                                                                                                                 {
-                                                                                                                                    if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid ))
+
+                                                                                                                                    if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbyusername_ipc[i].sid, rulestruct[b].s_sid ))
                                                                                                                                         {
                                                                                                                                             after_flag = 1;
 
@@ -1319,10 +1315,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                                     if ( debug->debuglimits )
                                                                                                                                                         {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by username. [%s]", afterbydst_ipc[i].sid, normalize_username);
+                                                                                                                                                            Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbydst_ipc[i].sid, normalize_username);
                                                                                                                                                         }
-
-//                                                                                                                                            counters_ipc->after_total++;
 
                                                                                                                                                     pthread_mutex_lock(&CounterMutex);;
                                                                                                                                                     counters->after_total++;
@@ -1636,10 +1630,8 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
 
                                                                                                                                                     if ( debug->debuglimits )
                                                                                                                                                         {
-                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
+                                                                                                                                                            Sagan_Log(S_NORMAL, "Threshold SID %s by_username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
                                                                                                                                                         }
-
-//                                                                                                                                            counters_ipc->threshold_total++;
 
                                                                                                                                                     pthread_mutex_lock(&CounterMutex);;
                                                                                                                                                     counters->threshold_total++;

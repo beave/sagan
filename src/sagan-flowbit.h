@@ -43,6 +43,7 @@ struct _Sagan_IPC_Flowbit
     sbool flowbit_state;
     uint32_t ip_src;
     uint32_t ip_dst;
+    char username[64]; 
     uintmax_t flowbit_expire;
     int expire;
 };
