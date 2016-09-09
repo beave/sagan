@@ -398,11 +398,11 @@ int main(int argc, char **argv)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %-21d | %d\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %-11d | %s\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
                         }
                     else
                         {
-                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %-21d | %d\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %-11d | %s\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
                         }
 
                 }
