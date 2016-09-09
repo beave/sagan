@@ -108,7 +108,7 @@ struct _Sagan_Bluedot_IP_Queue
 typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;
 struct _Sagan_Bluedot_Hash_Queue
 {
-    char hash[MAX_HASH_SIZE];
+    char hash[MD5_HASH_SIZE+1];
 };
 
 typedef struct _Sagan_Bluedot_URL_Queue _Sagan_Bluedot_URL_Queue;
