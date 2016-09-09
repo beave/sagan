@@ -77,7 +77,7 @@ struct _Sagan_Bluedot_IP_Cache
 typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
 struct _Sagan_Bluedot_Hash_Cache
 {
-    char hash[MAX_HASH_SIZE];
+    char hash[MD5_HASH_SIZE+1];
     uintmax_t cache_utime;
     int alertid;
 };
