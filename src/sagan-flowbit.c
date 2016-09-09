@@ -610,6 +610,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                                             Sagan_File_Lock(config->shm_flowbit);
 
+					    flowbit_ipc[a].flowbit_date = atol(timet); 
                                             flowbit_ipc[a].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout[i];
                                             flowbit_ipc[a].flowbit_state = 1;
 
@@ -667,6 +668,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                             flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
                             flowbit_ipc[counters_ipc->flowbit_count].ip_dst = ip_dst;
+			    flowbit_ipc[counters_ipc->flowbit_count].flowbit_date = atol(timet); 
                             flowbit_ipc[counters_ipc->flowbit_count].flowbit_expire = atol(timet) + flowbit_track[i].flowbit_timeout;
                             flowbit_ipc[counters_ipc->flowbit_count].flowbit_state = 1;
                             flowbit_ipc[counters_ipc->flowbit_count].expire = flowbit_track[i].flowbit_timeout;
