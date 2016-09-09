@@ -30,6 +30,7 @@ int   Sagan_Parse_Dst_Port( char * );
 int   Sagan_Parse_Proto( char * );
 int   Sagan_Parse_Proto_Program( char * );
 char *Sagan_Parse_Hash(char *, int );
+char *Sagan_Parse_Hash_Cleanup(char *);
 
 
 

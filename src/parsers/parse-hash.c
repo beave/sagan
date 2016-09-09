@@ -44,8 +44,9 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
     char tmpmsg[MAX_SYSLOGMSG];
     char *ptmp=NULL;
     char *tok=NULL;
+    char *tmp = NULL;
 
-    static __thread char ret[PARSE_HASH_SHA256+1];		/* Largest Hash */
+    static __thread char ret[SHA256_HASH_SIZE+1];		/* Largest Hash */
 
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
 
@@ -54,13 +55,15 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
     while (ptmp != NULL )
         {
 
+            tmp = Sagan_Parse_Hash_Cleanup(ptmp);
+
             if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL )
                 {
-                    if ( strlen(ptmp) == MD5_HASH_SIZE )
+                    if ( strlen(tmp) == MD5_HASH_SIZE )
                         {
-                            if ( Sagan_Validate_HEX(ptmp) == true )
+                            if ( Sagan_Validate_HEX(tmp) == true )
                                 {
-                                    return(ptmp);
+                                    return(tmp);
                                 }
                         }
 
@@ -68,11 +71,11 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
 
             else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL )
                 {
-                    if ( strlen(ptmp) == SHA1_HASH_SIZE )
+                    if ( strlen(tmp) == SHA1_HASH_SIZE )
                         {
-                            if ( Sagan_Validate_HEX(ptmp) == true )
+                            if ( Sagan_Validate_HEX(tmp) == true )
                                 {
-                                    strlcpy(ret, ptmp, sizeof(ret));
+                                    strlcpy(ret, tmp, sizeof(ret));
                                     return(ret);
                                 }
                         }
@@ -80,12 +83,12 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
 
             else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL )
                 {
-                    if ( strlen(ptmp) == SHA256_HASH_SIZE )
+                    if ( strlen(tmp) == SHA256_HASH_SIZE )
                         {
-                            if ( Sagan_Validate_HEX(ptmp) == true )
+                            if ( Sagan_Validate_HEX(tmp) == true )
                                 {
-                                    strlcpy(ret, ptmp, sizeof(ret));
-                                    return(ret);
+                                    strlcpy(ret, tmp, sizeof(ret));
+                                    return(tmp);
                                 }
                         }
                 }
@@ -97,4 +100,44 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
 
     return("\0");
 }
+
+
+char *Sagan_Parse_Hash_Cleanup(char *string)
+{
+
+    char tmp[512];
+    int i;
+    static __thread char in[512] = { 0 };
+    char tmp2[2];
+
+    char *ret = NULL;
+
+    strlcpy(in, string, sizeof(in));
+
+    int len = strlen(in);
+
+    if ( ( in[strlen(in) - 1] ) == ',' || ( in[strlen(in) - 1] ) == '\'' )
+        {
+            strlcpy(tmp, in, len-1 );
+            strlcpy(in, tmp, sizeof(in));
+        }
+
+    if ( in[0] == ',' || in[0] == '\'' || in[0] == ':' )
+        {
+
+            tmp[0] = '\0';
+
+            for(i=1; i < strlen(in); i++)
+                {
+                    snprintf(tmp2, sizeof(tmp2), "%c", in[i]);
+                    strcat(tmp, tmp2);
+                }
+
+            strlcpy(in, tmp, sizeof(in));
+        }
+
+    return(in);
+
+}
+
 

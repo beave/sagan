@@ -662,6 +662,7 @@ int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
                                     else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
                                         {
                                             strlcpy(normalize_sha256_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256), sizeof(normalize_sha256_hash));
+					    printf("-> %s\n", normalize_sha256_hash); 
                                         }
 
                                     /*  DEBUG
