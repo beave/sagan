@@ -122,10 +122,20 @@ int main(int argc, char **argv)
     char tmp_object_check[255];
     char tmp[64];
 
+    char *ipc_directory = IPC_DIRECTORY;
+
+    /* So users can point at the proper IPC location */
+
+    if ( argc == 2 )
+        {
+        ipc_directory = argv[1];
+        }
+
+
     /* Load the "counters" first.  The "counters" keep track of the number of elements on the
      * other arrays */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, COUNTERS_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, COUNTERS_IPC_FILE);
     object_check(tmp_object_check);
 
     if ( ( shm_counters = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -146,7 +156,7 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by source" data ****/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, THRESH_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_SRC_IPC_FILE);
     object_check(tmp_object_check);
 
     if ( (shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -184,7 +194,7 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by destination" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, THRESH_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_DST_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -222,7 +232,7 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by username" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, THRESH_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_USERNAME_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -258,7 +268,7 @@ int main(int argc, char **argv)
 
     /*** Get "after by source" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, AFTER_BY_SRC_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_SRC_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -293,7 +303,7 @@ int main(int argc, char **argv)
 
     /*** Get "After by destination" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, AFTER_BY_DST_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_DST_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -328,7 +338,7 @@ int main(int argc, char **argv)
 
     /*** Get "after by username" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, AFTER_BY_USERNAME_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_USERNAME_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -364,7 +374,7 @@ int main(int argc, char **argv)
 
     /*** Get "flowbit" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, FLOWBIT_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, FLOWBIT_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
@@ -410,7 +420,7 @@ int main(int argc, char **argv)
 
     /**** Get "Tracking" data (if enabled) ****/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", IPC_DIRECTORY, CLIENT_TRACK_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, CLIENT_TRACK_IPC_FILE);
     object_check(tmp_object_check);
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
