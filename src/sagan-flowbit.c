@@ -675,14 +675,15 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                             Sagan_File_Unlock(config->shm_flowbit);
 
-                            Sagan_File_Lock(config->shm_counters);
-                            counters_ipc->flowbit_count++;
-                            Sagan_File_Unlock(config->shm_counters);
-
                             if ( debug->debugflowbit)
                                 {
                                     Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created flowbit \"%s\" via \"set\" [%s -> %s],", __FILE__, __LINE__, counters_ipc->flowbit_count, flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, ip_src_char, ip_dst_char);
                                 }
+
+                            Sagan_File_Lock(config->shm_counters);
+                            counters_ipc->flowbit_count++;
+                            Sagan_File_Unlock(config->shm_counters);
+
                         }
                 }
         }
