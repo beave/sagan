@@ -38,6 +38,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
@@ -46,20 +47,32 @@
 #include "../src/processors/sagan-track-clients.h"
 
 /****************************************************************************
+ * usage - Give the user some hints about how to use this utility!
+ ****************************************************************************/
+
+void usage( void )
+{
+
+    fprintf(stderr, "\nsagan-peek [IPC directory]\n");
+
+}
+
+/****************************************************************************
  * object_check - Verifies a memory object exists before doing an open.
  * This way,  we don't mistakingly "create" the object!
  ****************************************************************************/
 
-void object_check( char *object )
+int object_check( char *object )
 {
 
     struct stat object_check;
 
     if ( ( stat(object, &object_check) == -1 ))
         {
-            fprintf(stderr, "Error.  The Sagan IPC object file '%s' was not found!\n", object);
-            exit(1);
+            return(false);
         }
+
+    return(true);
 }
 
 /****************************************************************************
@@ -118,6 +131,7 @@ int main(int argc, char **argv)
     int shm;
 
     int i;
+    int file_check;
 
     char tmp_object_check[255];
     char tmp[64];
@@ -128,15 +142,20 @@ int main(int argc, char **argv)
 
     if ( argc == 2 )
         {
-        ipc_directory = argv[1];
+            ipc_directory = argv[1];
         }
-
 
     /* Load the "counters" first.  The "counters" keep track of the number of elements on the
      * other arrays */
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, COUNTERS_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ( ( shm_counters = open(tmp_object_check, O_RDONLY ) ) == -1 )
 
@@ -157,7 +176,13 @@ int main(int argc, char **argv)
     /*** Get "threshold by source" data ****/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_SRC_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ( (shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -195,7 +220,13 @@ int main(int argc, char **argv)
     /*** Get "threshold by destination" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_DST_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -233,7 +264,13 @@ int main(int argc, char **argv)
     /*** Get "threshold by username" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_USERNAME_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -269,7 +306,13 @@ int main(int argc, char **argv)
     /*** Get "after by source" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_SRC_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -304,7 +347,13 @@ int main(int argc, char **argv)
     /*** Get "After by destination" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_DST_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -339,7 +388,13 @@ int main(int argc, char **argv)
     /*** Get "after by username" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_USERNAME_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -375,7 +430,13 @@ int main(int argc, char **argv)
     /*** Get "flowbit" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, FLOWBIT_IPC_FILE);
-    object_check(tmp_object_check);
+
+    if ( object_check(tmp_object_check) == false )
+        {
+            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+            usage();
+            exit(1);
+        }
 
     if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
         {
@@ -396,9 +457,9 @@ int main(int argc, char **argv)
         {
 
             printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
-            printf("-----------------------------------------------------------------------------------------------\n");
+            printf("-----------------------------------------------------------------------------------------------------------------------------\n");
             printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-            printf("-----------------------------------------------------------------------------------------------\n");
+            printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 
             for ( i = 0; i < counters_ipc->flowbit_count; i++)
                 {
@@ -408,11 +469,11 @@ int main(int argc, char **argv)
 
                     if ( flowbit_ipc[i].flowbit_state == 1 )
                         {
-                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %-11d | %s\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
                         }
                     else
                         {
-                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %-11d | %s\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
                         }
 
                 }
@@ -421,50 +482,54 @@ int main(int argc, char **argv)
     /**** Get "Tracking" data (if enabled) ****/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, CLIENT_TRACK_IPC_FILE);
-    object_check(tmp_object_check);
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) + (sizeof(_Sagan_Track_Clients_IPC) * counters_ipc->track_clients_client_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    close(shm);
-
-
-    if ( counters_ipc->track_clients_client_count >= 1 )
+    if ( object_check(tmp_object_check) == true )
         {
 
-            printf("\n*** Client Tracking (%d) ****\n", counters_ipc->track_clients_client_count);
-            printf("-----------------------------------------------------------------------------------------------\n");
-            printf("%-9s| %-16s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes" );
-            printf("-----------------------------------------------------------------------------------------------\n");
+            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                {
+                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
 
-            for ( i = 0; i < counters_ipc->track_clients_client_count; i++)
+            if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) + (sizeof(_Sagan_Track_Clients_IPC) * counters_ipc->track_clients_client_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                {
+                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            close(shm);
+
+
+            if ( counters_ipc->track_clients_client_count >= 1 )
                 {
 
-                    ip_addr_src.s_addr = htonl(SaganTrackClients_ipc[i].host_u32);
+                    printf("\n*** Client Tracking (%d) ****\n", counters_ipc->track_clients_client_count);
+                    printf("-----------------------------------------------------------------------------------------------\n");
+                    printf("%-9s| %-16s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes" );
+                    printf("-----------------------------------------------------------------------------------------------\n");
 
-                    if ( SaganTrackClients_ipc[i].status == 0 )
+                    for ( i = 0; i < counters_ipc->track_clients_client_count; i++)
                         {
-                            printf("ACTIVE   | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
-                        }
-                    else
-                        {
-                            printf("INACTIVE | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+
+                            ip_addr_src.s_addr = htonl(SaganTrackClients_ipc[i].host_u32);
+
+                            if ( SaganTrackClients_ipc[i].status == 0 )
+                                {
+                                    printf("ACTIVE   | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+                                }
+                            else
+                                {
+                                    printf("INACTIVE | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+
+                                }
 
                         }
-
                 }
-        }
 
-    close(shm);
+            close(shm);
+
+        } /* object_check */
 
     return(0);		/* Clean exit */
 
