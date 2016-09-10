@@ -68,6 +68,12 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     utime_u64 = atol(utime_tmp);
     int expired_time = config->pp_sagan_track_clients * 60;
 
+    if ( host_u32 == 0 ) 
+	{ 
+	Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__); 
+	return(false); 
+	} 
+
     /*************************/
     /** Record Clients Here **/
     /*************************/
