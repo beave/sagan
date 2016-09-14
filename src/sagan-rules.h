@@ -27,29 +27,25 @@
 #endif
 
 typedef struct arr_flow_1 arr_flow_1;
-struct arr_flow_1
-{
+struct arr_flow_1 {
     uint32_t lo;
     uint32_t hi;
 };
 
 typedef struct arr_flow_2 arr_flow_2;
-struct arr_flow_2
-{
+struct arr_flow_2 {
     uint32_t lo;
     uint32_t hi;
 };
 
 typedef struct meta_content_conversion meta_content_conversion;
-struct meta_content_conversion
-{
+struct meta_content_conversion {
     char meta_content_converted[MAX_META_CONTENT][256];
     int  meta_counter;
 };
 
 typedef struct _Rule_Struct _Rule_Struct;
-struct _Rule_Struct
-{
+struct _Rule_Struct {
     unsigned s_size_rule;
     char s_msg[256];
 
@@ -124,7 +120,7 @@ struct _Rule_Struct
     sbool s_find_dst_ip;
     int   s_find_dst_pos;
 
-    int   s_find_hash_type; 
+    int   s_find_hash_type;
 
     sbool flowbit_flag;                   	/* Does the rule contain a flowbit? */
     sbool flowbit_noalert;			/* Do we want to suppress "alerts" from flowbits in ALL output plugins? */

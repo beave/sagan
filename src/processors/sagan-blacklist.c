@@ -63,10 +63,9 @@ void Sagan_Blacklist_Init ( void )
 
     SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
 
-    if ( SaganBlacklist == NULL )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
-        }
+    if ( SaganBlacklist == NULL ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+    }
 
     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
 
@@ -104,130 +103,114 @@ void Sagan_Blacklist_Load ( void )
 
     blacklist_filename = strtok_r(config->blacklist_files, ",", &ptmp);
 
-    while ( blacklist_filename != NULL )
-        {
+    while ( blacklist_filename != NULL ) {
 
-            Sagan_Log(S_NORMAL, "Blacklist Processor Loading File: %s.", blacklist_filename);
-
-
-            if (( blacklist = fopen(blacklist_filename, "r" )) == NULL )
-                {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s - %s)", __FILE__, __LINE__, blacklist_filename, strerror(errno));
-                }
+        Sagan_Log(S_NORMAL, "Blacklist Processor Loading File: %s.", blacklist_filename);
 
 
-            line_count = 0;
-
-            while(fgets(blacklistbuf, 1024, blacklist) != NULL)
-                {
-
-                    /* Skip comments and blank linkes */
-
-                    if (blacklistbuf[0] == '#' || blacklistbuf[0] == 10 || blacklistbuf[0] == ';' || blacklistbuf[0] == 32)
-                        {
-                            line_count++;
-                            continue;
-
-                        }
-                    else
-                        {
-
-                            /* Allocate memory for Blacklists,  not comments */
-
-                            line_count++;
-
-                            SaganBlacklist = (_Sagan_Blacklist *) realloc(SaganBlacklist, (counters->blacklist_count+1) * sizeof(_Sagan_Blacklist));
-
-                            if ( SaganBlacklist == NULL )
-                                {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
-                                }
-
-                            Remove_Return(blacklistbuf);
-
-                            iprange = NULL;
-                            tmpmask = NULL;
-
-                            iprange = strtok_r(blacklistbuf, "/", &tok);
-                            tmpmask = strtok_r(NULL, "/", &tok);
-
-                            if ( tmpmask == NULL )
-                                {
-
-                                    /* If there is no CIDR,  then assume it's a /32 */
-
-                                    strlcpy(tmp, iprange, sizeof(tmp));
-                                    iprange = tmp;
-                                    mask = 32;
-                                }
-                            else
-                                {
-                                    mask = atoi(tmpmask);
-                                }
-
-                            /* Should do better error checking? */
-
-                            found = 0;
-
-                            if ( iprange == NULL )
-                                {
-
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid range in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
-                                    found = 1;
-                                }
-
-                            if ( mask == 0 )
-                                {
-
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid mask in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
-                                    found = 1;
-
-                                }
-
-                            /* Record lower and upper range based on the /CIDR.  We then use IP2Bit(ipaddr) to determine
-                             * if it's within the blacklist range.
-                             *
-                             * Idea came from "ashitpro"
-                             * http://bytes.com/topic/c/answers/765104-determining-whether-given-ip-exist-cidr-ip-range
-                             *
-                             */
-
-
-                            if ( found == 0 )
-                                {
-
-                                    u32_lower = IP2Bit(iprange);
-                                    u32_higher = u32_lower + (pow(2,32-mask)-1);
-
-                                    for ( i = 0; i < counters->blacklist_count; i++ )
-                                        {
-
-                                            if ( SaganBlacklist[i].u32_lower == u32_lower && SaganBlacklist[i].u32_higher == u32_higher )
-                                                {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
-                                                    found = 1;
-                                                }
-                                        }
-                                }
-
-                            if ( found == 0 )
-                                {
-
-                                    SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
-                                    SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
-
-                                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
-                                    counters->blacklist_count++;
-                                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
-
-                                }
-                        }
-                }
-
-            fclose(blacklist);
-            blacklist_filename = strtok_r(NULL, ",", &ptmp);
-
+        if (( blacklist = fopen(blacklist_filename, "r" )) == NULL ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s - %s)", __FILE__, __LINE__, blacklist_filename, strerror(errno));
         }
+
+
+        line_count = 0;
+
+        while(fgets(blacklistbuf, 1024, blacklist) != NULL) {
+
+            /* Skip comments and blank linkes */
+
+            if (blacklistbuf[0] == '#' || blacklistbuf[0] == 10 || blacklistbuf[0] == ';' || blacklistbuf[0] == 32) {
+                line_count++;
+                continue;
+
+            } else {
+
+                /* Allocate memory for Blacklists,  not comments */
+
+                line_count++;
+
+                SaganBlacklist = (_Sagan_Blacklist *) realloc(SaganBlacklist, (counters->blacklist_count+1) * sizeof(_Sagan_Blacklist));
+
+                if ( SaganBlacklist == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+                }
+
+                Remove_Return(blacklistbuf);
+
+                iprange = NULL;
+                tmpmask = NULL;
+
+                iprange = strtok_r(blacklistbuf, "/", &tok);
+                tmpmask = strtok_r(NULL, "/", &tok);
+
+                if ( tmpmask == NULL ) {
+
+                    /* If there is no CIDR,  then assume it's a /32 */
+
+                    strlcpy(tmp, iprange, sizeof(tmp));
+                    iprange = tmp;
+                    mask = 32;
+                } else {
+                    mask = atoi(tmpmask);
+                }
+
+                /* Should do better error checking? */
+
+                found = 0;
+
+                if ( iprange == NULL ) {
+
+                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid range in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
+                    found = 1;
+                }
+
+                if ( mask == 0 ) {
+
+                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid mask in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
+                    found = 1;
+
+                }
+
+                /* Record lower and upper range based on the /CIDR.  We then use IP2Bit(ipaddr) to determine
+                 * if it's within the blacklist range.
+                 *
+                 * Idea came from "ashitpro"
+                 * http://bytes.com/topic/c/answers/765104-determining-whether-given-ip-exist-cidr-ip-range
+                 *
+                 */
+
+
+                if ( found == 0 ) {
+
+                    u32_lower = IP2Bit(iprange);
+                    u32_higher = u32_lower + (pow(2,32-mask)-1);
+
+                    for ( i = 0; i < counters->blacklist_count; i++ ) {
+
+                        if ( SaganBlacklist[i].u32_lower == u32_lower && SaganBlacklist[i].u32_higher == u32_higher ) {
+                            Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
+                            found = 1;
+                        }
+                    }
+                }
+
+                if ( found == 0 ) {
+
+                    SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
+                    SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
+
+                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                    counters->blacklist_count++;
+                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+
+                }
+            }
+        }
+
+        fclose(blacklist);
+        blacklist_filename = strtok_r(NULL, ",", &ptmp);
+
+    }
 
 }
 
@@ -245,19 +228,17 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
     counters->blacklist_lookup_count++;
 
 
-    for ( i = 0; i < counters->blacklist_count; i++)
-        {
+    for ( i = 0; i < counters->blacklist_count; i++) {
 
-            if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) )
-                {
+        if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) ) {
 
-                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
-                    counters->blacklist_hit_count++;
-                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+            pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+            counters->blacklist_hit_count++;
+            pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
 
-                    return(true);
-                }
+            return(true);
         }
+    }
 
     return(false);
 
@@ -278,37 +259,34 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 
     char *results = NULL;
 
-    for (i = 1; i < MAX_PARSE_IP; i++)
-        {
+    for (i = 1; i < MAX_PARSE_IP; i++) {
 
-            results = Sagan_Parse_IP(syslog_message, i);
+        results = Sagan_Parse_IP(syslog_message, i);
 
-            /* Failed to find next IP,  short circuit the process */
+        /* Failed to find next IP,  short circuit the process */
 
-            if (!strcmp(results, "0"))
-                {
-                    return(false);
-                }
-
-            ip = IP2Bit(results);
-
-            counters->blacklist_lookup_count++;
-
-            for ( b = 0; b < counters->blacklist_count; b++ )
-                {
-                    if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
-
-                        {
-
-                            pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
-                            counters->blacklist_hit_count++;
-                            pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
-
-                            return(true);
-                        }
-                }
-
+        if (!strcmp(results, "0")) {
+            return(false);
         }
+
+        ip = IP2Bit(results);
+
+        counters->blacklist_lookup_count++;
+
+        for ( b = 0; b < counters->blacklist_count; b++ ) {
+            if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
+
+            {
+
+                pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                counters->blacklist_hit_count++;
+                pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+
+                return(true);
+            }
+        }
+
+    }
 
     return(false);
 }

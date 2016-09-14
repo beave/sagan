@@ -90,55 +90,46 @@ int Sagan_Check_Time(int rule_number)
 
     /* We check if rule extends to a new day */
 
-    if ( rulestruct[rule_number].aetas_start > rulestruct[rule_number].aetas_end )
-        {
-            next_day = 1;
-        }
+    if ( rulestruct[rule_number].aetas_start > rulestruct[rule_number].aetas_end ) {
+        next_day = 1;
+    }
 
     /* We check if current day is not one of our days */
 
-    if ( ! Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) )
-        {
-            off_day = 1;
-        }
+    if ( ! Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) ) {
+        off_day = 1;
+    }
 
     /* We check that we are in the current day || that the previous day is
        one of our days and the rule goes over to a new day */
 
-    if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) || ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current - 1) && next_day == 1) )
-        {
+    if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) || ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current - 1) && next_day == 1) ) {
 
-            /* We check if rule is in current day and does not extend to a new day */
+        /* We check if rule is in current day and does not extend to a new day */
 
-            if ( next_day == 0 && off_day == 0)
-                {
-                    if ( current_time >= rulestruct[rule_number].aetas_start && current_time <= rulestruct[rule_number].aetas_end )
-                        {
-                            return(true);
-                        }
-                }
-
-            /* We check if rule extends to a new day and that we are in a current day */
-
-            if ( next_day == 1 && off_day == 0 )
-                {
-                    if ( current_time >= rulestruct[rule_number].aetas_start || current_time <= rulestruct[rule_number].aetas_end )
-                        {
-                            return(true);
-                        }
-                }
-
-            /* We check if rule is on an off day but the rule rolled into the day */
-
-            if ( next_day == 1 && off_day == 1 )
-                {
-                    if ( current_time <= rulestruct[rule_number].aetas_end )
-                        {
-                            return(true);
-                        }
-                }
-
+        if ( next_day == 0 && off_day == 0) {
+            if ( current_time >= rulestruct[rule_number].aetas_start && current_time <= rulestruct[rule_number].aetas_end ) {
+                return(true);
+            }
         }
+
+        /* We check if rule extends to a new day and that we are in a current day */
+
+        if ( next_day == 1 && off_day == 0 ) {
+            if ( current_time >= rulestruct[rule_number].aetas_start || current_time <= rulestruct[rule_number].aetas_end ) {
+                return(true);
+            }
+        }
+
+        /* We check if rule is on an off day but the rule rolled into the day */
+
+        if ( next_day == 1 && off_day == 1 ) {
+            if ( current_time <= rulestruct[rule_number].aetas_end ) {
+                return(true);
+            }
+        }
+
+    }
 
     return(false);
 }
@@ -150,61 +141,47 @@ int Sagan_Check_Time(int rule_number)
 int Sagan_Check_Day(unsigned char day, int day_current)
 {
 
-    if ( day_current == 0 )
-        {
-            if (( day & SUNDAY ) == SUNDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 0 ) {
+        if (( day & SUNDAY ) == SUNDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 1 )
-        {
-            if (( day & MONDAY ) == MONDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 1 ) {
+        if (( day & MONDAY ) == MONDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 2 )
-        {
-            if (( day & TUESDAY ) == TUESDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 2 ) {
+        if (( day & TUESDAY ) == TUESDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 3 )
-        {
-            if (( day & WEDNESDAY ) == WEDNESDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 3 ) {
+        if (( day & WEDNESDAY ) == WEDNESDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 4 )
-        {
-            if (( day & THURSDAY ) == THURSDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 4 ) {
+        if (( day & THURSDAY ) == THURSDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 5 )
-        {
-            if (( day & FRIDAY ) == FRIDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 5 ) {
+        if (( day & FRIDAY ) == FRIDAY ) {
+            return(true);
         }
+    }
 
-    if ( day_current == 6 )
-        {
-            if (( day & SATURDAY ) == SATURDAY )
-                {
-                    return(true);
-                }
+    if ( day_current == 6 ) {
+        if (( day & SATURDAY ) == SATURDAY ) {
+            return(true);
         }
+    }
 
     return(false);
 

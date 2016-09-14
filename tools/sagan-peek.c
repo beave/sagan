@@ -67,10 +67,9 @@ int object_check( char *object )
 
     struct stat object_check;
 
-    if ( ( stat(object, &object_check) == -1 ))
-        {
-            return(false);
-        }
+    if ( ( stat(object, &object_check) == -1 )) {
+        return(false);
+    }
 
     return(true);
 }
@@ -140,36 +139,34 @@ int main(int argc, char **argv)
 
     /* So users can point at the proper IPC location */
 
-    if ( argc == 2 )
-        {
-            ipc_directory = argv[1];
-        }
+    if ( argc == 2 ) {
+        ipc_directory = argv[1];
+    }
 
     /* Load the "counters" first.  The "counters" keep track of the number of elements on the
      * other arrays */
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, COUNTERS_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
     if ( ( shm_counters = open(tmp_object_check, O_RDONLY ) ) == -1 )
 
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() for counters (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    {
+        fprintf(stderr, "[%s, line %d] Cannot open() for counters (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     if (( counters_ipc = mmap(0, sizeof(_Sagan_IPC_Counters) , PROT_READ, MAP_SHARED, shm_counters, 0)) == MAP_FAILED )
 
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory for counters object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    {
+        fprintf(stderr, "[%s, line %d] Error allocating memory for counters object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm_counters);
 
@@ -177,359 +174,313 @@ int main(int argc, char **argv)
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_SRC_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ( (shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() for thresh_by_src (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ( (shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() for thresh_by_src (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) + (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src), PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) + (sizeof(thresh_by_src_ipc) * counters_ipc->thresh_count_by_src), PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
-    if ( counters_ipc->thresh_count_by_src >= 1 )
-        {
+    if ( counters_ipc->thresh_count_by_src >= 1 ) {
 
 
-            printf("\n***  Threshold by source (%d) ***\n", counters_ipc->thresh_count_by_src);
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  Threshold by source (%d) ***\n", counters_ipc->thresh_count_by_src);
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
-            for ( i = 0; i < counters_ipc->thresh_count_by_src; i++)
-                {
+        for ( i = 0; i < counters_ipc->thresh_count_by_src; i++) {
 
-                    ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
+            ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
 
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
-                }
         }
+    }
 
     /*** Get "threshold by destination" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_DST_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) + (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) + (sizeof(thresh_by_dst_ipc) * counters_ipc->thresh_count_by_dst) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
 
-    if ( counters_ipc->thresh_count_by_dst >= 1 )
-        {
+    if ( counters_ipc->thresh_count_by_dst >= 1 ) {
 
 
-            printf("\n***  Threshold by destination (%d)***\n", counters_ipc->thresh_count_by_dst );
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  Threshold by destination (%d)***\n", counters_ipc->thresh_count_by_dst );
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
-            for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
-                {
-                    ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
+        for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++) {
+            ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
 
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
-                }
-
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
         }
+
+    }
 
     /*** Get "threshold by username" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_USERNAME_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) + (sizeof(thresh_by_username_ipc) *  counters_ipc->thresh_count_by_username ), PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) + (sizeof(thresh_by_username_ipc) *  counters_ipc->thresh_count_by_username ), PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
 
-    if ( counters_ipc->thresh_count_by_username >= 1 )
-        {
+    if ( counters_ipc->thresh_count_by_username >= 1 ) {
 
 
-            printf("\n***  Threshold by username (%d) ***\n", counters_ipc->thresh_count_by_username);
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  Threshold by username (%d) ***\n", counters_ipc->thresh_count_by_username);
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
 
-            for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
-                {
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
-                }
+        for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
+    }
 
     /*** Get "after by source" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_SRC_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) + (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src ),  PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) + (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src ),  PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
-    if ( counters_ipc->after_count_by_src >= 1 )
-        {
+    if ( counters_ipc->after_count_by_src >= 1 ) {
 
-            printf("\n***  After by source (%d) ***\n", counters_ipc->after_count_by_src);
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  After by source (%d) ***\n", counters_ipc->after_count_by_src);
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
-            for ( i = 0; i < counters_ipc->after_count_by_src; i++)
-                {
-                    ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
-                }
+        for ( i = 0; i < counters_ipc->after_count_by_src; i++) {
+            ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
+    }
 
 
     /*** Get "After by destination" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_DST_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) + (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) + (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
-    if ( counters_ipc->after_count_by_dst >= 1 )
-        {
+    if ( counters_ipc->after_count_by_dst >= 1 ) {
 
-            printf("\n***  After by destination (%d)***\n", counters_ipc->after_count_by_dst);
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  After by destination (%d)***\n", counters_ipc->after_count_by_dst);
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
-            for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
-                {
-                    ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
+        for ( i = 0; i < counters_ipc->after_count_by_dst; i++) {
+            ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
 
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
-                }
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
+    }
 
     /*** Get "after by username" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_USERNAME_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) + (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) + (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
 
-    if ( counters_ipc->after_count_by_username >= 1 )
-        {
+    if ( counters_ipc->after_count_by_username >= 1 ) {
 
-            printf("\n***  After by username ***(%d)\n", counters_ipc->after_count_by_username);
-            printf("---------------------------------------------------------------------------------\n");
-            printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
-            printf("---------------------------------------------------------------------------------\n");
-
+        printf("\n***  After by username ***(%d)\n", counters_ipc->after_count_by_username);
+        printf("---------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        printf("---------------------------------------------------------------------------------\n");
 
 
-            for ( i = 0; i < counters_ipc->after_count_by_username; i++)
-                {
-                    printf("%-16s| %-15d| %-21s| %-11s| %d\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
-                }
+
+        for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
+    }
 
     /*** Get "flowbit" data ***/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, FLOWBIT_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            usage();
-            exit(1);
-        }
+    if ( object_check(tmp_object_check) == false ) {
+        fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+        usage();
+        exit(1);
+    }
 
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+        fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
-    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) + (sizeof(_Sagan_IPC_Flowbit) * counters_ipc->flowbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
+    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) + (sizeof(_Sagan_IPC_Flowbit) * counters_ipc->flowbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+        fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+        exit(1);
+    }
 
     close(shm);
 
 
-    if ( counters_ipc->flowbit_count >= 1 )
-        {
+    if ( counters_ipc->flowbit_count >= 1 ) {
 
-            printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
-            printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-            printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-            printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+        printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
+        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 
-            for ( i = 0; i < counters_ipc->flowbit_count; i++)
-                {
+        for ( i = 0; i < counters_ipc->flowbit_count; i++) {
 
-                    ip_addr_src.s_addr = htonl(flowbit_ipc[i].ip_src);
-                    ip_addr_dst.s_addr = htonl(flowbit_ipc[i].ip_dst);
+            ip_addr_src.s_addr = htonl(flowbit_ipc[i].ip_src);
+            ip_addr_dst.s_addr = htonl(flowbit_ipc[i].ip_dst);
 
-                    if ( flowbit_ipc[i].flowbit_state == 1 )
-                        {
-                            printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
-                        }
-                    else
-                        {
-                            printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
-                        }
+            if ( flowbit_ipc[i].flowbit_state == 1 ) {
+                printf("ACTIVE   | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_date), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+            } else {
+                printf("INACTIVE | %-25s| %-16s| %-16s| %-21s| %d (%s)\n", flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), u32_time_to_human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].expire));
+            }
 
-                }
         }
+    }
 
     /**** Get "Tracking" data (if enabled) ****/
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, CLIENT_TRACK_IPC_FILE);
 
-    if ( object_check(tmp_object_check) == true )
-        {
+    if ( object_check(tmp_object_check) == true ) {
 
-            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-                {
-                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
+        if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 ) {
+            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+            exit(1);
+        }
+
+        if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) + (sizeof(_Sagan_Track_Clients_IPC) * counters_ipc->track_clients_client_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+            exit(1);
+        }
+
+        close(shm);
+
+
+        if ( counters_ipc->track_clients_client_count >= 1 ) {
+
+            printf("\n*** Client Tracking (%d) ****\n", counters_ipc->track_clients_client_count);
+            printf("-----------------------------------------------------------------------------------------------\n");
+            printf("%-9s| %-16s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes" );
+            printf("-----------------------------------------------------------------------------------------------\n");
+
+            for ( i = 0; i < counters_ipc->track_clients_client_count; i++) {
+
+                ip_addr_src.s_addr = htonl(SaganTrackClients_ipc[i].host_u32);
+
+                if ( SaganTrackClients_ipc[i].status == 0 ) {
+                    printf("ACTIVE   | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+                } else {
+                    printf("INACTIVE | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+
                 }
 
-            if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) + (sizeof(_Sagan_Track_Clients_IPC) * counters_ipc->track_clients_client_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-                {
-                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
+            }
+        }
 
-            close(shm);
+        close(shm);
 
-
-            if ( counters_ipc->track_clients_client_count >= 1 )
-                {
-
-                    printf("\n*** Client Tracking (%d) ****\n", counters_ipc->track_clients_client_count);
-                    printf("-----------------------------------------------------------------------------------------------\n");
-                    printf("%-9s| %-16s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes" );
-                    printf("-----------------------------------------------------------------------------------------------\n");
-
-                    for ( i = 0; i < counters_ipc->track_clients_client_count; i++)
-                        {
-
-                            ip_addr_src.s_addr = htonl(SaganTrackClients_ipc[i].host_u32);
-
-                            if ( SaganTrackClients_ipc[i].status == 0 )
-                                {
-                                    printf("ACTIVE   | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
-                                }
-                            else
-                                {
-                                    printf("INACTIVE | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
-
-                                }
-
-                        }
-                }
-
-            close(shm);
-
-        } /* object_check */
+    } /* object_check */
 
     return(0);		/* Clean exit */
 

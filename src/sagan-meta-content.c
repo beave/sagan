@@ -54,54 +54,39 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_con
 
     /* Normal "meta_content" search */
 
-    if ( rulestruct[rule_position].meta_content_not[z] == 0 )
-        {
-            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
-                {
-                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-                        {
-                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
-                                {
-                                    return(true);
-                                }
-                        }
-                    else
-                        {
-                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
-                                {
-                                    return(true);
-                                }
-                        }
+    if ( rulestruct[rule_position].meta_content_not[z] == 0 ) {
+        for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ ) {
+            if ( rulestruct[rule_position].meta_content_case[z] == 1 ) {
+                if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true)) {
+                    return(true);
                 }
+            } else {
+                if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i])) {
+                    return(true);
+                }
+            }
+        }
 
-            return(false);
+        return(false);
+
+    } else {
+
+        for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ ) {
+            if ( rulestruct[rule_position].meta_content_case[z] == 1 ) {
+                if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true)) {
+                    return(false);
+                }
+            } else {
+
+                if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i])) {
+                    return(false);
+                }
+            }
 
         }
-    else
-        {
 
-            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
-                {
-                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
-                        {
-                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
-                                {
-                                    return(false);
-                                }
-                        }
-                    else
-                        {
+        return(true);
 
-                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
-                                {
-                                    return(false);
-                                }
-                        }
-
-                }
-
-            return(true);
-
-        } /* End of "else" meta_content_not[z] == 0 */
+    } /* End of "else" meta_content_not[z] == 0 */
 
 } /* End of Sagan_Meta_Content_Search() */

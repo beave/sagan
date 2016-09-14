@@ -262,8 +262,7 @@ free slot for a blocking request */
 
 /* Variable Definitions */
 
-typedef struct _blockinfo		/* Block info structure */
-{
+typedef struct _blockinfo {	/* Block info structure */
     unsigned long sig_id;			/* Snort Signature ID (for logging/presentation) */
     unsigned long blockip;			/* IP to be blocked */
     unsigned long peerip;			/* Peer IP (if connection) */
@@ -275,8 +274,7 @@ typedef struct _blockinfo		/* Block info structure */
     short block;				/* block or unblock flag --- this flag is dynamically changed */
 }	BLOCKINFO;
 
-typedef struct _oldblockinfo		/* Block info structure */
-{
+typedef struct _oldblockinfo {	/* Block info structure */
     unsigned long blockip;			/* IP to be blocked */
     unsigned long peerip;			/* Peer IP (if connection) */
     time_t duration;			/* Duration of block */
@@ -287,8 +285,7 @@ typedef struct _oldblockinfo		/* Block info structure */
     short block;				/* block or unblock flag --- this flag is dynamically changed */
 }	OLDBLOCKINFO;
 
-typedef struct _blockqueue		/* queue for blocking requests */
-{
+typedef struct _blockqueue {	/* queue for blocking requests */
     BLOCKINFO blockinfo;			/* COPY of block request (not just pointer) */
     volatile unsigned long processing;	/* how many plugins are processing this request */
     unsigned long originator;		/* Orignating IP address so that forwarder can skip sending a request back to another Snortsam if it received it from there. */
@@ -297,24 +294,21 @@ typedef struct _blockqueue		/* queue for blocking requests */
     int reload;				/* Set TRUE on a queue entry caused by a USR1 reload. */
 }	BLOCKQUEUE;
 
-typedef struct _datalist		/* List of plugin devices/parameters */
-{
+typedef struct _datalist {	/* List of plugin devices/parameters */
     void *data;				/* Pointer to list data */
     volatile unsigned long readpointer;	/* Pointer to queue request */
     volatile int busy;			/* Busy/Free flag */
     struct _datalist *next;		/* Pointer to next element */
 }	DATALIST;
 
-typedef struct _threadtable		/* This table is allocated with room for all possible threads. It keeps track of: */
-{
+typedef struct _threadtable {	/* This table is allocated with room for all possible threads. It keeps track of: */
     volatile pthread_t threadid;	/* a) the Thread ID so that getout() can cancel all running threads before exit (handle under Windows), */
     volatile unsigned long winthreadid;	/*    Also, the Windows thread ID. Under Windows, this is the ID, above is the handle. */
     unsigned long plugin;		/* b) the plugin parameter for a thread, */
     DATALIST *datap;			/* c) the data pointer parameter for a thread. */
 }	THREADTABLE;
 
-typedef struct _snortsensor		/* structure for a snort sensor */
-{
+typedef struct _snortsensor {	/* structure for a snort sensor */
     struct _snortsensor				*next;
     struct in_addr				snortip;		/* IP address of sensor */
     BLOCKINFO					*rbfield;		/* an array of block structs for rollback */
@@ -336,8 +330,7 @@ typedef struct _snortsensor		/* structure for a snort sensor */
     unsigned char				packetversion;		/* The packet version the sensor uses. */
 }	SENSORLIST;
 
-typedef struct _FWsampacket				/* 2 blocks (3rd block is header from TwoFish) */
-{
+typedef struct _FWsampacket {			/* 2 blocks (3rd block is header from TwoFish) */
     unsigned short		endiancheck;		/* 0  */
     unsigned char		srcip[4];		/* 2  */
     unsigned char		dstip[4];		/* 6  */
@@ -354,8 +347,7 @@ typedef struct _FWsampacket				/* 2 blocks (3rd block is header from TwoFish) */
     unsigned char		fluff;			/* 31 */
 }	FWsamPacket;					/* 32 bytes in size */
 
-typedef struct _Old13FWsampacket			/* about 2 blocks (3rd block is header from TwoFish) */
-{
+typedef struct _Old13FWsampacket {		/* about 2 blocks (3rd block is header from TwoFish) */
     unsigned short		endiancheck;		/* 0  */
     unsigned char		srcip[4];		/* 2  */
     unsigned char		dstip[4];		/* 6  */
@@ -370,32 +362,28 @@ typedef struct _Old13FWsampacket			/* about 2 blocks (3rd block is header from T
     unsigned char		status;			/* 26 */
 }	Old13FWsamPacket;				/* 27 */
 
-typedef struct _dontblocklist		/* list of IP's/nets never to be blocked */
-{
+typedef struct _dontblocklist {	/* list of IP's/nets never to be blocked */
     struct _dontblocklist		*next;
     struct in_addr			ip;
     unsigned long			mask;
     int					block;
 }	DONTBLOCKLIST;
 
-typedef struct _onlyblocklist		/* list of IP's/nets never to be blocked */
-{
+typedef struct _onlyblocklist {	/* list of IP's/nets never to be blocked */
     struct _onlyblocklist		*next;
     struct in_addr			ip;
     unsigned long			mask;
     int					block;
 }	ONLYBLOCKLIST;
 
-typedef struct _overridelist		/* list of IP's/nets where block duration is overridden */
-{
+typedef struct _overridelist {	/* list of IP's/nets where block duration is overridden */
     struct _overridelist		*next;
     struct in_addr			ip;
     unsigned long			mask;
     time_t				newduration;
 }	OVERRIDELIST;
 
-typedef struct _limitlist		/* list of IP's/nets where block duration is limited */
-{
+typedef struct _limitlist {	/* list of IP's/nets where block duration is limited */
     struct _limitlist			*next;
     struct in_addr			ip;
     unsigned long			mask;
@@ -403,16 +391,14 @@ typedef struct _limitlist		/* list of IP's/nets where block duration is limited 
     int					upper;
 }	LIMITLIST;
 
-typedef struct _acceptlist			/* list of authorized snort sensors (with their initial key) */
-{
+typedef struct _acceptlist {		/* list of authorized snort sensors (with their initial key) */
     struct _acceptlist			*next;
     struct in_addr			ip;
     unsigned long			mask;
     unsigned char			initialkey[TwoFish_KEY_LENGTH+2];
 }	ACCEPTLIST;
 
-typedef struct _sidfilterlist			/* list of accepted or denied SIDs from listed sensor/network */
-{
+typedef struct _sidfilterlist {		/* list of accepted or denied SIDs from listed sensor/network */
     struct _sidfilterlist		*next;
     struct in_addr			ip;
     unsigned long			mask;
@@ -421,13 +407,11 @@ typedef struct _sidfilterlist			/* list of accepted or denied SIDs from listed s
     int					typedenied;
 }	SIDFILTERLIST;
 
-typedef struct _fwdata
-{
+typedef struct _fwdata {
     struct in_addr			ip;
 }   FWDATA;
 
-typedef struct _blockhistory
-{
+typedef struct _blockhistory {
     struct _blockhistory		*next;
     BLOCKINFO				blockinfo;
 }	BLOCKHISTORY;
@@ -515,8 +499,7 @@ int FWsamBlock(char *);
 
 /* Typedefs */
 
-typedef struct _FWsamstation            /* structure of a mgmt station */
-{
+typedef struct _FWsamstation {          /* structure of a mgmt station */
     unsigned short                  myseqno;
     unsigned short                  stationseqno;
     unsigned char                   mykeymod[4];

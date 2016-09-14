@@ -64,21 +64,17 @@ void Sagan_Ext_Thread ( _SaganEvent *Event, char *execute_script )
     char *tmpref = NULL;
     char tmp[6];
 
-    if ( debug->debugexternal )
-        {
-            Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
-        }
+    if ( debug->debugexternal ) {
+        Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+    }
 
     tmpref = Reference_Lookup( Event->found, 1 );
 
-    if ( Event->drop == 1 )
-        {
-            snprintf(tmp, sizeof(tmp), "True");
-        }
-    else
-        {
-            snprintf(tmp, sizeof(tmp), "False");
-        }
+    if ( Event->drop == 1 ) {
+        snprintf(tmp, sizeof(tmp), "True");
+    } else {
+        snprintf(tmp, sizeof(tmp), "False");
+    }
 
     snprintf(data, sizeof(data), "\n\
 ID:%lu:%s\n\
@@ -116,47 +112,42 @@ Syslog Priority:%s\n\
 
     pthread_mutex_lock( &ext_mutex );
 
-    if ( pipe(in) < 0 )
-        {
-            Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
-        }
+    if ( pipe(in) < 0 ) {
+        Remove_Lock_File();
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
+    }
 
 
-    if ( pipe(out) < 0 )
-        {
-            Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
-        }
+    if ( pipe(out) < 0 ) {
+        Remove_Lock_File();
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
+    }
 
     pid=fork();
-    if ( pid < 0 )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
-        }
-    else if ( pid == 0 )
-        {
-            /* Causes problems with alert.log */
+    if ( pid < 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
+    } else if ( pid == 0 ) {
+        /* Causes problems with alert.log */
 
-            close(0);
-            close(1);
-            close(2);
+        close(0);
+        close(1);
+        close(2);
 
-            dup2(in[0],0);		// Stdin..
-            dup2(out[1],1);
-            dup2(out[1],2);
+        dup2(in[0],0);		// Stdin..
+        dup2(out[1],1);
+        dup2(out[1],2);
 
-            close(in[1]);
-            close(out[0]);
+        close(in[1]);
+        close(out[0]);
 
-            //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-            //execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+        //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
+        //execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
 
-            execl(execute_script, execute_script, NULL, (char *)NULL);
+        execl(execute_script, execute_script, NULL, (char *)NULL);
 
-            Remove_Lock_File();
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
-        }
+        Remove_Lock_File();
+        Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
+    }
 
     close(in[0]);
     close(out[1]);
@@ -174,10 +165,9 @@ Syslog Priority:%s\n\
 
     pthread_mutex_unlock( &ext_mutex );
 
-    if ( debug->debugexternal == 1 )
-        {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
-        }
+    if ( debug->debugexternal == 1 ) {
+        Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+    }
 
 }
 

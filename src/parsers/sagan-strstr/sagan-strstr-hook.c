@@ -71,12 +71,11 @@ char *Sagan_strstr(const char *_x, const char *_y)
 
     size_t    len = strlen (_y);
     if (!*_y) return (char *) _x;
-    for (;;)
-        {
-            if (!(_x = strchr (_x, *_y))) return NULL;
-            if (!strncmp (_x, _y, len)) return (char *) _x;
-            _x++;
-        }
+    for (;;) {
+        if (!(_x = strchr (_x, *_y))) return NULL;
+        if (!strncmp (_x, _y, len)) return (char *) _x;
+        _x++;
+    }
 }
 
 #endif
@@ -100,10 +99,9 @@ char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
 
     strlcpy(needle_string, _y, sizeof(needle_string));
 
-    if ( needle_lower )
-        {
-            To_LowerC(needle_string);
-        }
+    if ( needle_lower ) {
+        To_LowerC(needle_string);
+    }
 
     p = Sagan_strstr( haystack_string, needle_string);
 

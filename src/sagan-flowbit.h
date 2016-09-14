@@ -28,8 +28,7 @@ int Sagan_Flowbit_Type ( char *, int, const char *);
 void Sagan_Flowbit_Cleanup(void);
 
 typedef struct _Sagan_Flowbit_Track _Sagan_Flowbit_Track;
-struct _Sagan_Flowbit_Track
-{
+struct _Sagan_Flowbit_Track {
     char	flowbit_name[64];
     int		flowbit_timeout;
 };
@@ -37,14 +36,13 @@ struct _Sagan_Flowbit_Track
 
 
 typedef struct _Sagan_IPC_Flowbit _Sagan_IPC_Flowbit;
-struct _Sagan_IPC_Flowbit
-{
+struct _Sagan_IPC_Flowbit {
     char flowbit_name[64];
     sbool flowbit_state;
     uint32_t ip_src;
     uint32_t ip_dst;
-    char username[64]; 
-    uintmax_t flowbit_date; 
+    char username[64];
+    uintmax_t flowbit_date;
     uintmax_t flowbit_expire;
     int expire;
 };

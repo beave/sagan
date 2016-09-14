@@ -25,8 +25,7 @@
 
 /* Classification strucure */
 typedef struct _Class_Struct _Class_Struct;
-struct _Class_Struct
-{
+struct _Class_Struct {
     unsigned s_size_class;
     char s_shortname[512];
     char s_desc[512];
