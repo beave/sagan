@@ -58,12 +58,12 @@ struct _Sagan_IPC_Flowbit *flowbit_ipc;
 struct _SaganConfig *config;
 
 pthread_mutex_t CounterMutex;
-        
+
 pthread_mutex_t After_By_Src_Mutex;
 pthread_mutex_t After_By_Dst_Mutex;
 pthread_mutex_t After_By_Dst_Port_Mutex;
 pthread_mutex_t After_By_Username_Mutex;
-        
+
 pthread_mutex_t Thresh_By_Src_Mutex;
 pthread_mutex_t Thresh_By_Dst_Mutex;
 pthread_mutex_t Thresh_By_Dst_Port_Mutex;
@@ -117,7 +117,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         utime = atol(timet);
 
         Sagan_File_Lock(config->shm_after_by_src);
-	pthread_mutex_lock(&After_By_Src_Mutex); 
+        pthread_mutex_lock(&After_By_Src_Mutex);
 
         struct after_by_src_ipc *temp_afterbysrc_ipc;
         temp_afterbysrc_ipc = malloc(sizeof(struct after_by_src_ipc) * config->max_after_by_src);
@@ -157,7 +157,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_src.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbysrc_ipc);
-	    pthread_mutex_unlock(&After_By_Src_Mutex); 
+            pthread_mutex_unlock(&After_By_Src_Mutex);
             Sagan_File_Unlock(config->shm_after_by_src);
             return(1);
 
@@ -166,7 +166,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_src", __FILE__, __LINE__, new_count, old_count);
         free(temp_afterbysrc_ipc);
 
-	pthread_mutex_unlock(&After_By_Src_Mutex); 
+        pthread_mutex_unlock(&After_By_Src_Mutex);
         Sagan_File_Unlock(config->shm_after_by_src);
         return(0);
 
@@ -185,7 +185,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_after_by_dst);
-	pthread_mutex_lock(&After_By_Dst_Mutex); 
+        pthread_mutex_lock(&After_By_Dst_Mutex);
 
         struct after_by_dst_ipc *temp_afterbydst_ipc;
         temp_afterbydst_ipc = malloc(sizeof(struct after_by_dst_ipc) * config->max_after_by_dst);
@@ -225,7 +225,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dst.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbydst_ipc);
-	    pthread_mutex_unlock(&After_By_Dst_Mutex); 
+            pthread_mutex_unlock(&After_By_Dst_Mutex);
             Sagan_File_Unlock(config->shm_after_by_dst);
             return(1);
 
@@ -234,7 +234,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dst", __FILE__, __LINE__, new_count, old_count);
         free(temp_afterbydst_ipc);
 
-	pthread_mutex_unlock(&After_By_Dst_Mutex); 
+        pthread_mutex_unlock(&After_By_Dst_Mutex);
         Sagan_File_Unlock(config->shm_after_by_dst);
         return(0);
 
@@ -252,7 +252,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_after_by_dstport);
-	pthread_mutex_lock(&After_By_Dst_Port_Mutex);
+        pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
         struct after_by_dstport_ipc *temp_afterbydstport_ipc;
         temp_afterbydstport_ipc = malloc(sizeof(struct after_by_dstport_ipc) * config->max_after_by_dstport);
@@ -292,7 +292,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbydstport_ipc);
-	    pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
+            pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
             Sagan_File_Unlock(config->shm_after_by_dstport);
             return(1);
 
@@ -301,7 +301,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dstport", __FILE__, __LINE__, new_count, old_count);
         free(temp_afterbydstport_ipc);
 
-	pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
+        pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
         Sagan_File_Unlock(config->shm_after_by_dstport);
         return(0);
 
@@ -320,7 +320,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_after_by_username);
-	pthread_mutex_lock(&After_By_Username_Mutex);
+        pthread_mutex_lock(&After_By_Username_Mutex);
 
         struct after_by_username_ipc *temp_afterbyusername_ipc;
         temp_afterbyusername_ipc = malloc(sizeof(struct after_by_username_ipc) * config->max_after_by_username);
@@ -361,7 +361,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_username.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbyusername_ipc);
-	    pthread_mutex_unlock(&After_By_Username_Mutex);
+            pthread_mutex_unlock(&After_By_Username_Mutex);
             Sagan_File_Unlock(config->shm_after_by_username);
             return(1);
 
@@ -370,7 +370,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_username", __FILE__, __LINE__, new_count, old_count);
         free(temp_afterbyusername_ipc);
 
-	pthread_mutex_unlock(&After_By_Username_Mutex); 
+        pthread_mutex_unlock(&After_By_Username_Mutex);
         Sagan_File_Unlock(config->shm_after_by_username);
         return(0);
     }
@@ -388,7 +388,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_thresh_by_src);
-	pthread_mutex_lock(&Thresh_By_Src_Mutex);
+        pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
         struct thresh_by_src_ipc *temp_threshbysrc_ipc;
         temp_threshbysrc_ipc = malloc(sizeof(struct thresh_by_src_ipc) * config->max_threshold_by_src);
@@ -428,7 +428,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_src.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbysrc_ipc);
-	    pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+            pthread_mutex_unlock(&Thresh_By_Src_Mutex);
             Sagan_File_Unlock(config->shm_thresh_by_src);
             return(1);
 
@@ -437,7 +437,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_src", __FILE__, __LINE__, new_count, old_count);
         free(temp_threshbysrc_ipc);
 
-	pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+        pthread_mutex_unlock(&Thresh_By_Src_Mutex);
         Sagan_File_Unlock(config->shm_thresh_by_src);
         return(0);
 
@@ -457,7 +457,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_thresh_by_dst);
-	pthread_mutex_lock(&Thresh_By_Dst_Mutex);
+        pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
         struct thresh_by_dst_ipc *temp_threshbydst_ipc;
         temp_threshbydst_ipc = malloc(sizeof(struct thresh_by_dst_ipc) * config->max_threshold_by_dst);
@@ -497,7 +497,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dst.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbydst_ipc);
-	    pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
+            pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
             Sagan_File_Unlock(config->shm_thresh_by_dst);
             return(1);
 
@@ -506,7 +506,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dst", __FILE__, __LINE__, new_count, old_count);
         free(temp_threshbydst_ipc);
 
-	pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
+        pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
         Sagan_File_Unlock(config->shm_thresh_by_dst);
         return(0);
 
@@ -565,7 +565,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbydstport_ipc);
-	    pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
+            pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
             Sagan_File_Unlock(config->shm_thresh_by_dst);
             return(1);
 
@@ -593,7 +593,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_thresh_by_username);
-	pthread_mutex_lock(&Thresh_By_Username_Mutex);
+        pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
         struct thresh_by_username_ipc *temp_threshbyusername_ipc;
         temp_threshbyusername_ipc = malloc(sizeof(struct thresh_by_username_ipc) * config->max_threshold_by_username);
@@ -634,7 +634,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_username.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbyusername_ipc);
-	    pthread_mutex_unlock(&Thresh_By_Username_Mutex);
+            pthread_mutex_unlock(&Thresh_By_Username_Mutex);
             Sagan_File_Unlock(config->shm_thresh_by_username);
             return(1);
 
@@ -643,7 +643,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_username", __FILE__, __LINE__, new_count, old_count);
         free(temp_threshbyusername_ipc);
 
-	pthread_mutex_unlock(&Thresh_By_Username_Mutex);
+        pthread_mutex_unlock(&Thresh_By_Username_Mutex);
         Sagan_File_Unlock(config->shm_thresh_by_username);
         return(0);
     }
@@ -661,7 +661,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         old_count = 0;
 
         Sagan_File_Lock(config->shm_flowbit);
-	pthread_mutex_lock(&Flowbit_Mutex);
+        pthread_mutex_lock(&Flowbit_Mutex);
 
         struct _Sagan_IPC_Flowbit *temp_flowbit_ipc;
         temp_flowbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flowbit) * config->max_flowbits);
@@ -704,7 +704,7 @@ sbool Sagan_Clean_IPC_Object( int type )
 
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flowbit.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_flowbit_ipc);
-	    pthread_mutex_unlock(&Flowbit_Mutex);
+            pthread_mutex_unlock(&Flowbit_Mutex);
             Sagan_File_Unlock(config->shm_flowbit);
             return(1);
         }
@@ -712,7 +712,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flowbit.", __FILE__, __LINE__, new_count, old_count);
         free(temp_flowbit_ipc);
 
-	pthread_mutex_unlock(&Flowbit_Mutex);
+        pthread_mutex_unlock(&Flowbit_Mutex);
         Sagan_File_Unlock(config->shm_flowbit);
         return(0);
 

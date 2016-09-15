@@ -430,11 +430,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
 
                             Sagan_File_Lock(config->shm_flowbit);
-			    pthread_mutex_lock(&Flowbit_Mutex); 
+                            pthread_mutex_lock(&Flowbit_Mutex);
 
                             flowbit_ipc[a].flowbit_state = 0;
 
-			    pthread_mutex_unlock(&Flowbit_Mutex);
+                            pthread_mutex_unlock(&Flowbit_Mutex);
                             Sagan_File_Unlock(config->shm_flowbit);
 
                             flowbit_unset_match = 1;
@@ -453,11 +453,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             }
 
                             Sagan_File_Lock(config->shm_flowbit);
-			    pthread_mutex_lock(&Flowbit_Mutex);
+                            pthread_mutex_lock(&Flowbit_Mutex);
 
                             flowbit_ipc[a].flowbit_state = 0;
 
-			    pthread_mutex_unlock(&Flowbit_Mutex);
+                            pthread_mutex_unlock(&Flowbit_Mutex);
                             Sagan_File_Unlock(config->shm_flowbit);
 
                             flowbit_unset_match = 1;
@@ -476,11 +476,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             }
 
                             Sagan_File_Lock(config->shm_flowbit);
-			    pthread_mutex_lock(&Flowbit_Mutex);
+                            pthread_mutex_lock(&Flowbit_Mutex);
 
                             flowbit_ipc[a].flowbit_state = 0;
 
-			    pthread_mutex_unlock(&Flowbit_Mutex);
+                            pthread_mutex_unlock(&Flowbit_Mutex);
                             Sagan_File_Unlock(config->shm_flowbit);
 
                             flowbit_unset_match = 1;
@@ -498,11 +498,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             }
 
                             Sagan_File_Lock(config->shm_flowbit);
-			    pthread_mutex_lock(&Flowbit_Mutex);
+                            pthread_mutex_lock(&Flowbit_Mutex);
 
                             flowbit_ipc[a].flowbit_state = 0;
 
-			    pthread_mutex_unlock(&Flowbit_Mutex);
+                            pthread_mutex_unlock(&Flowbit_Mutex);
                             Sagan_File_Unlock(config->shm_flowbit);
 
                             flowbit_unset_match = 1;
@@ -522,11 +522,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             }
 
                             Sagan_File_Lock(config->shm_flowbit);
-			    pthread_mutex_lock(&Flowbit_Mutex);
+                            pthread_mutex_lock(&Flowbit_Mutex);
 
                             flowbit_ipc[a].flowbit_state = 0;
-			
-    			    pthread_mutex_unlock(&Flowbit_Mutex);
+
+                            pthread_mutex_unlock(&Flowbit_Mutex);
                             Sagan_File_Unlock(config->shm_flowbit);
 
                             flowbit_unset_match = 1;
@@ -567,7 +567,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                         flowbit_ipc[a].ip_dst == ip_dst ) {
 
                         Sagan_File_Lock(config->shm_flowbit);
-			pthread_mutex_lock(&Flowbit_Mutex);
+                        pthread_mutex_lock(&Flowbit_Mutex);
 
                         flowbit_ipc[a].flowbit_date = atol(timet);
                         flowbit_ipc[a].flowbit_expire = atol(timet) + rulestruct[rule_position].flowbit_timeout[i];
@@ -577,7 +577,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set\" for flowbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_flowbit_name, i, flowbit_ipc[i].flowbit_expire, rulestruct[rule_position].flowbit_timeout[i], flowbit_ipc[a].ip_src, flowbit_ipc[a].ip_dst);
                         }
 
-			pthread_mutex_unlock(&Flowbit_Mutex);
+                        pthread_mutex_unlock(&Flowbit_Mutex);
                         Sagan_File_Unlock(config->shm_flowbit);
 
                         flowbit_match = 1;
@@ -619,7 +619,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
             if ( Sagan_Clean_IPC_Object(FLOWBIT) == 0 ) {
 
                 Sagan_File_Lock(config->shm_flowbit);
-		pthread_mutex_lock(&Flowbit_Mutex);
+                pthread_mutex_lock(&Flowbit_Mutex);
 
                 flowbit_ipc[counters_ipc->flowbit_count].ip_src = ip_src;
                 flowbit_ipc[counters_ipc->flowbit_count].ip_dst = ip_dst;
@@ -630,7 +630,7 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
 
                 strlcpy(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name, flowbit_track[i].flowbit_name, sizeof(flowbit_ipc[counters_ipc->flowbit_count].flowbit_name));
 
-		pthread_mutex_unlock(&Flowbit_Mutex);
+                pthread_mutex_unlock(&Flowbit_Mutex);
                 Sagan_File_Unlock(config->shm_flowbit);
 
                 if ( debug->debugflowbit) {
@@ -638,11 +638,11 @@ void Sagan_Flowbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char )
                 }
 
                 Sagan_File_Lock(config->shm_counters);
-		pthread_mutex_lock(&CounterMutex);
+                pthread_mutex_lock(&CounterMutex);
 
                 counters_ipc->flowbit_count++;
 
-		pthread_mutex_unlock(&CounterMutex);
+                pthread_mutex_unlock(&CounterMutex);
                 Sagan_File_Unlock(config->shm_counters);
 
             }
