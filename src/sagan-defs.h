@@ -140,9 +140,11 @@
 #define THRESH_BY_SRC_IPC_FILE "sagan-thresh-by-source.shared"
 #define THRESH_BY_DST_IPC_FILE "sagan-thresh-by-destination.shared"
 #define THRESH_BY_DSTPORT_IPC_FILE "sagan-thresh-by-destination-port.shared"
+#define THRESH_BY_SRCPORT_IPC_FILE "sagan-thresh-by-source-port.shared"
 #define THRESH_BY_USERNAME_IPC_FILE "sagan-thresh-by-username.shared"
 #define AFTER_BY_SRC_IPC_FILE "sagan-after-by-source.shared"
 #define AFTER_BY_DST_IPC_FILE "sagan-after-by-destination.shared"
+#define AFTER_BY_SRCPORT_IPC_FILE "sagan-after-by-source-port.shared"
 #define AFTER_BY_DSTPORT_IPC_FILE "sagan-after-by-destination-port.shared"
 #define AFTER_BY_USERNAME_IPC_FILE "sagan-after-by-username.shared"
 #define CLIENT_TRACK_IPC_FILE "sagan-track-clients.shared"
@@ -152,11 +154,13 @@
 #define DEFAULT_IPC_CLIENT_TRACK_IPC	10000
 #define DEFAULT_IPC_AFTER_BY_SRC	1000000
 #define DEFAULT_IPC_AFTER_BY_DST	1000000
+#define DEFAULT_IPC_AFTER_BY_SRC_PORT   1000000
 #define DEFAULT_IPC_AFTER_BY_DST_PORT	1000000
 #define DEFAULT_IPC_AFTER_BY_USERNAME	10000
 #define DEFAULT_IPC_THRESH_BY_SRC	1000000
 #define DEFAULT_IPC_THRESH_BY_DST	1000000
-#define DEFAULT_IPC_THRESH_BY_DST_PORT	1000000
+#define DEFAULT_IPC_THRESH_BY_SRC_PORT	1000000
+#define DEFAULT_IPC_THRESH_BY_DST_PORT  1000000
 #define DEFAULT_IPC_THRESH_BY_USERNAME	10000
 #define DEFAULT_IPC_FLOWBITS		10000
 
@@ -169,6 +173,8 @@
 #define THRESH_BY_DSTPORT	7
 #define THRESH_BY_USERNAME	8
 #define FLOWBIT			9
+#define THRESH_BY_SRCPORT	10
+#define AFTER_BY_SRCPORT	11
 
 #define PARSE_HASH_MD5		1
 #define	PARSE_HASH_SHA1		2

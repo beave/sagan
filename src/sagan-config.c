@@ -144,14 +144,15 @@ void Load_Config( void )
 
     config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
     config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
+    config->max_threshold_by_srcport = DEFAULT_IPC_THRESH_BY_SRC_PORT;
     config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
     config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
 
     config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
     config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
+    config->max_after_by_srcport = DEFAULT_IPC_AFTER_BY_SRC_PORT;
     config->max_after_by_dstport = DEFAULT_IPC_AFTER_BY_DST_PORT;
     config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
-
 
     config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
 

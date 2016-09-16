@@ -61,11 +61,13 @@ pthread_mutex_t CounterMutex;
 
 pthread_mutex_t After_By_Src_Mutex;
 pthread_mutex_t After_By_Dst_Mutex;
+pthread_mutex_t After_By_Src_Port_Mutex;
 pthread_mutex_t After_By_Dst_Port_Mutex;
 pthread_mutex_t After_By_Username_Mutex;
 
 pthread_mutex_t Thresh_By_Src_Mutex;
 pthread_mutex_t Thresh_By_Dst_Mutex;
+pthread_mutex_t Thresh_By_Src_Port_Mutex;
 pthread_mutex_t Thresh_By_Dst_Port_Mutex;
 pthread_mutex_t Thresh_By_Username_Mutex;
 
@@ -74,10 +76,12 @@ pthread_mutex_t Flowbit_Mutex;
 struct thresh_by_src_ipc *threshbysrc_ipc;
 struct thresh_by_dst_ipc *threshbydst_ipc;
 struct thresh_by_dstport_ipc *threshbydstport_ipc;
+struct thresh_by_srcport_ipc *threshbysrcport_ipc;
 struct thresh_by_username_ipc *threshbyusername_ipc;
 
 struct after_by_src_ipc *afterbysrc_ipc;
 struct after_by_dst_ipc *afterbydst_ipc;
+struct after_by_srcport_ipc *afterbysrcport_ipc;
 struct after_by_dstport_ipc *afterbydstport_ipc;
 struct after_by_username_ipc *afterbyusername_ipc;
 
@@ -239,6 +243,75 @@ sbool Sagan_Clean_IPC_Object( int type )
         return(0);
 
     }
+
+
+    /* Afterbysrcport_IPC */
+
+    else if ( type == AFTER_BY_SRCPORT && config->max_after_by_srcport < counters_ipc->after_count_by_srcport ) {
+        t = time(NULL);
+        now=localtime(&t);
+        strftime(timet, sizeof(timet), "%s",  now);
+        utime = atol(timet);
+
+        new_count = 0;
+        old_count = 0;
+
+        Sagan_File_Lock(config->shm_after_by_srcport);
+        pthread_mutex_lock(&After_By_Src_Port_Mutex);
+
+        struct after_by_srcport_ipc *temp_afterbysrcport_ipc;
+        temp_afterbysrcport_ipc = malloc(sizeof(struct after_by_srcport_ipc) * config->max_after_by_srcport);
+
+        memset(temp_afterbysrcport_ipc, 0, sizeof(sizeof(struct after_by_srcport_ipc) * config->max_after_by_srcport));
+
+        old_count = counters_ipc->after_count_by_srcport;
+
+        for (i = 0; i < counters_ipc->after_count_by_srcport; i++) {
+            if ( (utime - afterbysrcport_ipc[i].utime) < afterbysrcport_ipc[i].expire ) {
+
+                if ( debug->debugipc ) {
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, afterbysrcport_ipc[i].ipsrcport);
+                }
+
+                temp_afterbysrcport_ipc[new_count].ipsrcport = afterbysrcport_ipc[i].ipsrcport;
+                temp_afterbysrcport_ipc[new_count].count = afterbysrcport_ipc[i].count;
+                temp_afterbysrcport_ipc[new_count].utime = afterbysrcport_ipc[i].utime;
+                temp_afterbysrcport_ipc[new_count].expire = afterbysrcport_ipc[i].expire;
+                strlcpy(temp_afterbysrcport_ipc[new_count].sid, afterbysrcport_ipc[i].sid, sizeof(temp_afterbysrcport_ipc[new_count].sid));
+                new_count++;
+            }
+        }
+
+        if ( new_count > 0 ) {
+            for ( i = 0; i < new_count; i++ ) {
+                afterbysrcport_ipc[i].ipsrcport = temp_afterbysrcport_ipc[i].ipsrcport;
+                afterbysrcport_ipc[i].count = temp_afterbysrcport_ipc[i].count;
+                afterbysrcport_ipc[i].utime = temp_afterbysrcport_ipc[i].utime;
+                afterbysrcport_ipc[i].expire = temp_afterbysrcport_ipc[i].expire;
+                strlcpy(afterbysrcport_ipc[i].sid, temp_afterbysrcport_ipc[i].sid, sizeof(afterbysrcport_ipc[i].sid));
+            }
+
+            counters_ipc->after_count_by_srcport = new_count;
+
+        } else {
+
+            Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
+            free(temp_afterbysrcport_ipc);
+            pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+            Sagan_File_Unlock(config->shm_after_by_srcport);
+            return(1);
+
+        }
+
+        Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_srcport", __FILE__, __LINE__, new_count, old_count);
+        free(temp_afterbysrcport_ipc);
+
+        pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+        Sagan_File_Unlock(config->shm_after_by_srcport);
+        return(0);
+
+    }
+
 
     /* Afterbydstport_IPC */
 
@@ -512,6 +585,76 @@ sbool Sagan_Clean_IPC_Object( int type )
 
     }
 
+
+    /* Threshbysrcport_IPC */
+
+    else if ( type == THRESH_BY_SRCPORT && config->max_threshold_by_srcport < counters_ipc->thresh_count_by_srcport ) {
+
+        t = time(NULL);
+        now=localtime(&t);
+        strftime(timet, sizeof(timet), "%s",  now);
+        utime = atol(timet);
+
+        new_count = 0;
+        old_count = 0;
+
+        Sagan_File_Lock(config->shm_thresh_by_srcport);
+        pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
+
+        struct thresh_by_srcport_ipc *temp_threshbysrcport_ipc;
+        temp_threshbysrcport_ipc = malloc(sizeof(struct thresh_by_srcport_ipc) * config->max_threshold_by_srcport);
+
+        memset(temp_threshbysrcport_ipc, 0, sizeof(sizeof(struct thresh_by_srcport_ipc) * config->max_threshold_by_srcport));
+
+        old_count = counters_ipc->thresh_count_by_srcport;
+
+        for (i = 0; i < counters_ipc->thresh_count_by_src; i++) {
+            if ( (utime - threshbysrc_ipc[i].utime) < threshbysrc_ipc[i].expire ) {
+
+                if ( debug->debugipc ) {
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, threshbysrcport_ipc[i].ipsrcport);
+                }
+
+                temp_threshbysrcport_ipc[new_count].ipsrcport = threshbysrcport_ipc[i].ipsrcport;
+                temp_threshbysrcport_ipc[new_count].count = threshbysrcport_ipc[i].count;
+                temp_threshbysrcport_ipc[new_count].utime = threshbysrcport_ipc[i].utime;
+                temp_threshbysrcport_ipc[new_count].expire = threshbysrcport_ipc[i].expire;
+                strlcpy(temp_threshbysrcport_ipc[new_count].sid, threshbysrcport_ipc[i].sid, sizeof(temp_threshbysrcport_ipc[new_count].sid));
+                new_count++;
+            }
+        }
+
+        if ( new_count > 0 ) {
+            for ( i = 0; i < new_count; i++ ) {
+                threshbysrcport_ipc[i].ipsrcport = temp_threshbysrcport_ipc[i].ipsrcport;
+                threshbysrcport_ipc[i].count = temp_threshbysrcport_ipc[i].count;
+                threshbysrcport_ipc[i].utime = temp_threshbysrcport_ipc[i].utime;
+                threshbysrcport_ipc[i].expire = temp_threshbysrcport_ipc[i].expire;
+                strlcpy(threshbysrcport_ipc[i].sid, temp_threshbysrcport_ipc[i].sid, sizeof(threshbysrcport_ipc[i].sid));
+            }
+
+            counters_ipc->thresh_count_by_srcport = new_count;
+
+        } else {
+
+            Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
+            free(temp_threshbysrcport_ipc);
+            pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
+            Sagan_File_Unlock(config->shm_thresh_by_src);
+            return(1);
+
+        }
+
+        Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_srcport", __FILE__, __LINE__, new_count, old_count);
+        free(temp_threshbysrcport_ipc);
+
+        pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
+        Sagan_File_Unlock(config->shm_thresh_by_srcport);
+        return(0);
+
+    }
+
+
     /* Threshbydstport_IPC */
 
     else if ( type == THRESH_BY_DSTPORT && config->max_threshold_by_dstport < counters_ipc->thresh_count_by_dstport ) {
@@ -538,7 +681,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             if ( (utime - threshbydst_ipc[i].utime) < threshbydst_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping %u.", __FILE__, __LINE__, threshbydst_ipc[i].ipdst);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydstport_IPC : Keeping %u.", __FILE__, __LINE__, threshbydstport_ipc[i].ipdstport);
                 }
 
                 temp_threshbydstport_ipc[new_count].ipdstport = threshbydstport_ipc[i].ipdstport;
@@ -933,6 +1076,55 @@ void Sagan_IPC_Init(void)
     }
 
 
+    /* Threshold by source port */
+
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, THRESH_BY_SRCPORT_IPC_FILE);
+
+    Sagan_IPC_Check_Object(tmp_object_check, new_counters, "thresh_by_srcport");
+
+    if ((config->shm_thresh_by_srcport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
+        Sagan_Log(S_NORMAL, "+ Thresh_by_srcport shared object (new).");
+        new_object=1;
+    }
+
+    else if ((config->shm_thresh_by_srcport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if ( ftruncate(config->shm_thresh_by_srcport, sizeof(thresh_by_srcport_ipc) * config->max_threshold_by_srcport) != 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if (( threshbysrcport_ipc = mmap(0, sizeof(thresh_by_srcport_ipc) * config->max_threshold_by_srcport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_srcport, 0)) == MAP_FAILED ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_srcport object! [%s]", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if ( new_object == 0) {
+        Sagan_Log(S_NORMAL, "- Thresh_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->thresh_count_by_srcport, config->max_threshold_by_srcport);
+    }
+
+    new_object = 0;
+
+    if ( debug->debugipc && counters_ipc->thresh_count_by_srcport >= 1 ) {
+
+        Sagan_Log(S_DEBUG, "");
+        Sagan_Log(S_DEBUG, "*** Threshold by source port ***");
+        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRCPORT IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+
+        for ( i = 0; i < counters_ipc->thresh_count_by_srcport; i++) {
+            uint32_t srcport = htonl(threshbysrcport_ipc[i].ipsrcport);
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, threshbysrcport_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrcport_ipc[i].utime), threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
+
+        }
+
+        Sagan_Log(S_DEBUG, "");
+    }
+
+
+
+
     /* Threshold by destination port */
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, THRESH_BY_DSTPORT_IPC_FILE);
@@ -957,7 +1149,7 @@ void Sagan_IPC_Init(void)
     }
 
     if ( new_object == 0) {
-        Sagan_Log(S_NORMAL, "- Thresh_by_dstport shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->thresh_count_by_dstport, config->max_threshold_by_dstport);
+        Sagan_Log(S_NORMAL, "- Thresh_by_dstport shared object reloaded (%d destination ports loaded / max: %d).", counters_ipc->thresh_count_by_dstport, config->max_threshold_by_dstport);
     }
 
     new_object = 0;
@@ -1103,12 +1295,62 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_dst; i++) {
+
             ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
+
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
     }
+
+
+    /* After by source port */
+
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, AFTER_BY_SRCPORT_IPC_FILE);
+
+    Sagan_IPC_Check_Object(tmp_object_check, new_counters, "after_by_srcport");
+
+    if ((config->shm_after_by_srcport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
+        Sagan_Log(S_NORMAL, "+ After_by_srcport shared object (new).");
+        new_object=1;
+    }
+
+    else if ((config->shm_after_by_srcport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if ( ftruncate(config->shm_after_by_srcport, sizeof(after_by_srcport_ipc) * config->max_after_by_srcport) != 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if (( afterbysrcport_ipc = mmap(0, sizeof(after_by_srcport_ipc) * config->max_after_by_srcport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_srcport, 0)) == MAP_FAILED ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+    }
+
+    if ( new_object == 0 ) {
+        Sagan_Log(S_NORMAL, "- After_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->after_count_by_srcport, config->max_after_by_srcport);
+    }
+
+    new_object = 0;
+
+    if ( debug->debugipc && counters_ipc->after_count_by_srcport >= 1 ) {
+        Sagan_Log(S_DEBUG, "");
+        Sagan_Log(S_DEBUG, "*** After by source port ***");
+        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRCPORT", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+
+        for ( i = 0; i < counters_ipc->after_count_by_srcport; i++) {
+
+            uint32_t srcport = htonl(afterbysrcport_ipc[i].ipsrcport);
+
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, afterbysrcport_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrcport_ipc[i].utime), afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
+        }
+
+        Sagan_Log(S_DEBUG, "");
+    }
+
 
     /* After by destination port */
 
@@ -1134,7 +1376,7 @@ void Sagan_IPC_Init(void)
     }
 
     if ( new_object == 0 ) {
-        Sagan_Log(S_NORMAL, "- After_by_dstport shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->after_count_by_dstport, config->max_after_by_dstport);
+        Sagan_Log(S_NORMAL, "- After_by_dstport shared object reloaded (%d destinations ports loaded / max: %d).", counters_ipc->after_count_by_dstport, config->max_after_by_dstport);
     }
 
     new_object = 0;
@@ -1147,7 +1389,9 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_dstport; i++) {
-            uint32_t dstport = htonl(afterbydst_ipc[i].ipdst);
+
+            uint32_t dstport = htonl(afterbydstport_ipc[i].ipdstport);
+
             Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, afterbydstport_ipc[i].count, Sagan_u32_Time_To_Human(afterbydstport_ipc[i].utime), afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
         }
 

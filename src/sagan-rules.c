@@ -1403,6 +1403,7 @@ void Load_Rules( const char *ruleset )
                 while( tmptoken != NULL ) {
 
                     if (Sagan_strstr(tmptoken, "type")) {
+
                         if (Sagan_strstr(tmptoken, "limit")) {
                             rulestruct[counters->rulecount].threshold_type = 1;
                         }
@@ -1413,6 +1414,7 @@ void Load_Rules( const char *ruleset )
                     }
 
                     if (Sagan_strstr(tmptoken, "track")) {
+
                         if (Sagan_strstr(tmptoken, "by_src")) {
                             rulestruct[counters->rulecount].threshold_method = 1;
                         }
@@ -1425,8 +1427,12 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].threshold_method = 3;
                         }
 
-                        if (Sagan_strstr(tmptoken, "by_dstport")) {
+                        if (Sagan_strstr(tmptoken, "by_srcport")) {
                             rulestruct[counters->rulecount].threshold_method = 4;
+                        }
+
+                        if (Sagan_strstr(tmptoken, "by_dstport")) {
+                            rulestruct[counters->rulecount].threshold_method = 5;
                         }
                     }
 
@@ -1456,6 +1462,9 @@ void Load_Rules( const char *ruleset )
                 while( tmptoken != NULL ) {
 
                     if (Sagan_strstr(tmptoken, "track")) {
+
+                        /* DEBUG/FIXME: This needs to line up with sagan-defs! */
+
                         if (Sagan_strstr(tmptoken, "by_src")) {
                             rulestruct[counters->rulecount].after_method = 1;
                         }
@@ -1468,8 +1477,12 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].after_method = 3;
                         }
 
-                        if (Sagan_strstr(tmptoken, "by_dstport")) {
+                        if (Sagan_strstr(tmptoken, "by_srcport")) {
                             rulestruct[counters->rulecount].after_method = 4;
+                        }
+
+                        if (Sagan_strstr(tmptoken, "by_dstport")) {
+                            rulestruct[counters->rulecount].after_method = 5;
                         }
 
                     }

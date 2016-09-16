@@ -138,7 +138,7 @@ struct _Rule_Struct {
     int drop;                   /* inline DROP for ext. */
 
     int threshold_type;         /* 1 = limit,  2 = thresh */
-    int threshold_method;       /* 1 ==  src,  2 == dst,  3 == username, 4 == dstport */
+    int threshold_method;       /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
     int threshold_count;
     int threshold_seconds;
 

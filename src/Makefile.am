@@ -32,7 +32,6 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        sagan-check-flow.c\
                                                        sagan-aetas.c \
                                                        sagan-ipc.c \
-                                                       sagan-redis.c \
                                                        parsers/parse-ip.c \
                                                        parsers/parse-port.c \
                                                        parsers/parse-proto.c \

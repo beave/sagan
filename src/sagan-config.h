@@ -99,10 +99,12 @@ struct _SaganConfig {
     int 	shm_thresh_by_src;
     int		shm_thresh_by_dst;
     int		shm_thresh_by_dstport;
+    int		shm_thresh_by_srcport;
     int		shm_thresh_by_username;
 
     int		shm_after_by_src;
     int		shm_after_by_dst;
+    int 	shm_after_by_srcport;
     int		shm_after_by_dstport;
     int		shm_after_by_username;
 
@@ -116,11 +118,13 @@ struct _SaganConfig {
 
     int		max_threshold_by_src;
     int		max_threshold_by_dst;
+    int         max_threshold_by_srcport;
     int		max_threshold_by_dstport;
     int		max_threshold_by_username;
 
     int		max_after_by_src;
     int		max_after_by_dst;
+    int         max_after_by_srcport;
     int		max_after_by_dstport;
     int		max_after_by_username;
 
