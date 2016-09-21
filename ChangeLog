@@ -1,3 +1,18 @@
+09/21/2016 -    Sagan 1.1.2. released.
+
+                * Added "srcport" for "threshold" and "after".  
+                * Fixes around "dstport" for threshold" and "after"
+                * Fixed display of source/destination IP addresses in tools/sagan-peek.c
+                * Change "artistic" style from "GNU" to "Linux".  This allows better formatting of source code on smaller screens.
+                * New pthread mutex to address corruptions of mmap / files.
+                * tools/sagan-peek.c now has command line option to specify mmap file location. Various other improvements.
+                * Better error checking in src/processors/sagan-track-clients.c
+                * New MD5, SHA1 and SHA256 in src/parsers/parse-hash.c
+                * Minor Bluedot lookup fixes. 
+                * Fixes for "after" and "threshold" when dealing with "usernames". (Username tracking).
+                * Added "file" option for sagan.conf to reference a file to load.  For example, "var MYVAR file:/path/to/my/values.txt".
+                  For more information,  see https://github.com/beave/sagan/issues/75
+
 08/17/2016 -	Sagan 1.1.1 released.
 
 		* Added meta_offset, meta_depth, meta_within and meta_distince Champ Clark (cclark@quadrantsec.com)
