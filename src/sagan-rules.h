@@ -67,6 +67,9 @@ struct _Rule_Struct {
     char email[255];
     sbool email_flag;
 
+    sbool type_flag;				/* 0 == normal,  1 == dynamic */
+    char  dynamic_ruleset[MAXPATH];
+
     /* Check Flow */
     struct arr_flow_1 flow_1[MAX_CHECK_FLOWS];
     struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];

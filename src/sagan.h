@@ -135,6 +135,7 @@ struct _SaganCounters {
     int	     flowbit_total_counter;
 
     int      var_count;
+    int      dynamic_rule_count;
 
     int	     classcount;
     int      rulecount;
