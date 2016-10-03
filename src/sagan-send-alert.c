@@ -39,7 +39,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos )
+void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos )
 {
 
     char tmp[64] = { 0 };
@@ -51,7 +51,7 @@ void Sagan_Send_Alert ( _SaganProcSyslog *SaganProcSyslog_LOCAL, _Sagan_Processo
         Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
     }
 
-    memset(SaganProcessorEvent, 0, sizeof(_SaganEvent));
+    memset(SaganProcessorEvent, 0, sizeof(_Sagan_Event));
 
     if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID ) {
         SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(processor_info->processor_generator_id, alertid);

@@ -142,7 +142,7 @@ struct _SaganCounters {
     int      ruletotal;
 
     int      genmapcount;
-    int	     mapcount;
+
     int      mapcount_message;
     int      mapcount_program;
 
@@ -251,7 +251,8 @@ struct _SaganDebug {
 
 };
 
-typedef struct _Sagan_Proc_Syslog {
+typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
+struct _Sagan_Proc_Syslog {
     char syslog_host[50];
     char syslog_facility[50];
     char syslog_priority[50];
@@ -262,10 +263,10 @@ typedef struct _Sagan_Proc_Syslog {
     char syslog_program[50];
     char syslog_message[MAX_SYSLOGMSG];
 
-} _SaganProcSyslog;
+};
 
-typedef struct _Sagan_Event {
-
+typedef struct _Sagan_Event _Sagan_Event;
+struct _Sagan_Event {
     char *ip_src;
     char *ip_dst;
     int   dst_port;
@@ -275,7 +276,7 @@ typedef struct _Sagan_Event {
 
     int  found;
 
-    char *fpri;             /* ?? == *priority */
+    char *fpri;             /* *priority */
 
     sbool endian;
     sbool drop;
@@ -308,7 +309,8 @@ typedef struct _Sagan_Event {
     unsigned long alertid;
 
 
-} _SaganEvent;
+};
+
 
 /* Thresholding structure by source */
 typedef struct thresh_by_src_ipc thresh_by_src_ipc;

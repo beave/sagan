@@ -101,7 +101,7 @@ unsigned short blockport=0,blockproto=0,blocklog=FWSAM_LOG_NONE,blockhow=FWSAM_H
 
 pthread_mutex_t fwsam_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void Sagan_FWSam( _SaganEvent *Event )
+void Sagan_FWSam( _Sagan_Event *Event )
 {
 
     pthread_mutex_lock(&fwsam_mutex);

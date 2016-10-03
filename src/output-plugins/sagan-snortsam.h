@@ -494,7 +494,7 @@ void sig_usr2_flagger(int i);
 
 #endif  /* __SNORTSAM_H__ */
 
-void Sagan_FWSam( _SaganEvent * );
+void Sagan_FWSam( _Sagan_Event * );
 int FWsamBlock(char *);
 
 /* Typedefs */

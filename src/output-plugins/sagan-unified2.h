@@ -53,13 +53,13 @@
 #define DECODE_BLEN 65535
 #define EVENT_TYPE_EXTRA_DATA   4
 
-void Sagan_Unified2( _SaganEvent * );
-void Sagan_Unified2LogPacketAlert( _SaganEvent * );
+void Sagan_Unified2( _Sagan_Event * );
+void Sagan_Unified2LogPacketAlert( _Sagan_Event * );
 void Unified2InitFile( void );
 int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...);
 void *SaganAlloc( unsigned long );
 void Unified2CleanExit( void );
-void Sagan_WriteExtraData( _SaganEvent *, int );
+void Sagan_WriteExtraData( _Sagan_Event *, int );
 
 /* Data structure used for serialization of Unified2 Records */
 typedef struct _Serial_Unified2_Header {

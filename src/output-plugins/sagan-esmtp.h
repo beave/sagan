@@ -32,8 +32,8 @@
 #define ESMTPSERVER     32            /* SMTP server size max */
 #define MAX_EMAILSIZE   15360          /* Largest e-mail that can be sent */
 
-const char *esmtp_cb (void **, int *, void *);
-int Sagan_ESMTP_Thread( _SaganEvent * );
+const char *esmtp_cb ( void **, int *, void * );
+int Sagan_ESMTP_Thread( _Sagan_Event * );
 int fixlf(_SaganConfig *, char *, char *);
 
 #endif

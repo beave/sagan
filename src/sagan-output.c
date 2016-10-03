@@ -62,7 +62,7 @@ sbool nonthread_alert_lock=0;
 
 pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 
-void Sagan_Output( _SaganEvent *Event )
+void Sagan_Output( _Sagan_Event *Event )
 {
 
     /******************************/

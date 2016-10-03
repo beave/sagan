@@ -118,7 +118,7 @@ void Sagan_Engine_Init ( void )
 
 }
 
-int Sagan_Engine ( _SaganProcSyslog *SaganProcSyslog_LOCAL )
+int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     struct _Sagan_Processor_Info *processor_info_engine = NULL;

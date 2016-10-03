@@ -57,8 +57,6 @@ void Load_Protocol_Map( const char *map )
 
     Sagan_Log(S_NORMAL, "Loading protocol map file. [%s]", map);
 
-    counters->mapcount=0;
-
 
     if (( mapfile = fopen(map, "r" )) == NULL ) {
         Sagan_Log(S_ERROR, "[%s, line %d] Cannot open protocol map file (%s)", __FILE__, __LINE__, map);
@@ -108,13 +106,12 @@ void Load_Protocol_Map( const char *map )
                 counters->mapcount_program++;
             }
 
-            counters->mapcount++;
         }
 
     }
 
     fclose(mapfile);
-    Sagan_Log(S_NORMAL, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount, counters->mapcount_message, counters->mapcount_program);
+    Sagan_Log(S_NORMAL, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount_message + counters->mapcount_program, counters->mapcount_message, counters->mapcount_program);
 
 }
 

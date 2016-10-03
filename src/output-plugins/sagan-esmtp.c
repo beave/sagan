@@ -52,7 +52,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-int Sagan_ESMTP_Thread (_SaganEvent *Event)
+int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
 {
 
     char tmpref[2048];

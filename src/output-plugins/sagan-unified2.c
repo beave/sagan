@@ -119,7 +119,7 @@ void Unified2InitFile( void )
 /* Sagan_Unified2 - Write the Unified2 event        */
 /****************************************************/
 
-void Sagan_Unified2( _SaganEvent *Event )
+void Sagan_Unified2( _Sagan_Event *Event )
 {
 
 
@@ -190,7 +190,7 @@ void Sagan_Unified2( _SaganEvent *Event )
 /* file for reading by Barnyard2, etc.                                       */
 /*****************************************************************************/
 
-void Sagan_Unified2LogPacketAlert( _SaganEvent *Event )
+void Sagan_Unified2LogPacketAlert( _Sagan_Event *Event )
 {
 
     Serial_Unified2_Header hdr;
@@ -621,7 +621,7 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
  * XFF or "original IP" address.
  *****************************************************************************/
 
-void Sagan_WriteExtraData( _SaganEvent *Event, int type )
+void Sagan_WriteExtraData( _Sagan_Event *Event, int type )
 {
 
     Serial_Unified2_Header hdr;
