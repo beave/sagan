@@ -1047,14 +1047,16 @@ network_addr_t Str_To_Netaddr( char *ipstr )
     network_addr_t netaddr;
 
     if ( (prefixstr = strchr(ipstr, '/')) ) {
+
         *prefixstr = '\0';
         prefixstr++;
         prefix = strtol( prefixstr, (char **) NULL, 10 );
-        if ( errno || (*prefixstr == '\0') || (prefix < 1) || (prefix > 32) ) {
-            Sagan_Log(S_ERROR, "[E]: Invalid IP %s/%s in your config file var declaration!\n", ipstr, prefixstr );
+
+        if (*prefixstr == '\0' || prefix < 1 || prefix > 32) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Invalid IP %s/%s in your config file var declaration!\n", __FILE__, __LINE__, ipstr, prefixstr );
         }
         if ( (prefix < 8) ) {
-            Sagan_Log(S_WARN, "[W]: Your wildcard for '%s' is less than 8, is this really what you want?", ipstr );
+            Sagan_Log(S_ERROR, "[%s, line %d] Your wildcard for '%s' is less than /8,", __FILE__, __LINE__, ipstr );
         }
     }
 

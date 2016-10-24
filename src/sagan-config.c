@@ -538,6 +538,53 @@ void Load_Config( void )
 
             sagan_var1 = strtok_r(NULL," ", &tok);
 
+            /******* Dynamic rule loading & reporting *******/
+
+            if (!strcmp(sagan_var1, "dynamic_load:")) {
+
+                ptmp = sagan_var1;
+
+                while (ptmp != NULL) {
+
+                    if (!strcmp(ptmp, "sample_rate")) {
+
+                        ptmp = strtok_r(NULL," ", &tok);
+                        Remove_Return(ptmp);
+
+                        if ( ptmp == NULL ) {
+                            Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' processor has an invalid or missing 'sample_rate'!", __FILE__, __LINE__);
+                        }
+
+                        config->dynamic_load_sample_rate = atoi(ptmp);
+                    }
+
+                    if (!strcmp(ptmp, "type")) {
+
+                        ptmp = strtok_r(NULL," ", &tok);
+                        Remove_Return(ptmp);
+
+                        if ( ptmp == NULL ) {
+                            Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' processor has an invalid or missing 'type'!", __FILE__, __LINE__);
+                        }
+
+                        if (!strcmp(ptmp, "dynamic_load")) {
+                            config->dynamic_load_type = 0;
+                        }
+
+                        else if (!strcmp(ptmp, "log_only")) {
+                            config->dynamic_load_type = 1;
+                        }
+
+                        else if (!strcmp(ptmp, "alert")) {
+                            config->dynamic_load_type = 2;
+                        }
+
+                    }
+
+                    ptmp = strtok_r(NULL, "=", &tok);
+                }
+            }
+
             /******* Client tracker *******/
 
             if (!strcmp(sagan_var1, "sagan-track-clients:")) {
@@ -1108,6 +1155,7 @@ void Load_Config( void )
         /* var */
 
         if (!strcmp(sagan_option, "var")) {
+
             sagan_var1 = strtok_r(NULL, " ", &tok);
             var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
 
@@ -1154,7 +1202,6 @@ void Load_Config( void )
 
                         snprintf(tmpstring, sizeof(tmpstring), ",%s", Remove_Return(tmpbuf2));
 
-
                     }
 
                     /* Append to the var */
@@ -1186,14 +1233,14 @@ void Load_Config( void )
                     Remove_Spaces(sagan_var3);
                     Remove_Return(sagan_var3);
 
-                    strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
+                    strlcpy(var[counters->var_count].var_value, Sagan_Var_To_Value(sagan_var3), sizeof(var[counters->var_count].var_value));
 
                 } else {
 
                     /* Single value */
 
                     sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-                    strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+                    strlcpy(var[counters->var_count].var_value, Sagan_Var_To_Value(Remove_Return(sagan_var2)), sizeof(var[counters->var_count].var_value));
 
                 }
 
@@ -1221,10 +1268,15 @@ void Load_Config( void )
         }
 
         /* Check for duplicate VAR's */
+
         for (i = 0; i < counters->var_count; i++) {
+
             for ( check = i+1; check < counters->var_count; check ++) {
+
                 if (!strcmp (var[check].var_name, var[i].var_name )) {
+
                     Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate var '%s' & '%s'.  Please correct this.", __FILE__, __LINE__, var[check].var_name, var[i].var_name);
+
                 }
             }
         }

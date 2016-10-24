@@ -66,9 +66,6 @@ struct _SaganConfig {
     sbool        syslog_src_lookup;
     int          sagan_proto;
 
-    /*    sbool        home_any;  */                     /* 0 == no, 1 == yes */
-    /*    sbool        external_any;  */
-
     sbool        endian;
 
     /* Processors */
@@ -86,6 +83,11 @@ struct _SaganConfig {
 
     sbool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
+
+    /* Dynamic rule loading and reporting */
+
+    int			dynamic_load_sample_rate;
+    unsigned char	dynamic_load_type;
 
     /* Syslog output */
 

@@ -751,18 +751,38 @@ void Load_Rules( const char *ruleset )
 
             }
 
-	    /* "Dynamic" rule loading.  This allows Sagan to load rules when it "detects" new types */
+            /* "Dynamic" rule loading.  This allows Sagan to load rules when it "detects" new types */
 
             if (!strcmp(rulesplit, "type")) {
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
+
+                if ( arg == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic type' specified but not complete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                }
+
+                tmptoken = strtok_r(arg, ",", &saveptrrule2);
+
+                if ( tmptoken == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic type' specified but not complete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                }
+
+                Remove_Spaces(tmptoken);
 
                 if (!strcmp(tmptoken, "dynamic")) {
 
-                    tmptoken = Sagan_Var_To_Value(Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2)));
                     rulestruct[counters->rulecount].type_flag = 1;
+
+                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic type' specified but rule set is incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    strlcpy(rulestruct[counters->rulecount].dynamic_ruleset, Remove_Spaces(Sagan_Var_To_Value(tmptoken)), sizeof(rulestruct[counters->rulecount].dynamic_ruleset));
+
                     counters->dynamic_rule_count++;
+
 
                 } else if (!strcmp(tmptoken, "normal")) {
 
