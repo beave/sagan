@@ -1028,7 +1028,7 @@ in_addr_t A_To_Hl( char *ipstr )
     struct in_addr in;
 
     if ( !inet_aton(ipstr, &in) ) {
-        Sagan_Log(S_ERROR, "[E] Invalid address %s!\n", ipstr );
+        Sagan_Log(S_ERROR, "[%s, line %d] Invalid address %s!", __FILE__, __LINE__, ipstr );
     }
 
     return( ntohl(in.s_addr) );
@@ -1055,6 +1055,7 @@ network_addr_t Str_To_Netaddr( char *ipstr )
         if (*prefixstr == '\0' || prefix < 1 || prefix > 32) {
             Sagan_Log(S_ERROR, "[%s, line %d] Invalid IP %s/%s in your config file var declaration!\n", __FILE__, __LINE__, ipstr, prefixstr );
         }
+
         if ( (prefix < 8) ) {
             Sagan_Log(S_ERROR, "[%s, line %d] Your wildcard for '%s' is less than /8,", __FILE__, __LINE__, ipstr );
         }
@@ -1084,6 +1085,7 @@ char *Netaddr_To_Range( char ipstr[21] )
     char tmp2[512];
 
     if ( ( t = strchr(ipstr, '/') ) ) {
+
         netaddrs = realloc( netaddrs, 2 * sizeof(network_addr_t) );
         netaddrs[0] = Str_To_Netaddr( ipstr );
 
@@ -1100,13 +1102,19 @@ char *Netaddr_To_Range( char ipstr[21] )
             sprintf( result, "%s", my_str);
 
             return(result);
+
         } else {
+
             snprintf( result, sizeof(result), "%lu", (unsigned long)lo);
             return(result);
+
         }
+
     } else {
+
         snprintf( result, sizeof(result), "%lu", (unsigned long)IP2Bit(ipstr));
         return(result);
+
     }
 } /* netaddr_to_range() */
 
