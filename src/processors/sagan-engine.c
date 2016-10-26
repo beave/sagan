@@ -53,6 +53,7 @@
 #include "processors/sagan-engine.h"
 #include "processors/sagan-bro-intel.h"
 #include "processors/sagan-blacklist.h"
+#include "processors/sagan-dynamic-rules.h"
 
 #ifdef WITH_BLUEDOT
 #include "processors/sagan-bluedot.h"
@@ -233,7 +234,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
         /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
 
-        if ( rulestruct[b].type == NORMAL_RULE || rulestruct[b].type == DYNAMIC_RULE && dynamic_rule_flag == true ) {
+        if ( rulestruct[b].type == NORMAL_RULE || ( rulestruct[b].type == DYNAMIC_RULE && dynamic_rule_flag == true ) ) {
 
             match = 0;
 

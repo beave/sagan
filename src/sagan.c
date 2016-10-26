@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 
     int i;
 
-    int dynamic_line_count;
+    int dynamic_line_count = 0;
 
     time_t t;
     struct tm *run;

@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog, int, _Sagan_Processor_Info, char *, char * );
+int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *, int, _Sagan_Processor_Info *, char *, char * );

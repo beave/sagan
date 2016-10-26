@@ -30,11 +30,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
+#include "sagan-send-alert.h"
+
 
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
