@@ -90,10 +90,13 @@ int liblognorm_count;
 sbool liblognorm_load = 0;		/* Need to stay outside of HAVE_LIBLOGNORM */
 
 struct _Rule_Struct *rulestruct;
+struct _Rules_Loaded *rules_loaded;
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganVar *var;
+
+pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Load_Config( void )
 {
@@ -1311,7 +1314,24 @@ void Load_Config( void )
             /* It's not reference.config, classification.config, gen-msg.map or protocol.map, it must be a ruleset */
 
             if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map") && strcmp(filename, "protocol.map")) {
+
+
+                pthread_mutex_lock(&SaganRulesLoadedMutex);
+
+                rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
+
+                if ( rules_loaded == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
+                }
+
+                strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, ruleset, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
+                counters->rules_loaded_count++;
+
                 Load_Rules(ruleset);
+
+                pthread_mutex_unlock(&SaganRulesLoadedMutex);
+
+
             }
         }
     }

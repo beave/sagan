@@ -52,7 +52,8 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        processors/sagan-bluedot.c \
                                                        processors/sagan-blacklist.c \
                                                        processors/sagan-perfmon.c \
-                                                       processors/sagan-bro-intel.c
+                                                       processors/sagan-bro-intel.c \
+						       processors/sagan-dynamic-rules.c
 
 
                                                        install-data-local:

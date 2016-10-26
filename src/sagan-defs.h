@@ -181,3 +181,5 @@
 #define PARSE_HASH_SHA256		3
 #define PARSE_HASH_ALL			4
 
+#define NORMAL_RULE			0
+#define DYNAMIC_RULE			1

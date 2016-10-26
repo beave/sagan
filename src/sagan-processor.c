@@ -40,6 +40,7 @@
 #include "processors/sagan-engine.h"
 #include "processors/sagan-track-clients.h"
 #include "processors/sagan-blacklist.h"
+#include "processors/sagan-dynamic-rules.h"
 
 struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
@@ -48,6 +49,7 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 
 int proc_msgslot; 		/* Comes from sagan.c */
+sbool dynamic_rule_flag;
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
@@ -55,8 +57,11 @@ pthread_mutex_t SaganProcWorkMutex;
 pthread_cond_t SaganReloadCond;
 pthread_mutex_t SaganReloadMutex;
 
+pthread_mutex_t SaganDynamicFlag;
+
 pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
+
 
 void Sagan_Processor ( void )
 {
@@ -125,14 +130,21 @@ outside_loop:
 
         if ( ignore_flag == 0 ) {
 
-            Sagan_Engine(SaganProcSyslog_LOCAL);
+            Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
+
+            /* If this is a dynamic run,  reset back to normal */
+
+            if ( dynamic_rule_flag == DYNAMIC_RULE ) {
+                pthread_mutex_lock(&SaganDynamicFlag);
+                dynamic_rule_flag = 0;
+                pthread_mutex_unlock(&SaganDynamicFlag);
+            }
 
             if ( config->sagan_track_clients_flag ) {
 
                 Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
 
             }
-
 
         } // End if if (ignore_Flag)
 

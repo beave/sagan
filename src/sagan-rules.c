@@ -170,22 +170,29 @@ void Load_Rules( const char *ruleset )
     int dst_port=0;
     int src_port=0;
 
+    /* Store rule set names/path in memory for later usage dynamic loading, etc */
+
     if (( rulesfile = fopen(ruleset, "r" )) == NULL ) {
         Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s - %s)", __FILE__, __LINE__, ruleset, strerror(errno));
     }
 
-    Sagan_Log(S_NORMAL, "Loading %s rule file", ruleset);
+    Sagan_Log(S_NORMAL, "Loading %s rule file.", ruleset);
 
     while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
+
         int f1=0; /* Need for flow_direction, must reset every rule, not every group */
         int f2=0; /* Need for flow_direction, must reset every rule, not every group */
 
         linecount++;
 
         if (rulebuf[0] == '#' || rulebuf[0] == 10 || rulebuf[0] == ';' || rulebuf[0] == 32) {
+
             continue;
+
         } else {
+
             /* Allocate memory for rules, but not comments */
+
             rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 
             if ( rulestruct == NULL ) {
@@ -771,7 +778,7 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(tmptoken, "dynamic")) {
 
-                    rulestruct[counters->rulecount].type_flag = 1;
+                    rulestruct[counters->rulecount].type = DYNAMIC_RULE;
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -786,7 +793,7 @@ void Load_Rules( const char *ruleset )
 
                 } else if (!strcmp(tmptoken, "normal")) {
 
-                    rulestruct[counters->rulecount].type_flag = 0;
+                    rulestruct[counters->rulecount].type = NORMAL_RULE;
 
                 }
 

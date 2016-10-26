@@ -26,6 +26,11 @@
 #define BLUEDOT_MAX_CAT        10
 #endif
 
+typedef struct _Rules_Loaded _Rules_Loaded;
+struct _Rules_Loaded {
+    char ruleset[MAXPATH];
+};
+
 typedef struct arr_flow_1 arr_flow_1;
 struct arr_flow_1 {
     uint32_t lo;
@@ -67,7 +72,7 @@ struct _Rule_Struct {
     char email[255];
     sbool email_flag;
 
-    sbool type_flag;				/* 0 == normal,  1 == dynamic */
+    sbool type;				/* 0 == normal,  1 == dynamic */
     char  dynamic_ruleset[MAXPATH];
 
     /* Check Flow */

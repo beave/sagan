@@ -77,10 +77,12 @@ struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
+struct _Rules_Loaded *rules_loaded;
 struct _Class_Struct *classstruct;
 struct _Sagan_Processor_Generator *generator;
 struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
+
 
 struct _Sagan_IPC_Flowbit *flowbit;
 
@@ -239,7 +241,9 @@ void Sig_Handler( void )
             counters->ruletotal=0;
             counters->genmapcount=0;
             counters->flowbit_track_count=0;
+            counters->rules_loaded_count=0;
 
+            memset(rules_loaded, 0, sizeof(_Rules_Loaded));
             memset(rulestruct, 0, sizeof(_Rule_Struct));
             memset(classstruct, 0, sizeof(_Class_Struct));
             memset(generator, 0, sizeof(_Sagan_Processor_Generator));

@@ -18,14 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#define SAGAN_PROCESSOR_NAME "Sagan_Engine"
-#define SAGAN_PROCESSOR_FACILITY "daemon"
-#define SAGAN_PROCESSOR_PRIORITY "warning"
-#define SAGAN_PROCESSOR_PRI 1
-#define SAGAN_PROCESSOR_CLASS "Sagan_Engine"
-#define SAGAN_PROCESSOR_REV "1"
-#define SAGAN_PROCESSOR_TAG NULL
-#define SAGAN_PROCESSOR_GENERATOR_ID 1
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
 
-int Sagan_Engine ( _Sagan_Proc_Syslog *, sbool );
-void Sagan_Engine_Init ( void );
+int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog, int, _Sagan_Processor_Info, char *, char * );

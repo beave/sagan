@@ -104,10 +104,14 @@ struct _Sagan_Flowbit *flowbit;
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
 int proc_msgslot=0;
+sbool dynamic_rule_flag = 0;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
+
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganMalformedCounter=PTHREAD_MUTEX_INITIALIZER;
+
+pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
 /* ########################################################################
  * Start of main() thread
@@ -205,12 +209,12 @@ int main(int argc, char **argv)
 
     int i;
 
+    int dynamic_line_count;
+
     time_t t;
     struct tm *run;
 
     sbool debugflag=0;
-
-    /* Allocate and clear memory for global structs */
 
     /* Allocate memory for global struct _SaganDebug */
 
@@ -787,6 +791,13 @@ int main(int argc, char **argv)
 
                 counters->sagantotal++;
 
+                /* If Dynamic rules are loaded,  keep track of line count */
+
+                if ( config->dynamic_load_sample_rate != 0 ) {
+
+                    dynamic_line_count++;
+                }
+
                 syslog_host = strtok_r(syslogstring, "|", &tok);
 
                 /* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
@@ -975,12 +986,6 @@ int main(int argc, char **argv)
                 }
 
 
-                /*
-                	                    if ( config->sagan_track_clients_flag )
-                       		                {
-                                            	Sagan_Track_Clients( IP2Bit(syslog_host) );
-                                        	}
-                */
                 if ( proc_msgslot < config->max_processor_threads ) {
 
                     pthread_mutex_lock(&SaganProcWorkMutex);
@@ -994,6 +999,15 @@ int main(int argc, char **argv)
                     strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
                     strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
                     strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
+
+                    if ( config->dynamic_load_sample_rate != 0 && ( dynamic_line_count >= config->dynamic_load_sample_rate ) ) {
+
+                        pthread_mutex_lock(&SaganDynamicFlag);
+                        dynamic_rule_flag = DYNAMIC_RULE;
+                        pthread_mutex_unlock(&SaganDynamicFlag);
+
+                        dynamic_line_count = 0;
+                    }
 
                     proc_msgslot++;
 
