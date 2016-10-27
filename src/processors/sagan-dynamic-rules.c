@@ -20,6 +20,9 @@
 
 /* sagan-dynamic-load.c
  *
+ * This loads rule sets dynamically based off 'dynamic' rules.  The idea is 
+ * for Sagan to detect logs it might not be monitoring and automatically 
+ * enable and/or warn the operator. 
  *
  */
 
@@ -75,15 +78,15 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
+    /*****************************/
     /* Load rules, log and alert */
+    /*****************************/
 
     if ( config->dynamic_load_type == 0 ) {
 
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Dynamically loading '%s'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
-        pthread_mutex_lock(&SaganRulesLoadedMutex);
-        Load_Rules(rulestruct[rule_position].dynamic_ruleset);
-        pthread_mutex_unlock(&SaganRulesLoadedMutex);
+	/* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
 
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                          processor_info_engine,
@@ -97,9 +100,16 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          config->sagan_port,
                          rule_position );
 
+        pthread_mutex_lock(&SaganRulesLoadedMutex);
+        Load_Rules(rulestruct[rule_position].dynamic_ruleset);
+        pthread_mutex_unlock(&SaganRulesLoadedMutex);
+	
+
     }
 
+    /************/
     /* Log only */
+    /************/
 
     else if ( config->dynamic_load_type == 1 ) {
 
@@ -107,11 +117,14 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     }
 
+    /**************/
     /* Alert only */
+    /**************/
 
     else if ( config->dynamic_load_type == 2 ) {
 
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'alert'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
+
 
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                          processor_info_engine,
