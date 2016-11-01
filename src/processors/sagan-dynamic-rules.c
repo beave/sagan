@@ -20,9 +20,9 @@
 
 /* sagan-dynamic-load.c
  *
- * This loads rule sets dynamically based off 'dynamic' rules.  The idea is 
- * for Sagan to detect logs it might not be monitoring and automatically 
- * enable and/or warn the operator. 
+ * This loads rule sets dynamically based off 'dynamic' rules.  The idea is
+ * for Sagan to detect logs it might not be monitoring and automatically
+ * enable and/or warn the operator.
  *
  */
 
@@ -60,17 +60,17 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
     /* We don't want the array to be altered while we are working with it */
 
     pthread_mutex_lock(&SaganRulesLoadedMutex);
-    reload_rules = 1; 
+    reload_rules = 1;
 
     for (i=0; i<counters->rules_loaded_count; i++) {
 
         /* If the rule set is loaded (or in our array), nothing else needs to be done */
 
         if (!strcmp(rulestruct[rule_position].dynamic_ruleset, rules_loaded[i].ruleset)) {
-	
-	    /* Rule was already loaded.  Release mutex and continue as normal */
 
-	    pthread_mutex_unlock(&SaganRulesLoadedMutex);
+            /* Rule was already loaded.  Release mutex and continue as normal */
+
+            pthread_mutex_unlock(&SaganRulesLoadedMutex);
             return(0);
         }
     }
@@ -89,7 +89,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     /* Done here,  release so others can process */
 
-    reload_rules = 0; 
+    reload_rules = 0;
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
     /*****************************/
@@ -100,7 +100,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Dynamically loading '%s'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
-	/* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
+        /* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
 
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                          processor_info_engine,
@@ -114,16 +114,16 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          config->sagan_port,
                          rule_position );
 
-	/* Lock rules so other threads don't try to use it while we alter/load new rules */
+        /* Lock rules so other threads don't try to use it while we alter/load new rules */
 
         pthread_mutex_lock(&SaganRulesLoadedMutex);
-        reload_rules = 1; 
+        reload_rules = 1;
 
         Load_Rules(rulestruct[rule_position].dynamic_ruleset);
 
-	reload_rules = 0; 
+        reload_rules = 0;
         pthread_mutex_unlock(&SaganRulesLoadedMutex);
-	
+
     }
 
     /************/

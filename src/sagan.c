@@ -1013,11 +1013,11 @@ int main(int argc, char **argv)
                     }
 
 
-		    /* Thread holds here if rule load is in progress */
+                    /* Thread holds here if rule load is in progress */
 
                     pthread_mutex_lock(&SaganRulesLoadedMutex);
-		    reload_rules = 0; 
-		    pthread_mutex_unlock(&SaganRulesLoadedMutex);
+                    reload_rules = 0;
+                    pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
                     proc_msgslot++;
 

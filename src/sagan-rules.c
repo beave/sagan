@@ -753,26 +753,25 @@ void Load_Rules( const char *ruleset )
 
                 }
 
-
                 rulestruct[counters->rulecount].flowbit_count = flowbit_count;
 
             }
 
             /* "Dynamic" rule loading.  This allows Sagan to load rules when it "detects" new types */
 
-	    if (!strcmp(rulesplit, "dynamic_load")) { 
+            if (!strcmp(rulesplit, "dynamic_load")) {
 
-		arg = strtok_r(NULL, ":", &saveptrrule2);
+                arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' specified but not complete at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                 }
 
-	    strlcpy(rulestruct[counters->rulecount].dynamic_ruleset, Remove_Spaces(Sagan_Var_To_Value(arg)), sizeof(rulestruct[counters->rulecount].dynamic_ruleset));
-	    rulestruct[counters->rulecount].type = DYNAMIC_RULE;
-	    counters->dynamic_rule_count++;
+                strlcpy(rulestruct[counters->rulecount].dynamic_ruleset, Remove_Spaces(Sagan_Var_To_Value(arg)), sizeof(rulestruct[counters->rulecount].dynamic_ruleset));
+                rulestruct[counters->rulecount].type = DYNAMIC_RULE;
+                counters->dynamic_rule_count++;
 
-	    } 
+            }
 
 #ifdef HAVE_LIBMAXMINDDB
 
