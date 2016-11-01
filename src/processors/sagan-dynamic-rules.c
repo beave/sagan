@@ -48,6 +48,8 @@ struct _Rule_Struct *rulestruct;
 struct _Rules_Loaded *rules_loaded;
 struct _SaganCounters *counters;
 
+int proc_msgslot;
+
 pthread_mutex_t SaganRulesLoadedMutex;
 
 int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_position, _Sagan_Processor_Info *processor_info_engine, char *ip_src, char *ip_dst )
@@ -101,7 +103,9 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          rule_position );
 
         pthread_mutex_lock(&SaganRulesLoadedMutex);
+
         Load_Rules(rulestruct[rule_position].dynamic_ruleset);
+
         pthread_mutex_unlock(&SaganRulesLoadedMutex);
 	
 
