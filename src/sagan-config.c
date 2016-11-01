@@ -87,6 +87,9 @@ struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
 #endif
 
+pthread_mutex_t SaganRulesLoadedMutex;	/* Used when reloading configuration/rules */
+sbool reload_rules;                   
+
 sbool liblognorm_load = 0;		/* Need to stay outside of HAVE_LIBLOGNORM */
 
 struct _Rule_Struct *rulestruct;
@@ -96,7 +99,6 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganVar *var;
 
-pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Load_Config( void )
 {
@@ -1315,8 +1317,9 @@ void Load_Config( void )
 
             if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map") && strcmp(filename, "protocol.map")) {
 
+		pthread_mutex_lock(&SaganRulesLoadedMutex);
 
-                pthread_mutex_lock(&SaganRulesLoadedMutex);
+		reload_rules = 1; 
 
                 rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 
@@ -1329,8 +1332,8 @@ void Load_Config( void )
 
                 Load_Rules(ruleset);
 
-                pthread_mutex_unlock(&SaganRulesLoadedMutex);
-
+		reload_rules = 0; 
+		pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
             }
         }

@@ -310,13 +310,9 @@ void Sig_Handler( void )
             config->brointel_flag = 0;
 
             if ( config->sagan_track_clients_flag ) {
+
                 free(SaganTrackClients);
 
-
-//                    config->sagan_track_clients_flag = 0;
-//                      counters_ipc->track_clients_client_count = 0;
-//                      counters_ipc->track_clients_down = 0;
-//
             }
 
             /* Output formats */

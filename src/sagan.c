@@ -104,12 +104,15 @@ struct _Sagan_Flowbit *flowbit;
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
 int proc_msgslot=0;
+
 sbool dynamic_rule_flag = 0;
+sbool reload_rules = 0;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganMalformedCounter=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
@@ -1008,6 +1011,13 @@ int main(int argc, char **argv)
 
                         dynamic_line_count = 0;
                     }
+
+
+		    /* Thread holds here if rule load is in progress */
+
+                    pthread_mutex_lock(&SaganRulesLoadedMutex);
+		    reload_rules = 0; 
+		    pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
                     proc_msgslot++;
 

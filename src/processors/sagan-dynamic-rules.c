@@ -48,7 +48,7 @@ struct _Rule_Struct *rulestruct;
 struct _Rules_Loaded *rules_loaded;
 struct _SaganCounters *counters;
 
-int proc_msgslot;
+sbool reload_rules;
 
 pthread_mutex_t SaganRulesLoadedMutex;
 
@@ -57,16 +57,25 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     int i;
 
+    /* We don't want the array to be altered while we are working with it */
+
+    pthread_mutex_lock(&SaganRulesLoadedMutex);
+    reload_rules = 1; 
+
     for (i=0; i<counters->rules_loaded_count; i++) {
 
         /* If the rule set is loaded (or in our array), nothing else needs to be done */
 
         if (!strcmp(rulestruct[rule_position].dynamic_ruleset, rules_loaded[i].ruleset)) {
+	
+	    /* Rule was already loaded.  Release mutex and continue as normal */
+
+	    pthread_mutex_unlock(&SaganRulesLoadedMutex);
             return(0);
         }
     }
 
-    pthread_mutex_lock(&SaganRulesLoadedMutex);
+    /* Since rule was not loaded,  add it to our rule list */
 
     rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 
@@ -78,6 +87,9 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     counters->rules_loaded_count++;
 
+    /* Done here,  release so others can process */
+
+    reload_rules = 0; 
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
     /*****************************/
@@ -102,13 +114,16 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          config->sagan_port,
                          rule_position );
 
+	/* Lock rules so other threads don't try to use it while we alter/load new rules */
+
         pthread_mutex_lock(&SaganRulesLoadedMutex);
+        reload_rules = 1; 
 
         Load_Rules(rulestruct[rule_position].dynamic_ruleset);
 
+	reload_rules = 0; 
         pthread_mutex_unlock(&SaganRulesLoadedMutex);
 	
-
     }
 
     /************/
