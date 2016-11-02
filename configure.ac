@@ -192,7 +192,7 @@ PKG_PROG_PKG_CONFIG
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h pcre.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h])
 
 AC_CHECK_SIZEOF([size_t])
 
@@ -251,10 +251,152 @@ AM_PROG_AS
 
 AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat strlcat strlcpy getopt_long gethostbyname socket htons connect send recv dup2 strspn strdup memset access ftruncate strerror mmap shm_open])
 
-AC_CHECK_LIB(pcre, main,,AC_MSG_ERROR(Sagan needs PCRE installed.  Please see http://www.pcre.org.))
 AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
 AC_CHECK_LIB(rt, main,,AC_MSG_ERROR(Sagan needs librt!))
+
+
+##############################################################################
+# libpcre - This section was taken from the Suricata configure.ac.  It does
+# some extra checks and enabled PCRE JIT - 2016/11/01
+##############################################################################
+
+AC_ARG_WITH(libpcre_includes,
+        [  --with-libpcre-includes=DIR  libpcre include directory],
+        [with_libpcre_includes="$withval"],[with_libpcre_includes=no])
+AC_ARG_WITH(libpcre_libraries,
+        [  --with-libpcre-libraries=DIR    libpcre library directory],
+        [with_libpcre_libraries="$withval"],[with_libpcre_libraries="no"])
+
+if test "$with_libpcre_includes" != "no"; then
+    CPPFLAGS="${CPPFLAGS} -I${with_libpcre_includes}"
+fi
+
+AC_CHECK_HEADER(pcre.h,,[AC_ERROR(pcre.h not found ...)])
+
+if test "$with_libpcre_libraries" != "no"; then
+    LDFLAGS="${LDFLAGS} -L${with_libpcre_libraries}"
+fi
+
+PCRE=""
+AC_CHECK_LIB(pcre, pcre_get_substring,, PCRE="no")
+if test "$PCRE" = "no"; then
+    echo
+    echo "   ERROR!  pcre library not found, go get it"
+    echo "   from www.pcre.org."
+    echo
+    exit 1
+fi
+
+# libpcre 8.35 (especially on debian) has a known issue that results in segfaults
+if test "$with_libpcre_libraries" = "no"; then
+    PKG_CHECK_MODULES(LIBPCREVERSION, [libpcre = 8.35],[libpcre_buggy_found="yes"],[libprce_buggy_found="no"])
+    if test "$libpcre_buggy_found" = "yes"; then
+        echo
+        echo "   Warning! vulnerable libpcre version 8.35 found"
+        echo "   This version has a known issue that could result in segfaults"
+        echo "   please upgrade to a newer version of pcre which you can get from"
+        echo "   www.pcre.org. For more information, see issue #1693"
+        echo
+        echo "   Continuing for now with JIT disabled..."
+        echo
+    fi
+fi
+
+# To prevent duping the lib link we reset LIBS after this check. Setting action-if-found to NULL doesn't seem to work
+# see: http://blog.flameeyes.eu/2008/04/29/i-consider-ac_check_lib-harmful
+PCRE=""
+TMPLIBS="${LIBS}"
+AC_CHECK_LIB(pcre, pcre_dfa_exec,, PCRE="no")
+if test "$PCRE" = "no"; then
+    echo
+    echo "   ERROR!  pcre library was found but version was < 6.0"
+    echo "   please upgrade to a newer version of pcre which you can get from"
+    echo "   www.pcre.org."
+    echo
+    exit 1
+fi
+LIBS="${TMPLIBS}"
+
+AC_TRY_COMPILE([ #include <pcre.h> ],
+    [ int eo = 0; eo |= PCRE_EXTRA_MATCH_LIMIT_RECURSION; ],
+    [ pcre_match_limit_recursion_available=yes ], [:]
+)
+
+if test "$pcre_match_limit_recursion_available" != "yes"; then
+    echo
+    echo "   Warning! pcre extra opt PCRE_EXTRA_MATCH_LIMIT_RECURSION not found"
+    echo "   This could lead to potential DoS please upgrade to pcre >= 6.5"
+    echo "   from www.pcre.org."
+    echo "   Continuing for now...."
+    echo
+    AC_DEFINE([NO_PCRE_MATCH_RLIMIT],[1],[Pcre PCRE_EXTRA_MATCH_LIMIT_RECURSION not available])
+fi
+
+TMPCFLAGS="${CFLAGS}"
+CFLAGS="-O0 -g -Werror -Wall"
+AC_TRY_COMPILE([ #include <pcre.h> ],
+    [ pcre_extra *extra = NULL; pcre_free_study(extra); ],
+    [ AC_DEFINE([HAVE_PCRE_FREE_STUDY], [1], [Pcre pcre_free_study supported])], [:]
+)
+CFLAGS="${TMPCFLAGS}"
+
+
+#enable support for PCRE-jit available since pcre-8.20
+AC_MSG_CHECKING(for PCRE JIT support)
+AC_TRY_COMPILE([ #include <pcre.h> ],
+    [
+    int jit = 0;
+    pcre_config(PCRE_CONFIG_JIT, &jit);
+    ],
+    [ pcre_jit_available=yes ], [ pcre_jit_available=no ]
+    )
+
+# bug 1693, libpcre 8.35 is broken and debian jessie is still using that
+if test "$libpcre_buggy_found" = "yes"; then
+    pcre_jit_available="no, libpcre 8.35 blacklisted"
+fi
+
+
+if test "x$pcre_jit_available" = "xyes"; then
+   AC_MSG_RESULT(yes)
+   AC_DEFINE([PCRE_HAVE_JIT], [1], [Pcre with JIT compiler support enabled])
+
+   AC_MSG_CHECKING(for PCRE JIT support usability)
+   AC_TRY_COMPILE([ #include <pcre.h> ],
+       [
+       const char* regexstr = "(a|b|c|d)";
+       pcre *re;
+       const char *error;
+       pcre_extra *extra;
+       int err_offset;
+       re = pcre_compile(regexstr,0, &error, &err_offset,NULL);
+       extra = pcre_study(re, PCRE_STUDY_JIT_COMPILE, &error);
+       if (extra == NULL)
+           exit(EXIT_FAILURE);
+       int jit = 0;
+       int ret = pcre_fullinfo(re, extra, PCRE_INFO_JIT, &jit);
+       if (ret != 0 || jit != 1)
+           exit(EXIT_FAILURE);
+       exit(EXIT_SUCCESS);
+       ],
+       [ pcre_jit_works=yes ], [:]
+   )
+   if test "x$pcre_jit_works" != "xyes"; then
+       AC_MSG_RESULT(no)
+       echo
+       echo "   PCRE JIT support detection worked but testing it failed"
+       echo "   something odd is going on, please file a bug report."
+       echo
+       exit 1
+   else
+       AC_MSG_RESULT(yes)
+   fi
+else
+    AC_MSG_RESULT(no)
+fi
+
+#### End of PCRE ############################################################
 
 if test "$SYSSTRSTR" = "yes"; then
 	AC_MSG_RESULT([using build in strstr()...])
@@ -327,11 +469,11 @@ AC_CHECK_HEADERS(dumbnet.h,,DUMBNET_H="no")
 
 if test "x$DNET_H" = "xno" -a "x$DUMBNET_H" = "xno"; then
     echo
-    echo "The libdnet headers cannot be found.  This library is used for Sagan's"
-    echo "Unified2 output support.  Please see:" 
-    echo "https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
-    echo "To disable this feature use the --disable-libdnet flag."
-    exit
+    echo "   The libdnet headers cannot be found.  This library is used for Sagan's"
+    echo "   Unified2 output support.  Please see:" 
+    echo "   https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
+    echo "   To disable this feature use the --disable-libdnet flag."
+    exit 1
 fi
 
 AC_CHECK_LIB(dnet, eth_set,,[DNET="no"])
@@ -339,11 +481,11 @@ AC_CHECK_LIB(dumbnet, eth_set,,[DUMBNET="no"])
 
 if test "x$DNET" = "xno" -a "x$DUMBNET" = "xno"; then
     echo
-    echo "The libdnet headers cannot be found.  This library is used for Sagan's" 
-    echo "Unified2 output support.  Please see:"
-    echo "https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
-    echo "To disable this feature use the --disable-libdnet flag."
-    exit
+    echo "   The libdnet headers cannot be found.  This library is used for Sagan's" 
+    echo "   Unified2 output support.  Please see:"
+    echo "   https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
+    echo "   To disable this feature use the --disable-libdnet flag."
+    exit 1
 fi
 
 fi

@@ -71,6 +71,7 @@ void Sagan_Usage(void)
     fprintf(stderr, "\t\t\tfrom a FIFO.  The file must be in the Sagan format!\n");
     fprintf(stderr, "-l, --log [file]\tsagan.log location [default: %s].\n\n", SAGANLOG );
     fprintf(stderr, "-Q, --quiet\t\tRun Sagan in 'quiet' mode (no console output)\n");
+    fprintf(stderr, "\n");
 
 #ifdef HAVE_LIBESMTP
     fprintf(stderr, "* libesmtp (SMTP) support is included.\n");
@@ -108,6 +109,9 @@ void Sagan_Usage(void)
     fprintf(stderr, "* Using Quadrant's Bluedot.\n");
 #endif
 
+#ifdef PCRE_HAVE_JIT
+    fprintf(stderr, "* Using PCRE JIT.\n");
+#endif
 
     fprintf(stderr, "\n* Compiled on %s at %s.\n", __DATE__, __TIME__);
 }

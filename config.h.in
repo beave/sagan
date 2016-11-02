@@ -121,8 +121,8 @@
 /* Define to 1 if you have the <netinet/in.h> header file. */
 #undef HAVE_NETINET_IN_H
 
-/* Define to 1 if you have the <pcre.h> header file. */
-#undef HAVE_PCRE_H
+/* Pcre pcre_free_study supported */
+#undef HAVE_PCRE_FREE_STUDY
 
 /* Define to 1 if you have the <pthread.h> header file. */
 #undef HAVE_PTHREAD_H
@@ -277,6 +277,9 @@
    slash. */
 #undef LSTAT_FOLLOWS_SLASHED_SYMLINK
 
+/* Pcre PCRE_EXTRA_MATCH_LIMIT_RECURSION not available */
+#undef NO_PCRE_MATCH_RLIMIT
+
 /* Name of package */
 #undef PACKAGE
 
@@ -297,6 +300,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Pcre with JIT compiler support enabled */
+#undef PCRE_HAVE_JIT
 
 /* Define as the return type of signal handlers (`int' or `void'). */
 #undef RETSIGTYPE

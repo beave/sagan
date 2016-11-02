@@ -1214,6 +1214,11 @@ void Load_Rules( const char *ruleset )
                         strlcat(pcrerule, tmp, sizeof(pcrerule));
                     }
 
+#ifdef PCRE_HAVE_JIT
+
+                    pcreoptions |= PCRE_STUDY_JIT_COMPILE;
+
+#endif
                     /* are we /past/ and at the args? */
 
                     if ( pcreflag == 1 ) {
@@ -1267,10 +1272,25 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
                 }
 
+
                 /* We store the compiled/study results.  This saves us some CPU time during searching - Champ Clark III - 02/01/2011 */
 
                 rulestruct[counters->rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
                 rulestruct[counters->rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[counters->rulecount].re_pcre[pcre_count], pcreoptions, &error);
+
+#ifdef PCRE_HAVE_JIT
+
+                int jit = 0;
+                rc = 0;
+
+                rc = pcre_fullinfo(rulestruct[counters->rulecount].re_pcre[pcre_count], rulestruct[counters->rulecount].pcre_extra[pcre_count], PCRE_INFO_JIT, &jit);
+
+                if (rc != 0 || jit != 1) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] PCRE JIT does not support regexp in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                }
+
+#endif
+
 
                 if (  rulestruct[counters->rulecount].re_pcre[pcre_count]  == NULL ) {
                     Remove_Lock_File();

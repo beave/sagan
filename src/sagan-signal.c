@@ -243,13 +243,13 @@ void Sig_Handler( void )
             counters->genmapcount=0;
             counters->flowbit_track_count=0;
             counters->rules_loaded_count=0;
-	    counters->var_count=0;
+            counters->var_count=0;
 
             memset(rules_loaded, 0, sizeof(_Rules_Loaded));
             memset(rulestruct, 0, sizeof(_Rule_Struct));
             memset(classstruct, 0, sizeof(_Class_Struct));
             memset(generator, 0, sizeof(_Sagan_Processor_Generator));
-	    memset(var, 0, sizeof(_SaganVar)); 
+            memset(var, 0, sizeof(_SaganVar));
 
             /**********************************/
             /* Disabled and reset processors. */
