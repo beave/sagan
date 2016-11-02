@@ -1218,11 +1218,10 @@ void Load_Rules( const char *ruleset )
 
                     if ( pcreflag == 1 ) {
 
-/*
 #ifdef PCRE_HAVE_JIT
                     pcreoptions |= PCRE_STUDY_JIT_COMPILE;
 #endif
-*/
+
                         switch(tmp2[i]) {
 
                         case 'i':
@@ -1246,6 +1245,7 @@ void Load_Rules( const char *ruleset )
                         case 'G':
                             if ( pcreflag == 1 ) pcreoptions |= PCRE_UNGREEDY;
                             break;
+
 
                             /* PCRE options that aren't really used? */
 
@@ -1280,7 +1280,6 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
                 rulestruct[counters->rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[counters->rulecount].re_pcre[pcre_count], pcreoptions, &error);
 
-/* CHECK ERROR ABOVE
 #ifdef PCRE_HAVE_JIT
 
                 int jit = 0;
@@ -1289,15 +1288,10 @@ void Load_Rules( const char *ruleset )
                 rc = pcre_fullinfo(rulestruct[counters->rulecount].re_pcre[pcre_count], rulestruct[counters->rulecount].pcre_extra[pcre_count], PCRE_INFO_JIT, &jit);
 
                 if (rc != 0 || jit != 1) {
-		    printf("|%s|\n", pcrerule); 
-                    Sagan_Log(S_WARN, "[%s, line %d] PCRE JIT does not support regexp in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
-                } else { 
-		    printf("Good: %s\n", pcrerule); 
-		} 
+                    Sagan_Log(S_WARN, "[%s, line %d] PCRE JIT does not support regexp in %s at line %d (pcre == %s). Continuing without PCRE JIT enabled.", __FILE__, __LINE__, ruleset, linecount, pcrerule);
+		}
 
 #endif
-*/
-
 
                 if (  rulestruct[counters->rulecount].re_pcre[pcre_count]  == NULL ) {
                     Remove_Lock_File();
