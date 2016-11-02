@@ -761,6 +761,13 @@ void Load_Rules( const char *ruleset )
 
             if (!strcmp(rulesplit, "dynamic_load")) {
 
+                if ( config->dynamic_load_sample_rate == 0 ) {
+
+                    Sagan_Log(S_ERROR, "[%s, line %d] Attempting to load a dynamic rule but the 'dynamic_load' processor hasn't been configured.  Abort", __FILE__, __LINE__, linecount, ruleset);
+
+                }
+
+
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
