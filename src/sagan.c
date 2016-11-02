@@ -467,6 +467,11 @@ int main(int argc, char **argv)
     Sagan_Log(S_NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
     Sagan_Log(S_NORMAL, "Out of %d rules, %d flowbit(s) are in use.", counters->rulecount, counters->flowbit_total_counter);
     Sagan_Log(S_NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
+
+#ifdef PCRE_HAVE_JIT
+    Sagan_Log(S_NORMAL, "PCRE JIT is enabled.");
+#endif
+
     Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
 
 #ifdef HAVE_LIBPCAP
