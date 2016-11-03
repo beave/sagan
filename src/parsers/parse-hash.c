@@ -100,8 +100,6 @@ char *Sagan_Parse_Hash_Cleanup(char *string)
     static __thread char in[512] = { 0 };
     char tmp2[2];
 
-    char *ret = NULL;
-
     strlcpy(in, string, sizeof(in));
 
     int len = strlen(in);

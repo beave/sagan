@@ -151,7 +151,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int  alter_num;
     int  meta_alter_num;
 
-    sbool geoip2_isset = 0;
     sbool flowbit_return = 0;
     sbool alert_time_trigger = 0;
     sbool check_flow_return = 1;  /* 1 = match, 0 = no match */
@@ -208,6 +207,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 #ifdef HAVE_LIBMAXMINDDB
     int   geoip2_return = 0;
+    sbool geoip2_isset = 0;
 #endif
 
 #ifdef WITH_BLUEDOT
