@@ -66,6 +66,8 @@ struct _SaganConfig {
     sbool        syslog_src_lookup;
     int          sagan_proto;
 
+    sbool	 pcre_jit; 				/* For PCRE JIT support testing */
+
     sbool        endian;
 
     /* Processors */

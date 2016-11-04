@@ -447,6 +447,21 @@ int main(int argc, char **argv)
 
     Sagan_Open_Log_File(OPEN, SAGAN_LOG);
 
+#ifdef PCRE_HAVE_JIT
+
+    /* We test if pages will support RWX before loading rules.  If it doesn't due to the OS,
+       we want to disable PCRE JIT now.  This prevents confusing warnings of PCRE JIT during
+       rule load */
+
+    config->pcre_jit = 1;
+
+    if (PageSupportsRWX() == 0) {
+        Sagan_Log(S_WARN, "The operating system doens't allow RWX pages.  Disabling PCRE JIT.");
+        config->pcre_jit = 0;
+    }
+
+#endif
+
     Load_Config();
 
     Sagan_Engine_Init();
@@ -469,7 +484,11 @@ int main(int argc, char **argv)
     Sagan_Log(S_NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
 
 #ifdef PCRE_HAVE_JIT
-    Sagan_Log(S_NORMAL, "PCRE JIT is enabled.");
+
+    if ( config->pcre_jit == 1 ) {
+        Sagan_Log(S_NORMAL, "PCRE JIT is enabled.");
+    }
+
 #endif
 
     Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);

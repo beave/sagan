@@ -471,6 +471,8 @@ char *Sagan_Return_Time( uintmax_t );
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );
 
+int PageSupportsRWX(void);
+
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );
 #endif

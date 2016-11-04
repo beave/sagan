@@ -47,6 +47,8 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/mman.h>
+
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -1222,3 +1224,24 @@ uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
     return(0);
 
 }
+
+/***************************************************************************/
+/* PageSupportsRWX - Checks the OS to see if it allows RMX pages.  This    */
+/* function is from Suricata and is by Shawn Webb from HardenedBSD. GRSec  */
+/* will cause things like PCRE JIT to fail.                                */
+/***************************************************************************/
+
+int PageSupportsRWX(void)
+{
+    int retval = 1;
+    void *ptr;
+    ptr = mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
+    if (ptr != MAP_FAILED) {
+        if (mprotect(ptr, getpagesize(), PROT_READ|PROT_WRITE|PROT_EXEC) == -1) {
+            retval = 0;
+        }
+        munmap(ptr, getpagesize());
+    }
+    return retval;
+}
+
