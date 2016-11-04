@@ -78,6 +78,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "\"bhennigar\" (Github)\t\t\t\tBug reporting & testing.\n");
     fprintf(stderr, "Corey Fisher (cfisher@quadrantsec.com)\t\tCode testing & debugging.\n");
     fprintf(stderr, "\"Work-lako\" (Github)\t\t\t\tIdea/patch for sagan-syslog.c.\n");
+    fprintf(stderr, "Jeremy A. Grove (jgrove@quadrantsec.com)\tBug reporting.\n");
 
 
     fprintf(stderr, "\n");
