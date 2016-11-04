@@ -80,6 +80,11 @@ struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;
 #endif
 
+/* For pre-8.20 PCRE compatibility */
+#ifndef PCRE_STUDY_JIT_COMPILE
+#define PCRE_STUDY_JIT_COMPILE 0
+#endif
+
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
 struct _Sagan_Flowbit *flowbit;
@@ -1196,9 +1201,11 @@ void Load_Rules( const char *ruleset )
             /* PCRE needs a little extra "work" */
 
             if (!strcmp(rulesplit, "pcre" )) {
+
                 if ( pcre_count > MAX_PCRE ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] There is to many \"pcre\" types in the rule at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                 }
+
                 arg = strtok_r(NULL, ";", &saveptrrule2);
                 strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 
@@ -1208,7 +1215,6 @@ void Load_Rules( const char *ruleset )
 
                 pcreflag=0;
                 memset(pcrerule, 0, sizeof(pcrerule));
-
 
                 for ( i = 1; i < strlen(tmp2); i++) {
 
@@ -1224,10 +1230,6 @@ void Load_Rules( const char *ruleset )
                     /* are we /past/ and at the args? */
 
                     if ( pcreflag == 1 ) {
-
-#ifdef PCRE_HAVE_JIT
-                        pcreoptions |= PCRE_STUDY_JIT_COMPILE;
-#endif
 
                         switch(tmp2[i]) {
 
@@ -1277,6 +1279,7 @@ void Load_Rules( const char *ruleset )
                     }
                 }
 
+
                 if ( pcreflag == 0 ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset, linecount);
                 }
@@ -1285,6 +1288,11 @@ void Load_Rules( const char *ruleset )
                 /* We store the compiled/study results.  This saves us some CPU time during searching - Champ Clark III - 02/01/2011 */
 
                 rulestruct[counters->rulecount].re_pcre[pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
+
+#ifdef PCRE_HAVE_JIT
+                pcreoptions |= PCRE_STUDY_JIT_COMPILE;
+#endif
+
                 rulestruct[counters->rulecount].pcre_extra[pcre_count] = pcre_study( rulestruct[counters->rulecount].re_pcre[pcre_count], pcreoptions, &error);
 
 #ifdef PCRE_HAVE_JIT
