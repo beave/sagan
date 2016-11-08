@@ -14,6 +14,60 @@ AM_MAINTAINER_MODE([disable])
 
 VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
 
+
+# Check OS
+
+AC_MSG_CHECKING([host os])
+
+# If no host OS,  try uname
+
+if test -z "$host" ; then
+        host="`uname`"
+fi
+
+echo -n "installation for $host OS... "
+
+
+    case "$host" in
+        *-*-*freebsd*)
+            CFLAGS="${CFLAGS} -D__FreeBSD__"
+            CPPFLAGS="${CPPFLAGS} -I/usr/local/include -I/usr/local/include/libnet11"
+            LDFLAGS="${LDFLAGS} -L/usr/local/lib -L/usr/local/lib/libnet11"
+            ;;
+        *-*-openbsd*)
+            CFLAGS="${CFLAGS} -D__OpenBSD__"
+            CPPFLAGS="${CPPFLAGS} -I/usr/local/include -I/usr/local/include/libnet-1.1"
+            LDFLAGS="${LDFLAGS} -L/usr/local/lib -I/usr/local/lib/libnet-1.1"
+            ;;
+        *darwin*|*Darwin*)
+            CFLAGS="${CFLAGS} -D__Darwin__"
+            CPPFLAGS="${CPPFLAGS} -I/opt/local/include"
+            LDFLAGS="${LDFLAGS} -L/opt/local/lib"
+            ;;
+        *-*-linux*)
+	    CFLAGS="${CFLAGS} -D__Linux__"
+            #for now do nothing
+            ;;
+#        *-*-mingw32*)
+#            CFLAGS="${CFLAGS} -DOS_WIN32"
+#            LDFLAGS="${LDFLAGS} -lws2_32"
+#            WINDOWS_PATH="yes"
+#            ;;
+#        *-*-cygwin)
+#            WINDOWS_PATH="yes"
+#            ;;
+#        *-*-solaris*)
+#            AC_MSG_WARN([support for Solaris/Illumos/SunOS is experimental])
+#            LDFLAGS="${LDFLAGS} -lsocket -lnsl"
+#            ;;
+        *)
+            AC_MSG_WARN([unsupported OS this may or may not work])
+            ;;
+    esac
+    AC_MSG_RESULT(ok)
+
+
+
 AC_C_BIGENDIAN(AC_SUBST([ENDIAN],[big]),AC_SUBST([ENDIAN],[little]))
 
 AC_ARG_ENABLE(snortsam,
@@ -192,7 +246,7 @@ PKG_PROG_PKG_CONFIG
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h sys/mman.h])
 
 AC_CHECK_SIZEOF([size_t])
 
@@ -505,6 +559,7 @@ if test "$SNORTSAM" = "yes"; then
         AC_MSG_RESULT([------- Snortsam support is enabled -------])
         AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
         fi
+
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 

@@ -47,7 +47,6 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 
 
 #include "sagan.h"
@@ -1231,6 +1230,12 @@ uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
 /* will cause things like PCRE JIT to fail.                                */
 /***************************************************************************/
 
+#ifndef HAVE_SYS_MMAN_H
+#define PageSupportsRWX 1
+#else
+#include <sys/mman.h>
+
+
 int PageSupportsRWX(void)
 {
     int retval = 1;
@@ -1245,3 +1250,4 @@ int PageSupportsRWX(void)
     return retval;
 }
 
+#endif /* HAVE_SYS_MMAN_H */

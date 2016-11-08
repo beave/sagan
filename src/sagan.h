@@ -471,7 +471,20 @@ char *Sagan_Return_Time( uintmax_t );
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );
 
-int PageSupportsRWX(void);
+/* This was taken from Suricata util-pages.h. "OpenBSD won't allow test" */
+
+#ifdef __OpenBSD__
+    /* OpenBSD won't allow for this test:
+     * "suricata(...): mprotect W^X violation" */
+    #define PageSupportsRWX() 0
+#else
+    #ifndef HAVE_SYS_MMAN_H
+        #define PageSupportsRWX() 1
+    #else
+        int PageSupportsRWX(void);
+    #endif /* HAVE_SYS_MMAN_H */
+#endif
+
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );
