@@ -1235,17 +1235,23 @@ void Load_Config( void )
                     sagan_var2 = strtok_r(NULL, "[", &tok);
                     sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
 
+		    Sagan_Var_To_Value(sagan_var3); 
+		    Remove_Return(sagan_var3);
                     Remove_Spaces(sagan_var3);
-                    Remove_Return(sagan_var3);
 
-                    strlcpy(var[counters->var_count].var_value, Sagan_Var_To_Value(sagan_var3), sizeof(var[counters->var_count].var_value));
+                    strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
 
                 } else {
 
                     /* Single value */
 
                     sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-                    strlcpy(var[counters->var_count].var_value, Sagan_Var_To_Value(Remove_Return(sagan_var2)), sizeof(var[counters->var_count].var_value));
+
+		    Sagan_Var_To_Value(sagan_var2); 
+		    Remove_Return(sagan_var2); 
+		    Remove_Spaces(sagan_var2); 
+
+                    strlcpy(var[counters->var_count].var_value, sagan_var2, sizeof(var[counters->var_count].var_value));
 
                 }
 
