@@ -145,7 +145,7 @@ void Load_Config( void )
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
 
-    config->max_flowbits = DEFAULT_IPC_FLOWBITS;
+    config->max_xbits = DEFAULT_IPC_XBITS;
 
     config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
     config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
@@ -266,14 +266,19 @@ void Load_Config( void )
         }
 
 
-        if (!strcmp(sagan_option, "flowbits")) {
+        if (!strcmp(sagan_option, "flowbits") || !strcmp(sagan_option, "xbits")) {
+
+            if (!strcmp(sagan_option, "flowbits")) {
+                Sagan_Log(S_WARN, "[%s, line %d] Depreciated \"flowbits\" in use.  Use \"xbits\".", __FILE__, __LINE__);
+            }
+
             sagan_var1 = strtok_r(NULL, " ", &tok);
 
             if ( sagan_var1 == NULL ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] \"flowbits\" is incomplete!", __FILE__, __LINE__);
+                Sagan_Log(S_ERROR, "[%s, line %d] \"xbits\" is incomplete!", __FILE__, __LINE__);
             }
 
-            config->max_flowbits = atoi(sagan_var1);
+            config->max_xbits = atoi(sagan_var1);
         }
 
 
@@ -1235,8 +1240,8 @@ void Load_Config( void )
                     sagan_var2 = strtok_r(NULL, "[", &tok);
                     sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
 
-		    Sagan_Var_To_Value(sagan_var3); 
-		    Remove_Return(sagan_var3);
+                    Sagan_Var_To_Value(sagan_var3);
+                    Remove_Return(sagan_var3);
                     Remove_Spaces(sagan_var3);
 
                     strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
@@ -1247,9 +1252,9 @@ void Load_Config( void )
 
                     sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
 
-		    Sagan_Var_To_Value(sagan_var2); 
-		    Remove_Return(sagan_var2); 
-		    Remove_Spaces(sagan_var2); 
+                    Sagan_Var_To_Value(sagan_var2);
+                    Remove_Return(sagan_var2);
+                    Remove_Spaces(sagan_var2);
 
                     strlcpy(var[counters->var_count].var_value, sagan_var2, sizeof(var[counters->var_count].var_value));
 

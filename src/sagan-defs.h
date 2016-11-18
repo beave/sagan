@@ -62,7 +62,7 @@
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */
 #define MAX_META_CONTENT	10		/* Max 'meta_content' within a rule */
-#define MAX_FLOWBITS		20		/* Max 'flowbits' within a rule */
+#define MAX_XBITS		20		/* Max 'xbits' within a rule */
 
 #define MAX_CHECK_FLOWS		50		/* Max amount of IP addresses to be checked in a flow */
 
@@ -136,7 +136,7 @@
 #define IPC_DIRECTORY			"/var/run/sagan"
 
 #define COUNTERS_IPC_FILE 		"sagan-counters.shared"
-#define FLOWBIT_IPC_FILE 		"sagan-flowbits.shared"
+#define XBIT_IPC_FILE 	     	        "sagan-xbits.shared"
 #define THRESH_BY_SRC_IPC_FILE 		"sagan-thresh-by-source.shared"
 #define THRESH_BY_DST_IPC_FILE 		"sagan-thresh-by-destination.shared"
 #define THRESH_BY_DSTPORT_IPC_FILE 	"sagan-thresh-by-destination-port.shared"
@@ -162,7 +162,7 @@
 #define DEFAULT_IPC_THRESH_BY_SRC_PORT	1000000
 #define DEFAULT_IPC_THRESH_BY_DST_PORT  1000000
 #define DEFAULT_IPC_THRESH_BY_USERNAME	10000
-#define DEFAULT_IPC_FLOWBITS		10000
+#define DEFAULT_IPC_XBITS		10000
 
 #define AFTER_BY_SRC			1
 #define AFTER_BY_DST			2
@@ -172,7 +172,7 @@
 #define THRESH_BY_DST			6
 #define THRESH_BY_DSTPORT		7
 #define THRESH_BY_USERNAME		8
-#define FLOWBIT				9
+#define XBIT				9
 #define THRESH_BY_SRCPORT		10
 #define AFTER_BY_SRCPORT		11
 

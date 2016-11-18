@@ -56,7 +56,7 @@
 #include "version.h"
 
 #include "sagan-credits.h"
-#include "sagan-flowbit.h"
+#include "sagan-xbit.h"
 #include "sagan-processor.h"
 #include "sagan-config.h"
 #include "sagan-ignore-list.h"
@@ -94,7 +94,6 @@ struct _Rule_Struct *rulestruct;
 struct class_struct *classstruct;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
-struct _Sagan_Flowbit *flowbit;
 
 #ifdef WITH_BLUEDOT
 #include <curl/curl.h>
@@ -345,8 +344,8 @@ int main(int argc, char **argv)
                 debugflag=1;
             }
 
-            if (Sagan_strstr(optarg, "flowbit")) {
-                debug->debugflowbit=1;
+            if (Sagan_strstr(optarg, "xbit")) {
+                debug->debugxbit=1;
                 debugflag=1;
             }
 
@@ -480,7 +479,7 @@ int main(int argc, char **argv)
     pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
 
     Sagan_Log(S_NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-    Sagan_Log(S_NORMAL, "Out of %d rules, %d flowbit(s) are in use.", counters->rulecount, counters->flowbit_total_counter);
+    Sagan_Log(S_NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->xbit_total_counter);
     Sagan_Log(S_NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
 
 #ifdef PCRE_HAVE_JIT

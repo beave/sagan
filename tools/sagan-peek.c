@@ -44,7 +44,7 @@
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
-#include "../src/sagan-flowbit.h"
+#include "../src/sagan-xbit.h"
 
 #include "../src/processors/sagan-track-clients.h"
 
@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 
     struct _Sagan_IPC_Counters *counters_ipc;
 
-    struct _Sagan_IPC_Flowbit *flowbit_ipc;
+    struct _Sagan_IPC_Xbit *xbit_ipc;
     struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 
     struct thresh_by_src_ipc *threshbysrc_ipc;
@@ -396,9 +396,9 @@ int main(int argc, char **argv)
         }
     }
 
-    /*** Get "flowbit" data ***/
+    /*** Get "xbit" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, FLOWBIT_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, XBIT_IPC_FILE);
 
     if ( object_check(tmp_object_check) == false ) {
         fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
@@ -411,7 +411,7 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) + (sizeof(_Sagan_IPC_Flowbit) * counters_ipc->flowbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
+    if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) + (sizeof(_Sagan_IPC_Xbit) * counters_ipc->xbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED ) {
         fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
         exit(1);
     }
@@ -419,29 +419,29 @@ int main(int argc, char **argv)
     close(shm);
 
 
-    if ( counters_ipc->flowbit_count >= 1 ) {
+    if ( counters_ipc->xbit_count >= 1 ) {
 
-        printf("\n*** Flowbits (%d) ****\n", counters_ipc->flowbit_count);
+        printf("\n*** Xbits (%d) ****\n", counters_ipc->xbit_count);
         printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-        printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+        printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
         printf("-----------------------------------------------------------------------------------------------------------------------------\n");
 
-        for ( i = 0; i < counters_ipc->flowbit_count; i++) {
+        for ( i = 0; i < counters_ipc->xbit_count; i++) {
 
-            ip_addr_src.s_addr = htonl(flowbit_ipc[i].ip_src);
-            ip_addr_dst.s_addr = htonl(flowbit_ipc[i].ip_dst);
+            ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
+            ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
 
-            if ( flowbit_ipc[i].flowbit_state == 1 ) {
+            if ( xbit_ipc[i].xbit_state == 1 ) {
 
-                printf("ACTIVE   | %-25s| ", flowbit_ipc[i].flowbit_name);
+                printf("ACTIVE   | %-25s| ", xbit_ipc[i].xbit_name);
             } else {
-                printf("INACTIVE | %-25s| ", flowbit_ipc[i].flowbit_name);
+                printf("INACTIVE | %-25s| ", xbit_ipc[i].xbit_name);
             }
 
             printf("%-16s| ", inet_ntoa(ip_addr_src));
             printf("%-16s| ", inet_ntoa(ip_addr_dst));
-            printf("%-21s| ", u32_time_to_human(flowbit_ipc[i].flowbit_date));
-            printf("%d (%s)\n", flowbit_ipc[i].expire, u32_time_to_human(flowbit_ipc[i].flowbit_date + flowbit_ipc[i].expire));
+            printf("%-21s| ", u32_time_to_human(xbit_ipc[i].xbit_date));
+            printf("%d (%s)\n", xbit_ipc[i].expire, u32_time_to_human(xbit_ipc[i].xbit_date + xbit_ipc[i].expire));
 
         }
     }

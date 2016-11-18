@@ -41,7 +41,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-flowbit.h"
+#include "sagan-xbit.h"
 #include "sagan-config.h"
 #include "sagan-lockfile.h"
 #include "sagan-signal.h"
@@ -83,9 +83,6 @@ struct _Sagan_Processor_Generator *generator;
 struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
 struct _SaganVar *var;
-
-
-struct _Sagan_IPC_Flowbit *flowbit;
 
 struct _Sagan_Ignorelist *SaganIgnorelist;
 
@@ -156,10 +153,10 @@ void Sig_Handler( void )
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_flowbit);
+            Sagan_File_Unlock(config->shm_xbit);
 
-            if ( close(config->shm_flowbit) != 0 ) {
-                Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC flowbit! [%s]", __FILE__, __LINE__, strerror(errno));
+            if ( close(config->shm_xbit) != 0 ) {
+                Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
             Sagan_File_Unlock(config->shm_thresh_by_src);
@@ -241,7 +238,6 @@ void Sig_Handler( void )
             counters->rulecount=0;
             counters->ruletotal=0;
             counters->genmapcount=0;
-            counters->flowbit_track_count=0;
             counters->rules_loaded_count=0;
             counters->var_count=0;
 

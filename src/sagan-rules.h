@@ -109,10 +109,19 @@ struct _Rule_Struct {
     int content_count;
     int meta_content_count;
     int meta_content_converted_count;
-    int flowbit_count;				/* Number of flowbits in memory */
 
-    int flowbit_condition_count;		/* Number of isset/isnot within a rule */
-    int flowbit_set_count;			/* Number of set/unset within a rule */
+    int xbit_count;				/* Number of xbits in memory */
+    int xbit_condition_count;			/* Number of isset/isnot within a rule */
+    int xbit_set_count;				/* Number of set/unset within a rule */
+
+    sbool xbit_flag;              	        /* Does the rule contain a xbit? */
+    sbool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
+    sbool xbit_nounified2;                      /* Do we want to suppress "unified2" from xbits in unified2 output */
+
+    int xbit_type[MAX_XBITS];                   /* 1 == set, 2 == unset,  3 == isset, 4 == isnotset */
+    int xbit_direction[MAX_XBITS];              /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    int xbit_timeout[MAX_XBITS];                /* How long a xbit is to stay alive (seconds) */
+    char xbit_name[MAX_XBITS][64];              /* Name of the xbit */
 
     int ref_count;
     int dst_port;
@@ -130,31 +139,21 @@ struct _Rule_Struct {
 
     int   s_find_hash_type;
 
-    sbool flowbit_flag;                   	/* Does the rule contain a flowbit? */
-    sbool flowbit_noalert;			/* Do we want to suppress "alerts" from flowbits in ALL output plugins? */
-    sbool flowbit_nounified2;	 		/* Do we want to suppress "unified2" from flowbits in unified2 output */
-
-    int flowbit_type[MAX_FLOWBITS];		/* 1 == set, 2 == unset,  3 == isset, 4 == isnotset */
-    int flowbit_direction[MAX_FLOWBITS];	/* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
-    int flowbit_memory_position[MAX_FLOWBITS];	/* "Where" in the flowbit struct flowbit is */
-    int flowbit_timeout[MAX_FLOWBITS];		/* How long a flowbit is to stay alive (seconds) */
-    char flowbit_name[MAX_FLOWBITS][64]; 	/* Name of the flowbit */
-
     sbool normalize;
-    sbool content_not[MAX_CONTENT];     /* content: ! "something" */
+    sbool content_not[MAX_CONTENT];             /* content: ! "something" */
 
-    int drop;                   /* inline DROP for ext. */
+    int drop;                                   /* inline DROP for ext. */
 
-    int threshold_type;         /* 1 = limit,  2 = thresh */
-    int threshold_method;       /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
+    int threshold_type;                         /* 1 = limit,  2 = thresh */
+    int threshold_method;                       /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
     int threshold_count;
     int threshold_seconds;
 
-    int after_method;               /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
+    int after_method;                           /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
     int after_count;
     int after_seconds;
 
-    int fwsam_src_or_dst;               /* 1 == src,  2 == dst */
+    int fwsam_src_or_dst;                       /* 1 == src,  2 == dst */
     unsigned long  fwsam_seconds;
 
     sbool meta_content_flag;

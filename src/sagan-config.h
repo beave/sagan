@@ -99,7 +99,7 @@ struct _SaganConfig {
     int		sagan_syslog_options;
 
     int		shm_counters;
-    int		shm_flowbit;
+    int		shm_xbit;
     int 	shm_thresh_by_src;
     int		shm_thresh_by_dst;
     int		shm_thresh_by_dstport;
@@ -118,7 +118,7 @@ struct _SaganConfig {
 
     char	ipc_directory[MAXPATH];
 
-    int		max_flowbits;
+    int		max_xbits;
 
     int		max_threshold_by_src;
     int		max_threshold_by_dst;

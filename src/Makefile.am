@@ -28,7 +28,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        sagan-protocol-map.c \
                                                        sagan-geoip2.c \
                                                        sagan-meta-content.c \
-                                                       sagan-flowbit.c \
+                                                       sagan-xbit.c \
                                                        sagan-check-flow.c\
                                                        sagan-aetas.c \
                                                        sagan-ipc.c \

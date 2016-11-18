@@ -52,7 +52,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "\"Stas Alekseev\" (salekseev - Github)\t\tSpec file for Redhat/Fedora.\n");
     fprintf(stderr, "\"Alice Kaerast\" (kaerast - Github\t\trsyslog example in 'extra'.\n");
     fprintf(stderr, "\"DigiAngel\" (Github)\t\t\t\t'content:!' idea.\n");
-    fprintf(stderr, "Robert Bridge (RobbieAB - Github)\t\t'flowbit' idea.\n");
+    fprintf(stderr, "Robert Bridge (RobbieAB - Github)\t\t'flowbit/xbit' idea.\n");
     fprintf(stderr, "Mathieu Parent (sathieu - Github)\t\tOld MySQL port fix.\n");
     fprintf(stderr, "Pierre Chifflier (chifflier - Github)\t\tPatches/bug fixes/man page.\n");
     fprintf(stderr, "Pierre Chifflier \t\t\t\tDebian/Ubuntu packages.\n");

@@ -48,12 +48,12 @@
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "sagan-ipc.h"
-#include "sagan-flowbit.h"
+#include "sagan-xbit.h"
 
 #include "processors/sagan-track-clients.h"
 
 struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Flowbit *flowbit_ipc;
+struct _Sagan_IPC_Xbit *xbit_ipc;
 
 struct _SaganConfig *config;
 
@@ -71,7 +71,7 @@ pthread_mutex_t Thresh_By_Src_Port_Mutex;
 pthread_mutex_t Thresh_By_Dst_Port_Mutex;
 pthread_mutex_t Thresh_By_Username_Mutex;
 
-pthread_mutex_t Flowbit_Mutex;
+pthread_mutex_t Xbit_Mutex;
 
 struct thresh_by_src_ipc *threshbysrc_ipc;
 struct thresh_by_dst_ipc *threshbydst_ipc;
@@ -791,9 +791,9 @@ sbool Sagan_Clean_IPC_Object( int type )
         return(0);
     }
 
-    /* Flowbit_IPC */
+    /* Xbit_IPC */
 
-    else if ( type == FLOWBIT && config->max_flowbits < counters_ipc->flowbit_count ) {
+    else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count ) {
 
         t = time(NULL);
         now=localtime(&t);
@@ -803,29 +803,29 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_flowbit);
-        pthread_mutex_lock(&Flowbit_Mutex);
+        Sagan_File_Lock(config->shm_xbit);
+        pthread_mutex_lock(&Xbit_Mutex);
 
-        struct _Sagan_IPC_Flowbit *temp_flowbit_ipc;
-        temp_flowbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flowbit) * config->max_flowbits);
+        struct _Sagan_IPC_Xbit *temp_xbit_ipc;
+        temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits);
 
-        memset(temp_flowbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flowbit) * config->max_flowbits));
+        memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits));
 
-        old_count = counters_ipc->flowbit_count;
+        old_count = counters_ipc->xbit_count;
 
-        for (i = 0; i < counters_ipc->flowbit_count; i++) {
-            if ( (utime - flowbit_ipc[i].flowbit_expire) < flowbit_ipc[i].expire ) {
+        for (i = 0; i < counters_ipc->xbit_count; i++) {
+            if ( (utime - xbit_ipc[i].xbit_expire) < xbit_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping '%s'.", __FILE__, __LINE__, flowbit_ipc[i].ip_src, flowbit_ipc[i].ip_dst);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping '%s'.", __FILE__, __LINE__, xbit_ipc[i].ip_src, xbit_ipc[i].ip_dst);
                 }
 
-                temp_flowbit_ipc[new_count].flowbit_state = flowbit_ipc[i].flowbit_state;
-                temp_flowbit_ipc[new_count].ip_src = flowbit_ipc[i].ip_src;
-                temp_flowbit_ipc[new_count].ip_dst = flowbit_ipc[i].ip_dst;
-                temp_flowbit_ipc[new_count].flowbit_expire = flowbit_ipc[i].flowbit_expire;
-                temp_flowbit_ipc[new_count].expire = flowbit_ipc[i].expire;
-                strlcpy(temp_flowbit_ipc[new_count].flowbit_name, flowbit_ipc[i].flowbit_name, sizeof(temp_flowbit_ipc[new_count].flowbit_name));
+                temp_xbit_ipc[new_count].xbit_state = xbit_ipc[i].xbit_state;
+                temp_xbit_ipc[new_count].ip_src = xbit_ipc[i].ip_src;
+                temp_xbit_ipc[new_count].ip_dst = xbit_ipc[i].ip_dst;
+                temp_xbit_ipc[new_count].xbit_expire = xbit_ipc[i].xbit_expire;
+                temp_xbit_ipc[new_count].expire = xbit_ipc[i].expire;
+                strlcpy(temp_xbit_ipc[new_count].xbit_name, xbit_ipc[i].xbit_name, sizeof(temp_xbit_ipc[new_count].xbit_name));
 
                 new_count++;
             }
@@ -833,30 +833,30 @@ sbool Sagan_Clean_IPC_Object( int type )
 
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
-                flowbit_ipc[i].flowbit_state = temp_flowbit_ipc[i].flowbit_state;
-                flowbit_ipc[i].ip_src = temp_flowbit_ipc[i].ip_src;
-                flowbit_ipc[i].ip_dst = temp_flowbit_ipc[i].ip_dst;
-                flowbit_ipc[i].flowbit_expire = temp_flowbit_ipc[i].flowbit_expire;
-                flowbit_ipc[i].expire = temp_flowbit_ipc[i].expire;
-                strlcpy(flowbit_ipc[i].flowbit_name, temp_flowbit_ipc[i].flowbit_name, sizeof(flowbit_ipc[i].flowbit_name));
+                xbit_ipc[i].xbit_state = temp_xbit_ipc[i].xbit_state;
+                xbit_ipc[i].ip_src = temp_xbit_ipc[i].ip_src;
+                xbit_ipc[i].ip_dst = temp_xbit_ipc[i].ip_dst;
+                xbit_ipc[i].xbit_expire = temp_xbit_ipc[i].xbit_expire;
+                xbit_ipc[i].expire = temp_xbit_ipc[i].expire;
+                strlcpy(xbit_ipc[i].xbit_name, temp_xbit_ipc[i].xbit_name, sizeof(xbit_ipc[i].xbit_name));
             }
 
-            counters_ipc->flowbit_count = new_count;
+            counters_ipc->xbit_count = new_count;
 
         } else {
 
-            Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flowbit.  Nothing to remove!", __FILE__, __LINE__);
-            free(temp_flowbit_ipc);
-            pthread_mutex_unlock(&Flowbit_Mutex);
-            Sagan_File_Unlock(config->shm_flowbit);
+            Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
+            free(temp_xbit_ipc);
+            pthread_mutex_unlock(&Xbit_Mutex);
+            Sagan_File_Unlock(config->shm_xbit);
             return(1);
         }
 
-        Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flowbit.", __FILE__, __LINE__, new_count, old_count);
-        free(temp_flowbit_ipc);
+        Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Xbit.", __FILE__, __LINE__, new_count, old_count);
+        free(temp_xbit_ipc);
 
-        pthread_mutex_unlock(&Flowbit_Mutex);
-        Sagan_File_Unlock(config->shm_flowbit);
+        pthread_mutex_unlock(&Xbit_Mutex);
+        Sagan_File_Unlock(config->shm_xbit);
         return(0);
 
     }
@@ -933,51 +933,51 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
     }
 
-    /* Flowbit memory object */
+    /* Xbit memory object */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, FLOWBIT_IPC_FILE);
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
 
-    Sagan_IPC_Check_Object(tmp_object_check, new_counters, "flowbit");
+    Sagan_IPC_Check_Object(tmp_object_check, new_counters, "xbit");
 
-    if ((config->shm_flowbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
-        Sagan_Log(S_NORMAL, "+ Flowbit shared object (new).");
+    if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
+        Sagan_Log(S_NORMAL, "+ Xbit shared object (new).");
         new_object=1;
     }
 
-    else if ((config->shm_flowbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for flowbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+    else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
     }
 
-    if ( ftruncate(config->shm_flowbit, sizeof(_Sagan_IPC_Flowbit) * config->max_flowbits ) != 0 ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate flowbit. [%s]", __FILE__, __LINE__, strerror(errno));
+    if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
     }
 
-    if (( flowbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flowbit) * config->max_flowbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flowbit, 0)) == MAP_FAILED ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for flowbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+    if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
     }
 
     if ( new_object == 0) {
-        Sagan_Log(S_NORMAL, "- Flowbit shared object reloaded (%d flowbits loaded / max: %d).", counters_ipc->flowbit_count, config->max_flowbits);
+        Sagan_Log(S_NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
     }
 
     new_object = 0;
 
-    if ( debug->debugipc && counters_ipc->flowbit_count >= 1 ) {
+    if ( debug->debugipc && counters_ipc->xbit_count >= 1 ) {
 
         Sagan_Log(S_DEBUG, "");
-        Sagan_Log(S_DEBUG, "*** Flowbits ***");
+        Sagan_Log(S_DEBUG, "*** Xbits ***");
         Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Flowbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+        Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
         Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
 
 
-        for (i= 0; i < counters_ipc->flowbit_count; i++ ) {
+        for (i= 0; i < counters_ipc->xbit_count; i++ ) {
 
-            ip_addr_src.s_addr = htonl(flowbit_ipc[i].ip_src);
-            ip_addr_dst.s_addr = htonl(flowbit_ipc[i].ip_dst);
+            ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
+            ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
 
-            if ( flowbit_ipc[i].flowbit_state == 1 ) {
-                Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", flowbit_ipc[i].flowbit_state, flowbit_ipc[i].flowbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(flowbit_ipc[i].flowbit_expire), flowbit_ipc[i].expire );
+            if ( xbit_ipc[i].xbit_state == 1 ) {
+                Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(xbit_ipc[i].xbit_expire), xbit_ipc[i].expire );
             }
 
         }

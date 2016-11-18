@@ -77,7 +77,7 @@ struct _SaganDNSCache {
 typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
 struct _Sagan_IPC_Counters {
 
-    int  flowbit_count;
+    int  xbit_count;
     int	 thresh_count_by_src;
     int	 thresh_count_by_dst;
     int	 thresh_count_by_dstport;
@@ -132,7 +132,7 @@ struct _SaganCounters {
     int	     thread_output_counter;
     int	     thread_processor_counter;
 
-    int	     flowbit_total_counter;
+    int	     xbit_total_counter;
 
     int      var_count;
 
@@ -149,9 +149,6 @@ struct _SaganCounters {
     int      mapcount_program;
 
     int	     droplist_count;
-
-    int	     flowbit_count;
-    int	     flowbit_track_count;
 
     int      brointel_addr_count;
     int      brointel_domain_count;
@@ -224,7 +221,7 @@ struct _SaganDebug {
     sbool debugfwsam;
     sbool debugexternal;
     sbool debugthreads;
-    sbool debugflowbit;
+    sbool debugxbit;
     sbool debugengine;
     sbool debugbrointel;
     sbool debugmalformed;
@@ -474,15 +471,15 @@ sbool Sagan_File_Unlock ( int );
 /* This was taken from Suricata util-pages.h. "OpenBSD won't allow test" */
 
 #ifdef __OpenBSD__
-    /* OpenBSD won't allow for this test:
-     * "suricata(...): mprotect W^X violation" */
-    #define PageSupportsRWX() 0
+/* OpenBSD won't allow for this test:
+ * "suricata(...): mprotect W^X violation" */
+#define PageSupportsRWX() 0
 #else
-    #ifndef HAVE_SYS_MMAN_H
-        #define PageSupportsRWX() 1
-    #else
-        int PageSupportsRWX(void);
-    #endif /* HAVE_SYS_MMAN_H */
+#ifndef HAVE_SYS_MMAN_H
+#define PageSupportsRWX() 1
+#else
+int PageSupportsRWX(void);
+#endif /* HAVE_SYS_MMAN_H */
 #endif
 
 

@@ -42,7 +42,7 @@
 #include "sagan-aetas.h"
 #include "sagan-meta-content.h"
 #include "sagan-send-alert.h"
-#include "sagan-flowbit.h"
+#include "sagan-xbit.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
 #include "sagan-ipc.h"
@@ -151,7 +151,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int  alter_num;
     int  meta_alter_num;
 
-    sbool flowbit_return = 0;
+    sbool xbit_return = 0;
     sbool alert_time_trigger = 0;
     sbool check_flow_return = 1;  /* 1 = match, 0 = no match */
 
@@ -702,11 +702,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     }
 
                     /****************************************************************************
-                     * Flowbit
+                     * Xbit
                      ****************************************************************************/
 
-                    if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_condition_count ) {
-                        flowbit_return = Sagan_Flowbit_Condition(b, ip_src, ip_dst);
+                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_condition_count ) {
+                        xbit_return = Sagan_Xbit_Condition(b, ip_src, ip_dst);
                     }
 
                     /****************************************************************************
@@ -929,10 +929,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /****************************************************************************/
                     if ( check_flow_return == 1 ) {
 
-                        if ( rulestruct[b].flowbit_flag == 0 ||
-                             ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count == 0 ) ||
-                             ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count && rulestruct[b].flowbit_condition_count && flowbit_return ) ||
-                             ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count == 0 && rulestruct[b].flowbit_condition_count && flowbit_return )) {
+                        if ( rulestruct[b].xbit_flag == 0 ||
+                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count == 0 ) ||
+                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count && xbit_return ) ||
+                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count == 0 && rulestruct[b].xbit_condition_count && xbit_return )) {
 
                             if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == 1 ) {
 
@@ -1809,13 +1809,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flowbit Flag: %d | Flowbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flowbit_flag, flowbit_return);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                 }
 
-                                                                if ( rulestruct[b].flowbit_flag && rulestruct[b].flowbit_set_count )
-                                                                    Sagan_Flowbit_Set(b, ip_src, ip_dst);
+                                                                if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
+                                                                    Sagan_Xbit_Set(b, ip_src, ip_dst);
 
                                                                 threadid++;
 
@@ -1838,7 +1838,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                 processor_info_engine_proto                    =       proto;
                                                                 processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
 
-                                                                if ( rulestruct[b].flowbit_flag == 0 || rulestruct[b].flowbit_noalert == 0 ) {
+                                                                if ( rulestruct[b].xbit_flag == 0 || rulestruct[b].xbit_noalert == 0 ) {
 
                                                                     if ( rulestruct[b].type == NORMAL_RULE ) {
 
@@ -1880,7 +1880,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 #endif
                             } /* Time based alerts */
 
-                        } /* Flowbit */
+                        } /* Xbit */
 
                     } /* Check Rule Flow */
 
@@ -1892,10 +1892,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
             geoip2_isset = 0;
 #endif
 
-            match=0;  		  /* Reset match! */
-            sagan_match=0;		  /* Reset pcre/meta_content/content match! */
-            rc=0;		  	  /* Return code */
-            flowbit_return=0;	  /* Flowbit reset */
+            match=0;  		      /* Reset match! */
+            sagan_match=0;	      /* Reset pcre/meta_content/content match! */
+            rc=0;		      /* Return code */
+            xbit_return=0;	      /* Xbit reset */
             check_flow_return=1;      /* Rule flow direction reset */
 
 

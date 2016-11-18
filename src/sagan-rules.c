@@ -47,7 +47,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 
-#include "sagan-flowbit.h"
+#include "sagan-xbit.h"
 #include "sagan-lockfile.h"
 #include "sagan-classifications.h"
 #include "sagan-rules.h"
@@ -87,7 +87,6 @@ int liblognorm_count;
 
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
-struct _Sagan_Flowbit *flowbit;
 
 void Load_Rules( const char *ruleset )
 {
@@ -154,7 +153,7 @@ void Load_Rules( const char *ruleset )
     int meta_content_count=0;
     int meta_content_converted_count=0;
     int pcre_count=0;
-    int flowbit_count;
+    int xbit_count;
     int flow_1_count=0;
     int flow_2_count=0;
 
@@ -611,7 +610,14 @@ void Load_Rules( const char *ruleset )
 
             /* Non-quoted information (sid, reference, etc) */
 
-            if (!strcmp(rulesplit, "flowbits")) {
+            if (!strcmp(rulesplit, "flowbits") || !strcmp(rulesplit, "xbits")) {
+
+                if (!strcmp(rulesplit, "flowbits")) {
+
+                    Sagan_Log(S_WARN, "[%s, linx %d] The rule set '%s' at line '%d' has depreciated option 'flowbit'.  Use 'xbit' instead.", __FILE__, __LINE__, ruleset, linecount);
+
+                }
+
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
@@ -620,11 +626,11 @@ void Load_Rules( const char *ruleset )
                 }
 
                 if (!strcmp(tmptoken, "noalert")) {
-                    rulestruct[counters->rulecount].flowbit_noalert=1;
+                    rulestruct[counters->rulecount].xbit_noalert=1;
                 }
 
                 if (!strcmp(tmptoken, "nounified2")) {
-                    rulestruct[counters->rulecount].flowbit_nounified2=1;
+                    rulestruct[counters->rulecount].xbit_nounified2=1;
                 }
 
                 /* SET */
@@ -633,23 +639,23 @@ void Load_Rules( const char *ruleset )
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    rulestruct[counters->rulecount].flowbit_flag = 1; 				/* We have flowbit in the rule! */
-                    rulestruct[counters->rulecount].flowbit_set_count++;
-                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 1;		/* set */
+                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;		/* set */
 
-                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                    rulestruct[counters->rulecount].flowbit_timeout[flowbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                    if ( rulestruct[counters->rulecount].flowbit_timeout[flowbit_count] == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    flowbit_count++;
-                    counters->flowbit_total_counter++;
+                    xbit_count++;
+                    counters->xbit_total_counter++;
 
                 }
 
@@ -663,21 +669,21 @@ void Load_Rules( const char *ruleset )
                         Sagan_Log(S_ERROR, "[%s, line %d] Expected \"direction\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Sagan_Xbit_Type(tmptoken, linecount, ruleset);
 
-                    rulestruct[counters->rulecount].flowbit_flag = 1;               			/* We have flowbit in the rule! */
-                    rulestruct[counters->rulecount].flowbit_set_count++;
-                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 2;                	/* unset */
+                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 2;                	/* unset */
 
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                    flowbit_count++;
+                    xbit_count++;
 
                 }
 
@@ -688,35 +694,35 @@ void Load_Rules( const char *ruleset )
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Sagan_Xbit_Type(tmptoken, linecount, ruleset);
 
-                    rulestruct[counters->rulecount].flowbit_flag = 1;               			/* We have flowbit in the rule! */
-                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 3;               	/* isset */
+                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;               	/* isset */
 
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                    /* If we have multiple flowbit conditions (bit1&bit2),
-                     * we alter the flowbit_conditon_count to reflect that.
+                    /* If we have multiple xbit conditions (bit1&bit2),
+                     * we alter the xbit_conditon_count to reflect that.
                      * |'s are easy.  We just test to see if one of the
-                     * flowbits matched or not!
+                     * xbits matched or not!
                      */
 
-                    if (Sagan_strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&")) {
-                        rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
+                    if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
+                        rulestruct[counters->rulecount].xbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
                     } else {
-                        rulestruct[counters->rulecount].flowbit_condition_count++;
+                        rulestruct[counters->rulecount].xbit_condition_count++;
                     }
 
-                    flowbit_count++;
+                    xbit_count++;
                 }
 
                 /* ISNOTSET */
@@ -726,39 +732,39 @@ void Load_Rules( const char *ruleset )
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    rulestruct[counters->rulecount].flowbit_direction[flowbit_count] = Sagan_Flowbit_Type(tmptoken, linecount, ruleset);
+                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Sagan_Xbit_Type(tmptoken, linecount, ruleset);
 
-                    rulestruct[counters->rulecount].flowbit_flag = 1;                               	/* We have flowbit in the rule! */
-                    rulestruct[counters->rulecount].flowbit_type[flowbit_count]  = 4;               	/* isnotset */
+                    rulestruct[counters->rulecount].xbit_flag = 1;                               	/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;               	/* isnotset */
 
                     tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected flowbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
                     }
 
-                    strlcpy(rulestruct[counters->rulecount].flowbit_name[flowbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flowbit_name[flowbit_count]));
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                    /* If we have multiple flowbit conditions (bit1&bit2),
-                     * we alter the flowbit_conditon_count to reflect that.
+                    /* If we have multiple xbit conditions (bit1&bit2),
+                     * we alter the xbit_conditon_count to reflect that.
                      * |'s are easy.  We just test to see if one of the
-                     * flowbits matched or not!
+                     * xbits matched or not!
                      */
 
-                    if (Sagan_strstr(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&")) {
-                        rulestruct[counters->rulecount].flowbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].flowbit_name[flowbit_count], "&") + 1;
+                    if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
+                        rulestruct[counters->rulecount].xbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
                     } else {
-                        rulestruct[counters->rulecount].flowbit_condition_count++;
+                        rulestruct[counters->rulecount].xbit_condition_count++;
                     }
 
-                    flowbit_count++;
+                    xbit_count++;
 
                 }
 
-                rulestruct[counters->rulecount].flowbit_count = flowbit_count;
+                rulestruct[counters->rulecount].xbit_count = xbit_count;
 
             }
 
@@ -1954,7 +1960,7 @@ void Load_Rules( const char *ruleset )
         content_count=0;
         meta_content_count=0;
         meta_content_converted_count=0;
-        flowbit_count=0;
+        xbit_count=0;
         netcount=0;
         ref_count=0;
         flow_1_count=0;
