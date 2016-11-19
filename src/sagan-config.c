@@ -87,13 +87,18 @@ struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
 #endif
 
+pthread_mutex_t SaganRulesLoadedMutex;	/* Used when reloading configuration/rules */
+sbool reload_rules;
+
 sbool liblognorm_load = 0;		/* Need to stay outside of HAVE_LIBLOGNORM */
 
 struct _Rule_Struct *rulestruct;
+struct _Rules_Loaded *rules_loaded;
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganVar *var;
+
 
 void Load_Config( void )
 {
@@ -108,6 +113,8 @@ void Load_Config( void )
 
     char tmpbuf[CONFBUF];
     char tmpbuf2[CONFBUF];
+    char tmpbuf3[CONFBUF];
+    char tmpbuf4[CONFBUF];
     char tmpstring[CONFBUF];
 
     char *sagan_option=NULL;
@@ -118,6 +125,7 @@ void Load_Config( void )
 
     char *tok=NULL;
     char *tok2=NULL;
+    char *tok3=NULL;
 
     int i,check;
 
@@ -140,7 +148,7 @@ void Load_Config( void )
     config->sagan_host[0] = '\0';
     config->sagan_port = 514;
 
-    config->max_flowbits = DEFAULT_IPC_FLOWBITS;
+    config->max_xbits = DEFAULT_IPC_XBITS;
 
     config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
     config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
@@ -261,14 +269,19 @@ void Load_Config( void )
         }
 
 
-        if (!strcmp(sagan_option, "flowbits")) {
+        if (!strcmp(sagan_option, "flowbits") || !strcmp(sagan_option, "xbits")) {
+
+            if (!strcmp(sagan_option, "flowbits")) {
+                Sagan_Log(S_WARN, "[%s, line %d] Depreciated \"flowbits\" in use.  Use \"xbits\".", __FILE__, __LINE__);
+            }
+
             sagan_var1 = strtok_r(NULL, " ", &tok);
 
             if ( sagan_var1 == NULL ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] \"flowbits\" is incomplete!", __FILE__, __LINE__);
+                Sagan_Log(S_ERROR, "[%s, line %d] \"xbits\" is incomplete!", __FILE__, __LINE__);
             }
 
-            config->max_flowbits = atoi(sagan_var1);
+            config->max_xbits = atoi(sagan_var1);
         }
 
 
@@ -538,6 +551,53 @@ void Load_Config( void )
 
             sagan_var1 = strtok_r(NULL," ", &tok);
 
+            /******* Dynamic rule loading & reporting *******/
+
+            if (!strcmp(sagan_var1, "dynamic_load:")) {
+
+                ptmp = sagan_var1;
+
+                while (ptmp != NULL) {
+
+                    if (!strcmp(ptmp, "sample_rate")) {
+
+                        ptmp = strtok_r(NULL," ", &tok);
+                        Remove_Return(ptmp);
+
+                        if ( ptmp == NULL ) {
+                            Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' processor has an invalid or missing 'sample_rate'!", __FILE__, __LINE__);
+                        }
+
+                        config->dynamic_load_sample_rate = atoi(ptmp);
+                    }
+
+                    if (!strcmp(ptmp, "type")) {
+
+                        ptmp = strtok_r(NULL," ", &tok);
+                        Remove_Return(ptmp);
+
+                        if ( ptmp == NULL ) {
+                            Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' processor has an invalid or missing 'type'!", __FILE__, __LINE__);
+                        }
+
+                        if (!strcmp(ptmp, "dynamic_load")) {
+                            config->dynamic_load_type = 0;
+                        }
+
+                        else if (!strcmp(ptmp, "log_only")) {
+                            config->dynamic_load_type = 1;
+                        }
+
+                        else if (!strcmp(ptmp, "alert")) {
+                            config->dynamic_load_type = 2;
+                        }
+
+                    }
+
+                    ptmp = strtok_r(NULL, "=", &tok);
+                }
+            }
+
             /******* Client tracker *******/
 
             if (!strcmp(sagan_var1, "sagan-track-clients:")) {
@@ -718,11 +778,32 @@ void Load_Config( void )
                 Sagan_Log(S_ERROR, "[%s, line %d] \"%s\" appears to be incomplete!", sagan_option, __FILE__, __LINE__);
             }
 
-            if (!strcmp(sagan_var1, "external:")) {
+            if (!strncmp(sagan_var1, "external:", 9)) {
                 config->sagan_ext_flag=1;
                 config->sagan_external_output_flag=1;
 
-                ptmp = strtok_r(NULL, " ", &tok);
+		check=0;
+		i=0;
+
+		if (sagan_var1[10] != ' ') {
+
+			check = strlen(sagan_var1);
+			strncpy(tmpbuf3, sagan_var1, 9);
+			strcat(tmpbuf3," ");
+			strncpy(tmpbuf4, sagan_var1+9,check);
+			sagan_var1=strcat(tmpbuf3,tmpbuf4);
+			sagan_var1[check+1]='\0';
+			i=1;
+		}
+		
+		if ( i == 1 ) {
+			sagan_var1 = strtok_r(sagan_var1," ", &tok3);
+			ptmp = strtok_r(NULL, " ", &tok3);
+			strtok_r(NULL," ", &tok);
+
+		}else{
+                	ptmp = strtok_r(NULL, " ", &tok);
+		}
 
                 if ( ptmp == NULL ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output option is incomplete!", __FILE__, __LINE__);
@@ -732,11 +813,11 @@ void Load_Config( void )
                 Remove_Spaces(ptmp);
 
                 if (stat(ptmp, &filecheck) != 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' does not exist! Abort!", __FILE__, __LINE__, ptmp);
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output program '%s' does not exist! Abort!", __FILE__, __LINE__, ptmp);
                 }
 
                 if (access(ptmp, X_OK) == -1) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' is not executable! Abort!", __FILE__, __LINE__, ptmp);
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output program '%s' is not executable! Abort!", __FILE__, __LINE__, ptmp);
                 }
 
                 strlcpy(config->sagan_extern, ptmp, sizeof(config->sagan_extern));
@@ -1108,6 +1189,7 @@ void Load_Config( void )
         /* var */
 
         if (!strcmp(sagan_option, "var")) {
+
             sagan_var1 = strtok_r(NULL, " ", &tok);
             var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));   /* Allocate memory */
 
@@ -1154,7 +1236,6 @@ void Load_Config( void )
 
                         snprintf(tmpstring, sizeof(tmpstring), ",%s", Remove_Return(tmpbuf2));
 
-
                     }
 
                     /* Append to the var */
@@ -1183,8 +1264,9 @@ void Load_Config( void )
                     sagan_var2 = strtok_r(NULL, "[", &tok);
                     sagan_var3 = strtok_r(sagan_var2, "]", &tok2);
 
-                    Remove_Spaces(sagan_var3);
+                    Sagan_Var_To_Value(sagan_var3);
                     Remove_Return(sagan_var3);
+                    Remove_Spaces(sagan_var3);
 
                     strlcpy(var[counters->var_count].var_value, sagan_var3, sizeof(var[counters->var_count].var_value));
 
@@ -1193,7 +1275,12 @@ void Load_Config( void )
                     /* Single value */
 
                     sagan_var2 = strtok_r(NULL, " ", &tok); /* Move to position of value of var */
-                    strlcpy(var[counters->var_count].var_value, Remove_Return(sagan_var2), sizeof(var[counters->var_count].var_value));
+
+                    Sagan_Var_To_Value(sagan_var2);
+                    Remove_Return(sagan_var2);
+                    Remove_Spaces(sagan_var2);
+
+                    strlcpy(var[counters->var_count].var_value, sagan_var2, sizeof(var[counters->var_count].var_value));
 
                 }
 
@@ -1221,10 +1308,15 @@ void Load_Config( void )
         }
 
         /* Check for duplicate VAR's */
+
         for (i = 0; i < counters->var_count; i++) {
+
             for ( check = i+1; check < counters->var_count; check ++) {
+
                 if (!strcmp (var[check].var_name, var[i].var_name )) {
+
                     Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate var '%s' & '%s'.  Please correct this.", __FILE__, __LINE__, var[check].var_name, var[i].var_name);
+
                 }
             }
         }
@@ -1259,7 +1351,25 @@ void Load_Config( void )
             /* It's not reference.config, classification.config, gen-msg.map or protocol.map, it must be a ruleset */
 
             if (strcmp(filename, "reference.config") && strcmp(filename, "classification.config") && strcmp(filename, "gen-msg.map") && strcmp(filename, "protocol.map")) {
+
+                pthread_mutex_lock(&SaganRulesLoadedMutex);
+
+                reload_rules = 1;
+
+                rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
+
+                if ( rules_loaded == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
+                }
+
+                strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, ruleset, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
+                counters->rules_loaded_count++;
+
                 Load_Rules(ruleset);
+
+                reload_rules = 0;
+                pthread_mutex_unlock(&SaganRulesLoadedMutex);
+
             }
         }
     }
