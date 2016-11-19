@@ -772,8 +772,6 @@ void Load_Config( void )
 
             config->output_thread_flag = 1;
 
-            sagan_var1 = strtok_r(NULL," ", &tok);
-
             if ( sagan_var1 == NULL ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] \"%s\" appears to be incomplete!", sagan_option, __FILE__, __LINE__);
             }
@@ -785,7 +783,7 @@ void Load_Config( void )
 		check=0;
 		i=0;
 
-		if (sagan_var1[10] != ' ') {
+		if (strlen(sagan_var1) != 9) {
 
 			check = strlen(sagan_var1);
 			strncpy(tmpbuf3, sagan_var1, 9);
@@ -793,7 +791,7 @@ void Load_Config( void )
 			strncpy(tmpbuf4, sagan_var1+9,check);
 			sagan_var1=strcat(tmpbuf3,tmpbuf4);
 			sagan_var1[check+1]='\0';
-			i=1;
+			i++;
 		}
 		
 		if ( i == 1 ) {
@@ -804,6 +802,8 @@ void Load_Config( void )
 		}else{
                 	ptmp = strtok_r(NULL, " ", &tok);
 		}
+
+		Sagan_Log(S_NORMAL, "ptmp = '%s'", ptmp);
 
                 if ( ptmp == NULL ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output option is incomplete!", __FILE__, __LINE__);
