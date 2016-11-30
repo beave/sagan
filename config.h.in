@@ -99,6 +99,9 @@
 /* Define to 1 if you have the `rt' library (-lrt). */
 #undef HAVE_LIBRT
 
+/* Define to 1 if you have the `yaml' library (-lyaml). */
+#undef HAVE_LIBYAML
+
 /* Define to 1 if you have the <limits.h> header file. */
 #undef HAVE_LIMITS_H
 
@@ -123,9 +126,6 @@
 
 /* Pcre pcre_free_study supported */
 #undef HAVE_PCRE_FREE_STUDY
-
-/* Define to 1 if you have the <pthread.h> header file. */
-#undef HAVE_PTHREAD_H
 
 /* Define to 1 if your system has a GNU libc compatible `realloc' function,
    and to 0 otherwise. */

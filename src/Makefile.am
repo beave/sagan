@@ -7,6 +7,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                sagan_SOURCES = sagan.c \
                                                        sagan-classifications.c \
                                                        sagan-config.c \
+						       sagan-yaml.c \
                                                        sagan-lockfile.c \
                                                        sagan-references.c \
                                                        sagan-rules.c \

@@ -246,7 +246,7 @@ PKG_PROG_PKG_CONFIG
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 
-AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h pthread.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h sys/mman.h])
+AC_CHECK_HEADERS([stdio.h stdlib.h sys/types.h unistd.h stdint.h inttypes.h ctype.h errno.h fcntl.h sys/stat.h string.h getopt.h time.h stdarg.h limits.h stdbool.h arpa/inet.h netinet/in.h sys/time.h sys/socket.h sys/mmap.h sys/mman.h])
 
 AC_CHECK_SIZEOF([size_t])
 
@@ -305,9 +305,73 @@ AM_PROG_AS
 
 AC_CHECK_FUNCS([select strstr strchr strcmp strlen sizeof write snprintf strncat strlcat strlcpy getopt_long gethostbyname socket htons connect send recv dup2 strspn strdup memset access ftruncate strerror mmap shm_open])
 
-AC_CHECK_LIB(pthread, main,,AC_MSG_ERROR(Sagan needs pthreads!))
 AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
+
+# OSX doesn't have librt - this needs to be fixed!
+
 AC_CHECK_LIB(rt, main,,AC_MSG_ERROR(Sagan needs librt!))
+
+# libpthread
+AC_ARG_WITH(libpthread_includes,
+        [  --with-libpthread-includes=DIR  libpthread include directory],
+        [with_libpthread_includes="$withval"],[with_libpthread_includes=no])
+AC_ARG_WITH(libpthread_libraries,
+        [  --with-libpthread-libraries=DIR    libpthread library directory],
+        [with_libpthread_libraries="$withval"],[with_libpthread_libraries="no"])
+
+if test "$with_libpthread_includes" != "no"; then
+    CPPFLAGS="${CPPFLAGS} -I${with_libpthread_includes}"
+fi
+
+dnl AC_CHECK_HEADER(pthread.h,,[AC_ERROR(pthread.h not found ...)])
+
+if test "$with_libpthread_libraries" != "no"; then
+    LDFLAGS="${LDFLAGS}  -L${with_libpthread_libraries}"
+fi
+
+PTHREAD=""
+AC_CHECK_LIB(pthread, pthread_create,, PTHREAD="no")
+
+if test "$PTHREAD" = "no"; then
+    echo
+    echo "   ERROR! libpthread library not found,"
+    echo
+    exit 1
+fi
+
+# libyaml
+
+AC_ARG_WITH(libyaml_includes,
+        [  --with-libyaml-includes=DIR  libyaml include directory],
+        [with_libyaml_includes="$withval"],[with_libyaml_includes=no])
+AC_ARG_WITH(libyaml_libraries,
+        [  --with-libyaml-libraries=DIR    libyaml library directory],
+        [with_libyaml_libraries="$withval"],[with_libyaml_libraries="no"])
+
+if test "$with_libyaml_includes" != "no"; then
+    CPPFLAGS="${CPPFLAGS} -I${with_libyaml_includes}"
+fi
+
+AC_CHECK_HEADER(yaml.h,,LIBYAML="no")
+
+if test "$with_libyaml_libraries" != "no"; then
+    LDFLAGS="${LDFLAGS} -L${with_libyaml_libraries}"
+fi
+
+LIBYAML=""
+AC_CHECK_LIB(yaml,yaml_parser_initialize,,LIBYAML="no")
+
+if test "$LIBYAML" = "no"; then
+    echo
+    echo "   ERROR!  libyaml library not found, go get it"
+    echo "   from http://pyyaml.org/wiki/LibYAML "
+    echo "   or your distribution:"
+    echo
+    echo "   Ubuntu: apt-get install libyaml-dev"
+    echo "   Fedora: yum install libyaml-devel"
+    echo
+    exit 1
+fi
 
 
 ##############################################################################
