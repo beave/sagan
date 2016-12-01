@@ -113,6 +113,8 @@ void Load_Config( void )
 
     char tmpbuf[CONFBUF];
     char tmpbuf2[CONFBUF];
+    char tmpbuf3[CONFBUF];
+    char tmpbuf4[CONFBUF];
     char tmpstring[CONFBUF];
 
     char *sagan_option=NULL;
@@ -123,6 +125,7 @@ void Load_Config( void )
 
     char *tok=NULL;
     char *tok2=NULL;
+    char *tok3=NULL;
 
     int i,check;
 
@@ -769,17 +772,38 @@ void Load_Config( void )
 
             config->output_thread_flag = 1;
 
-            sagan_var1 = strtok_r(NULL," ", &tok);
-
             if ( sagan_var1 == NULL ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] \"%s\" appears to be incomplete!", sagan_option, __FILE__, __LINE__);
             }
 
-            if (!strcmp(sagan_var1, "external:")) {
+            if (!strncmp(sagan_var1, "external:", 9)) {
                 config->sagan_ext_flag=1;
                 config->sagan_external_output_flag=1;
 
-                ptmp = strtok_r(NULL, " ", &tok);
+		check=0;
+		i=0;
+
+		if (strlen(sagan_var1) != 9) {
+
+			check = strlen(sagan_var1);
+			strncpy(tmpbuf3, sagan_var1, 9);
+			strcat(tmpbuf3," ");
+			strncpy(tmpbuf4, sagan_var1+9,check);
+			sagan_var1=strcat(tmpbuf3,tmpbuf4);
+			sagan_var1[check+1]='\0';
+			i++;
+		}
+		
+		if ( i == 1 ) {
+			sagan_var1 = strtok_r(sagan_var1," ", &tok3);
+			ptmp = strtok_r(NULL, " ", &tok3);
+			strtok_r(NULL," ", &tok);
+
+		}else{
+                	ptmp = strtok_r(NULL, " ", &tok);
+		}
+
+		Sagan_Log(S_NORMAL, "ptmp = '%s'", ptmp);
 
                 if ( ptmp == NULL ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output option is incomplete!", __FILE__, __LINE__);
@@ -789,11 +813,11 @@ void Load_Config( void )
                 Remove_Spaces(ptmp);
 
                 if (stat(ptmp, &filecheck) != 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' does not exist! Abort!", __FILE__, __LINE__, ptmp);
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output program '%s' does not exist! Abort!", __FILE__, __LINE__, ptmp);
                 }
 
                 if (access(ptmp, X_OK) == -1) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] \"external\" output program '%s' is not executable! Abort!", __FILE__, __LINE__, ptmp);
+                    Sagan_Log(S_ERROR, "[%s, line %d] \"external:\" output program '%s' is not executable! Abort!", __FILE__, __LINE__, ptmp);
                 }
 
                 strlcpy(config->sagan_extern, ptmp, sizeof(config->sagan_extern));
