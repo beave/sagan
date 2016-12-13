@@ -128,7 +128,6 @@ void Load_YAML_Config( void )
     pthread_mutex_lock(&SaganRulesLoadedMutex);
     reload_rules = 1;
 
-
     /* Set some system defaults */
 
     strlcpy(config->sagan_alert_filepath, ALERTLOG, sizeof(config->sagan_alert_filepath));
@@ -165,7 +164,7 @@ void Load_YAML_Config( void )
 
     config->sagan_fifo[0] = '\0';
 
-    if ( config->sagan_is_file == 0 ) {
+    if ( config->sagan_is_file == false ) {
         strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
     }
 
@@ -186,7 +185,7 @@ void Load_YAML_Config( void )
     strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev));
 #endif
 
-    if (stat(config->sagan_config, &filecheck) != 0 ) {
+    if (stat(config->sagan_config, &filecheck) != false ) {
         Sagan_Log(S_ERROR, "[%s, line %d] The configuration file '%s' cannot be found! Abort!", __FILE__, __LINE__, config->sagan_config);
     }
 
@@ -235,7 +234,7 @@ void Load_YAML_Config( void )
 
         else if ( event.type == YAML_STREAM_END_EVENT ) {
 
-            done = 1;
+            done = true;
 
             if ( debug->debugload ) {
                 Sagan_Log(S_DEBUG, "[%s, line %d] YAML_STREAM_END_EVENT", __FILE__, __LINE__);
@@ -1473,6 +1472,30 @@ void Load_YAML_Config( void )
     yaml_event_delete(&event);
     yaml_parser_delete(&parser);
     fclose(fh);
+
+    /* Load required var's info config array */
+
+    for (a = 0; a<counters->var_count; a++) { 
+
+	if ( !strcmp(var[a].var_name, "FIFO") && config->sagan_is_file == 0 ) { 
+	   strlcpy(config->sagan_fifo, var[a].var_value, sizeof(config->sagan_fifo));
+	}
+
+	else if ( !strcmp(var[a].var_name, "LOCKFILE" ) ) {
+	   strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
+	}
+
+	else if ( !strcmp(var[a].var_name, "ALERTLOG" ) ) {
+	   strlcpy(config->sagan_alert_filepath, var[a].var_value, sizeof(config->sagan_alert_filepath));
+	} 
+	
+	else if ( !strcmp(var[a].var_name, "SAGANLOGPATH" ) ) {
+	   strlcpy(config->sagan_log_path, var[a].var_value, sizeof(config->sagan_log_path));
+	}
+
+    } 
+
+    exit(0); 
 
     /*********************/
     /* Sanity check here */

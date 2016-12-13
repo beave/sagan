@@ -491,7 +491,6 @@ rules-files:
   # Bluedot rules - Make sure the 'bluedot' processor is enabled!             #
   #############################################################################
 
-  #- $RULE_PATH/bluedot-catagories.conf
   #- $RULE_PATH/bluedot.rules
   #- $RULE_PATH/bro-bluedot.rules
   #- $RULE_PATH/cisco-bluedot.rules
@@ -553,12 +552,12 @@ rules-files:
   - $RULE_PATH/cisco-meraki.rules
   - $RULE_PATH/cisco-pixasa.rules
   - $RULE_PATH/cisco-prime.rules
-#  - $RULE_PATH/cisco-sdee.rules
+  #- $RULE_PATH/cisco-sdee.rules
   - $RULE_PATH/cisco-wlc.rules
   - $RULE_PATH/citrix.rules
   - $RULE_PATH/courier.rules
   - $RULE_PATH/cylance.rules
-#  - $RULE_PATH/deleted.rules
+  #- $RULE_PATH/deleted.rules
   - $RULE_PATH/digitalpersona.rules
   - $RULE_PATH/dovecot.rules
   - $RULE_PATH/f5-big-ip.rules
@@ -587,8 +586,8 @@ rules-files:
   - $RULE_PATH/openssh.rules
   - $RULE_PATH/openvpn.rules
   - $RULE_PATH/oracle.rules
-#  - $RULE_PATH/ossec-mi.rules
-#  - $RULE_PATH/ossec.rules
+  #- $RULE_PATH/ossec-mi.rules
+  #- $RULE_PATH/ossec.rules
   - $RULE_PATH/palo-alto.rules
   - $RULE_PATH/php.rules
   - $RULE_PATH/postfix.rules
