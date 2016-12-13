@@ -171,8 +171,8 @@ void Load_YAML_Config( void )
 
 #ifdef HAVE_LIBESMTP
     strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject));
-    config->sagan_esmtp_from[0] = NULL;
-    config->sagan_esmtp_server[0] = NULL;
+    config->sagan_esmtp_from[0] = '\0';
+    config->sagan_esmtp_server[0] = '\0';
 #endif
 
     config->sagan_proto = 17;           /* Default to UDP */
@@ -831,7 +831,7 @@ void Load_YAML_Config( void )
 
                     else if (!strcmp(last_pass, "categories") && config->bluedot_flag == true ) {
 
-                        strlcpy(config->config->bluedot_cat, Sagan_Var_To_Value(value), sizeof(config->bluedot_cat));
+                        strlcpy(config->bluedot_cat, Sagan_Var_To_Value(value), sizeof(config->bluedot_cat));
                     }
 
                     else if (!strcmp(last_pass, "url") && config->bluedot_flag == true ) {
@@ -1042,7 +1042,7 @@ void Load_YAML_Config( void )
 
                     else if ( !strcmp(last_pass, "subject") && config->sagan_esmtp_flag == true ) {
 
-                        strlcpy(config->sagan_esmtp_subject, Sagan_Var_To_Value(value), sizeof(config->sagan_esmtp_subject));
+                        strlcpy(config->sagan_email_subject, Sagan_Var_To_Value(value), sizeof(config->sagan_email_subject));
 
                     }
 
@@ -1483,11 +1483,11 @@ void Load_YAML_Config( void )
 
     if ( config->sagan_esmtp_flag ==  true ) {
 
-        if ( config->sagan_esmtp_from[0] == NULL ) {
+        if ( config->sagan_esmtp_from[0] == '\0' ) {
             Sagan_Log(S_ERROR, "[%s, line %d] SMTP output is enabled but no 'from' address is specified. Abort!");
         }
 
-        else if ( config->sagan_esmtp_server[0] == NULL ) {
+        else if ( config->sagan_esmtp_server[0] == '\0' ) {
             Sagan_Log(S_ERROR, "[%s, line %d] SMTP output is enabled but not 'server' address is specified. Abort!");
         }
 
