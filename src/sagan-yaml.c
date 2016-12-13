@@ -344,6 +344,15 @@ void Load_YAML_Config( void )
                         strlcpy(config->sagan_host, value, sizeof(config->sagan_host));
                     }
 
+		    else if (!strcmp(last_pass, "default-port")) { 
+			
+			config->sagan_port = atoi(Sagan_Var_To_Value(value)); 
+
+			if ( config->sagan_port == 0 ) { 
+				Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
+			} 
+		    }
+
                     else if (!strcmp(last_pass, "default-proto")) {
 
                         if ( !strcasecmp(value, "udp") ) {
@@ -381,7 +390,7 @@ void Load_YAML_Config( void )
 
                     else if (!strcmp(last_pass, "fifo-size")) {
 
-                        config->sagan_fifo_size = atoi(value);
+                        config->sagan_fifo_size = atoi(Sagan_Var_To_Value(value));
 
                         if ( config->sagan_fifo_size == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'fifo-size' is set to zero. Abort!", __FILE__, __LINE__);
@@ -400,7 +409,7 @@ void Load_YAML_Config( void )
 #endif
                     else if (!strcmp(last_pass, "max-threads")) {
 
-                        config->max_processor_threads = atoi(value);
+                        config->max_processor_threads = atoi(Sagan_Var_To_Value(value));
 
                         if ( config->max_processor_threads  == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'max_threads' is zero/invalid. Abort!", __FILE__, __LINE__);

@@ -127,7 +127,8 @@ sagan-core:
 
   core:
 
-    default-host: 192.168.2.1		
+    default-host: 192.168.2.1
+    default-port: 514
     default-proto: udp
     dns-warnings: disabled
     source-lookup: disabled		
