@@ -59,11 +59,12 @@ vars:
 
   # If you are using the -geoip rule sets & Sagan is compile with Maxmind 
   # GeoIP2 support (https://github.com/maxmind/libmaxminddb/releases), 
-  # you'll want to define your $HOME_COUNTRY.
+  # you'll want to define your $HOME_COUNTRY. ISO GeoIP country codes can
+  # be found at http://dev.maxmind.com/geoip/legacy/codes/iso3166/
 
   geoip-groups: 
 
-    HOME_COUNTRY: "[US, CA]"
+    HOME_COUNTRY: "US,CA"
 
   # If you want to use -aetas, also know as time based rule sets,  you'll
   # want to define the $SAGAN_HOURS and $SAGAN_DAYS variables. $SAGAN_HOURS is
@@ -84,7 +85,7 @@ vars:
 
   bluedot-groups: 
 
-    BLUEDOT: "[Malicious]"
+    BLUEDOT: "Malicious"
 
   # Variable for the max number of entires Sagan will retain via IPC. 
 
@@ -96,11 +97,11 @@ vars:
 
   misc-groups: 
 
-    CREDIT_CARD_PREFIXES: "[4,34,37,300,301,302,303,304,305,2014,2149,309,36,38,39,54,55,6011,6221,6222, 6223,6224,6225,6226,\ 
-                           6227,6228,6229,644,645,646,647,648,649,65,636,637,638,639,22,23,24,25,26,27,51,52,53,53,55]"
+    CREDIT_CARD_PREFIXES: "4,34,37,300,301,302,303,304,305,2014,2149,309,36,38,39,54,55,6011,6221,6222, 6223,6224,6225,6226,\ 
+                           6227,6228,6229,644,645,646,647,648,649,65,636,637,638,639,22,23,24,25,26,27,51,52,53,53,55"
 
-    RFC1918: "[10.,192.168.,172.16.,172.17.,172.18.,172.19.,172.20.,172.21.,172.22.,172.23.,172.24.,172.25.,172.26.,172.27.,\
-               172.28.,172.29.,172.30.,172.31.]"
+    RFC1918: "10.,192.168.,172.16.,172.17.,172.18.,172.19.,172.20.,172.21.,172.22.,172.23.,172.24.,172.25.,172.26.,172.27.,\
+               172.28.,172.29.,172.30.,172.31."
 
     # $WINDOWS_DOMAINS is used by some Windows rule sets to determine if a log
     # message contains or does not contain a valid DOMAIN for your organization.
@@ -108,13 +109,13 @@ vars:
     #
     # https://quadrantsec.com/about/blog/detecting_pass_the_hash_attacks_with_sagan_in_real_time/
 
-    WINDOWS_DOMAINS: "[MYCOMPANYDOMAIN, EXAMPLEDOMAIN, ANOTHER_DOMAIN]"
+    WINDOWS_DOMAINS: "MYCOMPANYDOMAIN,EXAMPLEDOMAIN,ANOTHER_DOMAIN"
 
     # Known valid Microsoft PSExec MD5 sums.  Versions v1.98, v2.00, v2.10, v2.11, v2.11 (2016).
 
-    PSEXEC_MD5: "[CD23B7C9E0EDEF184930BC8E0CA2264F0608BCB3, 9A46E577206D306D9D2B2AB2F72689E4F5F38FB1,\
-                  2EDEEFB431663F20A36A63C853108E083F4DA895,B5C62D79EDA4F7E4B60A9CAA5736A3FDC2F1B27E,\
-                  A7F7A0F74C8B48F1699858B3B6C11EDA]"
+    PSEXEC_MD5: "CD23B7C9E0EDEF184930BC8E0CA2264F0608BCB3, 9A46E577206D306D9D2B2AB2F72689E4F5F38FB1,\
+                 2EDEEFB431663F20A36A63C853108E083F4DA895,B5C62D79EDA4F7E4B60A9CAA5736A3FDC2F1B27E,\
+                 A7F7A0F74C8B48F1699858B3B6C11EDA"
 
 
 ##############################################################################
@@ -364,7 +365,7 @@ outputs:
       rcpt-to: sagan-alerts@example.com
       from: sagan-alert@example.com
       server: 192.168.0.1:25
-      subject: "[Sagan Alert]"
+      subject: "** Sagan Alert **"
  
   # The 'snortsam' output allows Sagan to send block information Snortsam 
   # agents.  If a rule the fwsam: option in it,  the offending IP address can 

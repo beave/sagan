@@ -343,14 +343,14 @@ void Load_YAML_Config( void )
                         strlcpy(config->sagan_host, value, sizeof(config->sagan_host));
                     }
 
-		    else if (!strcmp(last_pass, "default-port")) { 
-			
-			config->sagan_port = atoi(Sagan_Var_To_Value(value)); 
+                    else if (!strcmp(last_pass, "default-port")) {
 
-			if ( config->sagan_port == 0 ) { 
-				Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
-			} 
-		    }
+                        config->sagan_port = atoi(Sagan_Var_To_Value(value));
+
+                        if ( config->sagan_port == 0 ) {
+                            Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
+                        }
+                    }
 
                     else if (!strcmp(last_pass, "default-proto")) {
 
@@ -583,7 +583,14 @@ void Load_YAML_Config( void )
                     if (!strcmp(last_pass, "country_database")) {
 
                         if ( config->have_geoip2 == true ) {
+
                             strlcpy(config->geoip2_country_file, Sagan_Var_To_Value(value), sizeof(config->geoip2_country_file));
+
+                            Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+                            Sagan_Open_GeoIP2_Database();
+
+                            config->have_geoip2 = true;
+
                         }
                     }
 
@@ -1475,25 +1482,25 @@ void Load_YAML_Config( void )
 
     /* Load required var's info config array */
 
-    for (a = 0; a<counters->var_count; a++) { 
+    for (a = 0; a<counters->var_count; a++) {
 
-	if ( !strcmp(var[a].var_name, "$FIFO") && config->sagan_is_file == 0 ) { 
-	   strlcpy(config->sagan_fifo, var[a].var_value, sizeof(config->sagan_fifo));
-	}
+        if ( !strcmp(var[a].var_name, "$FIFO") && config->sagan_is_file == 0 ) {
+            strlcpy(config->sagan_fifo, var[a].var_value, sizeof(config->sagan_fifo));
+        }
 
-	else if ( !strcmp(var[a].var_name, "$LOCKFILE" ) ) {
-	   strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
-	}
+        else if ( !strcmp(var[a].var_name, "$LOCKFILE" ) ) {
+            strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
+        }
 
-	else if ( !strcmp(var[a].var_name, "$ALERTLOG" ) ) {
-	   strlcpy(config->sagan_alert_filepath, var[a].var_value, sizeof(config->sagan_alert_filepath));
-	} 
-	
-	else if ( !strcmp(var[a].var_name, "$SAGANLOGPATH" ) ) {
-	   strlcpy(config->sagan_log_path, var[a].var_value, sizeof(config->sagan_log_path));
-	}
+        else if ( !strcmp(var[a].var_name, "$ALERTLOG" ) ) {
+            strlcpy(config->sagan_alert_filepath, var[a].var_value, sizeof(config->sagan_alert_filepath));
+        }
 
-    } 
+        else if ( !strcmp(var[a].var_name, "$SAGANLOGPATH" ) ) {
+            strlcpy(config->sagan_log_path, var[a].var_value, sizeof(config->sagan_log_path));
+        }
+
+    }
 
     /*********************/
     /* Sanity check here */
