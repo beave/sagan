@@ -1477,19 +1477,19 @@ void Load_YAML_Config( void )
 
     for (a = 0; a<counters->var_count; a++) { 
 
-	if ( !strcmp(var[a].var_name, "FIFO") && config->sagan_is_file == 0 ) { 
+	if ( !strcmp(var[a].var_name, "$FIFO") && config->sagan_is_file == 0 ) { 
 	   strlcpy(config->sagan_fifo, var[a].var_value, sizeof(config->sagan_fifo));
 	}
 
-	else if ( !strcmp(var[a].var_name, "LOCKFILE" ) ) {
+	else if ( !strcmp(var[a].var_name, "$LOCKFILE" ) ) {
 	   strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
 	}
 
-	else if ( !strcmp(var[a].var_name, "ALERTLOG" ) ) {
+	else if ( !strcmp(var[a].var_name, "$ALERTLOG" ) ) {
 	   strlcpy(config->sagan_alert_filepath, var[a].var_value, sizeof(config->sagan_alert_filepath));
 	} 
 	
-	else if ( !strcmp(var[a].var_name, "SAGANLOGPATH" ) ) {
+	else if ( !strcmp(var[a].var_name, "$SAGANLOGPATH" ) ) {
 	   strlcpy(config->sagan_log_path, var[a].var_value, sizeof(config->sagan_log_path));
 	}
 
