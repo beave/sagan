@@ -7,11 +7,11 @@ INCLUDES = @INCLUDES@
 #install-data-local: 
 #	@$(NORMAL_INSTALL)
 #	$(mkinstalldirs) $(sysconfdir)
-#	$(INSTALL_DATA)sagan.conf $(sysconfdir)/sagan.conf
+#	$(INSTALL_DATA)sagan.conf $(sysconfdir)/sagan.yaml
 
 install-data-local:
 	test -z "$(DESTDIR)$(sysconfdir)" || /bin/mkdir -p "$(DESTDIR)$(sysconfdir)"
-	test -f "$(DESTDIR)$(sysconfdir)/sagan.conf" || $(INSTALL_DATA) etc/sagan.conf "$(DESTDIR)$(sysconfdir)/sagan.conf"
+	test -f "$(DESTDIR)$(sysconfdir)/sagan.yaml" || $(INSTALL_DATA) etc/sagan.yaml "$(DESTDIR)$(sysconfdir)/sagan.yaml"
 	test -z "$(DESTDIR)$(sbindir)" || /bin/mkdir -p "$(DESTDIR)$(sbindir)"
 	$(INSTALL) -d "$(DESTDIR)$(mandir)/man8"
 	$(INSTALL) -m 644 etc/sagan.8 "$(DESTDIR)$(mandir)/man8"
