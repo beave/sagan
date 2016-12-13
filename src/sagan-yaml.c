@@ -1495,8 +1495,6 @@ void Load_YAML_Config( void )
 
     } 
 
-    exit(0); 
-
     /*********************/
     /* Sanity check here */
     /*********************/
