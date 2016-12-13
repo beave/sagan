@@ -160,6 +160,18 @@ void Load_YAML_Config( void )
     config->sagan_fifo_size = MAX_FIFO_SIZE;
 #endif
 
+#ifdef WITH_BLUEDOT
+
+    /* Bluedot defaults */
+
+    strlcpy(config->bluedot_device_id, "NO_DEVICE_ID", sizeof(config->bluedot_device_id));
+    config->bluedot_timeout = 120;
+    
+    config->bluedot_cat[0] = '\0';
+    config->bluedot_url[0] = '\0';
+
+#endif
+
     /* Copy default FIFO */
 
     config->sagan_fifo[0] = '\0';
@@ -585,9 +597,6 @@ void Load_YAML_Config( void )
                         if ( config->have_geoip2 == true ) {
 
                             strlcpy(config->geoip2_country_file, Sagan_Var_To_Value(value), sizeof(config->geoip2_country_file));
-
-                            Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
-                            Sagan_Open_GeoIP2_Database();
 
                             config->have_geoip2 = true;
 
@@ -1518,7 +1527,7 @@ void Load_YAML_Config( void )
 
 #ifdef HAVE_LIBESMTP
 
-    if ( config->sagan_esmtp_flag ==  true ) {
+    if ( config->sagan_esmtp_flag == true ) {
 
         if ( config->sagan_esmtp_from[0] == '\0' ) {
             Sagan_Log(S_ERROR, "[%s, line %d] SMTP output is enabled but no 'from' address is specified. Abort!");
@@ -1534,12 +1543,16 @@ void Load_YAML_Config( void )
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    if ( config->have_geoip2 ) {
+    if ( config->have_geoip2 == true ) {
 
         if ( Sagan_Check_Var("$HOME_COUNTRY") == false ) {
 
             Sagan_Log(S_ERROR, "[%s, line %d] GeoIP2 is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
         }
+    
+    Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+    Sagan_Open_GeoIP2_Database();
+
     }
 
 #endif
@@ -1554,6 +1567,22 @@ void Load_YAML_Config( void )
 
 #endif
 
+#ifdef WITH_BLUEDOT
+
+    if ( config->bluedot_flag == true ) { 
+
+     	if ( config->bluedot_cat[0] == '\0' ) {
+		Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
+	}
+
+	if ( config->bluedot_url[0] == '\0' ) {
+		Sagan_Log(S_ERROR, "[%s, line %d] Bluedott \"url\" optin is missing.", __FILE__, __LINE__);
+	} 
+	
+	Sagan_Bluedot_Load_Cat();
+    }
+
+#endif 
 
     /**********************************************************************************/
     /* Load rules - Before loading, make sure we haven't already loaded the rule set! */
