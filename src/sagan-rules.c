@@ -88,7 +88,7 @@ int liblognorm_count;
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;
 
-void Load_Rules( const char *ruleset )
+void Load_Rules( char *ruleset )
 {
 
     struct stat filecheck;
@@ -614,7 +614,7 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(rulesplit, "flowbits")) {
 
-                    Sagan_Log(S_WARN, "[%s, linx %d] The rule set '%s' at line '%d' has depreciated option 'flowbit'.  Use 'xbit' instead.", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(S_WARN, "[%s, line %d] The rule set '%s' at line '%d' has depreciated option 'flowbit'.  Use 'xbit' instead.", __FILE__, __LINE__, ruleset, linecount);
 
                 }
 

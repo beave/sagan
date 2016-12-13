@@ -59,7 +59,6 @@ struct _SaganConfig *config;
 void Load_Classifications( const char *ruleset )
 {
 
-
     FILE *classfile;
 
     char classbuf[CLASSBUF];
@@ -68,6 +67,8 @@ void Load_Classifications( const char *ruleset )
     char *laststring=NULL;
     char tmpbuf2[5];
     int  linecount=0;
+
+    counters->classcount = 0;
 
     Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
 

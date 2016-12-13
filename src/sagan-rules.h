@@ -240,4 +240,4 @@ struct _Rule_Struct {
 
 };
 
-void Load_Rules ( const char * );
+void Load_Rules ( char * );

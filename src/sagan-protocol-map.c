@@ -55,6 +55,9 @@ void Load_Protocol_Map( const char *map )
     char *map3=NULL;
     char *map4=NULL;
 
+    counters->mapcount_message = 0;
+    counters->mapcount_program = 0;
+
     Sagan_Log(S_NORMAL, "Loading protocol map file. [%s]", map);
 
 

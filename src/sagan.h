@@ -482,7 +482,7 @@ int PageSupportsRWX(void);
 #endif /* HAVE_SYS_MMAN_H */
 #endif
 
-
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );
 #endif
+

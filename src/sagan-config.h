@@ -50,6 +50,7 @@ struct _SaganConfig {
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
+    sbool	 force_fifo_ownership_flag;		/* Chmod FIFO upon start */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     sbool        sagan_droplist_flag;
@@ -88,6 +89,7 @@ struct _SaganConfig {
 
     /* Dynamic rule loading and reporting */
 
+    sbool		dynamic_load_flag;
     int			dynamic_load_sample_rate;
     unsigned char	dynamic_load_type;
 
@@ -154,13 +156,6 @@ struct _SaganConfig {
     char        sagan_email_subject[64];
 #endif
 
-    /* Prelude framework support */
-
-#ifdef HAVE_LIBPRELUDE
-    char        sagan_prelude_profile[MAXPATH];
-    sbool       sagan_prelude_flag;
-#endif
-
     /* libdnet - Used for unified2 support */
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
@@ -204,7 +199,7 @@ struct _SaganConfig {
 
     /* Used for altering pipe size (if supported) */
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
     int          sagan_fifo_size;
 #endif
 

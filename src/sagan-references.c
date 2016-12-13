@@ -69,6 +69,7 @@ void Load_Reference( const char *ruleset )
 
     int linecount=0;
 
+    counters->refcount = 0;
 
     Sagan_Log(S_NORMAL, "Loading references.conf file. [%s]" , ruleset);
 

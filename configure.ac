@@ -341,37 +341,37 @@ fi
 
 # libyaml
 
-#AC_ARG_WITH(libyaml_includes,
-#        [  --with-libyaml-includes=DIR  libyaml include directory],
-#        [with_libyaml_includes="$withval"],[with_libyaml_includes=no])
-#AC_ARG_WITH(libyaml_libraries,
-#        [  --with-libyaml-libraries=DIR    libyaml library directory],
-#        [with_libyaml_libraries="$withval"],[with_libyaml_libraries="no"])
+AC_ARG_WITH(libyaml_includes,
+        [  --with-libyaml-includes=DIR  libyaml include directory],
+        [with_libyaml_includes="$withval"],[with_libyaml_includes=no])
+AC_ARG_WITH(libyaml_libraries,
+        [  --with-libyaml-libraries=DIR    libyaml library directory],
+        [with_libyaml_libraries="$withval"],[with_libyaml_libraries="no"])
 
-#if test "$with_libyaml_includes" != "no"; then
-#    CPPFLAGS="${CPPFLAGS} -I${with_libyaml_includes}"
-#fi
+if test "$with_libyaml_includes" != "no"; then
+    CPPFLAGS="${CPPFLAGS} -I${with_libyaml_includes}"
+fi
 
-#AC_CHECK_HEADER(yaml.h,,LIBYAML="no")
+AC_CHECK_HEADER(yaml.h,,LIBYAML="no")
 
-#if test "$with_libyaml_libraries" != "no"; then
-#    LDFLAGS="${LDFLAGS} -L${with_libyaml_libraries}"
-#fi
+if test "$with_libyaml_libraries" != "no"; then
+    LDFLAGS="${LDFLAGS} -L${with_libyaml_libraries}"
+fi
 
-#LIBYAML=""
-#AC_CHECK_LIB(yaml,yaml_parser_initialize,,LIBYAML="no")
+LIBYAML=""
+AC_CHECK_LIB(yaml,yaml_parser_initialize,,LIBYAML="no")
 
-#if test "$LIBYAML" = "no"; then
-#    echo
-#    echo "   ERROR!  libyaml library not found, go get it"
-#    echo "   from http://pyyaml.org/wiki/LibYAML "
-#    echo "   or your distribution:"
-#    echo
-#    echo "   Ubuntu: apt-get install libyaml-dev"
-#    echo "   Fedora: yum install libyaml-devel"
-#    echo
-#    exit 1
-#fi
+if test "$LIBYAML" = "no"; then
+    echo
+    echo "   ERROR!  libyaml library not found, go get it"
+    echo "   from http://pyyaml.org/wiki/LibYAML "
+    echo "   or your distribution:"
+    echo
+    echo "   Ubuntu: apt-get install libyaml-dev"
+    echo "   Fedora: yum install libyaml-devel"
+    echo
+    exit 1
+fi
 
 
 ##############################################################################
@@ -626,7 +626,7 @@ if test "$SNORTSAM" = "yes"; then
 
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
-AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.conf"`", [Sagan configuration file]) 
+AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.yaml"`", [Sagan configuration file]) 
 
 AC_DEFINE_UNQUOTED(PACKAGE_NAME, "sagan" )
 AC_DEFINE_UNQUOTED(PACKAGE_STRING, "Sagan $VERSION")

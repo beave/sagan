@@ -461,7 +461,9 @@ int main(int argc, char **argv)
 
 #endif
 
-    Load_Config();
+//    Load_Config();
+
+    Load_YAML_Config();
 
     Sagan_Engine_Init();
 
@@ -490,7 +492,9 @@ int main(int argc, char **argv)
 
 #endif
 
+    Sagan_Log(S_NORMAL, "");
     Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
+    Sagan_Log(S_NORMAL, "");
 
 #ifdef HAVE_LIBPCAP
 
@@ -786,7 +790,7 @@ int main(int argc, char **argv)
         if ( config->sagan_is_file == 0 ) {
             Sagan_Log(S_NORMAL, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
             Sagan_Set_Pipe_Size(fd);
 
@@ -806,7 +810,7 @@ int main(int argc, char **argv)
                 if ( fifoerr == 1 ) {
                     Sagan_Log(S_NORMAL, "FIFO writer has restarted. Processing events.");
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
                     Sagan_Set_Pipe_Size(fd);
 
@@ -819,7 +823,7 @@ int main(int argc, char **argv)
 
                 /* If Dynamic rules are loaded,  keep track of line count */
 
-                if ( config->dynamic_load_sample_rate != 0 ) {
+                if ( config->dynamic_load_flag == true ) {
 
                     dynamic_line_count++;
                 }
@@ -1026,7 +1030,7 @@ int main(int argc, char **argv)
                     strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
                     strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
 
-                    if ( config->dynamic_load_sample_rate != 0 && ( dynamic_line_count >= config->dynamic_load_sample_rate ) ) {
+                    if ( config->dynamic_load_flag == true && ( dynamic_line_count >= config->dynamic_load_sample_rate ) ) {
 
                         pthread_mutex_lock(&SaganDynamicFlag);
                         dynamic_rule_flag = DYNAMIC_RULE;
@@ -1038,7 +1042,7 @@ int main(int argc, char **argv)
 
                     /* Thread holds here if rule load is in progress */
 
-                    if ( config->dynamic_load_sample_rate != 0 ) {
+                    if ( config->dynamic_load_flag == true ) {
 
                         pthread_mutex_lock(&SaganRulesLoadedMutex);
                         reload_rules = 0;

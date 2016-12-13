@@ -509,6 +509,7 @@ char *Sagan_Var_To_Value(char *instring)
         ptmp = strtok_r(tmp, " ", &tok);
 
         while (ptmp != NULL ) {
+
             strlcpy(tmp2, Replace_String(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
             strlcat(tmp_result, tmp3, sizeof(tmp_result));
@@ -516,10 +517,12 @@ char *Sagan_Var_To_Value(char *instring)
         }
 
         strlcpy(tmp, tmp_result, sizeof(tmp));
-        tmpbuf = (char*)&tmp;
         memset(tmp_result, 0, sizeof(tmp_result));
     }
 
+
+    tmp[strlen(tmp)-1] = 0;		/* Remove trailing space */
+    tmpbuf = (char*)&tmp;
     return(tmpbuf);
 }
 
@@ -814,7 +817,7 @@ void Sagan_Open_Log_File( sbool state, int type )
  * Sagan_Set_Pipe_Size - Changes the capacity of the pipe/FIFO.
  ****************************************************************************/
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
 void Sagan_Set_Pipe_Size ( FILE *fd )
 {
@@ -1251,3 +1254,4 @@ int PageSupportsRWX(void)
 }
 
 #endif /* HAVE_SYS_MMAN_H */
+

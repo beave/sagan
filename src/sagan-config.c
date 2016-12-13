@@ -161,7 +161,7 @@ void Load_Config( void )
 
     config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
     config->sagan_fifo_size = MAX_FIFO_SIZE;
 #endif
 
@@ -381,7 +381,7 @@ void Load_Config( void )
         }
 
 
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+#if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
         if (!strcmp(sagan_option, "sagan_fifo_size")) {
             sagan_var1 = strtok_r(NULL, " ", &tok);
