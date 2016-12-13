@@ -342,7 +342,7 @@ void Sig_Handler( void )
             /* Re-load primary configuration (rules/classifictions/etc) */
             /************************************************************/
 
-            Load_Config();	/* <- RELOAD */
+            Load_YAML_Config();	/* <- RELOAD */
 
             /************************************************************/
             /* Re-load primary configuration (rules/classifictions/etc) */
