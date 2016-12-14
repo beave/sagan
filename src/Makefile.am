@@ -40,6 +40,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        parsers/sagan-strstr/strstr_sse2.S \
                                                        parsers/sagan-strstr/strstr_sse4_2.S \
                                                        output-plugins/sagan-alert.c \
+						       output-plugins/sagan-fast.c \
                                                        output-plugins/sagan-esmtp.c \
                                                        output-plugins/sagan-external.c \
                                                        output-plugins/sagan-unified2.c \

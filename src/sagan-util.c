@@ -796,6 +796,20 @@ void Sagan_Open_Log_File( sbool state, int type )
             fclose(config->sagan_alert_stream);
         }
 
+        if ( state == REOPEN && config->fast_flag == true ) {
+            fclose(config->sagan_fast_stream);
+        }
+
+        if ( config->fast_flag == true ) {
+
+            if (( config->sagan_fast_stream = fopen(config->fast_filename, "a" )) == NULL ) {
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+            }
+
+        }
+
+
         if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
             Remove_Lock_File();
             Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));

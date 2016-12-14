@@ -38,6 +38,7 @@ struct _SaganConfig {
     char         sagan_alert_filepath[MAXPATH];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
+    FILE	 *sagan_fast_stream;
     char         sagan_log_filepath[MAXPATH];
     FILE         *sagan_log_stream;
     char         sagan_lockfile[MAXPATH];
@@ -70,6 +71,9 @@ struct _SaganConfig {
     sbool	 pcre_jit; 				/* For PCRE JIT support testing */
 
     sbool        endian;
+
+    sbool 	 fast_flag;
+    char         fast_filename[MAXPATH];
 
     /* Processors */
 

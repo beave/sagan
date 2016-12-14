@@ -166,7 +166,7 @@ void Load_YAML_Config( void )
 
     strlcpy(config->bluedot_device_id, "NO_DEVICE_ID", sizeof(config->bluedot_device_id));
     config->bluedot_timeout = 120;
-    
+
     config->bluedot_cat[0] = '\0';
     config->bluedot_url[0] = '\0';
 
@@ -928,7 +928,11 @@ void Load_YAML_Config( void )
 
             else if ( type == YAML_TYPE_OUTPUT ) {
 
-                if (!strcmp(value, "unified2")) {
+                if (!strcmp(value, "fast")) {
+                    sub_type = YAML_OUTPUT_FAST;
+                }
+
+                else if (!strcmp(value, "unified2")) {
                     sub_type = YAML_OUTPUT_UNIFIED2;
                 }
 
@@ -947,6 +951,23 @@ void Load_YAML_Config( void )
                 else if (!strcmp(value, "syslog")) {
                     sub_type = YAML_OUTPUT_SYSLOG;
                 }
+
+                if ( sub_type == YAML_OUTPUT_FAST ) {
+
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+                            config->fast_flag = true;
+                        }
+                    }
+
+                    else if (!strcmp(last_pass, "filename") && config->fast_flag == true) {
+
+                        strlcpy(config->fast_filename, Sagan_Var_To_Value(value), sizeof(config->fast_filename));
+
+                    }
+
+                } /* sub_type == YAML_OUTPUT_FAST */
 
 #if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
 
@@ -1549,9 +1570,9 @@ void Load_YAML_Config( void )
 
             Sagan_Log(S_ERROR, "[%s, line %d] GeoIP2 is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
         }
-    
-    Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
-    Sagan_Open_GeoIP2_Database();
+
+        Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+        Sagan_Open_GeoIP2_Database();
 
     }
 
@@ -1569,20 +1590,20 @@ void Load_YAML_Config( void )
 
 #ifdef WITH_BLUEDOT
 
-    if ( config->bluedot_flag == true ) { 
+    if ( config->bluedot_flag == true ) {
 
-     	if ( config->bluedot_cat[0] == '\0' ) {
-		Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
-	}
+        if ( config->bluedot_cat[0] == '\0' ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
+        }
 
-	if ( config->bluedot_url[0] == '\0' ) {
-		Sagan_Log(S_ERROR, "[%s, line %d] Bluedott \"url\" optin is missing.", __FILE__, __LINE__);
-	} 
-	
-	Sagan_Bluedot_Load_Cat();
+        if ( config->bluedot_url[0] == '\0' ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Bluedott \"url\" optin is missing.", __FILE__, __LINE__);
+        }
+
+        Sagan_Bluedot_Load_Cat();
     }
 
-#endif 
+#endif
 
     /**********************************************************************************/
     /* Load rules - Before loading, make sure we haven't already loaded the rule set! */

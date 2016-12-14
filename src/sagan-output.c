@@ -76,9 +76,16 @@ void Sagan_Output( _Sagan_Event *Event )
 
     Sagan_Alert_File(Event);
 
+    if ( config->fast_flag == true ) {
+
+        Sagan_Fast_File(Event);
+
+    }
+
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
     if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == 0 ) {
+
         Sagan_Unified2( Event );
         Sagan_Unified2LogPacketAlert( Event );
 

@@ -328,12 +328,12 @@ processors:
 
 outputs:
 
-  # Similar to Snorts "alert_fast" output format. 
+  # The 'fast' output format allows Sagan to write alerts in a format similar
+  # to Snort's 'fast' output format. 
 
-#  - fast:
-#      enabled: yes
-#      filename: "$LOG_PATH/fast.log"
-#      append: yes
+  - fast:
+      enabled: no
+      filename: "$LOG_PATH/fast.log"
 
   # The 'unified2' output allows Sagan to write in Snort's unified2 format. 
   # This allows events/alerts generates by SAgan to be read and queued for

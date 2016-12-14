@@ -70,8 +70,7 @@
 #define		YAML_OUTPUT_SMTP		15
 #define		YAML_OUTPUT_SNORTSAM		16
 #define		YAML_OUTPUT_SYSLOG		17
-
-
+#define		YAML_OUTPUT_FAST		18
 
 void Load_YAML_Config(void);
 
