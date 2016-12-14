@@ -327,7 +327,7 @@ processors:
 
 outputs:
 
-  # The 'alert' output format allows Sagan to write alerts,  in detail, in a 
+  # The 'alert' output format allows Sagan to write alerts, in detail, in a 
   # traditional Snort style "alert log" ASCII format. 
 
   - alert:
