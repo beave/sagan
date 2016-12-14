@@ -36,6 +36,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #include "version.h"
 
@@ -43,6 +44,7 @@
 #include "sagan-defs.h"
 #include "sagan-xbit.h"
 #include "sagan-config.h"
+#include "sagan-yaml.h"
 #include "sagan-lockfile.h"
 #include "sagan-signal.h"
 #include "sagan-stats.h"
