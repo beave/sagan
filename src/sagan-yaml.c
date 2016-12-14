@@ -27,7 +27,6 @@
 /* Notes:
 
    * var doesn't do "file://" yet.
-   * Come back to "fast" output type in "outputs"
 
 */
 
@@ -928,7 +927,11 @@ void Load_YAML_Config( void )
 
             else if ( type == YAML_TYPE_OUTPUT ) {
 
-                if (!strcmp(value, "fast")) {
+                if (!strcmp(value, "alert")) {
+                    sub_type = YAML_OUTPUT_ALERT;
+                }
+
+                else if (!strcmp(value, "fast")) {
                     sub_type = YAML_OUTPUT_FAST;
                 }
 
@@ -952,7 +955,25 @@ void Load_YAML_Config( void )
                     sub_type = YAML_OUTPUT_SYSLOG;
                 }
 
-                if ( sub_type == YAML_OUTPUT_FAST ) {
+
+                if ( sub_type == YAML_OUTPUT_ALERT ) {
+
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+                            config->alert_flag = true;
+                        }
+                    }
+
+                    else if (!strcmp(last_pass, "filename") && config->alert_flag == true) {
+
+                        strlcpy(config->sagan_alert_filepath, Sagan_Var_To_Value(value), sizeof(config->sagan_alert_filepath));
+
+                    }
+
+                } /* sub_type == YAML_OUTPUT_ALERT */
+
+                else if ( sub_type == YAML_OUTPUT_FAST ) {
 
                     if (!strcmp(last_pass, "enabled")) {
 
@@ -971,7 +992,7 @@ void Load_YAML_Config( void )
 
 #if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
 
-                if ( sub_type == YAML_OUTPUT_UNIFIED2 ) {
+                else if ( sub_type == YAML_OUTPUT_UNIFIED2 ) {
 
                     if (!strcmp(last_pass, "enabled")) {
 
@@ -986,7 +1007,7 @@ void Load_YAML_Config( void )
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-                if ( sub_type == YAML_OUTPUT_UNIFIED2 ) {
+                else if ( sub_type == YAML_OUTPUT_UNIFIED2 ) {
 
                     if (!strcmp(last_pass, "enabled")) {
 

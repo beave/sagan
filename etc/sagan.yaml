@@ -328,6 +328,13 @@ processors:
 
 outputs:
 
+  # The 'alert' output format allows Sagan to write alerts,  in detail, in a 
+  # traditional Snort style "alert log" ASCII format. 
+
+  - alert:
+      enabled: yes
+      filename: "$LOG_PATH/alert.log"
+
   # The 'fast' output format allows Sagan to write alerts in a format similar
   # to Snort's 'fast' output format. 
 

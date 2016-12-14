@@ -35,7 +35,10 @@ struct _SaganConfig {
 
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
+
+    sbool	 alert_flag;
     char         sagan_alert_filepath[MAXPATH];
+
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
     FILE	 *sagan_fast_stream;

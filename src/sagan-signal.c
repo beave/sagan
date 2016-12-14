@@ -139,8 +139,19 @@ void Sig_Handler( void )
 
 #endif
 
-            fflush(config->sagan_alert_stream);
-            fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
+            if ( config->alert_flag == true ) {
+
+                fflush(config->sagan_alert_stream);
+                fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
+
+            }
+
+            if ( config->fast_flag == true ) {
+
+                fflush(config->sagan_fast_stream);
+                fclose(config->sagan_fast_stream);
+
+            }
 
             fflush(config->sagan_log_stream);               /* Close the sagan.log */
             fclose(config->sagan_log_stream);

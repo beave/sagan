@@ -792,7 +792,7 @@ void Sagan_Open_Log_File( sbool state, int type )
 
         /* For SIGHUP */
 
-        if ( state == REOPEN ) {
+        if ( state == REOPEN && config->alert_flag == true ) {
             fclose(config->sagan_alert_stream);
         }
 
@@ -810,9 +810,12 @@ void Sagan_Open_Log_File( sbool state, int type )
         }
 
 
-        if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
-            Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+        if ( config->alert_flag == true ) {
+
+            if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+            }
         }
 
         /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */

@@ -74,7 +74,11 @@ void Sagan_Output( _Sagan_Event *Event )
     pthread_mutex_lock(&SaganOutputNonThreadMutex);
     nonthread_alert_lock = 1;
 
-    Sagan_Alert_File(Event);
+    if ( config->alert_flag == true ) {
+
+        Sagan_Alert_File(Event);
+
+    }
 
     if ( config->fast_flag == true ) {
 
