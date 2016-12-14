@@ -45,7 +45,8 @@ struct _SaganCounters *counters;
 void Sagan_Fast_File( _Sagan_Event *Event )
 {
 
-    fprintf(config->sagan_fast_stream, "%s %s  [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", Event->date, Event->time, Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->priority); 
+    fprintf(config->sagan_fast_stream, "%s %s  [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", Event->date, Event->time, 
+    Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri); 
 
 	if ( Event->ip_proto == 1 ) { 
 		fprintf(config->sagan_fast_stream, "{ICMP}"); 
@@ -63,7 +64,7 @@ void Sagan_Fast_File( _Sagan_Event *Event )
 		fprintf(config->sagan_fast_stream, "{UNKNOWN}"); 
 		}
 
-	fprintf(config->sagan_fast_stream,"%s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port); 
+	fprintf(config->sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port); 
 		
     fflush(config->sagan_fast_stream);
 
