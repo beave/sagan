@@ -27,6 +27,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <pthread.h>
 
 #include "sagan.h"
@@ -34,9 +35,9 @@
 #include "sagan-rules.h"
 #include "sagan-config.h"
 
-#include "output-plugins/sagan-unified2.h"
 #include "output-plugins/sagan-alert.h"
 #include "output-plugins/sagan-external.h"
+#include "output-plugins/sagan-fast.h"
 
 #ifdef WITH_SNORTSAM
 #include "output-plugins/sagan-snortsam.h"
@@ -51,6 +52,7 @@
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
+#include "output-plugins/sagan-unified2.h"
 uintmax_t unified_event_id;
 #endif
 

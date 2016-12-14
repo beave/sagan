@@ -59,6 +59,7 @@
 #include "sagan-xbit.h"
 #include "sagan-processor.h"
 #include "sagan-config.h"
+#include "sagan-yaml.h"
 #include "sagan-ignore-list.h"
 #include "sagan-key.h"
 #include "sagan-lockfile.h"
@@ -460,8 +461,6 @@ int main(int argc, char **argv)
     }
 
 #endif
-
-//    Load_Config();
 
     Load_YAML_Config();
 
