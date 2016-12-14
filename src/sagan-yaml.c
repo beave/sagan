@@ -129,7 +129,6 @@ void Load_YAML_Config( void )
 
     /* Set some system defaults */
 
-    strlcpy(config->sagan_alert_filepath, ALERTLOG, sizeof(config->sagan_alert_filepath));
     strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
     strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
     strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
@@ -1541,10 +1540,6 @@ void Load_YAML_Config( void )
 
         else if ( !strcmp(var[a].var_name, "$LOCKFILE" ) ) {
             strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
-        }
-
-        else if ( !strcmp(var[a].var_name, "$ALERTLOG" ) ) {
-            strlcpy(config->sagan_alert_filepath, var[a].var_value, sizeof(config->sagan_alert_filepath));
         }
 
         else if ( !strcmp(var[a].var_name, "$SAGANLOGPATH" ) ) {

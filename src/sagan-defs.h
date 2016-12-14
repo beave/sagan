@@ -73,7 +73,6 @@
 
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"
 #define SAGANLOG		"/var/log/sagan/sagan.log"
-#define ALERTLOG		"/var/log/sagan/alert"
 #define SAGANLOGPATH		"/var/log/sagan"
 #define FIFO			"/var/run/sagan.fifo"
 #define RULE_PATH		"/usr/local/etc/sagan-rules"

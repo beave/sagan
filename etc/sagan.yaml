@@ -24,7 +24,6 @@ vars:
     FIFO: "/var/sagan/fifo/sagan.fifo"
     RULE_PATH: "/usr/local/etc/sagan-rules"
     LOCKFILE: "/var/run/sagan/sagan.pid"
-    ALERTLOG: "/var/log/sagan/alert"
     LOG_PATH: "/var/log/sagan"	
 
   # Information about your network sometimes, but rarely, used by rules. 
