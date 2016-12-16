@@ -140,9 +140,6 @@ Syslog Priority:%s\n\
         close(in[1]);
         close(out[0]);
 
-        //ret=execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-        //execl(config->sagan_extern, config->sagan_extern, NULL, (char *)NULL);
-
         execl(execute_script, execute_script, NULL, (char *)NULL);
 
         Remove_Lock_File();

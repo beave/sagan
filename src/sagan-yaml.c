@@ -26,7 +26,7 @@
 
 /* Notes:
 
-   * var doesn't do "file://" yet.
+   * "include"
 
 */
 
@@ -114,6 +114,9 @@ void Load_YAML_Config( void )
     unsigned char type = 0;
     unsigned char sub_type = 0;
     unsigned char toggle = 0;
+
+    char *ptr;
+    char *tok;
 
     int line = 0;
 
@@ -284,8 +287,6 @@ void Load_YAML_Config( void )
             /**** Load variables ****/
             /************************/
 
-            /* DEBUG - This doesnt take into account "var BOB file://usr/local/etc/filename.txt" */
-
             if ( type == YAML_TYPE_VAR ) {
 
                 if ( toggle == 1 ) {
@@ -304,16 +305,88 @@ void Load_YAML_Config( void )
 
                     if (strcmp(var[counters->var_count].var_name, "")) {
 
-                        strlcpy(var[counters->var_count].var_value, value, sizeof(var[counters->var_count].var_value));
+			/* If "file:/" is found, we load values from a file */
 
-                        if ( debug->debugload ) {
+                        if (Sagan_strstr(value, "file:/")) {
 
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
-                        }
+                            strtok_r(value, ":", &tok);
 
-                        counters->var_count++;
-                        toggle = 1;
+                            char *filename;
+                            char tmpbuf[CONFBUF];
+                            char tmpstring[CONFBUF];
 
+                            FILE *varfile;
+
+                            sbool check = 0;
+
+                            filename = strtok_r(NULL, ":", &tok);
+
+                            if ((varfile = fopen(filename, "r")) == NULL) {
+                                fprintf(stderr, "[E] [%s, line %d] Cannot open var file:%s\n", __FILE__,  __LINE__, filename);
+                                exit(-1);
+                            }
+
+
+                            while(fgets(tmpbuf, sizeof(tmpbuf), varfile) != NULL) {
+
+
+                                /* Stuff to skip */
+
+                                if (tmpbuf[0] == '#') continue;
+                                if (tmpbuf[0] == ';') continue;
+                                if (tmpbuf[0] == 10 ) continue;
+                                if (tmpbuf[0] == 32 ) continue;
+
+                                /* Simple check to see if this is the first entry or not.  This is to keep our
+                                   "," on mark */
+
+                                if ( debug->debugload ) {
+
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Variable from file \"%s\" var \"%s\" loaded: \"%s\"", __FILE__, __LINE__, filename, var[counters->var_count].var_name, Remove_Return(tmpbuf));
+                                }
+
+                                if ( check == 0 ) {
+
+                                    snprintf(tmpstring, sizeof(tmpstring), "%s", Remove_Return(tmpbuf));
+                                    check = 1;
+
+                                } else {
+
+                                    snprintf(tmpstring, sizeof(tmpstring), ",%s", Remove_Return(tmpbuf));
+
+                                }
+
+                                /* Append to the var */
+
+                                strlcat(var[counters->var_count].var_value, tmpstring, sizeof(var[counters->var_count].var_value));
+
+                            }
+
+                            fclose(varfile);
+
+                            if ( debug->debugload ) {
+
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Final load from file for \"%s\" value \"%s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
+
+                            }
+
+			    toggle = 1; 
+
+                        } else { 
+
+			    /* If "file:/" is not found, we load like a normal variable */
+
+                            strlcpy(var[counters->var_count].var_value, value, sizeof(var[counters->var_count].var_value));
+
+                            if ( debug->debugload ) {
+
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
+                            }
+
+                            counters->var_count++;
+                            toggle = 1;
+
+			} 
                     }
                 }
 
@@ -1046,7 +1119,7 @@ void Load_YAML_Config( void )
 
                     else if (!strcmp(last_pass, "command") && config->sagan_external_output_flag == true) {
 
-                        strlcpy(config->unified2_filepath, Sagan_Var_To_Value(value), sizeof(config->unified2_filepath));
+                        strlcpy(config->sagan_extern, Sagan_Var_To_Value(value), sizeof(config->sagan_extern));
 
                     }
 
