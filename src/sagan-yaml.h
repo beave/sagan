@@ -40,6 +40,7 @@
 #define		YAML_TYPE_PROCESSORS	3
 #define		YAML_TYPE_OUTPUT	4
 #define		YAML_TYPE_RULES		5
+#define		YAML_TYPE_INCLUDES	6
 
 /*******************/
 /* Secondary types */
@@ -73,6 +74,6 @@
 #define		YAML_OUTPUT_FAST		18
 #define		YAML_OUTPUT_ALERT		19
 
-void Load_YAML_Config(void);
+void Load_YAML_Config( char * );
 
 #endif

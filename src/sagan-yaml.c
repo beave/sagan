@@ -24,13 +24,6 @@
  *
  */
 
-/* Notes:
-
-   * "include"
-
-*/
-
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -98,8 +91,17 @@ sbool reload_rules;
 
 #ifdef HAVE_LIBYAML
 
-void Load_YAML_Config( void )
+void Load_YAML_Config( char *yaml_file )
 {
+
+    typedef struct _Includes _Includes;
+    struct _Includes {
+        char include_file[MAXPATH];
+    };
+
+    int includes_count;
+
+    struct _Includes *includes;
 
     struct stat filecheck;
 
@@ -107,8 +109,6 @@ void Load_YAML_Config( void )
     yaml_event_t  event;
 
     sbool done = 0;
-    sbool liblognorm_load = 0;
-
     sbool flag = 0;
 
     unsigned char type = 0;
@@ -130,86 +130,98 @@ void Load_YAML_Config( void )
     pthread_mutex_lock(&SaganRulesLoadedMutex);
     reload_rules = 1;
 
+
+    includes = malloc(sizeof(_Includes));
+
+    if ( includes == NULL ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to malloc memory for 'includes'. Abort!", __FILE__, __LINE__);
+    }
+
+
     /* Set some system defaults */
 
-    strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
-    strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
-    strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
-    strlcpy(config->ipc_directory, IPC_DIRECTORY, sizeof(config->ipc_directory));
-    strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
-    strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
+    if (!strcmp(config->sagan_config, yaml_file)) {
 
-    config->sagan_host[0] = '\0';
-    config->sagan_port = 514;
+        strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
+        strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
+        strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
+        strlcpy(config->ipc_directory, IPC_DIRECTORY, sizeof(config->ipc_directory));
+        strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
+        strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
 
-    config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
-    config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
-    config->max_threshold_by_srcport = DEFAULT_IPC_THRESH_BY_SRC_PORT;
-    config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
-    config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
+        config->sagan_host[0] = '\0';
+        config->sagan_port = 514;
 
-    config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
-    config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
-    config->max_after_by_srcport = DEFAULT_IPC_AFTER_BY_SRC_PORT;
-    config->max_after_by_dstport = DEFAULT_IPC_AFTER_BY_DST_PORT;
-    config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
+        config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
+        config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
+        config->max_threshold_by_srcport = DEFAULT_IPC_THRESH_BY_SRC_PORT;
+        config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
+        config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
 
-    config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
-    config->pp_sagan_track_clients = TRACK_TIME;
+        config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
+        config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
+        config->max_after_by_srcport = DEFAULT_IPC_AFTER_BY_SRC_PORT;
+        config->max_after_by_dstport = DEFAULT_IPC_AFTER_BY_DST_PORT;
+        config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
+
+        config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
+        config->pp_sagan_track_clients = TRACK_TIME;
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
-    config->sagan_fifo_size = MAX_FIFO_SIZE;
+        config->sagan_fifo_size = MAX_FIFO_SIZE;
 #endif
 
 #ifdef WITH_BLUEDOT
 
-    /* Bluedot defaults */
+        /* Bluedot defaults */
 
-    strlcpy(config->bluedot_device_id, "NO_DEVICE_ID", sizeof(config->bluedot_device_id));
-    config->bluedot_timeout = 120;
+        strlcpy(config->bluedot_device_id, "NO_DEVICE_ID", sizeof(config->bluedot_device_id));
+        config->bluedot_timeout = 120;
 
-    config->bluedot_cat[0] = '\0';
-    config->bluedot_url[0] = '\0';
+        config->bluedot_cat[0] = '\0';
+        config->bluedot_url[0] = '\0';
 
 #endif
 
-    /* Copy default FIFO */
+        /* Copy default FIFO */
 
-    config->sagan_fifo[0] = '\0';
+        config->sagan_fifo[0] = '\0';
 
-    if ( config->sagan_is_file == false ) {
-        strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
-    }
+        if ( config->sagan_is_file == false ) {
+            strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
+        }
 
 #ifdef HAVE_LIBESMTP
-    strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject));
-    config->sagan_esmtp_from[0] = '\0';
-    config->sagan_esmtp_server[0] = '\0';
+        strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject));
+        config->sagan_esmtp_from[0] = '\0';
+        config->sagan_esmtp_server[0] = '\0';
 #endif
 
-    config->sagan_proto = 17;           /* Default to UDP */
-    config->max_processor_threads = MAX_PROCESSOR_THREADS;
+        config->sagan_proto = 17;           /* Default to UDP */
+        config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
-    /* PLOG defaults */
+        /* PLOG defaults */
 
 #ifdef HAVE_LIBPCAP
-    strlcpy(config->plog_interface, PLOG_INTERFACE, sizeof(config->plog_interface));
-    strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
-    strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev));
+        strlcpy(config->plog_interface, PLOG_INTERFACE, sizeof(config->plog_interface));
+        strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
+        strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev));
 #endif
+
+    }
 
     if (stat(config->sagan_config, &filecheck) != false ) {
         Sagan_Log(S_ERROR, "[%s, line %d] The configuration file '%s' cannot be found! Abort!", __FILE__, __LINE__, config->sagan_config);
     }
 
-    FILE *fh = fopen(config->sagan_config, "r");
+    FILE *fh = fopen(yaml_file, "r");
 
     if (!yaml_parser_initialize(&parser)) {
         Sagan_Log(S_ERROR, "[%s, line %d] Failed to initialize the libyaml parser. Abort!", __FILE__, __LINE__);
     }
 
     if (fh == NULL) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to open the configuration file '%s' Abort!", __FILE__, __LINE__, config->sagan_config);
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to open the configuration file '%s' Abort!", __FILE__, __LINE__, yaml_file);
     }
 
     /* Set input file */
@@ -305,7 +317,7 @@ void Load_YAML_Config( void )
 
                     if (strcmp(var[counters->var_count].var_name, "")) {
 
-			/* If "file:/" is found, we load values from a file */
+                        /* If "file:/" is found, we load values from a file */
 
                         if (Sagan_strstr(value, "file:/")) {
 
@@ -370,11 +382,11 @@ void Load_YAML_Config( void )
 
                             }
 
-			    toggle = 1; 
+                            toggle = 1;
 
-                        } else { 
+                        } else {
 
-			    /* If "file:/" is not found, we load like a normal variable */
+                            /* If "file:/" is not found, we load like a normal variable */
 
                             strlcpy(var[counters->var_count].var_value, value, sizeof(var[counters->var_count].var_value));
 
@@ -386,11 +398,35 @@ void Load_YAML_Config( void )
                             counters->var_count++;
                             toggle = 1;
 
-			} 
+                        }
                     }
                 }
 
             } /* if type == YAML_TYPE_VAR */
+
+
+            else if ( type == YAML_TYPE_INCLUDES ) {
+
+                if ( toggle == 1 ) {
+
+                    toggle = 0;
+
+                } else {
+
+                    includes = (_Includes *) realloc(includes, (includes_count+1) * sizeof(_SaganVar));
+
+                    if ( includes == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for 'includes'. Abort!", __FILE__, __LINE__);
+                    }
+
+                    strlcpy(includes[includes_count].include_file, Sagan_Var_To_Value(value), sizeof(includes[includes_count].include_file));
+
+                    includes_count++;
+                    toggle = 1;
+
+                }
+            }
+
 
             else if ( type == YAML_TYPE_SAGAN_CORE ) {
 
@@ -700,14 +736,14 @@ void Load_YAML_Config( void )
                     if (!strcmp(last_pass, "enabled")) {
 
                         if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
-                            liblognorm_load = true;
+                            config->liblognorm_load = true;
 
                         }
                     }
 
                     if (!strcmp(last_pass, "normalize_rulebase")) {
 
-                        if ( liblognorm_load == true ) {
+                        if ( config->liblognorm_load == true ) {
 
                             Sagan_Liblognorm_Load(Sagan_Var_To_Value(value));
                         }
@@ -1532,6 +1568,21 @@ void Load_YAML_Config( void )
 
             } /* tag: var */
 
+            /*****************/
+            /**** include ****/
+            /*****************/
+
+            else if (!strcmp(value, "include")) {
+
+                if ( debug->debugload ) {
+                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found include ****", __FILE__, __LINE__);
+                }
+
+                type = YAML_TYPE_INCLUDES;
+                toggle = 0;
+
+            }  /* tag: include */
+
             /********************/
             /**** Sagan core ****/
             /********************/
@@ -1669,9 +1720,9 @@ void Load_YAML_Config( void )
 
 #ifdef HAVE_LIBLOGNORM
 
-    if ( liblognorm_load == 0 ) {
+    if ( config->liblognorm_load == false ) {
 
-        Sagan_Log(S_ERROR, "[%s, line %d] liblognorm is in use but 'normalize_file' is not set.  Abort.", __FILE__, __LINE__);
+        Sagan_Log(S_ERROR, "[%s, line %d] liblognorm is in use but is not set up.  Abort.", __FILE__, __LINE__);
 
     }
 
@@ -1703,7 +1754,7 @@ void Load_YAML_Config( void )
     tmp_rules_loaded = malloc(sizeof(_Rules_Loaded));
 
     if ( tmp_rules_loaded == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to malloc memory for debug. Abort!", __FILE__, __LINE__);
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to malloc memory for 'tmp_rules_loaded'. Abort!", __FILE__, __LINE__);
     }
 
     memset(tmp_rules_loaded, 0, sizeof(_Rules_Loaded));
@@ -1736,6 +1787,18 @@ void Load_YAML_Config( void )
     reload_rules = 0;
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
+    if ( includes_count != 0 ) {
+
+        for (a=0; a<includes_count; a++) {
+
+            Sagan_Log(S_NORMAL, "Loading included file '%s'.", includes[a].include_file);
+            Load_YAML_Config(includes[a].include_file);
+
+        }
+
+    }
+
+    free(includes);
 }
 
 #endif

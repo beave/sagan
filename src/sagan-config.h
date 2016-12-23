@@ -33,6 +33,8 @@ struct _SaganConfig {
     sbool	 daemonize;
     sbool	 quiet;
 
+    sbool	 liblognorm_load;
+
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
@@ -214,4 +216,4 @@ struct _SaganConfig {
 
 
 
-void Load_Config( void );
+//void Load_Config( void );

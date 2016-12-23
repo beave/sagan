@@ -462,7 +462,7 @@ int main(int argc, char **argv)
 
 #endif
 
-    Load_YAML_Config();
+    Load_YAML_Config(config->sagan_config);
 
     Sagan_Engine_Init();
 

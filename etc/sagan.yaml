@@ -641,3 +641,13 @@ rules-files:
   - $RULE_PATH/zeus.rules
   - $RULE_PATH/zimbra.rules
 
+#
+# Include other configs
+#
+
+# Includes.  Files included here will be handled as if they were
+# inlined in this configuration file.
+
+#include: "/usr/local/etc/include1.yaml"
+#include: "$RULE_PATHinclude2.yaml"
+
