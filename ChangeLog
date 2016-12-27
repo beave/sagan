@@ -1,3 +1,13 @@
+2016/12/XX -	Sagan 1.1.4 released. 
+
+		* Sagan has adopted YAML for future configuration file formats. For more information on YAML see https://en.wikipedia.org/wiki/YAML.  The new YAML format allows for a more stream line & easier to understand configuration.  The new 'sagan.yaml' is modeled after the Suricata YAML file.
+		* With the adoption of YAML,  Sagan now requires libyaml to be installed. 
+		* configure.in libyaml checks added. 
+		* Sagan "flowbits" are now known as "xbits". "xbits" represents what Sagan is doing with data rather than "flowbits".
+		* Added new "fast" output format.  Works the same as "fast" output format for Suricata/Snort.
+		* Test for OpenBSD RWX mem segments.  If not available,  then disable PCRE JIT.  Brought up by Victor Julian.
+		  https://github.com/beave/sagan/commit/65aa4dd4d8880d2c54ddbb67a39089d5e6001b69
+
 2016/11/07 -	Sagan 1.1.3 released.
 
 	        * New "dynamic_load" processor.  This allows rules to be created that can load other rules.  For example,  it is now possible to "detect" new logs coming in and have Sagan automatically load rules for them.
