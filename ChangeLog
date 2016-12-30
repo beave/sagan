@@ -1,4 +1,4 @@
-2016/12/XX -	Sagan 1.1.4 released. 
+2016/12/30 -	Sagan 1.1.4 released. 
 
 		* Sagan has adopted YAML for future configuration file formats. For more information on YAML see https://en.wikipedia.org/wiki/YAML.  The new YAML format allows for a more stream line & easier to understand configuration.  The new 'sagan.yaml' is modeled after the Suricata YAML file.
 		* With the adoption of YAML,  Sagan now requires libyaml to be installed. 
@@ -7,6 +7,7 @@
 		* Added new "fast" output format.  Works the same as "fast" output format for Suricata/Snort.
 		* Test for OpenBSD RWX mem segments.  If not available,  then disable PCRE JIT.  Brought up by Victor Julian.
 		  https://github.com/beave/sagan/commit/65aa4dd4d8880d2c54ddbb67a39089d5e6001b69
+		* Released from Hamburg, Germany after 33c3! :)
 
 2016/11/07 -	Sagan 1.1.3 released.
 
