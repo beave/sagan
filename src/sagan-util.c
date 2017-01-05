@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -792,6 +792,10 @@ void Sagan_Open_Log_File( sbool state, int type )
 
         /* For SIGHUP */
 
+        if ( state == REOPEN && config->eve_flag == true ) {
+            fclose(config->eve_stream);
+        }
+
         if ( state == REOPEN && config->alert_flag == true ) {
             fclose(config->sagan_alert_stream);
         }
@@ -799,6 +803,15 @@ void Sagan_Open_Log_File( sbool state, int type )
         if ( state == REOPEN && config->fast_flag == true ) {
             fclose(config->sagan_fast_stream);
         }
+
+        if ( config->eve_flag == true ) {
+
+            if (( config->eve_stream = fopen(config->eve_filename, "a" )) == NULL ) {
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+            }
+        }
+
 
         if ( config->fast_flag == true ) {
 
@@ -808,7 +821,6 @@ void Sagan_Open_Log_File( sbool state, int type )
             }
 
         }
-
 
         if ( config->alert_flag == true ) {
 
@@ -872,7 +884,7 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 
 #endif
 
-char *Sagan_Return_Date( uintmax_t utime )
+char *Sagan_Return_Date( uint32_t utime )
 {
 
     struct tm tm;
@@ -882,7 +894,7 @@ char *Sagan_Return_Date( uintmax_t utime )
     char *return_date = NULL;
 
     memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
 
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%F", &tm);
@@ -892,7 +904,7 @@ char *Sagan_Return_Date( uintmax_t utime )
 
 }
 
-char *Sagan_Return_Time( uintmax_t utime )
+char *Sagan_Return_Time( uint32_t utime )
 {
 
     struct tm tm;
@@ -902,7 +914,7 @@ char *Sagan_Return_Time( uintmax_t utime )
     char *return_date = NULL;
 
     memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
 
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%T", &tm);
@@ -918,7 +930,7 @@ char *Sagan_Return_Time( uintmax_t utime )
  * "readable" format.
  ****************************************************************************/
 
-char *Sagan_u32_Time_To_Human ( uintmax_t utime )
+char *Sagan_u32_Time_To_Human ( uint32_t utime )
 {
     struct tm tm;
     static __thread char time_buf[80];
@@ -927,7 +939,7 @@ char *Sagan_u32_Time_To_Human ( uintmax_t utime )
     char *return_time = NULL;
 
     memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
 
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);

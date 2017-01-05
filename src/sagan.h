@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -340,7 +340,7 @@ typedef struct thresh_by_srcport_ipc thresh_by_srcport_ipc;
 struct thresh_by_srcport_ipc {
     uint32_t ipsrcport;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -350,7 +350,7 @@ typedef struct thresh_by_dstport_ipc thresh_by_dstport_ipc;
 struct thresh_by_dstport_ipc {
     uint32_t ipdstport;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -391,7 +391,7 @@ typedef struct after_by_srcport_ipc after_by_srcport_ipc;
 struct after_by_srcport_ipc {
     uint32_t ipsrcport;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -401,7 +401,7 @@ typedef struct after_by_dstport_ipc after_by_dstport_ipc;
 struct after_by_dstport_ipc {
     uint32_t ipdstport;
     int  count;
-    uint64_t utime;
+    uintmax_t utime;
     char sid[20];
     int expire;
 };
@@ -457,13 +457,13 @@ int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
-char *Sagan_u32_Time_To_Human ( uintmax_t );
+char *Sagan_u32_Time_To_Human ( uint32_t );
 char *Netaddr_To_Range( char * );
 char *Strip_Chars(const char *string, const char *chars);
 sbool Is_IP (char *str);
 
-char *Sagan_Return_Date( uintmax_t );
-char *Sagan_Return_Time( uintmax_t );
+char *Sagan_Return_Date( uint32_t );
+char *Sagan_Return_Time( uint32_t );
 
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );

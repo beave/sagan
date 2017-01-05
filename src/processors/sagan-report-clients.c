@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Adam Hall <ahall@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Adam Hall <ahall@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -102,12 +102,12 @@ void Sagan_Report_Clients ( void )
         time_t t;
         struct tm *now;
 
-        uintmax_t utime_u64;
+        uintmax_t utime_u32;
 
         t = time(NULL);
         now=localtime(&t);
         strftime(utime_tmp, sizeof(utime_tmp), "%s",  now);
-        utime_u64 = atol(utime_tmp);
+        utime_u32 = atol(utime_tmp);
 
         int expired_time = config->pp_sagan_track_clients * 60;
 
@@ -130,7 +130,7 @@ void Sagan_Report_Clients ( void )
 
                 /* If host was done, verify host last seen time is still not an expired time */
 
-                if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) < expired_time ) {
+                if ( ( utime_u32 - SaganTrackClients_ipc[i].utime ) < expired_time ) {
 
                     /* Update status and seen time */
 
@@ -157,8 +157,8 @@ void Sagan_Report_Clients ( void )
                     strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
-                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
+                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u32));
+                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u32));
 
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previously not sending logs. The system appears to be sending logs again at %s", tmp_ip, ctime(&SaganTrackClients_ipc[i].utime) );
 
@@ -183,7 +183,7 @@ void Sagan_Report_Clients ( void )
 
                 /**** Check if last seen time of host has exceeded track time meaning it's down! ****/
 
-                if ( ( utime_u64 - SaganTrackClients_ipc[i].utime ) >= expired_time ) {
+                if ( ( utime_u32 - SaganTrackClients_ipc[i].utime ) >= expired_time ) {
                     /* Update status and utime */
 
                     Sagan_File_Lock(config->shm_track_clients);
@@ -209,8 +209,8 @@ void Sagan_Report_Clients ( void )
                     strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
-                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u64));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u64));
+                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u32));
+                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u32));
 
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). Last log was seen at %s. This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients, ctime(&SaganTrackClients_ipc[i].utime) );
 

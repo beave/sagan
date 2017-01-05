@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Adam Hall <ahall@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Adam Hall <ahall@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as

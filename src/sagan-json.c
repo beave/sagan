@@ -1,3 +1,5 @@
+/* $Id$ */
+
 /*
 ** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
 ** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
@@ -18,54 +20,71 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-fast.c
+/* sagan-json.c
  *
- * Provides logging functionality in a 'snort like' fast format.
+ * Functions that handle JSON output.
  *
  */
+
+
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <string.h>
+#include <stdbool.h>
+//#include <stdlib.h>
+//#include <pthread.h>
+//#include <string.h>
 
 #include "sagan.h"
-#include "sagan-alert.h"
+//#include "sagan-alert.h"
 #include "sagan-references.h"
 #include "sagan-config.h"
+#include "sagan-json.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
 
-void Sagan_Fast_File( _Sagan_Event *Event )
+
+char *Format_Sagan_JSON_Alert( _Sagan_Event *event)
 {
 
-    fprintf(config->sagan_fast_stream, "%s %s  [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", Event->date, Event->time,
-            Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri);
+    char *ret;
 
-    if ( Event->ip_proto == 1 ) {
-        fprintf(config->sagan_fast_stream, "{ICMP}");
+    char *proto;
+    char *drop;
+
+    static __thread char tmp[1024];
+
+    if ( event->ip_proto == 17 ) {
+        proto = "UDP";
     }
 
-    else if ( Event->ip_proto == 6 ) {
-        fprintf(config->sagan_fast_stream, "{TCP}");
+    else if ( event->ip_proto == 6 ) {
+        proto = "TCP";
     }
 
-    else if ( Event->ip_proto == 17 ) {
-        fprintf(config->sagan_fast_stream, "{UDP}");
+    else if ( event->ip_proto == 1 ) {
+        proto = "ICMP";
     }
 
-    else if ( Event->ip_proto != 1 && Event->ip_proto !=6 && Event->ip_proto != 17 ) {
-        fprintf(config->sagan_fast_stream, "{UNKNOWN}");
+    else if ( event->ip_proto != 1 || event->ip_proto != 6 || event->ip_proto != 17 ) {
+        proto = "UNKNOWN";
     }
 
-    fprintf(config->sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
+    if ( event->drop == true ) {
 
-    fflush(config->sagan_fast_stream);
+        /* Blocked?  Look at what Suricata says */
+
+        drop = "blocked";
+    } else {
+        drop = "allowed";
+    }
+
+    snprintf(tmp, sizeof(tmp), JSON_ALERT, event->date, event->time, event->ip_src, event->src_port,
+             event->ip_dst, event->dst_port, proto, drop, event->generatorid, event->sid, event->rev,
+             event->f_msg, event->class, event->pri );
+
+    return(tmp);
 
 }

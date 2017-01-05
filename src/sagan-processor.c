@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -75,7 +76,7 @@ void Sagan_Processor ( void )
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-    sbool ignore_flag=0;
+    sbool ignore_flag = false;
 
     int i;
 
@@ -85,7 +86,7 @@ void Sagan_Processor ( void )
 
         while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
 
-        if ( config->sagan_reload == 1 ) {
+        if ( config->sagan_reload ) {
             pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
         }
 
@@ -108,7 +109,7 @@ void Sagan_Processor ( void )
 
         if ( config->sagan_droplist_flag ) {
 
-            ignore_flag=0;
+            ignore_flag = false;
 
             for (i = 0; i < counters->droplist_count; i++) {
 
@@ -118,7 +119,7 @@ void Sagan_Processor ( void )
                     counters->ignore_count++;
                     pthread_mutex_unlock(&SaganIgnoreCounter);
 
-                    ignore_flag=1;
+                    ignore_flag = true;
                     goto outside_loop;	/* Stop processing from ignore list */
                 }
             }
@@ -128,22 +129,22 @@ outside_loop:
 
         /* If we're in a ignore state,  then we can bypass the processors */
 
-        if ( ignore_flag == 0 ) {
+        if ( ignore_flag == false ) {
 
             Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
             /* If this is a dynamic run,  reset back to normal */
 
             if ( dynamic_rule_flag == DYNAMIC_RULE ) {
+
                 pthread_mutex_lock(&SaganDynamicFlag);
                 dynamic_rule_flag = 0;
                 pthread_mutex_unlock(&SaganDynamicFlag);
+
             }
 
             if ( config->sagan_track_clients_flag ) {
-
                 Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
-
             }
 
         } // End if if (ignore_Flag)

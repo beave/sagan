@@ -32,6 +32,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        sagan-check-flow.c\
                                                        sagan-aetas.c \
                                                        sagan-ipc.c \
+						       sagan-json.c \
                                                        parsers/parse-ip.c \
                                                        parsers/parse-port.c \
                                                        parsers/parse-proto.c \
@@ -47,6 +48,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies
                                                        output-plugins/sagan-twofish.c \
                                                        output-plugins/sagan-snortsam.c \
                                                        output-plugins/sagan-syslog.c \
+						       output-plugins/sagan-eve.c \
                                                        processors/sagan-engine.c \
                                                        processors/sagan-track-clients.c \
                                                        processors/sagan-report-clients.c \

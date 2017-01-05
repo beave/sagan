@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -39,6 +39,12 @@ struct _SaganConfig {
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
     sbool	 alert_flag;
+
+    sbool	 	eve_flag; 			/* 0 = file */
+    unsigned char 	eve_type;
+    char 		eve_filename[MAXPATH];
+    FILE		*eve_stream;
+
     char         sagan_alert_filepath[MAXPATH];
 
     char         sagan_interface[50];

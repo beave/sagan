@@ -3,7 +3,7 @@
 
 #  ,-._,-.  Sagan configuration file [http://sagan.quadrantsec.com]
 #  \/)"(\/  Champ Clark III & The Quadrant Infosec Team: http://quadrantsec.com
-#   (_o_)   Copyright (C) 2009-2016 Quadrant Information Security., et al.
+#   (_o_)   Copyright (C) 2009-2017 Quadrant Information Security., et al.
 #   /   \/)   
 #  (|| ||)    
 #   oo-oo    
@@ -326,6 +326,13 @@ processors:
 # "outputs" inform Sagan on how to handle data upon detection. 
 
 outputs:
+
+  # WORK IN PROGRESS - Output the the Suricata EVE format.  
+
+  - eve-log:
+      enabled: yes
+      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
+      filename: "$LOG_PATH/eve.json"
 
   # The 'alert' output format allows Sagan to write alerts, in detail, in a 
   # traditional Snort style "alert log" ASCII format. 

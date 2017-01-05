@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -121,25 +121,25 @@ void Sagan_Perfmonitor_Handler( void )
 
             fprintf(config->perfmonitor_file_stream, "%s,", curtime_utime),
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagantotal - last_sagantotal);
+                    fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->sagantotal - last_sagantotal);
             last_sagantotal = counters->sagantotal;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->saganfound - last_saganfound);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->saganfound - last_saganfound);
             last_saganfound = counters->saganfound;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->alert_total - last_alert_total);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->alert_total - last_alert_total);
             last_alert_total = counters->alert_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->after_total - last_after_total);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->after_total - last_after_total);
             last_after_total = counters->after_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->threshold_total - last_threshold_total);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->threshold_total - last_threshold_total);
             last_threshold_total = counters->threshold_total;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->sagan_processor_drop - last_sagan_processor_drop);
             last_sagan_processor_drop = counters->sagan_processor_drop;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->ignore_count - last_ignore_count);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->ignore_count - last_ignore_count);
             last_ignore_count = counters->ignore_count;
 
             total = counters->sagantotal / seconds;
@@ -147,13 +147,13 @@ void Sagan_Perfmonitor_Handler( void )
 
 #ifdef HAVE_LIBMAXMINDDB
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_lookup - last_geoip2_lookup);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->geoip2_lookup - last_geoip2_lookup);
             last_geoip2_lookup = counters->geoip2_lookup;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_hit - last_geoip2_hit);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->geoip2_hit - last_geoip2_hit);
             last_geoip2_hit = counters->geoip2_hit;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_miss - last_geoip2_miss);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->geoip2_miss - last_geoip2_miss);
             last_geoip2_miss = counters->geoip2_miss;
 
 #endif
@@ -166,30 +166,30 @@ void Sagan_Perfmonitor_Handler( void )
 
             /* DEBUG: IS THE BELOW RIGHT?  TWO counters->sagan_processor_drop REFERENCES */
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_processor_drop - last_sagan_processor_drop);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->sagan_processor_drop - last_sagan_processor_drop);
             last_sagan_processor_drop = counters->sagan_processor_drop;
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->blacklist_hit_count - last_blacklist_hit_count);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->blacklist_hit_count - last_blacklist_hit_count);
             last_blacklist_hit_count = counters->blacklist_hit_count;
 
             /* DEBUG: CONSTANT? */
 
-//                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters_ipc->track_clients_client_count);
-//                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters_ipc->track_clients_down);
+//                    fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters_ipc->track_clients_client_count);
+//                    fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters_ipc->track_clients_down);
 
             fprintf(config->perfmonitor_file_stream, "%d,", counters_ipc->track_clients_client_count);
             fprintf(config->perfmonitor_file_stream, "%d,", counters_ipc->track_clients_down);
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagan_output_drop - last_sagan_output_drop);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->sagan_output_drop - last_sagan_output_drop);
             last_sagan_output_drop = counters->sagan_output_drop;
 
 #ifdef HAVE_LIBESMTP
             if ( config->sagan_esmtp_flag ) {
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_success - last_esmtp_count_success);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->esmtp_count_success - last_esmtp_count_success);
                 last_esmtp_count_success = counters->esmtp_count_success;
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->esmtp_count_failed - last_esmtp_count_failed);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->esmtp_count_failed - last_esmtp_count_failed);
                 last_esmtp_count_failed = counters->esmtp_count_failed;
             } else {
                 fprintf(config->perfmonitor_file_stream, "0,0,");
@@ -200,9 +200,9 @@ void Sagan_Perfmonitor_Handler( void )
             fprintf(config->perfmonitor_file_stream, "0,0,");
 #endif
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_cache_count);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->dns_cache_count);
 
-            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->dns_miss_count - last_dns_miss_count);
+            fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->dns_miss_count - last_dns_miss_count);
             last_dns_miss_count = counters->dns_miss_count;
 
 
@@ -213,12 +213,12 @@ void Sagan_Perfmonitor_Handler( void )
 
                 /* IP Reputation */
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_cache_count);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_ip_cache_count);
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_cache_hit - last_bluedot_ip_cache_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_ip_cache_hit - last_bluedot_ip_cache_hit);
                 last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_ip_positive_hit - last_bluedot_ip_positive_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_ip_positive_hit - last_bluedot_ip_positive_hit);
                 last_bluedot_ip_positive_hit = counters->bluedot_ip_positive_hit;
 
                 bluedot_ip_total = counters->bluedot_ip_total / seconds;
@@ -226,12 +226,12 @@ void Sagan_Perfmonitor_Handler( void )
 
                 /* Hash */
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_cache_count);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_hash_cache_count);
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_cache_hit - last_bluedot_hash_cache_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_hash_cache_hit - last_bluedot_hash_cache_hit);
                 last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_hash_positive_hit - last_bluedot_hash_positive_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_hash_positive_hit - last_bluedot_hash_positive_hit);
                 last_bluedot_hash_positive_hit = counters->bluedot_hash_positive_hit;
 
                 bluedot_hash_total = counters->bluedot_hash_total / seconds;
@@ -239,12 +239,12 @@ void Sagan_Perfmonitor_Handler( void )
 
                 /* URL */
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_cache_count);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_url_cache_count);
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_cache_hit - last_bluedot_url_cache_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_url_cache_hit - last_bluedot_url_cache_hit);
                 last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_url_positive_hit - last_bluedot_url_positive_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_url_positive_hit - last_bluedot_url_positive_hit);
                 last_bluedot_url_positive_hit = counters->bluedot_url_positive_hit;
 
                 bluedot_url_total = counters->bluedot_url_total / seconds;
@@ -252,12 +252,12 @@ void Sagan_Perfmonitor_Handler( void )
 
                 /* Filename */
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_cache_count);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_filename_cache_count);
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_cache_hit - last_bluedot_filename_cache_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_filename_cache_hit - last_bluedot_filename_cache_hit);
                 last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_count;
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_filename_positive_hit - last_bluedot_filename_positive_hit);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_filename_positive_hit - last_bluedot_filename_positive_hit);
                 last_bluedot_filename_positive_hit = counters->bluedot_filename_positive_hit;
 
                 bluedot_filename_total = counters->bluedot_filename_total / seconds;
@@ -265,7 +265,7 @@ void Sagan_Perfmonitor_Handler( void )
 
                 /* Error count */
 
-                fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->bluedot_error_count - last_bluedot_error_count);
+                fprintf(config->perfmonitor_file_stream, "%" PRIuMAX ",", counters->bluedot_error_count - last_bluedot_error_count);
                 last_bluedot_error_count = counters->bluedot_error_count;
 
                 fprintf(config->perfmonitor_file_stream, "%lu", bluedot_ip_total + bluedot_hash_total + bluedot_url_total + bluedot_filename_total);

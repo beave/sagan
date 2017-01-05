@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -128,7 +128,7 @@ void Load_YAML_Config( char *yaml_file )
     int b;
 
     pthread_mutex_lock(&SaganRulesLoadedMutex);
-    reload_rules = 1;
+    reload_rules = true;
 
 
     includes = malloc(sizeof(_Includes));
@@ -1035,7 +1035,11 @@ void Load_YAML_Config( char *yaml_file )
 
             else if ( type == YAML_TYPE_OUTPUT ) {
 
-                if (!strcmp(value, "alert")) {
+                if (!strcmp(value, "eve-log")) {
+                    sub_type = YAML_OUTPUT_EVE;
+                }
+
+                else if (!strcmp(value, "alert")) {
                     sub_type = YAML_OUTPUT_ALERT;
                 }
 
@@ -1063,8 +1067,33 @@ void Load_YAML_Config( char *yaml_file )
                     sub_type = YAML_OUTPUT_SYSLOG;
                 }
 
+                if ( sub_type == YAML_OUTPUT_EVE ) {
 
-                if ( sub_type == YAML_OUTPUT_ALERT ) {
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+                            config->eve_flag = true;
+                        }
+                    }
+
+                    else if ( !strcmp(last_pass, "filetype") && config->eve_flag == true ) {
+
+                        if (!strcmp(value, "regular")) {
+                            config->eve_type = 0;
+                        }
+
+                        // if (!strcmp(value, "something")) {
+                        // }
+                    }
+
+                    else if ( !strcmp(last_pass, "filename") && config->eve_flag == true ) {
+
+                        strlcpy(config->eve_filename, Sagan_Var_To_Value(value), sizeof(config->eve_filename));
+                    }
+
+                }
+
+                else if ( sub_type == YAML_OUTPUT_ALERT ) {
 
                     if (!strcmp(last_pass, "enabled")) {
 
@@ -1784,7 +1813,7 @@ void Load_YAML_Config( char *yaml_file )
 
     free(tmp_rules_loaded);
 
-    reload_rules = 0;
+    reload_rules = false;
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
     if ( includes_count != 0 ) {

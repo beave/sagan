@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -38,6 +38,7 @@
 #include "output-plugins/sagan-alert.h"
 #include "output-plugins/sagan-external.h"
 #include "output-plugins/sagan-fast.h"
+#include "output-plugins/sagan-eve.h"
 
 #ifdef WITH_SNORTSAM
 #include "output-plugins/sagan-snortsam.h"
@@ -60,7 +61,7 @@ struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 
-sbool nonthread_alert_lock=0;
+sbool nonthread_alert_lock = false;
 
 pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 
@@ -74,23 +75,23 @@ void Sagan_Output( _Sagan_Event *Event )
     /* Single threaded */
 
     pthread_mutex_lock(&SaganOutputNonThreadMutex);
-    nonthread_alert_lock = 1;
+    nonthread_alert_lock = true;
 
-    if ( config->alert_flag == true ) {
-
+    if ( config->alert_flag ) {
         Sagan_Alert_File(Event);
-
     }
 
-    if ( config->fast_flag == true ) {
+    if ( config->eve_flag ) {
+        Sagan_Alert_JSON(Event);
+    }
 
+    if ( config->fast_flag ) {
         Sagan_Fast_File(Event);
-
     }
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-    if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == 0 ) {
+    if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == false ) {
 
         Sagan_Unified2( Event );
         Sagan_Unified2LogPacketAlert( Event );
@@ -116,7 +117,7 @@ void Sagan_Output( _Sagan_Event *Event )
 
 #endif
 
-    nonthread_alert_lock = 0;
+    nonthread_alert_lock = false;
     pthread_mutex_unlock(&SaganOutputNonThreadMutex);
 
     /* End single threaded */
@@ -156,6 +157,7 @@ void Sagan_Output( _Sagan_Event *Event )
     if ( config->sagan_esmtp_flag ) {
         Sagan_ESMTP_Thread( Event );
     }
+
 #endif
 
     /****************************************************************************/
@@ -173,7 +175,5 @@ void Sagan_Output( _Sagan_Event *Event )
     if (  rulestruct[Event->found].external_flag == 1 ) {
         Sagan_Ext_Thread( Event, rulestruct[Event->found].external_program );
     }
-
-
 }
 

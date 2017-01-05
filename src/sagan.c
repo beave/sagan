@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2016 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2016 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -92,7 +92,6 @@
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
-struct class_struct *classstruct;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
@@ -103,10 +102,10 @@ struct _SaganDebug *debug;
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
-int proc_msgslot=0;
+int proc_msgslot = 0;
 
-sbool dynamic_rule_flag = 0;
-sbool reload_rules = 0;
+unsigned char dynamic_rule_flag = 0;
+sbool reload_rules = false;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 
@@ -190,9 +189,9 @@ int main(int argc, char **argv)
 
     struct sockaddr_in sa;
     char src_dns_lookup[20];
-    int  dns_flag=0;
 
-    sbool fifoerr=0;
+    sbool dns_flag = false;
+    sbool fifoerr = false;
 
     char *syslog_host=NULL;
     char *syslog_facility=NULL;
@@ -217,7 +216,7 @@ int main(int argc, char **argv)
     time_t t;
     struct tm *run;
 
-    sbool debugflag=0;
+    sbool debugflag = false;
 
     /* Allocate memory for global struct _SaganDebug */
 
@@ -283,7 +282,7 @@ int main(int argc, char **argv)
      */
 
     if ( !isatty(0) || !isatty(1) || !isatty(2) ) {
-        config->quiet = 1;
+        config->quiet = true;
     }
 
 
@@ -300,7 +299,7 @@ int main(int argc, char **argv)
             break;
 
         case 'Q':
-            config->quiet = 1;
+            config->quiet = true;
             break;
 
         case 'C':
@@ -311,100 +310,99 @@ int main(int argc, char **argv)
         case 'd':
 
             if (Sagan_strstr(optarg, "malformed")) {
-                debug->debugmalformed=1;
-                debugflag=1;
+                debug->debugmalformed = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "limits")) {
-                debug->debuglimits=1;
-                debugflag=1;
+                debug->debuglimits = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "syslog")) {
-                debug->debugsyslog=1;
-                debugflag=1;
+                debug->debugsyslog = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "load")) {
-                debug->debugload=1;
-                debugflag=1;
+                debug->debugload = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "fwsam")) {
-                debug->debugfwsam=1;
-                debugflag=1;
+                debug->debugfwsam = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "external")) {
-                debug->debugexternal=1;
-                debugflag=1;
+                debug->debugexternal = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "threads")) {
-                debug->debugthreads=1;
-                debugflag=1;
+                debug->debugthreads = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "xbit")) {
-                debug->debugxbit=1;
-                debugflag=1;
+                debug->debugxbit = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "engine")) {
-                debug->debugengine=1;
-                debugflag=1;
+                debug->debugengine = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "brointel")) {
-                debug->debugbrointel=1;
-                debugflag=1;
+                debug->debugbrointel = true;
+                debugflag = true;
             }
 
             if (Sagan_strstr(optarg, "ipc")) {
-                debug->debugipc=1;
-                debugflag=1;
+                debug->debugipc = true;
+                debugflag = true;
             }
 
 #ifdef HAVE_LIBMAXMINDDB
 
             if (Sagan_strstr(optarg, "geoip2")) {
-                debug->debuggeoip2=1;
-                debugflag=1;
+                debug->debuggeoip2 = true;
+                debugflag = true;
             }
 #endif
 
 #ifdef HAVE_LIBLOGNORM
             if (Sagan_strstr(optarg, "normalize" )) {
-                debug->debugnormalize=1;
-                debugflag=1;
+                debug->debugnormalize = true;
+                debugflag = true;
             }
 #endif
 
 #ifdef HAVE_LIBESMTP
             if (Sagan_strstr(optarg, "smtp")) {
-                debug->debugesmtp=1;
-                debugflag=1;
+                debug->debugesmtp = true;
+                debugflag = true;
             }
 #endif
 
 #ifdef HAVE_LIBPCAP
             if (Sagan_strstr(optarg, "plog")) {
-                debug->debugplog=1;
-                debugflag=1;
+                debug->debugplog = true;
+                debugflag = true;
             }
 #endif
 
 #ifdef WITH_BLUEDOT
             if (Sagan_strstr(optarg, "bluedot")) {
-                debug->debugbluedot=1;
-                debugflag=1;
+                debug->debugbluedot = true;
+                debugflag = true;
             }
 #endif
 
-
             /* If option is unknown */
 
-            if ( debugflag == 0 ) {
+            if ( debugflag == false ) {
                 fprintf(stderr, "Unknown debug option %s!\n", optarg);
                 exit(1);
             }
@@ -413,7 +411,7 @@ int main(int argc, char **argv)
             break;
 
         case 'D':
-            config->daemonize=1;
+            config->daemonize = true;
             break;
 
         case 'u':
@@ -425,7 +423,7 @@ int main(int argc, char **argv)
             break;
 
         case 'F':
-            config->sagan_is_file=1;
+            config->sagan_is_file = true;
             strlcpy(config->sagan_fifo,optarg,sizeof(config->sagan_fifo) - 1);
             break;
 
@@ -453,11 +451,11 @@ int main(int argc, char **argv)
        we want to disable PCRE JIT now.  This prevents confusing warnings of PCRE JIT during
        rule load */
 
-    config->pcre_jit = 1;
+    config->pcre_jit = true;
 
-    if (PageSupportsRWX() == 0) {
+    if (PageSupportsRWX() == false) {
         Sagan_Log(S_WARN, "The operating system doens't allow RWX pages.  Disabling PCRE JIT.");
-        config->pcre_jit = 0;
+        config->pcre_jit = false;
     }
 
 #endif
@@ -485,7 +483,7 @@ int main(int argc, char **argv)
 
 #ifdef PCRE_HAVE_JIT
 
-    if ( config->pcre_jit == 1 ) {
+    if ( config->pcre_jit ) {
         Sagan_Log(S_NORMAL, "PCRE JIT is enabled.");
     }
 
@@ -569,9 +567,11 @@ int main(int argc, char **argv)
 
     /* Sagan Blacklist IP processor *********************************************/
 
-    if ( config->blacklist_flag) {
+    if ( config->blacklist_flag ) {
+
         Sagan_Blacklist_Init();
         Sagan_Blacklist_Load();
+
     }
 
 #ifdef WITH_BLUEDOT
@@ -582,7 +582,6 @@ int main(int argc, char **argv)
 
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "Bluedot URL: %s", config->bluedot_url);
-//            Sagan_Log(S_NORMAL, "Bluedot Auth: %s", config->bluedot_auth);
         Sagan_Log(S_NORMAL, "Bluedot Device ID: %s", config->bluedot_device_id);
         Sagan_Log(S_NORMAL, "Bluedot Categories File: %s", config->bluedot_cat);
         Sagan_Log(S_NORMAL, "Bluedot Max Cache: %d", config->bluedot_max_cache);
@@ -622,6 +621,7 @@ int main(int argc, char **argv)
      ***************************************************************************/
 
 #ifdef HAVE_LIBESMTP
+
     if ( config->sagan_esmtp_flag ) {
         Sagan_Log(S_NORMAL, "");
 
@@ -632,20 +632,25 @@ int main(int argc, char **argv)
         Sagan_Log(S_NORMAL, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
         Sagan_Log(S_NORMAL, "SMTP server is set to: %s", config->sagan_esmtp_server);
     }
+
 #endif
 
 #ifdef WITH_SNORTSAM
 
     if ( config->sagan_fwsam_flag ) {
+
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "Snortsam output plug in enabled.");
+
     }
 
 #endif
 
     if ( config->sagan_external_output_flag ) {
+
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "External program to be called: %s", config->sagan_extern);
+
     }
 
     /* Unified2 ****************************************************************/
@@ -653,10 +658,12 @@ int main(int argc, char **argv)
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
     if ( config->sagan_unified2_flag ) {
+
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "Unified2 file: %s", config->unified2_filepath);
         Sagan_Log(S_NORMAL, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
         Unified2InitFile();
+
     }
 
 #endif
@@ -669,9 +676,11 @@ int main(int argc, char **argv)
     /* What to "ignore" ********************************************************/
 
     if ( config->sagan_droplist_flag ) {
+
         Load_Ignore_List();
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
+
     }
 
     /***************************************************************************
@@ -682,7 +691,7 @@ int main(int argc, char **argv)
     Sagan_Log(S_NORMAL, " ,-._,-. 	-*> Sagan! <*-");
     Sagan_Log(S_NORMAL, " \\/)\"(\\/	Version %s", VERSION);
     Sagan_Log(S_NORMAL, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
-    Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2016 Quadrant Information Security, et al.");
+    Sagan_Log(S_NORMAL, "  /   \\/)	Copyright (C) 2009-2017 Quadrant Information Security, et al.");
     Sagan_Log(S_NORMAL, " (|| ||) 	Using PCRE version: %s", pcre_version());
     Sagan_Log(S_NORMAL, "  oo-oo     Sagan is processing events.....");
     Sagan_Log(S_NORMAL, "");
@@ -690,6 +699,7 @@ int main(int argc, char **argv)
     /* Become a daemon if requested */
 
     if ( config->daemonize ) {
+
         Sagan_Log(S_NORMAL, "Becoming a daemon!");
 
         pid_t pid = 0;
@@ -716,16 +726,18 @@ int main(int argc, char **argv)
     /* We don't want the key_handler() if we're in daemon mode! */
 
     if (!config->daemonize ) {
+
         if (!config->quiet) {
 
             rc = pthread_create( &key_thread, NULL, (void *)key_handler, NULL );
 
             if ( rc != 0 ) {
+
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Error creating key_handler thread. [error: %d]", __FILE__, __LINE__, rc);
+
             }
         }
-
     }
 
     /* We do this after forking so init scripts can complete */
@@ -742,28 +754,34 @@ int main(int argc, char **argv)
         rc = pthread_create ( &processor_id[i], &thread_processor_attr, (void *)Sagan_Processor, NULL );
 
         if ( rc != 0 ) {
+
             Remove_Lock_File();
             Sagan_Log(S_ERROR, "Could not pthread_create() for I/O processors [error: %d]", rc);
+
         }
     }
 
     Sagan_Log(S_NORMAL, "");
 
-    if ( config->sagan_is_file == 0 ) {
+    if ( !config->sagan_is_file ) {
+
         Sagan_Log(S_NORMAL, "Attempting to open syslog FIFO (%s).", config->sagan_fifo);
+
     } else {
+
         Sagan_Log(S_NORMAL, "Attempting to open syslog FILE (%s).", config->sagan_fifo);
+
     }
 
 
 
-    while(1) {
+    while(true) {
 
         FILE *fd;
 
         if (( fd = fopen(config->sagan_fifo, "r" )) == NULL ) {
 
-            if ( config->sagan_is_file == 0 ) {
+            if ( config->sagan_is_file == false ) {
 
                 /* try to create it */
 
@@ -786,7 +804,7 @@ int main(int argc, char **argv)
 
         }
 
-        if ( config->sagan_is_file == 0 ) {
+        if ( config->sagan_is_file == false ) {
             Sagan_Log(S_NORMAL, "Successfully opened FIFO (%s).", config->sagan_fifo);
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
@@ -806,7 +824,8 @@ int main(int argc, char **argv)
 
                 /* If the FIFO was in a error state,  let user know the FIFO writer has resumed */
 
-                if ( fifoerr == 1 ) {
+                if ( fifoerr == true ) {
+
                     Sagan_Log(S_NORMAL, "FIFO writer has restarted. Processing events.");
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
@@ -814,8 +833,7 @@ int main(int argc, char **argv)
                     Sagan_Set_Pipe_Size(fd);
 
 #endif
-
-                    fifoerr=0;
+                    fifoerr = false;
                 }
 
                 counters->sagantotal++;
@@ -835,18 +853,18 @@ int main(int argc, char **argv)
 
                 if (config->syslog_src_lookup ) {
                     if ( inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0 ) { 	/* Is inbound a valid IP? */
-                        dns_flag=0;
+                        dns_flag = false;
 
                         for(i=0; i <= counters->dns_cache_count ; i++) {			/* Check cache first */
                             if (!strcmp( dnscache[i].hostname, syslog_host)) {
                                 syslog_host = dnscache[i].src_ip;
-                                dns_flag=1;
+                                dns_flag = true;
                             }
                         }
 
                         /* If entry was not found in cache,  look it up */
 
-                        if ( dns_flag == 0 ) {
+                        if ( dns_flag == false ) {
 
                             /* Do a DNS lookup */
                             strlcpy(src_dns_lookup, DNS_Lookup(syslog_host), sizeof(src_dns_lookup));
@@ -854,8 +872,10 @@ int main(int argc, char **argv)
                             /* Invalid lookups get the config->sagan_host value */
 
                             if (src_dns_lookup[0] == '0' ) {
+
                                 strlcpy(src_dns_lookup, config->sagan_host, sizeof(src_dns_lookup));
                                 counters->dns_miss_count++;
+
                             }
 
 
@@ -864,7 +884,9 @@ int main(int argc, char **argv)
                             dnscache = (_SaganDNSCache *) realloc(dnscache, (counters->dns_cache_count+1) * sizeof(_SaganDNSCache));
 
                             if ( dnscache == NULL ) {
+
                                 Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for dnscache. Abort!", __FILE__, __LINE__);
+
                             }
 
                             strlcpy(dnscache[counters->dns_cache_count].hostname, syslog_host, sizeof(dnscache[counters->dns_cache_count].hostname));
@@ -890,14 +912,15 @@ int main(int argc, char **argv)
                         if ( debug->debugmalformed ) {
                             Sagan_Log(S_WARN, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
                         }
-
                     }
                 }
 
                 /* We now check the rest of the values */
 
                 syslog_facility=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_facility == NULL ) {
+
                     syslog_facility = "SAGAN: FACILITY ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -910,7 +933,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_priority=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_priority == NULL ) {
+
                     syslog_priority = "SAGAN: PRIORITY ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -923,7 +948,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_level=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_level == NULL ) {
+
                     syslog_level = "SAGAN: LEVEL ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -936,7 +963,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_tag=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_tag == NULL ) {
+
                     syslog_tag = "SAGAN: TAG ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -949,7 +978,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_date=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_date == NULL ) {
+
                     syslog_date = "SAGAN: DATE ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -962,7 +993,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_time=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_time == NULL ) {
+
                     syslog_time = "SAGAN: TIME ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -976,7 +1009,9 @@ int main(int argc, char **argv)
 
 
                 syslog_program=strtok_r(NULL, "|", &tok);
+
                 if ( syslog_program == NULL ) {
+
                     syslog_program = "SAGAN: PROGRAM ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -989,7 +1024,9 @@ int main(int argc, char **argv)
                 }
 
                 syslog_msg=strtok_r(NULL, "", &tok);		/* In case the message has | in it,  we delimit on "" */
+
                 if ( syslog_msg == NULL ) {
+
                     syslog_msg = "SAGAN: MESSAGE ERROR";
 
                     pthread_mutex_lock(&SaganMalformedCounter);
@@ -1044,7 +1081,7 @@ int main(int argc, char **argv)
                     if ( config->dynamic_load_flag == true ) {
 
                         pthread_mutex_lock(&SaganRulesLoadedMutex);
-                        reload_rules = 0;
+                        reload_rules = true;
                         pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
                     }
@@ -1078,7 +1115,8 @@ int main(int argc, char **argv)
             /* DEBUG : set a kill flag and join */
             /* RMEOVE LOCK */
 
-            if ( fifoerr == 0 ) {
+            if ( fifoerr == false ) {
+
                 if ( config->sagan_is_file != 0 ) {
                     Sagan_Log(S_NORMAL, "EOF reached. Waiting for threads to catch up....");
                     Sagan_Log(S_NORMAL, "");
@@ -1094,9 +1132,11 @@ int main(int argc, char **argv)
 
                     Sagan_Log(S_NORMAL, "Exiting.");		/* DEBUG: Rejoin threads */
                     exit(0);
+
                 } else {
+
                     Sagan_Log(S_WARN, "FIFO writer closed.  Waiting for FIFO writer to restart....");
-                    fifoerr=1; 			/* Set flag so our wile(fgets) knows */
+                    fifoerr = true; 			/* Set flag so our wile(fgets) knows */
                 }
             }
             sleep(1);		/* So we don't eat 100% CPU */
