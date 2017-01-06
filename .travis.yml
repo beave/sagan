@@ -56,5 +56,5 @@ before_install:
             build-essential autoconf automake liblognorm1 liblognorm-dev \
             libyaml-0-2 libyaml-dev libdumbnet1 libdumbnet-dev
 
-	fi
+    fi
 
