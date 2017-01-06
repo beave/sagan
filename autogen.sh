@@ -2,7 +2,7 @@
 
 # This generates makefiles, configure, etc.
 
-libtoolize --force
-aclocal
-autoheader
-autoreconf -vfi
+#libtoolize --force
+aclocal -I m4
+#autoheader -I m4
+autoreconf -vfi -I m4
