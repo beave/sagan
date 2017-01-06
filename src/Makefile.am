@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 AUTOMAKE_OPIONS=foreign no-dependencies
 
                 bin_PROGRAMS = sagan
