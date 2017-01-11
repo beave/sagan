@@ -6,8 +6,8 @@ language: c
 compiler: gcc
 
 # Define the default CFLAGS used by all builds as a YAML anchor.
-default-cflags: &default-cflags
-  CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
+#default-cflags: &default-cflags
+#  CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
 
 # The default build is Linux with gcc. Add additional builds to the
 # matrix here.
@@ -34,19 +34,18 @@ matrix:
 # Change this to your needs
 script:
   - sh autogen.sh
-  - |
-    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
         ./configure || { echo "!!!! ERROR !!!!"; cat config.log && false; }
     fi
   - make
   # With debug enabled too much output is generated for Travis, so
   # redirect stderr to a file.
-  - |
-    if [[ "$ENABLE_DEBUG" == "yes" ]]; then
-        make check 2> stderr.log
-    else
-        make check
-    fi
+  #- |
+  #  if [[ "$ENABLE_DEBUG" == "yes" ]]; then
+  #      make check 2> stderr.log
+  #  else
+  #      make check
+  #  fi
 before_install:
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
