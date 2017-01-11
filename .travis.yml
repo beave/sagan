@@ -34,9 +34,10 @@ matrix:
 # Change this to your needs
 script:
   - sh autogen.sh
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        ./configure || { echo "!!!! ERROR !!!!"; cat config.log && false; }
-    fi
+#  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+#        ./configure || { echo "!!!! ERROR !!!!"; cat config.log && false; }
+#    fi
+  - ./configure
   - make
   # With debug enabled too much output is generated for Travis, so
   # redirect stderr to a file.
