@@ -612,12 +612,6 @@ void Load_Rules( char *ruleset )
 
             if (!strcmp(rulesplit, "flowbits") || !strcmp(rulesplit, "xbits")) {
 
-                if (!strcmp(rulesplit, "flowbits")) {
-
-                    Sagan_Log(S_WARN, "[%s, line %d] The rule set '%s' at line '%d' has depreciated option 'flowbit'.  Use 'xbit' instead.", __FILE__, __LINE__, ruleset, linecount);
-
-                }
-
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
