@@ -36,7 +36,7 @@ script:
   - sh autogen.sh
   - |
     if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-        ./configure
+        ./configure || { echo "!!!! ERROR !!!!"; cat config.log && false; }
     fi
   - make
   # With debug enabled too much output is generated for Travis, so
