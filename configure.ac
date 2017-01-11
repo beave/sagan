@@ -1,19 +1,16 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT
+VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
+
+#AC_INIT(sagan, ${VERSION})
+AC_INIT([sagan], m4_esyscmd([cat src/version.h | cut -d\" -f2]))
 AC_CONFIG_SRCDIR([src])
 AC_CANONICAL_SYSTEM
 AC_GNU_SOURCE
 LT_INIT
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE([disable])
-
-
-#VERSION=`cat $srcdir/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
-
-VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
-
 
 # Check OS
 
@@ -231,7 +228,7 @@ if test "x$with_libdnet_libraries" != "xno"; then
 fi
 
 AC_SUBST(VERSION)
-AM_INIT_AUTOMAKE(sagan, ${VERSION})
+AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_HEADER(config.h)
 
 # Checks for programs.

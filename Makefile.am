@@ -1,7 +1,8 @@
-AUTOMAKE_OPIONS=foreign no-dependencies
+AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
+ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = src
 
-INCLUDES = @INCLUDES@
+#INCLUDES = @INCLUDES@
 
 # Install BFD include file, and others that it needs.
 #install-data-local: 

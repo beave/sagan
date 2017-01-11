@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-AUTOMAKE_OPIONS=foreign no-dependencies
+AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 
                 bin_PROGRAMS = sagan
                                sagan_CPPFLAGS = -I$(top_srcdir) $(LIBFASTJSON_CFLAGS) $(LIBESTR_CFLAGS)
