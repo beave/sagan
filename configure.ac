@@ -3,7 +3,6 @@
 
 VERSION=`cat src/version.h | grep "#define VERSION " | sed -e 's/^.*\"\(.*\)\"/\1/'`
 
-#AC_INIT(sagan, ${VERSION})
 AC_INIT([sagan], m4_esyscmd([cat src/version.h | cut -d\" -f2]))
 AC_CONFIG_SRCDIR([src])
 AC_CANONICAL_SYSTEM
@@ -11,6 +10,7 @@ AC_GNU_SOURCE
 LT_INIT
 AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE([disable])
+AM_PROG_CC_C_O
 
 # Check OS
 
