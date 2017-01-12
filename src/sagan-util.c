@@ -114,7 +114,9 @@ void Sagan_Droppriv(void)
 
         if ( config->sagan_is_file == 0 ) {	/* Don't change ownsership/etc if we're processing a file */
 
-            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+            if ( config->force_fifo_ownership_flag ) {
+                ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+            }
 
             if ( ret < 0 ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));

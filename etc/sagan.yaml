@@ -138,7 +138,7 @@ sagan-core:
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    force-fifo-ownership: false
+    force-fifo-ownership: true
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after
