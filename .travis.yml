@@ -61,6 +61,6 @@ before_install:
         ./autogen.sh && ./configure && make 
         sudo make install
         sudo ldconfig
-	cd ..
+        cd ..
 
     fi
