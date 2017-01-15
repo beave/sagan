@@ -53,8 +53,8 @@ before_install:
 
         sudo apt-get update -qq
         sudo apt-get install -y libpcre3 libpcre3-dbg libpcre3-dev \
-            build-essential autoconf automake liblognorm0 liblognorm-dev \
-            libyaml-0-2 libyaml-dev libdumbnet1 libdumbnet-dev pkg-config
+            build-essential autoconf automake libyaml-0-2 libyaml-dev \
+            libdumbnet1 libdumbnet-dev pkg-config
 
         git clone https://github.com/rsyslog/libfastjson
         cd libfastjson/
@@ -62,5 +62,27 @@ before_install:
         sudo make install
         sudo ldconfig
         cd ..
+
+        git clone https://github.com/rsyslog/libestr
+        cd libestr
+        ./autogen.sh && ./configure && make
+        sudo make install
+        sudo ldconfig
+        cd ..
+
+        git clone https://github.com/rsyslog/libee
+        cd libee
+        ./autogen.sh && ./configure && make
+        sudo make install
+        sudo ldconfig
+        cd ..
+
+        git clone https://github.com/rsyslog/liblognorm
+        cd liblognorm
+        ./autogen.sh && ./configure && make
+        sudo make install
+        sudo ldconfig
+        cd ..
+
 
     fi
