@@ -56,9 +56,10 @@ before_install:
             build-essential autoconf automake liblognorm0 liblognorm-dev \
             libyaml-0-2 libyaml-dev libdumbnet1 libdumbnet-dev pkg-config
 
-    fi
-  - git clone https://github.com/rsyslog/libfastjson
-  - cd libfastjson/
-  - ./autogen.sh && ./configure && make && make install
-  - ldconfig
+        git clone https://github.com/rsyslog/libfastjson
+        cd libfastjson/
+        ./autogen.sh && ./configure && make 
+        sudo make install
+        sudo ldconfig
 
+    fi
