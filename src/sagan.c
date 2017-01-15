@@ -460,7 +460,9 @@ int main(int argc, char **argv)
 
 #endif
 
+    pthread_mutex_lock(&SaganRulesLoadedMutex);
     Load_YAML_Config(config->sagan_config);
+    pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
     Sagan_Engine_Init();
 

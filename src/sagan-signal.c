@@ -101,6 +101,8 @@ struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
+pthread_mutex_t SaganRulesLoadedMutex;
+
 void Sig_Handler( void )
 {
 
@@ -363,7 +365,9 @@ void Sig_Handler( void )
             /* Re-load primary configuration (rules/classifictions/etc) */
             /************************************************************/
 
+	    pthread_mutex_lock(&SaganRulesLoadedMutex); 
             Load_YAML_Config(config->sagan_config);	/* <- RELOAD */
+	    pthread_mutex_unlock(&SaganRulesLoadedMutex); 
 
             /************************************************************/
             /* Re-load primary configuration (rules/classifictions/etc) */

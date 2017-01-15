@@ -655,5 +655,5 @@ rules-files:
 # inlined in this configuration file.
 
 #include: "/usr/local/etc/include1.yaml"
-#include: "$RULE_PATHinclude2.yaml"
+#include: "$RULE_PATH/include2.yaml"
 

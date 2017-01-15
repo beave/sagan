@@ -81,12 +81,12 @@ struct _SaganDebug *debug;
 struct _SaganVar *var;
 struct _SaganCounters *counters;
 struct _Rules_Loaded *rules_loaded;
+struct _Rule_Struct *rulestruct;
 
 #ifndef HAVE_LIBYAML
 ** You must of LIBYAML installed! **
 #endif
 
-pthread_mutex_t SaganRulesLoadedMutex;  	/* Used when reloading configuration/rules */
 sbool reload_rules;
 
 #ifdef HAVE_LIBYAML
@@ -99,10 +99,6 @@ void Load_YAML_Config( char *yaml_file )
         char include_file[MAXPATH];
     };
 
-    int includes_count;
-
-    struct _Includes *includes;
-
     struct stat filecheck;
 
     yaml_parser_t parser;
@@ -110,6 +106,8 @@ void Load_YAML_Config( char *yaml_file )
 
     sbool done = 0;
     sbool flag = 0;
+
+    int check = 0; 
 
     unsigned char type = 0;
     unsigned char sub_type = 0;
@@ -122,21 +120,10 @@ void Load_YAML_Config( char *yaml_file )
 
     char last_pass[128];
 
-    int tmp_rules_loaded_count;
-
     int a;
     int b;
 
-    pthread_mutex_lock(&SaganRulesLoadedMutex);
     reload_rules = true;
-
-
-    includes = malloc(sizeof(_Includes));
-
-    if ( includes == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to malloc memory for 'includes'. Abort!", __FILE__, __LINE__);
-    }
-
 
     /* Set some system defaults */
 
@@ -167,8 +154,21 @@ void Load_YAML_Config( char *yaml_file )
         config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
         config->pp_sagan_track_clients = TRACK_TIME;
 
+        config->sagan_proto = 17;           /* Default to UDP */
+        config->max_processor_threads = MAX_PROCESSOR_THREADS;
+
+        /* Copy default FIFO */
+
+        config->sagan_fifo[0] = '\0';
+
+        if ( config->sagan_is_file == false ) {
+            strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
+        }
+
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
+
         config->sagan_fifo_size = MAX_FIFO_SIZE;
+
 #endif
 
 #ifdef WITH_BLUEDOT
@@ -183,29 +183,28 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
-        /* Copy default FIFO */
+#ifdef WITH_SYSLOG
 
-        config->sagan_fifo[0] = '\0';
+        config->sagan_syslog_facility = DEFAULT_SYSLOG_FACILITY;
+        config->sagan_syslog_priority = DEFAULT_SYSLOG_PRIORITY;
+        config->sagan_syslog_options = LOG_PID;
 
-        if ( config->sagan_is_file == false ) {
-            strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
-        }
+#endif
 
 #ifdef HAVE_LIBESMTP
+
         strlcpy(config->sagan_email_subject, DEFAULT_SMTP_SUBJECT, sizeof(config->sagan_email_subject));
         config->sagan_esmtp_from[0] = '\0';
         config->sagan_esmtp_server[0] = '\0';
+
 #endif
 
-        config->sagan_proto = 17;           /* Default to UDP */
-        config->max_processor_threads = MAX_PROCESSOR_THREADS;
-
-        /* PLOG defaults */
-
 #ifdef HAVE_LIBPCAP
+
         strlcpy(config->plog_interface, PLOG_INTERFACE, sizeof(config->plog_interface));
         strlcpy(config->plog_filter, PLOG_FILTER, sizeof(config->plog_filter));
         strlcpy(config->plog_logdev, PLOG_LOGDEV, sizeof(config->plog_logdev));
+
 #endif
 
     }
@@ -239,8 +238,11 @@ void Load_YAML_Config( char *yaml_file )
 
         }
 
-        if ( event.type == YAML_DOCUMENT_START_EVENT && debug->debugload ) {
-            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
+        if ( event.type == YAML_DOCUMENT_START_EVENT ) {
+
+	    if ( debug->debugload ) {
+            	Sagan_Log(S_DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
+	    }
 
             yaml_version_directive_t *ver = event.data.document_start.version_directive;
 
@@ -413,15 +415,10 @@ void Load_YAML_Config( char *yaml_file )
 
                 } else {
 
-                    includes = (_Includes *) realloc(includes, (includes_count+1) * sizeof(_SaganVar));
+		    Sagan_Log(S_NORMAL, "Loading included file '%s'.", Sagan_Var_To_Value(value));
 
-                    if ( includes == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for 'includes'. Abort!", __FILE__, __LINE__);
-                    }
+		    Load_YAML_Config(Sagan_Var_To_Value(value)); 
 
-                    strlcpy(includes[includes_count].include_file, Sagan_Var_To_Value(value), sizeof(includes[includes_count].include_file));
-
-                    includes_count++;
                     toggle = 1;
 
                 }
@@ -1304,12 +1301,6 @@ void Load_YAML_Config( char *yaml_file )
 
                             config->sagan_syslog_flag = true;
 
-                            /* Set defaults */
-
-                            config->sagan_syslog_facility = DEFAULT_SYSLOG_FACILITY;
-                            config->sagan_syslog_priority = DEFAULT_SYSLOG_PRIORITY;
-                            config->sagan_syslog_options = LOG_PID;
-
                         }
                     }
 
@@ -1552,8 +1543,11 @@ void Load_YAML_Config( char *yaml_file )
 #endif
             } /* else if ype == YAML_TYPE_OUTPUT */
 
-
             else if ( type == YAML_TYPE_RULES ) {
+
+		Load_Rules( (char*)Sagan_Var_To_Value(value) ); 
+
+		/* Store rule names into an array in case we're using dynamic_load */
 
                 rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 
@@ -1691,12 +1685,27 @@ void Load_YAML_Config( char *yaml_file )
 
     }
 
-    /*********************/
-    /* Sanity check here */
-    /*********************/
+    /**********************/
+    /* Sanity checks here */
+    /**********************/
+
+    /* Check rules for duplicate sid.  We can't have that! */
+            
+    for (a = 0; a < counters->rulecount; a++)
+        {           
+
+            for ( check = a+1; check < counters->rulecount; check++)
+                {           
+
+                    if (!strcmp (rulestruct[check].s_sid, rulestruct[a].s_sid ))
+                        {             
+                            Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
+                        }
+                }
+        }
 
 
-    if ( config->sagan_is_file == 0 && config->sagan_fifo[0] == '\0' ) {
+    if ( config->sagan_is_file == false && config->sagan_fifo[0] == '\0' ) {
         Sagan_Log(S_ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
     }
 
@@ -1764,60 +1773,8 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
-    /**********************************************************************************/
-    /* Load rules - Before loading, make sure we haven't already loaded the rule set! */
-    /**********************************************************************************/
-
-    struct _Rules_Loaded *tmp_rules_loaded;
-
-    tmp_rules_loaded = malloc(sizeof(_Rules_Loaded));
-
-    if ( tmp_rules_loaded == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to malloc memory for 'tmp_rules_loaded'. Abort!", __FILE__, __LINE__);
-    }
-
-    memset(tmp_rules_loaded, 0, sizeof(_Rules_Loaded));
-
-    for (a=0; a<counters->rules_loaded_count; a++) {
-
-        for (b=0; b<tmp_rules_loaded_count; b++) {
-
-            if (!strcmp(rules_loaded[a].ruleset, tmp_rules_loaded[b].ruleset))  {
-                Sagan_Log(S_ERROR, "The ruleset '%s' has already been loaded. Abort!", rules_loaded[a].ruleset);
-            }
-
-        } /* for b */
-
-        tmp_rules_loaded = (_Rules_Loaded *) realloc(tmp_rules_loaded, (tmp_rules_loaded_count+1) * sizeof(_Rules_Loaded));
-
-        if ( tmp_rules_loaded == NULL ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for tmp_rules_loaded. Abort!", __FILE__, __LINE__);
-        }
-
-        strlcpy(tmp_rules_loaded[tmp_rules_loaded_count].ruleset, rules_loaded[a].ruleset, sizeof(tmp_rules_loaded[tmp_rules_loaded_count].ruleset));
-        tmp_rules_loaded_count++;
-
-        Load_Rules( (char*)rules_loaded[a].ruleset );
-
-    } /* for a */
-
-    free(tmp_rules_loaded);
-
     reload_rules = false;
-    pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
-    if ( includes_count != 0 ) {
-
-        for (a=0; a<includes_count; a++) {
-
-            Sagan_Log(S_NORMAL, "Loading included file '%s'.", includes[a].include_file);
-            Load_YAML_Config(includes[a].include_file);
-
-        }
-
-    }
-
-    free(includes);
 }
 
 #endif
