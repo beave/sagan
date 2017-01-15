@@ -58,28 +58,28 @@ before_install:
 
         git clone https://github.com/rsyslog/libfastjson
         cd libfastjson/
-        ./autogen.sh && ./configure && make 
+        ./autogen.sh && ./configure --prefix=/usr && make 
         sudo make install
         sudo ldconfig
         cd ..
 
         git clone https://github.com/rsyslog/libestr
         cd libestr
-        ./autogen.sh && ./configure && make
+        ./autogen.sh && ./configure --prefix=/usr && make
         sudo make install
         sudo ldconfig
         cd ..
 
         git clone https://github.com/rsyslog/libee
         cd libee
-        ./autogen.sh && ./configure && make
+        ./autogen.sh && ./configure --prefix=/usr && make
         sudo make install
         sudo ldconfig
         cd ..
 
         git clone https://github.com/rsyslog/liblognorm
         cd liblognorm
-        ./autogen.sh && ./configure && make
+        ./autogen.sh && ./configure --prefix=/usr --disable-docs && make
         sudo make install
         sudo ldconfig
         cd ..
