@@ -102,7 +102,8 @@ void Sagan_Droppriv(void)
     }
 
     if ( getuid() == 0 ) {
-        Sagan_Log(S_NORMAL, "Dropping privileges [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+
+        Sagan_Log(S_NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 
         /*
          * We chown certain log files to our Sagan user.  This is done so no files are "owned"
@@ -112,11 +113,9 @@ void Sagan_Droppriv(void)
              * Champ Clark (04/14/2015)
              */
 
-        if ( config->sagan_is_file == 0 ) {	/* Don't change ownsership/etc if we're processing a file */
+        if ( config->sagan_is_file == false ) {	/* Don't change ownsership/etc if we're processing a file */
 
-            if ( config->force_fifo_ownership_flag ) {
-                ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-            }
+            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
             if ( ret < 0 ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
@@ -806,40 +805,50 @@ void Sagan_Open_Log_File( sbool state, int type )
             fclose(config->sagan_fast_stream);
         }
 
-        if ( config->eve_flag == true ) {
+        if ( config->eve_flag ) {
 
             if (( config->eve_stream = fopen(config->eve_filename, "a" )) == NULL ) {
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
             }
+
+            ret = chown(config->eve_filename, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 ) {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
+            }
+
         }
 
 
-        if ( config->fast_flag == true ) {
+        if ( config->fast_flag ) {
 
             if (( config->sagan_fast_stream = fopen(config->fast_filename, "a" )) == NULL ) {
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
             }
 
+            ret = chown(config->fast_filename, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 ) {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
+            }
         }
 
-        if ( config->alert_flag == true ) {
+
+        if ( config->alert_flag ) {
 
             if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
             }
+
+            ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+            if ( ret < 0 ) {
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
+            }
         }
-
-        /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
-
-        ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-        if ( ret < 0 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
-        }
-
     }
 
 }

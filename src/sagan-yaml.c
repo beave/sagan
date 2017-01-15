@@ -559,16 +559,6 @@ void Load_YAML_Config( char *yaml_file )
 
                     }
 
-                    else if (!strcmp(last_pass, "force-fifo-ownership")) {
-
-                        if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
-                            config->force_fifo_ownership_flag = true;
-                        }
-
-
-                    }
-
-
                 } /* if sub_type == YAML_SAGAN_CORE_CORE */
 
                 if ( sub_type == YAML_SAGAN_CORE_MMAP_IPC ) {

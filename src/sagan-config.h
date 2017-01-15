@@ -62,7 +62,6 @@ struct _SaganConfig {
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
-    sbool	 force_fifo_ownership_flag;		/* Chmod FIFO upon start */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     sbool        sagan_droplist_flag;
