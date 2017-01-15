@@ -57,4 +57,8 @@ before_install:
             libyaml-0-2 libyaml-dev libdumbnet1 libdumbnet-dev pkg-config
 
     fi
+  - git clone https://github.com/rsyslog/libfastjson
+  - cd libfastjson/
+  - ./autogen.sh && ./configure && make && make install
+  - ldconfig
 
