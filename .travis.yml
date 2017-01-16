@@ -70,19 +70,14 @@ before_install:
         sudo ldconfig
         cd ..
 
-        git clone https://github.com/rsyslog/libee
-        cd libee
-        ./autogen.sh && ./configure --prefix=/usr && make
-        sudo make install
-        sudo ldconfig
-        cd ..
-
         git clone https://github.com/rsyslog/liblognorm
         cd liblognorm
         ./autogen.sh && ./configure --prefix=/usr --disable-docs && make
         sudo make install
         sudo ldconfig
         cd ..
+
+	exit 1
 
 
     fi
