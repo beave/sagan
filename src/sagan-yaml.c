@@ -105,7 +105,6 @@ void Load_YAML_Config( char *yaml_file )
     yaml_event_t  event;
 
     sbool done = 0;
-    sbool flag = 0;
 
     int check = 0;
 
@@ -113,15 +112,11 @@ void Load_YAML_Config( char *yaml_file )
     unsigned char sub_type = 0;
     unsigned char toggle = 0;
 
-    char *ptr;
     char *tok;
-
-    int line = 0;
 
     char last_pass[128];
 
     int a;
-    int b;
 
     reload_rules = true;
 
@@ -764,7 +759,7 @@ void Load_YAML_Config( char *yaml_file )
                     if (!strcmp(last_pass, "enabled")) {
 
                         if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
-                            config->plog_flag = 1;
+                            config->plog_flag = true;
                         }
                     }
 
