@@ -7,7 +7,8 @@ compiler: gcc
 
 # Define the default CFLAGS used by all builds as a YAML anchor.
 default-cflags: &default-cflags
-   CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
+   CFLAGS="-Wall -Wno-unused-parameter -Wno-unused-function"
+   #CFLAGS="-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-function"
 
 # The default build is Linux with gcc. Add additional builds to the
 # matrix here.
