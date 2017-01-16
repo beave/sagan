@@ -107,7 +107,7 @@ void Load_YAML_Config( char *yaml_file )
     sbool done = 0;
     sbool flag = 0;
 
-    int check = 0; 
+    int check = 0;
 
     unsigned char type = 0;
     unsigned char sub_type = 0;
@@ -240,9 +240,9 @@ void Load_YAML_Config( char *yaml_file )
 
         if ( event.type == YAML_DOCUMENT_START_EVENT ) {
 
-	    if ( debug->debugload ) {
-            	Sagan_Log(S_DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
-	    }
+            if ( debug->debugload ) {
+                Sagan_Log(S_DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
+            }
 
             yaml_version_directive_t *ver = event.data.document_start.version_directive;
 
@@ -415,9 +415,9 @@ void Load_YAML_Config( char *yaml_file )
 
                 } else {
 
-		    Sagan_Log(S_NORMAL, "Loading included file '%s'.", Sagan_Var_To_Value(value));
+                    Sagan_Log(S_NORMAL, "Loading included file '%s'.", Sagan_Var_To_Value(value));
 
-		    Load_YAML_Config(Sagan_Var_To_Value(value)); 
+                    Load_YAML_Config(Sagan_Var_To_Value(value));
 
                     toggle = 1;
 
@@ -1545,9 +1545,9 @@ void Load_YAML_Config( char *yaml_file )
 
             else if ( type == YAML_TYPE_RULES ) {
 
-		Load_Rules( (char*)Sagan_Var_To_Value(value) ); 
+                Load_Rules( (char*)Sagan_Var_To_Value(value) );
 
-		/* Store rule names into an array in case we're using dynamic_load */
+                /* Store rule names into an array in case we're using dynamic_load */
 
                 rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 
@@ -1690,19 +1690,16 @@ void Load_YAML_Config( char *yaml_file )
     /**********************/
 
     /* Check rules for duplicate sid.  We can't have that! */
-            
-    for (a = 0; a < counters->rulecount; a++)
-        {           
 
-            for ( check = a+1; check < counters->rulecount; check++)
-                {           
+    for (a = 0; a < counters->rulecount; a++) {
 
-                    if (!strcmp (rulestruct[check].s_sid, rulestruct[a].s_sid ))
-                        {             
-                            Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
-                        }
-                }
+        for ( check = a+1; check < counters->rulecount; check++) {
+
+            if (!strcmp (rulestruct[check].s_sid, rulestruct[a].s_sid )) {
+                Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
+            }
         }
+    }
 
 
     if ( config->sagan_is_file == false && config->sagan_fifo[0] == '\0' ) {

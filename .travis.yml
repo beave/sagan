@@ -77,7 +77,6 @@ before_install:
         sudo ldconfig
         cd ..
 
-	exit 1
-
+        exit 1
 
     fi

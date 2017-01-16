@@ -365,9 +365,9 @@ void Sig_Handler( void )
             /* Re-load primary configuration (rules/classifictions/etc) */
             /************************************************************/
 
-	    pthread_mutex_lock(&SaganRulesLoadedMutex); 
+            pthread_mutex_lock(&SaganRulesLoadedMutex);
             Load_YAML_Config(config->sagan_config);	/* <- RELOAD */
-	    pthread_mutex_unlock(&SaganRulesLoadedMutex); 
+            pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
             /************************************************************/
             /* Re-load primary configuration (rules/classifictions/etc) */

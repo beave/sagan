@@ -448,49 +448,68 @@ int main(int argc, char **argv)
     /* Become a daemon if requested */
 
     if ( config->daemonize ) {
+
         Sagan_Log(S_NORMAL, "Becoming a daemon!");
 
         pid_t pid = 0;
         pid = fork();
+
         if ( pid == 0 ) {
+
             /* Child */
+
             if ( setsid() == -1 ) {
-                 Sagan_Log(S_ERROR, "[%s, line %d] Failed creating new session while daemonizing", __FILE__, __LINE__);
-                 exit(1);
+                Sagan_Log(S_ERROR, "[%s, line %d] Failed creating new session while daemonizing", __FILE__, __LINE__);
+                exit(1);
             }
+
             pid = fork();
+
             if ( pid == 0 ) {
-                 /* Grandchild, the actual daemon */
-                 if ( chdir("/") == -1 ) {
-                     Sagan_Log(S_ERROR, "[%s, line %d] Failed changing directory to / after daemonizing [errno %d]", __FILE__, __LINE__, errno);
-                     exit(1);
-                 }
-                 /* Close and re-open stdin, stdout, and stderr, so as to
-                    to release anyone waiting on them. */
-                 close(0);
-                 close(1);
-                 close(2);
-                 if ( open("/dev/null", O_RDONLY) == -1 ) {
-                     Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stdin after daemonizing [errno %d]", __FILE__, __LINE__, errno);
-                 }
-                 if ( open("/dev/null", O_WRONLY) == -1 ) {
-                     Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stdout after daemonizing [errno %d]", __FILE__, __LINE__, errno);
-                 }
-                 if ( open("/dev/null", O_RDWR) == -1 ) {
-                     Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stderr after daemonizing [errno %d]", __FILE__, __LINE__, errno);
-                 }
+
+                /* Grandchild, the actual daemon */
+
+                if ( chdir("/") == -1 ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed changing directory to / after daemonizing [errno %d]", __FILE__, __LINE__, errno);
+                    exit(1);
+                }
+
+                /* Close and re-open stdin, stdout, and stderr, so as to
+                   to release anyone waiting on them. */
+
+                close(0);
+                close(1);
+                close(2);
+
+                if ( open("/dev/null", O_RDONLY) == -1 ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stdin after daemonizing [errno %d]", __FILE__, __LINE__, errno);
+                }
+
+                if ( open("/dev/null", O_WRONLY) == -1 ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stdout after daemonizing [errno %d]", __FILE__, __LINE__, errno);
+                }
+
+                if ( open("/dev/null", O_RDWR) == -1 ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Failed reopening stderr after daemonizing [errno %d]", __FILE__, __LINE__, errno);
+                }
 
             } else if ( pid < 0 ) {
-                 Sagan_Log(S_ERROR, "[%s, line %d] Failed second fork while daemonizing", __FILE__, __LINE__);
-                 exit(1);
-            }
-            else {
+
+                Sagan_Log(S_ERROR, "[%s, line %d] Failed second fork while daemonizing", __FILE__, __LINE__);
+                exit(1);
+
+            } else {
+
                 exit(0);
             }
+
         } else if ( pid < 0 ) {
-             Sagan_Log(S_ERROR, "[%s, line %d] Failed first fork while daemonizing", __FILE__, __LINE__);
-             exit(1);
+
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed first fork while daemonizing", __FILE__, __LINE__);
+            exit(1);
+
         } else {
+
             /* Wait for child to exit */
             waitpid(pid, NULL, 0);
             exit(0);
