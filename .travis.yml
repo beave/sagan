@@ -57,7 +57,7 @@ before_install:
             libdumbnet1 libdumbnet-dev pkg-config
 
         git clone https://github.com/rsyslog/libfastjson
-        cd libfastjson/
+        cd libfastjson
         ./autogen.sh && ./configure --prefix=/usr && make 
         sudo make install
         sudo ldconfig
@@ -65,18 +65,18 @@ before_install:
 
         git clone https://github.com/rsyslog/libestr
         cd libestr
-        ./autogen.sh && ./configure --prefix=/usr && make
+        autoreconf -vfi
+        ./configure --prefix=/usr && make
         sudo make install
         sudo ldconfig
         cd ..
 
         git clone https://github.com/rsyslog/liblognorm
         cd liblognorm
-        ./autogen.sh && ./configure --prefix=/usr --disable-docs && make
+        autoreconf -vfi
+        ./configure --prefix=/usr --disable-docs && make
         sudo make install
         sudo ldconfig
         cd ..
-
-        exit 1
 
     fi
