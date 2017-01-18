@@ -59,6 +59,9 @@
 
 #ifdef WITH_BLUEDOT
 #include "processors/sagan-bluedot.h"
+
+sbool bluedot_load;
+
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
@@ -1540,6 +1543,19 @@ void Load_YAML_Config( char *yaml_file )
 
             else if ( type == YAML_TYPE_RULES ) {
 
+#ifdef WITH_BLUEDOT
+
+                if ( config->bluedot_flag == true && bluedot_load == false ) {
+
+                    Sagan_Bluedot_Init();
+                    Sagan_Bluedot_Load_Cat();
+
+                    bluedot_load = true;
+
+                }
+
+#endif
+
                 Load_Rules( (char*)Sagan_Var_To_Value(value) );
 
                 /* Store rule names into an array in case we're using dynamic_load */
@@ -1757,10 +1773,8 @@ void Load_YAML_Config( char *yaml_file )
         }
 
         if ( config->bluedot_url[0] == '\0' ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Bluedott \"url\" optin is missing.", __FILE__, __LINE__);
+            Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"url\" option is missing.", __FILE__, __LINE__);
         }
-
-        Sagan_Bluedot_Load_Cat();
     }
 
 #endif

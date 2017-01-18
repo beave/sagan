@@ -663,7 +663,6 @@ int main(int argc, char **argv)
     if ( config->bluedot_flag ) {
 
         curl_global_init(CURL_GLOBAL_ALL);
-        Sagan_Bluedot_Init();
 
         Sagan_Log(S_NORMAL, "");
         Sagan_Log(S_NORMAL, "Bluedot URL: %s", config->bluedot_url);
