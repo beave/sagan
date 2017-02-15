@@ -1,3 +1,21 @@
+2017/02/15 - 	Sagan 1.1.5 released. 
+
+		* Travis-CI (travis.yml) support added to test build Sagan automatically. 
+		* Sagan_Log issue that cause segfault in certain situations with "xbits".
+		  https://github.com/beave/sagan/commit/ce76ebe41f51b21d38a3ece60adf2ad69a5a795d
+		* Large effort to clean up autoconf/automake fules.
+		  https://github.com/beave/sagan/commit/57a457951670ddb3803fe3bd20a1e4b637d3ddc3
+		  https://github.com/beave/sagan/commit/911e895d2d246c5605bd6fd42da20cb2a3e5f75b
+		* --daemon bug fix by Ray Ruvinskiy.  This fix moves the --daemon logic earlier in the Sagan code (pre-rule loading, etc).  This allows for Sagan to load with less memory being used.   See commit for more details.
+		  https://github.com/beave/sagan/commit/0a286f06e42a7d509ac662a19bdcc72b777a426f
+		  https://github.com/beave/sagan/commit/f86694adafa76092bdcc1378333227d7945de104
+		* Remove "force-fifo-ownership" YAML option from configuration/code.
+		  https://github.com/beave/sagan/commit/3d828ca5c91357231e71842c0ac85c2a58cbb9c0
+		* "include" in YAML configuration would fail to load in certain situations.  This has been corrected.
+		  https://github.com/beave/sagan/commit/b27a578082e93eb4f407cdaaa281d57ed4ab88d2
+		* Bluedot initialization was being called at the wrong time.  
+		  https://github.com/beave/sagan/commit/172759a1b6e73eae584b1e6a738a2bf2d3303626
+
 2016/12/30 -	Sagan 1.1.4 released. 
 
 		* Sagan has adopted YAML for future configuration file formats. For more information on YAML see https://en.wikipedia.org/wiki/YAML.  The new YAML format allows for a more stream line & easier to understand configuration.  The new 'sagan.yaml' is modeled after the Suricata YAML file.
