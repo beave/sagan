@@ -177,7 +177,7 @@ void Load_Rules( const char *ruleset )
 
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
-    strlcpy(ruleset_fullname, ruleset_fullname, sizeof(ruleset_fullname)); 
+    strlcpy(ruleset_fullname, ruleset, sizeof(ruleset_fullname)); 
 
     if (( rulesfile = fopen(ruleset_fullname, "r" )) == NULL ) {
         Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s - %s)", __FILE__, __LINE__, ruleset_fullname, strerror(errno));
