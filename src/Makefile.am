@@ -7,7 +7,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                        sagan_LDADD = $(LIBFASTJSON_LIBS) $(LIBLOGNORM_LIBS) $(LIBESTR_LIBS)
 
                                                sagan_SOURCES = sagan.c \
-                                                       sagan-classifications.c \
+                                                       classifications.c \
 						       sagan-yaml.c \
                                                        sagan-lockfile.c \
                                                        sagan-references.c \

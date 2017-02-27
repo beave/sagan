@@ -49,7 +49,7 @@
 #include "sagan-signal.h"
 #include "sagan-stats.h"
 #include "sagan-gen-msg.h"
-#include "sagan-classifications.h"
+#include "classifications.h"
 #include "processors/sagan-perfmon.h"
 #include "sagan-rules.h"
 #include "sagan-ignore-list.h"

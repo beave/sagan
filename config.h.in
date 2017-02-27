@@ -57,6 +57,9 @@
 /* F_GETPIPE_SZ is supported */
 #undef HAVE_GETPIPE_SZ
 
+/* Define to 1 if you have the `gettimeofday' function. */
+#undef HAVE_GETTIMEOFDAY
+
 /* Define to 1 if you have the `htons' function. */
 #undef HAVE_HTONS
 

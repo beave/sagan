@@ -41,7 +41,7 @@
 #include "sagan-yaml.h"
 #include "sagan-rules.h"
 #include "sagan-config.h"
-#include "sagan-classifications.h"
+#include "classifications.h"
 #include "sagan-gen-msg.h"
 #include "sagan-protocol-map.h"
 #include "sagan-references.h"

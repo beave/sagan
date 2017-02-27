@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-classifications.c
+/* classifications.c
  *
  * Loads the classifications file into memory for future use.
  *
@@ -49,7 +49,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-gen-msg.h"
-#include "sagan-classifications.h"
+#include "classifications.h"
 
 struct _SaganCounters *counters;
 struct _Class_Struct *classstruct;

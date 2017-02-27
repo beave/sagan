@@ -39,7 +39,7 @@
 
 #include "sagan.h"
 #include "sagan-alert.h"
-#include "sagan-classifications.h"
+#include "classifications.h"
 #include "sagan-config.h"
 
 struct _Rule_Struct *rulestruct;
