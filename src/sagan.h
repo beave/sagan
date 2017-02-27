@@ -273,7 +273,7 @@ struct _Sagan_Event {
     int   dst_port;
     int   src_port;
 
-    time_t event_time_sec;
+    struct timeval event_time;
 
     int  found;
 
@@ -486,3 +486,5 @@ int PageSupportsRWX(void);
 void Sagan_Set_Pipe_Size( FILE * );
 #endif
 
+
+void CreateTimeString (const struct timeval *, char *, size_t , sbool );

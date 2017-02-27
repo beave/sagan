@@ -88,7 +88,6 @@ void Sagan_Track_Clients_Init ( void )
 void Sagan_Report_Clients ( void )
 {
 
-
     for(;;) {
 
         struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
@@ -103,6 +102,8 @@ void Sagan_Report_Clients ( void )
         struct tm *now;
 
         uintmax_t utime_u32;
+
+	struct timeval tp;
 
         t = time(NULL);
         now=localtime(&t);
@@ -164,6 +165,9 @@ void Sagan_Report_Clients ( void )
 
                     alertid=101;		/* See gen-msg.map */
 
+                    gettimeofday(&tp, 0);
+                    time_t curtime = tp.tv_sec;
+
                     /* Send alert to output plugins */
 
                     Sagan_Send_Alert(SaganProcSyslog_LOCAL,
@@ -176,7 +180,7 @@ void Sagan_Report_Clients ( void )
                                      alertid,
                                      config->sagan_port,
                                      config->sagan_port,
-                                     0);
+                                     0, tp);
                 } /* End last seen check time */
 
             } else {
@@ -216,6 +220,10 @@ void Sagan_Report_Clients ( void )
 
                     alertid=100;	/* See gen-msg.map  */
 
+                    gettimeofday(&tp, 0);
+                    time_t curtime = tp.tv_sec;
+
+
                     /* Send alert to output plugins */
 
                     Sagan_Send_Alert(SaganProcSyslog_LOCAL,
@@ -228,7 +236,7 @@ void Sagan_Report_Clients ( void )
                                      alertid,
                                      config->sagan_port,
                                      config->sagan_port,
-                                     0);
+                                     0, tp);
 
                 }  /* End of existing utime check */
 

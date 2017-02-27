@@ -131,8 +131,10 @@ void Sagan_Unified2( _Sagan_Event *Event )
     memset(&alertdata, 0, sizeof(alertdata));
 
     alertdata.event_id = htonl(unified_event_id);  					// Event ID (increments)
-    alertdata.event_second = htonl(Event->event_time_sec);				// Time of event;
-    alertdata.event_microsecond = htonl(0);	                			// Not recording to the microsecond
+
+    alertdata.event_second = htonl(Event->event_time.tv_sec); 				// Event epoch
+    alertdata.event_microsecond = htonl( Event->event_time.tv_usec );			// Event microseconds
+
     alertdata.signature_id = htonl(atoi(Event->sid));
     alertdata.signature_revision = htonl(atoi(Event->rev));				// Rule Revision
 
@@ -346,9 +348,9 @@ void Sagan_Unified2LogPacketAlert( _Sagan_Event *Event )
     logheader.sensor_id = 0;
     logheader.linktype = htonl(1);				// linktype set to ethernet (don't need tokenring, etc).
     logheader.event_id = htonl(unified_event_id);
-    logheader.event_second = htonl(Event->event_time_sec);
-    logheader.packet_second = htonl(Event->event_time_sec);
-    logheader.packet_microsecond = htonl(0);
+    logheader.event_second = htonl(Event->event_time.tv_sec);
+    logheader.packet_second = htonl(Event->event_time.tv_sec);
+    logheader.packet_microsecond = htonl(Event->event_time.tv_usec);
     logheader.packet_length = htonl(len_eth + len_iphdr + p_len + len_payload);
 
     hdr.length = htonl(sizeof(Serial_Unified2Packet) - 4 + pkt_length);
@@ -669,7 +671,7 @@ void Sagan_WriteExtraData( _Sagan_Event *Event, int type )
 
     alertdata.sensor_id = 0;
     alertdata.event_id = htonl(unified_event_id);
-    alertdata.event_second = htonl(Event->event_time_sec);
+    alertdata.event_second = htonl(Event->event_time.tv_sec);
     alertdata.data_type = htonl(EVENT_DATA_TYPE_BLOB);
 
     alertdata.type = htonl(type);

@@ -39,7 +39,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos )
+void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos, struct timeval tp )
 {
 
     char tmp[64] = { 0 };
@@ -86,7 +86,7 @@ void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Proces
     SaganProcessorEvent->date            =       SaganProcSyslog_LOCAL->syslog_date;
     SaganProcessorEvent->ip_proto        =       proto;
 
-    SaganProcessorEvent->event_time_sec  =       time(NULL);
+    SaganProcessorEvent->event_time	 =       tp;
 
     SaganProcessorEvent->generatorid     =       processor_info->processor_generator_id;
 

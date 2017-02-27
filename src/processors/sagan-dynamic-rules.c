@@ -57,6 +57,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     int i;
 
+    struct timeval  tp;
+
     /* We don't want the array to be altered while we are working with it */
 
     pthread_mutex_lock(&SaganRulesLoadedMutex);
@@ -100,6 +102,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Dynamically loading '%s'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
+        gettimeofday(&tp, 0);
+
         /* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
 
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
@@ -112,7 +116,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          atoi(rulestruct[rule_position].s_sid),
                          config->sagan_port,
                          config->sagan_port,
-                         rule_position );
+                         rule_position, tp );
 
         /* Lock rules so other threads don't try to use it while we alter/load new rules */
 
@@ -145,6 +149,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'alert'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
 
+	gettimeofday(&tp, 0);
+
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                          processor_info_engine,
                          ip_src,
@@ -155,7 +161,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                          atoi(rulestruct[rule_position].s_sid),
                          config->sagan_port,
                          config->sagan_port,
-                         rule_position );
+                         rule_position, tp );
 
     }
 

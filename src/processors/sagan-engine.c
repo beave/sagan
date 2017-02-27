@@ -145,6 +145,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int b = 0;
     int z = 0;
 
+    
+
     sbool match = false;
     int sagan_match = 0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
 
@@ -196,6 +198,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     time_t t;
     struct tm *now;
     char  timet[20];
+
+    struct timeval tp; 
+    long int ms; 
 
     uintmax_t thresh_oldtime;
     uintmax_t after_oldtime;
@@ -490,6 +495,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
             /* if you got match */
 
             if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count ) {
+
+		gettimeofday(&tp, 0);	/* Store event time as soon as we get a match */
 
                 if ( match == false ) {
 
@@ -1860,7 +1867,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                          processor_info_engine_alertid,
                                                                                          processor_info_engine_src_port,
                                                                                          processor_info_engine_dst_port,
-                                                                                         b );
+                                                                                         b, tp );
 
                                                                     } else {
 

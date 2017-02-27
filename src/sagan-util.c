@@ -1295,3 +1295,36 @@ int PageSupportsRWX(void)
 
 #endif /* HAVE_SYS_MMAN_H */
 
+struct tm *Sagan_LocalTime(time_t timep, struct tm *result)
+{
+    return localtime_r(&timep, result);
+}
+
+
+void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool type)
+{
+    time_t time = ts->tv_sec;
+    struct tm local_tm;
+    struct tm *t = (struct tm*)Sagan_LocalTime(time, &local_tm);
+
+    if ( type == 0 ) {
+
+        /* Suricata / Snort "fast.log" type */
+
+        snprintf(str, size, "%02d/%02d/%02d-%02d:%02d:%02d.%06u",
+                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
+                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
+
+    } else {
+
+        /* Old "alert log" type */
+
+        snprintf(str, size, "%02d-%02d-%02d %02d:%02d:%02d.%06u",
+                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
+                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
+
+    }
+
+}
+
+
