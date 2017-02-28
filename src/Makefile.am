@@ -15,10 +15,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        signal-handler.c \
                                                        key.c \
                                                        stats.c \
-                                                       strlcat.c \
-                                                       strlcpy.c \
                                                        usage.c \
-                                                       util.c \
                                                        plog.c \
                                                        output.c \
                                                        processor.c \
@@ -34,6 +31,9 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        check-flow.c\
                                                        aetas.c \
                                                        ipc.c \
+                                                       util.c \
+                                                       util-strlcpy.c \
+                                                       util-strlcat.c \
 						       json-handler.c \
                                                        parsers/ip.c \
                                                        parsers/port.c \
