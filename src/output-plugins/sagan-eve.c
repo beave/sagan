@@ -37,7 +37,7 @@
 #include "sagan.h"
 #include "sagan-json.h"
 #include "sagan-eve.h"
-//#include "sagan-references.h"
+//#include "references.h"
 #include "sagan-config.h"
 
 struct _SaganConfig *config;

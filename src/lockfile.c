@@ -43,8 +43,9 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-lockfile.h"
+#include "lockfile.h"
 #include "sagan-config.h"
+#include "signal-handler.h"
 
 #include "version.h"
 

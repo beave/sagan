@@ -41,8 +41,8 @@
 #include "sagan-defs.h"
 #include "version.h"
 
-#include "sagan-lockfile.h"
-#include "sagan-references.h"
+#include "lockfile.h"
+#include "references.h"
 #include "sagan-config.h"
 #include "output-plugins/sagan-external.h"
 

@@ -52,7 +52,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
-#include "sagan-signal.h"
+#include "signal-handler.h"
 #include "sagan-plog.h"
 
 struct _SaganDebug *debug;

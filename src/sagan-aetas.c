@@ -41,7 +41,7 @@
 
 #include "sagan.h"
 #include "sagan-aetas.h"
-#include "sagan-rules.h"
+#include "rules.h"
 
 struct _Rule_Struct *rulestruct;
 

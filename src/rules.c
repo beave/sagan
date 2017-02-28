@@ -48,9 +48,9 @@
 #include "sagan-defs.h"
 
 #include "sagan-xbit.h"
-#include "sagan-lockfile.h"
+#include "lockfile.h"
 #include "classifications.h"
-#include "sagan-rules.h"
+#include "rules.h"
 #include "sagan-config.h"
 #include "parsers/parsers.h"
 

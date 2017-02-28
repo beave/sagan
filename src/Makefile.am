@@ -8,11 +8,11 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 
                                                sagan_SOURCES = sagan.c \
                                                        classifications.c \
-						       sagan-yaml.c \
-                                                       sagan-lockfile.c \
-                                                       sagan-references.c \
-                                                       sagan-rules.c \
-                                                       sagan-signal.c \
+						       config-yaml.c \
+                                                       lockfile.c \
+                                                       references.c \
+                                                       rules.c \
+                                                       signal-handler.c \
                                                        sagan-key.c \
                                                        sagan-stats.c \
                                                        sagan-strlcat.c \

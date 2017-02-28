@@ -32,7 +32,7 @@
 
 #include "sagan.h"
 #include "sagan-output.h"
-#include "sagan-rules.h"
+#include "rules.h"
 #include "sagan-config.h"
 
 #include "output-plugins/sagan-alert.h"

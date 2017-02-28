@@ -43,7 +43,7 @@
 #include "sagan-meta-content.h"
 #include "sagan-send-alert.h"
 #include "sagan-xbit.h"
-#include "sagan-rules.h"
+#include "rules.h"
 #include "sagan-config.h"
 #include "sagan-ipc.h"
 #include "sagan-check-flow.h"

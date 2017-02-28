@@ -40,7 +40,7 @@
 
 #include "sagan.h"
 //#include "sagan-alert.h"
-#include "sagan-references.h"
+#include "references.h"
 #include "sagan-config.h"
 #include "sagan-json.h"
 

@@ -34,17 +34,16 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-
 #include "version.h"
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-yaml.h"
-#include "sagan-rules.h"
+#include "config-yaml.h"
+#include "rules.h"
 #include "sagan-config.h"
 #include "classifications.h"
 #include "sagan-gen-msg.h"
 #include "sagan-protocol-map.h"
-#include "sagan-references.h"
+#include "references.h"
 #include "parsers/parsers.h"
 
 /* Processors */
@@ -53,9 +52,11 @@
 #include "processors/sagan-perfmon.h"
 #include "processors/sagan-bro-intel.h"
 
+
 #ifdef HAVE_LIBYAML
 #include <yaml.h>
 #endif
+
 
 #ifdef WITH_BLUEDOT
 #include "processors/sagan-bluedot.h"

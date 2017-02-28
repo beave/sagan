@@ -40,7 +40,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
-#include "sagan-lockfile.h"
+#include "lockfile.h"
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;

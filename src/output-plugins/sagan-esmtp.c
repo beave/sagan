@@ -42,8 +42,8 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
-#include "sagan-references.h"
-#include "sagan-rules.h"
+#include "references.h"
+#include "rules.h"
 #include "sagan-esmtp.h"
 #include "version.h"
 

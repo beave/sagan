@@ -35,8 +35,9 @@
 #include <string.h>
 
 #include "sagan.h"
+
 #include "sagan-alert.h"
-#include "sagan-references.h"
+#include "references.h"
 #include "sagan-config.h"
 
 struct _Rule_Struct *rulestruct;

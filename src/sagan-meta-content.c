@@ -41,7 +41,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-meta-content.h"
-#include "sagan-rules.h"
+#include "rules.h"
 #include "parsers/parsers.h"
 
 struct _Rule_Struct *rulestruct;

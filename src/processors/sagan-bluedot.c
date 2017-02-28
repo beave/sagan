@@ -45,7 +45,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
-#include "sagan-rules.h"
+#include "rules.h"
 #include "sagan-bluedot.h"
 
 #include "parsers/parsers.h"
