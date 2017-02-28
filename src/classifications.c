@@ -48,7 +48,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-gen-msg.h"
+#include "gen-msg.h"
 #include "classifications.h"
 
 struct _SaganCounters *counters;

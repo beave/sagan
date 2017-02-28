@@ -13,52 +13,52 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        references.c \
                                                        rules.c \
                                                        signal-handler.c \
-                                                       sagan-key.c \
-                                                       sagan-stats.c \
-                                                       sagan-strlcat.c \
-                                                       sagan-strlcpy.c \
-                                                       sagan-usage.c \
-                                                       sagan-util.c \
-                                                       sagan-plog.c \
-                                                       sagan-output.c \
-                                                       sagan-processor.c \
-                                                       sagan-gen-msg.c \
-                                                       sagan-liblognorm.c \
-                                                       sagan-ignore-list.c \
-                                                       sagan-send-alert.c \
-                                                       sagan-credits.c \
-                                                       sagan-protocol-map.c \
-                                                       sagan-geoip2.c \
-                                                       sagan-meta-content.c \
-                                                       sagan-xbit.c \
-                                                       sagan-check-flow.c\
-                                                       sagan-aetas.c \
-                                                       sagan-ipc.c \
-						       sagan-json.c \
-                                                       parsers/parse-ip.c \
-                                                       parsers/parse-port.c \
-                                                       parsers/parse-proto.c \
-                                                       parsers/parse-hash.c \
-                                                       parsers/sagan-strstr/sagan-strstr-hook.c \
-                                                       parsers/sagan-strstr/strstr_sse2.S \
-                                                       parsers/sagan-strstr/strstr_sse4_2.S \
-                                                       output-plugins/sagan-alert.c \
-						       output-plugins/sagan-fast.c \
-                                                       output-plugins/sagan-esmtp.c \
-                                                       output-plugins/sagan-external.c \
-                                                       output-plugins/sagan-unified2.c \
-                                                       output-plugins/sagan-twofish.c \
-                                                       output-plugins/sagan-snortsam.c \
-                                                       output-plugins/sagan-syslog.c \
-						       output-plugins/sagan-eve.c \
-                                                       processors/sagan-engine.c \
-                                                       processors/sagan-track-clients.c \
-                                                       processors/sagan-report-clients.c \
-                                                       processors/sagan-bluedot.c \
-                                                       processors/sagan-blacklist.c \
-                                                       processors/sagan-perfmon.c \
-                                                       processors/sagan-bro-intel.c \
-						       processors/sagan-dynamic-rules.c
+                                                       key.c \
+                                                       stats.c \
+                                                       strlcat.c \
+                                                       strlcpy.c \
+                                                       usage.c \
+                                                       util.c \
+                                                       plog.c \
+                                                       output.c \
+                                                       processor.c \
+                                                       gen-msg.c \
+                                                       liblognormalize.c \
+                                                       ignore-list.c \
+                                                       send-alert.c \
+                                                       credits.c \
+                                                       protocol-map.c \
+                                                       geoip2.c \
+                                                       meta-content.c \
+                                                       xbit.c \
+                                                       check-flow.c\
+                                                       aetas.c \
+                                                       ipc.c \
+						       json-handler.c \
+                                                       parsers/ip.c \
+                                                       parsers/port.c \
+                                                       parsers/proto.c \
+                                                       parsers/hash.c \
+                                                       parsers/strstr-asm/strstr-hook.c \
+                                                       parsers/strstr-asm/strstr_sse2.S \
+                                                       parsers/strstr-asm/strstr_sse4_2.S \
+                                                       output-plugins/alert.c \
+						       output-plugins/fast.c \
+                                                       output-plugins/esmtp.c \
+                                                       output-plugins/external.c \
+                                                       output-plugins/unified2.c \
+                                                       output-plugins/snortsam-twofish.c \
+                                                       output-plugins/snortsam.c \
+                                                       output-plugins/syslog-handler.c \
+						       output-plugins/eve.c \
+                                                       processors/engine.c \
+                                                       processors/track-clients.c \
+                                                       processors/report-clients.c \
+                                                       processors/bluedot.c \
+                                                       processors/blacklist.c \
+                                                       processors/perfmon.c \
+                                                       processors/bro-intel.c \
+						       processors/dynamic-rules.c
 
 
                                                        install-data-local:

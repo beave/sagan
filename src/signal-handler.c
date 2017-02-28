@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-signal.c
+/* signal.c
  *
  * This runs as a thread for signal processing.
  *
@@ -42,37 +42,38 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "sagan-xbit.h"
+#include "xbit.h"
 #include "sagan-config.h"
 #include "config-yaml.h"
 #include "lockfile.h"
 #include "signal-handler.h"
-#include "sagan-stats.h"
-#include "sagan-gen-msg.h"
+#include "stats.h"
+#include "gen-msg.h"
 #include "classifications.h"
-#include "processors/sagan-perfmon.h"
-#include "rules.h"
-#include "sagan-ignore-list.h"
-#include "sagan-check-flow.h"
 
-#include "processors/sagan-blacklist.h"
-#include "processors/sagan-track-clients.h"
-#include "processors/sagan-bro-intel.h"
+#include "processors/perfmon.h"
+#include "rules.h"
+#include "ignore-list.h"
+#include "check-flow.h"
+
+#include "processors/blacklist.h"
+#include "processors/track-clients.h"
+#include "processors/bro-intel.h"
 
 #ifdef HAVE_LIBLOGNORM
-#include "sagan-liblognorm.h"
+#include "liblognormalize.h"
 #include <liblognorm.h>
 int liblognorm_count;
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/sagan-unified2.h"
+#include "output-plugins/unified2.h"
 sbool sagan_unified2_flag;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
-#include "sagan-geoip2.h"
+#include "geoip2.h"
 #endif
 
 struct _SaganCounters *counters;

@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-yaml.c
+/* config-yaml.c
  *
  * Loads the sagan.yaml configuration file into memory.
  *
@@ -41,17 +41,16 @@
 #include "rules.h"
 #include "sagan-config.h"
 #include "classifications.h"
-#include "sagan-gen-msg.h"
-#include "sagan-protocol-map.h"
+#include "gen-msg.h"
+#include "protocol-map.h"
 #include "references.h"
 #include "parsers/parsers.h"
 
 /* Processors */
 
-#include "processors/sagan-blacklist.h"
-#include "processors/sagan-perfmon.h"
-#include "processors/sagan-bro-intel.h"
-
+#include "processors/blacklist.h"
+#include "processors/perfmon.h"
+#include "processors/bro-intel.h"
 
 #ifdef HAVE_LIBYAML
 #include <yaml.h>
@@ -59,25 +58,25 @@
 
 
 #ifdef WITH_BLUEDOT
-#include "processors/sagan-bluedot.h"
+#include "processors/bluedot.h"
 
 sbool bluedot_load;
 
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/sagan-unified2.h"
+#include "output-plugins/unified2.h"
 #endif
 
 #ifdef HAVE_LIBLOGNORM
 #include <liblognorm.h>
-#include "sagan-liblognorm.h"
+#include "liblognormalize.h"
 struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-#include "sagan-geoip2.h"
+#include "geoip2.h"
 #endif
 
 struct _SaganConfig *config;

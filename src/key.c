@@ -18,19 +18,42 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+/* key.c
+ *
+ * This runs as a thread for stdin.  This allows users,  when running
+ * in the foreground,  to hit "enter" to see statistics of sagan.
+ *
+ */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
-#include "parsers/strstr-asm/strstr-hook.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <pthread.h>
 
-char *Sagan_Parse_IP( char *, int );
-int   Sagan_Parse_Src_Port( char * );
-int   Sagan_Parse_Dst_Port( char * );
-int   Sagan_Parse_Proto( char * );
-int   Sagan_Parse_Proto_Program( char * );
-char *Sagan_Parse_Hash(char *, int );
-char *Sagan_Parse_Hash_Cleanup(char *);
+#include "version.h"
 
+#include "sagan.h"
+#include "sagan-defs.h"
+#include "key.h"
+#include "stats.h"
 
+struct _SaganConfig *config;
 
+void key_handler( void )
+{
+
+    while(1) {
+
+        int key;
+
+        key=getchar();
+        if ( key != 0 ) {
+            Sagan_Statistics();
+        }
+
+    }
+}

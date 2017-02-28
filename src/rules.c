@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-rules.c
+/* rules.c
  *
  * Loads and parses the rule files into memory
  *
@@ -47,7 +47,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 
-#include "sagan-xbit.h"
+#include "xbit.h"
 #include "lockfile.h"
 #include "classifications.h"
 #include "rules.h"
@@ -55,7 +55,7 @@
 #include "parsers/parsers.h"
 
 #ifdef WITH_BLUEDOT
-#include "processors/sagan-bluedot.h"
+#include "processors/bluedot.h"
 #endif
 
 struct _SaganCounters *counters;
@@ -74,7 +74,7 @@ uintmax_t bluedot_time_u32 = 0;
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-#include "sagan-liblognorm.h"
+#include "liblognormalize.h"
 struct liblognorm_struct *liblognormstruct;
 struct liblognorm_toload_struct *liblognormtoloadstruct;
 int liblognorm_count;

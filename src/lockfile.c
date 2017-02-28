@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-lockfile.c
+/* lockfile.c
  *
  * Creates a lock file for the Sagan process.    We don't want Sagan to be
  * running more than once.  Also does a simple 'test' to see if the PID

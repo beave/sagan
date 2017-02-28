@@ -55,37 +55,37 @@
 #include "sagan-defs.h"
 #include "version.h"
 
-#include "sagan-credits.h"
-#include "sagan-xbit.h"
-#include "sagan-processor.h"
+#include "credits.h"
+#include "xbit.h"
+#include "processor.h"
 #include "sagan-config.h"
 #include "config-yaml.h"
-#include "sagan-ignore-list.h"
-#include "sagan-key.h"
+#include "ignore-list.h"
+#include "key.h"
 #include "lockfile.h"
 #include "signal-handler.h"
-#include "sagan-usage.h"
-#include "sagan-stats.h"
-#include "sagan-ipc.h"
+#include "usage.h"
+#include "stats.h"
+#include "ipc.h"
 #include "parsers/parsers.h"
 
 #ifdef HAVE_LIBPCAP
-#include "sagan-plog.h"
+#include "plog.h"
 #endif
 
-#include "processors/sagan-engine.h"
-#include "processors/sagan-blacklist.h"
-#include "processors/sagan-track-clients.h"
-#include "processors/sagan-report-clients.h"
-#include "processors/sagan-perfmon.h"
-#include "processors/sagan-bro-intel.h"
+#include "processors/engine.h"
+#include "processors/blacklist.h"
+#include "processors/track-clients.h"
+#include "processors/report-clients.h"
+#include "processors/perfmon.h"
+#include "processors/bro-intel.h"
 
 #ifdef HAVE_LIBLOGNORM
-#include "sagan-liblognorm.h"
+#include "liblognormalize.h"
 #endif
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/sagan-unified2.h"
+#include "output-plugins/unified2.h"
 #endif
 
 #define OVECCOUNT 30
@@ -97,7 +97,7 @@ struct _SaganDebug *debug;
 
 #ifdef WITH_BLUEDOT
 #include <curl/curl.h>
-#include "processors/sagan-bluedot.h"
+#include "processors/bluedot.h"
 #endif
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;

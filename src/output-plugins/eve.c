@@ -18,19 +18,38 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+/* eve.c
+ *
+ * Write alerts in a JSON/Suricata like format
+ *
+ */
+
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
-#include "parsers/strstr-asm/strstr-hook.h"
+#include <stdio.h>
+//#include <stdlib.h>
+//#include <pthread.h>
+//#include <string.h>
 
-char *Sagan_Parse_IP( char *, int );
-int   Sagan_Parse_Src_Port( char * );
-int   Sagan_Parse_Dst_Port( char * );
-int   Sagan_Parse_Proto( char * );
-int   Sagan_Parse_Proto_Program( char * );
-char *Sagan_Parse_Hash(char *, int );
-char *Sagan_Parse_Hash_Cleanup(char *);
+#include "sagan.h"
+#include "json-handler.h"
+#include "eve.h"
+//#include "references.h"
+#include "sagan-config.h"
 
+struct _SaganConfig *config;
 
+void Sagan_Alert_JSON( _Sagan_Event *event )
+{
 
+    char alert_data[1024];
+
+    strlcpy(alert_data, (const char*)Format_Sagan_JSON_Alert(event), sizeof(alert_data));
+    fprintf(config->eve_stream, "%s\n", alert_data);
+
+    fflush(config->eve_stream);
+
+}
