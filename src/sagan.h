@@ -43,14 +43,6 @@
 
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
 
-#ifndef HAVE_STRLCPY
-int strlcpy(char *, const char *,  size_t );
-#endif
-
-#ifndef HAVE_STRLCAT
-int strlcat(char *, const char *, size_t );
-#endif
-
 int    Is_Numeric (char *);
 char   *To_UpperC(char* const );
 char   *To_LowerC(char* const );

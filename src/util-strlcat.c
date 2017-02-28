@@ -32,6 +32,7 @@
 #include <sys/types.h>
 #include <string.h>
 
+size_t strlcat(char *, const char *, size_t );
 
 /*
  * Appends src to string dst of size siz (unlike strncat, siz is the
