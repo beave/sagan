@@ -159,7 +159,7 @@ char *Remove_Spaces(char *s)
 
 /* Shift a string to all uppercase */
 
-char *To_UpperC(char *const s)
+char *To_UpperC(char* const s)
 {
     char* cur = s;
     while (*cur) {
@@ -277,31 +277,31 @@ sbool Is_Numeric (char *str)
 /* Grab's information between "quotes" and returns it.  Use for things like
  * parsing msg: and pcre */
 
-char *Between_Quotes(char *instring)
+char *Between_Quotes(char *str)
 {
     sbool flag=0;
     int i;
+
     char tmp1[2];
+    char tmp2[512] = { 0 }; 
 
-    static __thread char tmp2[512];
-    memset(tmp2,0,sizeof(tmp2));
+    for ( i=0; i<strlen(str); i++) {
 
-    for ( i=0; i<strlen(instring); i++) {
-
-        if ( flag == 1 && instring[i] == '\"' ) {
+        if ( flag == 1 && str[i] == '\"' ) {
             flag = 0;
         }
 
         if ( flag == 1 ) {
-            snprintf(tmp1, sizeof(tmp1), "%c", instring[i]);
+            snprintf(tmp1, sizeof(tmp1), "%c", str[i]);
             strlcat(tmp2, tmp1, sizeof(tmp2));
         }
 
-        if ( instring[i] == '\"' ) flag++;
+        if ( str[i] == '\"' ) flag++;
 
     }
 
-    return(tmp2);
+    snprintf(str, sizeof(tmp2), "%s", tmp2); 
+    return(str); 
 }
 
 /* CalcPct (Taken from Snort) */
@@ -324,11 +324,10 @@ double CalcPct(uintmax_t cnt, uintmax_t total)
 /* DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely
  * based on Beej's showip.c */
 
-char *DNS_Lookup( char *host )
+int DNS_Lookup( char *host, char *str, size_t size )
 {
 
-    static __thread char ipstr[INET6_ADDRSTRLEN];
-    memset(ipstr,0,sizeof(ipstr));
+    char ipstr[INET6_ADDRSTRLEN] = { 0 }; 
 
     struct addrinfo hints, *res;
     int status;
@@ -337,10 +336,12 @@ char *DNS_Lookup( char *host )
     /* Short circuit if it's a "localhost" lookup */
 
     if ( !strcmp(host, "localhost" ) ) {
-        return(config->sagan_host);
+	snprintf(str, size, "%s", config->sagan_host); 
+        return(0);
     }
 
     if ( config->disable_dns_warnings == 0 ) {
+
         Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
         Sagan_Log(S_WARN, "Sagan DNS lookup need for '%s'.", host);
         Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
@@ -354,13 +355,15 @@ char *DNS_Lookup( char *host )
 
     if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
         Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
-        return "0";
+        return -1;
     }
 
     if (res->ai_family == AF_INET) { // IPv4
         struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
         addr = &(ipv4->sin_addr);
+
     } else { // IPv6
+
         struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res->ai_addr;
         addr = &(ipv6->sin6_addr);
     }
@@ -368,7 +371,8 @@ char *DNS_Lookup( char *host )
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     free(res);
 
-    return(ipstr);
+    snprintf(str, size, "%s", ipstr); 
+    return 0;
 }
 
 
@@ -379,8 +383,7 @@ char *Replace_String(char *str, char *orig, char *rep)
 
     static __thread char buffer[4096];
     memset(buffer,0,sizeof(buffer));
-
-    char *p;
+    char *p = NULL;
 
     if(!(p = strstr(str, orig))) {
         return str;
@@ -389,7 +392,9 @@ char *Replace_String(char *str, char *orig, char *rep)
     strlcpy(buffer, str, p-str);
     buffer[p-str] = '\0';
     sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
-    return(buffer);
+
+    return buffer;
+
 }
 
 
@@ -480,7 +485,7 @@ char *Sagan_Var_To_Value(char *instring)
 
         while (ptmp != NULL ) {
 
-            strlcpy(tmp2, Replace_String(ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
+            strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
             strlcat(tmp_result, tmp3, sizeof(tmp_result));
             ptmp = strtok_r(NULL, " ", &tok);
@@ -493,6 +498,7 @@ char *Sagan_Var_To_Value(char *instring)
 
     tmp[strlen(tmp)-1] = 0;		/* Remove trailing space */
     tmpbuf = (char*)&tmp;
+
     return(tmpbuf);
 }
 
@@ -504,6 +510,7 @@ int Sagan_Validate_HEX (const char *string)
 {
 
     const char *curr = string;
+
     while (*curr != 0) {
         if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9')) {
             ++curr;
@@ -670,13 +677,16 @@ int Sagan_Character_Count ( char *string_in, char *char_to_count)
     int return_count = 0;
 
     /* Convert to usable types */
+
     strlcpy(tmp, char_to_count, 2);
     strlcpy(str_to_count, string_in, sizeof(str_to_count));
 
     to_count = (int)tmp[0];
 
     for (i = 0; i < strlen(str_to_count); i++) {
+
         /* Search for and count int char[i] */
+
         if ( (int)str_to_count[i] == to_count ) {
             return_count++;
         }

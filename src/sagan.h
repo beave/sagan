@@ -444,7 +444,9 @@ struct _Sagan_Processor_Info {
 
 void Sagan_Log( int, const char *, ... );
 void Sagan_Droppriv( void );
-char *DNS_Lookup( char * );
+
+int DNS_Lookup( char *, char *str, size_t size );
+
 char *Sagan_Var_To_Value(char *);
 
 uint32_t IP2Bit (char * );

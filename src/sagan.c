@@ -930,11 +930,12 @@ int main(int argc, char **argv)
                         if ( dns_flag == false ) {
 
                             /* Do a DNS lookup */
-                            strlcpy(src_dns_lookup, DNS_Lookup(syslog_host), sizeof(src_dns_lookup));
+
+			    rc = DNS_Lookup(syslog_host, src_dns_lookup, sizeof(src_dns_lookup)); 
 
                             /* Invalid lookups get the config->sagan_host value */
 
-                            if (src_dns_lookup[0] == '0' ) {
+                            if ( rc == -1 ) {
 
                                 strlcpy(src_dns_lookup, config->sagan_host, sizeof(src_dns_lookup));
                                 counters->dns_miss_count++;
