@@ -331,7 +331,7 @@ outputs:
   # ONLY supports "regular" and "alerts" at this time!
 
   - eve-log:
-      enabled: yes
+      enabled: no
       filetype: regular            #regular|syslog|unix_dgram|unix_stream|redis
       interface: logs
       alerts: yes                     # Logs alerts
