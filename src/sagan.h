@@ -460,13 +460,13 @@ int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
-char *Sagan_u32_Time_To_Human ( uint32_t );
+void Sagan_u32_Time_To_Human ( uint32_t, char *str, size_t size );
 char *Netaddr_To_Range( char * );
 char *Strip_Chars(const char *string, const char *chars);
 sbool Is_IP (char *str);
 
-char *Sagan_Return_Date( uint32_t );
-char *Sagan_Return_Time( uint32_t );
+void Sagan_Return_Date( uint32_t, char *str, size_t size );
+void Sagan_Return_Time( uint32_t, char *str, size_t size );
 
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );

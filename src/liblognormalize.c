@@ -109,7 +109,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
     char buf[10*1024] = { 0 };
     char tmp_host[254] = { 0 };
 
-    int rc = 0; 
+    int rc = 0;
 
     const char *cstr = NULL;
     const char *tmp = NULL;
@@ -180,7 +180,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
         if ( SaganNormalizeLiblognorm->ip_src[0] == '0' ) {
 
-	     rc = DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host)); 
+            rc = DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host));
 
             if ( rc == -1 ) {
                 Sagan_Log(S_WARN, "Failed to do a DNS lookup for source '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->src_host, config->sagan_host);
@@ -198,7 +198,7 @@ void Sagan_Normalize_Liblognorm(char *syslog_msg)
 
         if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' ) {
 
-	    rc = DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host)); 
+            rc = DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host));
 
             if ( rc == -1 ) {
                 Sagan_Log(S_WARN, "Failed to do a DNS lookup for destination '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->dst_host, config->sagan_host);

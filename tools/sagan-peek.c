@@ -44,9 +44,9 @@
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
-#include "../src/sagan-xbit.h"
+#include "../src/xbit.h"
 
-#include "../src/processors/sagan-track-clients.h"
+#include "../src/processors/track-clients.h"
 
 /****************************************************************************
  * usage - Give the user some hints about how to use this utility!

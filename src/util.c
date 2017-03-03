@@ -283,7 +283,7 @@ char *Between_Quotes(char *str)
     int i;
 
     char tmp1[2];
-    char tmp2[512] = { 0 }; 
+    char tmp2[512] = { 0 };
 
     for ( i=0; i<strlen(str); i++) {
 
@@ -300,8 +300,8 @@ char *Between_Quotes(char *str)
 
     }
 
-    snprintf(str, sizeof(tmp2), "%s", tmp2); 
-    return(str); 
+    snprintf(str, sizeof(tmp2), "%s", tmp2);
+    return(str);
 }
 
 /* CalcPct (Taken from Snort) */
@@ -327,7 +327,7 @@ double CalcPct(uintmax_t cnt, uintmax_t total)
 int DNS_Lookup( char *host, char *str, size_t size )
 {
 
-    char ipstr[INET6_ADDRSTRLEN] = { 0 }; 
+    char ipstr[INET6_ADDRSTRLEN] = { 0 };
 
     struct addrinfo hints, *res;
     int status;
@@ -336,7 +336,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
     /* Short circuit if it's a "localhost" lookup */
 
     if ( !strcmp(host, "localhost" ) ) {
-	snprintf(str, size, "%s", config->sagan_host); 
+        snprintf(str, size, "%s", config->sagan_host);
         return(0);
     }
 
@@ -371,7 +371,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     free(res);
 
-    snprintf(str, size, "%s", ipstr); 
+    snprintf(str, size, "%s", ipstr);
     return 0;
 }
 
@@ -874,14 +874,12 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 
 #endif
 
-char *Sagan_Return_Date( uint32_t utime )
+void Sagan_Return_Date( uint32_t utime, char *str, size_t size )
 {
 
     struct tm tm;
-    static __thread char time_buf[80];
     char tmp[80];
-
-    char *return_date = NULL;
+    char time_buf[80];
 
     memset(&tm, 0, sizeof(struct tm));
     snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
@@ -889,19 +887,17 @@ char *Sagan_Return_Date( uint32_t utime )
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%F", &tm);
 
-    return_date = (char*)&time_buf;
-    return(return_date);
+    snprintf(str, size, "%s", time_buf);
 
 }
 
-char *Sagan_Return_Time( uint32_t utime )
+void Sagan_Return_Time( uint32_t utime, char *str, size_t size )
 {
 
     struct tm tm;
-    static __thread char time_buf[80];
-    char tmp[80];
 
-    char *return_date = NULL;
+    char time_buf[80];
+    char tmp[80];
 
     memset(&tm, 0, sizeof(struct tm));
     snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
@@ -909,8 +905,7 @@ char *Sagan_Return_Time( uint32_t utime )
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%T", &tm);
 
-    return_date = (char*)&time_buf;
-    return(return_date);
+    snprintf(str, size, "%s", time_buf);
 
 }
 
@@ -920,13 +915,12 @@ char *Sagan_Return_Time( uint32_t utime )
  * "readable" format.
  ****************************************************************************/
 
-char *Sagan_u32_Time_To_Human ( uint32_t utime )
+void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
 {
-    struct tm tm;
-    static __thread char time_buf[80];
-    char tmp[80];
 
-    char *return_time = NULL;
+    struct tm tm;
+    char time_buf[80];
+    char tmp[80];
 
     memset(&tm, 0, sizeof(struct tm));
     snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
@@ -934,9 +928,8 @@ char *Sagan_u32_Time_To_Human ( uint32_t utime )
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);
 
-    return_time = (char*)&time_buf;
+    snprintf(str, size, "%s", time_buf);
 
-    return(return_time);
 }
 
 /****************************************************************************

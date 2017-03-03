@@ -160,8 +160,8 @@ void Sagan_Report_Clients ( void )
                     strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
-                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u32));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u32));
+                    Sagan_Return_Date(utime_u32, SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                    Sagan_Return_Time(utime_u32, SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
 
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "The IP address %s was previously not sending logs. The system appears to be sending logs again at %s", tmp_ip, ctime(&SaganTrackClients_ipc[i].utime) );
 
@@ -215,8 +215,8 @@ void Sagan_Report_Clients ( void )
                     strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "00", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, PROCESSOR_NAME, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
-                    snprintf(SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date), "%s", Sagan_Return_Date(utime_u32));
-                    snprintf(SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time), "%s", Sagan_Return_Time(utime_u32));
+                    Sagan_Return_Date(utime_u32, SaganProcSyslog_LOCAL->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                    Sagan_Return_Time(utime_u32, SaganProcSyslog_LOCAL->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
 
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)-1, "Sagan has not recieved any logs from the IP address %s in over %d minute(s). Last log was seen at %s. This could be an indication that the system is down.", tmp_ip, config->pp_sagan_track_clients, ctime(&SaganTrackClients_ipc[i].utime) );
 

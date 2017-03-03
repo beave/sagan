@@ -931,7 +931,7 @@ int main(int argc, char **argv)
 
                             /* Do a DNS lookup */
 
-			    rc = DNS_Lookup(syslog_host, src_dns_lookup, sizeof(src_dns_lookup)); 
+                            rc = DNS_Lookup(syslog_host, src_dns_lookup, sizeof(src_dns_lookup));
 
                             /* Invalid lookups get the config->sagan_host value */
 

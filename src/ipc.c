@@ -899,6 +899,7 @@ void Sagan_IPC_Init(void)
     int i;
 
     char tmp_object_check[255];
+    char time_buf[80];
 
     /* For convert 32 bit IP to octet */
 
@@ -977,7 +978,10 @@ void Sagan_IPC_Init(void)
             ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
 
             if ( xbit_ipc[i].xbit_state == 1 ) {
-                Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), Sagan_u32_Time_To_Human(xbit_ipc[i].xbit_expire), xbit_ipc[i].expire );
+
+                Sagan_u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
+
+                Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), time_buf, xbit_ipc[i].expire );
             }
 
         }
@@ -1022,8 +1026,13 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_src; i++) {
+
             ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1067,8 +1076,12 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++) {
+
             ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
 
         }
 
@@ -1114,8 +1127,12 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_srcport; i++) {
+
             uint32_t srcport = htonl(threshbysrcport_ipc[i].ipsrcport);
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, threshbysrcport_ipc[i].count, Sagan_u32_Time_To_Human(threshbysrcport_ipc[i].utime), threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(threshbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
 
         }
 
@@ -1163,8 +1180,12 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_dstport; i++) {
+
             uint32_t dstport = htonl(threshbydstport_ipc[i].ipdstport);
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, threshbydstport_ipc[i].count, Sagan_u32_Time_To_Human(threshbydstport_ipc[i].utime), threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(threshbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
 
         }
 
@@ -1209,8 +1230,12 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
+
     }
 
     /* After by source */
@@ -1251,8 +1276,12 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_src; i++ ) {
+
             ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1298,7 +1327,9 @@ void Sagan_IPC_Init(void)
 
             ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+            Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1345,7 +1376,9 @@ void Sagan_IPC_Init(void)
 
             uint32_t srcport = htonl(afterbysrcport_ipc[i].ipsrcport);
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, afterbysrcport_ipc[i].count, Sagan_u32_Time_To_Human(afterbysrcport_ipc[i].utime), afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
+            Sagan_u32_Time_To_Human(afterbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1392,7 +1425,9 @@ void Sagan_IPC_Init(void)
 
             uint32_t dstport = htonl(afterbydstport_ipc[i].ipdstport);
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, afterbydstport_ipc[i].count, Sagan_u32_Time_To_Human(afterbydstport_ipc[i].utime), afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
+            Sagan_u32_Time_To_Human(afterbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1435,7 +1470,10 @@ void Sagan_IPC_Init(void)
         Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+
+            Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1490,7 +1528,10 @@ void Sagan_IPC_Init(void)
 
                     for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                         {
-                            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+
+        	    Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+
+                            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                         }
 
                     Sagan_Log(S_DEBUG, "");
