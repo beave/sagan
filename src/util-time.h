@@ -18,43 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* eve.c
- *
- * Write alerts in a JSON/Suricata like format
- *
- */
+struct tm *Sagan_LocalTime(time_t , struct tm *);
+void CreateTimeString (const struct timeval *, char *, size_t , sbool );
+void CreateIsoTimeString (const struct timeval *, char *, size_t );
 
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"             /* From autoconf */
-#endif
-
-#include <stdio.h>
-#include <stdbool.h>
-
-#include "sagan.h"
-#include "sagan-defs.h"
-#include "json-handler.h"
-#include "output-plugins/eve.h"
-
-#include "sagan-config.h"
-
-struct _SaganConfig *config;
-
-void Sagan_Alert_JSON( _Sagan_Event *Event )
-{
-
-    char alert_data[MAX_SYSLOGMSG+1024];
-
-    if ( config->eve_alerts == true ) {
-
-        Format_Sagan_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
-
-        fprintf(config->eve_stream, "%s\n", alert_data);
-
-    }
-
-
-    fflush(config->eve_stream);
-
-}

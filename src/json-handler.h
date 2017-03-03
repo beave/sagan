@@ -24,17 +24,12 @@
  *
  */
 
+#include <inttypes.h>
 
-char *Format_Sagan_JSON_Alert( _Sagan_Event * );
+void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *, char *, size_t);
 
-/* Timestamp is wrong :( */
-/* category doesn't line up */
+/* Suricata EVE Alert output */
 
-#define JSON_ALERT "{ \"timestamp\": \"%s%s\", \"event_type\": \"alert\", \"src_ip\": \"%s\", \"src_port\": %d, \"dest_ip\": \"%s\", \"dest_port\": %d, \"proto\": \"%s\", \"alert\": { \"action\": \"%s\", \"gid\": %lu, \"signature_id\": %s, \"rev\": %s, \"signature\": \"%s\", \"category\": \"%s\", \"severity\": %d } }"
-
-// { "timestamp": "XXXXXXXX", "event_type": "XXXXX", "src_ip": "XXXXXXXXX", "src_port": XXXX, "dest_ip": "XXXXXXXX", "dest_port": XXXXX, "proto": "XXX", "alert": { "action": "XXXXXX", "gid": X, "signature_id" :XXXXXXX, "rev": X, "signature": "XXXXXXXXXXXX", "category": "XXXXXXXX", "severity": X } }
-
-// { "timestamp": "2009-11-24T21:27:09.534255", "event_type": "alert", "src_ip": "192.168.2.7", "src_port": 1041, "dest_ip": "x.x.250.50", "dest_port": 80, "proto": "TCP", "alert": { "action": "allowed", "gid": 1, "signature_id" :2001999, "rev": 9, "signature": "ET MALWARE BTGrab.com Spyware Downloading Ads", "category": "A Network Trojan was detected", "severity": 1 } }
-
+#define EVE_ALERT "{\"timestamp\":\"\%s\",\"flow_id\":%" PRIu64 ",\"in_iface\":\"%s\",\"event_type\":\"alert\",\"src_ip\":\"%s\",\"src_port\":%d,\"dest_ip\":\"%s\",\"dest_port\":%d,\"proto\":\"%s\",\"alert\":{\"action\":\"%s\",\"gid\":%lu,\"signature_id\":%s,\"rev\":%s,\"signature\":\"%s\",\"category\":\"%s\",\"severity\":%d},\"payload\":\"%s\",\"stream\":0,\"packet\":\"%s\",\"packet_info\":{\"linktype\":1}}"
 
 

@@ -938,10 +938,17 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     curl = curl_easy_init();
 
     if (curl) {
+
+        //CURLM *mMultiCurl;
+
+        //mMultiCurl = curl_multi_init();
+        //curl_multi_setopt(mMultiCurl, CURLMOPT_PIPELINING, 1L);
+
         curl_easy_setopt(curl, CURLOPT_URL, tmpurl);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_func);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);   /* WIll send SIGALRM if not set */
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);    /* WIll send SIGALRM if not set */
+
         headers = curl_slist_append (headers, BLUEDOT_PROCESSOR_USER_AGENT);
         headers = curl_slist_append (headers, tmpdeviceid);
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */

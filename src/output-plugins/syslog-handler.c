@@ -53,6 +53,8 @@ void Sagan_Alert_Syslog( _Sagan_Event *Event )
     char syslog_message_output[1024] = { 0 };
     char *tmp_proto = NULL;
 
+    char classbuf[64];
+
     /* Template to mimic Snort syslog output */
 
     char *syslog_template = "[%lu:%s:%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d - %s";
@@ -73,7 +75,9 @@ void Sagan_Alert_Syslog( _Sagan_Event *Event )
         tmp_proto = "{UDP}";
     }
 
-    snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, Sagan_Classtype_Lookup ( Event->class ), Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->message);
+    Sagan_Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
+
+    snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, classbuf, Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->message);
 
     /* Send syslog message */
 

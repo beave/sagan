@@ -327,10 +327,15 @@ processors:
 outputs:
 
   # WORK IN PROGRESS - Output the the Suricata EVE format.  
+  # 
+  # ONLY supports "regular" and "alerts" at this time!
 
   - eve-log:
       enabled: yes
-      filetype: regular #regular|syslog|unix_dgram|unix_stream|redis
+      filetype: regular            #regular|syslog|unix_dgram|unix_stream|redis
+      interface: logs
+      alerts: yes                     # Logs alerts
+      logs: no                        # Log everything
       filename: "$LOG_PATH/eve.json"
 
   # The 'alert' output format allows Sagan to write alerts, in detail, in a 

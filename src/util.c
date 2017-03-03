@@ -809,7 +809,7 @@ void Sagan_Open_Log_File( sbool state, int type )
 
             if (( config->eve_stream = fopen(config->eve_filename, "a" )) == NULL ) {
                 Remove_Lock_File();
-                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
             }
 
             ret = chown(config->eve_filename, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
@@ -1295,36 +1295,9 @@ int PageSupportsRWX(void)
 
 #endif /* HAVE_SYS_MMAN_H */
 
-struct tm *Sagan_LocalTime(time_t timep, struct tm *result)
+int64_t FlowGetId( _Sagan_Event *Event)
 {
-    return localtime_r(&timep, result);
+    return (int64_t)(Event->event_time.tv_sec & 0x0000FFFF) << 16 |
+           (int64_t)(Event->event_time.tv_usec & 0x0000FFFF);
 }
-
-
-void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool type)
-{
-    time_t time = ts->tv_sec;
-    struct tm local_tm;
-    struct tm *t = (struct tm*)Sagan_LocalTime(time, &local_tm);
-
-    if ( type == 0 ) {
-
-        /* Suricata / Snort "fast.log" type */
-
-        snprintf(str, size, "%02d/%02d/%02d-%02d:%02d:%02d.%06u",
-                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
-                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
-
-    } else {
-
-        /* Old "alert log" type */
-
-        snprintf(str, size, "%02d-%02d-%02d %02d:%02d:%02d.%06u",
-                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
-                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
-
-    }
-
-}
-
 

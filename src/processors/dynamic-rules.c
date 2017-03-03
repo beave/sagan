@@ -150,7 +150,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
         Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'alert'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
 
-	gettimeofday(&tp, 0);
+        gettimeofday(&tp, 0);
 
         Sagan_Send_Alert(SaganProcSyslog_LOCAL,
                          processor_info_engine,

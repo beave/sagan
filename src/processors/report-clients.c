@@ -105,7 +105,7 @@ void Sagan_Report_Clients ( void )
 
         uintmax_t utime_u32;
 
-	struct timeval tp;
+        struct timeval tp;
 
         t = time(NULL);
         now=localtime(&t);

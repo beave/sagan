@@ -34,20 +34,17 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-//#include <stdlib.h>
-//#include <pthread.h>
-//#include <string.h>
+#include <string.h>
 
 #include "sagan.h"
-//#include "output-plugins/alert.h"
 #include "references.h"
 #include "sagan-config.h"
 #include "json-handler.h"
 
+struct _SaganConfig *config;
+struct _SaganDebug *debug;
 
-
-
-char *Format_Sagan_JSON_Alert( _Sagan_Event *event)
+void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 {
 
     char *ret;
@@ -55,37 +52,48 @@ char *Format_Sagan_JSON_Alert( _Sagan_Event *event)
     char *proto;
     char *drop;
 
-    static __thread char tmp[1024];
+    char timebuf[64];
+    char classbuf[64];
 
-    if ( event->ip_proto == 17 ) {
+    if ( Event->ip_proto == 17 ) {
         proto = "UDP";
     }
 
-    else if ( event->ip_proto == 6 ) {
+    else if ( Event->ip_proto == 6 ) {
         proto = "TCP";
     }
 
-    else if ( event->ip_proto == 1 ) {
+    else if ( Event->ip_proto == 1 ) {
         proto = "ICMP";
     }
 
-    else if ( event->ip_proto != 1 || event->ip_proto != 6 || event->ip_proto != 17 ) {
+    else if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 ) {
         proto = "UNKNOWN";
     }
 
-    if ( event->drop == true ) {
-
-        /* Blocked?  Look at what Suricata says */
+    if ( Event->drop == true ) {
 
         drop = "blocked";
+
     } else {
+
         drop = "allowed";
     }
 
-    snprintf(tmp, sizeof(tmp), JSON_ALERT, event->date, event->time, event->ip_src, event->src_port,
-             event->ip_dst, event->dst_port, proto, drop, event->generatorid, event->sid, event->rev,
-             event->f_msg, event->class, event->pri );
+    CreateIsoTimeString(&Event->event_time, timebuf, sizeof(timebuf));
 
-    return(tmp);
+    unsigned long b64_len = strlen(Event->message) * 2;
+    uint8_t b64_target[b64_len];
+
+    Base64Encode(Event->message, strlen(Event->message), b64_target, &b64_len);
+    Sagan_Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
+
+    snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "");
+
+    if ( debug->debugjson ) {
+
+        Sagan_Log(S_DEBUG, "[%s, line %d] JSON Output: %s", __FILE__, __LINE__, str);
+
+    }
 
 }

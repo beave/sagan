@@ -219,6 +219,7 @@ struct _SaganDebug {
     sbool debugmalformed;
     sbool debuglimits;
     sbool debugipc;
+    sbool debugjson;
 
 #ifdef HAVE_LIBMAXMINDDB
     sbool debuggeoip2;
@@ -260,6 +261,7 @@ struct _Sagan_Proc_Syslog {
 
 typedef struct _Sagan_Event _Sagan_Event;
 struct _Sagan_Event {
+
     char *ip_src;
     char *ip_dst;
     int   dst_port;
@@ -478,5 +480,18 @@ int PageSupportsRWX(void);
 void Sagan_Set_Pipe_Size( FILE * );
 #endif
 
+//static inline int64_t FlowGetId( _Sagan_Event Event)
+//{
+//    return (int64_t)f->flow_hash << 31 |
+//        (int64_t)(f->startts.tv_sec & 0x0000FFFF) << 16 |
+//        (int64_t)(f->startts.tv_usec & 0x0000FFFF);
 
-void CreateTimeString (const struct timeval *, char *, size_t , sbool );
+//      return (int64_t)(Event.event_time.tv_sec & 0x0000FFFF) << 16 |
+//	     (int64_t)(Event.event_time.tv_usec & 0x0000FFFF);
+//}
+
+
+//static inline int64_t FlowGetId( _Sagan_Event *);
+
+int64_t FlowGetId( _Sagan_Event *);
+

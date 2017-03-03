@@ -42,8 +42,12 @@ struct _SaganConfig {
 
     sbool	 	eve_flag; 			/* 0 = file */
     unsigned char 	eve_type;
+    char		eve_interface[32];
     char 		eve_filename[MAXPATH];
     FILE		*eve_stream;
+    sbool		eve_alerts;
+    sbool		eve_logs;
+
 
     char         sagan_alert_filepath[MAXPATH];
 

@@ -1058,6 +1058,7 @@ void Load_YAML_Config( char *yaml_file )
 
                         if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
                             config->eve_flag = true;
+                            strlcpy(config->eve_interface, "logs", sizeof(config->eve_interface)); 	/* Set a "default" value */
                         }
                     }
 
@@ -1071,11 +1072,33 @@ void Load_YAML_Config( char *yaml_file )
                         // }
                     }
 
+
+                    else if ( !strcmp(last_pass, "interface") && config->eve_flag == true ) {
+
+                        strlcpy(config->eve_interface, Sagan_Var_To_Value(value), sizeof(config->eve_interface));
+                    }
+
                     else if ( !strcmp(last_pass, "filename") && config->eve_flag == true ) {
 
                         strlcpy(config->eve_filename, Sagan_Var_To_Value(value), sizeof(config->eve_filename));
                     }
 
+                    else if ( !strcmp(last_pass, "alerts") && config->eve_flag == true ) {
+
+                        if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+                            config->eve_alerts = true;
+                        }
+
+                    }
+
+
+                    else if ( !strcmp(last_pass, "logs") && config->eve_flag == true ) {
+
+                        if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+                            config->eve_logs = true;
+                        }
+
+                    }
                 }
 
                 else if ( sub_type == YAML_OUTPUT_ALERT ) {

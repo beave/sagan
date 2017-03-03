@@ -144,7 +144,7 @@ void Load_Classifications( const char *ruleset )
  * (s_shortname) and returns the classtype's description
  ****************************************************************************/
 
-char *Sagan_Classtype_Lookup( const char *classtype)
+int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size )
 {
 
     int i;
@@ -152,11 +152,13 @@ char *Sagan_Classtype_Lookup( const char *classtype)
     for (i = 0; i < counters->classcount; i++) {
 
         if (!strcmp(classtype, classstruct[i].s_shortname)) {
-            return(classstruct[i].s_desc);
+            snprintf(str, size, "%s", classstruct[i].s_desc);
+            return 0;
         }
     }
 
 
-    return("UNKNOWN");
+    snprintf(str, sizeof("UNKNOWN"), "UNKNOWN");
+    return -1;
 }
 

@@ -32,8 +32,10 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        aetas.c \
                                                        ipc.c \
                                                        util.c \
+                                                       util-time.c \
                                                        util-strlcpy.c \
                                                        util-strlcat.c \
+                                                       util-base64.c \
 						       json-handler.c \
                                                        parsers/ip.c \
                                                        parsers/port.c \

@@ -364,6 +364,11 @@ int main(int argc, char **argv)
                 debugflag = true;
             }
 
+            if (Sagan_strstr(optarg, "json")) {
+                debug->debugjson = true;
+                debugflag = true;
+            }
+
 #ifdef HAVE_LIBMAXMINDDB
 
             if (Sagan_strstr(optarg, "geoip2")) {
@@ -1170,7 +1175,6 @@ int main(int argc, char **argv)
 
             /* fgets() has returned a error,  likely due to the FIFO writer leaving */
 
-            /* DEBUG : set a kill flag and join */
             /* RMEOVE LOCK */
 
             if ( fifoerr == false ) {
@@ -1188,7 +1192,7 @@ int main(int argc, char **argv)
                     Sagan_Statistics();
                     Remove_Lock_File();
 
-                    Sagan_Log(S_NORMAL, "Exiting.");		/* DEBUG: Rejoin threads */
+                    Sagan_Log(S_NORMAL, "Exiting.");
                     exit(0);
 
                 } else {

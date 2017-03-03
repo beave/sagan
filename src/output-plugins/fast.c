@@ -46,8 +46,8 @@ struct _SaganCounters *counters;
 void Sagan_Fast_File( _Sagan_Event *Event )
 {
 
-    char timebuf[64]; 
-    
+    char timebuf[64];
+
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 0);
 
     fprintf(config->sagan_fast_stream, "%s [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", timebuf,
