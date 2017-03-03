@@ -326,7 +326,7 @@ processors:
 
 outputs:
 
-  # WORK IN PROGRESS - Output the the Suricata EVE format.  
+  # WORK IN PROGRESS - Output in the Suricata EVE/Alert format.  
   # 
   # ONLY supports "regular" and "alerts" at this time!
 
