@@ -40,6 +40,9 @@ struct tm *Sagan_LocalTime(time_t timep, struct tm *result)
     return localtime_r(&timep, result);
 }
 
+/***************************************************************************/
+/* CreateTimeString - Used in fast.log, etc.  Based off Suricata source.   */
+/***************************************************************************/
 
 void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool type)
 {
@@ -67,6 +70,10 @@ void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool t
 
 }
 
+/***************************************************************************/
+/* CreateIsoTimeString - Used in EVE & alert output.  Based off Suricata   */
+/* source.                                                                 */
+/***************************************************************************/
 
 void CreateIsoTimeString (const struct timeval *ts, char *str, size_t size)
 {

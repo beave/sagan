@@ -43,14 +43,21 @@
 
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
 
-int    Is_Numeric (char *);
+sbool   Is_Numeric (char *);
+
 char   *To_UpperC(char* const );
 char   *To_LowerC(char* const );
 
 int	Check_Endian( void );
 void    Usage( void );
 void    Sagan_Chroot( const char * );
+
 char   *Remove_Return(char *);
+
+
+int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size );
+
+
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
 double CalcPct(uintmax_t, uintmax_t);
@@ -479,19 +486,6 @@ int PageSupportsRWX(void);
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void Sagan_Set_Pipe_Size( FILE * );
 #endif
-
-//static inline int64_t FlowGetId( _Sagan_Event Event)
-//{
-//    return (int64_t)f->flow_hash << 31 |
-//        (int64_t)(f->startts.tv_sec & 0x0000FFFF) << 16 |
-//        (int64_t)(f->startts.tv_usec & 0x0000FFFF);
-
-//      return (int64_t)(Event.event_time.tv_sec & 0x0000FFFF) << 16 |
-//	     (int64_t)(Event.event_time.tv_usec & 0x0000FFFF);
-//}
-
-
-//static inline int64_t FlowGetId( _Sagan_Event *);
 
 int64_t FlowGetId( _Sagan_Event *);
 

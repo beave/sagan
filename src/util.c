@@ -137,37 +137,6 @@ void Sagan_Droppriv(void)
     }
 }
 
-/***************************************************************/
-/* Convert syslog data to hex for input into the payload table */
-/***************************************************************/
-
-char *fasthex(char *xdata, int length)
-{
-    char conv[] = "0123456789ABCDEF";
-    char *retbuf = NULL;
-    char *index;
-    char *end;
-    char *ridx;
-
-    index = xdata;
-    end = xdata + length;
-    retbuf = (char *) calloc((length*2)+1, sizeof(char));
-
-    if ( retbuf == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for retbuf. Abort!", __FILE__, __LINE__);
-    }
-
-    ridx = retbuf;
-
-    while(index < end) {
-        *ridx++ = conv[((*index & 0xFF)>>4)];
-        *ridx++ = conv[((*index & 0xFF)&0x0F)];
-        index++;
-    }
-
-    return(retbuf);
-}
-
 /* Remove new-lines */
 
 char  *Remove_Return(char *s)
@@ -274,7 +243,7 @@ uint32_t IP2Bit (char *ipaddr)
 {
 
     struct sockaddr_in ipv4;
-    static __thread uint32_t ip;
+    uint32_t ip;
 
     /* Change to AF_UNSPEC for future ipv6 */
     /* Champ Clark III - 01/18/2011 */
@@ -294,7 +263,7 @@ uint32_t IP2Bit (char *ipaddr)
 
 /* Check if string contains only numbers */
 
-int Is_Numeric (char *str)
+sbool Is_Numeric (char *str)
 {
 
     if(strlen(str) == strspn(str, "0123456789")) {
@@ -1294,6 +1263,12 @@ int PageSupportsRWX(void)
 }
 
 #endif /* HAVE_SYS_MMAN_H */
+
+/***************************************************************************/
+/* FlowGetId - Generates a Suricata "FLow ID".  We don't really support    */
+/* "FLow ID" idea like Suricata.  This is for compatibility with Suricata  */
+/* EVE                                                                     */
+/***************************************************************************/
 
 int64_t FlowGetId( _Sagan_Event *Event)
 {
