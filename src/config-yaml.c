@@ -1222,7 +1222,6 @@ void Load_YAML_Config( char *yaml_file )
 
                         if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
                             config->sagan_esmtp_flag = true;
-                            config->sagan_sendto_flag = true;
                         }
                     }
 
@@ -1236,6 +1235,7 @@ void Load_YAML_Config( char *yaml_file )
                     else if ( !strcmp(last_pass, "rcpt-to") && config->sagan_esmtp_flag == true ) {
 
                         strlcpy(config->sagan_esmtp_to, Sagan_Var_To_Value(value), sizeof(config->sagan_esmtp_to));
+                        config->sagan_sendto_flag = true;
 
                     }
 

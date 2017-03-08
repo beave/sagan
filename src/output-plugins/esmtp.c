@@ -45,7 +45,9 @@
 #include "references.h"
 #include "rules.h"
 #include "esmtp.h"
+#include "util-time.h"
 #include "version.h"
+
 
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
@@ -57,6 +59,7 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
 
     char tmpref[2048];
     char tmpemail[255];
+    char timebuf[64];
 
     char tmpa[MAX_EMAILSIZE];
     char tmpb[MAX_EMAILSIZE];
@@ -77,26 +80,36 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
         }
     }
 
-    snprintf(tmpref, sizeof(tmpref), "%s", Reference_Lookup( Event->found, 0 ));
+    strlcpy(tmpref, Reference_Lookup( Event->found, 0 ), sizeof(tmpref));
 
     /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
 
     if ( rulestruct[Event->found].email_flag ) {
+
         if ( debug->debugesmtp ) {
             Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
         }
 
-        snprintf(tmpemail, sizeof(tmpemail), "%s", rulestruct[Event->found].email);
+        strlcpy(tmpemail, rulestruct[Event->found].email, sizeof(tmpemail));
+
     } else {
-        if ( debug->debugesmtp ) {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
-        }
 
         if ( config->sagan_sendto_flag ) {
-            snprintf(tmpemail, sizeof(tmpemail), "%s", config->sagan_esmtp_to);
+
+            if ( debug->debugesmtp ) {
+                Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
+            }
+
+            strlcpy(tmpemail, config->sagan_esmtp_to, sizeof(tmpemail));
+
+        } else {
+
+            return(0);
         }
 
     }
+
+    CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
 
     if ((r = snprintf(tmpa, sizeof(tmpa),
                       "MIME-Version: 1.0\r\n"
@@ -108,6 +121,7 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
                       "\r\n\n"
                       "[**] [%lu:%s] %s [**]\n"
                       "[Classification: %s] [Priority: %d] [%s]\n"
+                      "[Alert Time: %s]\n"
                       "%s %s %s:%d -> %s:%d %s %s\n"
                       "Syslog message: %s\r\n%s\n\r",
                       config->sagan_esmtp_from,
@@ -120,6 +134,7 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
                       Event->class,
                       Event->pri,
                       Event->host,
+                      timebuf,
                       Event->date,
                       Event->time,
                       Event->ip_src,

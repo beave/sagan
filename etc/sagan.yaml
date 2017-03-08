@@ -378,8 +378,10 @@ outputs:
 
   - smtp: 
       enabled: no
-      priority: 5			 # Only e-mail priorities <= this value.
-      rcpt-to: sagan-alerts@example.com
+      priority: 5			   # Only e-mail priorities this value.
+      rcpt-to: sagan-alerts@example.com    # Comment out the rcpt-to if you 
+                                           # only want signatures with the 
+                                           # "email" option to e-mail. 
       from: sagan-alert@example.com
       server: 192.168.0.1:25
       subject: "** Sagan Alert **"
