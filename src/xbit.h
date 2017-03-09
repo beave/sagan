@@ -22,8 +22,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Xbit_Set( int, char *, char * );
-int Sagan_Xbit_Condition ( int, char *, char * );
+void Sagan_Xbit_Set( int, char *, char *, int, int );
+int Sagan_Xbit_Condition ( int, char *, char *, int, int );
 int Sagan_Xbit_Type ( char *, int, const char *);
 void Sagan_Xbit_Cleanup(void);
 
@@ -31,6 +31,8 @@ typedef struct _Sagan_Xbit_Track _Sagan_Xbit_Track;
 struct _Sagan_Xbit_Track {
     char	xbit_name[64];
     int		xbit_timeout;
+    int		xbit_srcport;
+    int		xbit_dstport;
 };
 
 
@@ -41,6 +43,8 @@ struct _Sagan_IPC_Xbit {
     sbool xbit_state;
     uint32_t ip_src;
     uint32_t ip_dst;
+    int src_port;
+	int dst_port;
     char username[64];
     uintmax_t xbit_date;
     uintmax_t xbit_expire;

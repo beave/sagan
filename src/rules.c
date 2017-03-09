@@ -618,8 +618,8 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 tmptoken = Remove_Spaces(strtok_r(arg, ",", &saveptrrule2));
 
-                if (strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset_fullname);
+                if (strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports")) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                 }
 
                 if (!strcmp(tmptoken, "noalert")) {
@@ -758,6 +758,84 @@ void Load_Rules( const char *ruleset )
                     }
 
                     xbit_count++;
+
+                }
+
+                /* SET_SRCPORT */
+
+                if (!strcmp(tmptoken, "set_srcport")) {
+                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    }
+
+                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;		/* set_srcport */
+
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+
+                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    }
+
+                    xbit_count++;
+                    counters->xbit_total_counter++;
+
+                }
+
+                /* SET_DSTPORT */
+
+                if (!strcmp(tmptoken, "set_dstport")) {
+                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 6;		/* set_dstport */
+
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+
+                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    xbit_count++;
+                    counters->xbit_total_counter++;
+
+                }
+
+                /* SET_PORTS */
+
+                if (!strcmp(tmptoken, "set_ports")) {
+                    tmptoken = Remove_Spaces(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 7;		/* set_ports */
+
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+
+                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+
+                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    xbit_count++;
+                    counters->xbit_total_counter++;
 
                 }
 
