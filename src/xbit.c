@@ -1122,7 +1122,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_match = true;
+                        xbit_ipc[a].xbit_state = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_srcport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
@@ -1191,7 +1191,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_match = true;
+                        xbit_ipc[a].xbit_state = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_dstport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
@@ -1260,7 +1260,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_match = true;
+                        xbit_ipc[a].xbit_state = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_ports\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
