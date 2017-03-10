@@ -1098,7 +1098,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
         if ( rulestruct[rule_position].xbit_type[i] == 5 ) {
 
-            xbit_match = 0;
+            xbit_match = false;
 
             /* Xbits & (ie - bit1&bit2) */
 
@@ -1122,7 +1122,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_state = 1;
+                        xbit_ipc[a].xbit_match = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_srcport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
@@ -1131,7 +1131,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         pthread_mutex_unlock(&Xbit_Mutex);
                         Sagan_File_Unlock(config->shm_xbit);
 
-                        xbit_match = 1;
+                        xbit_match = true;
                     }
 
                 }
@@ -1139,7 +1139,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 /* If the xbit isn't in memory,  store it to be created later */
 
-                if ( xbit_match == 0 ) {
+                if ( xbit_match == false ) {
 
                     xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
 
@@ -1167,7 +1167,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
         if ( rulestruct[rule_position].xbit_type[i] == 6 ) {
 
-            xbit_match = 0;
+            xbit_match = false;
 
             /* Xbits & (ie - bit1&bit2) */
 
@@ -1191,7 +1191,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_state = 1;
+                        xbit_ipc[a].xbit_match = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_dstport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
@@ -1200,7 +1200,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         pthread_mutex_unlock(&Xbit_Mutex);
                         Sagan_File_Unlock(config->shm_xbit);
 
-                        xbit_match = 1;
+                        xbit_match = true;
                     }
 
                 }
@@ -1208,7 +1208,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 /* If the xbit isn't in memory,  store it to be created later */
 
-                if ( xbit_match == 0 ) {
+                if ( xbit_match == false ) {
 
                     xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
 
@@ -1236,7 +1236,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
         if ( rulestruct[rule_position].xbit_type[i] == 7 ) {
 
-            xbit_match = 0;
+            xbit_match = false;
 
             /* Xbits & (ie - bit1&bit2) */
 
@@ -1260,7 +1260,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         xbit_ipc[a].xbit_date = atol(timet);
                         xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                        xbit_ipc[a].xbit_state = 1;
+                        xbit_ipc[a].xbit_match = true;
 
                         if ( debug->debugxbit) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_ports\" for xbit \"%s\", [%d].  New expire time is %d (%d) [%u -> %u]. ", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].ip_dst);
@@ -1269,7 +1269,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         pthread_mutex_unlock(&Xbit_Mutex);
                         Sagan_File_Unlock(config->shm_xbit);
 
-                        xbit_match = 1;
+                        xbit_match = true;
                     }
 
                 }
@@ -1277,7 +1277,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 /* If the xbit isn't in memory,  store it to be created later */
 
-                if ( xbit_match == 0 ) {
+                if ( xbit_match == false ) {
 
                     xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
 
