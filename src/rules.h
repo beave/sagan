@@ -118,7 +118,7 @@ struct _Rule_Struct {
     sbool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
     sbool xbit_nounified2;                      /* Do we want to suppress "unified2" from xbits in unified2 output */
 
-    int xbit_type[MAX_XBITS];                   /* 1 == set, 2 == unset,  3 == isset, 4 == isnotset */
+    int xbit_type[MAX_XBITS];                   /* 1 == set, 2 == unset,  3 == isset, 4 == isnotset, 5 == set_srcport, 6 == set_dstport, 7 == set_ports */
     int xbit_direction[MAX_XBITS];              /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
     int xbit_timeout[MAX_XBITS];                /* How long a xbit is to stay alive (seconds) */
     char xbit_name[MAX_XBITS][64];              /* Name of the xbit */

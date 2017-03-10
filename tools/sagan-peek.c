@@ -422,9 +422,9 @@ int main(int argc, char **argv)
     if ( counters_ipc->xbit_count >= 1 ) {
 
         printf("\n*** Xbits (%d) ****\n", counters_ipc->xbit_count);
-        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
-        printf("%-9s| %-25s| %-16s| %-16s| %-21s| %s\n", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-        printf("-----------------------------------------------------------------------------------------------------------------------------\n");
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-9s| %-25s| %-16s| %-16s| %-8s| %-8s| %-21s| %s\n", "S", "Xbit name", "SRC IP", "DST IP", "SRC PRT", "DST PRT", "Date added/modified", "Expire");
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->xbit_count; i++) {
 
@@ -440,6 +440,8 @@ int main(int argc, char **argv)
 
             printf("%-16s| ", inet_ntoa(ip_addr_src));
             printf("%-16s| ", inet_ntoa(ip_addr_dst));
+            printf("%-8d| ", xbit_ipc[i].src_port);
+            printf("%-8d| ", xbit_ipc[i].dst_port);
             printf("%-21s| ", u32_time_to_human(xbit_ipc[i].xbit_date));
             printf("%d (%s)\n", xbit_ipc[i].expire, u32_time_to_human(xbit_ipc[i].xbit_date + xbit_ipc[i].expire));
 

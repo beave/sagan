@@ -720,7 +720,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                      ****************************************************************************/
 
                     if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_condition_count ) {
-                        xbit_return = Sagan_Xbit_Condition(b, ip_src, ip_dst);
+                        xbit_return = Sagan_Xbit_Condition(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
                     }
 
                     /****************************************************************************
@@ -1830,7 +1830,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                 }
 
                                                                 if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
-                                                                    Sagan_Xbit_Set(b, ip_src, ip_dst);
+                                                                    Sagan_Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
 
                                                                 threadid++;
 
