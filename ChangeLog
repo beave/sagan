@@ -1,3 +1,27 @@
+2017/03/XX -	Sagan 1.1.6 released. 
+
+                * New Suricata EVE "Alert" compatible JSON output! (still beta!).  See the "eve-log" in the sagan.yaml. Test with EveBox! 
+		* Microsecond resolution added in logging for fast, alert.log & unified2.
+                  https://github.com/beave/sagan/commit/5bf1a65270e50a8e1882e4c3a870589dd22b54ad
+		* Rules will now be distributed with Sagan released (see the "rules" directory). 
+		* Fixed issue #83 - SMTP YAML configation verses rule option bug.
+		  https://github.com/beave/sagan/issues/83
+		  https://github.com/beave/sagan/commit/b2f7e91d6906e87ac436eba91e002bd5729a9940
+		* Merge YoichSec (https://github.com/YoichSec) new xbit feature to track by source & destination ports.
+		  https://github.com/beave/sagan/pull/85
+		  https://github.com/beave/sagan/commit/546867a4ab7c861168acb861abfc9104c1811da6
+		* Removed "static __thread" from Sagan_u32_Time_To_Human() function.
+		  https://github.com/beave/sagan/commit/b6a6d01b8119f7576378e4ed1129193043ae9f8e
+		* Fix for Between_Quotes function related to content:! & meta_content:! rule options.
+		  https://github.com/beave/sagan/commit/2541f2a9e37b56e1ef3bd4a2d5e9c036a9f50e79
+		* Removed "static __thread" from Between_Quotes() function.
+		* Removed "static __thread" from DNS_Lookup() function.
+		* Removed Hex Validate() function (no longer needed)
+		  https://github.com/beave/sagan/commit/188322de08c0ef2ba1b2f11b68e5a5f33bf09c66
+		* Move strlcpy/strlcat prototypes.
+		  https://github.com/beave/sagan/commit/7e038dc4098c71a4ce7106d91617227166ce21c7
+		* Complete re-organization of source tree.  Dropped all "sagan-?.c" prefixes.
+
 2017/02/15 - 	Sagan 1.1.5 released. 
 
 		* Travis-CI (travis.yml) support added to test build Sagan automatically. 
