@@ -50,6 +50,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <stdbool.h>
+#include <sys/wait.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"

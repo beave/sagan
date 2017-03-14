@@ -80,7 +80,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "\"Work-lako\" (Github)\t\t\t\tIdea/patch for syslog-handler.c.\n");
     fprintf(stderr, "Jeremy A. Grove (jgrove@quadrantsec.com)\tBug reporting.\n");
     fprintf(stderr, "Ray Ruvinskiy (Github: rtkrruvinskiy)\t\tDaemonization Fixes.\n");
-    fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tXbit track by src/dst port code.\n"); 
+    fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tXbit track by src/dst port code.\n");
 
     fprintf(stderr, "\n");
 

@@ -39,6 +39,17 @@
 #include <maxminddb.h>
 #endif
 
+
+#ifndef HAVE_STRLCAT
+size_t strlcat(char *, const char *, size_t );
+#endif
+
+#ifndef HAVE_STRLCPY
+size_t strlcpy(char *, const char *, size_t );
+#endif
+
+
+
 #include "sagan-defs.h"
 
 typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */

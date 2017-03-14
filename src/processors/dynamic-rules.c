@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <sys/time.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"

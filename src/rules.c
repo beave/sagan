@@ -119,8 +119,6 @@ void Load_Rules( const char *ruleset )
     char *saveptrflow;
     char *saveptrrange;
     char *tmptoken;
-    char *not;
-    char *savenot=NULL;
 
     char *tok_tmp;
     char *tmptok_tmp;
@@ -137,8 +135,6 @@ void Load_Rules( const char *ruleset )
     char tmp3[MAX_CHECK_FLOWS * 21];
     char tmp2[RULEBUF];
     char tmp[2];
-
-    char rule_tmp[RULEBUF];
 
     char final_content[512];
     char *flow_a;

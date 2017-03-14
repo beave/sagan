@@ -47,7 +47,6 @@ struct _SaganDebug *debug;
 void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 {
 
-    char *ret;
 
     char *proto;
     char *drop;

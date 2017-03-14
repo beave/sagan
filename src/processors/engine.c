@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 #include <pthread.h>
 #include <stdbool.h>
 #include <sys/stat.h>
@@ -200,7 +201,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char  timet[20];
 
     struct timeval tp;
-    long int ms;
 
     uintmax_t thresh_oldtime;
     uintmax_t after_oldtime;

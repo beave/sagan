@@ -37,6 +37,7 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -168,7 +169,6 @@ void Sagan_Report_Clients ( void )
                     alertid=101;		/* See gen-msg.map */
 
                     gettimeofday(&tp, 0);
-                    time_t curtime = tp.tv_sec;
 
                     /* Send alert to output plugins */
 
@@ -223,7 +223,6 @@ void Sagan_Report_Clients ( void )
                     alertid=100;	/* See gen-msg.map  */
 
                     gettimeofday(&tp, 0);
-                    time_t curtime = tp.tv_sec;
 
 
                     /* Send alert to output plugins */

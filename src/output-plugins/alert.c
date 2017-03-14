@@ -37,6 +37,7 @@
 #include "sagan.h"
 
 #include "alert.h"
+#include "util-time.h"
 #include "references.h"
 #include "sagan-config.h"
 

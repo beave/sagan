@@ -115,7 +115,7 @@ void Load_YAML_Config( char *yaml_file )
     unsigned char sub_type = 0;
     unsigned char toggle = 0;
 
-    char *tok;
+    char *tok = NULL;
 
     char last_pass[128];
 

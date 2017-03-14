@@ -80,7 +80,7 @@ int Sagan_Parse_Src_Port (char *msg)
     if ( Sagan_strstr(tmpmsg, " PORT ")) {
 
         portstring = strtok_r(tmpmsg, " ", &saveptr1);
-        for ( i = 0, str = portstring; ; i++, str == NULL ) {
+        for ( i = 0, str = portstring; ; i++ ) { //, str == NULL ) {
 
             token = strtok_r(NULL, " ", &saveptr1);
             if ( token == NULL ) break;
@@ -116,7 +116,7 @@ int Sagan_Parse_Src_Port (char *msg)
     if ( Sagan_strstr(tmpmsg, " SPT")) {
 
         portstring = strtok_r(tmpmsg, " ", &saveptr1);
-        for ( i = 0, str = portstring; ; i++, str == NULL ) {
+        for ( i = 0, str = portstring; ; i++ ) { //, str == NULL ) {
 
             token = strtok_r(NULL, " ", &saveptr1);
             if ( token == NULL ) break;
@@ -140,7 +140,7 @@ int Sagan_Parse_Src_Port (char *msg)
 
         portstring = strtok_r(tmpmsg, ":", &saveptr1);
         token = strtok_r(portstring, " ", &saveptr2);
-        for ( i = 0, str = portstring; ; i++, str == NULL ) {
+        for ( i = 0, str = portstring; ; i++ ) { //, str == NULL ) {
             token = strtok_r(NULL, " ", &saveptr2);
             if ( token == NULL ) break;
 
@@ -172,7 +172,7 @@ int Sagan_Parse_Src_Port (char *msg)
 
         portstring = strtok_r(tmpmsg, "#", &saveptr1);
         token = strtok_r(portstring, " ", &saveptr2);
-        for ( i = 0, str = portstring; ; i++, str == NULL ) {
+        for ( i = 0, str = portstring; ; i++ ) { //, str == NULL ) {
             token = strtok_r(NULL, " ", &saveptr2);
             if ( token == NULL ) break;
 
@@ -230,7 +230,7 @@ int Sagan_Parse_Dst_Port (char *msg)
     if ( Sagan_strstr(tmpmsg, " DPT")) {
 
         portstring = strtok_r(tmpmsg, " ", &saveptr1);
-        for ( i = 0, str = portstring; ; i++, str == NULL ) {
+        for ( i = 0, str = portstring; ; i++ ) { //, str == NULL ) {
 
             token = strtok_r(NULL, " ", &saveptr1);
             if ( token == NULL ) break;

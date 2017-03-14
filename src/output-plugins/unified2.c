@@ -653,12 +653,12 @@ void Sagan_WriteExtraData( _Sagan_Event *Event, int type )
 
     case EVENT_INFO_HTTP_URI:
 
-        buffer = Event->normalize_http_uri;
+        buffer = (uint8_t*)Event->normalize_http_uri;
         break;
 
     case EVENT_INFO_HTTP_HOSTNAME:
 
-        buffer = Event->normalize_http_hostname;
+        buffer = (uint8_t*)Event->normalize_http_hostname;
         break;
 
     default:
