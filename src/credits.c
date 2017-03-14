@@ -38,7 +38,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "Champ Clark III (cclark@quadrantsec.com)\tLead developer.\n");
     fprintf(stderr, "Robert Nunley (rnunley@quadrantsec.com)\t\tRules/Ideas.\n");
     fprintf(stderr, "Brian Echeverry (becheverry@quadrantsec.com)\tRules/testing/bug report.\n");
-    fprintf(stderr, "Marcus Ranum\t\t\t\t\tsagan-plog.c code.\n");
+    fprintf(stderr, "Marcus Ranum\t\t\t\t\tplog.c code.\n");
     fprintf(stderr, "\"DrForbin\"\t\t\t\t\tPatches/testing/bug fixes.\n");
     fprintf(stderr, "Rainer Gerhards\t\t\t\t\tRsyslog/Liblognorm author.\n");
     fprintf(stderr, "Bruce M. Wink (bwink@quadrantsec.com)\t\tIdeas.\n");
@@ -77,7 +77,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "Steve Rawls (srawls@quadrantsec.com)\t\tBug reports & features.\n");
     fprintf(stderr, "\"bhennigar\" (Github)\t\t\t\tBug reporting & testing.\n");
     fprintf(stderr, "Corey Fisher (cfisher@quadrantsec.com)\t\tCode testing & debugging.\n");
-    fprintf(stderr, "\"Work-lako\" (Github)\t\t\t\tIdea/patch for sagan-syslog.c.\n");
+    fprintf(stderr, "\"Work-lako\" (Github)\t\t\t\tIdea/patch for syslog-handler.c.\n");
     fprintf(stderr, "Jeremy A. Grove (jgrove@quadrantsec.com)\tBug reporting.\n");
     fprintf(stderr, "Ray Ruvinskiy (Github: rtkrruvinskiy)\t\tDaemonization Fixes.\n");
     fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tXbit track by src/dst port code.\n"); 
