@@ -490,4 +490,4 @@ void Sagan_Set_Pipe_Size( FILE * );
 #endif
 
 int64_t FlowGetId( _Sagan_Event *);
-
+sbool Check_Content_Not( char * );

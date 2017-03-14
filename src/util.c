@@ -1279,3 +1279,38 @@ int64_t FlowGetId( _Sagan_Event *Event)
            (int64_t)(Event->event_time.tv_usec & 0x0000FFFF);
 }
 
+/***************************************************************************/
+/* Check_Content_Not - Simply returns true/false if a "not" (!) is present */
+/* in a string.  For example, content!"something";                         */
+/***************************************************************************/
+
+sbool Check_Content_Not( char *s )
+{
+
+    char rule_tmp[RULEBUF];
+    int i;
+
+    strlcpy(rule_tmp, s, sizeof(rule_tmp));
+
+    for (i=0; i<strlen(rule_tmp); i++) {
+
+        /* We found the first ",  no need to go any further */
+
+        if ( rule_tmp[i] == '"' ) {
+
+            return(false);
+
+        }
+
+        /* Got ! .  This is a content:! or meta_content:! rule! */
+
+        else if ( rule_tmp[i] == '!' ) {
+
+            return(true);
+
+        }
+    }
+
+    return(false);
+}
+

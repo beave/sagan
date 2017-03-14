@@ -136,6 +136,9 @@ void Load_Rules( const char *ruleset )
     char tmp3[MAX_CHECK_FLOWS * 21];
     char tmp2[RULEBUF];
     char tmp[2];
+
+    char rule_tmp[RULEBUF];
+
     char final_content[512];
     char *flow_a;
     char *flow_b;
@@ -933,6 +936,11 @@ void Load_Rules( const char *ruleset )
                 }
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                if ( Check_Content_Not(arg) == true ) {
+                    rulestruct[counters->rulecount].meta_content_not[content_count] = true;
+                }
+
                 tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
                 if ( tmptoken == NULL ) {
@@ -967,15 +975,9 @@ void Load_Rules( const char *ruleset )
 
                 rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_counter = meta_content_converted_count;
 
-                rulestruct[counters->rulecount].meta_content_flag = 1;
+                rulestruct[counters->rulecount].meta_content_flag = true;
 
                 tmptoken = strtok_r(NULL, ",", &saveptrrule2);
-
-                not = strtok_r(arg, "\"", &savenot);
-
-                if (Sagan_strstr(not, "!")) {
-                    rulestruct[counters->rulecount].meta_content_not[meta_content_count] = 1;
-                }
 
                 meta_content_count++;
                 rulestruct[counters->rulecount].meta_content_count=meta_content_count;
@@ -1155,30 +1157,30 @@ void Load_Rules( const char *ruleset )
                 strlcpy(rulestruct[counters->rulecount].s_msg, tmp2, sizeof(rulestruct[counters->rulecount].s_msg));
             }
 
+            /* Good ole "content" style search */
+
             if (!strcmp(rulesplit, "content" )) {
                 if ( content_count > MAX_CONTENT ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] There is to many \"content\" types in the rule at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
                 arg = strtok_r(NULL, ";", &saveptrrule2);
+
+                /* For content: ! "something" */
+
+                if ( Check_Content_Not(arg) == true ) {
+                    rulestruct[counters->rulecount].content_not[content_count] = true;
+                }
+
                 strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-
                 /* Convert HEX encoded data */
 
                 strlcpy(final_content, Sagan_Content_Pipe(tmp2, linecount, ruleset_fullname), sizeof(final_content));
-
-                /* For content: ! "something" */
-
-                not = strtok_r(arg, "\"", &savenot);
-
-                if (Sagan_strstr(not, "!")) {
-                    rulestruct[counters->rulecount].content_not[content_count] = 1;
-                }
 
                 strlcpy(rulestruct[counters->rulecount].s_content[content_count], final_content, sizeof(rulestruct[counters->rulecount].s_content[content_count]));
                 final_content[0] = '\0';

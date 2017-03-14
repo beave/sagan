@@ -876,8 +876,8 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
                              xbit_ipc[a].ip_src == ip_src &&
                              xbit_ipc[a].ip_dst == ip_dst &&
-							 xbit_ipc[a].src_port == src_port &&
-							 xbit_ipc[a].dst_port == dst_port ) {
+                             xbit_ipc[a].src_port == src_port &&
+                             xbit_ipc[a].dst_port == dst_port ) {
 
                             if ( debug->debugxbit) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
@@ -899,7 +899,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
                              xbit_ipc[a].ip_src == ip_src &&
-							 xbit_ipc[a].src_port == src_port )
+                             xbit_ipc[a].src_port == src_port )
 
                         {
 
@@ -924,7 +924,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
                              xbit_ipc[a].ip_dst == ip_dst &&
-							 xbit_ipc[a].dst_port == dst_port ) {
+                             xbit_ipc[a].dst_port == dst_port ) {
 
                             if ( debug->debugxbit) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);

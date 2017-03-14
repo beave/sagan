@@ -44,7 +44,7 @@ struct _Sagan_IPC_Xbit {
     uint32_t ip_src;
     uint32_t ip_dst;
     int src_port;
-	int dst_port;
+    int dst_port;
     char username[64];
     uintmax_t xbit_date;
     uintmax_t xbit_expire;
