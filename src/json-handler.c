@@ -38,6 +38,8 @@
 
 #include "sagan.h"
 #include "references.h"
+#include "util-base64.h"
+#include "util-time.h"
 #include "sagan-config.h"
 #include "json-handler.h"
 
@@ -48,8 +50,8 @@ void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 {
 
 
-    char *proto;
-    char *drop;
+    char *proto = NULL;
+    char *drop = NULL;
 
     char timebuf[64];
     char classbuf[64];
@@ -84,7 +86,7 @@ void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     unsigned long b64_len = strlen(Event->message) * 2;
     uint8_t b64_target[b64_len];
 
-    Base64Encode(Event->message, strlen(Event->message), b64_target, &b64_len);
+    Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
     Sagan_Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
     snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "");
