@@ -1,4 +1,4 @@
-2017/03/XX -	Sagan 1.1.6 released. 
+2017/03/16 -	Sagan 1.1.6 released. 
 
                 * New Suricata EVE "Alert" compatible JSON output! (still beta!).  See the "eve-log" in the sagan.yaml. Test with EveBox! 
 		* Microsecond resolution added in logging for fast, alert.log & unified2.
