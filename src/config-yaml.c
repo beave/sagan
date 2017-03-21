@@ -476,9 +476,13 @@ void Load_YAML_Config( char *yaml_file )
                             config->sagan_proto = 6;
                         }
 
+			else if ( !strcasecmp(value, "icmp") ) { 
+			    config->sagan_proto = 1; 
+			} 
+
                         else if ( strcasecmp(value, "tcp") && strcasecmp(value, "udp") ) {
 
-                            Sagan_Log(S_ERROR, "[%s, line %d] 'default_proto' can only be TCP or UDP.", __FILE__, __LINE__);
+                            Sagan_Log(S_ERROR, "[%s, line %d] 'default_proto' can only be TCP, UDP or ICMP.", __FILE__, __LINE__);
 
                         }
 
