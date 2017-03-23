@@ -693,17 +693,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     ip_src_u32 = IP2Bit(ip_src);
                     ip_dst_u32 = IP2Bit(ip_dst);
 
-                    ip_dstport_u32 = normalize_dst_port;
                     ip_srcport_u32 = normalize_src_port;
+                    ip_dstport_u32 = normalize_dst_port;
 
                     strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
                     /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
-                    the rule has some sort of flow.  It 0,  rule is set any/any */
+                    the rule has some sort of flow.  It 0,  rule is set any:any/any:any */
 
                     if ( rulestruct[b].has_flow == 1 ) {
 
-                        check_flow_return = Sagan_Check_Flow( b, ip_src_u32, ip_dst_u32);
+                        check_flow_return = Sagan_Check_Flow( b, ip_src_u32, normalize_src_port, ip_dst_u32, normalize_dst_port);
 
                         if(check_flow_return == false) {
 

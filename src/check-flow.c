@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 /* 3 = match ip     */ /************************/ /*****************/
 /********************/ /************************/ /*****************/
 
-sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
+sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port)
 {
 
     uint32_t *src;
@@ -54,15 +54,22 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
     uint32_t ip_src;
     uint32_t ip_dst;
 
+    int port_src;
+	int port_dst;
+
     src = &ip_src_u32;
     dst = &ip_dst_u32;
 
     if(rulestruct[b].direction == 0 || rulestruct[b].direction == 1) {
         ip_src = *src;
         ip_dst = *dst;
+        port_src = normalize_src_port;
+        port_dst = normalize_dst_port;
     } else {
         ip_src = *dst;
         ip_dst = *src;
+        port_src = normalize_dst_port;
+        port_dst = normalize_src_port;
     }
 
     /*flow 1*/
@@ -78,6 +85,9 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
 //    char tmp_flow_1[512];
     int f1;
 
+    /*port 1*/
+    int b1=0;
+
     /*flow 2*/
     int z=0;
     int a2=0;
@@ -90,6 +100,9 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
 //    char *tmp2;
 //    char tmp_flow_2[512];
     int f2;
+
+    /*port 2*/
+    int b2=0;
 
 //    uint32_t lo;
 //    uint32_t hi;
@@ -150,6 +163,19 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
         }
     }
 
+    /*Begin port_1*/
+    if(rulestruct[b].port_1_var != 0) {
+        if(port_src == rulestruct[b].src_port) {
+            b1=1;
+    	}
+    } else {
+        b1=1;
+    }
+
+    if(b1 != 1) {
+        return 0;
+    }
+
     /*Begin flow_2*/
     if(rulestruct[b].flow_2_var != 0) {
         for(i=0; i < rulestruct[b].flow_2_counter + 1; i++) {
@@ -201,6 +227,19 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32)
         if(failed > 0) {
             return 0;
         }
+    }
+
+    /*Begin port_2*/
+    if(rulestruct[b].port_2_var != 0) {
+        if(port_dst == rulestruct[b].dst_port) {
+            b2=1;
+    	}
+    } else {
+        b2=1;
+    }
+
+    if(b2 != 1) {
+        return 0;
     }
 
     /* If we made it to this point we have a match */

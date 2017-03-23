@@ -412,18 +412,19 @@ void Load_Rules( const char *ruleset )
 
                 //src_port = config->sagan_port;                            /* Set to default */
 
-                if (strcmp(nettmp, "any")) {
-                    src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
+                if (!strcmp(nettmp, "any")) {
+                    rulestruct[counters->rulecount].port_1_var = 0;	  /* 0 = any */
                 }
+                else {
+                  rulestruct[counters->rulecount].port_1_var = 1;	  /* 1 = var */
+                  if (Is_Numeric(nettmp)) {
+                      src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                  }
 
-                if (Is_Numeric(nettmp)) {
-                    src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                  if ( src_port == 0 ) {
+                      Sagan_Log(S_ERROR, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                  }
                 }
-
-                if ( src_port == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                }
-
                 rulestruct[counters->rulecount].src_port = src_port;      /* Set for the rule */
             }
 
@@ -497,13 +498,6 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-            /* Used later for a single check to determine if a rule has a flow or not
-               - Champ Clark III (06/12/2016) */
-
-            if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 ) {
-                rulestruct[counters->rulecount].has_flow = 1;
-            }
-
 	    dst_port = config->sagan_port;                          /* Set to default */
 
             /* Destination Port */
@@ -511,21 +505,25 @@ void Load_Rules( const char *ruleset )
 
                 //dst_port = config->sagan_port;				/* Set to default */
 
-                if (strcmp(nettmp, "any")) {
-                    dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
+                if (!strcmp(nettmp, "any")) {
+                	rulestruct[counters->rulecount].port_2_var = 0;	  /* 0 = any */
                 }
+                else {
+                  rulestruct[counters->rulecount].port_2_var = 1;	  /* 1 = var */
+                  if (Is_Numeric(nettmp)) {
+                      dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                  }
 
-                if (Is_Numeric(nettmp)) {
-                    dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                  if ( dst_port == 0 ) {
+                      Sagan_Log(S_ERROR, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                  }
                 }
-
-                if ( dst_port == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                }
-
                 rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
             }
 
+            if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0) {
+                rulestruct[counters->rulecount].has_flow = 1;
+            }
 
             tokennet = strtok_r(NULL, " ", &saveptrnet);
             nettmp = Sagan_Var_To_Value(tokennet); 			/* Convert $VAR to values per line */

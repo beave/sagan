@@ -85,6 +85,8 @@ struct _Rule_Struct {
 
     sbool flow_1_var;
     sbool flow_2_var;
+    sbool port_1_var;
+    sbool port_2_var;
 
     sbool has_flow;
 
@@ -92,6 +94,7 @@ struct _Rule_Struct {
     int flow_2_type[MAX_CHECK_FLOWS];
     int  flow_1_counter;
     int  flow_2_counter;
+
 
     sbool s_nocase[MAX_CONTENT];
     int s_offset[MAX_CONTENT];
