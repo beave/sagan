@@ -476,9 +476,9 @@ void Load_YAML_Config( char *yaml_file )
                             config->sagan_proto = 6;
                         }
 
-			else if ( !strcasecmp(value, "icmp") ) { 
-			    config->sagan_proto = 1; 
-			} 
+                        else if ( !strcasecmp(value, "icmp") ) {
+                            config->sagan_proto = 1;
+                        }
 
                         else if ( strcasecmp(value, "tcp") && strcasecmp(value, "udp") ) {
 
@@ -1232,6 +1232,7 @@ void Load_YAML_Config( char *yaml_file )
                     else if ( !strcmp(last_pass, "priority") && config->sagan_esmtp_flag == true ) {
 
                         /* This can have a zero value */
+
                         config->min_email_priority = atoi(Sagan_Var_To_Value(value));
 
                     }

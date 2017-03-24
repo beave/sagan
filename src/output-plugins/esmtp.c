@@ -65,13 +65,13 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
     char tmpb[MAX_EMAILSIZE];
     int r = 0;
 
-
-    /* If the events doesnt have enought priority,  short circuit here.  If the
+    /* If the events doesnt have a high enough priority, short circuit here.  If the
      * config->min_email_priority == 0,  then e-mail everything */
 
     if ( config->min_email_priority != 0 ) {
 
-        if ( Event->pri > config->min_email_priority ) {
+        if ( Event->pri < config->min_email_priority ) {
+
             if ( debug->debugesmtp ) {
                 Sagan_Log(S_DEBUG, "Event priority (%d) is not < min_email_priority (%d)", Event->pri, config->min_email_priority);
             }

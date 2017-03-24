@@ -329,8 +329,8 @@ void Load_Rules( const char *ruleset )
             }
 
             /* Protocol */
-	
-	    ip_proto = config->sagan_proto;
+
+            ip_proto = config->sagan_proto;
 
             if ( netcount == 1 ) {
 
@@ -405,15 +405,18 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-	    src_port = config->sagan_port;                            /* Set to default */
-
             /* Source Port */
+
             if ( netcount == 3 ) {
 
-                //src_port = config->sagan_port;                            /* Set to default */
-
                 if (strcmp(nettmp, "any")) {
+
                     src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
+
+                } else {
+
+                    src_port = config->sagan_port;                            /* Set to default */
+
                 }
 
                 if (Is_Numeric(nettmp)) {
@@ -504,16 +507,21 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].has_flow = 1;
             }
 
-	    dst_port = config->sagan_port;                          /* Set to default */
 
             /* Destination Port */
+
             if ( netcount == 6 ) {
 
-                //dst_port = config->sagan_port;				/* Set to default */
-
                 if (strcmp(nettmp, "any")) {
+
                     dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
+
+                } else {
+
+                    dst_port = config->sagan_port;                          /* Set to default */
+
                 }
+
 
                 if (Is_Numeric(nettmp)) {
                     dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
@@ -564,59 +572,59 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].s_find_proto_program = true;
             }
 
-	    if (!strcmp(rulesplit, "default_proto")) { 
-		
-		arg = strtok_r(NULL, ":", &saveptrrule2);
+            if (!strcmp(rulesplit, "default_proto")) {
 
-		if ( arg == NULL ) { 
-			Sagan_Log(S_ERROR, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-		} 
-
-		Remove_Spaces(Sagan_Var_To_Value(arg)); 
-
-		if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
-			rulestruct[counters->rulecount].ip_proto = 1; 
-		} 
-
-		else if (!strcmp(arg, "tcp" ) || !strcmp(arg, "6" )) {
-			rulestruct[counters->rulecount].ip_proto = 6; 
-		} 
-
-		else if (!strcmp(arg, "udp" ) || !strcmp(arg, "17" )) {
-			rulestruct[counters->rulecount].ip_proto = 17;
-		}
-	
-	    }
-
-	    if (!strcmp(rulesplit, "default_src_port")) {
-
-		arg = strtok_r(NULL, ":", &saveptrrule2);
-
-		if ( arg == NULL ) { 
-                        Sagan_Log(S_ERROR, "[%s, line %d] The \"default_src_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                }
-
-		Remove_Spaces(Sagan_Var_To_Value(arg));
-
-
-		rulestruct[counters->rulecount].src_port = atoi(arg); 
-
-	    }
-
-	
-            if (!strcmp(rulesplit, "default_dst_port")) {
-                
                 arg = strtok_r(NULL, ":", &saveptrrule2);
-                
+
                 if ( arg == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] The \"default_dst_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
-                
+
                 Remove_Spaces(Sagan_Var_To_Value(arg));
-            
-            
+
+                if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
+                    rulestruct[counters->rulecount].ip_proto = 1;
+                }
+
+                else if (!strcmp(arg, "tcp" ) || !strcmp(arg, "6" )) {
+                    rulestruct[counters->rulecount].ip_proto = 6;
+                }
+
+                else if (!strcmp(arg, "udp" ) || !strcmp(arg, "17" )) {
+                    rulestruct[counters->rulecount].ip_proto = 17;
+                }
+
+            }
+
+            if (!strcmp(rulesplit, "default_src_port")) {
+
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                if ( arg == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_src_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                }
+
+                Remove_Spaces(Sagan_Var_To_Value(arg));
+
+
+                rulestruct[counters->rulecount].src_port = atoi(arg);
+
+            }
+
+
+            if (!strcmp(rulesplit, "default_dst_port")) {
+
+                arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                if ( arg == NULL ) {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_dst_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                }
+
+                Remove_Spaces(Sagan_Var_To_Value(arg));
+
+
                 rulestruct[counters->rulecount].dst_port = atoi(arg);
-            
+
             }
 
             if (!strcmp(rulesplit, "parse_src_ip")) {
