@@ -175,6 +175,10 @@ void Load_Rules( const char *ruleset )
     int dst_port=0;
     int src_port=0;
 
+    int default_proto=0;
+    int default_dst_port=0;
+    int default_src_port=0;
+
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
     strlcpy(ruleset_fullname, ruleset, sizeof(ruleset_fullname));
@@ -405,7 +409,7 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-	    src_port = config->sagan_port;                            /* Set to default */
+//	    src_port = config->sagan_port;                            /* Set to default */
 
             /* Source Port */
             if ( netcount == 3 ) {
@@ -498,7 +502,7 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-	    dst_port = config->sagan_port;                          /* Set to default */
+//	    dst_port = config->sagan_port;                          /* Set to default */
 
             /* Destination Port */
             if ( netcount == 6 ) {
@@ -570,22 +574,23 @@ void Load_Rules( const char *ruleset )
 			Sagan_Log(S_ERROR, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
 		} 
 
-		Remove_Spaces(Sagan_Var_To_Value(arg)); 
+		arg = Remove_Spaces(Sagan_Var_To_Value(arg));
 
 		if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
-			rulestruct[counters->rulecount].ip_proto = 1; 
+			rulestruct[counters->rulecount].default_proto = 1;
 		} 
 
 		else if (!strcmp(arg, "tcp" ) || !strcmp(arg, "6" )) {
-			rulestruct[counters->rulecount].ip_proto = 6; 
+			rulestruct[counters->rulecount].default_proto = 6;
 		} 
 
 		else if (!strcmp(arg, "udp" ) || !strcmp(arg, "17" )) {
-			rulestruct[counters->rulecount].ip_proto = 17;
+			rulestruct[counters->rulecount].default_proto = 17;
 		}
 	
 	    }
 
+	    default_src_port = config->sagan_port;
 	    if (!strcmp(rulesplit, "default_src_port")) {
 
 		arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -597,11 +602,11 @@ void Load_Rules( const char *ruleset )
 		Remove_Spaces(Sagan_Var_To_Value(arg));
 
 
-		rulestruct[counters->rulecount].src_port = atoi(arg); 
+		rulestruct[counters->rulecount].default_src_port = atoi(arg);
 
 	    }
 
-	
+            default_dst_port = config->sagan_port;
             if (!strcmp(rulesplit, "default_dst_port")) {
                 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -613,7 +618,7 @@ void Load_Rules( const char *ruleset )
                 Remove_Spaces(Sagan_Var_To_Value(arg));
             
             
-                rulestruct[counters->rulecount].dst_port = atoi(arg);
+                rulestruct[counters->rulecount].default_dst_port = atoi(arg);
             
             }
 

@@ -208,7 +208,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
-    int proto = config->sagan_proto;		/* Set proto to default */
+//    int proto = config->sagan_proto;		/* Set proto to default */
+    int proto = 0;
 
     sbool brointel_results = 0;
     sbool blacklist_results = 0;
@@ -642,10 +643,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     /* If the rule calls for proto searching,  we do it now */
 
-                    proto = 0;
+//                    proto = 0;
+
+                    proto = rulestruct[b].default_proto;
 
                     if ( rulestruct[b].s_find_proto_program == 1 ) {
-                        proto = Sagan_Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
+//                        proto = Sagan_Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                     }
 
                     if ( rulestruct[b].s_find_proto == 1 && proto == 0 ) {
@@ -655,9 +658,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                        use */
 
-                    if ( proto == 0 ) {
-                        proto = rulestruct[b].ip_proto;
-                    }
+//                    if ( proto == 0 ) {
+//                        proto = rulestruct[b].default_proto;
+//                    }
 
                     if ( ip_src_flag == 0 || ip_src[0] == '0' ) {
                         strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
@@ -668,11 +671,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     }
 
                     if ( normalize_src_port == 0 ) {
+                        normalize_src_port=rulestruct[b].default_src_port;
+                    }
+
+                    if ( normalize_src_port == 0 ) {
                         normalize_src_port=config->sagan_port;
                     }
 
                     if ( normalize_dst_port == 0 ) {
-                        normalize_dst_port=rulestruct[b].dst_port;
+                        normalize_dst_port=rulestruct[b].default_dst_port;
+                    }
+
+                    if ( normalize_dst_port == 0 ) {
+                        normalize_dst_port=config->sagan_port;
                     }
 
                     if ( proto == 0 ) {
