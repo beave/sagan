@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <sys/time.h>
 #include <time.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "util-time.h"
@@ -85,3 +86,111 @@ void CreateIsoTimeString (const struct timeval *ts, char *str, size_t size)
     strftime(time_fmt, sizeof(time_fmt), "%Y-%m-%dT%H:%M:%S.%%06u%z", t);
     snprintf(str, size, time_fmt, ts->tv_usec);
 }
+
+
+/* This function should be removed and replaced */
+
+void Sagan_Return_Date( uint32_t utime, char *str, size_t size )
+{
+
+    struct tm tm;
+    char tmp[80];
+    char time_buf[80];
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%F", &tm);
+
+    snprintf(str, size, "%s", time_buf);
+
+}
+
+/* This function should be removed and replaced */
+
+void Sagan_Return_Time( uint32_t utime, char *str, size_t size )
+{
+
+    struct tm tm;
+
+    char time_buf[80];
+    char tmp[80];
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%T", &tm);
+
+    snprintf(str, size, "%s", time_buf);
+
+}
+
+
+/****************************************************************************
+ * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
+ * "readable" format.
+ ****************************************************************************/
+
+void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
+{
+
+    struct tm tm;
+    char time_buf[80];
+    char tmp[80];
+
+    memset(&tm, 0, sizeof(struct tm));
+    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
+
+    strptime(tmp, "%s", &tm);
+    strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);
+
+    snprintf(str, size, "%s", time_buf);
+
+}
+
+
+/*************************************************************/
+/* Returns the numbers of seconds.  For example, "1 hour" == */
+/* 3600                                                      */
+/*************************************************************/
+
+uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
+{
+
+    /* Covers both plural and non-plural (ie - minute/minutes) */
+
+    if (Sagan_strstr(type, "second")) {
+        return(number);
+    }
+
+    if (Sagan_strstr(type, "minute")) {
+        return(number * 60);
+    }
+
+    if (Sagan_strstr(type, "hour")) {
+        return(number * 60 * 60);
+    }
+
+    if (Sagan_strstr(type, "day")) {
+        return(number * 60 * 60 * 24);
+    }
+
+    if (Sagan_strstr(type, "week")) {
+        return(number * 60 * 60 * 24 * 7);
+    }
+
+    if (Sagan_strstr(type, "month")) {
+        return(number * 60 * 60 * 24 * 7 * 4);
+    }
+
+    if (Sagan_strstr(type, "year")) {
+        return(number * 60 * 60 * 24 * 365);
+    }
+
+    Sagan_Log(S_WARN, "'%s' type is unknown!", type);
+    return(0);
+
+}
+

@@ -476,9 +476,6 @@ char *Netaddr_To_Range( char * );
 char *Strip_Chars(const char *string, const char *chars);
 sbool Is_IP (char *str);
 
-void Sagan_Return_Date( uint32_t, char *str, size_t size );
-void Sagan_Return_Time( uint32_t, char *str, size_t size );
-
 sbool Sagan_File_Lock ( int );
 sbool Sagan_File_Unlock ( int );
 

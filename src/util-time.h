@@ -21,5 +21,9 @@
 struct tm *Sagan_LocalTime(time_t , struct tm *);
 void CreateTimeString (const struct timeval *, char *, size_t , sbool );
 void CreateIsoTimeString (const struct timeval *, char *, size_t );
+void Sagan_Return_Date( uint32_t, char *str, size_t size );
+void Sagan_Return_Time( uint32_t, char *str, size_t size );
+
+
 
 

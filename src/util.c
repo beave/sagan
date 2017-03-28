@@ -874,64 +874,6 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 
 #endif
 
-void Sagan_Return_Date( uint32_t utime, char *str, size_t size )
-{
-
-    struct tm tm;
-    char tmp[80];
-    char time_buf[80];
-
-    memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
-
-    strptime(tmp, "%s", &tm);
-    strftime(time_buf, sizeof(time_buf), "%F", &tm);
-
-    snprintf(str, size, "%s", time_buf);
-
-}
-
-void Sagan_Return_Time( uint32_t utime, char *str, size_t size )
-{
-
-    struct tm tm;
-
-    char time_buf[80];
-    char tmp[80];
-
-    memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
-
-    strptime(tmp, "%s", &tm);
-    strftime(time_buf, sizeof(time_buf), "%T", &tm);
-
-    snprintf(str, size, "%s", time_buf);
-
-}
-
-
-/****************************************************************************
- * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
- * "readable" format.
- ****************************************************************************/
-
-void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
-{
-
-    struct tm tm;
-    char time_buf[80];
-    char tmp[80];
-
-    memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", (unsigned long)utime);
-
-    strptime(tmp, "%s", &tm);
-    strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);
-
-    snprintf(str, size, "%s", time_buf);
-
-}
-
 /****************************************************************************
  * Sagan_File_Lock - Takes in a file descriptor and "locks" the file.  Used
  * with IPC/memory mapped files.
@@ -1017,6 +959,7 @@ in_addr_t Netmask( int prefix )
 /******************************************************/
 /* Compute broadcast address given address and prefix */
 /******************************************************/
+
 in_addr_t Broadcast( in_addr_t addr, int prefix )
 {
 
@@ -1028,6 +971,7 @@ in_addr_t Broadcast( in_addr_t addr, int prefix )
 /****************************************************/
 /* Compute network address given address and prefix */
 /****************************************************/
+
 in_addr_t Network( in_addr_t addr, int prefix )
 {
 
@@ -1038,6 +982,7 @@ in_addr_t Network( in_addr_t addr, int prefix )
 /*************************************************************/
 /* Convert an A.B.C.D address into a 32-bit host-order value */
 /*************************************************************/
+
 in_addr_t A_To_Hl( char *ipstr )
 {
 
@@ -1052,9 +997,10 @@ in_addr_t A_To_Hl( char *ipstr )
 } /* a_to_hl() */
 
 /*******************************************************************/
-/* convert a network address char string into a host-order network */
+/* Convert a network address char string into a host-order network */
 /* address and an integer prefix value                             */
 /*******************************************************************/
+
 network_addr_t Str_To_Netaddr( char *ipstr )
 {
 
@@ -1088,6 +1034,7 @@ network_addr_t Str_To_Netaddr( char *ipstr )
 /* Convert an IP or IP/CIDR into 32bit decimal single IP or 32bit decimal  */
 /* IP low and high range                                                   */
 /***************************************************************************/
+
 char *Netaddr_To_Range( char ipstr[21] )
 {
 
@@ -1193,49 +1140,6 @@ sbool Is_IP (char *str)
 
         return(false);
     }
-
-}
-
-/*************************************************************/
-/* Returns the numbers of seconds.  For example, "1 hour" == */
-/* 3600                                                      */
-/*************************************************************/
-
-uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
-{
-
-    /* Covers both plural and non-plural (ie - minute/minutes) */
-
-    if (Sagan_strstr(type, "second")) {
-        return(number);
-    }
-
-    if (Sagan_strstr(type, "minute")) {
-        return(number * 60);
-    }
-
-    if (Sagan_strstr(type, "hour")) {
-        return(number * 60 * 60);
-    }
-
-    if (Sagan_strstr(type, "day")) {
-        return(number * 60 * 60 * 24);
-    }
-
-    if (Sagan_strstr(type, "week")) {
-        return(number * 60 * 60 * 24 * 7);
-    }
-
-    if (Sagan_strstr(type, "month")) {
-        return(number * 60 * 60 * 24 * 7 * 4);
-    }
-
-    if (Sagan_strstr(type, "year")) {
-        return(number * 60 * 60 * 24 * 365);
-    }
-
-    Sagan_Log(S_WARN, "'%s' type is unknown!", type);
-    return(0);
 
 }
 
