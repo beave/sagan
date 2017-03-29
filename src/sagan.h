@@ -66,13 +66,13 @@ void    Sagan_Chroot( const char * );
 char   *Remove_Return(char *);
 
 
-int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size );
+int Sagan_Classtype_Lookup( const char *, char *, size_t size );
 
 
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
 double CalcPct(uintmax_t, uintmax_t);
-char   *Replace_String(char *, char *, char *);
+char   *Replace_String(char *, char *, char *); 
 char   *Get_Filename(char *);
 
 uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);
@@ -458,13 +458,16 @@ void Sagan_Droppriv( void );
 
 int DNS_Lookup( char *, char *str, size_t size );
 
-char *Sagan_Var_To_Value(char *);
+void Sagan_Var_To_Value(char *, char *str, size_t size);
 
 uint32_t IP2Bit (char * );
 char *Bit2IP(uint32_t);
 
-int Sagan_Validate_HEX (const char *);
-char *Sagan_Content_Pipe(char *, int, const char *);
+sbool Sagan_Validate_HEX (const char *);
+
+
+char *Sagan_Content_Pipe(char *, int, const char *, char *, size_t size);
+
 sbool is_rfc1918 ( uint32_t );
 char *Sagan_Replace_Sagan( char *, char *);
 int Sagan_Character_Count ( char *, char *);

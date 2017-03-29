@@ -61,7 +61,7 @@ void Load_Reference( const char *ruleset )
 {
 
     FILE *reffile;
-
+    
     char refbuf[1024];
     char *saveptr=NULL;
     char *tmptoken=NULL;

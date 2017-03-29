@@ -117,6 +117,8 @@ void Load_YAML_Config( char *yaml_file )
 
     char *tok = NULL;
 
+    char tmp[CONFBUF] = { 0 }; 
+
     char last_pass[128];
 
     int a;
@@ -413,9 +415,10 @@ void Load_YAML_Config( char *yaml_file )
 
                 } else {
 
-                    Sagan_Log(S_NORMAL, "Loading included file '%s'.", Sagan_Var_To_Value(value));
 
-                    Load_YAML_Config(Sagan_Var_To_Value(value));
+		    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                    Sagan_Log(S_NORMAL, "Loading included file '%s'.", tmp);
+                    Load_YAML_Config(tmp);
 
                     toggle = 1;
 
@@ -459,7 +462,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "default-port")) {
 
-                        config->sagan_port = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->sagan_port = atoi(tmp);
 
                         if ( config->sagan_port == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
@@ -507,7 +511,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "fifo-size")) {
 
-                        config->sagan_fifo_size = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        config->sagan_fifo_size = atoi(tmp);
 
                         if ( config->sagan_fifo_size == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'fifo-size' is set to zero. Abort!", __FILE__, __LINE__);
@@ -526,7 +531,8 @@ void Load_YAML_Config( char *yaml_file )
 #endif
                     else if (!strcmp(last_pass, "max-threads")) {
 
-                        config->max_processor_threads = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_processor_threads = atoi(tmp);
 
                         if ( config->max_processor_threads  == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'max_threads' is zero/invalid. Abort!", __FILE__, __LINE__);
@@ -536,25 +542,29 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "classification")) {
 
-                        Load_Classifications(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        Load_Classifications(tmp);
 
                     }
 
                     else if (!strcmp(last_pass, "reference")) {
 
-                        Load_Reference(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        Load_Reference(tmp);
 
                     }
 
                     else if (!strcmp(last_pass, "gen-msg-map")) {
 
-                        Load_Gen_Map(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        Load_Gen_Map(tmp);
 
                     }
 
                     else if (!strcmp(last_pass, "protocol-map")) {
 
-                        Load_Protocol_Map(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        Load_Protocol_Map(tmp);
 
                     }
 
@@ -564,13 +574,15 @@ void Load_YAML_Config( char *yaml_file )
 
                     if (!strcmp(last_pass, "ipc-directory")) {
 
-                        strlcpy(config->ipc_directory, Sagan_Var_To_Value(value), sizeof(config->ipc_directory));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->ipc_directory, tmp, sizeof(config->ipc_directory));
 
                     }
 
                     else if (!strcmp(last_pass, "xbit")) {
 
-                        config->max_xbits = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_xbits = atoi(tmp);
 
                         if ( config->max_xbits == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'xbits' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -579,7 +591,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "threshold-by-src")) {
 
-                        config->max_threshold_by_src = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_threshold_by_src = atoi(tmp);
 
                         if ( config->max_threshold_by_src == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -588,7 +601,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "threshold-by-dst")) {
 
-                        config->max_threshold_by_dst = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_threshold_by_dst = atoi(tmp);
 
                         if ( config->max_threshold_by_dst == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -596,8 +610,9 @@ void Load_YAML_Config( char *yaml_file )
                     }
 
                     else if (!strcmp(last_pass, "threshold-by-username")) {
-
-                        config->max_threshold_by_username = atoi(Sagan_Var_To_Value(value));
+		
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_threshold_by_username = atoi(tmp);
 
                         if ( config->max_threshold_by_username == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -606,7 +621,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "after-by-src")) {
 
-                        config->max_after_by_src = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_after_by_src = atoi(tmp);
 
                         if ( config->max_after_by_src == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -615,7 +631,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "after-by-dst")) {
 
-                        config->max_after_by_dst = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_after_by_dst = atoi(tmp);
 
                         if ( config->max_after_by_dst == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -624,7 +641,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "after-by-username")) {
 
-                        config->max_after_by_username = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_after_by_username = atoi(tmp);
 
                         if ( config->max_after_by_username == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -633,7 +651,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "track-clients")) {
 
-                        config->max_track_clients = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->max_track_clients = atoi(tmp);
 
                         if ( config->max_track_clients == 0 ) {
                             Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'track-clients' is set to zero.  Abort!", __FILE__, __LINE__);
@@ -652,8 +671,12 @@ void Load_YAML_Config( char *yaml_file )
                     }
 
                     if (!strcmp(last_pass, "ignore_file")) {
+
                         if (config->sagan_droplist_flag == true) {
-                            strlcpy(config->sagan_droplistfile, Sagan_Var_To_Value(value), sizeof(config->sagan_droplistfile));
+
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                            strlcpy(config->sagan_droplistfile, tmp, sizeof(config->sagan_droplistfile));
+
                         }
                     }
 
@@ -692,7 +715,8 @@ void Load_YAML_Config( char *yaml_file )
 
                         if ( config->have_geoip2 == true ) {
 
-                            strlcpy(config->geoip2_country_file, Sagan_Var_To_Value(value), sizeof(config->geoip2_country_file));
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                            strlcpy(config->geoip2_country_file, tmp, sizeof(config->geoip2_country_file));
 
                             config->have_geoip2 = true;
 
@@ -734,7 +758,8 @@ void Load_YAML_Config( char *yaml_file )
 
                         if ( config->liblognorm_load == true ) {
 
-                            Sagan_Liblognorm_Load(Sagan_Var_To_Value(value));
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                            Sagan_Liblognorm_Load(tmp);
                         }
 
                     }
@@ -774,19 +799,22 @@ void Load_YAML_Config( char *yaml_file )
 
                         if (!strcmp(last_pass, "interface")) {
 
-                            strlcpy(config->plog_interface, Sagan_Var_To_Value(value), sizeof(config->plog_interface));
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                            strlcpy(config->plog_interface, tmp, sizeof(config->plog_interface));
 
                         }
 
                         if (!strcmp(last_pass, "bpf-filter")) {
 
-                            strlcpy(config->plog_filter, Sagan_Var_To_Value(value), sizeof(config->plog_filter));
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                            strlcpy(config->plog_filter, tmp, sizeof(config->plog_filter));
 
                         }
 
                         if (!strcmp(last_pass, "log-device")) {
 
-                            strlcpy(config->plog_logdev, Sagan_Var_To_Value(value), sizeof(config->plog_logdev));
+			    Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                            strlcpy(config->plog_logdev, tmp, sizeof(config->plog_logdev));
 
                         }
 
@@ -840,7 +868,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if ( !strcmp(last_pass, "timeout") && config->sagan_track_clients_flag == true ) {
 
-                        config->pp_sagan_track_clients = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->pp_sagan_track_clients = atoi(tmp);
 
                         if ( config->pp_sagan_track_clients == 0 ) {
 
@@ -862,7 +891,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "time") && config->perfmonitor_flag == true ) {
 
-                        config->perfmonitor_time = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        config->perfmonitor_time = atoi(tmp);
 
                         if ( config->perfmonitor_time == 0 ) {
 
@@ -873,7 +903,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "filename") && config->perfmonitor_flag == true ) {
 
-                        strlcpy(config->perfmonitor_file_name, Sagan_Var_To_Value(value), sizeof(config->perfmonitor_file_name));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->perfmonitor_file_name, tmp, sizeof(config->perfmonitor_file_name));
 
                     }
 
@@ -890,7 +921,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "filename") && config->blacklist_flag == true ) {
 
-                        strlcpy(config->blacklist_files, Sagan_Var_To_Value(value), sizeof(config->blacklist_files));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->blacklist_files, tmp, sizeof(config->blacklist_files));
                     }
 
                 } /* if sub_type == YAML_PROCESSORS_BLACKLIST */
@@ -924,12 +956,14 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "device-id") && config->bluedot_flag == true ) {
 
-                        strlcpy(config->bluedot_device_id, Sagan_Var_To_Value(value), sizeof(config->bluedot_device_id));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->bluedot_device_id, tmp, sizeof(config->bluedot_device_id));
                     }
 
                     else if (!strcmp(last_pass, "max-cache") && config->bluedot_flag == true ) {
 
-                        config->bluedot_max_cache = strtoull(Sagan_Var_To_Value(value), NULL, 10);
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        config->bluedot_max_cache = strtoull(tmp, NULL, 10);
 
                         if ( config->bluedot_max_cache == 0 ) {
 
@@ -940,7 +974,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "cache-timeout") && config->bluedot_flag == true ) {
 
-                        config->bluedot_timeout = atoi(Sagan_Var_To_Value(value)) * 60;
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->bluedot_timeout = atoi(tmp) * 60;
 
                         if ( config->bluedot_timeout == 0 ) {
 
@@ -951,12 +986,14 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "categories") && config->bluedot_flag == true ) {
 
-                        strlcpy(config->bluedot_cat, Sagan_Var_To_Value(value), sizeof(config->bluedot_cat));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->bluedot_cat, tmp, sizeof(config->bluedot_cat));
                     }
 
                     else if (!strcmp(last_pass, "url") && config->bluedot_flag == true ) {
-
-                        strlcpy(config->bluedot_url, Sagan_Var_To_Value(value), sizeof(config->bluedot_url));
+	
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp); 
+                        strlcpy(config->bluedot_url, tmp, sizeof(config->bluedot_url));
                     }
 
                 } /* if sub_type == YAML_PROCESSORS_BLUEDOT */
@@ -975,7 +1012,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "url") && config->brointel_flag == true ) {
 
-                        strlcpy(config->brointel_files, Sagan_Var_To_Value(value), sizeof(config->brointel_files));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->brointel_files, tmp, sizeof(config->brointel_files));
 
                     }
 
@@ -992,7 +1030,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "sample-rate") && config->dynamic_load_flag == true ) {
 
-                        config->dynamic_load_sample_rate = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->dynamic_load_sample_rate = atoi(tmp);
 
                         if ( config->dynamic_load_sample_rate == 0 ) {
 
@@ -1079,12 +1118,14 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if ( !strcmp(last_pass, "interface") && config->eve_flag == true ) {
 
-                        strlcpy(config->eve_interface, Sagan_Var_To_Value(value), sizeof(config->eve_interface));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->eve_interface, tmp, sizeof(config->eve_interface));
                     }
 
                     else if ( !strcmp(last_pass, "filename") && config->eve_flag == true ) {
 
-                        strlcpy(config->eve_filename, Sagan_Var_To_Value(value), sizeof(config->eve_filename));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->eve_filename, tmp, sizeof(config->eve_filename));
                     }
 
                     else if ( !strcmp(last_pass, "alerts") && config->eve_flag == true ) {
@@ -1115,8 +1156,9 @@ void Load_YAML_Config( char *yaml_file )
                     }
 
                     else if (!strcmp(last_pass, "filename") && config->alert_flag == true) {
-
-                        strlcpy(config->sagan_alert_filepath, Sagan_Var_To_Value(value), sizeof(config->sagan_alert_filepath));
+			
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->sagan_alert_filepath, tmp, sizeof(config->sagan_alert_filepath));
 
                     }
 
@@ -1133,7 +1175,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "filename") && config->fast_flag == true) {
 
-                        strlcpy(config->fast_filename, Sagan_Var_To_Value(value), sizeof(config->fast_filename));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->fast_filename, tmp, sizeof(config->fast_filename));
 
                     }
 
@@ -1168,12 +1211,14 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if ( !strcmp(last_pass, "filename") && config->sagan_unified2_flag == true ) {
 
-                        strlcpy(config->unified2_filepath, Sagan_Var_To_Value(value), sizeof(config->unified2_filepath));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->unified2_filepath, tmp, sizeof(config->unified2_filepath));
                     }
 
                     else if ( !strcmp(last_pass, "limit") && config->sagan_unified2_flag == true ) {
 
-                        config->unified2_limit = atoi(Sagan_Var_To_Value(value)) * 1024 * 1024;
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->unified2_limit = atoi(tmp) * 1024 * 1024;
 
                         if ( config->unified2_limit == 0 ) {
 
@@ -1196,7 +1241,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "command") && config->sagan_external_output_flag == true) {
 
-                        strlcpy(config->sagan_extern, Sagan_Var_To_Value(value), sizeof(config->sagan_extern));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->sagan_extern, tmp, sizeof(config->sagan_extern));
 
                     }
 
@@ -1233,32 +1279,37 @@ void Load_YAML_Config( char *yaml_file )
 
                         /* This can have a zero value */
 
-                        config->min_email_priority = atoi(Sagan_Var_To_Value(value));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        config->min_email_priority = atoi(tmp);
 
                     }
 
                     else if ( !strcmp(last_pass, "rcpt-to") && config->sagan_esmtp_flag == true ) {
 
-                        strlcpy(config->sagan_esmtp_to, Sagan_Var_To_Value(value), sizeof(config->sagan_esmtp_to));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->sagan_esmtp_to, tmp, sizeof(config->sagan_esmtp_to));
                         config->sagan_sendto_flag = true;
 
                     }
 
                     else if ( !strcmp(last_pass, "from") && config->sagan_esmtp_flag == true ) {
 
-                        strlcpy(config->sagan_esmtp_from, Sagan_Var_To_Value(value), sizeof(config->sagan_esmtp_from));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->sagan_esmtp_from, tmp, sizeof(config->sagan_esmtp_from));
 
                     }
 
                     else if ( !strcmp(last_pass, "server") && config->sagan_esmtp_flag == true ) {
 
-                        strlcpy(config->sagan_esmtp_server, Sagan_Var_To_Value(value), sizeof(config->sagan_esmtp_server));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->sagan_esmtp_server, tmp, sizeof(config->sagan_esmtp_server));
 
                     }
 
                     else if ( !strcmp(last_pass, "subject") && config->sagan_esmtp_flag == true ) {
 
-                        strlcpy(config->sagan_email_subject, Sagan_Var_To_Value(value), sizeof(config->sagan_email_subject));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                        strlcpy(config->sagan_email_subject, tmp, sizeof(config->sagan_email_subject));
 
                     }
 
@@ -1295,7 +1346,8 @@ void Load_YAML_Config( char *yaml_file )
 
                     else if (!strcmp(last_pass, "server") && config->sagan_fwsam_flag == true) {
 
-                        strlcpy(config->sagan_fwsam_info, Sagan_Var_To_Value(value), sizeof(config->sagan_fwsam_info));
+			Sagan_Var_To_Value(value, tmp, sizeof(tmp));
+                        strlcpy(config->sagan_fwsam_info, tmp, sizeof(config->sagan_fwsam_info));
 
                     }
                 }
@@ -1584,7 +1636,8 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
-                Load_Rules( (char*)Sagan_Var_To_Value(value) );
+		Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                Load_Rules( (char*)tmp );
 
                 /* Store rule names into an array in case we're using dynamic_load */
 
@@ -1594,7 +1647,8 @@ void Load_YAML_Config( char *yaml_file )
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
                 }
 
-                strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, Sagan_Var_To_Value(value), sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
+		Sagan_Var_To_Value(value, tmp, sizeof(tmp)); 
+                strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, tmp, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
                 counters->rules_loaded_count++;
 
             }

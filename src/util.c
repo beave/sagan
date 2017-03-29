@@ -381,6 +381,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
 char *Replace_String(char *str, char *orig, char *rep)
 {
 
+
     static __thread char buffer[4096];
     memset(buffer,0,sizeof(buffer));
     char *p = NULL;
@@ -461,7 +462,7 @@ sbool is_rfc1918 ( uint32_t ipint )
 /* example - $RULE_PATH into it's true value.                               */
 /****************************************************************************/
 
-char *Sagan_Var_To_Value(char *instring)
+void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
 {
 
     char *ptmp = NULL;
@@ -469,21 +470,19 @@ char *Sagan_Var_To_Value(char *instring)
     char tmp2[MAX_VAR_VALUE_SIZE] = { 0 };
     char tmp3[MAX_VAR_VALUE_SIZE] = { 0 };
     char tmp_result[MAX_VAR_VALUE_SIZE] = { 0 };
-
-    static __thread char tmp[MAX_VAR_VALUE_SIZE] = { 0 };
-
-    char *tmpbuf = (char*)malloc(MAX_VAR_VALUE_SIZE);
-    memset(tmpbuf,0,(sizeof((char*)tmpbuf)));
+    char tmp[MAX_VAR_VALUE_SIZE] = { 0 };
 
     int i=0;
 
-    snprintf(tmp, sizeof(tmp), "%s", instring);		// Segfault with strlcpy
+    snprintf(tmp, sizeof(tmp), "%s", in_str);		// Segfault with strlcpy
 
     for (i=0; i<counters->var_count; i++) {
 
         ptmp = strtok_r(tmp, " ", &tok);
 
         while (ptmp != NULL ) {
+
+	    //Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2)); 
 
             strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
@@ -497,16 +496,16 @@ char *Sagan_Var_To_Value(char *instring)
 
 
     tmp[strlen(tmp)-1] = 0;		/* Remove trailing space */
-    tmpbuf = (char*)&tmp;
 
-    return(tmpbuf);
+    snprintf(str, size, "%s", tmp);
+
 }
 
 /****************************************************************************/
 /* Sagan_Validate_HEX - Makes sure a string is valid hex.                   */
 /****************************************************************************/
 
-int Sagan_Validate_HEX (const char *string)
+sbool Sagan_Validate_HEX (const char *string)
 {
 
     const char *curr = string;
@@ -550,7 +549,7 @@ int Sagan_Check_Var(const char *string)
 * Move to this function 05/05/2014 - Champ Clark
 *************************************************************************************************/
 
-char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
+char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str, size_t size )
 {
 
     int pipe_flag = 0;
@@ -611,7 +610,8 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset)
 
     }
 
-    return(final_content);
+     snprintf(str, size, "%s", final_content);
+     return(str); 
 }
 
 /****************************************************************************
