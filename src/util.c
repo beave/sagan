@@ -139,46 +139,42 @@ void Sagan_Droppriv(void)
 
 /* Remove new-lines */
 
-char  *Remove_Return(char *s)
+void Remove_Return(char *s)
 {
     char *s1, *s2;
     for(s1 = s2 = s; *s1; *s1++ = *s2++ )
         while( *s2 == '\n' )s2++;
-    return s;
 }
 
 /* Removes spaces from certain rule fields, etc */
 
-char *Remove_Spaces(char *s)
+void Remove_Spaces(char *s)
 {
     char *s1, *s2;
     for(s1 = s2 = s; *s1; *s1++ = *s2++ )
         while( *s2 == ' ')s2++;
-    return s;
 }
 
 /* Shift a string to all uppercase */
 
-char *To_UpperC(char* const s)
+void To_UpperC(char* const s)
 {
     char* cur = s;
     while (*cur) {
         *cur = toupper(*cur);
         ++cur;
     }
-    return s;
 }
 
 /* Shift a string to all lowercase */
 
-char *To_LowerC(char *const s)
+void To_LowerC(char *const s)
 {
     char* cur = s;
     while (*cur) {
         *cur = tolower(*cur);
         ++cur;
     }
-    return s;
 }
 
 
@@ -381,19 +377,19 @@ int DNS_Lookup( char *host, char *str, size_t size )
 void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 {
 
-    char buffer[4096] = { 0 }; 
+    char buffer[4096] = { 0 };
     char *p = NULL;
 
     if(!(p = strstr(in_str, orig))) {
-	snprintf(str, size, "%s", in_str); 
-        return; 
+        snprintf(str, size, "%s", in_str);
+        return;
     }
 
     strlcpy(buffer, in_str, p-in_str);
     buffer[p-in_str] = '\0';
     sprintf(buffer+(p-in_str), "%s%s", rep, p+strlen(orig));
 
-    snprintf(str, size, "%s", buffer); 
+    snprintf(str, size, "%s", buffer);
 
 }
 
@@ -482,8 +478,6 @@ void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
         while (ptmp != NULL ) {
 
             Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
-
-            //strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
             strlcat(tmp_result, tmp3, sizeof(tmp_result));
             ptmp = strtok_r(NULL, " ", &tok);
@@ -624,7 +618,7 @@ void Sagan_Replace_Sagan( char *string_in, char *replace, char *str, size_t size
     char string[1024] = { 0 };
     char tmp[2] = { 0 };
 
-    char new_string[CONFBUF] = { 0 }; 
+    char new_string[CONFBUF] = { 0 };
 
     int i;
 
@@ -652,7 +646,7 @@ void Sagan_Replace_Sagan( char *string_in, char *replace, char *str, size_t size
     }
 
 
-    snprintf(str, size, "%s", new_string); 
+    snprintf(str, size, "%s", new_string);
 }
 
 

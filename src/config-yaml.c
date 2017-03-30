@@ -354,25 +354,22 @@ void Load_YAML_Config( char *yaml_file )
                                 /* Simple check to see if this is the first entry or not.  This is to keep our
                                    "," on mark */
 
+                                Remove_Return(tmpbuf);
+
                                 if ( debug->debugload ) {
 
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] Variable from file \"%s\" var \"%s\" loaded: \"%s\"", __FILE__, __LINE__, filename, var[counters->var_count].var_name, Remove_Return(tmpbuf));
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Variable from file \"%s\" var \"%s\" loaded: \"%s\"", __FILE__, __LINE__, filename, var[counters->var_count].var_name, tmpbuf);
                                 }
 
                                 if ( check == 0 ) {
 
-                                    snprintf(tmpstring, sizeof(tmpstring), "%s", Remove_Return(tmpbuf));
                                     check = 1;
-
-                                } else {
-
-                                    snprintf(tmpstring, sizeof(tmpstring), ",%s", Remove_Return(tmpbuf));
 
                                 }
 
                                 /* Append to the var */
 
-                                strlcat(var[counters->var_count].var_value, tmpstring, sizeof(var[counters->var_count].var_value));
+                                strlcat(var[counters->var_count].var_value, tmpbuf, sizeof(var[counters->var_count].var_value));
 
                             }
 

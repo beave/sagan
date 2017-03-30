@@ -441,17 +441,18 @@ void Sagan_Bluedot_Load_Cat(void)
 
             /* Normalize the list for later use.  Better to do this here than when processing rules */
 
-            bluedot_tok1 = Remove_Return(strtok_r(buf, "|", &saveptr));
+            bluedot_tok1 = strtok_r(buf, "|", &saveptr);
 
             if ( bluedot_tok1 == NULL ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] Bluedot categories file appears to be malformed.", __FILE__, __LINE__);
             }
 
+            Remove_Return(bluedot_tok1);
             Remove_Spaces(bluedot_tok1);
+
             SaganBluedotCatList[counters->bluedot_cat_count].cat_number = atoi(bluedot_tok1);
 
-            bluedot_tok2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
-
+            bluedot_tok2 = strtok_r(NULL, "|", &saveptr);
 
             if ( bluedot_tok2 == NULL ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] Bluedot categories file appears to be malformed.", __FILE__, __LINE__);

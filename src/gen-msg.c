@@ -77,17 +77,33 @@ void Load_Gen_Map( const char *genmap )
 
         }
 
-        gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
-        gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
-        gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+        gen1 = strtok_r(genbuf, "|", &saveptr);
 
-        if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) {
-            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
+        if ( gen1 == NULL ) {
+            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen1) ", genmap);
         }
+
+        Remove_Return(gen1);
+
+        gen2 = strtok_r(NULL, "|", &saveptr);
+
+        if ( gen2 == NULL ) {
+            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen2) ", genmap);
+        }
+
+        Remove_Return(gen2);
+
+        gen3 = strtok_r(NULL, "|", &saveptr);
+
+        if ( gen3 == NULL ) {
+            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen3) ", genmap);
+        }
+
+        Remove_Return(gen3);
 
         generator[counters->genmapcount].generatorid=atoi(gen1);
         generator[counters->genmapcount].alertid=atoi(gen2);
-        strlcpy(generator[counters->genmapcount].generator_msg, Remove_Return(gen3), sizeof(generator[counters->genmapcount].generator_msg));
+        strlcpy(generator[counters->genmapcount].generator_msg, gen3, sizeof(generator[counters->genmapcount].generator_msg));
 
         counters->genmapcount++;
     }

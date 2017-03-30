@@ -56,20 +56,21 @@ typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX
 
 sbool   Is_Numeric (char *);
 
-char   *To_UpperC(char* const );
-char   *To_LowerC(char* const );
+void   To_UpperC(char* const );
+void   To_LowerC(char* const );
 
 int	Check_Endian( void );
 void    Usage( void );
 void    Sagan_Chroot( const char * );
 
-char   *Remove_Return(char *);
+void	Remove_Return(char *);
 
 
 int Sagan_Classtype_Lookup( const char *, char *, size_t size );
 
 
-char   *Remove_Spaces(char *);
+void Remove_Spaces(char *);
+
 char   *Between_Quotes( char * );
 double CalcPct(uintmax_t, uintmax_t);
 void Replace_String(char *, char *, char *, char *str, size_t size);

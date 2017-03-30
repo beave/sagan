@@ -74,14 +74,42 @@ void Load_Protocol_Map( const char *map )
         } else {
             /* Allocate memory for references,  not comments */
 
-            map1 = Remove_Spaces(Remove_Return(strtok_r(mapbuf, "|", &saveptr)));
-            map2 = Remove_Spaces(Remove_Return(strtok_r(NULL, "|", &saveptr)));
-            map3 = Remove_Spaces(Remove_Return(strtok_r(NULL, "|", &saveptr)));
-            map4 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+            map1 = strtok_r(mapbuf, "|", &saveptr);
 
-            if ( map1 == NULL || map2 == NULL || map3 == NULL || map4 == NULL) {
-                Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", map);
+            if ( map1 == NULL ) {
+                Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map1)", map);
             }
+
+            Remove_Return(map1);
+            Remove_Spaces(map1);
+
+            map2 = strtok_r(NULL, "|", &saveptr);
+
+            if ( map2 == NULL ) {
+                Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map2)", map);
+            }
+
+            Remove_Return(map2);
+            Remove_Spaces(map2);
+
+            map3 = strtok_r(NULL, "|", &saveptr);
+
+            if ( map3 == NULL ) {
+                Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map3)", map);
+            }
+
+            Remove_Return(map3);
+            Remove_Spaces(map3);
+
+            map4 = strtok_r(NULL, "|", &saveptr);
+
+            if ( map4 == NULL ) {
+                Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map4)", map);
+            }
+
+            Remove_Return(map4);
+            Remove_Spaces(map4);
+
 
             if (!strcmp(map1, "message")) {
                 map_message = (_Sagan_Protocol_Map_Message *) realloc(map_message, (counters->mapcount_message+1) * sizeof(_Sagan_Protocol_Map_Message));
