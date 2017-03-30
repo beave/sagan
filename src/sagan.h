@@ -72,7 +72,7 @@ int Sagan_Classtype_Lookup( const char *, char *, size_t size );
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
 double CalcPct(uintmax_t, uintmax_t);
-char   *Replace_String(char *, char *, char *);
+void Replace_String(char *, char *, char *, char *str, size_t size);
 char   *Get_Filename(char *);
 
 uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);

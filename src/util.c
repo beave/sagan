@@ -378,23 +378,22 @@ int DNS_Lookup( char *host, char *str, size_t size )
 
 /* String replacement function.  Used for things like $RULE_PATH */
 
-char *Replace_String(char *str, char *orig, char *rep)
+void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 {
 
-
-    static __thread char buffer[4096];
-    memset(buffer,0,sizeof(buffer));
+    char buffer[4096] = { 0 }; 
     char *p = NULL;
 
-    if(!(p = strstr(str, orig))) {
-        return str;
+    if(!(p = strstr(in_str, orig))) {
+	snprintf(str, size, "%s", in_str); 
+        return; 
     }
 
-    strlcpy(buffer, str, p-str);
-    buffer[p-str] = '\0';
-    sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+    strlcpy(buffer, in_str, p-in_str);
+    buffer[p-in_str] = '\0';
+    sprintf(buffer+(p-in_str), "%s%s", rep, p+strlen(orig));
 
-    return buffer;
+    snprintf(str, size, "%s", buffer); 
 
 }
 
@@ -482,9 +481,9 @@ void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
 
         while (ptmp != NULL ) {
 
-            //Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
+            Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
 
-            strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
+            //strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
             strlcat(tmp_result, tmp3, sizeof(tmp_result));
             ptmp = strtok_r(NULL, " ", &tok);
