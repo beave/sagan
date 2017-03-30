@@ -72,7 +72,7 @@ int Sagan_Classtype_Lookup( const char *, char *, size_t size );
 char   *Remove_Spaces(char *);
 char   *Between_Quotes( char * );
 double CalcPct(uintmax_t, uintmax_t);
-char   *Replace_String(char *, char *, char *); 
+char   *Replace_String(char *, char *, char *);
 char   *Get_Filename(char *);
 
 uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);
@@ -461,7 +461,7 @@ int DNS_Lookup( char *, char *str, size_t size );
 void Sagan_Var_To_Value(char *, char *str, size_t size);
 
 uint32_t IP2Bit (char * );
-char *Bit2IP(uint32_t);
+void Bit2IP(uint32_t, char *str, size_t size);
 
 sbool Sagan_Validate_HEX (const char *);
 

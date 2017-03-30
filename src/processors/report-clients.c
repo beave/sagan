@@ -98,7 +98,7 @@ void Sagan_Report_Clients ( void )
         int alertid;
         int i;
 
-        char *tmp_ip = NULL;
+        char tmp_ip[16] = { 0 };
 
         char utime_tmp[20] = { 0 };
         time_t t;
@@ -148,7 +148,7 @@ void Sagan_Report_Clients ( void )
                     counters_ipc->track_clients_down--;
                     Sagan_File_Unlock(config->shm_counters);
 
-                    tmp_ip = Bit2IP(SaganTrackClients_ipc[i].host_u32);
+                    Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 
                     Sagan_Log(S_WARN, "[Processor: %s] Logs are being received from %s again.",  PROCESSOR_NAME, tmp_ip );
 
@@ -202,7 +202,7 @@ void Sagan_Report_Clients ( void )
                     counters_ipc->track_clients_down++;
                     Sagan_File_Unlock(config->shm_counters);
 
-                    tmp_ip = Bit2IP(SaganTrackClients_ipc[i].host_u32);
+                    Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 
                     Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
 

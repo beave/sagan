@@ -482,7 +482,7 @@ void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
 
         while (ptmp != NULL ) {
 
-	    //Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2)); 
+            //Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
 
             strlcpy(tmp2, Replace_String( ptmp, var[i].var_name, var[i].var_value), sizeof(tmp2));
             snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
@@ -610,8 +610,8 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, ch
 
     }
 
-     snprintf(str, size, "%s", final_content);
-     return(str); 
+    snprintf(str, size, "%s", final_content);
+    return(str);
 }
 
 /****************************************************************************
@@ -924,22 +924,14 @@ sbool Sagan_File_Unlock( int fd )
  * Bit2IP - Takes a 32 bit IP address and returns an octet notation
  ****************************************************************************/
 
-char *Bit2IP(uint32_t ip_u32)
+void Bit2IP(uint32_t ip_u32, char *str, size_t size)
 {
-
-    char *return_ip = NULL;
 
     struct in_addr ip_addr_convert;
 
-    static __thread char retbuf[20];
-    memset(retbuf,0,sizeof(retbuf));
-
     ip_addr_convert.s_addr = htonl(ip_u32);
-    strlcpy(retbuf, inet_ntoa(ip_addr_convert), sizeof(retbuf));
+    snprintf(str, size, "%s", inet_ntoa(ip_addr_convert));
 
-    return_ip = (char*)&retbuf;
-
-    return(return_ip);
 }
 
 /****************************************/
@@ -1114,10 +1106,15 @@ sbool Is_IP (char *str)
     int prefix;
     struct in_addr addr;
 
+    char tmp_ip[16] = { 0 };
+
     if(strlen(str) == strspn(str, "0123456789./")) {
 
         if(strspn(str, "./") == 0) {
-            if ( inet_aton(Bit2IP(atol(str)), &addr) == 0 ) {
+
+            Bit2IP(atol(str), tmp_ip, sizeof(tmp_ip));
+
+            if ( inet_aton(tmp_ip, &addr) == 0 ) {
                 return(false);
             }
         }
