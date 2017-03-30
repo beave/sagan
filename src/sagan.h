@@ -469,7 +469,7 @@ sbool Sagan_Validate_HEX (const char *);
 char *Sagan_Content_Pipe(char *, int, const char *, char *, size_t size);
 
 sbool is_rfc1918 ( uint32_t );
-char *Sagan_Replace_Sagan( char *, char *);
+void Sagan_Replace_Sagan( char *, char *, char *str, size_t size);
 int Sagan_Character_Count ( char *, char *);
 sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );

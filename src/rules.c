@@ -125,6 +125,8 @@ void Load_Rules( const char *ruleset )
     char *ptmp=NULL;
     char *tok = NULL;
 
+    char tmp_help[CONFBUF];
+
     uintmax_t fwsam_time_tmp;
 
     char netstr[512];
@@ -1055,7 +1057,8 @@ void Load_Rules( const char *ruleset )
 
                 while (ptmp != NULL) {
 
-                    strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp), sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
+		    Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp, tmp_help, sizeof(tmp_help)); 
+		    strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], tmp_help, sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
 
                     meta_content_converted_count++;
 

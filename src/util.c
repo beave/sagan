@@ -618,16 +618,13 @@ char *Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, ch
  * with *replace
  ****************************************************************************/
 
-char *Sagan_Replace_Sagan( char *string_in, char *replace)
+void Sagan_Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
 {
 
     char string[1024] = { 0 };
     char tmp[2] = { 0 };
 
-    char *buf;
-
-    static __thread char new_string[1024];
-    memset(&new_string, 0, sizeof(new_string));
+    char new_string[CONFBUF] = { 0 }; 
 
     int i;
 
@@ -654,8 +651,8 @@ char *Sagan_Replace_Sagan( char *string_in, char *replace)
         }
     }
 
-    buf = (char*)&new_string;
-    return(buf);
+
+    snprintf(str, size, "%s", new_string); 
 }
 
 
