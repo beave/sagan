@@ -48,7 +48,7 @@
 
 struct _SaganConfig *config;
 
-char *Sagan_Parse_IP( char *syslogmessage, int pos )
+void Sagan_Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
 {
 
     int result_space, result_nonspace, i, b;
@@ -59,7 +59,7 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
 
     char ctmp[2] = { 0 };
 
-    static __thread char lastgood[16] = { 0 };
+    char lastgood[16] = { 0 };
 
     char msg[MAX_SYSLOGMSG] = { 0 };
     char tmpmsg[MAX_SYSLOGMSG] = { 0 };
@@ -88,9 +88,14 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
                 current_pos++;
 
                 if ( current_pos == pos ) {
-                    return(ptmp);
+
+                    snprintf(str, size, "%s", ptmp);
+                    return;
+
                 }
+
             } else {
+
                 notfound = 1;
             }
 
@@ -116,12 +121,16 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
                             current_pos++;
 
                             if ( current_pos == pos ) {
+
                                 if (!strcmp(lastgood, "127.0.0.1")) {
-                                    return(config->sagan_host);
+
+                                    snprintf(str, size, "%s", config->sagan_host);
+                                    return;
+
                                 }
 
-                                retbuf = (char*)&lastgood;
-                                return(retbuf);
+                                snprintf(str, size, "%s", lastgood);
+                                return;
                             }
 
                             flag = 0;
@@ -138,6 +147,6 @@ char *Sagan_Parse_IP( char *syslogmessage, int pos )
         ptmp = strtok_r(NULL, " ", &tok);
     }
 
-    return("0");
+    snprintf(str, size, "0");
 }
 

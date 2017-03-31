@@ -1277,15 +1277,14 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
 {
 
     int i;
-    char results[64];
+    char results[16];
 
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
     for ( i = 1; i < MAX_PARSE_IP; i++ ) {
 
-
-        strlcpy(results, Sagan_Parse_IP(syslog_message, i), sizeof(results));
+        Sagan_Parse_IP(syslog_message, i, results, sizeof(results));
 
         /* Failed to find next IP,  short circuit the process */
 

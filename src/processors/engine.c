@@ -594,14 +594,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         /* parse_src_ip: {position} */
 
                         if ( rulestruct[b].s_find_src_ip == 1 ) {
-                            strlcpy(ip_src, Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos), sizeof(ip_src));
+                            Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos, ip_src, sizeof(ip_src));
                             ip_src_flag = 1;
                         }
 
                         /* parse_dst_ip: {postion} */
 
                         if ( rulestruct[b].s_find_dst_ip == 1 ) {
-                            strlcpy(ip_dst, Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos), sizeof(ip_dst));
+                            Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos, ip_dst, sizeof(ip_dst));
                             ip_dst_flag = 1;
                         }
 
@@ -617,24 +617,23 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         /* parse_hash: md5 */
 
                         if ( rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 ) {
-                            strlcpy(normalize_md5_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5), sizeof(normalize_md5_hash));
+                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5, normalize_md5_hash, sizeof(normalize_md5_hash));
                         }
 
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 ) {
-                            strlcpy(normalize_sha1_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1), sizeof(normalize_sha1_hash));
+                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, normalize_sha1_hash, sizeof(normalize_sha1_hash));
                         }
 
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 ) {
-                            strlcpy(normalize_sha256_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256), sizeof(normalize_sha256_hash));
-                            printf("-> %s\n", normalize_sha256_hash);
+                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
                         }
 
                         /*  DEBUG
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
                             {
-                                strlcpy(normalize_sha256_hash, Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256), sizeof(normalize_sha256_hash));
-                        }
-                        */
+                        Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
+                                          }
+                                          */
 
 
                     }

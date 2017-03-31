@@ -142,7 +142,7 @@ void Load_Reference( const char *ruleset )
 void Reference_Lookup( int rulemem, int type, char *str, size_t size )
 {
 
-    char reftmp[256] = { 0 }; 
+    char reftmp[256] = { 0 };
 
     int i=0;
     int b=0;
@@ -165,8 +165,8 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
         if ( tmp != NULL ) {
             strlcpy(reftype, tmp, sizeof(reftype));
         } else {
-	    snprintf(str, 1, ""); 
-	    return; 
+            snprintf(str, 1, "");
+            return;
         }
 
         tmp  = strtok_r(NULL, ",", &tmptok);
@@ -174,8 +174,8 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
         if ( tmp != NULL ) {
             strlcpy(url, tmp, sizeof(url));
         } else {
-	    snprintf(str, 1, ""); 
-	    return;
+            snprintf(str, 1, "");
+            return;
         }
 
 
@@ -195,5 +195,5 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
         }
     }
 
-    snprintf(str, size, "%s", reftmp); 
+    snprintf(str, size, "%s", reftmp);
 }

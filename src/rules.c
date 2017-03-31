@@ -377,7 +377,7 @@ void Load_Rules( const char *ruleset )
 
                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow)) {
 
-			Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help)); 
+                        Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help));
 
                         if(!Is_IP(tok_help)) {
                             Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
@@ -389,7 +389,7 @@ void Load_Rules( const char *ruleset )
 
                             if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
 
-				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range)); 
+                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
 
@@ -405,7 +405,7 @@ void Load_Rules( const char *ruleset )
 
                             } else {
 
-				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
 
@@ -501,7 +501,7 @@ void Load_Rules( const char *ruleset )
 
                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow)) {
 
-			Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help)); 
+                        Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help));
 
                         if(!Is_IP(tok_help)) {
                             Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
@@ -513,7 +513,7 @@ void Load_Rules( const char *ruleset )
 
                             if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
 
-				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
 
@@ -530,7 +530,7 @@ void Load_Rules( const char *ruleset )
 
                             } else {
 
-				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
 
@@ -1137,7 +1137,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-		Between_Quotes(tmptoken, tmp2, sizeof(tmp2)); 
+                Between_Quotes(tmptoken, tmp2, sizeof(tmp2));
 
                 Sagan_Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
 
@@ -1356,7 +1356,7 @@ void Load_Rules( const char *ruleset )
             if (!strcmp(rulesplit, "msg" )) {
                 arg = strtok_r(NULL, ";", &saveptrrule2);
 
-		Between_Quotes(arg, tmp2, sizeof(tmp2)); 
+                Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"msg\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1379,8 +1379,8 @@ void Load_Rules( const char *ruleset )
                 if ( Check_Content_Not(arg) == true ) {
                     rulestruct[counters->rulecount].content_not[content_count] = true;
                 }
-	
-		Between_Quotes(arg, tmp2, sizeof(tmp2));
+
+                Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1501,7 +1501,7 @@ void Load_Rules( const char *ruleset )
 
                 arg = strtok_r(NULL, ";", &saveptrrule2);
 
-		Between_Quotes(arg, tmp2, sizeof(tmp2));
+                Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "The \"pcre\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);

@@ -72,8 +72,8 @@ void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool t
 }
 
 /***************************************************************************
- * CreateIsoTimeString - Used in EVE & alert output.  Based off Suricata   
- * source.                                                                 
+ * CreateIsoTimeString - Used in EVE & alert output.  Based off Suricata
+ * source.
  ***************************************************************************/
 
 void CreateIsoTimeString (const struct timeval *ts, char *str, size_t size)
@@ -89,7 +89,7 @@ void CreateIsoTimeString (const struct timeval *ts, char *str, size_t size)
 
 
 /************************************************
- * This function should be removed and replaced 
+ * This function should be removed and replaced
  ************************************************/
 
 void Sagan_Return_Date( uint32_t utime, char *str, size_t size )
@@ -110,7 +110,7 @@ void Sagan_Return_Date( uint32_t utime, char *str, size_t size )
 }
 
 /********************************************************************************
- * Return the "old" (non ISO) time - This function should be removed || replaced 
+ * Return the "old" (non ISO) time - This function should be removed || replaced
  ********************************************************************************/
 
 void Sagan_Return_Time( uint32_t utime, char *str, size_t size )
@@ -156,8 +156,8 @@ void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
 
 
 /*************************************************************
- * Returns the numbers of seconds.  For example, "1 hour" == 
- * 3600                                                      
+ * Returns the numbers of seconds.  For example, "1 hour" ==
+ * 3600
  *************************************************************/
 
 uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)

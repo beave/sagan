@@ -80,7 +80,7 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
         }
     }
 
-    Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref)); 
+    Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref));
 
     /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
 

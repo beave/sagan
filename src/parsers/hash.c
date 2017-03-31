@@ -39,14 +39,12 @@
 
 struct _SaganConfig *config;
 
-char *Sagan_Parse_Hash(char *syslogmessage, int type)
+void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 {
     char tmpmsg[MAX_SYSLOGMSG];
     char *ptmp=NULL;
     char *tok=NULL;
-    char *tmp = NULL;
-
-    static __thread char ret[SHA256_HASH_SIZE+1];		/* Largest Hash */
+    char tmp[SHA256_HASH_SIZE+1];
 
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
 
@@ -54,12 +52,13 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
 
     while (ptmp != NULL ) {
 
-        tmp = Sagan_Parse_Hash_Cleanup(ptmp);
+        Sagan_Parse_Hash_Cleanup(ptmp, tmp, sizeof(tmp));
 
         if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == MD5_HASH_SIZE ) {
                 if ( Sagan_Validate_HEX(tmp) == true ) {
-                    return(tmp);
+                    snprintf(str, size, "%s", tmp);
+                    return;
                 }
             }
 
@@ -68,8 +67,8 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
         else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == SHA1_HASH_SIZE ) {
                 if ( Sagan_Validate_HEX(tmp) == true ) {
-                    strlcpy(ret, tmp, sizeof(ret));
-                    return(ret);
+                    snprintf(str, size, "%s", tmp);
+                    return;
                 }
             }
         }
@@ -77,8 +76,8 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
         else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == SHA256_HASH_SIZE ) {
                 if ( Sagan_Validate_HEX(tmp) == true ) {
-                    strlcpy(ret, tmp, sizeof(ret));
-                    return(tmp);
+                    snprintf(str, size, "%s", tmp);
+                    return;
                 }
             }
         }
@@ -88,16 +87,16 @@ char *Sagan_Parse_Hash(char *syslogmessage, int type)
 
     }
 
-    return("\0");
+    snprintf(str, size, "\0");
 }
 
 
-char *Sagan_Parse_Hash_Cleanup(char *string)
+void Sagan_Parse_Hash_Cleanup(char *string, char *str, size_t size)
 {
 
     char tmp[512];
     int i;
-    static __thread char in[512] = { 0 };
+    char in[512] = { 0 };
     char tmp2[2];
 
     strlcpy(in, string, sizeof(in));
@@ -121,8 +120,7 @@ char *Sagan_Parse_Hash_Cleanup(char *string)
         strlcpy(in, tmp, sizeof(in));
     }
 
-    return(in);
+    snprintf(str, size, "%s", in);
 
 }
-
 

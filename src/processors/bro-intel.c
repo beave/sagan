@@ -534,12 +534,12 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
 
     uint32_t ip;
 
-    char *results = NULL;
+    char results[16] = { 0 };
 
 
     for (i = 1; i < MAX_PARSE_IP; i++) {
 
-        results = Sagan_Parse_IP(syslog_message, i);
+        Sagan_Parse_IP(syslog_message, i, results, sizeof(results));
 
         /* Failed to find next IP,  short circuit the process */
 

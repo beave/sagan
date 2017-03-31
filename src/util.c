@@ -67,10 +67,10 @@ sbool daemonize;
 sbool quiet;
 
 /*****************************************************************************
- * This force Sagan to chroot.                                               
- *                                                                           
- * Note: printf/fprints are used,  because we actually chroot before the log 
- * it initalized                                                             
+ * This force Sagan to chroot.
+ *
+ * Note: printf/fprints are used,  because we actually chroot before the log
+ * it initalized
  *****************************************************************************/
 
 void Sagan_Chroot(const char *chrootdir )
@@ -85,7 +85,7 @@ void Sagan_Chroot(const char *chrootdir )
 }
 
 /************************************************
- * Drop priv's so we aren't running as "root".  
+ * Drop priv's so we aren't running as "root".
  ************************************************/
 
 void Sagan_Droppriv(void)
@@ -138,7 +138,7 @@ void Sagan_Droppriv(void)
 }
 
 /********************
- * Remove new-lines 
+ * Remove new-lines
  ********************/
 
 void Remove_Return(char *s)
@@ -160,7 +160,7 @@ void Remove_Spaces(char *s)
 }
 
 /**********************************
- * Shift a string to all uppercase 
+ * Shift a string to all uppercase
  **********************************/
 
 void To_UpperC(char *const s)
@@ -173,7 +173,7 @@ void To_UpperC(char *const s)
 }
 
 /**********************************
- * Shift a string to all lowercase 
+ * Shift a string to all lowercase
  **********************************/
 
 void To_LowerC(char *const s)
@@ -230,7 +230,7 @@ void Sagan_Log (int type, const char *format,... )
 }
 
 /******************************************
- * Check if system is big || little endian 
+ * Check if system is big || little endian
  ******************************************/
 
 int Check_Endian()
@@ -274,7 +274,7 @@ uint32_t IP2Bit (char *ipaddr)
 }
 
 /****************************************
- * Check if string contains only numbers 
+ * Check if string contains only numbers
  ****************************************/
 
 sbool Is_Numeric (char *str)
@@ -290,7 +290,7 @@ sbool Is_Numeric (char *str)
 
 /***************************************************************************
  * Grab's information between "quotes" and returns it.  Use for things like
- * parsing msg: and pcre 
+ * parsing msg: and pcre
  ***************************************************************************/
 
 void Between_Quotes(char *instr, char *str, size_t size)
@@ -316,11 +316,11 @@ void Between_Quotes(char *instr, char *str, size_t size)
 
     }
 
-      snprintf(str, size, "%s", tmp2);
+    snprintf(str, size, "%s", tmp2);
 }
 
 /*****************************
- * CalcPct (Taken from Snort) 
+ * CalcPct (Taken from Snort)
  *****************************/
 
 double CalcPct(uintmax_t cnt, uintmax_t total)
@@ -340,7 +340,7 @@ double CalcPct(uintmax_t cnt, uintmax_t total)
 
 /********************************************************************
  * DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely
- * based on Beej's showip.c 
+ * based on Beej's showip.c
  ********************************************************************/
 
 int DNS_Lookup( char *host, char *str, size_t size )
@@ -422,9 +422,9 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 }
 
 /****************************************************************************
- * s_rfc1918                                                                
- *                                                                          
- * Checks to see if an ip address is RFC1918 or not                         
+ * s_rfc1918
+ *
+ * Checks to see if an ip address is RFC1918 or not
  ****************************************************************************/
 
 sbool is_rfc1918 ( uint32_t ipint )
@@ -461,8 +461,8 @@ sbool is_rfc1918 ( uint32_t ipint )
 }
 
 /****************************************************************************
- * Sagan_Var_To_Value - Changes a variable in a configuration file (for     
- * example - $RULE_PATH into it's true value.                              
+ * Sagan_Var_To_Value - Changes a variable in a configuration file (for
+ * example - $RULE_PATH into it's true value.
  ****************************************************************************/
 
 void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
@@ -503,7 +503,7 @@ void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
 }
 
 /****************************************************************************
- * Sagan_Validate_HEX - Makes sure a string is valid hex.                   
+ * Sagan_Validate_HEX - Makes sure a string is valid hex.
  ****************************************************************************/
 
 sbool Sagan_Validate_HEX (const char *string)
@@ -522,7 +522,7 @@ sbool Sagan_Validate_HEX (const char *string)
 }
 
 /****************************************************************************
- * Sagan_Check_Var - Checks to make sure a "var" is present in memory       
+ * Sagan_Check_Var - Checks to make sure a "var" is present in memory
  ****************************************************************************/
 
 int Sagan_Check_Var(const char *string)
@@ -934,7 +934,7 @@ void Bit2IP(uint32_t ip_u32, char *str, size_t size)
 }
 
 /****************************************
- * Compute netmask address given prefix 
+ * Compute netmask address given prefix
  ****************************************/
 
 in_addr_t Netmask( int prefix )
@@ -949,7 +949,7 @@ in_addr_t Netmask( int prefix )
 
 
 /******************************************************
- * Compute broadcast address given address and prefix 
+ * Compute broadcast address given address and prefix
  ******************************************************/
 
 in_addr_t Broadcast( in_addr_t addr, int prefix )
@@ -961,7 +961,7 @@ in_addr_t Broadcast( in_addr_t addr, int prefix )
 
 
 /****************************************************
- * Compute network address given address and prefix 
+ * Compute network address given address and prefix
  ****************************************************/
 
 in_addr_t Network( in_addr_t addr, int prefix )
@@ -972,7 +972,7 @@ in_addr_t Network( in_addr_t addr, int prefix )
 } /* network() */
 
 /*************************************************************
- * Convert an A.B.C.D address into a 32-bit host-order value 
+ * Convert an A.B.C.D address into a 32-bit host-order value
  *************************************************************/
 
 in_addr_t A_To_Hl( char *ipstr )
@@ -989,8 +989,8 @@ in_addr_t A_To_Hl( char *ipstr )
 } /* a_to_hl() */
 
 /*******************************************************************
- * Convert a network address char string into a host-order network 
- * address and an integer prefix value                             
+ * Convert a network address char string into a host-order network
+ * address and an integer prefix value
  *******************************************************************/
 
 network_addr_t Str_To_Netaddr( char *ipstr )
@@ -1023,11 +1023,11 @@ network_addr_t Str_To_Netaddr( char *ipstr )
 } /* str_to_netaddr() */
 
 /***************************************************************************
- * Convert an IP or IP/CIDR into 32bit decimal single IP or 32bit decimal  
- * IP low and high range                                                   
+ * Convert an IP or IP/CIDR into 32bit decimal single IP or 32bit decimal
+ * IP low and high range
  ***************************************************************************/
 
-void Netaddr_To_Range( char ipstr[21], char *str, size_t size) 
+void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
 {
 
     network_addr_t *netaddrs = NULL;
@@ -1035,7 +1035,7 @@ void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
     char *t = NULL;
     char my_str[50] = { 0 };
     char my_str2[101] = { 0 };
-    char result[101] = { 0 }; 
+    char result[101] = { 0 };
     char tmp[512] = { 0 };
     char tmp2[512] = { 0 };
 
@@ -1054,8 +1054,8 @@ void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
             strlcpy(my_str, tmp, sizeof(my_str));
             strlcpy(my_str2, tmp2, sizeof(my_str2));
             strcat(my_str, my_str2);
-	    snprintf(str, size, "%s", my_str); 
-	    return; 
+            snprintf(str, size, "%s", my_str);
+            return;
 
         } else {
 
@@ -1067,13 +1067,13 @@ void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
     } else {
 
         snprintf( str, size, "%lu", (unsigned long)IP2Bit(ipstr));
-	return;
+        return;
 
     }
 } /* netaddr_to_range() */
 
 /**********************************
- * Strip characters from a string 
+ * Strip characters from a string
  **********************************/
 
 void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
@@ -1089,12 +1089,12 @@ void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
     }
 
     newstr[counter] = 0;
-    snprintf(str, size, "%s", newstr); 
+    snprintf(str, size, "%s", newstr);
 }
 
 /***************************************************
- * Check if str is valid IP from decimal or dotted 
- * quad ( 167772160, 1.1.1.1, 192.168.192.168/28 ) 
+ * Check if str is valid IP from decimal or dotted
+ * quad ( 167772160, 1.1.1.1, 192.168.192.168/28 )
  ***************************************************/
 
 sbool Is_IP (char *str)
@@ -1140,9 +1140,9 @@ sbool Is_IP (char *str)
 }
 
 /***************************************************************************
- * PageSupportsRWX - Checks the OS to see if it allows RMX pages.  This    
- * function is from Suricata and is by Shawn Webb from HardenedBSD. GRSec  
- * will cause things like PCRE JIT to fail.                                
+ * PageSupportsRWX - Checks the OS to see if it allows RMX pages.  This
+ * function is from Suricata and is by Shawn Webb from HardenedBSD. GRSec
+ * will cause things like PCRE JIT to fail.
  ***************************************************************************/
 
 #ifndef HAVE_SYS_MMAN_H
@@ -1167,9 +1167,9 @@ int PageSupportsRWX(void)
 #endif /* HAVE_SYS_MMAN_H */
 
 /***************************************************************************
- * FlowGetId - Generates a Suricata "FLow ID".  We don't really support    
- * "FLow ID" idea like Suricata.  This is for compatibility with Suricata  
- * EVE                                                                     
+ * FlowGetId - Generates a Suricata "FLow ID".  We don't really support
+ * "FLow ID" idea like Suricata.  This is for compatibility with Suricata
+ * EVE
  ***************************************************************************/
 
 int64_t FlowGetId( _Sagan_Event *Event)
@@ -1179,8 +1179,8 @@ int64_t FlowGetId( _Sagan_Event *Event)
 }
 
 /***************************************************************************
- * Check_Content_Not - Simply returns true/false if a "not" (!) is present 
- * in a string.  For example, content!"something";                         
+ * Check_Content_Not - Simply returns true/false if a "not" (!) is present
+ * in a string.  For example, content!"something";
  ***************************************************************************/
 
 sbool Check_Content_Not( char *s )

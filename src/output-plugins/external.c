@@ -68,7 +68,7 @@ void Sagan_Ext_Thread ( _Sagan_Event *Event, char *execute_script )
         Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
     }
 
-    
+
     Reference_Lookup( Event->found, 1, tmpref, sizeof(tmpref));
 
     if ( Event->drop == 1 ) {
