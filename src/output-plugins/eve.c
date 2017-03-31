@@ -41,7 +41,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Alert_JSON( _Sagan_Event *Event )
+void Alert_JSON( _Sagan_Event *Event )
 {
 
     char alert_data[MAX_SYSLOGMSG+1024];

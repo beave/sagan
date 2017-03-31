@@ -44,7 +44,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void Sagan_Fast_File( _Sagan_Event *Event )
+void Fast_File( _Sagan_Event *Event )
 {
 
     char timebuf[64];

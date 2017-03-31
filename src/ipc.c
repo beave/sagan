@@ -47,6 +47,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "util-time.h"
 #include "ipc.h"
 #include "xbit.h"
 

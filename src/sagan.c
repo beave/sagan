@@ -304,7 +304,7 @@ int main(int argc, char **argv)
             break;
 
         case 'C':
-            Sagan_Credits();
+            Credits();
             exit(0);
             break;
 

@@ -90,7 +90,7 @@ void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Proces
 
     SaganProcessorEvent->generatorid     =       processor_info->processor_generator_id;
 
-    Sagan_Output ( SaganProcessorEvent );
+    Output ( SaganProcessorEvent );
     free(SaganProcessorEvent);
 
 }

@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32);
+sbool Check_Flow( int b, uint32_t ip_src_u32, uint32_t ip_dst_u32);

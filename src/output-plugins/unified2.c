@@ -122,7 +122,7 @@ void Unified2InitFile( void )
 /* Sagan_Unified2 - Write the Unified2 event        */
 /****************************************************/
 
-void Sagan_Unified2( _Sagan_Event *Event )
+void Unified2( _Sagan_Event *Event )
 {
 
 
@@ -189,13 +189,13 @@ void Sagan_Unified2( _Sagan_Event *Event )
 }
 
 /*****************************************************************************/
-/* Sagan_Unified2LogPacketAlert - Create's a raw TCP/UDP/IP/ICMP 'packet'    */
+/* Unified2LogPacketAlert - Create's a raw TCP/UDP/IP/ICMP 'packet'    */
 /* This packet is "fake",  as we are taking syslog data and 'building'       */
 /* a packet with libdnet.  This fake packet is then fed to the Unified2      */
 /* file for reading by Barnyard2, etc.                                       */
 /*****************************************************************************/
 
-void Sagan_Unified2LogPacketAlert( _Sagan_Event *Event )
+void Unified2LogPacketAlert( _Sagan_Event *Event )
 {
 
     Serial_Unified2_Header hdr;
@@ -621,12 +621,12 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 
 
 /*****************************************************************************
- * Sagan_WriteExtraData - Writes any "extra data" that might be useful for
+ * Unified2WriteExtraData - Writes any "extra data" that might be useful for
  * for analysis.  For example,  we always write the syslog source IP as the
  * XFF or "original IP" address.
  *****************************************************************************/
 
-void Sagan_WriteExtraData( _Sagan_Event *Event, int type )
+void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 {
 
     Serial_Unified2_Header hdr;

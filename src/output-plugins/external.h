@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Ext_Thread( _Sagan_Event *, char * );
+void External_Thread( _Sagan_Event *, char * );

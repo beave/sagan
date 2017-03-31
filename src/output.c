@@ -65,7 +65,7 @@ sbool nonthread_alert_lock = false;
 
 pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 
-void Sagan_Output( _Sagan_Event *Event )
+void Output( _Sagan_Event *Event )
 {
 
     /******************************/
@@ -78,26 +78,26 @@ void Sagan_Output( _Sagan_Event *Event )
     nonthread_alert_lock = true;
 
     if ( config->alert_flag ) {
-        Sagan_Alert_File(Event);
+        Alert_File(Event);
     }
 
     if ( config->eve_flag ) {
-        Sagan_Alert_JSON(Event);
+        Alert_JSON(Event);
     }
 
     if ( config->fast_flag ) {
-        Sagan_Fast_File(Event);
+        Fast_File(Event);
     }
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
     if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == false ) {
 
-        Sagan_Unified2( Event );
-        Sagan_Unified2LogPacketAlert( Event );
+        Unified2( Event );
+        Unified2LogPacketAlert( Event );
 
         if ( Event->host[0] != '\0' ) {
-            Sagan_WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
+            Unified2WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
         }
 
         /* These get normalized in engine.c and passed via
@@ -105,11 +105,11 @@ void Sagan_Output( _Sagan_Event *Event )
          * them there! */
 
         if ( Event->normalize_http_uri[0] != '\0' ) {
-            Sagan_WriteExtraData( Event, EVENT_INFO_HTTP_URI );
+            Unified2WriteExtraData( Event, EVENT_INFO_HTTP_URI );
         }
 
         if ( Event->normalize_http_hostname[0] != '\0' ) {
-            Sagan_WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
+            Unified2WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
         }
 
         unified_event_id++;
@@ -129,7 +129,7 @@ void Sagan_Output( _Sagan_Event *Event )
 #ifdef WITH_SYSLOG
 
     if ( config->sagan_syslog_flag ) {
-        Sagan_Alert_Syslog( Event );
+        Alert_Syslog( Event );
     }
 
 #endif
@@ -143,7 +143,7 @@ void Sagan_Output( _Sagan_Event *Event )
 #ifdef WITH_SNORTSAM
 
     if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) {
-        Sagan_FWSam( Event );
+        FWSam( Event );
     }
 
 #endif
@@ -155,7 +155,7 @@ void Sagan_Output( _Sagan_Event *Event )
 #ifdef HAVE_LIBESMTP
 
     if ( config->sagan_esmtp_flag ) {
-        Sagan_ESMTP_Thread( Event );
+        ESMTP_Thread( Event );
     }
 
 #endif
@@ -165,7 +165,7 @@ void Sagan_Output( _Sagan_Event *Event )
     /****************************************************************************/
 
     if ( config->sagan_ext_flag ) {
-        Sagan_Ext_Thread( Event, config->sagan_extern );
+        External_Thread( Event, config->sagan_extern );
     }
 
     /****************************************************************************/
@@ -173,7 +173,7 @@ void Sagan_Output( _Sagan_Event *Event )
     /****************************************************************************/
 
     if (  rulestruct[Event->found].external_flag == 1 ) {
-        Sagan_Ext_Thread( Event, rulestruct[Event->found].external_program );
+        External_Thread( Event, rulestruct[Event->found].external_program );
     }
 }
 

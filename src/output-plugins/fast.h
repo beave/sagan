@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Fast_File( _Sagan_Event *);
+void Fast_File( _Sagan_Event *);
 

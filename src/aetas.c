@@ -45,7 +45,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Check_Time(int rule_number)
+int Check_Time(int rule_number)
 {
 
     char ct[64] = { 0 };
@@ -96,14 +96,14 @@ int Sagan_Check_Time(int rule_number)
 
     /* We check if current day is not one of our days */
 
-    if ( ! Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) ) {
+    if ( ! Check_Day(rulestruct[rule_number].alert_days, day_current ) ) {
         off_day = 1;
     }
 
     /* We check that we are in the current day || that the previous day is
        one of our days and the rule goes over to a new day */
 
-    if ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current ) || ( Sagan_Check_Day(rulestruct[rule_number].alert_days, day_current - 1) && next_day == 1) ) {
+    if ( Check_Day(rulestruct[rule_number].alert_days, day_current ) || ( Check_Day(rulestruct[rule_number].alert_days, day_current - 1) && next_day == 1) ) {
 
         /* We check if rule is in current day and does not extend to a new day */
 
@@ -135,10 +135,10 @@ int Sagan_Check_Time(int rule_number)
 }
 
 /****************************************************************************/
-/* Sagan_Check_Day - Returns days if found in the "day" bitmask             */
+/* Check_Day - Returns days if found in the "day" bitmask             */
 /****************************************************************************/
 
-int Sagan_Check_Day(unsigned char day, int day_current)
+int Check_Day(unsigned char day, int day_current)
 {
 
     if ( day_current == 0 ) {

@@ -53,7 +53,7 @@ struct _SaganConfig *config;
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
-void Sagan_Ext_Thread ( _Sagan_Event *Event, char *execute_script )
+void External_Thread ( _Sagan_Event *Event, char *execute_script )
 {
 
     int in[2];

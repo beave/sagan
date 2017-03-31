@@ -702,7 +702,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     if ( rulestruct[b].has_flow == 1 ) {
 
-                        check_flow_return = Sagan_Check_Flow( b, ip_src_u32, ip_dst_u32);
+                        check_flow_return = Check_Flow( b, ip_src_u32, ip_dst_u32);
 
                         if(check_flow_return == false) {
 
@@ -774,7 +774,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                         alert_time_trigger = false;
 
-                        if (  Sagan_Check_Time(b) ) {
+                        if ( Check_Time(b) ) {
                             alert_time_trigger = true;
                         }
                     }

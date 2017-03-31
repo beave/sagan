@@ -31,7 +31,7 @@
 #include "sagan.h"
 #include "version.h"
 
-void Sagan_Credits(void)
+void Credits(void)
 {
 
     fprintf(stderr, "\n--[Sagan version %s | Credits]--------------------------------\n\n", VERSION);

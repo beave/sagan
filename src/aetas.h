@@ -22,6 +22,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-int Sagan_Check_Time(int);
-int Sagan_Check_Day(unsigned char, int);
+int Check_Time(int);
+int Check_Day(unsigned char, int);
 

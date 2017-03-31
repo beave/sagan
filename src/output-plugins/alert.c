@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void Sagan_Alert_File( _Sagan_Event *Event )
+void Alert_File( _Sagan_Event *Event )
 {
 
     char tmpref[256];

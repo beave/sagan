@@ -1035,7 +1035,6 @@ void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
     char *t = NULL;
     char my_str[50] = { 0 };
     char my_str2[101] = { 0 };
-    char result[101] = { 0 };
     char tmp[512] = { 0 };
     char tmp2[512] = { 0 };
 

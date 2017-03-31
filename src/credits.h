@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void    Sagan_Credits( void );
+void    Credits( void );
 

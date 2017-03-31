@@ -327,7 +327,6 @@ void Load_YAML_Config( char *yaml_file )
 
                             char *filename;
                             char tmpbuf[CONFBUF];
-                            char tmpstring[CONFBUF];
 
                             FILE *varfile;
 

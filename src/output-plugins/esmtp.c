@@ -54,7 +54,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
+int ESMTP_Thread ( _Sagan_Event *Event )
 {
 
     char tmpref[256];
@@ -178,8 +178,8 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
         counters->esmtp_count_failed++;
         goto failure;
     }
-    if((r = fixlf(config, tmpb, tmpa)) <= 0) {
-        Sagan_Log(S_WARN, "[%s, line %d] Cannot fixlf.",  __FILE__, __LINE__);
+    if((r = FixLF(config, tmpb, tmpa)) <= 0) {
+        Sagan_Log(S_WARN, "[%s, line %d] Cannot FixLF.",  __FILE__, __LINE__);
         counters->esmtp_count_failed++;
         goto failure;
     }
@@ -228,7 +228,7 @@ failure:
 }
 
 int
-fixlf( _SaganConfig *config, char *d, char *s)
+FixLF( _SaganConfig *config, char *d, char *s)
 {
     int sl=0;
     int i=0;

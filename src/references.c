@@ -165,7 +165,7 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
         if ( tmp != NULL ) {
             strlcpy(reftype, tmp, sizeof(reftype));
         } else {
-            snprintf(str, 1, "");
+	    strlcpy(str, "", 1); 
             return;
         }
 
@@ -174,7 +174,7 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
         if ( tmp != NULL ) {
             strlcpy(url, tmp, sizeof(url));
         } else {
-            snprintf(str, 1, "");
+	    strlcpy(str, "", 1); 
             return;
         }
 

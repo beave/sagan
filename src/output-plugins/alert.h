@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Alert_File( _Sagan_Event *);
+void Alert_File( _Sagan_Event *);
 

@@ -47,7 +47,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void Sagan_Alert_Syslog( _Sagan_Event *Event )
+void Alert_Syslog( _Sagan_Event *Event )
 {
 
     char syslog_message_output[1024] = { 0 };
