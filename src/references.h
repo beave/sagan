@@ -33,4 +33,5 @@ struct _Ref_Struct {
 
 
 void Load_Reference ( const char * );
-char   *Reference_Lookup( int, int );
+
+void Reference_Lookup( int, int, char *str, size_t size );

@@ -84,9 +84,13 @@ void Load_Reference( const char *ruleset )
         /* Skip comments and blank linkes */
 
         if (refbuf[0] == '#' || refbuf[0] == 10 || refbuf[0] == ';' || refbuf[0] == 32) {
+
             continue;
+
         } else {
+
             /* Allocate memory for references,  not comments */
+
             refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
 
             if ( refstruct == NULL ) {
@@ -135,11 +139,10 @@ void Load_Reference( const char *ruleset )
 // 0 == alert
 // 1 == parsable.
 
-char *Reference_Lookup( int rulemem, int type )
+void Reference_Lookup( int rulemem, int type, char *str, size_t size )
 {
 
-    static __thread char reftmp[1024];
-    memset(&reftmp, 0, sizeof(reftmp));
+    char reftmp[256] = { 0 }; 
 
     int i=0;
     int b=0;
@@ -162,7 +165,8 @@ char *Reference_Lookup( int rulemem, int type )
         if ( tmp != NULL ) {
             strlcpy(reftype, tmp, sizeof(reftype));
         } else {
-            return("");
+	    snprintf(str, 1, ""); 
+	    return; 
         }
 
         tmp  = strtok_r(NULL, ",", &tmptok);
@@ -170,7 +174,8 @@ char *Reference_Lookup( int rulemem, int type )
         if ( tmp != NULL ) {
             strlcpy(url, tmp, sizeof(url));
         } else {
-            return("");
+	    snprintf(str, 1, ""); 
+	    return;
         }
 
 
@@ -190,5 +195,5 @@ char *Reference_Lookup( int rulemem, int type )
         }
     }
 
-    return(reftmp);
+    snprintf(str, size, "%s", reftmp); 
 }

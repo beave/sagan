@@ -32,15 +32,14 @@
 
 static const char *b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-/********************************************************************************/
-/* Base64Encode - Returns a base64 encoded string.  This was taken from         */
-/* Suricata.  I believe it was derived from Jouni Malinen work from:            */
-/*                                                                              */
-/* http://web.mit.edu/freebsd/head/contrib/wpa/src/utils/base64.c               */
-/* http://stackoverflow.com/questions/342409/how-do-i-base64-encode-decode-in-c */
-/*                                                                              */
-/********************************************************************************/
-
+/********************************************************************************
+ * Base64Encode - Returns a base64 encoded string.  This was taken from         
+ * Suricata.  I believe it was derived from Jouni Malinen work from:            
+ *                                                                              
+ * http://web.mit.edu/freebsd/head/contrib/wpa/src/utils/base64.c               
+ * http://stackoverflow.com/questions/342409/how-do-i-base64-encode-decode-in-c 
+ *                                                                              
+ ********************************************************************************/
 
 int Base64Encode(const unsigned char *in,  unsigned long inlen,
                  unsigned char *out, unsigned long *outlen)

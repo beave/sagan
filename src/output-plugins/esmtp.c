@@ -57,7 +57,7 @@ struct _SaganCounters *counters;
 int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
 {
 
-    char tmpref[2048];
+    char tmpref[256];
     char tmpemail[255];
     char timebuf[64];
 
@@ -80,7 +80,7 @@ int Sagan_ESMTP_Thread ( _Sagan_Event *Event )
         }
     }
 
-    strlcpy(tmpref, Reference_Lookup( Event->found, 0 ), sizeof(tmpref));
+    Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref)); 
 
     /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
 

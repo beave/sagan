@@ -71,10 +71,9 @@ int Sagan_Classtype_Lookup( const char *, char *, size_t size );
 
 void Remove_Spaces(char *);
 
-char   *Between_Quotes( char * );
+void Between_Quotes( char *, char *str, size_t size );
 double CalcPct(uintmax_t, uintmax_t);
 void Replace_String(char *, char *, char *, char *str, size_t size);
-char   *Get_Filename(char *);
 
 uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);
 
@@ -467,7 +466,7 @@ void Bit2IP(uint32_t, char *str, size_t size);
 sbool Sagan_Validate_HEX (const char *);
 
 
-char *Sagan_Content_Pipe(char *, int, const char *, char *, size_t size);
+void Sagan_Content_Pipe(char *, int, const char *, char *, size_t size);
 
 sbool is_rfc1918 ( uint32_t );
 void Sagan_Replace_Sagan( char *, char *, char *str, size_t size);
@@ -476,8 +475,8 @@ sbool Sagan_Wildcard( char *, char *);
 void Sagan_Open_Log_File( sbool, int );
 int Sagan_Check_Var(const char *);
 void Sagan_u32_Time_To_Human ( uint32_t, char *str, size_t size );
-char *Netaddr_To_Range( char * );
-char *Strip_Chars(const char *string, const char *chars);
+void Netaddr_To_Range( char *, char *str, size_t size );
+void Strip_Chars(const char *string, const char *chars, char *str, size_t size);
 sbool Is_IP (char *str);
 
 sbool Sagan_File_Lock ( int );

@@ -61,20 +61,25 @@ void Sagan_Ext_Thread ( _Sagan_Event *Event, char *execute_script )
     int n, pid;
     char buf[MAX_SYSLOGMSG];
     char data[MAX_SYSLOGMSG];
-    char *tmpref = NULL;
+    char tmpref[256];
     char tmp[6];
 
     if ( debug->debugexternal ) {
         Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
     }
 
-    tmpref = Reference_Lookup( Event->found, 1 );
+    
+    Reference_Lookup( Event->found, 1, tmpref, sizeof(tmpref));
 
     if ( Event->drop == 1 ) {
+
         snprintf(tmp, sizeof(tmp), "True");
+
     } else {
+
         snprintf(tmp, sizeof(tmp), "False");
     }
+
 
     snprintf(data, sizeof(data), "\n\
 ID:%lu:%s\n\

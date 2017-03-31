@@ -48,7 +48,7 @@ struct _SaganCounters *counters;
 void Sagan_Alert_File( _Sagan_Event *Event )
 {
 
-    char *tmpref = NULL;
+    char tmpref[256];
     char timebuf[64];
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
@@ -63,10 +63,10 @@ void Sagan_Alert_File( _Sagan_Event *Event )
 
     if ( Event->found != 0 ) {
 
-        tmpref = Reference_Lookup( Event->found, 0 );
+        Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref) );
 
         if (strcmp(tmpref, "" )) {
-            fprintf(config->sagan_alert_stream, "%s\n", Reference_Lookup( Event->found, 0 ));
+            fprintf(config->sagan_alert_stream, "%s\n", tmpref);
         }
     }
 

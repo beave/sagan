@@ -128,6 +128,7 @@ void Load_Rules( const char *ruleset )
     char *tok = NULL;
 
     char tmp_help[CONFBUF];
+    char tok_help[64];
 
     uintmax_t fwsam_time_tmp;
 
@@ -144,13 +145,10 @@ void Load_Rules( const char *ruleset )
     char rule_tmp[RULEBUF];
 
     char final_content[512];
-    //char *flow_a;
 
     char flow_a[128];
-    //char *flow_b;
-
     char flow_b[128];
-    char *flow_range;
+    char flow_range[256];
 
     char alert_time_tmp[10];
     char alert_tmp_minute[3];
@@ -372,49 +370,76 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(flow_a, "any") || !strcmp(flow_a, tokennet)) {
                     rulestruct[counters->rulecount].flow_1_var = 0;	  /* 0 = any */
+
                 } else {
+
                     strlcpy(tmp3, flow_a, sizeof(tmp3));
+
                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow)) {
-                        if(!Is_IP(Strip_Chars(tmptoken, "not!"))) {
-                            Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tmptoken);
+
+			Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help)); 
+
+                        if(!Is_IP(tok_help)) {
+                            Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
                         }
+
                         f1++;
-                        if(strchr(tmptoken, '/')) {
-                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
-                                flow_range = Netaddr_To_Range(Strip_Chars(tmptoken, "not!"));
+
+                        if(strchr(tok_help, '/')) {
+
+                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
+
+				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range)); 
 
                                 if(strchr(flow_range, '-')) {
+
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_1_type[f1] = 0; /* 0 = not in group */
+
                                 } else {
+
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(flow_range);
                                     rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* This was a /32, not a range */
                                 }
+
                             } else {
-                                flow_range = Netaddr_To_Range(tmptoken);
+
+				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+
                                 if(strchr(flow_range, '-')) {
+
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_1_type[f1] = 1; /* 1 = in group */
+
                                 } else {
+
                                     rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(flow_range);
                                     rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* This was a /32, not a range */
                                 }
                             }
+
                         } else {
-                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
+
+                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
+
                                 rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* 2 = not match ip */
-                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(Strip_Chars(tmptoken, "not!"));
+                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tok_help);
+
                             } else {
+
                                 rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* 3 = match ip */
-                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tmptoken);
+                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tok_help);
                             }
                         }
+
                         flow_1_count++;
+
                         if( flow_1_count > 49 ) {
                             Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50'.", __FILE__, __LINE__);
                         }
+
                     }
                     rulestruct[counters->rulecount].flow_1_var = 1;   /* 1 = var */
                     rulestruct[counters->rulecount].flow_1_counter = flow_1_count;
@@ -469,46 +494,74 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(flow_b, "any") || !strcmp(flow_b, tokennet)) {
                     rulestruct[counters->rulecount].flow_2_var = 0;     /* 0 = any */
+
                 } else {
+
                     strlcpy(tmp3, flow_b, sizeof(tmp3));
+
                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow)) {
-                        if(!Is_IP(Strip_Chars(tmptoken, "not!"))) {
-                            Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tmptoken);
+
+			Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help)); 
+
+                        if(!Is_IP(tok_help)) {
+                            Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
                         }
+
                         f2++;
-                        if(strchr(tmptoken, '/')) {
-                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
-                                flow_range = Netaddr_To_Range(Strip_Chars(tmptoken, "not!"));
+
+                        if(strchr(tok_help, '/')) {
+
+                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
+
+				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
+
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_2_type[f2] = 0; /* 0 = not in group */
+
                                 } else {
+
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(flow_range);
                                     rulestruct[counters->rulecount].flow_2_type[f2] = 2; /* This was a /32, not a range */
+
                                 }
+
                             } else {
-                                flow_range = Netaddr_To_Range(tmptoken);
+
+				Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+
                                 if(strchr(flow_range, '-')) {
+
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
                                     rulestruct[counters->rulecount].flow_2_type[f2] = 1; /* 1 = in group */
+
                                 } else {
+
                                     rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(flow_range);
                                     rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* This was a /32, not a range */
+
                                 }
                             }
+
                         } else {
-                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
+
+                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
                                 rulestruct[counters->rulecount].flow_2_type[f2] = 2; /* 2 = not match ip */
-                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(Strip_Chars(tmptoken, "not!"));
+                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(tok_help);
+
                             } else {
+
                                 rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
-                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(tmptoken);
+                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(tok_help);
+
                             }
                         }
+
                         flow_2_count++;
+
                         if( flow_2_count > 49 ) {
                             Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of entries for follow_flow_2 '50'.", __FILE__, __LINE__);
                         }
@@ -1084,7 +1137,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                strlcpy(tmp2, Between_Quotes(tmptoken), sizeof(tmp2));
+		Between_Quotes(tmptoken, tmp2, sizeof(tmp2)); 
 
                 Sagan_Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
 
@@ -1302,7 +1355,8 @@ void Load_Rules( const char *ruleset )
 
             if (!strcmp(rulesplit, "msg" )) {
                 arg = strtok_r(NULL, ";", &saveptrrule2);
-                strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
+
+		Between_Quotes(arg, tmp2, sizeof(tmp2)); 
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"msg\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1325,8 +1379,8 @@ void Load_Rules( const char *ruleset )
                 if ( Check_Content_Not(arg) == true ) {
                     rulestruct[counters->rulecount].content_not[content_count] = true;
                 }
-
-                strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
+	
+		Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1446,7 +1500,8 @@ void Load_Rules( const char *ruleset )
                 }
 
                 arg = strtok_r(NULL, ";", &saveptrrule2);
-                strlcpy(tmp2, Between_Quotes(arg), sizeof(tmp2));
+
+		Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
                     Sagan_Log(S_ERROR, "The \"pcre\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
