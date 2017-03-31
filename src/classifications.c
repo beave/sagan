@@ -140,11 +140,11 @@ void Load_Classifications( const char *ruleset )
 }
 
 /****************************************************************************
- * Sagan_Classtype_Lookup - Simple routine that looks up the classtype
+ * Classtype_Lookup - Simple routine that looks up the classtype
  * (s_shortname) and returns the classtype's description
  ****************************************************************************/
 
-int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size )
+int Classtype_Lookup( const char *classtype, char *str, size_t size )
 {
 
     int i;

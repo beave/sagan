@@ -120,7 +120,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         strftime(timet, sizeof(timet), "%s",  now);
         utime = atol(timet);
 
-        Sagan_File_Lock(config->shm_after_by_src);
+        File_Lock(config->shm_after_by_src);
         pthread_mutex_lock(&After_By_Src_Mutex);
 
         struct after_by_src_ipc *temp_afterbysrc_ipc;
@@ -162,7 +162,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_src.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbysrc_ipc);
             pthread_mutex_unlock(&After_By_Src_Mutex);
-            Sagan_File_Unlock(config->shm_after_by_src);
+            File_Unlock(config->shm_after_by_src);
             return(1);
 
         }
@@ -171,7 +171,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_afterbysrc_ipc);
 
         pthread_mutex_unlock(&After_By_Src_Mutex);
-        Sagan_File_Unlock(config->shm_after_by_src);
+        File_Unlock(config->shm_after_by_src);
         return(0);
 
     }
@@ -188,7 +188,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_after_by_dst);
+        File_Lock(config->shm_after_by_dst);
         pthread_mutex_lock(&After_By_Dst_Mutex);
 
         struct after_by_dst_ipc *temp_afterbydst_ipc;
@@ -230,7 +230,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dst.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbydst_ipc);
             pthread_mutex_unlock(&After_By_Dst_Mutex);
-            Sagan_File_Unlock(config->shm_after_by_dst);
+            File_Unlock(config->shm_after_by_dst);
             return(1);
 
         }
@@ -239,7 +239,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_afterbydst_ipc);
 
         pthread_mutex_unlock(&After_By_Dst_Mutex);
-        Sagan_File_Unlock(config->shm_after_by_dst);
+        File_Unlock(config->shm_after_by_dst);
         return(0);
 
     }
@@ -256,7 +256,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_after_by_srcport);
+        File_Lock(config->shm_after_by_srcport);
         pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
         struct after_by_srcport_ipc *temp_afterbysrcport_ipc;
@@ -298,7 +298,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbysrcport_ipc);
             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-            Sagan_File_Unlock(config->shm_after_by_srcport);
+            File_Unlock(config->shm_after_by_srcport);
             return(1);
 
         }
@@ -307,7 +307,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_afterbysrcport_ipc);
 
         pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-        Sagan_File_Unlock(config->shm_after_by_srcport);
+        File_Unlock(config->shm_after_by_srcport);
         return(0);
 
     }
@@ -324,7 +324,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_after_by_dstport);
+        File_Lock(config->shm_after_by_dstport);
         pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
         struct after_by_dstport_ipc *temp_afterbydstport_ipc;
@@ -366,7 +366,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbydstport_ipc);
             pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-            Sagan_File_Unlock(config->shm_after_by_dstport);
+            File_Unlock(config->shm_after_by_dstport);
             return(1);
 
         }
@@ -375,7 +375,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_afterbydstport_ipc);
 
         pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-        Sagan_File_Unlock(config->shm_after_by_dstport);
+        File_Unlock(config->shm_after_by_dstport);
         return(0);
 
     }
@@ -392,7 +392,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_after_by_username);
+        File_Lock(config->shm_after_by_username);
         pthread_mutex_lock(&After_By_Username_Mutex);
 
         struct after_by_username_ipc *temp_afterbyusername_ipc;
@@ -435,7 +435,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_username.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_afterbyusername_ipc);
             pthread_mutex_unlock(&After_By_Username_Mutex);
-            Sagan_File_Unlock(config->shm_after_by_username);
+            File_Unlock(config->shm_after_by_username);
             return(1);
 
         }
@@ -444,7 +444,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_afterbyusername_ipc);
 
         pthread_mutex_unlock(&After_By_Username_Mutex);
-        Sagan_File_Unlock(config->shm_after_by_username);
+        File_Unlock(config->shm_after_by_username);
         return(0);
     }
 
@@ -460,7 +460,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_thresh_by_src);
+        File_Lock(config->shm_thresh_by_src);
         pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
         struct thresh_by_src_ipc *temp_threshbysrc_ipc;
@@ -502,7 +502,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_src.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbysrc_ipc);
             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-            Sagan_File_Unlock(config->shm_thresh_by_src);
+            File_Unlock(config->shm_thresh_by_src);
             return(1);
 
         }
@@ -511,7 +511,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_threshbysrc_ipc);
 
         pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-        Sagan_File_Unlock(config->shm_thresh_by_src);
+        File_Unlock(config->shm_thresh_by_src);
         return(0);
 
     }
@@ -529,7 +529,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_thresh_by_dst);
+        File_Lock(config->shm_thresh_by_dst);
         pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
         struct thresh_by_dst_ipc *temp_threshbydst_ipc;
@@ -571,7 +571,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dst.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbydst_ipc);
             pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
-            Sagan_File_Unlock(config->shm_thresh_by_dst);
+            File_Unlock(config->shm_thresh_by_dst);
             return(1);
 
         }
@@ -580,7 +580,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_threshbydst_ipc);
 
         pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
-        Sagan_File_Unlock(config->shm_thresh_by_dst);
+        File_Unlock(config->shm_thresh_by_dst);
         return(0);
 
     }
@@ -598,7 +598,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_thresh_by_srcport);
+        File_Lock(config->shm_thresh_by_srcport);
         pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
 
         struct thresh_by_srcport_ipc *temp_threshbysrcport_ipc;
@@ -640,7 +640,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbysrcport_ipc);
             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-            Sagan_File_Unlock(config->shm_thresh_by_src);
+            File_Unlock(config->shm_thresh_by_src);
             return(1);
 
         }
@@ -649,7 +649,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_threshbysrcport_ipc);
 
         pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-        Sagan_File_Unlock(config->shm_thresh_by_srcport);
+        File_Unlock(config->shm_thresh_by_srcport);
         return(0);
 
     }
@@ -667,7 +667,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_thresh_by_dstport);
+        File_Lock(config->shm_thresh_by_dstport);
         pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
 
         struct thresh_by_dstport_ipc *temp_threshbydstport_ipc;
@@ -709,7 +709,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbydstport_ipc);
             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-            Sagan_File_Unlock(config->shm_thresh_by_dst);
+            File_Unlock(config->shm_thresh_by_dst);
             return(1);
 
         }
@@ -718,7 +718,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_threshbydstport_ipc);
 
         pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-        Sagan_File_Unlock(config->shm_thresh_by_dstport);
+        File_Unlock(config->shm_thresh_by_dstport);
         return(0);
 
     }
@@ -735,7 +735,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_thresh_by_username);
+        File_Lock(config->shm_thresh_by_username);
         pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
         struct thresh_by_username_ipc *temp_threshbyusername_ipc;
@@ -778,7 +778,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_username.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_threshbyusername_ipc);
             pthread_mutex_unlock(&Thresh_By_Username_Mutex);
-            Sagan_File_Unlock(config->shm_thresh_by_username);
+            File_Unlock(config->shm_thresh_by_username);
             return(1);
 
         }
@@ -787,7 +787,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_threshbyusername_ipc);
 
         pthread_mutex_unlock(&Thresh_By_Username_Mutex);
-        Sagan_File_Unlock(config->shm_thresh_by_username);
+        File_Unlock(config->shm_thresh_by_username);
         return(0);
     }
 
@@ -803,7 +803,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         new_count = 0;
         old_count = 0;
 
-        Sagan_File_Lock(config->shm_xbit);
+        File_Lock(config->shm_xbit);
         pthread_mutex_lock(&Xbit_Mutex);
 
         struct _Sagan_IPC_Xbit *temp_xbit_ipc;
@@ -848,7 +848,7 @@ sbool Sagan_Clean_IPC_Object( int type )
             Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
             free(temp_xbit_ipc);
             pthread_mutex_unlock(&Xbit_Mutex);
-            Sagan_File_Unlock(config->shm_xbit);
+            File_Unlock(config->shm_xbit);
             return(1);
         }
 
@@ -856,7 +856,7 @@ sbool Sagan_Clean_IPC_Object( int type )
         free(temp_xbit_ipc);
 
         pthread_mutex_unlock(&Xbit_Mutex);
-        Sagan_File_Unlock(config->shm_xbit);
+        File_Unlock(config->shm_xbit);
         return(0);
 
     }
@@ -979,7 +979,7 @@ void Sagan_IPC_Init(void)
 
             if ( xbit_ipc[i].xbit_state == 1 ) {
 
-                Sagan_u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
+                u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
                 Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), time_buf, xbit_ipc[i].expire );
             }
@@ -1029,7 +1029,7 @@ void Sagan_IPC_Init(void)
 
             ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
 
-            Sagan_u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
@@ -1079,7 +1079,7 @@ void Sagan_IPC_Init(void)
 
             ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
 
-            Sagan_u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
 
@@ -1130,7 +1130,7 @@ void Sagan_IPC_Init(void)
 
             uint32_t srcport = htonl(threshbysrcport_ipc[i].ipsrcport);
 
-            Sagan_u32_Time_To_Human(threshbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(threshbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
 
@@ -1183,7 +1183,7 @@ void Sagan_IPC_Init(void)
 
             uint32_t dstport = htonl(threshbydstport_ipc[i].ipdstport);
 
-            Sagan_u32_Time_To_Human(threshbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(threshbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
 
@@ -1231,7 +1231,7 @@ void Sagan_IPC_Init(void)
 
         for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
 
-            Sagan_u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
@@ -1279,7 +1279,7 @@ void Sagan_IPC_Init(void)
 
             ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
 
-            Sagan_u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
@@ -1327,7 +1327,7 @@ void Sagan_IPC_Init(void)
 
             ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
 
-            Sagan_u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
@@ -1376,7 +1376,7 @@ void Sagan_IPC_Init(void)
 
             uint32_t srcport = htonl(afterbysrcport_ipc[i].ipsrcport);
 
-            Sagan_u32_Time_To_Human(afterbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(afterbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
         }
@@ -1425,7 +1425,7 @@ void Sagan_IPC_Init(void)
 
             uint32_t dstport = htonl(afterbydstport_ipc[i].ipdstport);
 
-            Sagan_u32_Time_To_Human(afterbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(afterbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
         }
@@ -1471,7 +1471,7 @@ void Sagan_IPC_Init(void)
 
         for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
 
-            Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+            u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
@@ -1493,10 +1493,10 @@ void Sagan_IPC_Init(void)
 
             /* Reset any track_clients_client_count's to 0! */
 
-            Sagan_File_Lock(config->shm_counters);
+            File_Lock(config->shm_counters);
             counters_ipc->track_clients_client_count = 0;
             counters_ipc->track_clients_down = 0;
-            Sagan_File_Unlock(config->shm_counters);
+            File_Unlock(config->shm_counters);
 
         } else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 1 ) {
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
@@ -1529,7 +1529,7 @@ void Sagan_IPC_Init(void)
                     for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                         {
 
-        	    Sagan_u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+        	    u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
                             Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                         }

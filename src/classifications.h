@@ -34,8 +34,6 @@ struct _Class_Struct {
 
 
 void Load_Classifications( const char * );
-//char *Sagan_Classtype_Lookup( const char *);
-
-int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size );
+int  Classtype_Lookup( const char *classtype, char *str, size_t size );
 
 

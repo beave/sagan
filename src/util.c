@@ -73,7 +73,7 @@ sbool quiet;
  * it initalized
  *****************************************************************************/
 
-void Sagan_Chroot(const char *chrootdir )
+void Chroot(const char *chrootdir )
 {
 
     printf("[*] Chroot to %s\n", chrootdir);
@@ -88,7 +88,7 @@ void Sagan_Chroot(const char *chrootdir )
  * Drop priv's so we aren't running as "root".
  ************************************************/
 
-void Sagan_Droppriv(void)
+void Droppriv(void)
 {
 
     struct stat fifocheck;
@@ -461,11 +461,11 @@ sbool is_rfc1918 ( uint32_t ipint )
 }
 
 /****************************************************************************
- * Sagan_Var_To_Value - Changes a variable in a configuration file (for
+ * Var_To_Value - Changes a variable in a configuration file (for
  * example - $RULE_PATH into it's true value.
  ****************************************************************************/
 
-void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
+void Var_To_Value(char *in_str, char *str, size_t size)
 {
 
     char *ptmp = NULL;
@@ -503,10 +503,10 @@ void Sagan_Var_To_Value(char *in_str, char *str, size_t size)
 }
 
 /****************************************************************************
- * Sagan_Validate_HEX - Makes sure a string is valid hex.
+ * Validate_HEX - Makes sure a string is valid hex.
  ****************************************************************************/
 
-sbool Sagan_Validate_HEX (const char *string)
+sbool Validate_HEX (const char *string)
 {
 
     const char *curr = string;
@@ -522,10 +522,10 @@ sbool Sagan_Validate_HEX (const char *string)
 }
 
 /****************************************************************************
- * Sagan_Check_Var - Checks to make sure a "var" is present in memory
+ * Check_Var - Checks to make sure a "var" is present in memory
  ****************************************************************************/
 
-int Sagan_Check_Var(const char *string)
+int Check_Var(const char *string)
 {
 
     int i;
@@ -550,7 +550,7 @@ int Sagan_Check_Var(const char *string)
  * Move to this function 05/05/2014 - Champ Clark
  *************************************************************************************************/
 
-void Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str, size_t size )
+void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str, size_t size )
 {
 
     int pipe_flag = 0;
@@ -591,7 +591,7 @@ void Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, cha
 
             snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
 
-            if (!Sagan_Validate_HEX(final_content_tmp)) {
+            if (!Validate_HEX(final_content_tmp)) {
                 Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
             }
 
@@ -615,11 +615,11 @@ void Sagan_Content_Pipe(char *in_string, int linecount, const char *ruleset, cha
 }
 
 /****************************************************************************
- * Sagan_Replace_Sagan() - Take the %sagan% out of a string and replaces it
+ * Replace_Sagan() - Take the %sagan% out of a string and replaces it
  * with *replace
  ****************************************************************************/
 
-void Sagan_Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
+void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
 {
 
     char string[1024] = { 0 };
@@ -660,12 +660,12 @@ void Sagan_Replace_Sagan( char *string_in, char *replace, char *str, size_t size
 
 
 /****************************************************************************
- * Sagan_Character_Count - Simple routine that "counts" the number of
+ * Character_Count - Simple routine that "counts" the number of
  * time "char_to_count" (single character) occurs.   Returns the int
  * value of what it found
  ****************************************************************************/
 
-int Sagan_Character_Count ( char *string_in, char *char_to_count)
+int Character_Count ( char *string_in, char *char_to_count)
 {
 
     char str_to_count[128] = { 0 };
@@ -695,7 +695,7 @@ int Sagan_Character_Count ( char *string_in, char *char_to_count)
 }
 
 /****************************************************************************
- * Sagan_Wildcard - Used for comparing strings with wildcard support.  This
+ * Wildcard - Used for comparing strings with wildcard support.  This
  * function was taken from:
  *
  * http://www.geeksforgeeks.org/wildcard-character-matching/
@@ -703,7 +703,7 @@ int Sagan_Character_Count ( char *string_in, char *char_to_count)
  * They had a much better solution than mine!
  ****************************************************************************/
 
-sbool Sagan_Wildcard( char *first, char *second )
+sbool Wildcard( char *first, char *second )
 {
     if (*first == '\0' && *second == '\0') {
         return true;
@@ -714,23 +714,23 @@ sbool Sagan_Wildcard( char *first, char *second )
     }
 
     if (*first == '?' || *first == *second) {
-        return Sagan_Wildcard(first+1, second+1);
+        return Wildcard(first+1, second+1);
     }
 
     if (*first == '*') {
-        return Sagan_Wildcard(first+1, second) || Sagan_Wildcard(first, second+1);
+        return Wildcard(first+1, second) || Wildcard(first, second+1);
     }
 
     return false;
 }
 
 /****************************************************************************
- * Sagan_Open_Log_File - This controls the opening and/or re-opening of log
+ * Open_Log_File - This controls the opening and/or re-opening of log
  * files.  This is useful for situation like SIGHUP,  where we want to
  * close a file handle and start a new one.  Think of 'logrotate'.
  ****************************************************************************/
 
-void Sagan_Open_Log_File( sbool state, int type )
+void Open_Log_File( sbool state, int type )
 {
 
     struct passwd *pw = NULL;
@@ -756,7 +756,7 @@ void Sagan_Open_Log_File( sbool state, int type )
             exit(1);
         }
 
-        /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
+        /* Chown the log files in case we get a SIGHUP or whatnot later (due to Chroot()) */
 
         ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
 
@@ -832,12 +832,12 @@ void Sagan_Open_Log_File( sbool state, int type )
 }
 
 /****************************************************************************
- * Sagan_Set_Pipe_Size - Changes the capacity of the pipe/FIFO.
+ * Set_Pipe_Size - Changes the capacity of the pipe/FIFO.
  ****************************************************************************/
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
-void Sagan_Set_Pipe_Size ( FILE *fd )
+void Set_Pipe_Size ( FILE *fd )
 {
 
     int fd_int;
@@ -874,11 +874,11 @@ void Sagan_Set_Pipe_Size ( FILE *fd )
 #endif
 
 /****************************************************************************
- * Sagan_File_Lock - Takes in a file descriptor and "locks" the file.  Used
+ * File_Lock - Takes in a file descriptor and "locks" the file.  Used
  * with IPC/memory mapped files.
  ****************************************************************************/
 
-sbool Sagan_File_Lock ( int fd )
+sbool File_Lock ( int fd )
 {
 
     struct flock fl;
@@ -897,11 +897,11 @@ sbool Sagan_File_Lock ( int fd )
 }
 
 /****************************************************************************
- * Sagan_File_Unlock - Takes in a file descriptor and "unlocks" the file.
+ * File_Unlock - Takes in a file descriptor and "unlocks" the file.
  * Used with IPC/memory mapped files.
  ****************************************************************************/
 
-sbool Sagan_File_Unlock( int fd )
+sbool File_Unlock( int fd )
 {
 
     struct flock fl;

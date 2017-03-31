@@ -171,49 +171,49 @@ void Sig_Handler( void )
 
             /* IPC Shared Memory */
 
-            Sagan_File_Unlock(config->shm_counters);
+            File_Unlock(config->shm_counters);
 
             if ( close(config->shm_counters) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_xbit);
+            File_Unlock(config->shm_xbit);
 
             if ( close(config->shm_xbit) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_thresh_by_src);
+            File_Unlock(config->shm_thresh_by_src);
 
             if ( close(config->shm_thresh_by_src) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_thresh_by_dst);
+            File_Unlock(config->shm_thresh_by_dst);
 
             if ( close(config->shm_thresh_by_dst) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_thresh_by_username);
+            File_Unlock(config->shm_thresh_by_username);
 
             if ( close(config->shm_thresh_by_username) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_after_by_src);
+            File_Unlock(config->shm_after_by_src);
 
             if ( close(config->shm_after_by_src) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_after_by_dst);
+            File_Unlock(config->shm_after_by_dst);
 
             if ( close(config->shm_after_by_dst) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
             }
 
-            Sagan_File_Unlock(config->shm_after_by_username);
+            File_Unlock(config->shm_after_by_username);
 
             if ( close(config->shm_after_by_username) != 0 ) {
                 Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
@@ -221,7 +221,7 @@ void Sig_Handler( void )
 
             if ( config->sagan_track_clients_flag ) {
 
-                Sagan_File_Unlock(config->shm_track_clients);
+                File_Unlock(config->shm_track_clients);
 
                 if ( close(config->shm_track_clients) != 0 ) {
                     Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC _Sagan_Track_Clients! [%s]", __FILE__, __LINE__, strerror(errno));
@@ -251,7 +251,7 @@ void Sig_Handler( void )
             * 04/14/2015 - Champ Clark III (cclark@quadrantsec.com)
             */
 
-            Sagan_Open_Log_File(REOPEN, ALL_LOGS);
+            Open_Log_File(REOPEN, ALL_LOGS);
 
             /******************/
             /* Reset counters */

@@ -53,7 +53,7 @@
 
 struct _SaganConfig *config;
 
-int Sagan_Parse_Src_Port (char *msg)
+int Parse_Src_Port (char *msg)
 {
 
     int port;
@@ -206,7 +206,7 @@ int Sagan_Parse_Src_Port (char *msg)
     return(port);
 }
 
-int Sagan_Parse_Dst_Port (char *msg)
+int Parse_Dst_Port (char *msg)
 {
 
     int port;

@@ -133,11 +133,11 @@ void Sagan_Return_Time( uint32_t utime, char *str, size_t size )
 
 
 /****************************************************************************
- * Sagan_u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
+ * u32_Time_To_Human - Converts a 32/64 bit epoch time into a human
  * "readable" format.
  ****************************************************************************/
 
-void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
+void u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
 {
 
     struct tm tm;
@@ -160,7 +160,7 @@ void Sagan_u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
  * 3600
  *************************************************************/
 
-uintmax_t Sagan_Value_To_Seconds(char *type, uintmax_t number)
+uintmax_t Value_To_Seconds(char *type, uintmax_t number)
 {
 
     /* Covers both plural and non-plural (ie - minute/minutes) */

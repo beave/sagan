@@ -539,7 +539,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
 
     for (i = 1; i < MAX_PARSE_IP; i++) {
 
-        Sagan_Parse_IP(syslog_message, i, results, sizeof(results));
+        Parse_IP(syslog_message, i, results, sizeof(results));
 
         /* Failed to find next IP,  short circuit the process */
 

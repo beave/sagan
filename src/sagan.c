@@ -425,7 +425,7 @@ int main(int argc, char **argv)
             break;
 
         case 'c':
-            Sagan_Chroot(optarg);
+            Chroot(optarg);
             break;
 
         case 'F':
@@ -449,7 +449,7 @@ int main(int argc, char **argv)
         }
     }
 
-    Sagan_Open_Log_File(OPEN, SAGAN_LOG);
+    Open_Log_File(OPEN, SAGAN_LOG);
 
     /* Become a daemon if requested */
 
@@ -608,7 +608,7 @@ int main(int argc, char **argv)
 #endif
 
 
-    Sagan_Droppriv();              /* Become the Sagan user */
+    Droppriv();              /* Become the Sagan user */
     Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
 
     Sagan_IPC_Init();
@@ -628,7 +628,7 @@ int main(int argc, char **argv)
 
     /* Open sagan alert file */
 
-    Sagan_Open_Log_File(OPEN, ALERT_LOG);
+    Open_Log_File(OPEN, ALERT_LOG);
 
     /****************************************************************************
      * Display processor information as we load
@@ -873,7 +873,7 @@ int main(int argc, char **argv)
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
-            Sagan_Set_Pipe_Size(fd);
+            Set_Pipe_Size(fd);
 
 #endif
 
@@ -894,7 +894,7 @@ int main(int argc, char **argv)
 
 #if defined(HAVE_GETPIPE_SZ) && defined(HAVE_SETPIPE_SZ)
 
-                    Sagan_Set_Pipe_Size(fd);
+                    Set_Pipe_Size(fd);
 
 #endif
                     fifoerr = false;

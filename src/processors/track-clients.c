@@ -81,25 +81,25 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     for (i=0; i<counters_ipc->track_clients_client_count; i++) {
         if ( SaganTrackClients_ipc[i].host_u32 == host_u32 ) {
 
-            Sagan_File_Lock(config->shm_track_clients);
+            File_Lock(config->shm_track_clients);
             SaganTrackClients_ipc[i].utime = utime_u64;
             SaganTrackClients_ipc[i].expire = expired_time;
-            Sagan_File_Unlock(config->shm_track_clients);
+            File_Unlock(config->shm_track_clients);
             return(true);
         }
     }
 
     if ( counters_ipc->track_clients_client_count < config->max_track_clients ) {
-        Sagan_File_Lock(config->shm_track_clients);
+        File_Lock(config->shm_track_clients);
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
-        Sagan_File_Unlock(config->shm_track_clients);
+        File_Unlock(config->shm_track_clients);
 
-        Sagan_File_Lock(config->shm_counters);
+        File_Lock(config->shm_counters);
         counters_ipc->track_clients_client_count++;
-        Sagan_File_Unlock(config->shm_counters);
+        File_Unlock(config->shm_counters);
         return(false);
 
     } else {

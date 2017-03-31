@@ -253,7 +253,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                 ptmp = strtok_r(tmpbuf, "|", &tok2);
                 match = true;
                 while ( ptmp != NULL ) {
-                    if ( Sagan_Wildcard(ptmp, SaganProcSyslog_LOCAL->syslog_program) == 1 ) {
+                    if ( Wildcard(ptmp, SaganProcSyslog_LOCAL->syslog_program) == 1 ) {
                         match = false;
                     }
 
@@ -594,22 +594,22 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         /* parse_src_ip: {position} */
 
                         if ( rulestruct[b].s_find_src_ip == 1 ) {
-                            Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos, ip_src, sizeof(ip_src));
+                            Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_src_pos, ip_src, sizeof(ip_src));
                             ip_src_flag = 1;
                         }
 
                         /* parse_dst_ip: {postion} */
 
                         if ( rulestruct[b].s_find_dst_ip == 1 ) {
-                            Sagan_Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos, ip_dst, sizeof(ip_dst));
+                            Parse_IP(SaganProcSyslog_LOCAL->syslog_message, rulestruct[b].s_find_dst_pos, ip_dst, sizeof(ip_dst));
                             ip_dst_flag = 1;
                         }
 
                         /* parse_port */
 
                         if ( rulestruct[b].s_find_port == 1 ) {
-                            normalize_src_port = Sagan_Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
-                            normalize_dst_port = Sagan_Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
+                            normalize_src_port = Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
+                            normalize_dst_port = Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
                         } else {
                             normalize_src_port = config->sagan_port;
                         }
@@ -617,21 +617,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         /* parse_hash: md5 */
 
                         if ( rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 ) {
-                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5, normalize_md5_hash, sizeof(normalize_md5_hash));
+                            Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5, normalize_md5_hash, sizeof(normalize_md5_hash));
                         }
 
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 ) {
-                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, normalize_sha1_hash, sizeof(normalize_sha1_hash));
+                            Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, normalize_sha1_hash, sizeof(normalize_sha1_hash));
                         }
 
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 ) {
-                            Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
+                            Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
                         }
 
                         /*  DEBUG
                         else if ( rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
                             {
-                        Sagan_Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
+                        Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, normalize_sha256_hash, sizeof(normalize_sha256_hash));
                                           }
                                           */
 
@@ -644,11 +644,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     proto = 0;
 
                     if ( rulestruct[b].s_find_proto_program == 1 ) {
-                        proto = Sagan_Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
+                        proto = Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                     }
 
                     if ( rulestruct[b].s_find_proto == 1 && proto == 0 ) {
-                        proto = Sagan_Parse_Proto(SaganProcSyslog_LOCAL->syslog_message);
+                        proto = Parse_Proto(SaganProcSyslog_LOCAL->syslog_message);
                     }
 
                     /* If proto is not searched or has failed,  default to whatever the rule told us to
@@ -996,7 +996,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_src);
+                                                                            File_Lock(config->shm_after_by_src);
                                                                             pthread_mutex_lock(&After_By_Src_Mutex);
 
                                                                             afterbysrc_ipc[i].count++;
@@ -1010,7 +1010,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Src_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_src);
+                                                                            File_Unlock(config->shm_after_by_src);
 
                                                                             if ( rulestruct[b].after_count < afterbysrc_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1036,7 +1036,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                     if ( Sagan_Clean_IPC_Object(AFTER_BY_SRC) == 0 ) {
 
-                                                                        Sagan_File_Lock(config->shm_after_by_src);
+                                                                        File_Lock(config->shm_after_by_src);
                                                                         pthread_mutex_lock(&After_By_Src_Mutex);
 
                                                                         afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
@@ -1045,14 +1045,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
                                                                         afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
 
-                                                                        Sagan_File_Unlock(config->shm_after_by_src);
+                                                                        File_Unlock(config->shm_after_by_src);
 
-                                                                        Sagan_File_Lock(config->shm_counters);
+                                                                        File_Lock(config->shm_counters);
 
                                                                         counters_ipc->after_count_by_src++;
 
                                                                         pthread_mutex_unlock(&After_By_Src_Mutex);
-                                                                        Sagan_File_Unlock(config->shm_counters);
+                                                                        File_Unlock(config->shm_counters);
 
                                                                     }
 
@@ -1072,7 +1072,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_srcport);
+                                                                            File_Lock(config->shm_after_by_srcport);
                                                                             pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                             afterbysrcport_ipc[i].count++;
@@ -1086,7 +1086,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_srcport);
+                                                                            File_Unlock(config->shm_after_by_srcport);
 
                                                                             if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1108,7 +1108,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_after_by_srcport);
+                                                                            File_Lock(config->shm_after_by_srcport);
                                                                             pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
@@ -1117,14 +1117,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_after_by_srcport);
+                                                                            File_Unlock(config->shm_after_by_srcport);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->after_count_by_srcport++;
 
                                                                             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1144,7 +1144,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid )) {
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_dst);
+                                                                            File_Lock(config->shm_after_by_dst);
                                                                             pthread_mutex_lock(&After_By_Dst_Mutex);
 
                                                                             afterbydst_ipc[i].count++;
@@ -1158,7 +1158,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Dst_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_dst);
+                                                                            File_Unlock(config->shm_after_by_dst);
 
                                                                             if ( rulestruct[b].after_count < afterbydst_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1181,7 +1181,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_after_by_dst);
+                                                                            File_Lock(config->shm_after_by_dst);
                                                                             pthread_mutex_lock(&After_By_Dst_Mutex);
 
                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
@@ -1190,14 +1190,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
                                                                             afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_after_by_dst);
+                                                                            File_Unlock(config->shm_after_by_dst);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->after_count_by_dst++;
 
                                                                             pthread_mutex_unlock(&After_By_Dst_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1216,7 +1216,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(afterbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_srcport);
+                                                                            File_Lock(config->shm_after_by_srcport);
                                                                             pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                             afterbysrcport_ipc[i].count++;
@@ -1230,7 +1230,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_srcport);
+                                                                            File_Unlock(config->shm_after_by_srcport);
 
                                                                             if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1252,7 +1252,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_after_by_srcport);
+                                                                            File_Lock(config->shm_after_by_srcport);
                                                                             pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
@@ -1261,14 +1261,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
                                                                             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_after_by_srcport);
+                                                                            File_Unlock(config->shm_after_by_srcport);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->after_count_by_srcport++;
 
                                                                             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1287,7 +1287,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(afterbydstport_ipc[i].sid, rulestruct[b].s_sid )) {
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_dstport);
+                                                                            File_Lock(config->shm_after_by_dstport);
                                                                             pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
                                                                             afterbydstport_ipc[i].count++;
@@ -1301,7 +1301,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_dstport);
+                                                                            File_Unlock(config->shm_after_by_dstport);
 
                                                                             if ( rulestruct[b].after_count < afterbydstport_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1323,7 +1323,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_after_by_dstport);
+                                                                            File_Lock(config->shm_after_by_dstport);
                                                                             pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
                                                                             afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
@@ -1332,14 +1332,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
                                                                             afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[b].after_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_after_by_dstport);
+                                                                            File_Unlock(config->shm_after_by_dstport);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->after_count_by_dstport++;
 
                                                                             pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1359,7 +1359,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbyusername_ipc[i].sid, rulestruct[b].s_sid )) {
                                                                             after_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_after_by_username);
+                                                                            File_Lock(config->shm_after_by_username);
                                                                             pthread_mutex_lock(&After_By_Username_Mutex);
 
                                                                             afterbyusername_ipc[i].count++;
@@ -1373,7 +1373,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&After_By_Username_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_after_by_username);
+                                                                            File_Unlock(config->shm_after_by_username);
 
                                                                             if ( rulestruct[b].after_count < afterbyusername_ipc[i].count ) {
                                                                                 after_log_flag = false;
@@ -1396,7 +1396,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_after_by_username);
+                                                                            File_Lock(config->shm_after_by_username);
                                                                             pthread_mutex_lock(&After_By_Username_Mutex);
 
                                                                             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
@@ -1405,14 +1405,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
                                                                             afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_after_by_username);
+                                                                            File_Unlock(config->shm_after_by_username);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->after_count_by_username++;
 
                                                                             pthread_mutex_unlock(&After_By_Username_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1445,7 +1445,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             thresh_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_src);
+                                                                            File_Lock(config->shm_thresh_by_src);
                                                                             pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
                                                                             threshbysrc_ipc[i].count++;
@@ -1460,7 +1460,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_src);
+                                                                            File_Unlock(config->shm_thresh_by_src);
 
                                                                             if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count ) {
                                                                                 thresh_log_flag = true;
@@ -1484,7 +1484,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(THRESH_BY_SRC) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_src);
+                                                                            File_Lock(config->shm_thresh_by_src);
                                                                             pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
@@ -1493,14 +1493,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
                                                                             threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_src);
+                                                                            File_Unlock(config->shm_thresh_by_src);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->thresh_count_by_src++;
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1519,7 +1519,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             thresh_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_dst);
+                                                                            File_Lock(config->shm_thresh_by_dst);
                                                                             pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
                                                                             threshbydst_ipc[i].count++;
@@ -1532,7 +1532,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_dst);
+                                                                            File_Unlock(config->shm_thresh_by_dst);
 
 
                                                                             if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count ) {
@@ -1555,7 +1555,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(THRESH_BY_DST) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_dst);
+                                                                            File_Lock(config->shm_thresh_by_dst);
                                                                             pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
@@ -1564,14 +1564,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
                                                                             threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_dst);
+                                                                            File_Unlock(config->shm_thresh_by_dst);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->thresh_count_by_dst++;
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1592,7 +1592,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             thresh_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_srcport);
+                                                                            File_Lock(config->shm_thresh_by_srcport);
                                                                             pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
 
                                                                             threshbysrcport_ipc[i].count++;
@@ -1605,7 +1605,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_srcport);
+                                                                            File_Unlock(config->shm_thresh_by_srcport);
 
 
                                                                             if ( rulestruct[b].threshold_count < threshbysrcport_ipc[i].count ) {
@@ -1628,7 +1628,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(THRESH_BY_SRCPORT) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_srcport);
+                                                                            File_Lock(config->shm_thresh_by_srcport);
                                                                             pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
 
 
@@ -1638,14 +1638,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].utime = atol(timet);
                                                                             threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].expire = rulestruct[b].threshold_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_srcport);
+                                                                            File_Unlock(config->shm_thresh_by_srcport);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->thresh_count_by_srcport++;
 
                                                                             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1665,7 +1665,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             thresh_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_dstport);
+                                                                            File_Lock(config->shm_thresh_by_dstport);
                                                                             pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
 
                                                                             threshbydstport_ipc[i].count++;
@@ -1678,7 +1678,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_dstport);
+                                                                            File_Unlock(config->shm_thresh_by_dstport);
 
 
                                                                             if ( rulestruct[b].threshold_count < threshbydstport_ipc[i].count ) {
@@ -1701,7 +1701,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                         if ( Sagan_Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 ) {
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_dstport);
+                                                                            File_Lock(config->shm_thresh_by_dstport);
                                                                             pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
 
 
@@ -1711,14 +1711,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
                                                                             threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[b].threshold_seconds;
 
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_dstport);
+                                                                            File_Unlock(config->shm_thresh_by_dstport);
 
-                                                                            Sagan_File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
                                                                             counters_ipc->thresh_count_by_dstport++;
 
                                                                             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_counters);
+                                                                            File_Unlock(config->shm_counters);
 
                                                                         }
 
@@ -1738,7 +1738,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             thresh_flag = true;
 
-                                                                            Sagan_File_Lock(config->shm_thresh_by_username);
+                                                                            File_Lock(config->shm_thresh_by_username);
                                                                             pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
                                                                             threshbyusername_ipc[i].count++;
@@ -1752,7 +1752,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                             }
 
                                                                             pthread_mutex_unlock(&Thresh_By_Username_Mutex);
-                                                                            Sagan_File_Unlock(config->shm_thresh_by_username);
+                                                                            File_Unlock(config->shm_thresh_by_username);
 
                                                                             if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count ) {
 
@@ -1775,7 +1775,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                     if ( thresh_flag == false ) {
 
-                                                                        Sagan_File_Lock(config->shm_thresh_by_username);
+                                                                        File_Lock(config->shm_thresh_by_username);
                                                                         pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
                                                                         strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
@@ -1785,7 +1785,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
 
 
-                                                                        Sagan_File_Unlock(config->shm_thresh_by_username);
+                                                                        File_Unlock(config->shm_thresh_by_username);
 
 //                                                                   if ( config->max_threshold_by_username < counters_ipc->thresh_count_by_username ) {
 //                                                                        Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_username' of %d has been reached! Consider increasing 'threshold_by_username'!", __FILE__, __LINE__, config->max_threshold_by_username );
@@ -1795,12 +1795,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 //                                                                    } else {
 
-                                                                        Sagan_File_Lock(config->shm_counters);
+                                                                        File_Lock(config->shm_counters);
 
                                                                         counters_ipc->thresh_count_by_username++;
 
                                                                         pthread_mutex_unlock(&Thresh_By_Username_Mutex);
-                                                                        Sagan_File_Unlock(config->shm_counters);
+                                                                        File_Unlock(config->shm_counters);
 
 //                                                                    }
 

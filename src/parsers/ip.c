@@ -48,7 +48,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
+void Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
 {
 
     int result_space, result_nonspace, i, b;

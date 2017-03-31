@@ -138,15 +138,15 @@ void Sagan_Report_Clients ( void )
 
                     /* Update status and seen time */
 
-                    Sagan_File_Lock(config->shm_track_clients);
+                    File_Lock(config->shm_track_clients);
                     SaganTrackClients_ipc[i].status = 0;
-                    Sagan_File_Unlock(config->shm_track_clients);
+                    File_Unlock(config->shm_track_clients);
 
                     /* Update counters */
 
-                    Sagan_File_Lock(config->shm_counters);
+                    File_Lock(config->shm_counters);
                     counters_ipc->track_clients_down--;
-                    Sagan_File_Unlock(config->shm_counters);
+                    File_Unlock(config->shm_counters);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 
@@ -192,15 +192,15 @@ void Sagan_Report_Clients ( void )
                 if ( ( utime_u32 - SaganTrackClients_ipc[i].utime ) >= expired_time ) {
                     /* Update status and utime */
 
-                    Sagan_File_Lock(config->shm_track_clients);
+                    File_Lock(config->shm_track_clients);
                     SaganTrackClients_ipc[i].status = 1;
-                    Sagan_File_Unlock(config->shm_track_clients);
+                    File_Unlock(config->shm_track_clients);
 
                     /* Update counters */
 
-                    Sagan_File_Lock(config->shm_counters);
+                    File_Lock(config->shm_counters);
                     counters_ipc->track_clients_down++;
-                    Sagan_File_Unlock(config->shm_counters);
+                    File_Unlock(config->shm_counters);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 

@@ -39,7 +39,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
+void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 {
     char tmpmsg[MAX_SYSLOGMSG];
     char *ptmp=NULL;
@@ -52,11 +52,11 @@ void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 
     while (ptmp != NULL ) {
 
-        Sagan_Parse_Hash_Cleanup(ptmp, tmp, sizeof(tmp));
+        Parse_Hash_Cleanup(ptmp, tmp, sizeof(tmp));
 
         if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == MD5_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
+                if ( Validate_HEX(tmp) == true ) {
                     snprintf(str, size, "%s", tmp);
                     return;
                 }
@@ -66,7 +66,7 @@ void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 
         else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == SHA1_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
+                if ( Validate_HEX(tmp) == true ) {
                     snprintf(str, size, "%s", tmp);
                     return;
                 }
@@ -75,7 +75,7 @@ void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 
         else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL ) {
             if ( strlen(tmp) == SHA256_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
+                if ( Validate_HEX(tmp) == true ) {
                     snprintf(str, size, "%s", tmp);
                     return;
                 }
@@ -91,7 +91,7 @@ void Sagan_Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 }
 
 
-void Sagan_Parse_Hash_Cleanup(char *string, char *str, size_t size)
+void Parse_Hash_Cleanup(char *string, char *str, size_t size)
 {
 
     char tmp[512];

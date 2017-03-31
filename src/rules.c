@@ -365,7 +365,7 @@ void Load_Rules( const char *ruleset )
             /* First flow */
             if ( netcount == 2 ) {
 
-                Sagan_Var_To_Value(tokennet, flow_a, sizeof(flow_a));
+                Var_To_Value(tokennet, flow_a, sizeof(flow_a));
                 Remove_Spaces(flow_a);
 
                 if (!strcmp(flow_a, "any") || !strcmp(flow_a, tokennet)) {
@@ -461,7 +461,7 @@ void Load_Rules( const char *ruleset )
                 }
 
                 if (Is_Numeric(nettmp)) {
-                    src_port = atoi(nettmp);          /* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                    src_port = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
                 }
 
                 if ( src_port == 0 ) {
@@ -489,7 +489,7 @@ void Load_Rules( const char *ruleset )
             /* Second flow */
             if ( netcount == 5 ) {
 
-                Sagan_Var_To_Value(tokennet, flow_b, sizeof(flow_b));
+                Var_To_Value(tokennet, flow_b, sizeof(flow_b));
                 Remove_Spaces(flow_b);
 
                 if (!strcmp(flow_b, "any") || !strcmp(flow_b, tokennet)) {
@@ -596,7 +596,7 @@ void Load_Rules( const char *ruleset )
 
 
                 if (Is_Numeric(nettmp)) {
-                    dst_port = atoi(nettmp);		/* If it's a number (see Sagan_Var_To_Value),  then set to that */
+                    dst_port = atoi(nettmp);		/* If it's a number (see Var_To_Value),  then set to that */
                 }
 
                 if ( dst_port == 0 ) {
@@ -608,7 +608,7 @@ void Load_Rules( const char *ruleset )
 
 
             tokennet = strtok_r(NULL, " ", &saveptrnet);
-            Sagan_Var_To_Value(tokennet, nettmp, sizeof(nettmp));
+            Var_To_Value(tokennet, nettmp, sizeof(nettmp));
             Remove_Spaces(nettmp);
 
             netcount++;
@@ -652,7 +652,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(arg, tmp1, sizeof(tmp1));
+                Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
                 if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
@@ -677,7 +677,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"default_src_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(arg, tmp1, sizeof(tmp1));
+                Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
                 rulestruct[counters->rulecount].src_port = atoi(arg);
@@ -693,7 +693,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"default_dst_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(arg, tmp1, sizeof(tmp1));
+                Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
 
@@ -878,7 +878,7 @@ void Load_Rules( const char *ruleset )
                      */
 
                     if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
-                        rulestruct[counters->rulecount].xbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
+                        rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
                     } else {
                         rulestruct[counters->rulecount].xbit_condition_count++;
                     }
@@ -920,7 +920,7 @@ void Load_Rules( const char *ruleset )
                      */
 
                     if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
-                        rulestruct[counters->rulecount].xbit_condition_count = Sagan_Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
+                        rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
                     } else {
                         rulestruct[counters->rulecount].xbit_condition_count++;
                     }
@@ -1036,7 +1036,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' specified but not complete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(arg, tmp1, sizeof(tmp1));
+                Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
                 strlcpy(rulestruct[counters->rulecount].dynamic_ruleset, tmp1, sizeof(rulestruct[counters->rulecount].dynamic_ruleset));
@@ -1104,7 +1104,7 @@ void Load_Rules( const char *ruleset )
 
                 tmptoken = strtok_r(NULL, ";", &saveptrrule2);           /* Grab country codes */
 
-                Sagan_Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
+                Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmptoken);
 
                 strlcpy(rulestruct[counters->rulecount].geoip2_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip2_country_codes));
@@ -1139,7 +1139,7 @@ void Load_Rules( const char *ruleset )
 
                 Between_Quotes(tmptoken, tmp2, sizeof(tmp2));
 
-                Sagan_Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
+                Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
 
                 strlcpy(rulestruct[counters->rulecount].meta_content_help[meta_content_count], rule_tmp, sizeof(rulestruct[counters->rulecount].meta_content_help[meta_content_count]));
 
@@ -1149,7 +1149,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
+                Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmptoken);
 
                 strlcpy(tmp2, tmptoken, sizeof(tmp2));
@@ -1159,7 +1159,7 @@ void Load_Rules( const char *ruleset )
 
                 while (ptmp != NULL) {
 
-                    Sagan_Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp, tmp_help, sizeof(tmp_help));
+                    Replace_Sagan(rulestruct[counters->rulecount].meta_content_help[meta_content_count], ptmp, tmp_help, sizeof(tmp_help));
                     strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], tmp_help, sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
 
                     meta_content_converted_count++;
@@ -1233,7 +1233,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"program\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
-                Sagan_Var_To_Value(arg, tmp1, sizeof(tmp1));
+                Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
                 strlcpy(rulestruct[counters->rulecount].s_program, tmp1, sizeof(rulestruct[counters->rulecount].s_program));
@@ -1388,7 +1388,7 @@ void Load_Rules( const char *ruleset )
 
                 /* Convert HEX encoded data */
 
-                Sagan_Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
+                Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
                 strlcpy(final_content, rule_tmp, sizeof(final_content));
 
                 strlcpy(rulestruct[counters->rulecount].s_content[content_count], final_content, sizeof(rulestruct[counters->rulecount].s_content[content_count]));
@@ -1647,7 +1647,7 @@ void Load_Rules( const char *ruleset )
                 fwsam_time_tmp=atol(tmptok_tmp);	/* Digit/time */
                 tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3); /* Type - hour/minute */
 
-                rulestruct[counters->rulecount].fwsam_seconds = Sagan_Value_To_Seconds(tmptok_tmp, fwsam_time_tmp);
+                rulestruct[counters->rulecount].fwsam_seconds = Value_To_Seconds(tmptok_tmp, fwsam_time_tmp);
 
             }
 
@@ -1659,7 +1659,7 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].alert_time_flag = 1;
 
                 tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
-                Sagan_Var_To_Value(tok_tmp, tmp1, sizeof(tmp1));
+                Var_To_Value(tok_tmp, tmp1, sizeof(tmp1));
                 strlcpy(tmp2, tmp1, sizeof(tmp2));				/* DEBUG NOT NEEDED */
 
                 tmptoken = strtok_r(tmp2, ",", &saveptrrule2);
@@ -2108,7 +2108,7 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset_fullname, linecount);
                                 }
 
-                                rulestruct[counters->rulecount].bluedot_mdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
+                                rulestruct[counters->rulecount].bluedot_mdate_effective_period = Value_To_Seconds(bluedot_type, bluedot_time_u32);
                             } else if (Sagan_strstr(tmptoken, "cdate_effective_period" )) {
                                 bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
 
@@ -2131,7 +2131,7 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset_fullname, linecount);
                                 }
 
-                                rulestruct[counters->rulecount].bluedot_cdate_effective_period = Sagan_Value_To_Seconds(bluedot_type, bluedot_time_u32);
+                                rulestruct[counters->rulecount].bluedot_cdate_effective_period = Value_To_Seconds(bluedot_type, bluedot_time_u32);
                             }
 
                         } else {
@@ -2163,7 +2163,7 @@ void Load_Rules( const char *ruleset )
                             Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
                         }
 
-                        Sagan_Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
+                        Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
                         Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_HASH);
                     }
@@ -2179,7 +2179,7 @@ void Load_Rules( const char *ruleset )
                             Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
                         }
 
-                        Sagan_Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
+                        Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
                         Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_URL);
                     }
@@ -2194,7 +2194,7 @@ void Load_Rules( const char *ruleset )
                             Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
                         }
 
-                        Sagan_Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
+                        Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
                         Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_FILENAME);
                     }

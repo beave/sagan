@@ -1284,7 +1284,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
 
     for ( i = 1; i < MAX_PARSE_IP; i++ ) {
 
-        Sagan_Parse_IP(syslog_message, i, results, sizeof(results));
+        Parse_IP(syslog_message, i, results, sizeof(results));
 
         /* Failed to find next IP,  short circuit the process */
 

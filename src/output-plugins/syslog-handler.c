@@ -75,7 +75,7 @@ void Sagan_Alert_Syslog( _Sagan_Event *Event )
         tmp_proto = "{UDP}";
     }
 
-    Sagan_Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
+    Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
     snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, classbuf, Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->message);
 

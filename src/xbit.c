@@ -725,13 +725,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                             }
 
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = false;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -748,13 +748,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = false;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -771,13 +771,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = false;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -793,13 +793,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = false;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -817,13 +817,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = false;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -838,13 +838,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -859,13 +859,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -883,13 +883,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -907,13 +907,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -930,13 +930,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -956,13 +956,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -978,13 +978,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -1000,13 +1000,13 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
                             }
 
-                            Sagan_File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
                             xbit_ipc[a].xbit_state = 0;
 
                             pthread_mutex_unlock(&Xbit_Mutex);
-                            Sagan_File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_xbit);
 
                             xbit_unset_match = 1;
 
@@ -1048,7 +1048,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         xbit_ipc[a].src_port == config->sagan_port &&
                         xbit_ipc[a].dst_port == config->sagan_port ) {
 
-                        Sagan_File_Lock(config->shm_xbit);
+                        File_Lock(config->shm_xbit);
                         pthread_mutex_lock(&Xbit_Mutex);
 
                         xbit_ipc[a].xbit_date = atol(timet);
@@ -1060,7 +1060,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         }
 
                         pthread_mutex_unlock(&Xbit_Mutex);
-                        Sagan_File_Unlock(config->shm_xbit);
+                        File_Unlock(config->shm_xbit);
 
                         xbit_match = true;
                     }
@@ -1117,7 +1117,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         xbit_ipc[a].src_port == src_port &&
                         xbit_ipc[a].dst_port == config->sagan_port ) {
 
-                        Sagan_File_Lock(config->shm_xbit);
+                        File_Lock(config->shm_xbit);
                         pthread_mutex_lock(&Xbit_Mutex);
 
                         xbit_ipc[a].xbit_date = atol(timet);
@@ -1129,7 +1129,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         }
 
                         pthread_mutex_unlock(&Xbit_Mutex);
-                        Sagan_File_Unlock(config->shm_xbit);
+                        File_Unlock(config->shm_xbit);
 
                         xbit_match = true;
                     }
@@ -1186,7 +1186,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         xbit_ipc[a].src_port == config->sagan_port &&
                         xbit_ipc[a].dst_port == dst_port ) {
 
-                        Sagan_File_Lock(config->shm_xbit);
+                        File_Lock(config->shm_xbit);
                         pthread_mutex_lock(&Xbit_Mutex);
 
                         xbit_ipc[a].xbit_date = atol(timet);
@@ -1198,7 +1198,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         }
 
                         pthread_mutex_unlock(&Xbit_Mutex);
-                        Sagan_File_Unlock(config->shm_xbit);
+                        File_Unlock(config->shm_xbit);
 
                         xbit_match = true;
                     }
@@ -1255,7 +1255,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         xbit_ipc[a].src_port == src_port &&
                         xbit_ipc[a].dst_port == dst_port ) {
 
-                        Sagan_File_Lock(config->shm_xbit);
+                        File_Lock(config->shm_xbit);
                         pthread_mutex_lock(&Xbit_Mutex);
 
                         xbit_ipc[a].xbit_date = atol(timet);
@@ -1267,7 +1267,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         }
 
                         pthread_mutex_unlock(&Xbit_Mutex);
-                        Sagan_File_Unlock(config->shm_xbit);
+                        File_Unlock(config->shm_xbit);
 
                         xbit_match = true;
                     }
@@ -1309,7 +1309,7 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
             if ( Sagan_Clean_IPC_Object(XBIT) == 0 ) {
 
-                Sagan_File_Lock(config->shm_xbit);
+                File_Lock(config->shm_xbit);
                 pthread_mutex_lock(&Xbit_Mutex);
 
                 xbit_ipc[counters_ipc->xbit_count].ip_src = ip_src;
@@ -1324,19 +1324,19 @@ void Sagan_Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int
                 strlcpy(xbit_ipc[counters_ipc->xbit_count].xbit_name, xbit_track[i].xbit_name, sizeof(xbit_ipc[counters_ipc->xbit_count].xbit_name));
 
                 pthread_mutex_unlock(&Xbit_Mutex);
-                Sagan_File_Unlock(config->shm_xbit);
+                File_Unlock(config->shm_xbit);
 
                 if ( debug->debugxbit) {
                     Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d],", __FILE__, __LINE__, counters_ipc->xbit_count, xbit_ipc[counters_ipc->xbit_count].xbit_name, ip_src_char, xbit_track[i].xbit_srcport, ip_dst_char, xbit_track[i].xbit_dstport);
                 }
 
-                Sagan_File_Lock(config->shm_counters);
+                File_Lock(config->shm_counters);
                 pthread_mutex_lock(&CounterMutex);
 
                 counters_ipc->xbit_count++;
 
                 pthread_mutex_unlock(&CounterMutex);
-                Sagan_File_Unlock(config->shm_counters);
+                File_Unlock(config->shm_counters);
 
             }
         }
