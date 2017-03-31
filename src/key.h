@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void key_handler( void );
+void Key_Handler( void );

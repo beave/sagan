@@ -54,21 +54,25 @@ void Fast_File( _Sagan_Event *Event )
     fprintf(config->sagan_fast_stream, "%s [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", timebuf,
             Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri);
 
-    if ( Event->ip_proto == 1 ) {
-        fprintf(config->sagan_fast_stream, "{ICMP}");
-    }
+    if ( Event->ip_proto == 1 )
+        {
+            fprintf(config->sagan_fast_stream, "{ICMP}");
+        }
 
-    else if ( Event->ip_proto == 6 ) {
-        fprintf(config->sagan_fast_stream, "{TCP}");
-    }
+    else if ( Event->ip_proto == 6 )
+        {
+            fprintf(config->sagan_fast_stream, "{TCP}");
+        }
 
-    else if ( Event->ip_proto == 17 ) {
-        fprintf(config->sagan_fast_stream, "{UDP}");
-    }
+    else if ( Event->ip_proto == 17 )
+        {
+            fprintf(config->sagan_fast_stream, "{UDP}");
+        }
 
-    else if ( Event->ip_proto != 1 && Event->ip_proto !=6 && Event->ip_proto != 17 ) {
-        fprintf(config->sagan_fast_stream, "{UNKNOWN}");
-    }
+    else if ( Event->ip_proto != 1 && Event->ip_proto !=6 && Event->ip_proto != 17 )
+        {
+            fprintf(config->sagan_fast_stream, "{UNKNOWN}");
+        }
 
     fprintf(config->sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
 

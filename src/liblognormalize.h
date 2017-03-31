@@ -28,18 +28,21 @@
 
 /* liblognorm struct */
 typedef struct liblognorm_struct liblognorm_struct;
-struct liblognorm_struct {
+struct liblognorm_struct
+{
     char type[50];
     char filepath[MAXPATH];
 };
 
 typedef struct liblognorm_toload_struct liblognorm_toload_struct;
-struct liblognorm_toload_struct {
+struct liblognorm_toload_struct
+{
     char type[50];
     char filepath[MAXPATH];
 };
 
-typedef struct _SaganNormalizeLiblognorm {
+typedef struct _SaganNormalizeLiblognorm
+{
     char ip_src[MAXIP];
     char ip_dst[MAXIP];
 
@@ -63,5 +66,5 @@ typedef struct _SaganNormalizeLiblognorm {
 #endif
 
 
-void Sagan_Liblognorm_Load( char * );
-void Sagan_Normalize_Liblognorm( char * );
+void Liblognorm_Load( char * );
+void Normalize_Liblognorm( char * );

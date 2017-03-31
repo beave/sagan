@@ -30,7 +30,7 @@ char        plog_filter[256];
 sbool       plog_flag;
 int         plog_promiscuous;
 
-void plog_handler( void );
+void Plog_Handler( void );
 
 #endif
 

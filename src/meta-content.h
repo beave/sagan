@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-int Sagan_Meta_Content_Search(char *, int, int);
+int Meta_Content_Search(char *, int, int);
 

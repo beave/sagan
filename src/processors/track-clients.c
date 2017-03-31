@@ -69,44 +69,50 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     utime_u64 = atol(utime_tmp);
     int expired_time = config->pp_sagan_track_clients * 60;
 
-    if ( host_u32 == 0 ) {
-        Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
-        return(false);
-    }
+    if ( host_u32 == 0 )
+        {
+            Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
+            return(false);
+        }
 
     /*************************/
     /** Record Clients Here **/
     /*************************/
 
-    for (i=0; i<counters_ipc->track_clients_client_count; i++) {
-        if ( SaganTrackClients_ipc[i].host_u32 == host_u32 ) {
+    for (i=0; i<counters_ipc->track_clients_client_count; i++)
+        {
+            if ( SaganTrackClients_ipc[i].host_u32 == host_u32 )
+                {
 
-            File_Lock(config->shm_track_clients);
-            SaganTrackClients_ipc[i].utime = utime_u64;
-            SaganTrackClients_ipc[i].expire = expired_time;
-            File_Unlock(config->shm_track_clients);
-            return(true);
+                    File_Lock(config->shm_track_clients);
+                    SaganTrackClients_ipc[i].utime = utime_u64;
+                    SaganTrackClients_ipc[i].expire = expired_time;
+                    File_Unlock(config->shm_track_clients);
+                    return(true);
+                }
         }
-    }
 
-    if ( counters_ipc->track_clients_client_count < config->max_track_clients ) {
-        File_Lock(config->shm_track_clients);
-        SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
-        SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
-        SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
-        SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
-        File_Unlock(config->shm_track_clients);
+    if ( counters_ipc->track_clients_client_count < config->max_track_clients )
+        {
+            File_Lock(config->shm_track_clients);
+            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
+            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
+            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
+            SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
+            File_Unlock(config->shm_track_clients);
 
-        File_Lock(config->shm_counters);
-        counters_ipc->track_clients_client_count++;
-        File_Unlock(config->shm_counters);
-        return(false);
+            File_Lock(config->shm_counters);
+            counters_ipc->track_clients_client_count++;
+            File_Unlock(config->shm_counters);
+            return(false);
 
-    } else {
+        }
+    else
+        {
 
-        Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
+            Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
 
-    }
+        }
 
     return(true);
 } /* CLose sagan_track_clients */

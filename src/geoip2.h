@@ -28,8 +28,8 @@
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-void Sagan_Open_GeoIP2_Database( void );
-int Sagan_GeoIP2_Lookup_Country( char *, int );
+void Open_GeoIP2_Database( void );
+int GeoIP2_Lookup_Country( char *, int );
 #endif
 
 

@@ -108,14 +108,16 @@ int       PageSupportsRWX(void);
 
 
 typedef struct _SaganDNSCache _SaganDNSCache;
-struct _SaganDNSCache {
+struct _SaganDNSCache
+{
 
     char hostname[64];
     char src_ip[20];
 };
 
 typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
-struct _Sagan_IPC_Counters {
+struct _Sagan_IPC_Counters
+{
 
     int  xbit_count;
     int	 thresh_count_by_src;
@@ -137,7 +139,8 @@ struct _Sagan_IPC_Counters {
 
 
 typedef struct _SaganCounters _SaganCounters;
-struct _SaganCounters {
+struct _SaganCounters
+{
 
     uintmax_t threshold_total;
     uintmax_t after_total;
@@ -252,7 +255,8 @@ struct _SaganCounters {
 };
 
 typedef struct _SaganDebug _SaganDebug;
-struct _SaganDebug {
+struct _SaganDebug
+{
 
     sbool debugsyslog;
     sbool debugload;
@@ -292,7 +296,8 @@ struct _SaganDebug {
 };
 
 typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
-struct _Sagan_Proc_Syslog {
+struct _Sagan_Proc_Syslog
+{
     char syslog_host[50];
     char syslog_facility[50];
     char syslog_priority[50];
@@ -306,7 +311,8 @@ struct _Sagan_Proc_Syslog {
 };
 
 typedef struct _Sagan_Event _Sagan_Event;
-struct _Sagan_Event {
+struct _Sagan_Event
+{
 
     char *ip_src;
     char *ip_dst;
@@ -356,7 +362,8 @@ struct _Sagan_Event {
 /* Thresholding structure by source */
 
 typedef struct thresh_by_src_ipc thresh_by_src_ipc;
-struct thresh_by_src_ipc {
+struct thresh_by_src_ipc
+{
     uint32_t ipsrc;
     int  count;
     uintmax_t utime;
@@ -368,7 +375,8 @@ struct thresh_by_src_ipc {
 /* Thresholding structure by destination */
 
 typedef struct thresh_by_dst_ipc thresh_by_dst_ipc;
-struct thresh_by_dst_ipc {
+struct thresh_by_dst_ipc
+{
     uint32_t ipdst;
     int  count;
     uintmax_t utime;
@@ -380,7 +388,8 @@ struct thresh_by_dst_ipc {
 /* Thresholding structure by source port */
 
 typedef struct thresh_by_srcport_ipc thresh_by_srcport_ipc;
-struct thresh_by_srcport_ipc {
+struct thresh_by_srcport_ipc
+{
     uint32_t ipsrcport;
     int  count;
     uintmax_t utime;
@@ -391,7 +400,8 @@ struct thresh_by_srcport_ipc {
 /* Thresholding structure by destination port */
 
 typedef struct thresh_by_dstport_ipc thresh_by_dstport_ipc;
-struct thresh_by_dstport_ipc {
+struct thresh_by_dstport_ipc
+{
     uint32_t ipdstport;
     int  count;
     uintmax_t utime;
@@ -403,7 +413,8 @@ struct thresh_by_dstport_ipc {
 /* Thesholding structure by username */
 
 typedef struct thresh_by_username_ipc thresh_by_username_ipc;
-struct thresh_by_username_ipc {
+struct thresh_by_username_ipc
+{
     char username[128];
     int  count;
     uintmax_t utime;
@@ -414,7 +425,8 @@ struct thresh_by_username_ipc {
 /* After structure by source */
 
 typedef struct after_by_src_ipc after_by_src_ipc;
-struct after_by_src_ipc {
+struct after_by_src_ipc
+{
     uint32_t ipsrc;
     int  count;
     uintmax_t utime;
@@ -425,7 +437,8 @@ struct after_by_src_ipc {
 /* After structure by destination */
 
 typedef struct after_by_dst_ipc after_by_dst_ipc;
-struct after_by_dst_ipc {
+struct after_by_dst_ipc
+{
     uint32_t ipdst;
     int  count;
     uintmax_t utime;
@@ -436,7 +449,8 @@ struct after_by_dst_ipc {
 /* After structure by source port */
 
 typedef struct after_by_srcport_ipc after_by_srcport_ipc;
-struct after_by_srcport_ipc {
+struct after_by_srcport_ipc
+{
     uint32_t ipsrcport;
     int  count;
     uintmax_t utime;
@@ -447,7 +461,8 @@ struct after_by_srcport_ipc {
 /* After structure by destination port */
 
 typedef struct after_by_dstport_ipc after_by_dstport_ipc;
-struct after_by_dstport_ipc {
+struct after_by_dstport_ipc
+{
     uint32_t ipdstport;
     int  count;
     uintmax_t utime;
@@ -459,7 +474,8 @@ struct after_by_dstport_ipc {
 /* After structure by username */
 
 typedef struct after_by_username_ipc after_by_username_ipc;
-struct after_by_username_ipc {
+struct after_by_username_ipc
+{
     char username[128];
     int  count;
     uintmax_t utime;
@@ -468,18 +484,21 @@ struct after_by_username_ipc {
 };
 
 typedef struct _SaganVar _SaganVar;
-struct _SaganVar {
+struct _SaganVar
+{
     char var_name[MAX_VAR_NAME_SIZE];
     char var_value[MAX_VAR_VALUE_SIZE];
 };
 
-typedef struct network_addr {
+typedef struct network_addr
+{
     in_addr_t addr;
     int pfx;
 } network_addr_t;
 
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
-struct _Sagan_Processor_Info {
+struct _Sagan_Processor_Info
+{
 
     char *processor_name;
     char *processor_facility;

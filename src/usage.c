@@ -34,7 +34,7 @@
 #include "sagan.h"
 #include "version.h"
 
-void Sagan_Usage(void)
+void Usage(void)
 {
     fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
     fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");

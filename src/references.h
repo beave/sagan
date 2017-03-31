@@ -25,7 +25,8 @@
 
 /* Reference structure */
 typedef struct _Ref_Struct _Ref_Struct;
-struct _Ref_Struct {
+struct _Ref_Struct
+{
     unsigned s_size_ref;
     char s_refid[512];
     char s_refurl[2048];
@@ -33,5 +34,4 @@ struct _Ref_Struct {
 
 
 void Load_Reference ( const char * );
-
 void Reference_Lookup( int, int, char *str, size_t size );

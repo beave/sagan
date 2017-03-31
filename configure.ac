@@ -306,7 +306,7 @@ AC_CHECK_LIB(m, main,,AC_MSG_ERROR(Sagan needs libm!))
 
 # OSX doesn't have librt - this needs to be fixed!
 
-AC_CHECK_LIB(rt, main,,AC_MSG_ERROR(Sagan needs librt!))
+##AC_CHECK_LIB(rt, main,,AC_MSG_ERROR(Sagan needs librt!))
 
 # libpthread
 AC_ARG_WITH(libpthread_includes,
