@@ -315,7 +315,7 @@ int Sagan_Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char
                             break;
                         }
 
-                        /* direction: dst_xbitsrc */
+                        /* direction: dst_xbitsrc_p */
 
                         if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
                              xbit_ipc[a].ip_src == ip_dst &&

@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 /* 3 = match ip     */ /************************/ /*****************/
 /********************/ /************************/ /*****************/
 
-sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port)
+sbool Sagan_Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port)
 {
 
     uint32_t *src;
@@ -71,6 +71,9 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, int normalize_src_port, uint
         port_src = normalize_dst_port;
         port_dst = normalize_src_port;
     }
+
+    /*proto*/
+    int c1=0;
 
     /*flow 1*/
     int w=0;
@@ -109,6 +112,19 @@ sbool Sagan_Check_Flow( int b, uint32_t ip_src_u32, int normalize_src_port, uint
 
     int i;
     int failed=0;
+
+    /*Begin ip_proto*/
+    if(rulestruct[b].ip_proto != 0) {
+        if(ip_proto == rulestruct[b].ip_proto) {
+            c1=1;
+    	}
+    } else {
+        c1=1;
+    }
+
+    if(c1 != 1) {
+        return 0;
+    }
 
     /*Begin flow_1*/
     if(rulestruct[b].flow_1_var != 0) {

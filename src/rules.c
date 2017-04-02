@@ -252,6 +252,10 @@ void Load_Rules( const char *ruleset )
 
         rc=0;
 
+        if (!Sagan_strstr(rulebuf, "any")) {
+            rc++;
+        }
+
         if (!Sagan_strstr(rulebuf, "tcp")) {
             rc++;
         }
@@ -268,8 +272,8 @@ void Load_Rules( const char *ruleset )
             rc++;
         }
 
-        if ( rc == 4 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset_fullname, linecount);
+        if ( rc == 5 ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (any/tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset_fullname, linecount);
         }
 
         /* Parse forward for the first '(' */
@@ -334,11 +338,15 @@ void Load_Rules( const char *ruleset )
 
             /* Protocol */
 	
-	    ip_proto = config->sagan_proto;
+//	        ip_proto = config->sagan_proto;
 
             if ( netcount == 1 ) {
 
                 //ip_proto = config->sagan_proto;
+
+            	if (!strcmp(tokennet, "any" )) {
+                    ip_proto = 0;
+                }
 
                 if (!strcmp(tokennet, "icmp" )) {
                     ip_proto = 1;
@@ -350,6 +358,10 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(tokennet, "udp"  )) {
                     ip_proto = 17;
+                }
+
+                if (!strcmp(tokennet, "syslog"  )) {
+                    ip_proto = config->sagan_proto;
                 }
             }
 
@@ -525,7 +537,7 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
             }
 
-            if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0) {
+            if ( rulestruct[counters->rulecount].ip_proto != 0 || rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0) {
                 rulestruct[counters->rulecount].has_flow = 1;
             }
 
@@ -2076,6 +2088,9 @@ void Load_Rules( const char *ruleset )
             Sagan_Log(S_DEBUG, "= pri: %d", rulestruct[counters->rulecount].s_pri);
             Sagan_Log(S_DEBUG, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
             Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
+            Sagan_Log(S_DEBUG, "= default_dst_port: %d", rulestruct[counters->rulecount].default_dst_port);
+            Sagan_Log(S_DEBUG, "= protocol: %d", rulestruct[counters->rulecount].ip_proto);
+            Sagan_Log(S_DEBUG, "= src_port: %d", rulestruct[counters->rulecount].src_port);
             Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
 
             if ( rulestruct[counters->rulecount].s_find_src_ip != 0 ) {

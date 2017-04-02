@@ -643,12 +643,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     /* If the rule calls for proto searching,  we do it now */
 
-//                    proto = 0;
-
-                    proto = rulestruct[b].default_proto;
+                    proto = 0;
 
                     if ( rulestruct[b].s_find_proto_program == 1 ) {
-//                        proto = Sagan_Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
+                        proto = Sagan_Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                     }
 
                     if ( rulestruct[b].s_find_proto == 1 && proto == 0 ) {
@@ -658,9 +656,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                        use */
 
-//                    if ( proto == 0 ) {
-//                        proto = rulestruct[b].default_proto;
-//                    }
+                    if ( proto == 0 ) {
+                        proto = rulestruct[b].default_proto;
+                    }
 
                     if ( ip_src_flag == 0 || ip_src[0] == '0' ) {
                         strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
@@ -709,12 +707,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
-                    /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
-                    the rule has some sort of flow.  It 0,  rule is set any:any/any:any */
+                    /* Check for flow of rule - has_flow is set as rule loading.  If 1, then
+                    the rule has some sort of flow.  If 0,  rule is set any:any/any:any */
 
                     if ( rulestruct[b].has_flow == 1 ) {
 
-                        check_flow_return = Sagan_Check_Flow( b, ip_src_u32, normalize_src_port, ip_dst_u32, normalize_dst_port);
+                        check_flow_return = Sagan_Check_Flow( b, proto, ip_src_u32, normalize_src_port, ip_dst_u32, normalize_dst_port);
 
                         if(check_flow_return == false) {
 
