@@ -23,4 +23,4 @@
 #endif
 
 
-void Sagan_Processor ( void );
+void Processor ( void );

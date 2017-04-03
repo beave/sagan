@@ -31,7 +31,7 @@
 #include "sagan.h"
 #include "version.h"
 
-void Sagan_Credits(void)
+void Credits(void)
 {
 
     fprintf(stderr, "\n--[Sagan version %s | Credits]--------------------------------\n\n", VERSION);
@@ -81,6 +81,7 @@ void Sagan_Credits(void)
     fprintf(stderr, "Jeremy A. Grove (jgrove@quadrantsec.com)\tBug reporting.\n");
     fprintf(stderr, "Ray Ruvinskiy (Github: rtkrruvinskiy)\t\tDaemonization Fixes.\n");
     fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tXbit track by src/dst port code.\n");
+    fprintf(stderr, "\"@3vilJohn\" (Twitter)\t\t\t\tVarious bug reports & testing.\n");
 
     fprintf(stderr, "\n");
 

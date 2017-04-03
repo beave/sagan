@@ -39,7 +39,7 @@
 
 struct _SaganConfig *config;
 
-void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos, struct timeval tp )
+void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, int alertid, int src_port, int dst_port, int pos, struct timeval tp )
 {
 
     char tmp[64] = { 0 };
@@ -47,17 +47,25 @@ void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Proces
     struct _Sagan_Event *SaganProcessorEvent = NULL;
     SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
 
-    if ( SaganProcessorEvent == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
-    }
+    if ( SaganProcessorEvent == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
+        }
 
     memset(SaganProcessorEvent, 0, sizeof(_Sagan_Event));
 
-    if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID ) {
-        SaganProcessorEvent->f_msg           =       Sagan_Generator_Lookup(processor_info->processor_generator_id, alertid);
-    } else {
-        SaganProcessorEvent->f_msg           =       processor_info->processor_name;
-    }
+    if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID )
+        {
+
+            Generator_Lookup(processor_info->processor_generator_id, alertid, tmp, sizeof(tmp));
+            SaganProcessorEvent->f_msg           =       tmp;
+
+        }
+    else
+        {
+
+            SaganProcessorEvent->f_msg           =       processor_info->processor_name;
+        }
 
     SaganProcessorEvent->message         =       SaganProcSyslog_LOCAL->syslog_message;
     SaganProcessorEvent->program         =       processor_info->processor_name;
@@ -90,7 +98,7 @@ void Sagan_Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Proces
 
     SaganProcessorEvent->generatorid     =       processor_info->processor_generator_id;
 
-    Sagan_Output ( SaganProcessorEvent );
+    Output ( SaganProcessorEvent );
     free(SaganProcessorEvent);
 
 }

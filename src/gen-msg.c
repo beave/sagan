@@ -57,40 +57,65 @@ void Load_Gen_Map( const char *genmap )
 
     counters->genmapcount=0;
 
-    if (( genmapfile = fopen(genmap, "r" )) == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
-    }
-
-    while(fgets(genbuf, 1024, genmapfile) != NULL) {
-
-        /* Skip comments and blank linkes */
-
-        if (genbuf[0] == '#' || genbuf[0] == 10 || genbuf[0] == ';' || genbuf[0] == 32) {
-            continue;
-        } else {
-            /* Allocate memory for references,  not comments */
-            generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
-
-            if ( generator == NULL ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
-            }
-
+    if (( genmapfile = fopen(genmap, "r" )) == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
         }
 
-        gen1 = Remove_Return(strtok_r(genbuf, "|", &saveptr));
-        gen2 = Remove_Return(strtok_r(NULL, "|", &saveptr));
-        gen3 = Remove_Return(strtok_r(NULL, "|", &saveptr));
+    while(fgets(genbuf, 1024, genmapfile) != NULL)
+        {
 
-        if ( gen1 == NULL || gen2 == NULL || gen3 == NULL ) {
-            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated", genmap);
+            /* Skip comments and blank linkes */
+
+            if (genbuf[0] == '#' || genbuf[0] == 10 || genbuf[0] == ';' || genbuf[0] == 32)
+                {
+                    continue;
+                }
+            else
+                {
+                    /* Allocate memory for references,  not comments */
+                    generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
+
+                    if ( generator == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
+                        }
+
+                }
+
+            gen1 = strtok_r(genbuf, "|", &saveptr);
+
+            if ( gen1 == NULL )
+                {
+                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen1) ", genmap);
+                }
+
+            Remove_Return(gen1);
+
+            gen2 = strtok_r(NULL, "|", &saveptr);
+
+            if ( gen2 == NULL )
+                {
+                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen2) ", genmap);
+                }
+
+            Remove_Return(gen2);
+
+            gen3 = strtok_r(NULL, "|", &saveptr);
+
+            if ( gen3 == NULL )
+                {
+                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen3) ", genmap);
+                }
+
+            Remove_Return(gen3);
+
+            generator[counters->genmapcount].generatorid=atoi(gen1);
+            generator[counters->genmapcount].alertid=atoi(gen2);
+            strlcpy(generator[counters->genmapcount].generator_msg, gen3, sizeof(generator[counters->genmapcount].generator_msg));
+
+            counters->genmapcount++;
         }
-
-        generator[counters->genmapcount].generatorid=atoi(gen1);
-        generator[counters->genmapcount].alertid=atoi(gen2);
-        strlcpy(generator[counters->genmapcount].generator_msg, Remove_Return(gen3), sizeof(generator[counters->genmapcount].generator_msg));
-
-        counters->genmapcount++;
-    }
 
     fclose(genmapfile);
     Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
@@ -102,18 +127,21 @@ void Load_Gen_Map( const char *genmap )
 /* "gen-msg.map") of a processor                                            */
 /****************************************************************************/
 
-char *Sagan_Generator_Lookup(int processor_id, int alert_id)
+void Generator_Lookup(int processor_id, int alert_id, char *str, size_t size)
 {
 
     int z=0;
     char *msg=NULL;
 
-    for (z=0; z<counters->genmapcount; z++) {
-        if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id) {
-            msg=generator[z].generator_msg;
+    for (z=0; z<counters->genmapcount; z++)
+        {
+            if ( generator[z].generatorid == processor_id && generator[z].alertid == alert_id)
+                {
+                    msg=generator[z].generator_msg;
+                    break;
+                }
         }
-    }
 
-    return(msg);
+    snprintf(str, size, "%s", msg);
 }
 

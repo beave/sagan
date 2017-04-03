@@ -25,7 +25,8 @@
 
 /* Classification strucure */
 typedef struct _Class_Struct _Class_Struct;
-struct _Class_Struct {
+struct _Class_Struct
+{
     unsigned s_size_class;
     char s_shortname[512];
     char s_desc[512];
@@ -34,8 +35,6 @@ struct _Class_Struct {
 
 
 void Load_Classifications( const char * );
-//char *Sagan_Classtype_Lookup( const char *);
-
-int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size );
+int  Classtype_Lookup( const char *classtype, char *str, size_t size );
 
 

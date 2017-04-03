@@ -35,6 +35,8 @@
 #include <time.h>
 #include <arpa/inet.h>
 
+#include "sagan-defs.h"
+
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
 #endif
@@ -49,43 +51,73 @@ size_t strlcpy(char *, const char *, size_t );
 #endif
 
 
+typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX.
+			   "(small bool) I intentionally use char, to keep it slim so
+		           that many fit into the CPU cache!".  */
 
-#include "sagan-defs.h"
+sbool     Is_Numeric (char *);
+void      To_UpperC(char* const );
+void      To_LowerC(char* const );
+int	  Check_Endian( void );
+void      Usage( void );
+void      Chroot( const char * );
+void	  Remove_Return(char *);
+int       Classtype_Lookup( const char *, char *, size_t size );
+void      Remove_Spaces(char *);
+void      Between_Quotes( char *, char *str, size_t size );
+double    CalcPct(uintmax_t, uintmax_t);
+void      Replace_String(char *, char *, char *, char *str, size_t size);
+uintmax_t Value_To_Seconds (char *, uintmax_t);
+void      Sagan_Log( int, const char *, ... );
+void      Droppriv( void );
+int       DNS_Lookup( char *, char *str, size_t size );
+void      Var_To_Value(char *, char *str, size_t size);
+uint32_t  IP2Bit (char * );
+void      Bit2IP(uint32_t, char *str, size_t size);
+sbool     Validate_HEX (const char *);
+void      Content_Pipe(char *, int, const char *, char *, size_t size);
+sbool     is_rfc1918 ( uint32_t );
+void      Replace_Sagan( char *, char *, char *str, size_t size);
+int       Character_Count ( char *, char *);
+sbool     Wildcard( char *, char *);
+void      Open_Log_File( sbool, int );
+int       Check_Var(const char *);
+void      Netaddr_To_Range( char *, char *str, size_t size );
+void      Strip_Chars(const char *string, const char *chars, char *str, size_t size);
+sbool     Is_IP (char *str);
+sbool     File_Lock ( int );
+sbool     File_Unlock ( int );
+sbool     Check_Content_Not( char * );
 
-typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX. "(small bool) I intentionally use char, to keep it slim so that many fit into the CPU cache!".  */
-
-sbool   Is_Numeric (char *);
-
-char   *To_UpperC(char* const );
-char   *To_LowerC(char* const );
-
-int	Check_Endian( void );
-void    Usage( void );
-void    Sagan_Chroot( const char * );
-
-char   *Remove_Return(char *);
+#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
+void      Set_Pipe_Size( FILE * );
+#endif
 
 
-int Sagan_Classtype_Lookup( const char *classtype, char *str, size_t size );
+#ifdef __OpenBSD__
+/* OpenBSD won't allow for this test:
+ * "suricata(...): mprotect W^X violation" */
+#define PageSupportsRWX() 0
+#else
+#ifndef HAVE_SYS_MMAN_H
+#define PageSupportsRWX() 1
+#else
+int       PageSupportsRWX(void);
+#endif /* HAVE_SYS_MMAN_H */
+#endif
 
-
-char   *Remove_Spaces(char *);
-char   *Between_Quotes( char * );
-double CalcPct(uintmax_t, uintmax_t);
-char   *Replace_String(char *, char *, char *);
-char   *Get_Filename(char *);
-
-uintmax_t Sagan_Value_To_Seconds (char *, uintmax_t);
 
 typedef struct _SaganDNSCache _SaganDNSCache;
-struct _SaganDNSCache {
+struct _SaganDNSCache
+{
 
     char hostname[64];
     char src_ip[20];
 };
 
 typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
-struct _Sagan_IPC_Counters {
+struct _Sagan_IPC_Counters
+{
 
     int  xbit_count;
     int	 thresh_count_by_src;
@@ -107,7 +139,8 @@ struct _Sagan_IPC_Counters {
 
 
 typedef struct _SaganCounters _SaganCounters;
-struct _SaganCounters {
+struct _SaganCounters
+{
 
     uintmax_t threshold_total;
     uintmax_t after_total;
@@ -192,8 +225,6 @@ struct _SaganCounters {
     uintmax_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
     uintmax_t bluedot_mdate_cache;                                 /* Hits from cache , but where over a modification date */
     uintmax_t bluedot_cdate_cache;      			   /* Hits from cache , but where over a create date */
-
-
     uintmax_t bluedot_error_count;
 
     uintmax_t bluedot_hash_cache_count;
@@ -224,7 +255,8 @@ struct _SaganCounters {
 };
 
 typedef struct _SaganDebug _SaganDebug;
-struct _SaganDebug {
+struct _SaganDebug
+{
 
     sbool debugsyslog;
     sbool debugload;
@@ -264,7 +296,8 @@ struct _SaganDebug {
 };
 
 typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
-struct _Sagan_Proc_Syslog {
+struct _Sagan_Proc_Syslog
+{
     char syslog_host[50];
     char syslog_facility[50];
     char syslog_priority[50];
@@ -278,7 +311,8 @@ struct _Sagan_Proc_Syslog {
 };
 
 typedef struct _Sagan_Event _Sagan_Event;
-struct _Sagan_Event {
+struct _Sagan_Event
+{
 
     char *ip_src;
     char *ip_dst;
@@ -326,8 +360,10 @@ struct _Sagan_Event {
 
 
 /* Thresholding structure by source */
+
 typedef struct thresh_by_src_ipc thresh_by_src_ipc;
-struct thresh_by_src_ipc {
+struct thresh_by_src_ipc
+{
     uint32_t ipsrc;
     int  count;
     uintmax_t utime;
@@ -337,8 +373,10 @@ struct thresh_by_src_ipc {
 
 
 /* Thresholding structure by destination */
+
 typedef struct thresh_by_dst_ipc thresh_by_dst_ipc;
-struct thresh_by_dst_ipc {
+struct thresh_by_dst_ipc
+{
     uint32_t ipdst;
     int  count;
     uintmax_t utime;
@@ -348,8 +386,10 @@ struct thresh_by_dst_ipc {
 
 
 /* Thresholding structure by source port */
+
 typedef struct thresh_by_srcport_ipc thresh_by_srcport_ipc;
-struct thresh_by_srcport_ipc {
+struct thresh_by_srcport_ipc
+{
     uint32_t ipsrcport;
     int  count;
     uintmax_t utime;
@@ -358,8 +398,10 @@ struct thresh_by_srcport_ipc {
 };
 
 /* Thresholding structure by destination port */
+
 typedef struct thresh_by_dstport_ipc thresh_by_dstport_ipc;
-struct thresh_by_dstport_ipc {
+struct thresh_by_dstport_ipc
+{
     uint32_t ipdstport;
     int  count;
     uintmax_t utime;
@@ -369,8 +411,10 @@ struct thresh_by_dstport_ipc {
 
 
 /* Thesholding structure by username */
+
 typedef struct thresh_by_username_ipc thresh_by_username_ipc;
-struct thresh_by_username_ipc {
+struct thresh_by_username_ipc
+{
     char username[128];
     int  count;
     uintmax_t utime;
@@ -379,8 +423,10 @@ struct thresh_by_username_ipc {
 };
 
 /* After structure by source */
+
 typedef struct after_by_src_ipc after_by_src_ipc;
-struct after_by_src_ipc {
+struct after_by_src_ipc
+{
     uint32_t ipsrc;
     int  count;
     uintmax_t utime;
@@ -389,8 +435,10 @@ struct after_by_src_ipc {
 };
 
 /* After structure by destination */
+
 typedef struct after_by_dst_ipc after_by_dst_ipc;
-struct after_by_dst_ipc {
+struct after_by_dst_ipc
+{
     uint32_t ipdst;
     int  count;
     uintmax_t utime;
@@ -399,8 +447,10 @@ struct after_by_dst_ipc {
 };
 
 /* After structure by source port */
+
 typedef struct after_by_srcport_ipc after_by_srcport_ipc;
-struct after_by_srcport_ipc {
+struct after_by_srcport_ipc
+{
     uint32_t ipsrcport;
     int  count;
     uintmax_t utime;
@@ -409,8 +459,10 @@ struct after_by_srcport_ipc {
 };
 
 /* After structure by destination port */
+
 typedef struct after_by_dstport_ipc after_by_dstport_ipc;
-struct after_by_dstport_ipc {
+struct after_by_dstport_ipc
+{
     uint32_t ipdstport;
     int  count;
     uintmax_t utime;
@@ -420,8 +472,10 @@ struct after_by_dstport_ipc {
 
 
 /* After structure by username */
+
 typedef struct after_by_username_ipc after_by_username_ipc;
-struct after_by_username_ipc {
+struct after_by_username_ipc
+{
     char username[128];
     int  count;
     uintmax_t utime;
@@ -430,18 +484,21 @@ struct after_by_username_ipc {
 };
 
 typedef struct _SaganVar _SaganVar;
-struct _SaganVar {
+struct _SaganVar
+{
     char var_name[MAX_VAR_NAME_SIZE];
     char var_value[MAX_VAR_VALUE_SIZE];
 };
 
-typedef struct network_addr {
+typedef struct network_addr
+{
     in_addr_t addr;
     int pfx;
 } network_addr_t;
 
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
-struct _Sagan_Processor_Info {
+struct _Sagan_Processor_Info
+{
 
     char *processor_name;
     char *processor_facility;
@@ -453,52 +510,8 @@ struct _Sagan_Processor_Info {
     int   processor_generator_id;
 };
 
-void Sagan_Log( int, const char *, ... );
-void Sagan_Droppriv( void );
 
-int DNS_Lookup( char *, char *str, size_t size );
+/* Function that require the above arrays */
 
-char *Sagan_Var_To_Value(char *);
+int64_t   FlowGetId( _Sagan_Event *);
 
-uint32_t IP2Bit (char * );
-char *Bit2IP(uint32_t);
-
-int Sagan_Validate_HEX (const char *);
-char *Sagan_Content_Pipe(char *, int, const char *);
-sbool is_rfc1918 ( uint32_t );
-char *Sagan_Replace_Sagan( char *, char *);
-int Sagan_Character_Count ( char *, char *);
-sbool Sagan_Wildcard( char *, char *);
-void Sagan_Open_Log_File( sbool, int );
-int Sagan_Check_Var(const char *);
-void Sagan_u32_Time_To_Human ( uint32_t, char *str, size_t size );
-char *Netaddr_To_Range( char * );
-char *Strip_Chars(const char *string, const char *chars);
-sbool Is_IP (char *str);
-
-void Sagan_Return_Date( uint32_t, char *str, size_t size );
-void Sagan_Return_Time( uint32_t, char *str, size_t size );
-
-sbool Sagan_File_Lock ( int );
-sbool Sagan_File_Unlock ( int );
-
-/* This was taken from Suricata util-pages.h. "OpenBSD won't allow test" */
-
-#ifdef __OpenBSD__
-/* OpenBSD won't allow for this test:
- * "suricata(...): mprotect W^X violation" */
-#define PageSupportsRWX() 0
-#else
-#ifndef HAVE_SYS_MMAN_H
-#define PageSupportsRWX() 1
-#else
-int PageSupportsRWX(void);
-#endif /* HAVE_SYS_MMAN_H */
-#endif
-
-#if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
-void Sagan_Set_Pipe_Size( FILE * );
-#endif
-
-int64_t FlowGetId( _Sagan_Event *);
-sbool Check_Content_Not( char * );

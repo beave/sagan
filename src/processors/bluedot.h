@@ -57,14 +57,16 @@ int Sagan_Bluedot_Clean_Queue ( char *, unsigned char );
 
 
 typedef struct _Sagan_Bluedot_Cat_List _Sagan_Bluedot_Cat_List;
-struct _Sagan_Bluedot_Cat_List {
+struct _Sagan_Bluedot_Cat_List
+{
     int		cat_number;
     char	cat[50];
 };
 
 
 typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
-struct _Sagan_Bluedot_IP_Cache {
+struct _Sagan_Bluedot_IP_Cache
+{
     uint32_t host;
     uintmax_t mdate_utime;
     uintmax_t cdate_utime;
@@ -73,14 +75,16 @@ struct _Sagan_Bluedot_IP_Cache {
 };
 
 typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
-struct _Sagan_Bluedot_Hash_Cache {
+struct _Sagan_Bluedot_Hash_Cache
+{
     char hash[MD5_HASH_SIZE+1];
     uintmax_t cache_utime;
     int alertid;
 };
 
 typedef struct _Sagan_Bluedot_URL_Cache _Sagan_Bluedot_URL_Cache;
-struct _Sagan_Bluedot_URL_Cache {
+struct _Sagan_Bluedot_URL_Cache
+{
     char url[8192];
     uintmax_t cache_utime;
     int alertid;
@@ -88,29 +92,34 @@ struct _Sagan_Bluedot_URL_Cache {
 
 
 typedef struct _Sagan_Bluedot_Filename_Cache _Sagan_Bluedot_Filename_Cache;
-struct _Sagan_Bluedot_Filename_Cache {
+struct _Sagan_Bluedot_Filename_Cache
+{
     char filename[256];
     uintmax_t cache_utime;
     int alertid;
 };
 
 typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
-struct _Sagan_Bluedot_IP_Queue {
+struct _Sagan_Bluedot_IP_Queue
+{
     uint32_t host;
 };
 
 typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;
-struct _Sagan_Bluedot_Hash_Queue {
+struct _Sagan_Bluedot_Hash_Queue
+{
     char hash[MD5_HASH_SIZE+1];
 };
 
 typedef struct _Sagan_Bluedot_URL_Queue _Sagan_Bluedot_URL_Queue;
-struct _Sagan_Bluedot_URL_Queue {
+struct _Sagan_Bluedot_URL_Queue
+{
     char url[8192];
 };
 
 typedef struct _Sagan_Bluedot_Filename_Queue _Sagan_Bluedot_Filename_Queue;
-struct _Sagan_Bluedot_Filename_Queue {
+struct _Sagan_Bluedot_Filename_Queue
+{
     char filename[256];
 };
 

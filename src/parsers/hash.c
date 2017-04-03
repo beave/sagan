@@ -39,90 +39,102 @@
 
 struct _SaganConfig *config;
 
-char *Sagan_Parse_Hash(char *syslogmessage, int type)
+void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 {
     char tmpmsg[MAX_SYSLOGMSG];
     char *ptmp=NULL;
     char *tok=NULL;
-    char *tmp = NULL;
-
-    static __thread char ret[SHA256_HASH_SIZE+1];		/* Largest Hash */
+    char tmp[SHA256_HASH_SIZE+1];
 
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
 
     ptmp = strtok_r(tmpmsg, " ", &tok);
 
-    while (ptmp != NULL ) {
+    while (ptmp != NULL )
+        {
 
-        tmp = Sagan_Parse_Hash_Cleanup(ptmp);
+            Parse_Hash_Cleanup(ptmp, tmp, sizeof(tmp));
 
-        if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL ) {
-            if ( strlen(tmp) == MD5_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
-                    return(tmp);
+            if ( type == PARSE_HASH_MD5 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(tmp) == MD5_HASH_SIZE )
+                        {
+                            if ( Validate_HEX(tmp) == true )
+                                {
+                                    snprintf(str, size, "%s", tmp);
+                                    return;
+                                }
+                        }
+
                 }
-            }
+
+            else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(tmp) == SHA1_HASH_SIZE )
+                        {
+                            if ( Validate_HEX(tmp) == true )
+                                {
+                                    snprintf(str, size, "%s", tmp);
+                                    return;
+                                }
+                        }
+                }
+
+            else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL )
+                {
+                    if ( strlen(tmp) == SHA256_HASH_SIZE )
+                        {
+                            if ( Validate_HEX(tmp) == true )
+                                {
+                                    snprintf(str, size, "%s", tmp);
+                                    return;
+                                }
+                        }
+                }
+
+
+            ptmp = strtok_r(NULL, " ", &tok);
 
         }
 
-        else if ( type == PARSE_HASH_SHA1 || type == PARSE_HASH_ALL ) {
-            if ( strlen(tmp) == SHA1_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
-                    strlcpy(ret, tmp, sizeof(ret));
-                    return(ret);
-                }
-            }
-        }
-
-        else if ( type == PARSE_HASH_SHA256 || type == PARSE_HASH_ALL ) {
-            if ( strlen(tmp) == SHA256_HASH_SIZE ) {
-                if ( Sagan_Validate_HEX(tmp) == true ) {
-                    strlcpy(ret, tmp, sizeof(ret));
-                    return(tmp);
-                }
-            }
-        }
-
-
-        ptmp = strtok_r(NULL, " ", &tok);
-
-    }
-
-    return("\0");
+    tmp[0] = '\0'; 
+    snprintf(str, size, "%s", tmp);
 }
 
 
-char *Sagan_Parse_Hash_Cleanup(char *string)
+void Parse_Hash_Cleanup(char *string, char *str, size_t size)
 {
 
     char tmp[512];
     int i;
-    static __thread char in[512] = { 0 };
+    char in[512] = { 0 };
     char tmp2[2];
 
     strlcpy(in, string, sizeof(in));
 
     int len = strlen(in);
 
-    if ( ( in[strlen(in) - 1] ) == ',' || ( in[strlen(in) - 1] ) == '\'' ) {
-        strlcpy(tmp, in, len-1 );
-        strlcpy(in, tmp, sizeof(in));
-    }
-
-    if ( in[0] == ',' || in[0] == '\'' || in[0] == ':' ) {
-
-        tmp[0] = '\0';
-
-        for(i=1; i < strlen(in); i++) {
-            snprintf(tmp2, sizeof(tmp2), "%c", in[i]);
-            strcat(tmp, tmp2);
+    if ( ( in[strlen(in) - 1] ) == ',' || ( in[strlen(in) - 1] ) == '\'' )
+        {
+            strlcpy(tmp, in, len-1 );
+            strlcpy(in, tmp, sizeof(in));
         }
 
-        strlcpy(in, tmp, sizeof(in));
-    }
+    if ( in[0] == ',' || in[0] == '\'' || in[0] == ':' )
+        {
 
-    return(in);
+            tmp[0] = '\0';
+
+            for(i=1; i < strlen(in); i++)
+                {
+                    snprintf(tmp2, sizeof(tmp2), "%c", in[i]);
+                    strcat(tmp, tmp2);
+                }
+
+            strlcpy(in, tmp, sizeof(in));
+        }
+
+    snprintf(str, size, "%s", in);
 
 }
-
 

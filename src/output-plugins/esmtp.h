@@ -33,8 +33,8 @@
 #define MAX_EMAILSIZE   15360          /* Largest e-mail that can be sent */
 
 const char *esmtp_cb ( void **, int *, void * );
-int Sagan_ESMTP_Thread( _Sagan_Event * );
-int fixlf(_SaganConfig *, char *, char *);
+int ESMTP_Thread( _Sagan_Event * );
+int FixLF(_SaganConfig *, char *, char *);
 
 #endif
 

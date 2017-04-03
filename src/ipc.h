@@ -31,8 +31,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_IPC_Init(void);
-sbool Sagan_Clean_IPC_Object( int );
-void Sagan_IPC_Check_Object(char *, sbool, char *);
+void IPC_Init(void);
+sbool Clean_IPC_Object( int );
+void IPC_Check_Object(char *, sbool, char *);
 
 

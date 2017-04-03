@@ -22,4 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-sbool Sagan_Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port);
+sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port);
+

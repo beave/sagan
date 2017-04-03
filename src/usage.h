@@ -22,4 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Usage( void );
+void Usage( void );

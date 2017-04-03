@@ -22,5 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Output( _Sagan_Event * );
-void Sagan_Alert( _Sagan_Event * );
+void Output( _Sagan_Event * );

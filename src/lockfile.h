@@ -23,5 +23,5 @@
 #endif
 
 void Remove_Lock_File ( void );
-void checklockfile ( void );
+void CheckLockFile ( void );
 

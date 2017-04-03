@@ -378,7 +378,9 @@ outputs:
 
   - smtp: 
       enabled: no
-      priority: 5			   # Only e-mail priorities this value.
+      priority: 5			   # Only e-mail priorities this value
+                                           # or higher.  If 'priority' is not
+                                           # set, everything is e-mailed. 
       rcpt-to: sagan-alerts@example.com    # Comment out the rcpt-to if you 
                                            # only want signatures with the 
                                            # "email" option to e-mail. 

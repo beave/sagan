@@ -46,7 +46,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_count)
+int Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_count)
 {
 
     int z = meta_content_count;
@@ -54,39 +54,54 @@ int Sagan_Meta_Content_Search(char *syslog_msg, int rule_position , int meta_con
 
     /* Normal "meta_content" search */
 
-    if ( rulestruct[rule_position].meta_content_not[z] == 0 ) {
-        for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ ) {
-            if ( rulestruct[rule_position].meta_content_case[z] == 1 ) {
-                if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true)) {
-                    return(true);
+    if ( rulestruct[rule_position].meta_content_not[z] == 0 )
+        {
+            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
+                {
+                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                        {
+                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
+                                {
+                                    return(true);
+                                }
+                        }
+                    else
+                        {
+                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
+                                {
+                                    return(true);
+                                }
+                        }
                 }
-            } else {
-                if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i])) {
-                    return(true);
-                }
-            }
-        }
 
-        return(false);
-
-    } else {
-
-        for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ ) {
-            if ( rulestruct[rule_position].meta_content_case[z] == 1 ) {
-                if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true)) {
-                    return(false);
-                }
-            } else {
-
-                if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i])) {
-                    return(false);
-                }
-            }
+            return(false);
 
         }
+    else
+        {
 
-        return(true);
+            for ( i=0; i<rulestruct[rule_position].meta_content_containers[z].meta_counter; i++ )
+                {
+                    if ( rulestruct[rule_position].meta_content_case[z] == 1 )
+                        {
+                            if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
+                                {
+                                    return(false);
+                                }
+                        }
+                    else
+                        {
 
-    } /* End of "else" meta_content_not[z] == 0 */
+                            if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
+                                {
+                                    return(false);
+                                }
+                        }
 
-} /* End of Sagan_Meta_Content_Search() */
+                }
+
+            return(true);
+
+        } /* End of "else" meta_content_not[z] == 0 */
+
+} /* End of Meta_Content_Search() */

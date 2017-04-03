@@ -46,7 +46,7 @@
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
+void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 {
 
 
@@ -56,30 +56,37 @@ void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     char timebuf[64];
     char classbuf[64];
 
-    if ( Event->ip_proto == 17 ) {
-        proto = "UDP";
-    }
+    if ( Event->ip_proto == 17 )
+        {
+            proto = "UDP";
+        }
 
-    else if ( Event->ip_proto == 6 ) {
-        proto = "TCP";
-    }
+    else if ( Event->ip_proto == 6 )
+        {
+            proto = "TCP";
+        }
 
-    else if ( Event->ip_proto == 1 ) {
-        proto = "ICMP";
-    }
+    else if ( Event->ip_proto == 1 )
+        {
+            proto = "ICMP";
+        }
 
-    else if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 ) {
-        proto = "UNKNOWN";
-    }
+    else if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
+        {
+            proto = "UNKNOWN";
+        }
 
-    if ( Event->drop == true ) {
+    if ( Event->drop == true )
+        {
 
-        drop = "blocked";
+            drop = "blocked";
 
-    } else {
+        }
+    else
+        {
 
-        drop = "allowed";
-    }
+            drop = "allowed";
+        }
 
     CreateIsoTimeString(&Event->event_time, timebuf, sizeof(timebuf));
 
@@ -87,14 +94,15 @@ void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     uint8_t b64_target[b64_len];
 
     Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
-    Sagan_Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
+    Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
     snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "");
 
-    if ( debug->debugjson ) {
+    if ( debug->debugjson )
+        {
 
-        Sagan_Log(S_DEBUG, "[%s, line %d] JSON Output: %s", __FILE__, __LINE__, str);
+            Sagan_Log(S_DEBUG, "[%s, line %d] JSON Output: %s", __FILE__, __LINE__, str);
 
-    }
+        }
 
 }

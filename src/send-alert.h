@@ -22,5 +22,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Send_Alert ( _Sagan_Proc_Syslog *, _Sagan_Processor_Info *, char *, char *, char *, char *, int, int, int, int, int, struct timeval tp );
+void Send_Alert ( _Sagan_Proc_Syslog *, _Sagan_Processor_Info *, char *, char *, char *, char *, int, int, int, int, int, struct timeval tp );
 

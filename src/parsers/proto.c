@@ -44,51 +44,63 @@ struct _Sagan_Protocol_Map_Message *map_message;
 struct _Sagan_Protocol_Map_Program *map_program;
 
 /****************************************************************************
- * Sagan_Parse_Proto - Searches for simple clues from the message about what
+ * Parse_Proto - Searches for simple clues from the message about what
  * protocl might have generated this event
  ****************************************************************************/
 
-int Sagan_Parse_Proto( char *msg )
+int Parse_Proto( char *msg )
 {
 
     int i;
 
-    for (i = 0; i < counters->mapcount_message; i++) {
+    for (i = 0; i < counters->mapcount_message; i++)
+        {
 
-        if ( map_message[i].nocase == 1 ) {
-            if (Sagan_stristr(msg, map_message[i].search, true)) {
-                return(map_message[i].proto);
-            }
-        } else {
-            if (Sagan_strstr(msg, map_message[i].search)) {
-                return(map_message[i].proto);
-            }
+            if ( map_message[i].nocase == 1 )
+                {
+                    if (Sagan_stristr(msg, map_message[i].search, true))
+                        {
+                            return(map_message[i].proto);
+                        }
+                }
+            else
+                {
+                    if (Sagan_strstr(msg, map_message[i].search))
+                        {
+                            return(map_message[i].proto);
+                        }
+                }
         }
-    }
     return(0);
 }
 
 /****************************************************************************
- * Sagan_Parse_Proto_Program - Attempts to determine the protocol that generate
+ * Parse_Proto_Program - Attempts to determine the protocol that generate
  * the event by the program that generate it.
  ****************************************************************************/
 
-int Sagan_Parse_Proto_Program( char *program )
+int Parse_Proto_Program( char *program )
 {
 
     int i;
 
-    for (i = 0; i < counters->mapcount_program; i++) {
+    for (i = 0; i < counters->mapcount_program; i++)
+        {
 
-        if ( map_program[i].nocase == 1 ) {
-            if (Sagan_stristr(program, map_program[i].program, true)) {
-                return(map_program[i].proto);
-            }
-        } else {
-            if (Sagan_strstr(program, map_program[i].program)) {
-                return(map_program[i].proto);
-            }
+            if ( map_program[i].nocase == 1 )
+                {
+                    if (Sagan_stristr(program, map_program[i].program, true))
+                        {
+                            return(map_program[i].proto);
+                        }
+                }
+            else
+                {
+                    if (Sagan_strstr(program, map_program[i].program))
+                        {
+                            return(map_program[i].proto);
+                        }
+                }
         }
-    }
     return(0);
 }

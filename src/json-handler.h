@@ -26,7 +26,7 @@
 
 #include <inttypes.h>
 
-void Format_Sagan_JSON_Alert_EVE( _Sagan_Event *, char *, size_t);
+void Format_JSON_Alert_EVE( _Sagan_Event *, char *, size_t);
 
 /* Suricata EVE Alert output */
 

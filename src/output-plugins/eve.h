@@ -25,5 +25,5 @@
  */
 
 
-void Sagan_Alert_JSON( _Sagan_Event * );
+void Alert_JSON( _Sagan_Event * );
 

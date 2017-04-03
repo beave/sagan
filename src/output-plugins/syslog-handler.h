@@ -29,5 +29,5 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Sagan_Alert_Syslog( _Sagan_Event * );
+void Alert_Syslog( _Sagan_Event * );
 

@@ -45,10 +45,10 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-void Sagan_Alert_File( _Sagan_Event *Event )
+void Alert_File( _Sagan_Event *Event )
 {
 
-    char *tmpref = NULL;
+    char tmpref[256];
     char timebuf[64];
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
@@ -61,14 +61,16 @@ void Sagan_Alert_File( _Sagan_Event *Event )
     fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
     fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 
-    if ( Event->found != 0 ) {
+    if ( Event->found != 0 )
+        {
 
-        tmpref = Reference_Lookup( Event->found, 0 );
+            Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref) );
 
-        if (strcmp(tmpref, "" )) {
-            fprintf(config->sagan_alert_stream, "%s\n", Reference_Lookup( Event->found, 0 ));
+            if (strcmp(tmpref, "" ))
+                {
+                    fprintf(config->sagan_alert_stream, "%s\n", tmpref);
+                }
         }
-    }
 
 
     fflush(config->sagan_alert_stream);
