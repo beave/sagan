@@ -55,7 +55,7 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     uint32_t ip_dst;
 
     int port_src;
-	int port_dst;
+    int port_dst;
 
     src = &ip_src_u32;
     dst = &ip_dst_u32;
