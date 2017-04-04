@@ -1569,7 +1569,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                                                                                             if ( debug->debuglimits )
                                                                                                                                                                 {
-                                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbydst_ipc[i].sid, normalize_username);
+                                                                                                                                                                    Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbyusername_ipc[i].sid, normalize_username);
                                                                                                                                                                 }
 
                                                                                                                                                             pthread_mutex_lock(&CounterMutex);
