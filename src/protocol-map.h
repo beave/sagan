@@ -25,8 +25,7 @@
 /* Storage for protocol.map (program search) */
 
 typedef struct _Sagan_Protocol_Map_Program _Sagan_Protocol_Map_Program;
-struct _Sagan_Protocol_Map_Program
-{
+struct _Sagan_Protocol_Map_Program {
     int type;
     int proto;
     int nocase;
@@ -36,8 +35,7 @@ struct _Sagan_Protocol_Map_Program
 /* Storage for protocol.map (message search) */
 
 typedef struct _Sagan_Protocol_Map_Message _Sagan_Protocol_Map_Message;
-struct _Sagan_Protocol_Map_Message
-{
+struct _Sagan_Protocol_Map_Message {
     int type;
     int proto;
     int nocase;

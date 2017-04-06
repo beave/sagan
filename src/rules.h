@@ -27,35 +27,30 @@
 #endif
 
 typedef struct _Rules_Loaded _Rules_Loaded;
-struct _Rules_Loaded
-{
+struct _Rules_Loaded {
     char ruleset[MAXPATH];
 };
 
 typedef struct arr_flow_1 arr_flow_1;
-struct arr_flow_1
-{
+struct arr_flow_1 {
     uint32_t lo;
     uint32_t hi;
 };
 
 typedef struct arr_flow_2 arr_flow_2;
-struct arr_flow_2
-{
+struct arr_flow_2 {
     uint32_t lo;
     uint32_t hi;
 };
 
 typedef struct meta_content_conversion meta_content_conversion;
-struct meta_content_conversion
-{
+struct meta_content_conversion {
     char meta_content_converted[MAX_META_CONTENT][256];
     int  meta_counter;
 };
 
 typedef struct _Rule_Struct _Rule_Struct;
-struct _Rule_Struct
-{
+struct _Rule_Struct {
     unsigned s_size_rule;
     char s_msg[256];
 
