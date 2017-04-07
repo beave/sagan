@@ -107,7 +107,7 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                     and_or = true;
                 } else {
                     tmp_xbit_name = strtok_r(tmp, "&", &tok);
-                    and_or = false; 					/* Need this? */
+                    and_or = false;
                 }
 
                 while (tmp_xbit_name != NULL ) {
@@ -415,11 +415,15 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                 strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
 
                 if (Sagan_strstr(rulestruct[rule_position].xbit_name[i], "|")) {
+
                     tmp_xbit_name = strtok_r(tmp, "|", &tok);
                     and_or = true;
+
                 } else {
+
                     tmp_xbit_name = strtok_r(tmp, "&", &tok);
-                    and_or = false;                                  /* Need this? */
+                    and_or = false;
+
                 }
 
                 while (tmp_xbit_name != NULL ) {
@@ -430,38 +434,7 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
                         if ( xbit_ipc[a].xbit_state == false ) {
 
-                            /* direction: none */
-
-                            if ( rulestruct[rule_position].xbit_direction[i] == 0 ) {
-
-                                if ( debug->debugxbit) {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                }
-
-                                xbit_total_match++;
-                                a = counters_ipc->xbit_count;
-                                break;
-                            }
-
-                            /* direction: both */
-
-                            if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
-
-
-                                if ( xbit_ipc[a].ip_src == ip_src &&
-                                     xbit_ipc[a].ip_dst == ip_dst ) {
-
-                                    if ( debug->debugxbit) {
-                                        Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                    }
-
-                                    xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
-                                }
-                            }
-
-                            /* direction: by_src */
+                            /* direction: by_src  - most common check */
 
                             if ( rulestruct[rule_position].xbit_direction[i] == 2 ) {
 
@@ -472,14 +445,59 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            /* direction: none */
+
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 0 ) {
+
+                                if ( debug->debugxbit) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                }
+
+                                xbit_total_match++;
+
+                                /* Only 1 xbit, not need to continue loop */
+
+                                if ( counters_ipc->xbit_count == 1 ) {
                                     break;
+                                }
+
+                            }
+
+                            /* direction: both */
+
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
+
+
+                                if ( xbit_ipc[a].ip_src == ip_src &&
+                                     xbit_ipc[a].ip_dst == ip_dst ) {
+
+                                    if ( debug->debugxbit) {
+                                        Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
+                                    }
+
+                                    xbit_total_match++;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+
                                 }
                             }
 
                             /* direction: by_dst */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 3 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 3 ) {
 
                                 if ( xbit_ipc[a].ip_dst == ip_dst ) {
 
@@ -488,14 +506,18 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
 
                             /* direction: reverse */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 4 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 4 ) {
 
                                 if ( xbit_ipc[a].ip_src == ip_dst &&
                                      xbit_ipc[a].ip_dst == ip_src ) {
@@ -505,14 +527,19 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+
                                 }
                             }
 
                             /* direction: src_xbitdst */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 5 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 5 ) {
 
                                 if ( xbit_ipc[a].ip_dst == ip_src ) {
 
@@ -521,14 +548,19 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+
                                 }
                             }
 
                             /* direction: dst_xbitsrc */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 6 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 6 ) {
 
                                 if ( xbit_ipc[a].ip_src == ip_dst ) {
 
@@ -537,14 +569,19 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+
                                 }
                             }
 
                             /* direction: both_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 7 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 7 ) {
 
 
                                 if ( xbit_ipc[a].ip_src == ip_src &&
@@ -557,14 +594,19 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
+
                                 }
                             }
 
                             /* direction: by_src_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 8 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 8 ) {
 
                                 if ( xbit_ipc[a].ip_src == ip_src &&
                                      xbit_ipc[a].src_port == src_port ) {
@@ -574,14 +616,18 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
 
                             /* direction: by_dst_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 9 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 9 ) {
 
                                 if ( xbit_ipc[a].ip_dst == ip_dst &&
                                      xbit_ipc[a].dst_port == dst_port ) {
@@ -591,14 +637,18 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
 
                             /* direction: reverse_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 10 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 10 ) {
 
                                 if ( xbit_ipc[a].ip_src == ip_dst &&
                                      xbit_ipc[a].ip_dst == ip_src &&
@@ -610,14 +660,18 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
 
                             /* direction: src_xbitdst_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 11 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 11 ) {
 
                                 if ( xbit_ipc[a].ip_dst == ip_src &&
                                      xbit_ipc[a].dst_port == src_port ) {
@@ -627,14 +681,18 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
 
                             /* direction: dst_xbitsrc_p */
 
-                            if ( rulestruct[rule_position].xbit_direction[i] == 12 ) {
+                            else if ( rulestruct[rule_position].xbit_direction[i] == 12 ) {
 
                                 if ( xbit_ipc[a].ip_src == ip_dst &&
                                      xbit_ipc[a].src_port == dst_port ) {
@@ -644,12 +702,14 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                                     }
 
                                     xbit_total_match++;
-                                    a = counters_ipc->xbit_count;
-                                    break;
+
+                                    /* Only 1 xbit, not need to continue loop */
+
+                                    if ( counters_ipc->xbit_count == 1 ) {
+                                        break;
+                                    }
                                 }
                             }
-
-
 
                         } /* End xbit_state == 0 */
 

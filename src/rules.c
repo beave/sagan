@@ -877,10 +877,20 @@ void Load_Rules( const char *ruleset )
                      * xbits matched or not!
                      */
 
+                    if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
+                         Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") ) {
+
+                        Sagan_Log(S_ERROR, "[%s, line %d] Syntax error at line %d in %s. 'isset' cannot have | and & operators", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    }
+
                     if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
+
                         rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
+
                     } else {
+
                         rulestruct[counters->rulecount].xbit_condition_count++;
+
                     }
 
                     xbit_count++;
@@ -919,10 +929,22 @@ void Load_Rules( const char *ruleset )
                      * xbits matched or not!
                      */
 
+
+                    if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
+                         Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") ) {
+
+                        Sagan_Log(S_ERROR, "[%s, line %d] Syntax error at line %d in %s. 'isnotset' cannot have | and & operators", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    }
+
+
                     if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
+
                         rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
+
                     } else {
+
                         rulestruct[counters->rulecount].xbit_condition_count++;
+
                     }
 
                     xbit_count++;

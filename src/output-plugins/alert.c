@@ -61,16 +61,14 @@ void Alert_File( _Sagan_Event *Event )
     fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
     fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 
-    if ( Event->found != 0 )
-        {
+    if ( Event->found != 0 ) {
 
-            Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref) );
+        Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref) );
 
-            if (strcmp(tmpref, "" ))
-                {
-                    fprintf(config->sagan_alert_stream, "%s\n", tmpref);
-                }
+        if (strcmp(tmpref, "" )) {
+            fprintf(config->sagan_alert_stream, "%s\n", tmpref);
         }
+    }
 
 
     fflush(config->sagan_alert_stream);

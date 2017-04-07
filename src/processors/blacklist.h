@@ -24,8 +24,7 @@ sbool Sagan_Blacklist_IPADDR( uint32_t );
 sbool Sagan_Blacklist_IPADDR_All ( char * );
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
-struct _Sagan_Blacklist
-{
+struct _Sagan_Blacklist {
 
     uint32_t u32_lower;
     uint32_t u32_higher;
