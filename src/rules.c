@@ -104,7 +104,6 @@ void Load_Rules( const char *ruleset )
 
     char *rulestring;
     char *netstring;
-    //char *nettmp = NULL;
 
     char nettmp[64];
 
@@ -771,8 +770,13 @@ void Load_Rules( const char *ruleset )
                 Remove_Spaces(tmptoken);
 
 
-                if (strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset' or 'isset' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                if ( strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") &&
+                     strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") &&
+                     strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports") &&
+                     strcmp(tmptoken, "count") ) {
+
+                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset' or 'count' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+
                 }
 
                 if (!strcmp(tmptoken, "noalert")) {
@@ -814,7 +818,7 @@ void Load_Rules( const char *ruleset )
 
                 /* UNSET */
 
-                if (!strcmp(tmptoken, "unset")) {
+                else if (!strcmp(tmptoken, "unset")) {
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -846,7 +850,7 @@ void Load_Rules( const char *ruleset )
 
                 /* ISSET */
 
-                if (!strcmp(tmptoken, "isset")) {
+                else if (!strcmp(tmptoken, "isset")) {
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -898,7 +902,7 @@ void Load_Rules( const char *ruleset )
 
                 /* ISNOTSET */
 
-                if (!strcmp(tmptoken, "isnotset")) {
+                else if (!strcmp(tmptoken, "isnotset")) {
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -953,7 +957,7 @@ void Load_Rules( const char *ruleset )
 
                 /* SET_SRCPORT */
 
-                if (!strcmp(tmptoken, "set_srcport")) {
+                else if (!strcmp(tmptoken, "set_srcport")) {
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -982,7 +986,8 @@ void Load_Rules( const char *ruleset )
 
                 /* SET_DSTPORT */
 
-                if (!strcmp(tmptoken, "set_dstport")) {
+                else if (!strcmp(tmptoken, "set_dstport")) {
+
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
@@ -1010,7 +1015,7 @@ void Load_Rules( const char *ruleset )
 
                 /* SET_PORTS */
 
-                if (!strcmp(tmptoken, "set_ports")) {
+                else if (!strcmp(tmptoken, "set_ports")) {
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1035,6 +1040,76 @@ void Load_Rules( const char *ruleset )
                     xbit_count++;
                     counters->xbit_total_counter++;
 
+                }
+
+                /* COUNTER */
+
+                else if (!strcmp(tmptoken, "count")) {
+
+                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    Remove_Spaces(tmptoken);
+
+                    /* Calling "Xbit_Type" is complete overkill? */
+
+                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Xbit_Type(tmptoken, linecount, ruleset_fullname);
+                    rulestruct[counters->rulecount].xbit_flag = 1;
+                    rulestruct[counters->rulecount].xbit_set_count++;
+                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 8;         /* count */
+
+                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name to count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    Remove_Spaces(tmptoken);
+                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+
+                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit value to count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    strlcpy(tmp1, tmptoken, sizeof(tmptoken));
+                    Remove_Spaces(tmp1);
+
+                    if ( tmp1[0] != '>' && tmp1[0] != '<' && tmp1[0] != '=' ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected '>', '<' or '=' operator in xbit count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+
+                    }
+
+                    /* Determine the xbit counter operator */
+
+                    if ( tmp1[0] == '>' ) {
+                        rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 0;
+                        tmptoken = strtok_r(tmp1, ">", &saveptrrule3);
+                    }
+
+                    else if ( tmp1[0] == '<' ) {
+                        rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 1;
+                        tmptoken = strtok_r(tmp1, "<", &saveptrrule3);
+                    }
+
+                    else if ( tmp1[0] == '=' ) {
+                        rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 2;
+                        tmptoken = strtok_r(tmp1, "=", &saveptrrule3);
+                    }
+
+                    if ( tmptoken == NULL ) {
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected value to look for in xbit count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    }
+
+                    Remove_Spaces(tmptoken);
+                    rulestruct[counters->rulecount].xbit_count_counter[xbit_count] = atoi(tmptoken);
+
+                    xbit_count++;
+                    counters->xbit_total_counter++;
                 }
 
                 rulestruct[counters->rulecount].xbit_count = xbit_count;

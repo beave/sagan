@@ -64,7 +64,6 @@ void Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
     char msg[MAX_SYSLOGMSG] = { 0 };
     char tmpmsg[MAX_SYSLOGMSG] = { 0 };
 
-    char *retbuf=(char*)malloc(16);
     char *tok=NULL;
     char *ptmp=NULL;
 

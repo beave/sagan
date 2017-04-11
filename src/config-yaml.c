@@ -1006,7 +1006,7 @@ void Load_YAML_Config( char *yaml_file )
                         }
                     }
 
-                    else if (!strcmp(last_pass, "url") && config->brointel_flag == true ) {
+                    else if (!strcmp(last_pass, "filename") && config->brointel_flag == true ) {
 
                         Var_To_Value(value, tmp, sizeof(tmp));
                         strlcpy(config->brointel_files, tmp, sizeof(config->brointel_files));
