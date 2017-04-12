@@ -158,6 +158,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int meta_alter_num = 0;
 
     sbool xbit_return = 0;
+    sbool xbit_count_return = 0;
+
     sbool alert_time_trigger = false;
     sbool check_flow_return = true;  /* 1 = match, 0 = no match */
 
@@ -715,12 +717,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     }
 
                     /****************************************************************************
-                     * Xbit
+                     * Xbit - ISSET || ISNOTSET
                      ****************************************************************************/
 
-                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_condition_count ) {
-                        xbit_return = Xbit_Condition(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
+                    if ( rulestruct[b].xbit_flag ) {
+
+                        if ( rulestruct[b].xbit_condition_count ) {
+                            xbit_return = Xbit_Condition(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
+                        }
+
+                        if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_count_flag ) {
+                            xbit_count_return = Xbit_Count(b, ip_src, ip_dst);
+                        }
+
                     }
+
 
                     /****************************************************************************
                      * Country code
@@ -942,850 +953,855 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /****************************************************************************/
                     if ( check_flow_return == true ) {
 
-                        if ( rulestruct[b].xbit_flag == false ||
-                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count == 0 ) ||
-                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count && xbit_return ) ||
-                             ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count == 0 && rulestruct[b].xbit_condition_count && xbit_return )) {
+                        /* DEBUG: Had rulestruct[b].xbit_flag */
 
-                            if ( rulestruct[b].alert_time_flag == 0 || alert_time_trigger == true ) {
+                        if ( rulestruct[b].xbit_flag == false ||
+                             ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count == 0 ) ||
+                             ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count && xbit_return ) ||
+                             ( rulestruct[b].xbit_set_count == false && rulestruct[b].xbit_condition_count && xbit_return )) {
+
+                            if ( rulestruct[b].xbit_count_flag == false ||
+                                 xbit_count_return == true ) {
+
+                                if ( rulestruct[b].alert_time_flag == false || alert_time_trigger == true ) {
 
 #ifdef HAVE_LIBMAXMINDDB
-                                if ( rulestruct[b].geoip2_flag == 0 || geoip2_isset == true ) {
+                                    if ( rulestruct[b].geoip2_flag == false || geoip2_isset == true ) {
 #endif
-                                    if ( rulestruct[b].blacklist_flag == 0 || blacklist_results == 1 ) {
+                                        if ( rulestruct[b].blacklist_flag == false || blacklist_results == true ) {
 
-                                        if ( rulestruct[b].brointel_flag == 0 || brointel_results == 1) {
+                                            if ( rulestruct[b].brointel_flag == false || brointel_results == true ) {
 #ifdef WITH_BLUEDOT
 
 
-                                            if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_file_hash == 0 || ( rulestruct[b].bluedot_file_hash == 1 && bluedot_hash_flag == 1 )) {
+                                                if ( config->bluedot_flag == false || rulestruct[b].bluedot_file_hash == false || ( rulestruct[b].bluedot_file_hash == true && bluedot_hash_flag == true )) {
 
-                                                if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_filename == 0 || ( rulestruct[b].bluedot_filename == 1 && bluedot_filename_flag == 1 )) {
+                                                    if ( config->bluedot_flag == false || rulestruct[b].bluedot_filename == false || ( rulestruct[b].bluedot_filename == true && bluedot_filename_flag == true )) {
 
-                                                    if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_url == 0 || ( rulestruct[b].bluedot_url == 1 && bluedot_url_flag == 1 )) {
+                                                        if ( config->bluedot_flag == false || rulestruct[b].bluedot_url == false || ( rulestruct[b].bluedot_url == true && bluedot_url_flag == true )) {
 
-                                                        if ( config->bluedot_flag == 0 || rulestruct[b].bluedot_ipaddr_type == 0 || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == 1 )) {
+                                                            if ( config->bluedot_flag == false || rulestruct[b].bluedot_ipaddr_type == false || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == true )) {
 
 
 
 #endif
 
-                                                            after_log_flag = false;
+                                                                after_log_flag = false;
 
-                                                            /*********************************************************/
-                                                            /* After - Similar to thresholding,  but the opposite    */
-                                                            /* direction - ie - alert _after_ X number of events     */
-                                                            /*********************************************************/
+                                                                /*********************************************************/
+                                                                /* After - Similar to thresholding,  but the opposite    */
+                                                                /* direction - ie - alert _after_ X number of events     */
+                                                                /*********************************************************/
 
-                                                            if ( rulestruct[b].after_method != 0 ) {
+                                                                if ( rulestruct[b].after_method != 0 ) {
 
-                                                                after_log_flag = true;
+                                                                    after_log_flag = true;
 
-                                                                t = time(NULL);
-                                                                now=localtime(&t);
-                                                                strftime(timet, sizeof(timet), "%s",  now);
+                                                                    t = time(NULL);
+                                                                    now=localtime(&t);
+                                                                    strftime(timet, sizeof(timet), "%s",  now);
 
-                                                                /* After by source IP address */
+                                                                    /* After by source IP address */
 
-                                                                if ( rulestruct[b].after_method == AFTER_BY_SRC ) {
+                                                                    if ( rulestruct[b].after_method == AFTER_BY_SRC ) {
 
-                                                                    after_flag = false;
+                                                                        after_flag = false;
 
-                                                                    for (i = 0; i < counters_ipc->after_count_by_src; i++ ) {
-                                                                        if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                        for (i = 0; i < counters_ipc->after_count_by_src; i++ ) {
+                                                                            if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            after_flag = true;
+                                                                                after_flag = true;
+
+                                                                                File_Lock(config->shm_after_by_src);
+                                                                                pthread_mutex_lock(&After_By_Src_Mutex);
+
+                                                                                afterbysrc_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
+                                                                                afterbysrc_ipc[i].utime = atol(timet);
+
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbysrc_ipc[i].count=1;
+                                                                                    afterbysrc_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
+                                                                                }
+
+                                                                                pthread_mutex_unlock(&After_By_Src_Mutex);
+                                                                                File_Unlock(config->shm_after_by_src);
+
+                                                                                if ( rulestruct[b].after_count < afterbysrc_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
+                                                                                    }
+
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
+
+                                                                            }
+                                                                        }
+                                                                    }
+
+
+                                                                    /* If not found,  add it to the array */
+
+                                                                    if ( after_flag == false ) {
+
+                                                                        if ( Clean_IPC_Object(AFTER_BY_SRC) == 0 ) {
 
                                                                             File_Lock(config->shm_after_by_src);
                                                                             pthread_mutex_lock(&After_By_Src_Mutex);
 
-                                                                            afterbysrc_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
-                                                                            afterbysrc_ipc[i].utime = atol(timet);
+                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
+                                                                            strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
+                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
+                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
+                                                                            afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
 
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbysrc_ipc[i].count=1;
-                                                                                afterbysrc_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
-
-                                                                            pthread_mutex_unlock(&After_By_Src_Mutex);
                                                                             File_Unlock(config->shm_after_by_src);
 
-                                                                            if ( rulestruct[b].after_count < afterbysrc_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
-                                                                                }
-
-
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
-                                                                            }
-
-                                                                        }
-                                                                    }
-                                                                }
-
-
-                                                                /* If not found,  add it to the array */
-
-                                                                if ( after_flag == false ) {
-
-                                                                    if ( Clean_IPC_Object(AFTER_BY_SRC) == 0 ) {
-
-                                                                        File_Lock(config->shm_after_by_src);
-                                                                        pthread_mutex_lock(&After_By_Src_Mutex);
-
-                                                                        afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc = ip_src_u32;
-                                                                        strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[b].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
-                                                                        afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
-                                                                        afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
-                                                                        afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[b].after_seconds;
-
-                                                                        File_Unlock(config->shm_after_by_src);
-
-                                                                        File_Lock(config->shm_counters);
-
-                                                                        counters_ipc->after_count_by_src++;
-
-                                                                        pthread_mutex_unlock(&After_By_Src_Mutex);
-                                                                        File_Unlock(config->shm_counters);
-
-                                                                    }
-
-                                                                }
-
-
-                                                                /* After by source IP port */
-
-                                                                if ( rulestruct[b].after_method == 4 ) {
-
-                                                                    after_flag = false;
-
-                                                                    /* Check array for matching src / sid */
-
-                                                                    for (i = 0; i < counters_ipc->after_count_by_srcport; i++ ) {
-                                                                        if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(afterbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
-
-                                                                            after_flag = true;
-
-                                                                            File_Lock(config->shm_after_by_srcport);
-                                                                            pthread_mutex_lock(&After_By_Src_Port_Mutex);
-
-                                                                            afterbysrcport_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
-                                                                            afterbysrcport_ipc[i].utime = atol(timet);
-
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbysrcport_ipc[i].count=1;
-                                                                                afterbysrcport_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
-
-                                                                            pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            File_Unlock(config->shm_after_by_srcport);
-
-                                                                            if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_srcport_u32);
-                                                                                }
-
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
-                                                                            }
-                                                                        }
-                                                                    }
-
-                                                                    /* If not found,  add it to the array */
-
-                                                                    if ( after_flag == false ) {
-
-                                                                        if ( Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
-
-                                                                            File_Lock(config->shm_after_by_srcport);
-                                                                            pthread_mutex_lock(&After_By_Src_Port_Mutex);
-
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
-                                                                            strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid));
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].count = 1;
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
-
-                                                                            File_Unlock(config->shm_after_by_srcport);
-
                                                                             File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->after_count_by_srcport++;
+                                                                            counters_ipc->after_count_by_src++;
 
-                                                                            pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+                                                                            pthread_mutex_unlock(&After_By_Src_Mutex);
                                                                             File_Unlock(config->shm_counters);
 
                                                                         }
 
                                                                     }
-                                                                }
 
 
-                                                                /* After by destination IP address */
+                                                                    /* After by source IP port */
 
-                                                                if ( rulestruct[b].after_method == 2 ) {
+                                                                    if ( rulestruct[b].after_method == 4 ) {
 
-                                                                    after_flag = false;
+                                                                        after_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->after_count_by_dst; i++ ) {
-                                                                        if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid )) {
-                                                                            after_flag = true;
+                                                                        for (i = 0; i < counters_ipc->after_count_by_srcport; i++ ) {
+                                                                            if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(afterbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            File_Lock(config->shm_after_by_dst);
-                                                                            pthread_mutex_lock(&After_By_Dst_Mutex);
+                                                                                after_flag = true;
 
-                                                                            afterbydst_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
-                                                                            afterbydst_ipc[i].utime = atol(timet);
+                                                                                File_Lock(config->shm_after_by_srcport);
+                                                                                pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbydst_ipc[i].count=1;
+                                                                                afterbysrcport_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
+                                                                                afterbysrcport_ipc[i].utime = atol(timet);
+
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbysrcport_ipc[i].count=1;
+                                                                                    afterbysrcport_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
+                                                                                }
+
+                                                                                pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_after_by_srcport);
+
+                                                                                if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_srcport_u32);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        /* If not found,  add it to the array */
+
+                                                                        if ( after_flag == false ) {
+
+                                                                            if ( Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
+
+                                                                                File_Lock(config->shm_after_by_srcport);
+                                                                                pthread_mutex_lock(&After_By_Src_Port_Mutex);
+
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
+                                                                                strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid));
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].count = 1;
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
+
+                                                                                File_Unlock(config->shm_after_by_srcport);
+
+                                                                                File_Lock(config->shm_counters);
+
+                                                                                counters_ipc->after_count_by_srcport++;
+
+                                                                                pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
+
+                                                                        }
+                                                                    }
+
+
+                                                                    /* After by destination IP address */
+
+                                                                    if ( rulestruct[b].after_method == 2 ) {
+
+                                                                        after_flag = false;
+
+                                                                        /* Check array for matching src / sid */
+
+                                                                        for (i = 0; i < counters_ipc->after_count_by_dst; i++ ) {
+                                                                            if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(afterbydst_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                                after_flag = true;
+
+                                                                                File_Lock(config->shm_after_by_dst);
+                                                                                pthread_mutex_lock(&After_By_Dst_Mutex);
+
+                                                                                afterbydst_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
                                                                                 afterbydst_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&After_By_Dst_Mutex);
-                                                                            File_Unlock(config->shm_after_by_dst);
-
-                                                                            if ( rulestruct[b].after_count < afterbydst_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbydst_ipc[i].count=1;
+                                                                                    afterbydst_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
                                                                                 }
 
+                                                                                pthread_mutex_unlock(&After_By_Dst_Mutex);
+                                                                                File_Unlock(config->shm_after_by_dst);
 
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                if ( rulestruct[b].after_count < afterbydst_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
+                                                                                    }
+
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( after_flag == false ) {
+                                                                        if ( after_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
+                                                                            if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
-                                                                            File_Lock(config->shm_after_by_dst);
-                                                                            pthread_mutex_lock(&After_By_Dst_Mutex);
+                                                                                File_Lock(config->shm_after_by_dst);
+                                                                                pthread_mutex_lock(&After_By_Dst_Mutex);
 
-                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
-                                                                            strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
-                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
-                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
-                                                                            afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
+                                                                                afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst = ip_dst_u32;
+                                                                                strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[b].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
+                                                                                afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
+                                                                                afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
+                                                                                afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[b].after_seconds;
 
-                                                                            File_Unlock(config->shm_after_by_dst);
+                                                                                File_Unlock(config->shm_after_by_dst);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->after_count_by_dst++;
+                                                                                counters_ipc->after_count_by_dst++;
 
-                                                                            pthread_mutex_unlock(&After_By_Dst_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&After_By_Dst_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                                /* After by source IP port */
+                                                                    /* After by source IP port */
 
-                                                                if ( rulestruct[b].after_method == 4 ) {
+                                                                    if ( rulestruct[b].after_method == 4 ) {
 
-                                                                    after_flag = false;
+                                                                        after_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->after_count_by_srcport; i++ ) {
-                                                                        if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(afterbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
-                                                                            after_flag = true;
+                                                                        for (i = 0; i < counters_ipc->after_count_by_srcport; i++ ) {
+                                                                            if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(afterbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                                after_flag = true;
 
-                                                                            File_Lock(config->shm_after_by_srcport);
-                                                                            pthread_mutex_lock(&After_By_Src_Port_Mutex);
+                                                                                File_Lock(config->shm_after_by_srcport);
+                                                                                pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
-                                                                            afterbysrcport_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
-                                                                            afterbysrcport_ipc[i].utime = atol(timet);
-
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbysrcport_ipc[i].count=1;
+                                                                                afterbysrcport_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
                                                                                 afterbysrcport_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            File_Unlock(config->shm_after_by_srcport);
-
-                                                                            if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_dstport_u32);
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbysrcport_ipc[i].count=1;
+                                                                                    afterbysrcport_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_after_by_srcport);
+
+                                                                                if ( rulestruct[b].after_count < afterbysrcport_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_dstport_u32);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( after_flag == false ) {
+                                                                        if ( after_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
+                                                                            if ( Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
 
-                                                                            File_Lock(config->shm_after_by_srcport);
-                                                                            pthread_mutex_lock(&After_By_Src_Port_Mutex);
+                                                                                File_Lock(config->shm_after_by_srcport);
+                                                                                pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
-                                                                            strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid));
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].count = 1;
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
-                                                                            afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
+                                                                                strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid));
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].count = 1;
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
+                                                                                afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[b].after_seconds;
 
-                                                                            File_Unlock(config->shm_after_by_srcport);
+                                                                                File_Unlock(config->shm_after_by_srcport);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->after_count_by_srcport++;
+                                                                                counters_ipc->after_count_by_srcport++;
 
-                                                                            pthread_mutex_unlock(&After_By_Src_Port_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&After_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                                /* After by destination IP port */
+                                                                    /* After by destination IP port */
 
-                                                                if ( rulestruct[b].after_method == 5 ) {
+                                                                    if ( rulestruct[b].after_method == 5 ) {
 
-                                                                    after_flag = false;
+                                                                        after_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->after_count_by_dstport; i++ ) {
-                                                                        if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(afterbydstport_ipc[i].sid, rulestruct[b].s_sid )) {
-                                                                            after_flag = true;
+                                                                        for (i = 0; i < counters_ipc->after_count_by_dstport; i++ ) {
+                                                                            if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(afterbydstport_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                                after_flag = true;
 
-                                                                            File_Lock(config->shm_after_by_dstport);
-                                                                            pthread_mutex_lock(&After_By_Dst_Port_Mutex);
+                                                                                File_Lock(config->shm_after_by_dstport);
+                                                                                pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
-                                                                            afterbydstport_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
-                                                                            afterbydstport_ipc[i].utime = atol(timet);
-
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbydstport_ipc[i].count=1;
+                                                                                afterbydstport_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
                                                                                 afterbydstport_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-                                                                            File_Unlock(config->shm_after_by_dstport);
-
-                                                                            if ( rulestruct[b].after_count < afterbydstport_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP port. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbydstport_ipc[i].count=1;
+                                                                                    afterbydstport_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
+                                                                                File_Unlock(config->shm_after_by_dstport);
+
+                                                                                if ( rulestruct[b].after_count < afterbydstport_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by destination IP port. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( after_flag == false ) {
+                                                                        if ( after_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 ) {
+                                                                            if ( Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 ) {
 
-                                                                            File_Lock(config->shm_after_by_dstport);
-                                                                            pthread_mutex_lock(&After_By_Dst_Port_Mutex);
+                                                                                File_Lock(config->shm_after_by_dstport);
+                                                                                pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
-                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
-                                                                            strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid));
-                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].count = 1;
-                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
-                                                                            afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[b].after_seconds;
+                                                                                afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
+                                                                                strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid));
+                                                                                afterbydstport_ipc[counters_ipc->after_count_by_dstport].count = 1;
+                                                                                afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
+                                                                                afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[b].after_seconds;
 
-                                                                            File_Unlock(config->shm_after_by_dstport);
+                                                                                File_Unlock(config->shm_after_by_dstport);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->after_count_by_dstport++;
+                                                                                counters_ipc->after_count_by_dstport++;
 
-                                                                            pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                                /* After by username */
+                                                                    /* After by username */
 
-                                                                if ( rulestruct[b].after_method == 3 && normalize_username[0] != '\0' ) {
+                                                                    if ( rulestruct[b].after_method == 3 && normalize_username[0] != '\0' ) {
 
-                                                                    after_flag = false;
+                                                                        after_flag = false;
 
-                                                                    /* Check array for matching username / sid */
+                                                                        /* Check array for matching username / sid */
 
-                                                                    for (i = 0; i < counters_ipc->after_count_by_username; i++ ) {
+                                                                        for (i = 0; i < counters_ipc->after_count_by_username; i++ ) {
 
-                                                                        if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbyusername_ipc[i].sid, rulestruct[b].s_sid )) {
-                                                                            after_flag = true;
+                                                                            if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && !strcmp(afterbyusername_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                                after_flag = true;
 
-                                                                            File_Lock(config->shm_after_by_username);
-                                                                            pthread_mutex_lock(&After_By_Username_Mutex);
+                                                                                File_Lock(config->shm_after_by_username);
+                                                                                pthread_mutex_lock(&After_By_Username_Mutex);
 
-                                                                            afterbyusername_ipc[i].count++;
-                                                                            after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
-                                                                            afterbyusername_ipc[i].utime = atol(timet);
-
-                                                                            if ( after_oldtime > rulestruct[b].after_seconds ) {
-                                                                                afterbyusername_ipc[i].count=1;
+                                                                                afterbyusername_ipc[i].count++;
+                                                                                after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
                                                                                 afterbyusername_ipc[i].utime = atol(timet);
-                                                                                after_log_flag = true;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&After_By_Username_Mutex);
-                                                                            File_Unlock(config->shm_after_by_username);
-
-                                                                            if ( rulestruct[b].after_count < afterbyusername_ipc[i].count ) {
-                                                                                after_log_flag = false;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbyusername_ipc[i].sid, normalize_username);
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                    afterbyusername_ipc[i].count=1;
+                                                                                    afterbyusername_ipc[i].utime = atol(timet);
+                                                                                    after_log_flag = true;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->after_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&After_By_Username_Mutex);
+                                                                                File_Unlock(config->shm_after_by_username);
 
+                                                                                if ( rulestruct[b].after_count < afterbyusername_ipc[i].count ) {
+                                                                                    after_log_flag = false;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbyusername_ipc[i].sid, normalize_username);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->after_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found, add to the username array */
+                                                                        /* If not found, add to the username array */
 
-                                                                    if ( after_flag == false ) {
+                                                                        if ( after_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
+                                                                            if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
-                                                                            File_Lock(config->shm_after_by_username);
-                                                                            pthread_mutex_lock(&After_By_Username_Mutex);
+                                                                                File_Lock(config->shm_after_by_username);
+                                                                                pthread_mutex_lock(&After_By_Username_Mutex);
 
-                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
-                                                                            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
-                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
-                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
-                                                                            afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
+                                                                                strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
+                                                                                strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[b].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
+                                                                                afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
+                                                                                afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
+                                                                                afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[b].after_seconds;
 
-                                                                            File_Unlock(config->shm_after_by_username);
+                                                                                File_Unlock(config->shm_after_by_username);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->after_count_by_username++;
+                                                                                counters_ipc->after_count_by_username++;
 
-                                                                            pthread_mutex_unlock(&After_By_Username_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&After_By_Username_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                            } /* End of After */
+                                                                } /* End of After */
 
-                                                            thresh_log_flag = false;
+                                                                thresh_log_flag = false;
 
-                                                            /*********************************************************/
-                                                            /* Thresh holding                                        */
-                                                            /*********************************************************/
+                                                                /*********************************************************/
+                                                                /* Thresh holding                                        */
+                                                                /*********************************************************/
 
-                                                            if ( rulestruct[b].threshold_type != 0 && after_log_flag == false ) {
+                                                                if ( rulestruct[b].threshold_type != 0 && after_log_flag == false ) {
 
-                                                                t = time(NULL);
-                                                                now=localtime(&t);
-                                                                strftime(timet, sizeof(timet), "%s",  now);
+                                                                    t = time(NULL);
+                                                                    now=localtime(&t);
+                                                                    strftime(timet, sizeof(timet), "%s",  now);
 
-                                                                /* Thresholding by source IP address */
+                                                                    /* Thresholding by source IP address */
 
-                                                                if ( rulestruct[b].threshold_method == 1 ) {
-                                                                    thresh_flag = false;
+                                                                    if ( rulestruct[b].threshold_method == 1 ) {
+                                                                        thresh_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->thresh_count_by_src; i++ ) {
-                                                                        if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                        for (i = 0; i < counters_ipc->thresh_count_by_src; i++ ) {
+                                                                            if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            thresh_flag = true;
+                                                                                thresh_flag = true;
 
-                                                                            File_Lock(config->shm_thresh_by_src);
-                                                                            pthread_mutex_lock(&Thresh_By_Src_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_src);
+                                                                                pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
-                                                                            threshbysrc_ipc[i].count++;
-                                                                            thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
+                                                                                threshbysrc_ipc[i].count++;
+                                                                                thresh_oldtime = atol(timet) - threshbysrc_ipc[i].utime;
 
-                                                                            threshbysrc_ipc[i].utime = atol(timet);
-
-                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
-                                                                                threshbysrc_ipc[i].count=1;
                                                                                 threshbysrc_ipc[i].utime = atol(timet);
-                                                                                thresh_log_flag = false;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            File_Unlock(config->shm_thresh_by_src);
-
-                                                                            if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count ) {
-                                                                                thresh_log_flag = true;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
+                                                                                if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
+                                                                                    threshbysrc_ipc[i].count=1;
+                                                                                    threshbysrc_ipc[i].utime = atol(timet);
+                                                                                    thresh_log_flag = false;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);
-                                                                                counters->threshold_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+                                                                                File_Unlock(config->shm_thresh_by_src);
+
+                                                                                if ( rulestruct[b].threshold_count < threshbysrc_ipc[i].count ) {
+                                                                                    thresh_log_flag = true;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);
+                                                                                    counters->threshold_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+
+                                                                                }
+
+                                                                            }
+                                                                        }
+
+                                                                        /* If not found,  add it to the array */
+
+                                                                        if ( thresh_flag == false ) {
+
+                                                                            if ( Clean_IPC_Object(THRESH_BY_SRC) == 0 ) {
+
+                                                                                File_Lock(config->shm_thresh_by_src);
+                                                                                pthread_mutex_lock(&Thresh_By_Src_Mutex);
+
+                                                                                threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
+                                                                                strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+                                                                                threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
+                                                                                threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
+                                                                                threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
+
+                                                                                File_Unlock(config->shm_thresh_by_src);
+
+                                                                                File_Lock(config->shm_counters);
+
+                                                                                counters_ipc->thresh_count_by_src++;
+
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+                                                                                File_Unlock(config->shm_counters);
 
                                                                             }
 
                                                                         }
                                                                     }
 
-                                                                    /* If not found,  add it to the array */
+                                                                    /* Thresholding by destination IP address */
 
-                                                                    if ( thresh_flag == false ) {
+                                                                    if ( rulestruct[b].threshold_method == 2 ) {
+                                                                        thresh_flag = false;
 
-                                                                        if ( Clean_IPC_Object(THRESH_BY_SRC) == 0 ) {
+                                                                        /* Check array for matching src / sid */
 
-                                                                            File_Lock(config->shm_thresh_by_src);
-                                                                            pthread_mutex_lock(&Thresh_By_Src_Mutex);
+                                                                        for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ ) {
+                                                                            if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
-                                                                            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[b].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
-                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
-                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
-                                                                            threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[b].threshold_seconds;
+                                                                                thresh_flag = true;
 
-                                                                            File_Unlock(config->shm_thresh_by_src);
+                                                                                File_Lock(config->shm_thresh_by_dst);
+                                                                                pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
-                                                                            File_Lock(config->shm_counters);
-
-                                                                            counters_ipc->thresh_count_by_src++;
-
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            File_Unlock(config->shm_counters);
-
-                                                                        }
-
-                                                                    }
-                                                                }
-
-                                                                /* Thresholding by destination IP address */
-
-                                                                if ( rulestruct[b].threshold_method == 2 ) {
-                                                                    thresh_flag = false;
-
-                                                                    /* Check array for matching src / sid */
-
-                                                                    for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ ) {
-                                                                        if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[b].s_sid )) {
-
-                                                                            thresh_flag = true;
-
-                                                                            File_Lock(config->shm_thresh_by_dst);
-                                                                            pthread_mutex_lock(&Thresh_By_Dst_Mutex);
-
-                                                                            threshbydst_ipc[i].count++;
-                                                                            thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
-                                                                            threshbydst_ipc[i].utime = atol(timet);
-                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
-                                                                                threshbydst_ipc[i].count=1;
+                                                                                threshbydst_ipc[i].count++;
+                                                                                thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
                                                                                 threshbydst_ipc[i].utime = atol(timet);
-                                                                                thresh_log_flag = false;
-                                                                            }
-
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            File_Unlock(config->shm_thresh_by_dst);
-
-
-                                                                            if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count ) {
-                                                                                thresh_log_flag = true;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                                                                if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
+                                                                                    threshbydst_ipc[i].count=1;
+                                                                                    threshbydst_ipc[i].utime = atol(timet);
+                                                                                    thresh_log_flag = false;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);;
-                                                                                counters->threshold_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+                                                                                File_Unlock(config->shm_thresh_by_dst);
+
+
+                                                                                if ( rulestruct[b].threshold_count < threshbydst_ipc[i].count ) {
+                                                                                    thresh_log_flag = true;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                    counters->threshold_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( thresh_flag == false ) {
+                                                                        if ( thresh_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(THRESH_BY_DST) == 0 ) {
+                                                                            if ( Clean_IPC_Object(THRESH_BY_DST) == 0 ) {
 
-                                                                            File_Lock(config->shm_thresh_by_dst);
-                                                                            pthread_mutex_lock(&Thresh_By_Src_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_dst);
+                                                                                pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
-                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
-                                                                            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
-                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
-                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
-                                                                            threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
+                                                                                threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
+                                                                                strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[b].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
+                                                                                threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
+                                                                                threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
+                                                                                threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[b].threshold_seconds;
 
-                                                                            File_Unlock(config->shm_thresh_by_dst);
+                                                                                File_Unlock(config->shm_thresh_by_dst);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->thresh_count_by_dst++;
+                                                                                counters_ipc->thresh_count_by_dst++;
 
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                                /* Thresholding by source IP port */
+                                                                    /* Thresholding by source IP port */
 
-                                                                if ( rulestruct[b].threshold_method == 4 ) {
+                                                                    if ( rulestruct[b].threshold_method == 4 ) {
 
-                                                                    thresh_flag = false;
+                                                                        thresh_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->thresh_count_by_srcport; i++ ) {
+                                                                        for (i = 0; i < counters_ipc->thresh_count_by_srcport; i++ ) {
 
-                                                                        if ( threshbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(threshbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                            if ( threshbysrcport_ipc[i].ipsrcport == ip_srcport_u32 && !strcmp(threshbysrcport_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            thresh_flag = true;
+                                                                                thresh_flag = true;
 
-                                                                            File_Lock(config->shm_thresh_by_srcport);
-                                                                            pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_srcport);
+                                                                                pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
 
-                                                                            threshbysrcport_ipc[i].count++;
-                                                                            thresh_oldtime = atol(timet) - threshbysrcport_ipc[i].utime;
-                                                                            threshbysrcport_ipc[i].utime = atol(timet);
-                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
-                                                                                threshbysrcport_ipc[i].count=1;
+                                                                                threshbysrcport_ipc[i].count++;
+                                                                                thresh_oldtime = atol(timet) - threshbysrcport_ipc[i].utime;
                                                                                 threshbysrcport_ipc[i].utime = atol(timet);
-                                                                                thresh_log_flag = false;
-                                                                            }
-
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-                                                                            File_Unlock(config->shm_thresh_by_srcport);
-
-
-                                                                            if ( rulestruct[b].threshold_count < threshbysrcport_ipc[i].count ) {
-                                                                                thresh_log_flag = true;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP port. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
+                                                                                    threshbysrcport_ipc[i].count=1;
+                                                                                    threshbysrcport_ipc[i].utime = atol(timet);
+                                                                                    thresh_log_flag = false;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);;
-                                                                                counters->threshold_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_thresh_by_srcport);
+
+
+                                                                                if ( rulestruct[b].threshold_count < threshbysrcport_ipc[i].count ) {
+                                                                                    thresh_log_flag = true;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "Threshold SID %s by source IP port. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                    counters->threshold_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( thresh_flag == false ) {
+                                                                        if ( thresh_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(THRESH_BY_SRCPORT) == 0 ) {
+                                                                            if ( Clean_IPC_Object(THRESH_BY_SRCPORT) == 0 ) {
 
-                                                                            File_Lock(config->shm_thresh_by_srcport);
-                                                                            pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_srcport);
+                                                                                pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
 
 
-                                                                            threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].ipsrcport = ip_srcport_u32;
-                                                                            strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid));
-                                                                            threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].count = 1;
-                                                                            threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].utime = atol(timet);
-                                                                            threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].expire = rulestruct[b].threshold_seconds;
+                                                                                threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].ipsrcport = ip_srcport_u32;
+                                                                                strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid, rulestruct[b].s_sid, sizeof(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid));
+                                                                                threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].count = 1;
+                                                                                threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].utime = atol(timet);
+                                                                                threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].expire = rulestruct[b].threshold_seconds;
 
-                                                                            File_Unlock(config->shm_thresh_by_srcport);
+                                                                                File_Unlock(config->shm_thresh_by_srcport);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->thresh_count_by_srcport++;
+                                                                                counters_ipc->thresh_count_by_srcport++;
 
-                                                                            pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
-                                                                /* Thresholding by destination IP port */
+                                                                    /* Thresholding by destination IP port */
 
-                                                                if ( rulestruct[b].threshold_method == 5 ) {
+                                                                    if ( rulestruct[b].threshold_method == 5 ) {
 
-                                                                    thresh_flag = false;
+                                                                        thresh_flag = false;
 
-                                                                    /* Check array for matching src / sid */
+                                                                        /* Check array for matching src / sid */
 
-                                                                    for (i = 0; i < counters_ipc->thresh_count_by_dstport; i++ ) {
-                                                                        if ( threshbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                        for (i = 0; i < counters_ipc->thresh_count_by_dstport; i++ ) {
+                                                                            if ( threshbydstport_ipc[i].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            thresh_flag = true;
+                                                                                thresh_flag = true;
 
-                                                                            File_Lock(config->shm_thresh_by_dstport);
-                                                                            pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_dstport);
+                                                                                pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
 
-                                                                            threshbydstport_ipc[i].count++;
-                                                                            thresh_oldtime = atol(timet) - threshbydstport_ipc[i].utime;
-                                                                            threshbydstport_ipc[i].utime = atol(timet);
-                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
-                                                                                threshbydstport_ipc[i].count=1;
+                                                                                threshbydstport_ipc[i].count++;
+                                                                                thresh_oldtime = atol(timet) - threshbydstport_ipc[i].utime;
                                                                                 threshbydstport_ipc[i].utime = atol(timet);
-                                                                                thresh_log_flag = false;
-                                                                            }
-
-                                                                            pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-                                                                            File_Unlock(config->shm_thresh_by_dstport);
-
-
-                                                                            if ( rulestruct[b].threshold_count < threshbydstport_ipc[i].count ) {
-                                                                                thresh_log_flag = true;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP PORT. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
+                                                                                    threshbydstport_ipc[i].count=1;
+                                                                                    threshbydstport_ipc[i].utime = atol(timet);
+                                                                                    thresh_log_flag = false;
                                                                                 }
 
-                                                                                pthread_mutex_lock(&CounterMutex);;
-                                                                                counters->threshold_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
+                                                                                pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
+                                                                                File_Unlock(config->shm_thresh_by_dstport);
+
+
+                                                                                if ( rulestruct[b].threshold_count < threshbydstport_ipc[i].count ) {
+                                                                                    thresh_log_flag = true;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP PORT. [%s]", threshbydstport_ipc[i].sid, ip_dstport_u32);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                    counters->threshold_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+                                                                                }
                                                                             }
                                                                         }
-                                                                    }
 
-                                                                    /* If not found,  add it to the array */
+                                                                        /* If not found,  add it to the array */
 
-                                                                    if ( thresh_flag == false ) {
+                                                                        if ( thresh_flag == false ) {
 
-                                                                        if ( Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 ) {
+                                                                            if ( Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 ) {
 
-                                                                            File_Lock(config->shm_thresh_by_dstport);
-                                                                            pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
+                                                                                File_Lock(config->shm_thresh_by_dstport);
+                                                                                pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
 
 
-                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
-                                                                            strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
-                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
-                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
-                                                                            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[b].threshold_seconds;
+                                                                                threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
+                                                                                strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[b].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
+                                                                                threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
+                                                                                threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
+                                                                                threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[b].threshold_seconds;
 
-                                                                            File_Unlock(config->shm_thresh_by_dstport);
+                                                                                File_Unlock(config->shm_thresh_by_dstport);
 
-                                                                            File_Lock(config->shm_counters);
+                                                                                File_Lock(config->shm_counters);
 
-                                                                            counters_ipc->thresh_count_by_dstport++;
+                                                                                counters_ipc->thresh_count_by_dstport++;
 
-                                                                            pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
-                                                                            File_Unlock(config->shm_counters);
+                                                                                pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
+                                                                                File_Unlock(config->shm_counters);
+
+                                                                            }
 
                                                                         }
-
                                                                     }
-                                                                }
 
 
-                                                                if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' ) {
+                                                                    if ( rulestruct[b].threshold_method == 3 && normalize_username[0] != '\0' ) {
 
-                                                                    thresh_flag = false;
+                                                                        thresh_flag = false;
 
-                                                                    /* Check array fror matching username / sid */
+                                                                        /* Check array fror matching username / sid */
 
-                                                                    for (i = 0; i < counters_ipc->thresh_count_by_username; i++) {
+                                                                        for (i = 0; i < counters_ipc->thresh_count_by_username; i++) {
 
-                                                                        if ( !strcmp(threshbyusername_ipc[i].username, normalize_username) && !strcmp(threshbyusername_ipc[i].sid, rulestruct[b].s_sid )) {
+                                                                            if ( !strcmp(threshbyusername_ipc[i].username, normalize_username) && !strcmp(threshbyusername_ipc[i].sid, rulestruct[b].s_sid )) {
 
-                                                                            thresh_flag = true;
+                                                                                thresh_flag = true;
+
+                                                                                File_Lock(config->shm_thresh_by_username);
+                                                                                pthread_mutex_lock(&Thresh_By_Username_Mutex);
+
+                                                                                threshbyusername_ipc[i].count++;
+                                                                                thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
+                                                                                threshbyusername_ipc[i].utime = atol(timet);
+
+                                                                                if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
+                                                                                    threshbyusername_ipc[i].count=1;
+                                                                                    threshbyusername_ipc[i].utime = atol(timet);
+                                                                                    thresh_log_flag = false;
+                                                                                }
+
+                                                                                pthread_mutex_unlock(&Thresh_By_Username_Mutex);
+                                                                                File_Unlock(config->shm_thresh_by_username);
+
+                                                                                if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count ) {
+
+                                                                                    thresh_log_flag = true;
+
+                                                                                    if ( debug->debuglimits ) {
+                                                                                        Sagan_Log(S_NORMAL, "Threshold SID %s by_username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
+                                                                                    }
+
+                                                                                    pthread_mutex_lock(&CounterMutex);;
+                                                                                    counters->threshold_total++;
+                                                                                    pthread_mutex_unlock(&CounterMutex);
+
+                                                                                }
+
+                                                                            }
+                                                                        }
+
+                                                                        /* Username not found, add it to array */
+
+                                                                        if ( thresh_flag == false ) {
 
                                                                             File_Lock(config->shm_thresh_by_username);
                                                                             pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
-                                                                            threshbyusername_ipc[i].count++;
-                                                                            thresh_oldtime = atol(timet) - threshbyusername_ipc[i].utime;
-                                                                            threshbyusername_ipc[i].utime = atol(timet);
+                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
+                                                                            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
+                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
+                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
+                                                                            threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
 
-                                                                            if ( thresh_oldtime > rulestruct[b].threshold_seconds ) {
-                                                                                threshbyusername_ipc[i].count=1;
-                                                                                threshbyusername_ipc[i].utime = atol(timet);
-                                                                                thresh_log_flag = false;
-                                                                            }
 
-                                                                            pthread_mutex_unlock(&Thresh_By_Username_Mutex);
                                                                             File_Unlock(config->shm_thresh_by_username);
-
-                                                                            if ( rulestruct[b].threshold_count < threshbyusername_ipc[i].count ) {
-
-                                                                                thresh_log_flag = true;
-
-                                                                                if ( debug->debuglimits ) {
-                                                                                    Sagan_Log(S_NORMAL, "Threshold SID %s by_username. [%s]", threshbyusername_ipc[i].sid, normalize_username);
-                                                                                }
-
-                                                                                pthread_mutex_lock(&CounterMutex);;
-                                                                                counters->threshold_total++;
-                                                                                pthread_mutex_unlock(&CounterMutex);
-
-                                                                            }
-
-                                                                        }
-                                                                    }
-
-                                                                    /* Username not found, add it to array */
-
-                                                                    if ( thresh_flag == false ) {
-
-                                                                        File_Lock(config->shm_thresh_by_username);
-                                                                        pthread_mutex_lock(&Thresh_By_Username_Mutex);
-
-                                                                        strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
-                                                                        strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[b].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
-                                                                        threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
-                                                                        threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
-                                                                        threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[b].threshold_seconds;
-
-
-                                                                        File_Unlock(config->shm_thresh_by_username);
 
 //                                                                   if ( config->max_threshold_by_username < counters_ipc->thresh_count_by_username ) {
 //                                                                        Sagan_Log(S_WARN, "[%s, line %d] Max 'threshold_by_username' of %d has been reached! Consider increasing 'threshold_by_username'!", __FILE__, __LINE__, config->max_threshold_by_username );
@@ -1795,104 +1811,106 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 //                                                                    } else {
 
-                                                                        File_Lock(config->shm_counters);
+                                                                            File_Lock(config->shm_counters);
 
-                                                                        counters_ipc->thresh_count_by_username++;
+                                                                            counters_ipc->thresh_count_by_username++;
 
-                                                                        pthread_mutex_unlock(&Thresh_By_Username_Mutex);
-                                                                        File_Unlock(config->shm_counters);
+                                                                            pthread_mutex_unlock(&Thresh_By_Username_Mutex);
+                                                                            File_Unlock(config->shm_counters);
 
 //                                                                    }
 
-                                                                    }
-
-                                                                }
-
-                                                            }  /* End of thresholding */
-
-
-                                                            pthread_mutex_lock(&CounterMutex);
-                                                            counters->saganfound++;
-                                                            pthread_mutex_unlock(&CounterMutex);
-
-                                                            /* Check for thesholding & "after" */
-
-                                                            if ( thresh_log_flag == false && after_log_flag == false ) {
-
-                                                                if ( debug->debugengine ) {
-
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
-
-                                                                }
-
-                                                                if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
-                                                                    Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
-
-                                                                threadid++;
-
-                                                                if ( threadid >= MAX_THREADS ) {
-                                                                    threadid=0;
-                                                                }
-
-
-                                                                processor_info_engine->processor_name          =       s_msg;
-                                                                processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                                processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                                processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                                processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                                processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                                processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                                processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
-
-                                                                processor_info_engine_dst_port                 =       normalize_dst_port;
-                                                                processor_info_engine_src_port                 =       normalize_src_port;
-                                                                processor_info_engine_proto                    =       proto;
-                                                                processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
-
-                                                                if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 ) {
-
-                                                                    if ( rulestruct[b].type == NORMAL_RULE ) {
-
-                                                                        Send_Alert(SaganProcSyslog_LOCAL,
-                                                                                   processor_info_engine,
-                                                                                   ip_src,
-                                                                                   ip_dst,
-                                                                                   normalize_http_uri,
-                                                                                   normalize_http_hostname,
-                                                                                   processor_info_engine_proto,
-                                                                                   processor_info_engine_alertid,
-                                                                                   processor_info_engine_src_port,
-                                                                                   processor_info_engine_dst_port,
-                                                                                   b, tp );
-
-                                                                    } else {
-
-                                                                        Sagan_Dynamic_Rules(SaganProcSyslog_LOCAL, b, processor_info_engine,
-                                                                                            ip_src, ip_dst);
+                                                                        }
 
                                                                     }
 
-                                                                }
+                                                                }  /* End of thresholding */
 
 
-                                                            } /* Threshold / After */
+                                                                pthread_mutex_lock(&CounterMutex);
+                                                                counters->saganfound++;
+                                                                pthread_mutex_unlock(&CounterMutex);
+
+                                                                /* Check for thesholding & "after" */
+
+                                                                if ( thresh_log_flag == false && after_log_flag == false ) {
+
+                                                                    if ( debug->debugengine ) {
+
+                                                                        Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                        Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                        Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
+                                                                        Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+
+                                                                    }
+
+                                                                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
+                                                                        Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port);
+
+                                                                    threadid++;
+
+                                                                    if ( threadid >= MAX_THREADS ) {
+                                                                        threadid=0;
+                                                                    }
+
+
+                                                                    processor_info_engine->processor_name          =       s_msg;
+                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+
+                                                                    processor_info_engine_dst_port                 =       normalize_dst_port;
+                                                                    processor_info_engine_src_port                 =       normalize_src_port;
+                                                                    processor_info_engine_proto                    =       proto;
+                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+
+                                                                    if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 ) {
+
+                                                                        if ( rulestruct[b].type == NORMAL_RULE ) {
+
+                                                                            Send_Alert(SaganProcSyslog_LOCAL,
+                                                                                       processor_info_engine,
+                                                                                       ip_src,
+                                                                                       ip_dst,
+                                                                                       normalize_http_uri,
+                                                                                       normalize_http_hostname,
+                                                                                       processor_info_engine_proto,
+                                                                                       processor_info_engine_alertid,
+                                                                                       processor_info_engine_src_port,
+                                                                                       processor_info_engine_dst_port,
+                                                                                       b, tp );
+
+                                                                        } else {
+
+                                                                            Sagan_Dynamic_Rules(SaganProcSyslog_LOCAL, b, processor_info_engine,
+                                                                                                ip_src, ip_dst);
+
+                                                                        }
+
+                                                                    }
+
+
+                                                                } /* Threshold / After */
 #ifdef WITH_BLUEDOT
-                                                        } /* Bluedot */
+                                                            } /* Bluedot */
+                                                        }
                                                     }
                                                 }
-                                            }
 #endif
 
-                                        } /* Bro Intel */
+                                            } /* Bro Intel */
 
-                                    } /* Blacklist */
+                                        } /* Blacklist */
 #ifdef HAVE_LIBMAXMINDDB
-                                } /* GeoIP2 */
+                                    } /* GeoIP2 */
 #endif
-                            } /* Time based alerts */
+                                } /* Time based alerts */
+
+                            } /* Xbit count */
 
                         } /* Xbit */
 

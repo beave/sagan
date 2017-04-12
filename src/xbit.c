@@ -60,7 +60,7 @@ struct _Sagan_IPC_Xbit *xbit_ipc;
  * rule condition is tested here and returned.
  *****************************************************************************/
 
-int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
 {
 
     time_t t;
@@ -406,7 +406,7 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
         *    ISNOTSET     *
         *******************/
 
-        if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+        else if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
 
             xbit_match = false;
 
@@ -734,6 +734,11 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
         } /* End of "xbit_type[i] == 4" */
 
+        else if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+        }
+
+
     } /* End of "for i" */
 
     /* IF we match all criteria for isset/isnotset
@@ -762,6 +767,73 @@ int Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int 
     return(false);
 
 }  /* End of Xbit_Condition(); */
+
+
+/*****************************************************************************
+ * Xbit_Count - Used to determine how many xbits has been set based on a
+ * source or destination address.  This is useful for identification of
+ * distributed attacks.
+ *****************************************************************************/
+
+sbool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char )
+{
+
+    uint32_t a = 0;
+    uint32_t i = 0;
+    uint32_t counter = 0;
+
+    uint32_t ip_src = IP2Bit(ip_src_char);
+    uint32_t ip_dst = IP2Bit(ip_dst_char);
+
+    for (i = 0; i < rulestruct[rule_position].xbit_count_count; i++) {
+
+        for (a = 0; a < counters_ipc->xbit_count; a++) {
+
+            if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
+                 xbit_ipc[a].ip_src == ip_src ) {
+
+                counter++;
+
+                if ( rulestruct[rule_position].xbit_count_gt_lt[i] == 0 ) {
+
+                    if ( counter > rulestruct[rule_position].xbit_count_counter[i] )  {
+
+                        if ( debug->debugxbit) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Xbit count 'by_src' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                        }
+
+
+                        return(true);
+                    }
+                }
+            }
+
+            else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
+                      xbit_ipc[a].ip_dst == ip_dst ) {
+
+                counter++;
+
+                if ( rulestruct[rule_position].xbit_count_gt_lt[i] == 0 ) {
+
+                    if ( counter > rulestruct[rule_position].xbit_count_counter[i] )  {
+
+                        if ( debug->debugxbit) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Xbit count 'by_dst' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                        }
+
+                        return(true);
+                    }
+                }
+            }
+        }
+    }
+
+    if ( debug->debugxbit) {
+        Sagan_Log(S_DEBUG, "[%s, line %d] Xbit count threshold NOT reached for xbit." , __FILE__, __LINE__);
+    }
+
+    return(false);
+}
 
 
 /*****************************************************************************

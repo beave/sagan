@@ -455,7 +455,6 @@ struct after_by_dstport_ipc {
     int expire;
 };
 
-
 /* After structure by username */
 
 typedef struct after_by_username_ipc after_by_username_ipc;

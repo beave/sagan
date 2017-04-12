@@ -23,7 +23,7 @@
 #endif
 
 void Xbit_Set( int, char *, char *, int, int );
-int  Xbit_Condition ( int, char *, char *, int, int );
+sbool Xbit_Condition ( int, char *, char *, int, int );
 int  Xbit_Type ( char *, int, const char *);
 void Xbit_Cleanup(void);
 
@@ -34,8 +34,6 @@ struct _Sagan_Xbit_Track {
     int		xbit_srcport;
     int		xbit_dstport;
 };
-
-
 
 typedef struct _Sagan_IPC_Xbit _Sagan_IPC_Xbit;
 struct _Sagan_IPC_Xbit {

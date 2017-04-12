@@ -105,14 +105,15 @@ struct _Rule_Struct {
     int meta_distance[MAX_META_CONTENT];
     int meta_within[MAX_META_CONTENT];
 
-    int pcre_count;
-    int content_count;
-    int meta_content_count;
-    int meta_content_converted_count;
+    unsigned char pcre_count;
+    unsigned char content_count;
+    unsigned char meta_content_count;
+    unsigned char meta_content_converted_count;
 
     int xbit_count;				/* Number of xbits in memory */
-    int xbit_condition_count;			/* Number of isset/isnot within a rule */
-    int xbit_set_count;				/* Number of set/unset within a rule */
+    unsigned char xbit_condition_count;		/* Number of isset/isnot within a rule */
+    unsigned char xbit_set_count;		/* Number of set/unset within a rule */
+    unsigned char xbit_count_count;		/* Number of count within a rule */
 
     sbool xbit_flag;              	        /* Does the rule contain a xbit? */
     sbool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
@@ -125,13 +126,15 @@ struct _Rule_Struct {
     int xbit_timeout[MAX_XBITS];                /* How long a xbit is to stay alive (seconds) */
     char xbit_name[MAX_XBITS][64];              /* Name of the xbit */
 
-    unsigned char xbit_count_gt_lt[MAX_XBITS];  /* 0 == Greater, 1 == Less than, 2 == Equals. */
-    int xbit_count_counter[MAX_XBITS];	        /* The amount the user is looking for */
+    unsigned char xbit_count_gt_lt[MAX_XBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
+    int xbit_count_counter[MAX_XBITS];        /* The amount the user is looking for */
+    sbool xbit_count_flag;
 
     int ref_count;
     int dst_port;
     int src_port;
     int ip_proto;
+
     sbool s_find_port;
     sbool s_find_proto;
     sbool s_find_proto_program;

@@ -1054,9 +1054,22 @@ void Load_Rules( const char *ruleset )
 
                     Remove_Spaces(tmptoken);
 
-                    /* Calling "Xbit_Type" is complete overkill? */
+                    if ( strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst") ) {
 
-                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Xbit_Type(tmptoken, linecount, ruleset_fullname);
+                        Sagan_Log(S_ERROR, "[%s, line %d] Expected count 'by_src' or 'by_dst'.  Got '%s' instead at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+
+                    }
+
+                    if ( !strcmp(tmptoken, "by_src") ) {
+
+                        rulestruct[counters->rulecount].xbit_direction[xbit_count] = 2;
+
+                    } else {
+
+                        rulestruct[counters->rulecount].xbit_direction[xbit_count] = 3;
+
+                    }
+
                     rulestruct[counters->rulecount].xbit_flag = 1;
                     rulestruct[counters->rulecount].xbit_set_count++;
                     rulestruct[counters->rulecount].xbit_type[xbit_count]  = 8;         /* count */
@@ -1107,9 +1120,11 @@ void Load_Rules( const char *ruleset )
 
                     Remove_Spaces(tmptoken);
                     rulestruct[counters->rulecount].xbit_count_counter[xbit_count] = atoi(tmptoken);
+                    rulestruct[counters->rulecount].xbit_count_flag = true;
 
                     xbit_count++;
                     counters->xbit_total_counter++;
+                    rulestruct[counters->rulecount].xbit_count_count++;
                 }
 
                 rulestruct[counters->rulecount].xbit_count = xbit_count;
@@ -1125,7 +1140,6 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] Attempting to load a dynamic rule but the 'dynamic_load' processor hasn't been configured.  Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
 
                 }
-
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
