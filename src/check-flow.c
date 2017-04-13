@@ -94,6 +94,13 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
 
     /*port 1*/
     int b1=0;
+    int u=0;
+    int eq3=0;
+    int ne3=0;
+    int eq3_val=0;
+    int ne3_val=0;
+    int g1;
+
 
     /*flow 2*/
     int z=0;
@@ -110,6 +117,12 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
 
     /*port 2*/
     int b2=0;
+    int v=0;
+    int eq4=0;
+    int ne4=0;
+    int eq4_val=0;
+    int ne4_val=0;
+    int g2;
 
 //    uint32_t lo;
 //    uint32_t hi;
@@ -127,7 +140,7 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
         }
     else
         {
-        c1=1;
+            c1=1;
         }
 
     if(c1 != 1)
@@ -212,9 +225,46 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     /*Begin port_1*/
     if(rulestruct[b].port_1_var != 0)
         {
-            if(port_src == rulestruct[b].src_port)
+            for(i=0; i < rulestruct[b].port_1_counter; i++)       //originally port_1_counter + 1. Deleted +1.
                 {
-                    b1=1;
+                    u++;
+                    g1 = rulestruct[b].port_1_type[u];
+
+                    if(g1 == 0)
+                        {
+                            ne3++;
+                            if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi)
+                                {
+                                    ne3_val++;
+                                }
+                        }
+
+                    if(g1 == 1)
+                        {
+                            eq3++;
+                            if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi)
+                                {
+                                    eq3_val++;
+                                }
+                        }
+
+                    if(g1 == 2)
+                        {
+                            ne3++;
+                            if(port_src == rulestruct[b].port_1[i].lo)
+                                {
+                                    ne3_val++;
+                                }
+                        }
+
+                    if(g1 == 3)
+                        {
+                            eq3++;
+                            if(port_src == rulestruct[b].port_1[i].lo)
+                                {
+                                    eq3_val++;
+                                }
+                        }
                 }
         }
     else
@@ -222,10 +272,34 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
             b1=1;
         }
 
+    /* if ne3, did anything match (meaning failed) */
+    if(ne3>0)
+        {
+            if(ne3_val > 0)
+                {
+                    failed++;
+                }
+        }
+
+    /* if eq3, did anything not match meaning failed */
+    if(eq3>0)
+        {
+            if(eq3_val < 1)
+                {
+                    failed++;
+                }
+        }
+
+    /* if either failed, we did not match, no need to check the second flow... we already failed! */
     if(b1 != 1)
         {
-            return 0;
+            if(failed > 0)
+                {
+                    return 0;
+                }
         }
+
+
 
     /*Begin flow_2*/
     if(rulestruct[b].flow_2_var != 0)
@@ -304,9 +378,46 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     /*Begin port_2*/
     if(rulestruct[b].port_2_var != 0)
         {
-            if(port_dst == rulestruct[b].dst_port)
+            for(i=0; i < rulestruct[b].port_2_counter; i++)       //originally port_2_counter + 1. Deleted +1.
                 {
-                    b2=1;
+                    v++;
+                    g2 = rulestruct[b].port_2_type[v];
+
+                    if(g2 == 0)
+                        {
+                            ne4++;
+                            if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi)
+                                {
+                                    ne4_val++;
+                                }
+                        }
+
+                    if(g2 == 1)
+                        {
+                            eq4++;
+                            if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi)
+                                {
+                                    eq4_val++;
+                                }
+                        }
+
+                    if(g2 == 2)
+                        {
+                            ne4++;
+                            if(port_dst == rulestruct[b].port_2[i].lo)
+                                {
+                                    ne4_val++;
+                                }
+                        }
+
+                    if(g2 == 3)
+                        {
+                            eq4++;
+                            if(port_dst == rulestruct[b].port_2[i].lo)
+                                {
+                                    eq4_val++;
+                                }
+                        }
                 }
         }
     else
@@ -314,9 +425,31 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
             b2=1;
         }
 
+    /* if ne4, did anything match (meaning failed) */
+    if(ne4>0)
+        {
+            if(ne4_val > 0)
+                {
+                    failed++;
+                }
+        }
+
+    /* if eq4, did anything not match meaning failed */
+    if(eq4>0)
+        {
+            if(eq4_val < 1)
+                {
+                    failed++;
+                }
+        }
+
+    /* if either failed, we did not match, no need to check the second flow... we already failed! */
     if(b2 != 1)
         {
-            return 0;
+            if(failed > 0)
+                {
+                    return 0;
+                }
         }
 
     /* If we made it to this point we have a match */

@@ -46,6 +46,20 @@ struct arr_flow_2
     uint32_t hi;
 };
 
+typedef struct arr_port_1 arr_port_1;
+struct arr_port_1
+{
+    int lo;
+    int hi;
+};
+
+typedef struct arr_port_2 arr_port_2;
+struct arr_port_2
+{
+    int lo;
+    int hi;
+};
+
 typedef struct meta_content_conversion meta_content_conversion;
 struct meta_content_conversion
 {
@@ -84,6 +98,9 @@ struct _Rule_Struct
     struct arr_flow_1 flow_1[MAX_CHECK_FLOWS];
     struct arr_flow_2 flow_2[MAX_CHECK_FLOWS];
 
+    struct arr_port_1 port_1[MAX_CHECK_FLOWS];
+    struct arr_port_2 port_2[MAX_CHECK_FLOWS];
+
     struct meta_content_conversion meta_content_containers[MAX_META_CONTENT];
 
     int direction;
@@ -97,9 +114,13 @@ struct _Rule_Struct
 
     int flow_1_type[MAX_CHECK_FLOWS];
     int flow_2_type[MAX_CHECK_FLOWS];
-    int  flow_1_counter;
-    int  flow_2_counter;
+    int flow_1_counter;
+    int flow_2_counter;
 
+    int port_1_type[MAX_CHECK_FLOWS];
+    int port_2_type[MAX_CHECK_FLOWS];
+    int port_1_counter;
+    int port_2_counter;
 
     sbool s_nocase[MAX_CONTENT];
     int s_offset[MAX_CONTENT];
@@ -133,7 +154,7 @@ struct _Rule_Struct
 
     int ref_count;
     int dst_port;                               /*dst port to match against events*/
-    int src_port;                               /*src port to match against events*/
+//    int src_port;                               /*src port to match against events*/
     int ip_proto;                               /*protocol to match against events*/
 
     int default_dst_port;                       /*default dst port to set*/

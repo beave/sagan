@@ -120,6 +120,8 @@ void Load_Rules( const char *ruleset )
     char *saveptrrule3=NULL;
     char *saveptrflow;
     char *saveptrrange;
+    char *saveptrport;
+    char *saveptrportrange;
     char *tmptoken;
 
     char *tok_tmp;
@@ -129,6 +131,7 @@ void Load_Rules( const char *ruleset )
 
     char tmp_help[CONFBUF];
     char tok_help[64];
+    char tok_help2[64];
 
     uintmax_t fwsam_time_tmp;
 
@@ -137,6 +140,7 @@ void Load_Rules( const char *ruleset )
     char rulebuf[RULEBUF];
     char pcrerule[MAX_PCRE_SIZE];
 
+    char tmp4[MAX_CHECK_FLOWS * 10];
     char tmp3[MAX_CHECK_FLOWS * 21];
     char tmp2[RULEBUF];
     char tmp[2];
@@ -166,6 +170,8 @@ void Load_Rules( const char *ruleset )
     int xbit_count;
     int flow_1_count=0;
     int flow_2_count=0;
+    int port_1_count=0;
+    int port_2_count=0;
 
     sbool pcreflag=0;
     int pcreoptions=0;
@@ -203,6 +209,8 @@ void Load_Rules( const char *ruleset )
 
             int f1=0; /* Need for flow_direction, must reset every rule, not every group */
             int f2=0; /* Need for flow_direction, must reset every rule, not every group */
+            int g1=0; /* Need for port_direction, must reset every rule, not every group */
+            int g2=0; /* Need for port_direction, must reset every rule, not every group */
 
             linecount++;
 
@@ -525,17 +533,64 @@ void Load_Rules( const char *ruleset )
                             else
                                 {
                                     rulestruct[counters->rulecount].port_1_var = 1;	  /* 1 = var */
-                                if (Is_Numeric(nettmp))
-                                    {
-                                        src_port = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
-                                    }
+                            	    strlcpy(tmp4, nettmp, sizeof(tmp4));
+                            	    for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
+                            	        {
+                            	            Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+                            	            g1++;
+                                            if (Is_Numeric(nettmp))
+                                                {
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
+                                                }
 
-                                if ( src_port == 0 )
-                                    {
-                                        Sagan_Log(S_ERROR, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                                    }
+                                            if (!strncmp(tmptoken,"!", 1) || !strncmp("not", tmptoken, 3))
+                                                {
+                                                    if(strchr(tok_help2,':'))
+                                                        {
+
+                                                	        rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_1[port_1_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                	        rulestruct[counters->rulecount].port_1_type[g1] = 0; /* 0 = not in group */
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(tok_help2);
+                                                            rulestruct[counters->rulecount].port_1_type[g1] = 2; /* This was a single port, not a range */
+
+                                                        }
+                                                }
+                                            else
+                                                {
+                                                    if(strchr(tok_help2, ':'))
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_1[port_1_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_1_type[g1] = 1; /* 1 = in group */
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(tok_help2);
+                                                            rulestruct[counters->rulecount].port_1_type[g1] = 3; /* This was a single port, not a range */
+
+                                                        }
+
+                                                }
+                                            port_1_count++;
+
+                                            if( port_1_count > MAX_CHECK_FLOWS )
+                                                {
+                                                    Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_1 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                                                }
+
+                            	        }
+                            	    rulestruct[counters->rulecount].port_1_counter = port_1_count;
                                 }
-                            rulestruct[counters->rulecount].src_port = src_port;      /* Set for the rule */
+
                         }
 
 
@@ -670,39 +725,85 @@ void Load_Rules( const char *ruleset )
                                 }
                         }
 
-                    /* Used later for a single check to determine if a rule has a flow or not
-                       - Champ Clark III (06/12/2016) */
-
-                    if ( rulestruct[counters->rulecount].ip_proto != 0 || rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0 )
-                        {
-                            rulestruct[counters->rulecount].has_flow = 1;
-                        }
-
-
                     /* Destination Port */
 
                     if ( netcount == 6 )
                         {
-
                             if (!strcmp(nettmp, "any"))
                                 {
-                	                rulestruct[counters->rulecount].port_2_var = 0;	  /* 0 = any */
+                                    rulestruct[counters->rulecount].port_2_var = 0;	  /* 0 = any */
                                 }
                             else
                                 {
                                     rulestruct[counters->rulecount].port_2_var = 1;	  /* 1 = var */
-                                    if (Is_Numeric(nettmp))
-                                        {
-                                            dst_port = atoi(nettmp);		/* If it's a number (see Var_To_Value),  then set to that */
-                                        }
+                            	    strlcpy(tmp4, nettmp, sizeof(tmp4));
+                            	    for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
+                            	        {
+                            	            Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+                            	            g2++;
+                                            if (Is_Numeric(nettmp))
+                                                {
+                                                    rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
+                                                }
 
-                                    if ( dst_port == 0 )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                                        }
+                                            if (!strncmp(tmptoken,"!", 1) || !strncmp("not", tmptoken, 3))
+                                                {
+                                                    if(strchr(tok_help2,':'))
+                                                        {
+
+                                                	        rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_2[port_2_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                	        rulestruct[counters->rulecount].port_2_type[g2] = 0; /* 0 = not in group */
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(tok_help2);
+                                                            rulestruct[counters->rulecount].port_2_type[g2] = 2; /* This was a single port, not a range */
+
+                                                        }
+                                                }
+                                            else
+                                                {
+                                                    if(strchr(tok_help2, ':'))
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_2[port_2_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                            rulestruct[counters->rulecount].port_2_type[g2] = 1; /* 1 = in group */
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(tok_help2);
+                                                            rulestruct[counters->rulecount].port_2_type[g2] = 3; /* This was a single port, not a range */
+
+                                                        }
+
+                                                }
+                                            port_2_count++;
+
+                                            if( port_2_count > MAX_CHECK_FLOWS )
+                                                {
+                                                    Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_2 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                                                }
+
+                            	        }
+                            	    rulestruct[counters->rulecount].port_2_counter = port_2_count;
                                 }
-                            rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
+
                         }
+
+
+                    /* Used later for a single check to determine if a rule has a flow or not
+                        - Champ Clark III (06/12/2016) */
+
+                     if ( rulestruct[counters->rulecount].ip_proto != 0 || rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0 )
+                         {
+                             rulestruct[counters->rulecount].has_flow = 1;
+                         }
 
                     tokennet = strtok_r(NULL, " ", &saveptrnet);
                     Var_To_Value(tokennet, nettmp, sizeof(nettmp));
@@ -2601,6 +2702,8 @@ void Load_Rules( const char *ruleset )
             ref_count=0;
             flow_1_count=0;
             flow_2_count=0;
+            port_1_count=0;
+            port_2_count=0;
             memset(netstr, 0, sizeof(netstr));
             memset(rulestr, 0, sizeof(rulestr));
 
