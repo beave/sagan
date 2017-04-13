@@ -2668,7 +2668,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_DEBUG, "= pri: %d", rulestruct[counters->rulecount].s_pri);
                     Sagan_Log(S_DEBUG, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
                     Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
-                    Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
+                    Sagan_Log(S_DEBUG, "= default_dst_port: %d", rulestruct[counters->rulecount].default_dst_port);
 
                     if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )
                         {

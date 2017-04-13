@@ -153,8 +153,6 @@ struct _Rule_Struct
     char xbit_name[MAX_XBITS][64];              /* Name of the xbit */
 
     int ref_count;
-    int dst_port;                               /*dst port to match against events*/
-//    int src_port;                               /*src port to match against events*/
     int ip_proto;                               /*protocol to match against events*/
 
     int default_dst_port;                       /*default dst port to set*/

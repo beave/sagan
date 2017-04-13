@@ -225,7 +225,7 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     /*Begin port_1*/
     if(rulestruct[b].port_1_var != 0)
         {
-            for(i=0; i < rulestruct[b].port_1_counter; i++)       //originally port_1_counter + 1. Deleted +1.
+            for(i=0; i < rulestruct[b].port_1_counter; i++)
                 {
                     u++;
                     g1 = rulestruct[b].port_1_type[u];
@@ -378,7 +378,7 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     /*Begin port_2*/
     if(rulestruct[b].port_2_var != 0)
         {
-            for(i=0; i < rulestruct[b].port_2_counter; i++)       //originally port_2_counter + 1. Deleted +1.
+            for(i=0; i < rulestruct[b].port_2_counter; i++)
                 {
                     v++;
                     g2 = rulestruct[b].port_2_type[v];
