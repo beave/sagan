@@ -356,12 +356,7 @@ void Load_Rules( const char *ruleset )
 
             /* Protocol */
 
-            ip_proto = config->sagan_proto;
-
-            if ( netcount == 1 ) {
-
-                //ip_proto = config->sagan_proto;
-				
+            if ( netcount == 1 ) {				
                 if (!strcmp(tokennet, "any" )) {
                     ip_proto = 0;
                 }
@@ -376,6 +371,10 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(tokennet, "udp"  )) {
                     ip_proto = 17;
+                }
+
+                if (!strcmp(tokennet, "syslog"  )) {
+                    ip_proto = config->sagan_proto;
                 }
             }
 
@@ -643,15 +642,7 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-            /* Used later for a single check to determine if a rule has a flow or not
-               - Champ Clark III (06/12/2016) */
-
-            if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 ) {
-                rulestruct[counters->rulecount].has_flow = 1;
-            }
-
-
-            /* Destination Port */
+                    /* Destination Port */
 
             if ( netcount == 6 )
                 {
@@ -778,15 +769,15 @@ void Load_Rules( const char *ruleset )
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
-                if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
+                if (!strcmp(tmp1, "icmp") || !strcmp(tmp1, "1")) {
                     rulestruct[counters->rulecount].default_proto = 1;
                 }
 
-                else if (!strcmp(arg, "tcp" ) || !strcmp(arg, "6" )) {
+                else if (!strcmp(tmp1, "tcp" ) || !strcmp(tmp1, "6" )) {
                     rulestruct[counters->rulecount].default_proto = 6;
                 }
 
-                else if (!strcmp(arg, "udp" ) || !strcmp(arg, "17" )) {
+                else if (!strcmp(tmp1, "udp" ) || !strcmp(tmp1, "17" )) {
                     rulestruct[counters->rulecount].default_proto = 17;
                 }
 

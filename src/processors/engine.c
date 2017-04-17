@@ -669,7 +669,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                     }
 
-
                     if ( normalize_src_port == 0 )
                         {
                             normalize_src_port=rulestruct[b].default_src_port;
