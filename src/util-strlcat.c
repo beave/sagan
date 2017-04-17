@@ -55,15 +55,13 @@ strlcat(char *dst, const char *src, size_t siz)
 
     if (n == 0)
         return(dlen + strlen(s));
-    while (*s != '\0')
-        {
-            if (n != 1)
-                {
-                    *d++ = *s;
-                    n--;
-                }
-            s++;
+    while (*s != '\0') {
+        if (n != 1) {
+            *d++ = *s;
+            n--;
         }
+        s++;
+    }
     *d = '\0';
 
     return(dlen + (s - src));	/* count does not include NUL */

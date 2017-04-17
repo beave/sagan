@@ -24,8 +24,7 @@
 
 
 typedef struct _Sagan_Ignorelist _Sagan_Ignorelist;
-struct _Sagan_Ignorelist
-{
+struct _Sagan_Ignorelist {
     char ignore_string[256];
 };
 

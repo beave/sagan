@@ -283,7 +283,7 @@ int main(int argc, char **argv)
 
 
         for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+            printf("%-16s| %-15d| %-21s| %-11s| %d\n", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
     }
 

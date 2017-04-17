@@ -59,25 +59,21 @@ void Alert_Syslog( _Sagan_Event *Event )
 
     char *syslog_template = "[%lu:%s:%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d - %s";
 
-    if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
-        {
-            tmp_proto = "{UNKNOWN}";
-        }
+    if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 ) {
+        tmp_proto = "{UNKNOWN}";
+    }
 
-    if ( Event->ip_proto == 1 )
-        {
-            tmp_proto = "{ICMP}";
-        }
+    if ( Event->ip_proto == 1 ) {
+        tmp_proto = "{ICMP}";
+    }
 
-    if ( Event->ip_proto == 6 )
-        {
-            tmp_proto = "{TCP}";
-        }
+    if ( Event->ip_proto == 6 ) {
+        tmp_proto = "{TCP}";
+    }
 
-    if ( Event->ip_proto == 17 )
-        {
-            tmp_proto = "{UDP}";
-        }
+    if ( Event->ip_proto == 17 ) {
+        tmp_proto = "{UDP}";
+    }
 
     Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 

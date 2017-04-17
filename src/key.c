@@ -46,16 +46,14 @@ struct _SaganConfig *config;
 void Key_Handler( void )
 {
 
-    while(1)
-        {
+    while(1) {
 
-            int key;
+        int key;
 
-            key=getchar();
-            if ( key != 0 )
-                {
-                    Statistics();
-                }
-
+        key=getchar();
+        if ( key != 0 ) {
+            Statistics();
         }
+
+    }
 }

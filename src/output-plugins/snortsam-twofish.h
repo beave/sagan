@@ -51,8 +51,7 @@
 #define TwoFish_DEFAULT_PW		"SnortHas2FishEncryptionRoutines!" /* default password (not more than 32 chars) */
 #define TwoFish_MAGIC			"TwoFish"			/* to indentify a successful decryption */
 
-enum
-{
+enum {
     TwoFish_KEY_SIZE = 256,					/* Valid values: 64, 128, 192, 256 */
     /* User 256, other key sizes have not been tested. */
     /* (But should work. I substituted as much as */
@@ -94,8 +93,7 @@ enum
 
 /* Global data structure for callers */
 
-typedef struct
-{
+typedef struct {
     u_int32_t sBox[4 * 256];					/* Key dependent S-box */
     u_int32_t subKeys[TwoFish_TOTAL_SUBKEYS];	/* Subkeys  */
     u_int8_t key[TwoFish_KEY_LENGTH];			/* Encryption Key */
@@ -103,8 +101,7 @@ typedef struct
     u_int8_t qBlockPlain[TwoFish_BLOCK_SIZE];	/* Used by CBC */
     u_int8_t qBlockCrypt[TwoFish_BLOCK_SIZE];
     u_int8_t prevCipher[TwoFish_BLOCK_SIZE];
-    struct  			/* Header for crypt functions. Has to be at least one block long. */
-    {
+    struct {			/* Header for crypt functions. Has to be at least one block long. */
         u_int32_t salt;							/* Random salt in first block (will salt the rest through CBC) */
         u_int8_t length[4];					/* The amount of data following the header */
         u_int8_t magic[TwoFish_MAGIC_LEN];		/* Magic to identify successful decryption  */

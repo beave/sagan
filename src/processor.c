@@ -70,10 +70,9 @@ void Processor ( void )
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
 
-    if ( SaganProcSyslog_LOCAL == NULL )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
-        }
+    if ( SaganProcSyslog_LOCAL == NULL ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
+    }
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
@@ -81,85 +80,77 @@ void Processor ( void )
 
     int i;
 
-    for (;;)
-        {
+    for (;;) {
 
-            pthread_mutex_lock(&SaganProcWorkMutex);
+        pthread_mutex_lock(&SaganProcWorkMutex);
 
-            while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
+        while ( proc_msgslot == 0 ) pthread_cond_wait(&SaganProcDoWork, &SaganProcWorkMutex);
 
-            if ( config->sagan_reload )
-                {
-                    pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
-                }
+        if ( config->sagan_reload ) {
+            pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
+        }
 
-            proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
+        proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
 					 * original value */
 
-            strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+        strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
-            pthread_mutex_unlock(&SaganProcWorkMutex);
+        pthread_mutex_unlock(&SaganProcWorkMutex);
 
-            /* Check for general "drop" items.  We do this first so we can save CPU later */
+        /* Check for general "drop" items.  We do this first so we can save CPU later */
 
-            if ( config->sagan_droplist_flag )
-                {
+        if ( config->sagan_droplist_flag ) {
 
-                    ignore_flag = false;
+            ignore_flag = false;
 
-                    for (i = 0; i < counters->droplist_count; i++)
-                        {
+            for (i = 0; i < counters->droplist_count; i++) {
 
-                            if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
-                                {
+                if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string)) {
 
-                                    pthread_mutex_lock(&SaganIgnoreCounter);
-                                    counters->ignore_count++;
-                                    pthread_mutex_unlock(&SaganIgnoreCounter);
+                    pthread_mutex_lock(&SaganIgnoreCounter);
+                    counters->ignore_count++;
+                    pthread_mutex_unlock(&SaganIgnoreCounter);
 
-                                    ignore_flag = true;
-                                    goto outside_loop;	/* Stop processing from ignore list */
-                                }
-                        }
+                    ignore_flag = true;
+                    goto outside_loop;	/* Stop processing from ignore list */
                 }
+            }
+        }
 
 outside_loop:
 
-            /* If we're in a ignore state,  then we can bypass the processors */
+        /* If we're in a ignore state,  then we can bypass the processors */
 
-            if ( ignore_flag == false )
-                {
+        if ( ignore_flag == false ) {
 
-                    Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
+            Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
-                    /* If this is a dynamic run,  reset back to normal */
+            /* If this is a dynamic run,  reset back to normal */
 
-                    if ( dynamic_rule_flag == DYNAMIC_RULE )
-                        {
+            if ( dynamic_rule_flag == DYNAMIC_RULE ) {
 
-                            pthread_mutex_lock(&SaganDynamicFlag);
-                            dynamic_rule_flag = 0;
-                            pthread_mutex_unlock(&SaganDynamicFlag);
+                pthread_mutex_lock(&SaganDynamicFlag);
+                dynamic_rule_flag = 0;
+                pthread_mutex_unlock(&SaganDynamicFlag);
 
-                        }
+            }
 
-                    if ( config->sagan_track_clients_flag )
-                        {
-                            Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
-                        }
+            if ( config->sagan_track_clients_flag ) {
+                Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
+            }
 
-                } // End if if (ignore_Flag)
+        } // End if if (ignore_Flag)
 
 
-        } //  for (;;)
+    } //  for (;;)
 
     Sagan_Log(S_WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
     free(SaganProcSyslog_LOCAL);		/* Should never make it here */

@@ -27,21 +27,18 @@
 #endif
 
 typedef struct _Rules_Loaded _Rules_Loaded;
-struct _Rules_Loaded
-{
+struct _Rules_Loaded {
     char ruleset[MAXPATH];
 };
 
 typedef struct arr_flow_1 arr_flow_1;
-struct arr_flow_1
-{
+struct arr_flow_1 {
     uint32_t lo;
     uint32_t hi;
 };
 
 typedef struct arr_flow_2 arr_flow_2;
-struct arr_flow_2
-{
+struct arr_flow_2 {
     uint32_t lo;
     uint32_t hi;
 };
@@ -61,15 +58,13 @@ struct arr_port_2
 };
 
 typedef struct meta_content_conversion meta_content_conversion;
-struct meta_content_conversion
-{
+struct meta_content_conversion {
     char meta_content_converted[MAX_META_CONTENT][256];
     int  meta_counter;
 };
 
 typedef struct _Rule_Struct _Rule_Struct;
-struct _Rule_Struct
-{
+struct _Rule_Struct {
     unsigned s_size_rule;
     char s_msg[256];
 
@@ -134,23 +129,30 @@ struct _Rule_Struct
     int meta_distance[MAX_META_CONTENT];
     int meta_within[MAX_META_CONTENT];
 
-    int pcre_count;
-    int content_count;
-    int meta_content_count;
-    int meta_content_converted_count;
+    unsigned char pcre_count;
+    unsigned char content_count;
+    unsigned char meta_content_count;
+    unsigned char meta_content_converted_count;
 
     int xbit_count;				/* Number of xbits in memory */
-    int xbit_condition_count;			/* Number of isset/isnot within a rule */
-    int xbit_set_count;				/* Number of set/unset within a rule */
+    unsigned char xbit_condition_count;		/* Number of isset/isnot within a rule */
+    unsigned char xbit_set_count;		/* Number of set/unset within a rule */
+    unsigned char xbit_count_count;		/* Number of count within a rule */
 
     sbool xbit_flag;              	        /* Does the rule contain a xbit? */
     sbool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
     sbool xbit_nounified2;                      /* Do we want to suppress "unified2" from xbits in unified2 output */
 
-    int xbit_type[MAX_XBITS];                   /* 1 == set, 2 == unset,  3 == isset, 4 == isnotset, 5 == set_srcport, 6 == set_dstport, 7 == set_ports */
-    int xbit_direction[MAX_XBITS];              /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
+						   6 == set_dstport, 7 == set_ports, 8 == count */
+
+    unsigned char xbit_direction[MAX_XBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
     int xbit_timeout[MAX_XBITS];                /* How long a xbit is to stay alive (seconds) */
     char xbit_name[MAX_XBITS][64];              /* Name of the xbit */
+
+    unsigned char xbit_count_gt_lt[MAX_XBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
+    int xbit_count_counter[MAX_XBITS];        /* The amount the user is looking for */
+    sbool xbit_count_flag;
 
     int ref_count;
     int ip_proto;                               /*protocol to match against events*/
@@ -176,17 +178,17 @@ struct _Rule_Struct
 
     int drop;                                   /* inline DROP for ext. */
 
-    int threshold_type;                         /* 1 = limit,  2 = thresh */
-    int threshold_method;                       /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
+    unsigned char threshold_type;               /* 1 = limit,  2 = thresh */
+    unsigned char threshold_method;             /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
     int threshold_count;
     int threshold_seconds;
 
-    int after_method;                           /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
+    unsigned char after_method;                 /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
     int after_count;
     int after_seconds;
 
-    int fwsam_src_or_dst;                       /* 1 == src,  2 == dst */
-    unsigned long  fwsam_seconds;
+    unsigned char fwsam_src_or_dst;             /* 1 == src,  2 == dst */
+    unsigned long fwsam_seconds;
 
     sbool meta_content_flag;
     sbool meta_content_case[MAX_META_CONTENT];
@@ -237,7 +239,7 @@ struct _Rule_Struct
 
 #ifdef WITH_BLUEDOT
 
-    int   bluedot_ipaddr_type;                 /* 1 == src,  2 == dst,  3 == both,  4 == all */
+    unsigned char   bluedot_ipaddr_type;                 /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
     int   bluedot_ip_cats[BLUEDOT_MAX_CAT];
     int   bluedot_ip_cat_count;
@@ -264,9 +266,9 @@ struct _Rule_Struct
 #ifdef HAVE_LIBMAXMINDDB
 
     sbool geoip2_flag;
-    int   geoip2_type;           /* 1 == isnot, 2 == is */
+    unsigned char geoip2_type;           /* 1 == isnot, 2 == is */
     char  geoip2_country_codes[256];
-    int   geoip2_src_or_dst;             /* 1 == src, 2 == dst */
+    unsigned char geoip2_src_or_dst;             /* 1 == src, 2 == dst */
 
 #endif
 
