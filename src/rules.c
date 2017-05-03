@@ -119,6 +119,8 @@ void Load_Rules( const char *ruleset )
     char *saveptrrule3=NULL;
     char *saveptrflow;
     char *saveptrrange;
+    char *saveptrport;
+    char *saveptrportrange;
     char *tmptoken;
 
     char *tok_tmp;
@@ -128,6 +130,7 @@ void Load_Rules( const char *ruleset )
 
     char tmp_help[CONFBUF];
     char tok_help[64];
+    char tok_help2[64];
 
     uintmax_t fwsam_time_tmp;
 
@@ -136,6 +139,7 @@ void Load_Rules( const char *ruleset )
     char rulebuf[RULEBUF];
     char pcrerule[MAX_PCRE_SIZE];
 
+    char tmp4[MAX_CHECK_FLOWS * 10];
     char tmp3[MAX_CHECK_FLOWS * 21];
     char tmp2[RULEBUF];
     char tmp[2];
@@ -165,6 +169,8 @@ void Load_Rules( const char *ruleset )
     int xbit_count;
     int flow_1_count=0;
     int flow_2_count=0;
+    int port_1_count=0;
+    int port_2_count=0;
 
     sbool pcreflag=0;
     int pcreoptions=0;
@@ -183,6 +189,9 @@ void Load_Rules( const char *ruleset )
     int dst_port=0;
     int src_port=0;
 
+    int default_proto=0;
+    int default_dst_port=0;
+    int default_src_port=0;
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
     strlcpy(ruleset_fullname, ruleset, sizeof(ruleset_fullname));
@@ -197,6 +206,8 @@ void Load_Rules( const char *ruleset )
 
         int f1=0; /* Need for flow_direction, must reset every rule, not every group */
         int f2=0; /* Need for flow_direction, must reset every rule, not every group */
+        int g1=0; /* Need for port_direction, must reset every rule, not every group */
+        int g2=0; /* Need for port_direction, must reset every rule, not every group */
 
         linecount++;
 
@@ -256,9 +267,14 @@ void Load_Rules( const char *ruleset )
 
         rc=0;
 
-        if (!Sagan_strstr(rulebuf, "tcp")) {
+        if (!Sagan_strstr(rulebuf, "any")) {
             rc++;
         }
+
+        if (!Sagan_strstr(rulebuf, "tcp")) {
+            rc++;
+                }
+
 
         if (!Sagan_strstr(rulebuf, "udp")) {
             rc++;
@@ -272,8 +288,8 @@ void Load_Rules( const char *ruleset )
             rc++;
         }
 
-        if ( rc == 4 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset_fullname, linecount);
+        if ( rc >= 5 ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (any/tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset_fullname, linecount);
         }
 
         /* Parse forward for the first '(' */
@@ -340,11 +356,10 @@ void Load_Rules( const char *ruleset )
 
             /* Protocol */
 
-            ip_proto = config->sagan_proto;
-
-            if ( netcount == 1 ) {
-
-                //ip_proto = config->sagan_proto;
+            if ( netcount == 1 ) {				
+                if (!strcmp(tokennet, "any" )) {
+                    ip_proto = 0;
+                }
 
                 if (!strcmp(tokennet, "icmp" )) {
                     ip_proto = 1;
@@ -356,6 +371,10 @@ void Load_Rules( const char *ruleset )
 
                 if (!strcmp(tokennet, "udp"  )) {
                     ip_proto = 17;
+                }
+
+                if (!strcmp(tokennet, "syslog"  )) {
+                    ip_proto = config->sagan_proto;
                 }
             }
 
@@ -404,6 +423,7 @@ void Load_Rules( const char *ruleset )
 
                             } else {
 
+
                                 Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
@@ -418,6 +438,7 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* This was a /32, not a range */
                                 }
                             }
+
 
                         } else {
 
@@ -446,29 +467,75 @@ void Load_Rules( const char *ruleset )
             }
 
             /* Source Port */
+            if ( netcount == 3 )
+                {
+                    if (!strcmp(nettmp, "any"))
+                        {
+                            rulestruct[counters->rulecount].port_1_var = 0;	  /* 0 = any */
+                        }
+                    else
+                        {
+                            rulestruct[counters->rulecount].port_1_var = 1;	  /* 1 = var */
+                            strlcpy(tmp4, nettmp, sizeof(tmp4));
+                            for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
+                                {
+                            	    Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+                            	    g1++;
+                                    if (Is_Numeric(nettmp))
+                                        {
+                                            rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
+                                        }
 
-            if ( netcount == 3 ) {
+                                    if (!strncmp(tmptoken,"!", 1) || !strncmp("not", tmptoken, 3))
+                                        {
+                                            if(strchr(tok_help2,':'))
+                                                {
 
-                if (strcmp(nettmp, "any")) {
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                	rulestruct[counters->rulecount].port_1_type[g1] = 0; /* 0 = not in group */
 
-                    src_port = atoi(nettmp);       /* If it's _NOT_ "any", set to default */
+                                                }
+                                            else
+                                                {
 
-                } else {
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(tok_help2);
+                                                    rulestruct[counters->rulecount].port_1_type[g1] = 2; /* This was a single port, not a range */
 
-                    src_port = config->sagan_port;                            /* Set to default */
+                                                }
+                                        }
+                                    else
+                                        {
+                                            if(strchr(tok_help2, ':'))
+                                                {
+
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                    rulestruct[counters->rulecount].port_1_type[g1] = 1; /* 1 = in group */
+
+                                                }
+                                            else
+                                                {
+
+                                                    rulestruct[counters->rulecount].port_1[port_1_count].lo = atoi(tok_help2);
+                                                    rulestruct[counters->rulecount].port_1_type[g1] = 3; /* This was a single port, not a range */
+
+                                                }
+
+                                        }
+                                    port_1_count++;
+
+                                    if( port_1_count > MAX_CHECK_FLOWS )
+                                        {
+                                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_1 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                                        }
+
+                            	}
+                            rulestruct[counters->rulecount].port_1_counter = port_1_count;
+                        }
 
                 }
 
-                if (Is_Numeric(nettmp)) {
-                    src_port = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
-                }
-
-                if ( src_port == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid source port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                }
-
-                rulestruct[counters->rulecount].src_port = src_port;      /* Set for the rule */
-            }
 
             /* Direction */
             if ( netcount == 4 ) {
@@ -529,6 +596,10 @@ void Load_Rules( const char *ruleset )
 
                             } else {
 
+
+
+
+ 
                                 Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
 
                                 if(strchr(flow_range, '-')) {
@@ -571,40 +642,84 @@ void Load_Rules( const char *ruleset )
                 }
             }
 
-            /* Used later for a single check to determine if a rule has a flow or not
-               - Champ Clark III (06/12/2016) */
+                    /* Destination Port */
 
-            if ( rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 ) {
+            if ( netcount == 6 )
+                {
+                    if (!strcmp(nettmp, "any"))
+                        {
+                            rulestruct[counters->rulecount].port_2_var = 0;	  /* 0 = any */
+                        }
+                    else
+                        {
+                            rulestruct[counters->rulecount].port_2_var = 1;	  /* 1 = var */
+                            strlcpy(tmp4, nettmp, sizeof(tmp4));
+                            for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
+	                            {
+	                                Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+	                                g2++;
+	                                if (Is_Numeric(nettmp))
+	                                    {
+	                                        rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(nettmp);          /* If it's a number (see Var_To_Value),  then set to that */
+	                                    }
+
+	                                if (!strncmp(tmptoken,"!", 1) || !strncmp("not", tmptoken, 3))
+	                                    {
+	                                        if(strchr(tok_help2,':'))
+	                                            {
+
+	                                                rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+	                                                rulestruct[counters->rulecount].port_2[port_2_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+	                                                rulestruct[counters->rulecount].port_2_type[g2] = 0; /* 0 = not in group */
+
+                                                }
+                                            else
+	                                            {
+
+                                                    rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(tok_help2);
+                                                    rulestruct[counters->rulecount].port_2_type[g2] = 2; /* This was a single port, not a range */
+
+                                                }
+                                        }
+                                    else
+                                        {
+                                            if(strchr(tok_help2, ':'))
+                                                {
+
+                                                    rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(strtok_r(tok_help2, ":", &saveptrportrange));
+                                                    rulestruct[counters->rulecount].port_2[port_2_count].hi = atoi(strtok_r(NULL, ":", &saveptrportrange));
+                                                    rulestruct[counters->rulecount].port_2_type[g2] = 1; /* 1 = in group */
+
+                                                }
+                                            else
+                                                {
+
+                                                    rulestruct[counters->rulecount].port_2[port_2_count].lo = atoi(tok_help2);
+                                                    rulestruct[counters->rulecount].port_2_type[g2] = 3; /* This was a single port, not a range */
+
+                                                }
+
+                                        }
+                                    port_2_count++;
+
+                                    if( port_2_count > MAX_CHECK_FLOWS )
+                                        {
+                                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_2 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                                        }
+
+                                }
+                            rulestruct[counters->rulecount].port_2_counter = port_2_count;
+                        }
+
+                }
+ 
+        /* Used later for a single check to determine if a rule has a flow or not
+            - Champ Clark III (06/12/2016) */
+
+        if ( rulestruct[counters->rulecount].ip_proto != 0 || rulestruct[counters->rulecount].flow_1_var != 0 || rulestruct[counters->rulecount].port_1_var != 0 || rulestruct[counters->rulecount].flow_2_var != 0 || rulestruct[counters->rulecount].port_2_var != 0 )
+            {
                 rulestruct[counters->rulecount].has_flow = 1;
             }
-
-
-            /* Destination Port */
-
-            if ( netcount == 6 ) {
-
-                if (strcmp(nettmp, "any")) {
-
-                    dst_port = atoi(nettmp);	/* If it's _NOT_ "any", set to default */
-
-                } else {
-
-                    dst_port = config->sagan_port;                          /* Set to default */
-
-                }
-
-
-                if (Is_Numeric(nettmp)) {
-                    dst_port = atoi(nettmp);		/* If it's a number (see Var_To_Value),  then set to that */
-                }
-
-                if ( dst_port == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid destination port on line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
-                }
-
-                rulestruct[counters->rulecount].dst_port = dst_port;	/* Set for the rule */
-            }
-
 
             tokennet = strtok_r(NULL, " ", &saveptrnet);
             Var_To_Value(tokennet, nettmp, sizeof(nettmp));
@@ -654,20 +769,21 @@ void Load_Rules( const char *ruleset )
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
-                if (!strcmp(arg, "icmp") || !strcmp(arg, "1")) {
-                    rulestruct[counters->rulecount].ip_proto = 1;
+                if (!strcmp(tmp1, "icmp") || !strcmp(tmp1, "1")) {
+                    rulestruct[counters->rulecount].default_proto = 1;
                 }
 
-                else if (!strcmp(arg, "tcp" ) || !strcmp(arg, "6" )) {
-                    rulestruct[counters->rulecount].ip_proto = 6;
+                else if (!strcmp(tmp1, "tcp" ) || !strcmp(tmp1, "6" )) {
+                    rulestruct[counters->rulecount].default_proto = 6;
                 }
 
-                else if (!strcmp(arg, "udp" ) || !strcmp(arg, "17" )) {
-                    rulestruct[counters->rulecount].ip_proto = 17;
+                else if (!strcmp(tmp1, "udp" ) || !strcmp(tmp1, "17" )) {
+                    rulestruct[counters->rulecount].default_proto = 17;
                 }
 
             }
 
+            default_src_port = config->sagan_port;
             if (!strcmp(rulesplit, "default_src_port")) {
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -679,10 +795,11 @@ void Load_Rules( const char *ruleset )
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
                 Remove_Spaces(tmp1);
 
-                rulestruct[counters->rulecount].src_port = atoi(arg);
+                rulestruct[counters->rulecount].default_src_port = atoi(tmp1);
 
             }
 
+            default_dst_port = config->sagan_port;
 
             if (!strcmp(rulesplit, "default_dst_port")) {
 
@@ -696,9 +813,11 @@ void Load_Rules( const char *ruleset )
                 Remove_Spaces(tmp1);
 
 
-                rulestruct[counters->rulecount].dst_port = atoi(arg);
+                rulestruct[counters->rulecount].default_dst_port = atoi(tmp1);
 
             }
+
+
 
             if (!strcmp(rulesplit, "parse_src_ip")) {
 
@@ -754,6 +873,7 @@ void Load_Rules( const char *ruleset )
                     Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256'.", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
+
             }
 
             /* Non-quoted information (sid, reference, etc) */
@@ -774,6 +894,7 @@ void Load_Rules( const char *ruleset )
                      strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") &&
                      strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports") &&
                      strcmp(tmptoken, "count") ) {
+
 
                     Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset' or 'count' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
 
@@ -2335,13 +2456,14 @@ void Load_Rules( const char *ruleset )
 
             Sagan_Log(S_DEBUG, "---[Rule %s]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
 
+
             Sagan_Log(S_DEBUG, "= sid: %s", rulestruct[counters->rulecount].s_sid);
             Sagan_Log(S_DEBUG, "= rev: %s", rulestruct[counters->rulecount].s_rev);
             Sagan_Log(S_DEBUG, "= msg: %s", rulestruct[counters->rulecount].s_msg);
             Sagan_Log(S_DEBUG, "= pri: %d", rulestruct[counters->rulecount].s_pri);
             Sagan_Log(S_DEBUG, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
             Sagan_Log(S_DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
-            Sagan_Log(S_DEBUG, "= dst_port: %d", rulestruct[counters->rulecount].dst_port);
+            Sagan_Log(S_DEBUG, "= default_dst_port: %d", rulestruct[counters->rulecount].default_dst_port);
 
             if ( rulestruct[counters->rulecount].s_find_src_ip != 0 ) {
                 Sagan_Log(S_DEBUG, "= parse_src_ip");
@@ -2362,6 +2484,7 @@ void Load_Rules( const char *ruleset )
 
         /* Reset for next rule */
 
+
         pcre_count=0;
         content_count=0;
         meta_content_count=0;
@@ -2371,6 +2494,8 @@ void Load_Rules( const char *ruleset )
         ref_count=0;
         flow_1_count=0;
         flow_2_count=0;
+        port_1_count=0;
+        port_2_count=0;
         memset(netstr, 0, sizeof(netstr));
         memset(rulestr, 0, sizeof(rulestr));
 

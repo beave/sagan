@@ -210,7 +210,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
-    int proto = config->sagan_proto;		/* Set proto to default */
+    int proto = 0;
 
     sbool brointel_results = 0;
     sbool blacklist_results = 0;
@@ -656,8 +656,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                        use */
 
+
                     if ( proto == 0 ) {
-                        proto = rulestruct[b].ip_proto;
+                        proto = rulestruct[b].default_proto;
                     }
 
                     if ( ip_src_flag == 0 || ip_src[0] == '0' ) {
@@ -668,13 +669,25 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                     }
 
-                    if ( normalize_src_port == 0 ) {
-                        normalize_src_port=config->sagan_port;
-                    }
+                    if ( normalize_src_port == 0 )
+                        {
+                            normalize_src_port=rulestruct[b].default_src_port;
+                        }
 
-                    if ( normalize_dst_port == 0 ) {
-                        normalize_dst_port=rulestruct[b].dst_port;
-                    }
+                    if ( normalize_src_port == 0 )
+                        {
+                            normalize_src_port=config->sagan_port;
+                        }
+
+                    if ( normalize_dst_port == 0 )
+                        {
+                            normalize_dst_port=rulestruct[b].default_dst_port;
+                        }
+
+                    if ( normalize_dst_port == 0 )
+                        {
+                            normalize_dst_port=config->sagan_port;
+                        }
 
                     if ( proto == 0 ) {
                         proto = config->sagan_proto;		/* Rule didn't specify proto,  use sagan default! */
@@ -699,12 +712,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
+
                     /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
-                    the rule has some sort of flow.  It 0,  rule is set any/any */
+                    the rule has some sort of flow.  It 0,  rule is set any:any/any:any */
 
                     if ( rulestruct[b].has_flow == 1 ) {
 
-                        check_flow_return = Check_Flow( b, ip_src_u32, ip_dst_u32);
+                        check_flow_return = Check_Flow( b, proto, ip_src_u32, normalize_src_port, ip_dst_u32, normalize_dst_port);
 
                         if(check_flow_return == false) {
 

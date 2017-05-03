@@ -331,6 +331,7 @@ sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, in
                                   xbit_ipc[a].src_port == dst_port &&
                                   xbit_ipc[a].dst_port == src_port )
 
+
                         {
                             if ( debug->debugxbit) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
@@ -366,7 +367,7 @@ sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, in
                             }
                         }
 
-                        /* direction: dst_xbitsrc */
+                        /* direction: dst_xbitsrc_p */
 
                         else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
                                   xbit_ipc[a].ip_src == ip_dst &&
