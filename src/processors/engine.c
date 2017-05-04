@@ -669,25 +669,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                     }
 
-                    if ( normalize_src_port == 0 )
-                        {
-                            normalize_src_port=rulestruct[b].default_src_port;
-                        }
+                    if ( normalize_src_port == 0 ) {
+                        normalize_src_port=rulestruct[b].default_src_port;
+                    }
 
-                    if ( normalize_src_port == 0 )
-                        {
-                            normalize_src_port=config->sagan_port;
-                        }
+                    if ( normalize_src_port == 0 ) {
+                        normalize_src_port=config->sagan_port;
+                    }
 
-                    if ( normalize_dst_port == 0 )
-                        {
-                            normalize_dst_port=rulestruct[b].default_dst_port;
-                        }
+                    if ( normalize_dst_port == 0 ) {
+                        normalize_dst_port=rulestruct[b].default_dst_port;
+                    }
 
-                    if ( normalize_dst_port == 0 )
-                        {
-                            normalize_dst_port=config->sagan_port;
-                        }
+                    if ( normalize_dst_port == 0 ) {
+                        normalize_dst_port=config->sagan_port;
+                    }
 
                     if ( proto == 0 ) {
                         proto = config->sagan_proto;		/* Rule didn't specify proto,  use sagan default! */

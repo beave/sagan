@@ -44,15 +44,13 @@ struct arr_flow_2 {
 };
 
 typedef struct arr_port_1 arr_port_1;
-struct arr_port_1
-{
+struct arr_port_1 {
     int lo;
     int hi;
 };
 
 typedef struct arr_port_2 arr_port_2;
-struct arr_port_2
-{
+struct arr_port_2 {
     int lo;
     int hi;
 };

@@ -25,7 +25,8 @@
 void Xbit_Set( int, char *, char *, int, int );
 sbool Xbit_Condition ( int, char *, char *, int, int );
 int  Xbit_Type ( char *, int, const char *);
-void Xbit_Cleanup(void);
+void Xbit_Cleanup( void );
+sbool Xbit_Count( int, char *, char * );
 
 typedef struct _Sagan_Xbit_Track _Sagan_Xbit_Track;
 struct _Sagan_Xbit_Track {

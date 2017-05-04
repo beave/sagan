@@ -60,20 +60,17 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     src = &ip_src_u32;
     dst = &ip_dst_u32;
 
-    if(rulestruct[b].direction == 0 || rulestruct[b].direction == 1)
-        {
-            ip_src = *src;
-            ip_dst = *dst;
-            port_src = normalize_src_port;
-            port_dst = normalize_dst_port;
-        }
-    else
-        {
-            ip_src = *dst;
-            ip_dst = *src;
-            port_src = normalize_dst_port;
-            port_dst = normalize_src_port;
-        }
+    if(rulestruct[b].direction == 0 || rulestruct[b].direction == 1) {
+        ip_src = *src;
+        ip_dst = *dst;
+        port_src = normalize_src_port;
+        port_dst = normalize_dst_port;
+    } else {
+        ip_src = *dst;
+        ip_dst = *src;
+        port_src = normalize_dst_port;
+        port_dst = normalize_src_port;
+    }
 
 
     /*proto*/
@@ -131,22 +128,17 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     int failed=0;
 
     /*Begin ip_proto*/
-    if(rulestruct[b].ip_proto != 0)
-        {
-            if(ip_proto == rulestruct[b].ip_proto)
-                {
-                    c1=1;
-                }
-        }
-    else
-        {
+    if(rulestruct[b].ip_proto != 0) {
+        if(ip_proto == rulestruct[b].ip_proto) {
             c1=1;
         }
+    } else {
+        c1=1;
+    }
 
-    if(c1 != 1)
-        {
-            return 0;
-        }
+    if(c1 != 1) {
+        return 0;
+    }
 
     /*Begin flow_1*/
     if(rulestruct[b].flow_1_var != 0) {
@@ -202,81 +194,63 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     }
 
     /*Begin port_1*/
-    if(rulestruct[b].port_1_var != 0)
-        {
-            for(i=0; i < rulestruct[b].port_1_counter; i++)
-                {
-                    u++;
-                    g1 = rulestruct[b].port_1_type[u];
+    if(rulestruct[b].port_1_var != 0) {
+        for(i=0; i < rulestruct[b].port_1_counter; i++) {
+            u++;
+            g1 = rulestruct[b].port_1_type[u];
 
-                    if(g1 == 0)
-                        {
-                            ne3++;
-                            if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi)
-                                {
-                                    ne3_val++;
-                                }
-                        }
-
-                    if(g1 == 1)
-                        {
-                            eq3++;
-                            if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi)
-                                {
-                                    eq3_val++;
-                                }
-                        }
-
-                    if(g1 == 2)
-                        {
-                            ne3++;
-                            if(port_src == rulestruct[b].port_1[i].lo)
-                                {
-                                    ne3_val++;
-                                }
-                        }
-
-                    if(g1 == 3)
-                        {
-                            eq3++;
-                            if(port_src == rulestruct[b].port_1[i].lo)
-                                {
-                                    eq3_val++;
-                                }
-                        }
+            if(g1 == 0) {
+                ne3++;
+                if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi) {
+                    ne3_val++;
                 }
+            }
+
+            if(g1 == 1) {
+                eq3++;
+                if(port_src >= rulestruct[b].port_1[i].lo && port_src <= rulestruct[b].port_1[i].hi) {
+                    eq3_val++;
+                }
+            }
+
+            if(g1 == 2) {
+                ne3++;
+                if(port_src == rulestruct[b].port_1[i].lo) {
+                    ne3_val++;
+                }
+            }
+
+            if(g1 == 3) {
+                eq3++;
+                if(port_src == rulestruct[b].port_1[i].lo) {
+                    eq3_val++;
+                }
+            }
         }
-    else
-        {
-            b1=1;
-        }
+    } else {
+        b1=1;
+    }
 
     /* if ne3, did anything match (meaning failed) */
-    if(ne3>0)
-        {
-            if(ne3_val > 0)
-                {
-                    failed++;
-                }
+    if(ne3>0) {
+        if(ne3_val > 0) {
+            failed++;
         }
+    }
 
     /* if eq3, did anything not match meaning failed */
-    if(eq3>0)
-        {
-            if(eq3_val < 1)
-                {
-                    failed++;
-                }
+    if(eq3>0) {
+        if(eq3_val < 1) {
+            failed++;
         }
+    }
 
     /* if either failed, we did not match, no need to check the second flow... we already failed! */
-    if(b1 != 1)
-        {
-            if(failed > 0)
-                {
-                    return 0;
-                }
+    if(b1 != 1) {
+        if(failed > 0) {
+            return 0;
         }
+    }
 
 
 
@@ -334,81 +308,63 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
     }
 
     /*Begin port_2*/
-    if(rulestruct[b].port_2_var != 0)
-        {
-            for(i=0; i < rulestruct[b].port_2_counter; i++)
-                {
-                    v++;
-                    g2 = rulestruct[b].port_2_type[v];
+    if(rulestruct[b].port_2_var != 0) {
+        for(i=0; i < rulestruct[b].port_2_counter; i++) {
+            v++;
+            g2 = rulestruct[b].port_2_type[v];
 
-                    if(g2 == 0)
-                        {
-                            ne4++;
-                            if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi)
-                                {
-                                    ne4_val++;
-                                }
-                        }
-
-                    if(g2 == 1)
-                        {
-                            eq4++;
-                            if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi)
-                                {
-                                    eq4_val++;
-                                }
-                        }
-
-                    if(g2 == 2)
-                        {
-                            ne4++;
-                            if(port_dst == rulestruct[b].port_2[i].lo)
-                                {
-                                    ne4_val++;
-                                }
-                        }
-
-                    if(g2 == 3)
-                        {
-                            eq4++;
-                            if(port_dst == rulestruct[b].port_2[i].lo)
-                                {
-                                    eq4_val++;
-                                }
-                        }
+            if(g2 == 0) {
+                ne4++;
+                if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi) {
+                    ne4_val++;
                 }
+            }
+
+            if(g2 == 1) {
+                eq4++;
+                if(port_dst >= rulestruct[b].port_2[i].lo && port_dst <= rulestruct[b].port_2[i].hi) {
+                    eq4_val++;
+                }
+            }
+
+            if(g2 == 2) {
+                ne4++;
+                if(port_dst == rulestruct[b].port_2[i].lo) {
+                    ne4_val++;
+                }
+            }
+
+            if(g2 == 3) {
+                eq4++;
+                if(port_dst == rulestruct[b].port_2[i].lo) {
+                    eq4_val++;
+                }
+            }
         }
-    else
-        {
-            b2=1;
-        }
+    } else {
+        b2=1;
+    }
 
     /* if ne4, did anything match (meaning failed) */
-    if(ne4>0)
-        {
-            if(ne4_val > 0)
-                {
-                    failed++;
-                }
+    if(ne4>0) {
+        if(ne4_val > 0) {
+            failed++;
         }
+    }
 
     /* if eq4, did anything not match meaning failed */
-    if(eq4>0)
-        {
-            if(eq4_val < 1)
-                {
-                    failed++;
-                }
+    if(eq4>0) {
+        if(eq4_val < 1) {
+            failed++;
         }
+    }
 
     /* if either failed, we did not match, no need to check the second flow... we already failed! */
-    if(b2 != 1)
-        {
-            if(failed > 0)
-                {
-                    return 0;
-                }
+    if(b2 != 1) {
+        if(failed > 0) {
+            return 0;
         }
+    }
 
     /* If we made it to this point we have a match */
     return 1;
