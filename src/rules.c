@@ -689,6 +689,11 @@ void Load_Rules( const char *ruleset )
         /* Parse the rule set!                                                       */
         /*****************************************************************************/
 
+        /* Set some defaults outside the option parsing */
+
+        rulestruct[counters->rulecount].default_proto = config->sagan_proto;
+        rulestruct[counters->rulecount].default_src_port = config->sagan_port;
+        rulestruct[counters->rulecount].default_dst_port = config->sagan_port;
 
         tokenrule = strtok_r(rulestring, ";", &saveptrrule1);
 
@@ -713,8 +718,6 @@ void Load_Rules( const char *ruleset )
                 strtok_r(NULL, ":", &saveptrrule2);
                 rulestruct[counters->rulecount].s_find_proto_program = true;
             }
-
-            rulestruct[counters->rulecount].default_proto = config->sagan_proto;		/* set default */
 
             if (!strcmp(rulesplit, "default_proto")) {
 
@@ -741,8 +744,6 @@ void Load_Rules( const char *ruleset )
 
             }
 
-            rulestruct[counters->rulecount].default_src_port = config->sagan_port;	/* Set default */
-
             if (!strcmp(rulesplit, "default_src_port")) {
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -757,8 +758,6 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].default_src_port = atoi(tmp1);
 
             }
-
-            rulestruct[counters->rulecount].default_dst_port = config->sagan_port;
 
             if (!strcmp(rulesplit, "default_dst_port")) {
 

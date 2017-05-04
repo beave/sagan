@@ -74,8 +74,10 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, _Sagan_Processor_In
 
     SaganProcessorEvent->ip_src          =       ip_src;
     SaganProcessorEvent->ip_dst          =       ip_dst;
+
     SaganProcessorEvent->dst_port        =       dst_port;
     SaganProcessorEvent->src_port        =       src_port;
+
     SaganProcessorEvent->found           =       pos;
 
     SaganProcessorEvent->normalize_http_uri	=	normalize_http_uri;

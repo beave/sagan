@@ -612,8 +612,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         if ( rulestruct[b].s_find_port == 1 ) {
                             normalize_src_port = Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
                             normalize_dst_port = Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
-                        } else {
-                            normalize_src_port = config->sagan_port;
                         }
 
                         /* parse_hash: md5 */
@@ -656,11 +654,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                        use */
 
-
-                    if ( proto == 0 ) {
-                        proto = rulestruct[b].default_proto;
-                    }
-
                     if ( ip_src_flag == 0 || ip_src[0] == '0' ) {
                         strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
                     }
@@ -669,24 +662,23 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                     }
 
+                    /* No source port was normalized, Use the rules default */
+
                     if ( normalize_src_port == 0 ) {
                         normalize_src_port=rulestruct[b].default_src_port;
                     }
 
-                    if ( normalize_src_port == 0 ) {
-                        normalize_src_port=config->sagan_port;
-                    }
+                    /* No destination port was normalzied. Use the rules default */
 
                     if ( normalize_dst_port == 0 ) {
                         normalize_dst_port=rulestruct[b].default_dst_port;
                     }
 
-                    if ( normalize_dst_port == 0 ) {
-                        normalize_dst_port=config->sagan_port;
-                    }
+
+                    /* No protocol was normalized.  Use the rules default */
 
                     if ( proto == 0 ) {
-                        proto = config->sagan_proto;		/* Rule didn't specify proto,  use sagan default! */
+                        proto = rulestruct[b].default_proto;
                     }
 
                     /* If the "source" is 127.0.0.1 that is not useful.  Replace with config->sagan_host
@@ -1262,7 +1254,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                     after_log_flag = false;
 
                                                                                     if ( debug->debuglimits ) {
-                                                                                        Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_dstport_u32);
+                                                                                        Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_srcport_u32);
                                                                                     }
 
                                                                                     pthread_mutex_lock(&CounterMutex);
@@ -1872,7 +1864,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                     processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
                                                                     processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
                                                                     processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
-
                                                                     processor_info_engine_dst_port                 =       normalize_dst_port;
                                                                     processor_info_engine_src_port                 =       normalize_src_port;
                                                                     processor_info_engine_proto                    =       proto;
