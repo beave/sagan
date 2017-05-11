@@ -364,7 +364,7 @@ if test "$LIBYAML" = "no"; then
     echo "   from http://pyyaml.org/wiki/LibYAML "
     echo "   or your distribution:"
     echo
-    echo "   Ubuntu: apt-get install libyaml-dev"
+    echo "   Debian/Ubuntu: apt-get install libyaml-dev"
     echo "   Fedora: yum install libyaml-devel"
     echo
     exit 1
