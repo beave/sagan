@@ -1295,9 +1295,10 @@ void Load_Rules( const char *ruleset )
                 tmptoken = strtok_r(NULL, ";", &saveptrrule2);           /* Grab country codes */
 
                 Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
-                Remove_Spaces(tmptoken);
+                Remove_Spaces(tmp1);
 
-                strlcpy(rulestruct[counters->rulecount].geoip2_country_codes, tmptoken, sizeof(rulestruct[counters->rulecount].geoip2_country_codes));
+                strlcpy(rulestruct[counters->rulecount].geoip2_country_codes, tmp1, sizeof(rulestruct[counters->rulecount].geoip2_country_codes));
+
                 rulestruct[counters->rulecount].geoip2_flag = 1;
             }
 #endif
@@ -1340,9 +1341,9 @@ void Load_Rules( const char *ruleset )
                 }
 
                 Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
-                Remove_Spaces(tmptoken);
+                Remove_Spaces(tmp1);
 
-                strlcpy(tmp2, tmptoken, sizeof(tmp2));
+                strlcpy(tmp2, tmp1, sizeof(tmp2));
 
                 ptmp = strtok_r(tmp2, ",", &tok);
                 meta_content_converted_count = 0;
@@ -1850,9 +1851,9 @@ void Load_Rules( const char *ruleset )
 
                 tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
                 Var_To_Value(tok_tmp, tmp1, sizeof(tmp1));
-                strlcpy(tmp2, tmp1, sizeof(tmp2));				/* DEBUG NOT NEEDED */
+//                strlcpy(tmp2, tmp1, sizeof(tmp2));				/* DEBUG NOT NEEDED */
 
-                tmptoken = strtok_r(tmp2, ",", &saveptrrule2);
+                tmptoken = strtok_r(tmp1, ",", &saveptrrule2);
 
                 while( tmptoken != NULL ) {
 
@@ -2355,7 +2356,7 @@ void Load_Rules( const char *ruleset )
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
-                        Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_HASH);
+                        Sagan_Verify_Categories( tmp1, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_HASH);
                     }
 
                     if ( Sagan_strstr(tmptoken, "url" ))
@@ -2371,7 +2372,7 @@ void Load_Rules( const char *ruleset )
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
-                        Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_URL);
+                        Sagan_Verify_Categories( tmp1, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_URL);
                     }
 
 
@@ -2386,7 +2387,7 @@ void Load_Rules( const char *ruleset )
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
 
-                        Sagan_Verify_Categories( tmptok_tmp, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_FILENAME);
+                        Sagan_Verify_Categories( tmp1, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_FILENAME);
                     }
 
                     /* Error  check (  set flag? */

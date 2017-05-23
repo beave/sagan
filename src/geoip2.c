@@ -149,7 +149,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     if (debug->debuggeoip2) {
         Sagan_Log(S_DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
-        Sagan_Log(S_DEBUG, "Country Codes    : %s", rulestruct[rule_position].geoip2_country_codes);
+        Sagan_Log(S_DEBUG, "Country Codes    : |%s|", rulestruct[rule_position].geoip2_country_codes);
         Sagan_Log(S_DEBUG, "Found in GeoIP DB: %s", country);
     }
 
