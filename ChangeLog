@@ -1,6 +1,54 @@
 2017/05/31 -	Sagan 1.1.7 released.
 
+		* The largest and most fundamental change relates to how Sagan rules are written. As of this release,  Sagan 
+		  rules mimic Snort/Suricata rules. In the past, the first part of a Sagan rule (for example, "alert tcp 
+		  $EXTERNAL_NET -> $HOME_NET 22") would be applied to the log message.  Sagan would catorgize the log as 
+		  being from a "tcp" source and using port "22". This is no longer the case.  If Sagan can determine from 
+		  the log data the protocol, source port, destination port, source address and destinations address, tradition 
+		  "Snort" like logic can then be applied. For example, a Sagan rule can now apply logic to those logs that match
+		  the criteria.  The rule writer may only want the rule logic to be applied to logs that are determined to be 
+		  from a TCP source and on port 22.  The idea is to more closely match Snort and Suricata rule functionality.
 
+		  In certain situations, you may want to applied a "default" protocol,  source or desitination port.  For example, 
+		  OpenSSH logs do not contain protocol information but we know OpenSSH uses TCP.  In those cases,  Sagan can apply
+		  defaults by using the new "default_proto" (tcp/udp/icmp), "default_dst_port" and "default_src_port".  These new rule
+		  rule options can use hard coded numeric or $VARIABLE options (for example, "default_dst_port: $SSH_PORT"); 
+
+		  More information about these changes can be found with the pull request & commits at:
+
+		  https://github.com/beave/sagan/pull/92
+		  https://github.com/beave/sagan/commit/7eb5caa4ac40f12471f63a3fc9f4759164cd40f9
+		  https://github.com/beave/sagan/commit/709a58f86fd66fb881a4aca2253628d69f4005de
+
+		  Special thanks a "YoichSec" (Yoichi Sagawa) for the pull/code to make this happen!
+		  
+		* Large cleanup effort involving Snortsam code.  This mainly cleaned up many compile time warning messages.
+		  https://github.com/beave/sagan/commit/3a63cb483784ead9a646c66edead9d1610cab98d
+
+		* Fixed issue of "external" output not being called correctly.  
+		  https://github.com/beave/sagan/issues/93
+
+		* Bro-intel support was broken in 1.1.6.  This bug has been fixed. 
+		  https://github.com/beave/sagan/issues/90
+
+		* A large effort and code clean up to standardize the way threads handle data between functions.  This greatly increases
+		  the codes "readablity" and brings stability in data handling.  More information can be found at:
+		  https://github.com/beave/sagan/issues/89
+		  https://github.com/beave/sagan/commit/9621976e98dec9ffd3ef2d82b844d61ff1efe8ee
+		  https://github.com/beave/sagan/commit/bcb7c0f40d7afc2ee76c93db73d3e2dc7e3d1e2d
+		  https://github.com/beave/sagan/commit/29231c0b7bb094c4c43b4984a966e41835584636
+		  https://github.com/beave/sagan/commit/678a6019443a438ee44917e1d7e2b4b4e45a05c2
+		  https://github.com/beave/sagan/commit/e7cb805e62bb5b41f6f85d1453050e5fc0fe3748
+		  https://github.com/beave/sagan/commit/033fe56b6d67ed1a894dfe3ebd6637d9e16e405b
+		  https://github.com/beave/sagan/commit/033fe56b6d67ed1a894dfe3ebd6637d9e16e405b
+		  https://github.com/beave/sagan/commit/a8ad0bd3f7172750982967b1fac5c12dbb2dedfc
+		  https://github.com/beave/sagan/commit/f797e3620105e825deef744f0a413ec8890a62d0
+
+		* Error in SMTP output.  Bug caused Sagan to always send e-mails reguardless of priority.
+		  https://github.com/beave/sagan/issues/88
+
+		* Many minor bug fixes and cleanups. 
+	
 2017/03/20 - 	Sagan 1.1.6-r1 released.
 
 		* Resolved minor compile time issues.
