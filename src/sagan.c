@@ -739,7 +739,7 @@ int main(int argc, char **argv)
     if ( config->sagan_external_output_flag ) {
 
         Sagan_Log(S_NORMAL, "");
-        Sagan_Log(S_NORMAL, "External program to be called: %s", config->sagan_extern);
+        Sagan_Log(S_NORMAL, "External program to be called: %s", config->sagan_external_command);
 
     }
 

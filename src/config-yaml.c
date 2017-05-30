@@ -1238,7 +1238,7 @@ void Load_YAML_Config( char *yaml_file )
                     else if (!strcmp(last_pass, "command") && config->sagan_external_output_flag == true) {
 
                         Var_To_Value(value, tmp, sizeof(tmp));
-                        strlcpy(config->sagan_extern, tmp, sizeof(config->sagan_extern));
+                        strlcpy(config->sagan_external_command, tmp, sizeof(config->sagan_external_command));
 
                     }
 

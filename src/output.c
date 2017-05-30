@@ -164,8 +164,8 @@ void Output( _Sagan_Event *Event )
     /* External program support                                                 */
     /****************************************************************************/
 
-    if ( config->sagan_ext_flag ) {
-        External_Thread( Event, config->sagan_extern );
+    if ( config->sagan_external_output_flag ) {
+        External_Thread( Event, config->sagan_external_command );
     }
 
     /****************************************************************************/

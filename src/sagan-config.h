@@ -62,7 +62,6 @@ struct _SaganConfig {
     char         sagan_log_path[MAXPATH];
     char         sagan_rule_path[MAXPATH];
     char         sagan_host[MAXHOST];
-    char         sagan_extern[MAXPATH];
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
@@ -74,10 +73,10 @@ struct _SaganConfig {
 
     int          max_processor_threads;
 
-    sbool        sagan_external_output_flag;            /* For things like external, email, fwsam */
+    sbool        sagan_external_output_flag;            /* For calling external commands */
+    char         sagan_external_command[MAXPATH];
 
     int          sagan_port;
-    sbool        sagan_ext_flag;
     sbool        disable_dns_warnings;
     sbool        syslog_src_lookup;
     int          sagan_proto;

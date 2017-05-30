@@ -1,3 +1,10 @@
+2017/05/31 -	Sagan 1.1.7 released.
+
+
+2017/03/20 - 	Sagan 1.1.6-r1 released.
+
+		* Resolved minor compile time issues.
+
 2017/03/16 -	Sagan 1.1.6 released. 
 
                 * New Suricata EVE "Alert" compatible JSON output! (still beta!).  See the "eve-log" in the sagan.yaml. Test with EveBox! 

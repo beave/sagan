@@ -65,7 +65,7 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     char tmp[6];
 
     if ( debug->debugexternal ) {
-        Sagan_Log(S_WARN, "[%s, line %d] In sagan_ext_thread()", __FILE__, __LINE__);
+        Sagan_Log(S_WARN, "[%s, line %d] In External_Thread()", __FILE__, __LINE__);
     }
 
 
@@ -148,7 +148,7 @@ Syslog Priority:%s\n\
         execl(execute_script, execute_script, NULL, (char *)NULL);
 
         Remove_Lock_File();
-        Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_extern);
+        Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_external_command);
     }
 
     close(in[0]);
@@ -168,7 +168,7 @@ Syslog Priority:%s\n\
     pthread_mutex_unlock( &ext_mutex );
 
     if ( debug->debugexternal == 1 ) {
-        Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_extern);
+        Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_external_command);
     }
 
 }
