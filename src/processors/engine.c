@@ -861,10 +861,29 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                         }
 
 
-                        if ( rulestruct[b].bluedot_file_hash && normalize_md5_hash[0] != '\0' ) {
+                        if ( rulestruct[b].bluedot_file_hash && ( normalize_md5_hash[0] != '\0' ||
+                                normalize_sha1_hash[0] != '\0' || normalize_sha256_hash[0] != '\0') ) {
 
-                            bluedot_results = Sagan_Bluedot_Lookup( normalize_md5_hash, BLUEDOT_LOOKUP_HASH, b);
-                            bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
+                            if ( normalize_md5_hash[0] != '\0') {
+
+                                bluedot_results = Sagan_Bluedot_Lookup( normalize_md5_hash, BLUEDOT_LOOKUP_HASH, b);
+                                bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
+
+                            }
+
+                            if ( normalize_sha1_hash[0] != '\0' ) {
+
+                                bluedot_results = Sagan_Bluedot_Lookup( normalize_sha1_hash, BLUEDOT_LOOKUP_HASH, b);
+                                bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
+
+                            }
+
+                            if ( normalize_sha256_hash[0] != '\0') {
+
+                                bluedot_results = Sagan_Bluedot_Lookup( normalize_sha256_hash, BLUEDOT_LOOKUP_HASH, b);
+                                bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
+
+                            }
 
                         }
 

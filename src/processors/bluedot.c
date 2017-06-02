@@ -863,7 +863,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     }  /* BLUEDOT_LOOKUP_IP */
 
-
     if ( type == BLUEDOT_LOOKUP_HASH ) {
 
         for (i=0; i<counters->bluedot_hash_cache_count; i++) {

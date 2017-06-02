@@ -74,7 +74,7 @@ struct _Sagan_Bluedot_IP_Cache {
 
 typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
 struct _Sagan_Bluedot_Hash_Cache {
-    char hash[MD5_HASH_SIZE+1];
+    char hash[SHA256_HASH_SIZE+1];
     uintmax_t cache_utime;
     int alertid;
 };
@@ -101,7 +101,7 @@ struct _Sagan_Bluedot_IP_Queue {
 
 typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;
 struct _Sagan_Bluedot_Hash_Queue {
-    char hash[MD5_HASH_SIZE+1];
+    char hash[SHA256_HASH_SIZE+1];
 };
 
 typedef struct _Sagan_Bluedot_URL_Queue _Sagan_Bluedot_URL_Queue;
