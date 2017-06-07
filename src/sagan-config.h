@@ -51,6 +51,7 @@ struct _SaganConfig {
 
     char         sagan_alert_filepath[MAXPATH];
 
+    char	 sagan_sensor_name[64];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
     FILE	 *sagan_fast_stream;
@@ -65,6 +66,7 @@ struct _SaganConfig {
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
+    char	 xbit_storage;				/* 0 == mmap, 1 == redis */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     sbool        sagan_droplist_flag;

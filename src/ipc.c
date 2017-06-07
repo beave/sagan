@@ -49,7 +49,7 @@
 #include "sagan-config.h"
 #include "util-time.h"
 #include "ipc.h"
-#include "xbit.h"
+#include "xbit-mmap.h"
 
 #include "processors/track-clients.h"
 

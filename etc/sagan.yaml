@@ -127,6 +127,7 @@ sagan-core:
 
   core:
 
+    sensor-name: "default_sensor_name"  # Unique name for this sensor.
     default-host: 192.168.2.1
     default-port: 514
     default-proto: udp
@@ -138,6 +139,7 @@ sagan-core:
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
+    xbit-storage: mmap          # mmap or redis
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after

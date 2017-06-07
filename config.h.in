@@ -81,6 +81,9 @@
 /* Define to 1 if you have the `estr' library (-lestr). */
 #undef HAVE_LIBESTR
 
+/* Define to 1 if you have the `hiredis' library (-lhiredis). */
+#undef HAVE_LIBHIREDIS
+
 /* Define to 1 if you have the `lognorm' library (-llognorm). */
 #undef HAVE_LIBLOGNORM
 

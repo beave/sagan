@@ -43,7 +43,7 @@
 #include "aetas.h"
 #include "meta-content.h"
 #include "send-alert.h"
-#include "xbit.h"
+#include "xbit-mmap.h"
 #include "rules.h"
 #include "sagan-config.h"
 #include "ipc.h"

@@ -35,6 +35,8 @@
 
 /* Various buffers used during configurations loading */
 
+#define SENSOR_NAME		"default_sensor_name"
+
 #define CLASSBUF		1024
 #define RULEBUF			5128
 #define CONFBUF			4096
@@ -102,7 +104,7 @@
 
 /* defaults if the user doesn't define */
 
-#define MAX_PROCESSOR_THREADS   50
+#define MAX_PROCESSOR_THREADS   100
 
 #define SUNDAY			1
 #define MONDAY			2

@@ -101,6 +101,12 @@ AC_ARG_ENABLE(system-strstr,
   [ SYSSTRSTR="no" ]
 )
 
+AC_ARG_ENABLE(redis,
+  [  --enable-redis  Enable Redis support.],
+  [ REDIS="$enableval"],
+  [ REDIS="no" ]
+)
+
 AC_ARG_WITH(esmtp_includes,
         [  --with-esmtp-includes=DIR    libesmtp include directory],
         [with_esmtp_includes="$withval"],[with_esmtp_includes="no"])
@@ -523,6 +529,13 @@ if test "$SYSLOG" = "yes"; then
 	AC_CHECK_HEADER([syslog.h])
 	AC_DEFINE(WITH_SYSLOG, 1, With Syslog)
 	fi
+
+if test "$REDIS" = "yes"; then
+       AC_MSG_RESULT([------- Redis support is enabled -------])
+       AC_CHECK_HEADER([hiredis/hiredis.h])
+       AC_CHECK_LIB(hiredis, main,,AC_MSG_ERROR(The Hiredis (Redis) library cannot be found.
+If you're not interested in Redis support use the --disable-redis flag.))
+       fi
 
 if test "$GEOIP2" = "yes"; then
        AC_MSG_RESULT([------- Maxmind GeoIP2 support is enabled -------])

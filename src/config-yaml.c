@@ -129,6 +129,7 @@ void Load_YAML_Config( char *yaml_file )
 
     if (!strcmp(config->sagan_config, yaml_file)) {
 
+        strlcpy(config->sagan_sensor_name, SENSOR_NAME, sizeof(config->sagan_sensor_name));
         strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
         strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
         strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
@@ -452,7 +453,11 @@ void Load_YAML_Config( char *yaml_file )
 
                 if ( sub_type == YAML_SAGAN_CORE_CORE ) {
 
-                    if (!strcmp(last_pass, "default-host")) {
+                    if (!strcmp(last_pass, "sensor-name")) {
+                        strlcpy(config->sagan_sensor_name, value, sizeof(config->sagan_sensor_name));
+                    }
+
+                    else if (!strcmp(last_pass, "default-host")) {
                         strlcpy(config->sagan_host, value, sizeof(config->sagan_host));
                     }
 
@@ -562,6 +567,27 @@ void Load_YAML_Config( char *yaml_file )
                         Var_To_Value(value, tmp, sizeof(tmp));
                         Load_Protocol_Map(tmp);
 
+                    }
+
+                    else if (!strcmp(last_pass, "xbit-storage")) {
+
+                        Var_To_Value(value, tmp, sizeof(tmp));
+
+                        if (strcmp(tmp, "mmap") && strcmp(tmp, "redis")) {
+
+                            Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|xbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
+
+                        }
+
+                        if (!strcmp(tmp, "redis")) {
+
+                            config->xbit_storage = 1;
+
+                        } else {
+
+                            config->xbit_storage = 0;
+
+                        }
                     }
 
                 } /* if sub_type == YAML_SAGAN_CORE_CORE */

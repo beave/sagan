@@ -57,7 +57,7 @@
 #include "version.h"
 
 #include "credits.h"
-#include "xbit.h"
+#include "xbit-mmap.h"
 #include "processor.h"
 #include "sagan-config.h"
 #include "config-yaml.h"
@@ -581,7 +581,7 @@ int main(int argc, char **argv)
 #endif
 
     Sagan_Log(S_NORMAL, "");
-    Sagan_Log(S_NORMAL, "Sagan version %s is firing up!", VERSION);
+    Sagan_Log(S_NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
     Sagan_Log(S_NORMAL, "");
 
 #ifdef HAVE_LIBPCAP

@@ -44,7 +44,7 @@
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
-#include "../src/xbit.h"
+#include "../src/xbit-mmap.h"
 
 #include "../src/processors/track-clients.h"
 

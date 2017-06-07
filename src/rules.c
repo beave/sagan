@@ -48,7 +48,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 
-#include "xbit.h"
+#include "xbit-mmap.h"
 #include "lockfile.h"
 #include "classifications.h"
 #include "rules.h"
