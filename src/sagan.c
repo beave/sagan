@@ -1151,7 +1151,9 @@ int main(int argc, char **argv)
 
                     pthread_cond_signal(&SaganProcDoWork);
                     pthread_mutex_unlock(&SaganProcWorkMutex);
+
                 } else {
+
                     counters->worker_thread_exhaustion++;
                     counters->sagan_log_drop++;
                 }

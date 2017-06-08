@@ -429,6 +429,10 @@ void Load_YAML_Config( char *yaml_file )
                     sub_type = YAML_SAGAN_CORE_CORE;
                 }
 
+                else if (!strcmp(value, "redis" )) {
+                    sub_type = YAML_SAGAN_CORE_REDIS;
+                }
+
                 else if (!strcmp(value, "mmap-ipc" )) {
                     sub_type = YAML_SAGAN_CORE_MMAP_IPC;
                 }
@@ -704,6 +708,65 @@ void Load_YAML_Config( char *yaml_file )
 
                 } /* if sub_type == YAML_SAGAN_CORE_IGNORE_LIST */
 
+#ifndef HAVE_LIBHIREDIS
+
+                if ( sub_type == YAML_SAGAN_CORE_REDIS ) {
+
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+
+                            Sagan_Log(S_ERROR, "[%s, line %d] Sagan was not compiled with hiredis (Redis) support!", __FILE__, __LINE__);
+
+                        }
+                    }
+                } /* if sub_type == YAML_SAGAN_CORE_REDIS */
+#endif
+
+#ifdef HAVE_LIBHIREDIS
+
+                if ( sub_type == YAML_SAGAN_CORE_REDIS ) {
+
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        config->have_redis = true;
+
+                    }
+
+                    if ( config->have_redis == true ) {
+
+                        if (!strcmp(last_pass, "server")) {
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            strlcpy(config->redis_server, tmp, sizeof(config->redis_server));
+                        }
+
+                        else if (!strcmp(last_pass, "port")) {
+
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            config->redis_port = atoi(tmp);
+
+                            if ( config->redis_port == 0 ) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
+                            }
+                        }
+
+                        else if (!strcmp(last_pass, "username")) {
+
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            strlcpy(config->redis_username, tmp, sizeof(config->redis_username));
+
+                        }
+
+                        else if (!strcmp(last_pass, "password")) {
+
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            strlcpy(config->redis_password, tmp, sizeof(config->redis_password));
+                        }
+
+                    }
+                } /* if sub_type == YAML_SAGAN_CORE_REDIS */
+
+#endif
 
 #ifndef HAVE_LIBMAXMINDDB
 
@@ -826,21 +889,21 @@ void Load_YAML_Config( char *yaml_file )
 
                         }
 
-                        if (!strcmp(last_pass, "bpf-filter")) {
+                        else if (!strcmp(last_pass, "bpf-filter")) {
 
                             Var_To_Value(value, tmp, sizeof(tmp));
                             strlcpy(config->plog_filter, tmp, sizeof(config->plog_filter));
 
                         }
 
-                        if (!strcmp(last_pass, "log-device")) {
+                        else if (!strcmp(last_pass, "log-device")) {
 
                             Var_To_Value(value, tmp, sizeof(tmp));
                             strlcpy(config->plog_logdev, tmp, sizeof(config->plog_logdev));
 
                         }
 
-                        if (!strcmp(last_pass, "promiscuous")) {
+                        else if (!strcmp(last_pass, "promiscuous")) {
 
                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
                                 config->plog_promiscuous = 1;

@@ -163,10 +163,19 @@ struct _SaganConfig {
     int         plog_promiscuous;
 #endif
 
+    /* Redis/hiredis support */
+
+#ifdef HAVE_LIBHIREDIS
+    sbool 	have_redis;
+    char	redis_server[255];
+    int		redis_port;
+    char 	redis_username[64];
+    char	redis_password[255];
+#endif
+
     /* libesmtp/SMTP support */
 
 #ifdef HAVE_LIBESMTP
-    //char        sagan_esmtp_to[255];
     sbool       sagan_sendto_flag;
     char        sagan_esmtp_from[255];
     char        sagan_esmtp_server[255];

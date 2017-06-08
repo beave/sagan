@@ -141,6 +141,16 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # mmap or redis
 
+  # Redis configuration.  Redis can be used to act as a global storage 
+  # engine for things like xbits. 
+
+  redis:
+
+    server: 127.0.0.1
+    port: 6379
+    username: "redis"
+    password: "password"
+
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after
   # data between system restarts (including system reboots!). 

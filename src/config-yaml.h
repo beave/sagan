@@ -54,6 +54,7 @@
 #define		YAML_SAGAN_CORE_GEOIP		4
 #define 	YAML_SAGAN_CORE_LIBLOGNORM	5
 #define		YAML_SAGAN_CORE_PLOG		6
+#define		YAML_SAGAN_CORE_REDIS		7
 
 /* Processors */
 
