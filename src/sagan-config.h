@@ -166,8 +166,7 @@ struct _SaganConfig {
     /* libesmtp/SMTP support */
 
 #ifdef HAVE_LIBESMTP
-    int         min_email_priority;
-    char        sagan_esmtp_to[255];
+    //char        sagan_esmtp_to[255];
     sbool       sagan_sendto_flag;
     char        sagan_esmtp_from[255];
     char        sagan_esmtp_server[255];

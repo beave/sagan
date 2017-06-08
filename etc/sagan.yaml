@@ -374,18 +374,13 @@ outputs:
   - external: 
       enabled: no
       command: "/home/sagan/myprogram"
-  
-  # The 'smtp' output allows Sagan to e-mail events that are triggered. To use
-  # this output option,  Sagan must be compile with libesmtp support. 
+ 
+  # The 'smtp' output allows Sagan to e-mail alerts that trigger.  The rules 
+  # you want e-mail need to contain the 'email' rule option and Sagan must
+  # be compiled with libesmtp support.  
 
   - smtp: 
       enabled: no
-      priority: 5			   # Only e-mail priorities this value
-                                           # or higher.  If 'priority' is not
-                                           # set, everything is e-mailed. 
-      rcpt-to: sagan-alerts@example.com    # Comment out the rcpt-to if you 
-                                           # only want signatures with the 
-                                           # "email" option to e-mail. 
       from: sagan-alert@example.com
       server: 192.168.0.1:25
       subject: "** Sagan Alert **"

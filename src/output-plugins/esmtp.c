@@ -58,57 +58,13 @@ int ESMTP_Thread ( _Sagan_Event *Event )
 {
 
     char tmpref[256];
-    char tmpemail[255];
     char timebuf[64];
 
     char tmpa[MAX_EMAILSIZE];
     char tmpb[MAX_EMAILSIZE];
     int r = 0;
 
-    /* If the events doesnt have a high enough priority, short circuit here.  If the
-     * config->min_email_priority == 0,  then e-mail everything */
-
-    if ( config->min_email_priority != 0 ) {
-
-        if ( Event->pri < config->min_email_priority ) {
-
-            if ( debug->debugesmtp ) {
-                Sagan_Log(S_DEBUG, "Event priority (%d) is not < min_email_priority (%d)", Event->pri, config->min_email_priority);
-            }
-
-            return(0);
-        }
-    }
-
     Reference_Lookup( Event->found, 0, tmpref, sizeof(tmpref));
-
-    /* Rule "email:" takes priority.  If not set,  then the "send-to:" option in the configuration file */
-
-    if ( rulestruct[Event->found].email_flag ) {
-
-        if ( debug->debugesmtp ) {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in rule: %s",  __FILE__, __LINE__, rulestruct[Event->found].email);
-        }
-
-        strlcpy(tmpemail, rulestruct[Event->found].email, sizeof(tmpemail));
-
-    } else {
-
-        if ( config->sagan_sendto_flag ) {
-
-            if ( debug->debugesmtp ) {
-                Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail in configuration file: %s",  __FILE__, __LINE__, config->sagan_esmtp_to);
-            }
-
-            strlcpy(tmpemail, config->sagan_esmtp_to, sizeof(tmpemail));
-
-        } else {
-
-            return(0);
-        }
-
-    }
-
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
 
     if ((r = snprintf(tmpa, sizeof(tmpa),
@@ -125,7 +81,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
                       "%s %s %s:%d -> %s:%d %s %s\n"
                       "Syslog message: %s\r\n%s\n\r",
                       config->sagan_esmtp_from,
-                      tmpemail,
+                      rulestruct[Event->found].email,
                       config->sagan_email_subject,
                       Event->f_msg,
                       Event->generatorid,
@@ -193,7 +149,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         counters->esmtp_count_failed++;
         goto failure;
     }
-    if((recipient = smtp_add_recipient (message, tmpemail)) == NULL) {
+    if((recipient = smtp_add_recipient (message, rulestruct[Event->found].email)) == NULL) {
         Sagan_Log(S_WARN, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
         counters->esmtp_count_failed++;
         goto failure;

@@ -154,7 +154,7 @@ void Output( _Sagan_Event *Event )
 
 #ifdef HAVE_LIBESMTP
 
-    if ( config->sagan_esmtp_flag ) {
+    if ( config->sagan_esmtp_flag && rulestruct[Event->found].email_flag ) {
         ESMTP_Thread( Event );
     }
 
@@ -172,7 +172,7 @@ void Output( _Sagan_Event *Event )
     /* External program via rule                                                */
     /****************************************************************************/
 
-    if (  rulestruct[Event->found].external_flag == 1 ) {
+    if (  rulestruct[Event->found].external_flag ) {
         External_Thread( Event, rulestruct[Event->found].external_program );
     }
 }

@@ -1297,23 +1297,6 @@ void Load_YAML_Config( char *yaml_file )
                         }
                     }
 
-                    else if ( !strcmp(last_pass, "priority") && config->sagan_esmtp_flag == true ) {
-
-                        /* This can have a zero value */
-
-                        Var_To_Value(value, tmp, sizeof(tmp));
-                        config->min_email_priority = atoi(tmp);
-
-                    }
-
-                    else if ( !strcmp(last_pass, "rcpt-to") && config->sagan_esmtp_flag == true ) {
-
-                        Var_To_Value(value, tmp, sizeof(tmp));
-                        strlcpy(config->sagan_esmtp_to, tmp, sizeof(config->sagan_esmtp_to));
-                        config->sagan_sendto_flag = true;
-
-                    }
-
                     else if ( !strcmp(last_pass, "from") && config->sagan_esmtp_flag == true ) {
 
                         Var_To_Value(value, tmp, sizeof(tmp));

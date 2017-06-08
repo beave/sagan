@@ -715,10 +715,6 @@ int main(int argc, char **argv)
     if ( config->sagan_esmtp_flag ) {
         Sagan_Log(S_NORMAL, "");
 
-        if ( config->min_email_priority ) {
-            Sagan_Log(S_NORMAL, "E-mail on priority %d or higher.", config->min_email_priority);
-        }
-
         Sagan_Log(S_NORMAL, "E-Mail will be sent from: %s", config->sagan_esmtp_from);
         Sagan_Log(S_NORMAL, "SMTP server is set to: %s", config->sagan_esmtp_server);
     }
