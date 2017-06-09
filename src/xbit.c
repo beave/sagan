@@ -30,6 +30,7 @@
 #endif
 
 #include <stdio.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
