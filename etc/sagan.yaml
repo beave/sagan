@@ -127,7 +127,7 @@ sagan-core:
 
   core:
 
-    sensor-name: "default_sensor_name"  # Unique name for this sensor.
+    sensor-name: "default_sensor_name"  # Unique name for this sensor (no spaces)
     default-host: 192.168.2.1
     default-port: 514
     default-proto: udp
@@ -141,11 +141,16 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # mmap or redis
 
+  # Experimental Code!!!
+  #
+  # This is a work in progress! 
+  #
   # Redis configuration.  Redis can be used to act as a global storage 
   # engine for things like xbits. 
 
   redis:
 
+    enabled: yes
     server: 127.0.0.1
     port: 6379
     username: "redis"
@@ -338,8 +343,9 @@ processors:
 
 outputs:
 
+  # Experimental Code!!!
+  #
   # WORK IN PROGRESS - Output in the Suricata EVE/Alert format.  
-  # 
   # ONLY supports "regular" and "alerts" at this time!
 
   - eve-log:

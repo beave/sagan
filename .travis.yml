@@ -47,7 +47,7 @@ before_install:
         sudo apt-get update -qq
         sudo apt-get install -y libpcre3 libpcre3-dbg libpcre3-dev \
             build-essential autoconf automake libyaml-0-2 libyaml-dev \
-            libdumbnet1 libdumbnet-dev pkg-config
+            libdumbnet1 libdumbnet-dev pkg-config libhiredis-dev
 
         git clone https://github.com/rsyslog/libfastjson
         cd libfastjson

@@ -52,23 +52,26 @@ void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool t
     struct tm local_tm;
     struct tm *t = (struct tm*)Sagan_LocalTime(time, &local_tm);
 
-    if ( type == 0 ) {
+    if ( type == 0 )
+        {
 
-        /* Suricata / Snort "fast.log" type */
+            /* Suricata / Snort "fast.log" type */
 
-        snprintf(str, size, "%02d/%02d/%02d-%02d:%02d:%02d.%06u",
-                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
-                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
+            snprintf(str, size, "%02d/%02d/%02d-%02d:%02d:%02d.%06u",
+                     t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
+                     t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
 
-    } else {
+        }
+    else
+        {
 
-        /* Old "alert log" type */
+            /* Old "alert log" type */
 
-        snprintf(str, size, "%02d-%02d-%02d %02d:%02d:%02d.%06u",
-                 t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
-                 t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
+            snprintf(str, size, "%02d-%02d-%02d %02d:%02d:%02d.%06u",
+                     t->tm_mon + 1, t->tm_mday, t->tm_year + 1900, t->tm_hour,
+                     t->tm_min, t->tm_sec, (uint32_t) ts->tv_usec);
 
-    }
+        }
 
 }
 
@@ -166,33 +169,40 @@ uintmax_t Value_To_Seconds(char *type, uintmax_t number)
 
     /* Covers both plural and non-plural (ie - minute/minutes) */
 
-    if (Sagan_strstr(type, "second")) {
-        return(number);
-    }
+    if (Sagan_strstr(type, "second"))
+        {
+            return(number);
+        }
 
-    if (Sagan_strstr(type, "minute")) {
-        return(number * 60);
-    }
+    if (Sagan_strstr(type, "minute"))
+        {
+            return(number * 60);
+        }
 
-    if (Sagan_strstr(type, "hour")) {
-        return(number * 60 * 60);
-    }
+    if (Sagan_strstr(type, "hour"))
+        {
+            return(number * 60 * 60);
+        }
 
-    if (Sagan_strstr(type, "day")) {
-        return(number * 60 * 60 * 24);
-    }
+    if (Sagan_strstr(type, "day"))
+        {
+            return(number * 60 * 60 * 24);
+        }
 
-    if (Sagan_strstr(type, "week")) {
-        return(number * 60 * 60 * 24 * 7);
-    }
+    if (Sagan_strstr(type, "week"))
+        {
+            return(number * 60 * 60 * 24 * 7);
+        }
 
-    if (Sagan_strstr(type, "month")) {
-        return(number * 60 * 60 * 24 * 7 * 4);
-    }
+    if (Sagan_strstr(type, "month"))
+        {
+            return(number * 60 * 60 * 24 * 7 * 4);
+        }
 
-    if (Sagan_strstr(type, "year")) {
-        return(number * 60 * 60 * 24 * 365);
-    }
+    if (Sagan_strstr(type, "year"))
+        {
+            return(number * 60 * 60 * 24 * 365);
+        }
 
     Sagan_Log(S_WARN, "'%s' type is unknown!", type);
     return(0);

@@ -22,10 +22,15 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef HAVE_LIBHIREDIS
+#include <hiredis/hiredis.h>
+#endif
+
 /* Sagan configuration struct (global) */
 
 typedef struct _SaganConfig _SaganConfig;
-struct _SaganConfig {
+struct _SaganConfig
+{
 
     /* Non-dependent var's */
 
@@ -166,11 +171,14 @@ struct _SaganConfig {
     /* Redis/hiredis support */
 
 #ifdef HAVE_LIBHIREDIS
-    sbool 	have_redis;
+    redisContext *c_redis;
+    sbool 	redis_flag;
     char	redis_server[255];
     int		redis_port;
     char 	redis_username[64];
     char	redis_password[255];
+//    int		redis_write_threads;
+//    int		redis_read_threads;
 #endif
 
     /* libesmtp/SMTP support */

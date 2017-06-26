@@ -77,43 +77,50 @@ void Output( _Sagan_Event *Event )
     pthread_mutex_lock(&SaganOutputNonThreadMutex);
     nonthread_alert_lock = true;
 
-    if ( config->alert_flag ) {
-        Alert_File(Event);
-    }
+    if ( config->alert_flag )
+        {
+            Alert_File(Event);
+        }
 
-    if ( config->eve_flag ) {
-        Alert_JSON(Event);
-    }
+    if ( config->eve_flag )
+        {
+            Alert_JSON(Event);
+        }
 
-    if ( config->fast_flag ) {
-        Fast_File(Event);
-    }
+    if ( config->fast_flag )
+        {
+            Fast_File(Event);
+        }
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-    if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == false ) {
+    if ( config->sagan_unified2_flag && rulestruct[Event->found].xbit_nounified2 == false )
+        {
 
-        Unified2( Event );
-        Unified2LogPacketAlert( Event );
+            Unified2( Event );
+            Unified2LogPacketAlert( Event );
 
-        if ( Event->host[0] != '\0' ) {
-            Unified2WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
+            if ( Event->host[0] != '\0' )
+                {
+                    Unified2WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
+                }
+
+            /* These get normalized in engine.c and passed via
+             * send-alert.c.  When adding more,  remember to add
+             * them there! */
+
+            if ( Event->normalize_http_uri[0] != '\0' )
+                {
+                    Unified2WriteExtraData( Event, EVENT_INFO_HTTP_URI );
+                }
+
+            if ( Event->normalize_http_hostname[0] != '\0' )
+                {
+                    Unified2WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
+                }
+
+            unified_event_id++;
         }
-
-        /* These get normalized in engine.c and passed via
-         * send-alert.c.  When adding more,  remember to add
-         * them there! */
-
-        if ( Event->normalize_http_uri[0] != '\0' ) {
-            Unified2WriteExtraData( Event, EVENT_INFO_HTTP_URI );
-        }
-
-        if ( Event->normalize_http_hostname[0] != '\0' ) {
-            Unified2WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
-        }
-
-        unified_event_id++;
-    }
 
 #endif
 
@@ -128,9 +135,10 @@ void Output( _Sagan_Event *Event )
 
 #ifdef WITH_SYSLOG
 
-    if ( config->sagan_syslog_flag ) {
-        Alert_Syslog( Event );
-    }
+    if ( config->sagan_syslog_flag )
+        {
+            Alert_Syslog( Event );
+        }
 
 #endif
 
@@ -142,9 +150,10 @@ void Output( _Sagan_Event *Event )
 
 #ifdef WITH_SNORTSAM
 
-    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst ) {
-        FWSam( Event );
-    }
+    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst )
+        {
+            FWSam( Event );
+        }
 
 #endif
 
@@ -154,9 +163,10 @@ void Output( _Sagan_Event *Event )
 
 #ifdef HAVE_LIBESMTP
 
-    if ( config->sagan_esmtp_flag && rulestruct[Event->found].email_flag ) {
-        ESMTP_Thread( Event );
-    }
+    if ( config->sagan_esmtp_flag && rulestruct[Event->found].email_flag )
+        {
+            ESMTP_Thread( Event );
+        }
 
 #endif
 
@@ -164,16 +174,18 @@ void Output( _Sagan_Event *Event )
     /* External program support                                                 */
     /****************************************************************************/
 
-    if ( config->sagan_external_output_flag ) {
-        External_Thread( Event, config->sagan_external_command );
-    }
+    if ( config->sagan_external_output_flag )
+        {
+            External_Thread( Event, config->sagan_external_command );
+        }
 
     /****************************************************************************/
     /* External program via rule                                                */
     /****************************************************************************/
 
-    if (  rulestruct[Event->found].external_flag ) {
-        External_Thread( Event, rulestruct[Event->found].external_program );
-    }
+    if (  rulestruct[Event->found].external_flag )
+        {
+            External_Thread( Event, rulestruct[Event->found].external_program );
+        }
 }
 

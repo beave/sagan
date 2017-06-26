@@ -61,6 +61,10 @@ void Usage(void)
     fprintf(stderr, ", geoip2");
 #endif
 
+#ifdef HAVE_LIBHIREDIS
+    fprintf(stderr, ", redis");
+#endif
+
     fprintf(stderr, ".\n");
 
     fprintf(stderr, "-D, --daemon\t\tMake process a daemon (fork to the background).\n");
@@ -111,6 +115,10 @@ void Usage(void)
 
 #ifdef PCRE_HAVE_JIT
     fprintf(stderr, "* Using PCRE JIT.\n");
+#endif
+
+#ifdef HAVE_LIBHIREDIS
+    fprintf(stderr, "* Using HiRedis/Redis.\n");
 #endif
 
     fprintf(stderr, "\n* Compiled on %s at %s.\n", __DATE__, __TIME__);

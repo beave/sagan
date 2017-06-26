@@ -25,7 +25,8 @@
 /* Storage for sagan-gen-msg.map */
 
 typedef struct _Sagan_Processor_Generator _Sagan_Processor_Generator;
-struct _Sagan_Processor_Generator {
+struct _Sagan_Processor_Generator
+{
     unsigned long generatorid;
     unsigned long alertid;
     char generator_msg[512];

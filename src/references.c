@@ -73,58 +73,67 @@ void Load_Reference( const char *ruleset )
 
     Sagan_Log(S_NORMAL, "Loading references.conf file. [%s]" , ruleset);
 
-    if (( reffile = fopen(ruleset, "r" )) == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
-    }
-
-    while(fgets(refbuf, 1024, reffile) != NULL) {
-
-        linecount++;
-
-        /* Skip comments and blank linkes */
-
-        if (refbuf[0] == '#' || refbuf[0] == 10 || refbuf[0] == ';' || refbuf[0] == 32) {
-
-            continue;
-
-        } else {
-
-            /* Allocate memory for references,  not comments */
-
-            refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
-
-            if ( refstruct == NULL ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
-            }
+    if (( reffile = fopen(ruleset, "r" )) == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__, __LINE__, ruleset);
         }
 
-        strtok_r(refbuf, ":", &saveptr);
-        tmptoken = strtok_r(NULL, " " , &saveptr);
+    while(fgets(refbuf, 1024, reffile) != NULL)
+        {
 
-        laststring = strtok_r(tmptoken, ",", &saveptr);
+            linecount++;
 
-        if ( laststring == NULL ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+            /* Skip comments and blank linkes */
+
+            if (refbuf[0] == '#' || refbuf[0] == 10 || refbuf[0] == ';' || refbuf[0] == 32)
+                {
+
+                    continue;
+
+                }
+            else
+                {
+
+                    /* Allocate memory for references,  not comments */
+
+                    refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
+
+                    if ( refstruct == NULL )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
+                        }
+                }
+
+            strtok_r(refbuf, ":", &saveptr);
+            tmptoken = strtok_r(NULL, " " , &saveptr);
+
+            laststring = strtok_r(tmptoken, ",", &saveptr);
+
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
+
+            strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
+
+            laststring = strtok_r(NULL, ",", &saveptr);
+
+            if ( laststring == NULL )
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                }
+
+            strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl));
+            refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
+
+            if (debug->debugload)
+                {
+                    Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
+                }
+
+            counters->refcount++;
+
         }
-
-        strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
-
-        laststring = strtok_r(NULL, ",", &saveptr);
-
-        if ( laststring == NULL ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
-        }
-
-        strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl));
-        refstruct[counters->refcount].s_refurl[strlen(refstruct[counters->refcount].s_refurl)-1] = '\0';
-
-        if (debug->debugload) {
-            Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
-        }
-
-        counters->refcount++;
-
-    }
     fclose(reffile);
     Sagan_Log(S_NORMAL, "%d references loaded.", counters->refcount);
 }
@@ -156,44 +165,55 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
     char refinfo[512];
     char refinfo2[512];
 
-    for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ ) {
+    for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ )
+        {
 
-        strlcpy(refinfo, rulestruct[rulemem].s_reference[i], sizeof(refinfo));
+            strlcpy(refinfo, rulestruct[rulemem].s_reference[i], sizeof(refinfo));
 
-        tmp = strtok_r(refinfo, ",", &tmptok);
+            tmp = strtok_r(refinfo, ",", &tmptok);
 
-        if ( tmp != NULL ) {
-            strlcpy(reftype, tmp, sizeof(reftype));
-        } else {
-            strlcpy(str, "", 1);
-            return;
-        }
-
-        tmp  = strtok_r(NULL, ",", &tmptok);
-
-        if ( tmp != NULL ) {
-            strlcpy(url, tmp, sizeof(url));
-        } else {
-            strlcpy(str, "", 1);
-            return;
-        }
-
-
-        for ( b=0; b < counters->refcount; b++) {
-
-            if (!strcmp(refstruct[b].s_refid,  reftype)) {
-                if ( type == 0 ) {
-                    snprintf(refinfo2, sizeof(refinfo2)-1, "[Xref => %s%s]",  refstruct[b].s_refurl, url);
+            if ( tmp != NULL )
+                {
+                    strlcpy(reftype, tmp, sizeof(reftype));
+                }
+            else
+                {
+                    strlcpy(str, "", 1);
+                    return;
                 }
 
-                if ( type == 1 ) {
-                    snprintf(refinfo2, sizeof(refinfo2)-1, "Reference:%s%s\n", refstruct[b].s_refurl, url);
+            tmp  = strtok_r(NULL, ",", &tmptok);
+
+            if ( tmp != NULL )
+                {
+                    strlcpy(url, tmp, sizeof(url));
+                }
+            else
+                {
+                    strlcpy(str, "", 1);
+                    return;
                 }
 
-                strlcat(reftmp,  refinfo2,  sizeof(reftmp));
-            }
+
+            for ( b=0; b < counters->refcount; b++)
+                {
+
+                    if (!strcmp(refstruct[b].s_refid,  reftype))
+                        {
+                            if ( type == 0 )
+                                {
+                                    snprintf(refinfo2, sizeof(refinfo2)-1, "[Xref => %s%s]",  refstruct[b].s_refurl, url);
+                                }
+
+                            if ( type == 1 )
+                                {
+                                    snprintf(refinfo2, sizeof(refinfo2)-1, "Reference:%s%s\n", refstruct[b].s_refurl, url);
+                                }
+
+                            strlcat(reftmp,  refinfo2,  sizeof(reftmp));
+                        }
+                }
         }
-    }
 
     snprintf(str, size, "%s", reftmp);
 }

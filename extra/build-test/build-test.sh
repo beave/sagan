@@ -5,7 +5,8 @@
 # 
 # - Public release (06/28/2015) 
 
-#   07/05/2016 - Champ Clark - Replaced jsonc -> libfastjson
+#   2016/07/05 - Champ Clark - Replaced jsonc -> libfastjson
+#   2017/06/25 - Added "--enable-redis".
 
 # Champ Clark III 
 
@@ -19,11 +20,12 @@
 #  --enable-esmtp          Enable libesmtp support.  
 #  --enable-geoip2         Enable Maxmind GeoIP2 support.  
 #  --enable-system-strstr  Enable system strstr.  
+#  --enable-redis	   Enable redis support.
 
 
 STANDARD="--disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet"
-ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip2 --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson"
-NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --disable-system-strstr --disable-libfastjson"
+ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip2 --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson --enable-redis"
+NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --disable-system-strstr --disable-libfastjson --disable-redis"
 
 LOG="output.log" 
 
