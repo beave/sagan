@@ -48,22 +48,18 @@ void Redis_Connect ( void )
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     config->c_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
 
-    if (config->c_redis == NULL || config->c_redis->err)
-        {
+    if (config->c_redis == NULL || config->c_redis->err) {
 
-            if (config->c_redis)
-                {
+        if (config->c_redis) {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_redis->errstr);
-                    redisFree(config->c_redis);
+            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_redis->errstr);
+            redisFree(config->c_redis);
 
-                }
-            else
-                {
+        } else {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
-                }
+            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
         }
+    }
 
 }
 
