@@ -69,12 +69,16 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     int i;
     int a;
+    int j;
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
     redisReply *reply;
+    redisReply *reply_2;
+    redisReply *reply_3;
+
     char redis_tmp[256] = { 0 };
     char redis_command[256] = { 0 };
     char tmp[128] = { 0 };
@@ -98,24 +102,38 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     for (i = 0; i < rulestruct[rule_position].xbit_count; i++) {
 
-        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+        if ( rulestruct[rule_position].xbit_type[i] == 3 || rulestruct[rule_position].xbit_type[i] == 4 ) {
 
             strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
 
             if (Sagan_strstr(rulestruct[rule_position].xbit_name[i], "|")) {
+
                 tmp_xbit_name = strtok_r(tmp, "|", &tok);
                 and_or = true;
+
             } else {
+
                 tmp_xbit_name = strtok_r(tmp, "&", &tok);
                 and_or = false;
+
             }
 
             while (tmp_xbit_name != NULL ) {
 
+                /* direction: none */
+
+                if ( rulestruct[rule_position].xbit_direction[i] == 0 ) {
+
+                    {
+                        Sagan_Log(S_WARN, "[%s, line %d] Call for \"isset\" or \"isnotset\" xbit \"%s\" with Redis is not supported! \"unset\" needs an IP source or destination", __FILE__, __LINE__, tmp_xbit_name);
+                    }
+
+                }
+
 
                 /* direction: both - this is the easiest as we have all the data */
 
-                if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
+                else if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
 
 
                     if ( debug->debugxbit ) {
@@ -136,43 +154,42 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
                     }
 
-		    /* Not found */
+                    /* Not found */
 
-		    if ( reply->str == NULL ) 
-		       { 
+                    if ( reply->str == NULL ) {
 
-                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) 
-                            {
-                            
+                        /* isset == 3, isnotset == 4 */
+
+                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
                             if ( debug->debugxbit ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Not found - Condition of xbit returning TRUE", __FILE__, __LINE__);
                             }
 
-			    pthread_mutex_unlock(&RedisMutex);                            
+                            pthread_mutex_unlock(&RedisMutex);
                             return(false); /* isset */
-                        
+
                         } else {
-                            
+
                             if ( debug->debugxbit ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Not found - Condition of xbit returning FALSE", __FILE__, __LINE__);
                             }
 
-			    pthread_mutex_unlock(&RedisMutex);
+                            pthread_mutex_unlock(&RedisMutex);
                             return(true); /* isnotset */
                         }
 
-		    }
+                    }
 
-		    /* xbit was found and marked as "active" */
+                    /* xbit was found and marked as "active" */
 
                     if ( atoi(reply->str) == true ) {
 
                         pthread_mutex_unlock(&RedisMutex);
 
-			/* "isset" == 3, "isnotset" == 4 */
+                        /* "isset" == 3, "isnotset" == 4 */
 
-                        if ( rulestruct[rule_position].xbit_type[i] == 3 )
-			    {
+                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
 
                             if ( debug->debugxbit ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
@@ -194,6 +211,218 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                 }
 
+                /* direction: by_src */
+
+                else if ( rulestruct[rule_position].xbit_direction[i] == 2 )
+
+                {
+
+                    pthread_mutex_lock(&RedisMutex);
+
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_src_index %u %u", ip_src, ip_src);
+
+                    reply = redisCommand(config->c_redis, redis_command);
+
+                    if ( debug->debugredis ) {
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+                    }
+
+                    if ( reply->elements == 0 ) {
+
+                        if ( debug->debugxbit ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" or \"isnotset\" by \"ip_src\" returned NULL result from Redis.  Exit function", __FILE__, __LINE__);
+                        }
+
+                        /* "isset" == 3, "isnotset" == 4 */
+
+                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
+                            }
+
+                            pthread_mutex_unlock(&RedisMutex);
+                            return(false); /* isset */
+
+                        } else {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                            }
+
+                            pthread_mutex_unlock(&RedisMutex);
+                            return(true); /* isnotset */
+                        }
+
+                    }
+
+                    for (j = 0; j < reply->elements; j++) {
+
+                        snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
+
+                        reply_2 = redisCommand(config->c_redis, redis_command);
+
+                        if ( debug->debugredis ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_2->str);
+                        }
+
+                        if ( !strcmp(tmp_xbit_name, reply_2->str ) ) {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s' by 'ip_src' key %s. ", __FILE__, __LINE__, tmp_xbit_name, reply->element[j]->str);
+                            }
+
+                            /* We don't do anything for == 4,  because we need to search all
+                               xbits */
+
+                            if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(true); /* isset */
+
+                            } else {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(false); /* isset */
+
+                            }
+
+                        }
+
+                    }
+
+                    if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+                        if ( debug->debugxbit ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                        }
+
+                        pthread_mutex_unlock(&RedisMutex);
+                        return(true); /* isset */
+
+                        pthread_mutex_unlock(&RedisMutex);
+                    }
+                }
+
+                /* direction: by_dst */
+
+                else if ( rulestruct[rule_position].xbit_direction[i] == 3 )
+
+                {
+
+                    pthread_mutex_lock(&RedisMutex);
+
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_dst_index %u %u", ip_dst, ip_dst);
+
+                    reply = redisCommand(config->c_redis, redis_command);
+
+                    if ( debug->debugredis ) {
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+                    }
+
+                    if ( reply->elements == 0 ) {
+
+                        if ( debug->debugxbit ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" or \"isnotset\" by \"ip_dst\" returned NULL result from Redis.  Exit function", __FILE__, __LINE__);
+                        }
+
+                        /* "isset" == 3, "isnotset" == 4 */
+
+                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
+                            }
+
+                            pthread_mutex_unlock(&RedisMutex);
+                            return(false); /* isset */
+
+                        } else {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                            }
+
+                            pthread_mutex_unlock(&RedisMutex);
+                            return(true); /* isnotset */
+                        }
+
+                    }
+
+                    for (j = 0; j < reply->elements; j++) {
+
+                        snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
+
+                        reply_2 = redisCommand(config->c_redis, redis_command);
+
+                        if ( debug->debugredis ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_2->str);
+                        }
+
+                        if ( !strcmp(tmp_xbit_name, reply_2->str ) ) {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s' by 'ip_dst' key %s. ", __FILE__, __LINE__, tmp_xbit_name, reply->element[j]->str);
+                            }
+
+                            /* We don't do anything for == 4,  because we need to search all
+                               xbits */
+
+                            if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(true); /* isset */
+
+                            } else {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(false); /* isset */
+
+                            }
+
+                        }
+
+                    }
+
+                    if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+                        if ( debug->debugxbit ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
+                        }
+
+                        pthread_mutex_unlock(&RedisMutex);
+                        return(true); /* isset */
+
+                        pthread_mutex_unlock(&RedisMutex);
+                    }
+                }
+
+
+
+
+                /* Move to next || or && xbit */
+
+
                 if ( and_or == true ) {
                     tmp_xbit_name = strtok_r(NULL, "|", &tok);
                 } else {
@@ -205,25 +434,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
         }
 
     }
-
-    /* "isset" == 3, "isnotset" == 4 */
-
-    if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
-
-        if ( debug->debugxbit ) {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
-        }
-
-        return(true);		/* isset */
-
-    } else {
-
-        if ( debug->debugxbit ) {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
-        }
-        return(false);		/* isnotset */
-    }
-
 }
 
 
