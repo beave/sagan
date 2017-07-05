@@ -132,12 +132,11 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                 }
 
-
+                /*****************************************************************/
                 /* direction: both - this is the easiest as we have all the data */
+                /*****************************************************************/
 
                 else if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
-
-                    printf("|%d|\n", rulestruct[rule_position].xbit_condition_count);
 
                     if ( debug->debugxbit ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, tmp_xbit_name, ip_src_char, ip_dst_char);
@@ -157,36 +156,65 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
                     }
 
-
                     if ( reply->str != NULL ) {
 
-                        /* isset == 3, isnotset == 4 */
+                        /* isset == 3 */
 
                         if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
 
                             if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s'", __FILE__, __LINE__, tmp_xbit_name );
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s' for 'isset'.", __FILE__, __LINE__, tmp_xbit_name );
                             }
 
-                            if ( and_or == true ) {
+                            if ( and_or == true || rulestruct[rule_position].xbit_condition_count == 1 ) {
 
                                 if ( debug->debugxbit ) {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] OR set, returning...", __FILE__, __LINE__, tmp_xbit_name );
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] OR set, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
                                 }
 
+                                pthread_mutex_unlock(&RedisMutex);
                                 return(true);
-                            }
+
+                            } /* End of and_or == true ... */
 
                             xbit_total_match++;
 
-                        }
+                        } /* End of rulestruct[rule_position].xbit_type[i] == 3 */
 
-                    }
+                    } else {  /* End of reply->str != NULL */
+
+                        /* isnotset == 4 */
+
+                        if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Did not find xbit '%s' for 'isnotset'.", __FILE__, __LINE__, tmp_xbit_name );
+                            }
+
+                            if ( and_or == false || rulestruct[rule_position].xbit_condition_count == 1 ) {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(true);
+
+                            } /* Enf of and_or == false */
+
+                            xbit_total_match++;
+
+                        } /* End of rulestruct[rule_position].xbit_type[i] == 4 */
+
+                    } /* End of else reply->str != NULL */
 
                     pthread_mutex_unlock(&RedisMutex);
-                }
 
+                } /* End of if (rulestruct[rule_position].xbit_direction[i] == 1 )
+
+		/*********************/
                 /* direction: by_src */
+                /*********************/
 
                 else if ( rulestruct[rule_position].xbit_direction[i] == 2 )
 
