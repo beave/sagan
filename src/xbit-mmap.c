@@ -762,7 +762,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_cha
     /* isset/isnotset failed. */
 
     if ( debug->debugxbit) {
-        Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
+        Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d matches.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
     }
 
     return(false);

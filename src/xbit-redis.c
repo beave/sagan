@@ -71,6 +71,8 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
     int a;
     int j;
 
+    int xbit_total_match = 0;
+
     time_t t;
     struct tm *now;
     char  timet[20];
@@ -144,7 +146,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                     snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
                     djb2_hash = Djb2_Hash(redis_tmp);
 
-                    snprintf(redis_command, sizeof(redis_command), "HGET %u active", djb2_hash);
+                    snprintf(redis_command, sizeof(redis_command), "HGET %u name", djb2_hash);
 
                     pthread_mutex_lock(&RedisMutex);
 
@@ -155,61 +157,33 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
                     }
 
-                    /* Not found */
 
-                    if ( reply->str == NULL ) {
+                    if ( reply->str != NULL ) {
 
                         /* isset == 3, isnotset == 4 */
 
                         if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
 
                             if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Not found - Condition of xbit returning TRUE", __FILE__, __LINE__);
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s'", __FILE__, __LINE__, tmp_xbit_name );
                             }
 
-                            pthread_mutex_unlock(&RedisMutex);
-                            return(false); /* isset */
+                            if ( and_or == true ) {
 
-                        } else {
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] OR set, returning...", __FILE__, __LINE__, tmp_xbit_name );
+                                }
 
-                            if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Not found - Condition of xbit returning FALSE", __FILE__, __LINE__);
+                                return(true);
                             }
 
-                            pthread_mutex_unlock(&RedisMutex);
-                            return(true); /* isnotset */
-                        }
+                            xbit_total_match++;
 
-                    }
-
-                    /* xbit was found and marked as "active" */
-
-                    if ( atoi(reply->str) == true ) {
-
-                        pthread_mutex_unlock(&RedisMutex);
-
-                        /* "isset" == 3, "isnotset" == 4 */
-
-                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
-
-                            if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE", __FILE__, __LINE__);
-                            }
-
-                            return(true); /* isset */
-
-                        } else {
-
-                            if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
-                            }
-                            return(false); /* isnotset */
                         }
 
                     }
 
                     pthread_mutex_unlock(&RedisMutex);
-
                 }
 
                 /* direction: by_src */
@@ -240,7 +214,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                         if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
 
                             if ( debug->debugxbit ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE", __FILE__, __LINE__);
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE.", __FILE__, __LINE__);
                             }
 
                             pthread_mutex_unlock(&RedisMutex);
@@ -419,8 +393,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                 }
 
 
-
-
                 /* Move to next || or && xbit */
 
 
@@ -435,7 +407,34 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
         }
 
     }
-}
+
+    /* IF we match all criteria for isset/isnotset
+     *
+     * If we match the xbit_conditon_count (number of concurrent xbits)
+     * we trigger.  It it's an "or" statement,  we trigger if any of the
+     * xbits are set.
+     *
+     */
+
+    if ( ( rulestruct[rule_position].xbit_condition_count == xbit_total_match ) || ( and_or == true && xbit_total_match != 0 ) ) {
+
+        if ( debug->debugxbit) {
+            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
+        }
+
+        return(true);
+    }
+
+    /* isset/isnotset failed. */
+
+    if ( debug->debugxbit) {
+        Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
+    }
+
+    return(false);
+
+} /* End of Xbit_Condition_Redis */
+
 
 
 void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
