@@ -61,6 +61,8 @@ pthread_mutex_t RedisMutex;
 	 src/dst do not need to be part of the HMSET.
          Do we event need "active" in HMSET?
 
+	 This code does not currently using password.
+
  ****************************************************************/
 
 /*****************************************************************************
