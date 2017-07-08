@@ -98,6 +98,9 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     int and_or = false;
 
+    char *src_or_dst = NULL;
+    char *src_or_dst_type = NULL;
+
     if ( debug->debugredis ) {
         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Condition", __FILE__, __LINE__);
     }
@@ -191,7 +194,9 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Did not find xbit '%s' for 'isnotset'.", __FILE__, __LINE__, tmp_xbit_name );
                             }
 
-                            if ( and_or == false || rulestruct[rule_position].xbit_condition_count == 1 ) {
+                            /* has ands */
+
+                            if ( and_or == false ) { // || rulestruct[rule_position].xbit_condition_count == 1 ) {
 
                                 if ( debug->debugxbit ) {
                                     Sagan_Log(S_DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
@@ -212,6 +217,152 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                 } /* End of if (rulestruct[rule_position].xbit_direction[i] == 1 || both ) */
 
+                /*******************************/
+                /* direction: by_src || by_dst */
+                /*******************************/
+
+                if ( rulestruct[rule_position].xbit_direction[i] == 2 ||
+                     rulestruct[rule_position].xbit_direction[i] == 3 ) {
+
+                    if ( rulestruct[rule_position].xbit_direction[i] == 2 ) {
+
+                        src_or_dst = "xbit_src_index";
+                        src_or_dst_type = "ip_src";
+
+                    } else {
+
+                        src_or_dst = "xbit_dst_index";
+                        src_or_dst_type = "ip_dst";
+
+                    }
+
+                    pthread_mutex_lock(&RedisMutex);
+
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE %s %u %u", src_or_dst, ip_src, ip_src);
+                    reply = redisCommand(config->c_redis, redis_command);
+
+                    if ( debug->debugredis ) {
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+                    }
+
+
+                    /**************************************************************/
+                    /* If nothing is found,  we can stop a lot of processing here.*/
+                    /**************************************************************/
+
+                    if ( reply->elements == 0 ) {
+
+                        /* isset - If nothing is found,  no need to continue */
+
+                        if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                            if ( debug->debugxbit ) {
+
+                                Sagan_Log(S_DEBUG, "[%s, line %d] No xbits found, returning FALSE", __FILE__, __LINE__ );
+                            }
+
+                            pthread_mutex_unlock(&RedisMutex);
+                            return(false);
+
+                        }
+
+                        /* isnotset */
+
+                        else if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+                            /* If we are looking for flowbit1&flowbit2 and flowbit1 is
+                               not set,  we can short circuit now */
+
+                            if ( and_or == false ) {
+
+                                if ( debug->debugxbit ) {
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] '&' found in xbit set. Returning TRUE", __FILE__, __LINE__ );
+                                }
+
+                                pthread_mutex_unlock(&RedisMutex);
+                                return(true); /* isnotset */
+
+                            }
+                        }
+
+                    } /* if ( reply->elements == 0 ) */
+
+                    /* If we've made it here,  we have data/xbits to deal with.  We start
+                       pulling records to compare if it's what we need */
+
+                    for (j = 0; j < reply->elements; j++) {
+
+                        snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
+                        reply_2 = redisCommand(config->c_redis, redis_command);
+
+                        if ( debug->debugredis ) {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_2->str);
+                        }
+
+
+                        /* Does the flowbit in the rule match what's in redis? */
+
+                        if ( !strcmp(tmp_xbit_name, reply_2->str ) ) {
+
+                            /* Got a xbit rule and xbit redis match */
+
+                            if ( debug->debugxbit ) {
+                                Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s' by '%s' key %s. ", __FILE__, __LINE__, tmp_xbit_name, src_or_dst_type, reply->element[j]->str);
+                            }
+
+                            /* If "isset" ....  */
+
+                            if ( rulestruct[rule_position].xbit_type[i] == 3 ) {
+
+                                /* And the rule has a |, we can go ahead an return true */
+
+                                if ( and_or == true ) {
+
+                                    if ( debug->debugxbit ) {
+                                        Sagan_Log(S_DEBUG, "[%s, line %d] | set, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
+                                    }
+
+                                    pthread_mutex_unlock(&RedisMutex);
+                                    return(true); /* isset */
+                                }
+
+                                /* No | is present ; increment counter */
+
+                                xbit_total_match++;
+
+                            }
+
+                            /* if "isnotset" .... */
+
+                            else if ( rulestruct[rule_position].xbit_type[i] == 4 ) {
+
+                                /* And the rule has a &, we can go ahead and return false */
+
+                                if ( and_or == false ) {
+
+                                    if ( debug->debugxbit ) {
+                                        Sagan_Log(S_DEBUG, "[%s, line %d] '&' found in xbit set. Returning FALSE", __FILE__, __LINE__ );
+                                    }
+
+                                    pthread_mutex_unlock(&RedisMutex);
+                                    return(false); /* isset */
+                                }
+
+                                /* No & is present ; increment counter */
+
+                                xbit_total_match++;
+                            }
+
+                        } /* if ( !strcmp(tmp_xbit_name, reply_2->str ) */
+
+                    } /* for (j = 0; j < reply->elements; j++ */
+
+                    pthread_mutex_unlock(&RedisMutex);
+
+                } /* rulestruct[rule_position].xbit_direction[i] == 2 || 3 */
+
 
                 if ( and_or == true ) {
                     tmp_xbit_name = strtok_r(NULL, "|", &tok);
@@ -220,7 +371,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                 }
 
             } /* while (tmp_xbit_name != NULL */
-        } /* rulestruct[rule_position].xbit_type[i] == 3 | 4 */ 
+        } /* rulestruct[rule_position].xbit_type[i] == 3 | 4 */
     } /* for (i = 0; .... */
 
     /* IF we match all criteria for isset/isnotset
@@ -248,8 +399,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     return(false);
 
-} /* End of Xbit_Condition_Redis */
-
+}
 
 
 void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
