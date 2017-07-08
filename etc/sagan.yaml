@@ -153,7 +153,6 @@ sagan-core:
     enabled: yes
     server: 127.0.0.1
     port: 6379
-    username: "redis"
     password: "password"
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
