@@ -62,6 +62,7 @@ pthread_mutex_t RedisMutex;
          Do we event need "active" in HMSET?
 
 	 This code does not currently using password.
+	 Needs to NOT open mmap xbit file if redis in use
 
  ****************************************************************/
 
