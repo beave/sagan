@@ -64,6 +64,7 @@ pthread_mutex_t RedisMutex;
 	 This code does not currently using password.
 	 Needs to NOT open mmap xbit file if redis in use
 	 "xbit-storage" option in yaml doesnt appear to ne used!
+         How to deal with ZADD to index? Manually delete? ignore?
 
  ****************************************************************/
 
