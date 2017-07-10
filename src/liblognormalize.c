@@ -221,7 +221,7 @@ void Normalize_Liblognorm(char *syslog_msg)
     }
 
 
-    json_object_object_get_ex(json, "ash-md5", &string_obj);
+    json_object_object_get_ex(json, "hash-md5", &string_obj);
     tmp = json_object_get_string(string_obj);
 
     if ( tmp != NULL ) {
