@@ -208,6 +208,13 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
+#ifdef HAVE_LIBHIREDIS
+
+        config->redis_password[0] = '\0';
+
+#endif
+
+
     }
 
     if (stat(config->sagan_config, &filecheck) != false ) {
@@ -429,7 +436,7 @@ void Load_YAML_Config( char *yaml_file )
                     sub_type = YAML_SAGAN_CORE_CORE;
                 }
 
-                else if (!strcmp(value, "redis" )) {
+                else if (!strcmp(value, "redis-server" )) {
                     sub_type = YAML_SAGAN_CORE_REDIS;
                 }
 
@@ -456,6 +463,9 @@ void Load_YAML_Config( char *yaml_file )
                 /* Enter sub-types */
 
                 if ( sub_type == YAML_SAGAN_CORE_CORE ) {
+
+                    printf("|%s|\n", last_pass);
+
 
                     if (!strcmp(last_pass, "sensor-name")) {
                         strlcpy(config->sagan_sensor_name, value, sizeof(config->sagan_sensor_name));
@@ -585,11 +595,11 @@ void Load_YAML_Config( char *yaml_file )
 
                         if (!strcmp(tmp, "redis")) {
 
-                            config->xbit_storage = 1;
+                            config->xbit_storage = XBIT_STORAGE_REDIS;
 
                         } else {
 
-                            config->xbit_storage = 0;
+                            config->xbit_storage = XBIT_STORAGE_MMAP;
 
                         }
                     }
@@ -754,13 +764,6 @@ void Load_YAML_Config( char *yaml_file )
                             if ( config->redis_port == 0 ) {
                                 Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
                             }
-                        }
-
-                        if (!strcmp(last_pass, "username")) {
-
-                            Var_To_Value(value, tmp, sizeof(tmp));
-                            strlcpy(config->redis_username, tmp, sizeof(config->redis_username));
-
                         }
 
                         if (!strcmp(last_pass, "password")) {

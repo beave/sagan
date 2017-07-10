@@ -135,11 +135,11 @@ sagan-core:
     source-lookup: disabled		
     fifo-size: 1048576		# System must support F_GETPIPE_SZ/F_SETPIPE_SZ. 
     max-threads: 100
+    xbit-storage: mmap		# xbit storage engine. ("mmap" or "redis")
     classification: "$RULE_PATH/classification.config"
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    xbit-storage: mmap          # mmap or redis
 
   # Experimental Code!!!
   #
@@ -148,12 +148,12 @@ sagan-core:
   # Redis configuration.  Redis can be used to act as a global storage 
   # engine for things like xbits. 
 
-  redis:
+  redis-server:
 
     enabled: yes
     server: 127.0.0.1
     port: 6379
-    password: "password"
+    password: "mypassword"  # Comment out to disable authentication.
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after

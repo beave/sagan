@@ -55,15 +55,11 @@ pthread_mutex_t RedisMutex;
  ready.  This is to test the functionality of using Redis as a
  backend to store "xbits" (making them "global" xbits.
 
- NOTES:  Need some debugging for "--debug xbit" in here as well.
-         Would likely want to deploy a thread pool for Redis ?
+ NOTES:  Would likely want to deploy a thread pool for Redis ?
 
 	 src/dst do not need to be part of the HMSET.
          Do we event need "active" in HMSET?
 
-	 This code does not currently using password.
-	 Needs to NOT open mmap xbit file if redis in use
-	 "xbit-storage" option in yaml doesnt appear to ne used!
          How to deal with ZADD to index? Manually delete? ignore?
 
  ****************************************************************/

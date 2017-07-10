@@ -174,10 +174,7 @@ struct _SaganConfig {
     sbool 	redis_flag;
     char	redis_server[255];
     int		redis_port;
-    char 	redis_username[64];
     char	redis_password[255];
-//    int		redis_write_threads;
-//    int		redis_read_threads;
 #endif
 
     /* libesmtp/SMTP support */

@@ -830,16 +830,33 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBHIREDIS
 
-    if ( config->redis_flag ) {
+    /* Right now,  Redis is only used for xbit storage */
+
+    if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS ) {
 
         Redis_Connect();
+
+        if ( config->redis_password[0] != '\0' ) {
+
+            pthread_mutex_lock(&RedisMutex);
+            reply = redisCommand(config->c_redis, "AUTH %s", config->redis_password);
+            pthread_mutex_unlock(&RedisMutex);
+
+            if (!strcmp(reply->str, "OK")) {
+                Sagan_Log(S_NORMAL, "Authentication success to Redis server at %s:%d.", config->redis_server, config->redis_port);
+            } else {
+
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "Authentication failure to Redis server at %s:%d. Abort!", config->redis_server, config->redis_port);
+            }
+        }
 
         pthread_mutex_lock(&RedisMutex);
         reply = redisCommand(config->c_redis, "PING");
         pthread_mutex_unlock(&RedisMutex);
 
         if (!strcmp(reply->str, "PONG")) {
-            Sagan_Log(S_NORMAL, "Connected to Redis at %s:%d!", config->redis_server, config->redis_port);
+            Sagan_Log(S_NORMAL, "Got PONG from Redis at %s:%d.", config->redis_server, config->redis_port);
         }
 
         freeReplyObject(reply);

@@ -794,7 +794,7 @@ sbool Clean_IPC_Object( int type )
 
     /* Xbit_IPC */
 
-    else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count ) {
+    else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count && config->xbit_storage == XBIT_STORAGE_MMAP ) {
 
         t = time(NULL);
         now=localtime(&t);
@@ -935,59 +935,67 @@ void IPC_Init(void)
         Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
     }
 
-    /* Xbit memory object */
+    /* Xbit memory object - File based mmap() */
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
+    if ( config->xbit_storage == XBIT_STORAGE_MMAP ) {
 
-    IPC_Check_Object(tmp_object_check, new_counters, "xbit");
+        snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
 
-    if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
-        Sagan_Log(S_NORMAL, "+ Xbit shared object (new).");
-        new_object=1;
-    }
+        IPC_Check_Object(tmp_object_check, new_counters, "xbit");
 
-    else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
-    }
-
-    if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
-    }
-
-    if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
-    }
-
-    if ( new_object == 0) {
-        Sagan_Log(S_NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
-    }
-
-    new_object = 0;
-
-    if ( debug->debugipc && counters_ipc->xbit_count >= 1 ) {
-
-        Sagan_Log(S_DEBUG, "");
-        Sagan_Log(S_DEBUG, "*** Xbits ***");
-        Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-        Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
-
-
-        for (i= 0; i < counters_ipc->xbit_count; i++ ) {
-
-            ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
-            ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
-
-            if ( xbit_ipc[i].xbit_state == 1 ) {
-
-                u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
-
-                Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), time_buf, xbit_ipc[i].expire );
-            }
-
+        if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 ) {
+            Sagan_Log(S_NORMAL, "+ Xbit shared object (new).");
+            new_object=1;
         }
-        Sagan_Log(S_DEBUG, "");
+
+        else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+        }
+
+        if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+        if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED ) {
+            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+        if ( new_object == 0) {
+            Sagan_Log(S_NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
+        }
+
+        new_object = 0;
+
+        if ( debug->debugipc && counters_ipc->xbit_count >= 1 ) {
+
+            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(S_DEBUG, "*** Xbits ***");
+            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
+
+
+            for (i= 0; i < counters_ipc->xbit_count; i++ ) {
+
+                ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
+                ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
+
+                if ( xbit_ipc[i].xbit_state == 1 ) {
+
+                    u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
+
+                    Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), time_buf, xbit_ipc[i].expire );
+                }
+
+            }
+            Sagan_Log(S_DEBUG, "");
+        }
+    } else {  /* if ( config->xbit_storage == XBIT_STORAGE_MMAP ) */
+
+        Sagan_Log(S_NORMAL, "- Xbit shared object (Objects stored in Redis)");
+
     }
+
 
     /* Threshold by source */
 
