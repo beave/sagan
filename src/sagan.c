@@ -104,7 +104,14 @@ struct _SaganDebug *debug;
 #ifdef HAVE_LIBHIREDIS
 #include <hiredis/hiredis.h>
 #include "redis.h"
+
 pthread_mutex_t RedisMutex=PTHREAD_MUTEX_INITIALIZER;
+
+//int redis_msgslot = 0;
+//pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
+//pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+
+
 #endif
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
@@ -589,6 +596,17 @@ int main(int argc, char **argv)
     pthread_attr_init(&thread_processor_attr);
     pthread_attr_setdetachstate(&thread_processor_attr,  PTHREAD_CREATE_DETACHED);
 
+#ifdef HAVE_LIBHIREDIS
+
+    /* Redis "writer" threads */
+
+    pthread_t redis_writer_processor_id[config->redis_max_writer_threads];
+    pthread_attr_t redis_writer_thread_processor_attr;
+    pthread_attr_init(&redis_writer_thread_processor_attr);
+    pthread_attr_setdetachstate(&redis_writer_thread_processor_attr,  PTHREAD_CREATE_DETACHED);
+
+#endif
+
     Sagan_Log(S_NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
     Sagan_Log(S_NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->xbit_total_counter);
     Sagan_Log(S_NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
@@ -834,29 +852,30 @@ int main(int argc, char **argv)
 
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS ) {
 
-        Redis_Connect();
+        Redis_Writer_Init();
+        Redis_Reader_Connect();
 
         if ( config->redis_password[0] != '\0' ) {
 
             pthread_mutex_lock(&RedisMutex);
-            reply = redisCommand(config->c_redis, "AUTH %s", config->redis_password);
+            reply = redisCommand(config->c_reader_redis, "AUTH %s", config->redis_password);
             pthread_mutex_unlock(&RedisMutex);
 
             if (!strcmp(reply->str, "OK")) {
-                Sagan_Log(S_NORMAL, "Authentication success to Redis server at %s:%d.", config->redis_server, config->redis_port);
+                Sagan_Log(S_NORMAL, "Authentication success for 'reader' to Redis server at %s:%d.", config->redis_server, config->redis_port);
             } else {
 
                 Remove_Lock_File();
-                Sagan_Log(S_ERROR, "Authentication failure to Redis server at %s:%d. Abort!", config->redis_server, config->redis_port);
+                Sagan_Log(S_ERROR, "Authentication failure for 'reader' to Redis server at %s:%d. Abort!", config->redis_server, config->redis_port);
             }
         }
 
         pthread_mutex_lock(&RedisMutex);
-        reply = redisCommand(config->c_redis, "PING");
+        reply = redisCommand(config->c_reader_redis, "PING");
         pthread_mutex_unlock(&RedisMutex);
 
         if (!strcmp(reply->str, "PONG")) {
-            Sagan_Log(S_NORMAL, "Got PONG from Redis at %s:%d.", config->redis_server, config->redis_port);
+            Sagan_Log(S_NORMAL, "Got 'reader' PONG from Redis at %s:%d.", config->redis_server, config->redis_port);
         }
 
         freeReplyObject(reply);
@@ -879,6 +898,27 @@ int main(int argc, char **argv)
 
         }
     }
+
+#ifdef HAVE_LIBHIREDIS
+
+    if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS ) {
+
+        Sagan_Log(S_NORMAL, "Spawning %d Redis Writer Threads.", config->redis_max_writer_threads);
+
+        for (i = 0; i < config->redis_max_writer_threads; i++) {
+
+            rc = pthread_create ( &redis_writer_processor_id[i], &redis_writer_thread_processor_attr, (void *)Redis_Writer, NULL );
+
+            if ( rc != 0 ) {
+
+                Remove_Lock_File();
+                Sagan_Log(S_ERROR, "Could not pthread_create() for I/O redis writers [error: %d]", rc);
+
+            }
+        }
+    }
+
+#endif
 
     Sagan_Log(S_NORMAL, "");
 
@@ -1218,7 +1258,7 @@ int main(int argc, char **argv)
                 }
 
                 if (debug->debugthreads) {
-                    Sagan_Log(S_DEBUG, "Current \"proc_msgslot\": %d", proc_msgslot);
+                    Sagan_Log(S_DEBUG, "[%s, line %d] Current \"proc_msgslot\": %d", __FILE__, __LINE__, proc_msgslot);
                 }
 
                 if (debug->debugsyslog) {

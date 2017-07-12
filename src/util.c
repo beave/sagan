@@ -937,7 +937,7 @@ void Bit2IP(uint32_t ip_u32, char *str, size_t size)
  * Compute netmask address given prefix
  ****************************************/
 
-in_addr_t Netmask( int prefix )
+static in_addr_t Netmask( int prefix )
 {
 
     if ( prefix == 0 || prefix == 32 )
@@ -952,7 +952,7 @@ in_addr_t Netmask( int prefix )
  * Compute broadcast address given address and prefix
  ******************************************************/
 
-in_addr_t Broadcast( in_addr_t addr, int prefix )
+static in_addr_t Broadcast( in_addr_t addr, int prefix )
 {
 
     return( addr | ~Netmask(prefix) );
@@ -964,7 +964,7 @@ in_addr_t Broadcast( in_addr_t addr, int prefix )
  * Compute network address given address and prefix
  ****************************************************/
 
-in_addr_t Network( in_addr_t addr, int prefix )
+static in_addr_t Network( in_addr_t addr, int prefix )
 {
 
     return( addr & Netmask(prefix) );
@@ -975,7 +975,7 @@ in_addr_t Network( in_addr_t addr, int prefix )
  * Convert an A.B.C.D address into a 32-bit host-order value
  *************************************************************/
 
-in_addr_t A_To_Hl( char *ipstr )
+static in_addr_t A_To_Hl( char *ipstr )
 {
 
     struct in_addr in;
@@ -993,7 +993,7 @@ in_addr_t A_To_Hl( char *ipstr )
  * address and an integer prefix value
  *******************************************************************/
 
-network_addr_t Str_To_Netaddr( char *ipstr )
+static network_addr_t Str_To_Netaddr( char *ipstr )
 {
 
     long int prefix = 32;

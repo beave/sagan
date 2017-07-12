@@ -38,22 +38,35 @@
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-pthread_mutex_t RedisMutex;
+int redis_msgslot;
 
-void Redis_Connect ( void )
+pthread_cond_t SaganRedisDoWork;
+pthread_mutex_t SaganRedisWorkMutex;
+
+struct _Sagan_Redis *SaganRedis = NULL;
+
+void Redis_Writer_Init ( void )
+{
+
+    SaganRedis = malloc(config->redis_max_writer_threads * sizeof(struct _Sagan_Redis));
+
+}
+
+
+void Redis_Reader_Connect ( void )
 {
 
     redisReply *reply;
 
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
-    config->c_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
+    config->c_reader_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
 
-    if (config->c_redis == NULL || config->c_redis->err) {
+    if (config->c_reader_redis == NULL || config->c_reader_redis->err) {
 
-        if (config->c_redis) {
+        if (config->c_reader_redis) {
 
-            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_redis->errstr);
-            redisFree(config->c_redis);
+            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_reader_redis->errstr);
+            redisFree(config->c_reader_redis);
 
         } else {
 
@@ -63,45 +76,102 @@ void Redis_Connect ( void )
 
 }
 
-/*
-
-void Redis_Command ( char *redis_command, char *str, size_t size )
+void Redis_Writer ( void )
 {
 
     redisReply *reply;
+    redisContext *c_writer_redis;
 
-    if ( debug->debugredis )
-        {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+    char *tok = NULL;
+    char *split_redis_command = NULL;
+    char tmp_redis_command[2048] = { 0 };
+    char tmp_reply[8] = { 0 };
+
+    struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+    c_writer_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
+
+    if (c_writer_redis == NULL || c_writer_redis->err) {
+
+        if (c_writer_redis) {
+
+            redisFree(c_writer_redis);
+            Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - %s. Abort!", __FILE__, __LINE__, c_writer_redis->errstr);
+
+        } else {
+
+            Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - Can't allocate Redis context", __FILE__, __LINE__);
+
+        }
+    }
+
+    /******************/
+    /* Log into Redis */
+    /******************/
+
+    if ( config->redis_password[0] != '\0' ) {
+
+        reply = redisCommand(c_writer_redis, "AUTH %s", config->redis_password);
+
+        if (!strcmp(reply->str, "OK")) {
+
+            if ( debug->debugredis ) {
+
+                Sagan_Log( S_DEBUG, "Authentication success for 'writer' to Redis server at %s:%d (pthread ID: %lu).", config->redis_server, config->redis_port, pthread_self() );
+
+            }
+
+        } else {
+
+            Remove_Lock_File();
+            Sagan_Log(S_ERROR, "Authentication failure for 'writer' to to Redis server at %s:%d (pthread ID: %lu). Abort!", config->redis_server, config->redis_port, pthread_self() );
+
+        }
+    }
+
+    for (;;) {
+
+        pthread_mutex_lock(&SaganRedisWorkMutex);
+
+        while ( redis_msgslot == 0 ) pthread_cond_wait(&SaganRedisDoWork, &SaganRedisWorkMutex);
+
+        redis_msgslot--;
+
+        strlcpy(tmp_redis_command, SaganRedis[redis_msgslot].redis_command, sizeof(tmp_redis_command));
+
+        pthread_mutex_unlock(&SaganRedisWorkMutex);
+
+        if ( debug->debugredis ) {
+
+            Sagan_Log(S_DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
         }
 
-    pthread_mutex_lock(&RedisMutex);
-    reply = redisCommand(config->c_redis, redis_command);
-    memcpy(redis_reply, reply, sizeof(reply));
-    pthread_mutex_unlock(&RedisMutex);
+        split_redis_command = strtok_r(tmp_redis_command, ";", &tok);
+
+        while ( split_redis_command != NULL ) {
+
+            if ( debug->debugredis ) {
+
+                Sagan_Log(S_DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
+
+            }
+
+            reply = redisCommand(c_writer_redis, split_redis_command);
+
+            if ( debug->debugredis ) {
+
+                Sagan_Log(S_DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
 
 
-    /* This is a pretty simple function.  We can only return one element back from a
-     * redis command at this time.   If the reply->elements is > than 0,  we only return
-     * the first element */
-/*
-    if ( reply->elements == 0 )
-	{
-        snprintf(str, size, "%s", reply->str);
-	} else {
-	snprintf(str, size, "%s", reply->element[0]->str);
-	}
+            }
 
-    if ( debug->debugredis )
-        {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, str);
+            freeReplyObject(reply);
+
+
+            split_redis_command = strtok_r(NULL, ";", &tok);
         }
 
-    freeReplyObject(reply);
-    return(redis_reply);
+    }
 
 }
-*/
-
 
 #endif

@@ -22,7 +22,10 @@
 
 #include <hiredis/hiredis.h>
 
-void Redis_Connect ( void );
+void Redis_Reader_Connect ( void );
+void Redis_Writer (void);
+void Redis_Writer_Init (void);
+
 //void Redis_Command ( char *redis_command, char *str, size_t size );
 
 #endif

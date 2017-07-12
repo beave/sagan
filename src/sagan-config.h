@@ -170,11 +170,17 @@ struct _SaganConfig {
     /* Redis/hiredis support */
 
 #ifdef HAVE_LIBHIREDIS
-    redisContext *c_redis;
+
+    redisContext *c_reader_redis;
+//    redisContext *c_writer_redis[MAX_THREADS];
+
     sbool 	redis_flag;
     char	redis_server[255];
     int		redis_port;
     char	redis_password[255];
+
+    int		redis_max_writer_threads;
+
 #endif
 
     /* libesmtp/SMTP support */

@@ -43,8 +43,17 @@
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
+struct _SaganCounters *counters;
+
+pthread_mutex_t RedisWriterCounterMutex=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t RedisMutex;
+
+int redis_msgslot = 0;
+pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
+pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+
+struct _Sagan_Redis *SaganRedis;
 
 /****************************************************************
    README * README * README * README * README * README * README
@@ -170,7 +179,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                     pthread_mutex_lock(&RedisMutex);
 
-                    reply = redisCommand(config->c_redis, redis_command);
+                    reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -272,7 +281,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                     /* Look for the source or destination in our "index" */
 
                     snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE %s %u %u", src_or_dst, ip_src, ip_src);
-                    reply = redisCommand(config->c_redis, redis_command);
+                    reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -330,7 +339,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                     for (j = 0; j < reply->elements; j++) {
 
                         snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
-                        reply_2 = redisCommand(config->c_redis, redis_command);
+                        reply_2 = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -497,50 +506,39 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                 snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
                 djb2_hash = Djb2_Hash(redis_tmp);
 
-                /* Insert the array from SET */
+                if ( redis_msgslot < config->redis_max_writer_threads ) {
 
-                pthread_mutex_lock(&RedisMutex);
+                    pthread_mutex_lock(&SaganRedisWorkMutex);
 
-                snprintf(redis_command, sizeof(redis_command), "HMSET %u active 1 name %s src_ip %u dst_ip %u timestamp %s expire %d sensor %s", djb2_hash, tmp_xbit_name, ip_src, ip_dst,  timet, rulestruct[rule_position].xbit_timeout[i], config->sagan_sensor_name);
+                    snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
-                reply = redisCommand(config->c_redis, redis_command);
+                             "HMSET %u active 1 name %s src_ip %u dst_ip %u timestamp %s expire %d sensor %s;"
+                             "EXPIRE %u %d;"
+                             "ZADD xbit_src_index %u %u;"
+                             "ZADD xbit_dst_index %u %u;",
 
-                if ( debug->debugredis ) {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+                             djb2_hash, tmp_xbit_name, ip_src, ip_dst,  timet, rulestruct[rule_position].xbit_timeout[i],
+                             config->sagan_sensor_name,
+
+                             djb2_hash, rulestruct[rule_position].xbit_timeout[i],
+
+                             ip_src, djb2_hash,
+                             ip_dst, djb2_hash );
+
+                    redis_msgslot++;
+
+                    pthread_cond_signal(&SaganRedisDoWork);
+                    pthread_mutex_unlock(&SaganRedisWorkMutex);
+
+                } else {
+
+                    Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'set'.  Skipping!");
+
+                    pthread_mutex_lock(&RedisWriterCounterMutex);
+                    counters->redis_writer_threads_drop++;
+                    pthread_mutex_unlock(&RedisWriterCounterMutex);
+
                 }
-
-                snprintf(redis_command, sizeof(redis_command), "EXPIRE %u %d", djb2_hash, rulestruct[rule_position].xbit_timeout[i]);
-
-                reply = redisCommand(config->c_redis, redis_command);
-
-                if ( debug->debugredis ) {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                }
-
-                /* Insert source/destination in our index */
-
-                snprintf(redis_command, sizeof(redis_command), "ZADD xbit_src_index %u %u", ip_src, djb2_hash);
-
-                reply = redisCommand(config->c_redis, redis_command);
-
-                if ( debug->debugredis ) {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                }
-
-                snprintf(redis_command, sizeof(redis_command), "ZADD xbit_dst_index %u %u", ip_dst, djb2_hash);
-
-                reply = redisCommand(config->c_redis, redis_command);
-
-                if ( debug->debugredis ) {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                }
-
-                pthread_mutex_unlock(&RedisMutex);
-
 
                 tmp_xbit_name = strtok_r(NULL, "&", &tok);
             }
@@ -579,7 +577,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     snprintf(redis_command, sizeof(redis_command), "HMGET %u active", djb2_hash);
 
-                    reply = redisCommand(config->c_redis, redis_command);
+                    reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -592,7 +590,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         snprintf(redis_command, sizeof(redis_command), "ZREMRANGEBYSCORE xbit_src_index %u %u", ip_src, ip_src);
 
-                        reply = redisCommand(config->c_redis, redis_command);
+                        reply = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -601,7 +599,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         snprintf(redis_command, sizeof(redis_command), "ZREMRANGEBYSCORE xbit_dst_index %u %u", ip_dst, ip_dst);
 
-                        reply = redisCommand(config->c_redis, redis_command);
+                        reply = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -610,7 +608,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         snprintf(redis_command, sizeof(redis_command), "DEL %u", djb2_hash);
 
-                        reply = redisCommand(config->c_redis, redis_command);
+                        reply = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -632,7 +630,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_src_index %u %u", ip_src, ip_src);
 
-                    reply = redisCommand(config->c_redis, redis_command);
+                    reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -654,7 +652,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
 
-                        reply_2 = redisCommand(config->c_redis, redis_command);
+                        reply_2 = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -669,7 +667,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "ZREM xbit_src_index %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -678,7 +676,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "ZREM xbit_dst_index %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -687,7 +685,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "DEL %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -710,7 +708,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_dst_index %u %u", ip_dst, ip_dst);
 
-                    reply = redisCommand(config->c_redis, redis_command);
+                    reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
                         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -732,7 +730,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                         snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
 
-                        reply_2 = redisCommand(config->c_redis, redis_command);
+                        reply_2 = redisCommand(config->c_reader_redis, redis_command);
 
                         if ( debug->debugredis ) {
                             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -747,7 +745,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "ZREM xbit_src_index %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -756,7 +754,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "ZREM xbit_dst_index %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -765,7 +763,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             snprintf(redis_command, sizeof(redis_command), "DEL %s", reply->element[j]->str );
 
-                            reply_3 = redisCommand(config->c_redis, redis_command);
+                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
 
                             if ( debug->debugredis ) {
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);

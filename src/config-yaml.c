@@ -210,7 +210,10 @@ void Load_YAML_Config( char *yaml_file )
 
 #ifdef HAVE_LIBHIREDIS
 
+#define DEFAULT_REDIS_MAX_WRITER_THREADS 10
+
         config->redis_password[0] = '\0';
+        config->redis_max_writer_threads = DEFAULT_REDIS_MAX_WRITER_THREADS;
 
 #endif
 
@@ -463,9 +466,6 @@ void Load_YAML_Config( char *yaml_file )
                 /* Enter sub-types */
 
                 if ( sub_type == YAML_SAGAN_CORE_CORE ) {
-
-                    printf("|%s|\n", last_pass);
-
 
                     if (!strcmp(last_pass, "sensor-name")) {
                         strlcpy(config->sagan_sensor_name, value, sizeof(config->sagan_sensor_name));
@@ -762,7 +762,7 @@ void Load_YAML_Config( char *yaml_file )
                             config->redis_port = atoi(tmp);
 
                             if ( config->redis_port == 0 ) {
-                                Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
+                                Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
                             }
                         }
 
@@ -770,6 +770,17 @@ void Load_YAML_Config( char *yaml_file )
 
                             Var_To_Value(value, tmp, sizeof(tmp));
                             strlcpy(config->redis_password, tmp, sizeof(config->redis_password));
+                        }
+
+                        if (!strcmp(last_pass, "writer_threads")) {
+
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            config->redis_max_writer_threads = atoi(tmp);
+
+                            if ( config->redis_max_writer_threads == 0 ) {
+                                Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'writer_threads' is set to zero.  Abort!", __FILE__, __LINE__);
+                            }
+
                         }
 
                     }

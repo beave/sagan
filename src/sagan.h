@@ -250,6 +250,10 @@ struct _SaganCounters {
     uintmax_t esmtp_count_failed;
 #endif
 
+#ifdef HAVE_LIBHIREDIS
+    uintmax_t redis_writer_threads_drop;
+#endif
+
 };
 
 typedef struct _SaganDebug _SaganDebug;
@@ -293,6 +297,15 @@ struct _SaganDebug {
 #endif
 
 };
+
+#ifdef HAVE_LIBHIREDIS
+
+typedef struct _Sagan_Redis _Sagan_Redis;
+struct _Sagan_Redis {
+    char redis_command[2048];
+};
+
+#endif
 
 typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
 struct _Sagan_Proc_Syslog {

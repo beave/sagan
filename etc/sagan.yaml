@@ -154,6 +154,8 @@ sagan-core:
     server: 127.0.0.1
     port: 6379
     password: "mypassword"  # Comment out to disable authentication.
+    writer_threads: 10
+
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after
