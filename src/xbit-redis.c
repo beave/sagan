@@ -485,7 +485,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
 
     if ( debug->debugredis ) {
-        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit SET", __FILE__, __LINE__);
+        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
     }
 
     for (i = 0; i < rulestruct[rule_position].xbit_count; i++) {
@@ -619,7 +619,6 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 } /* End of unset / both */
 
-
                 /* direction: ip_src */
 
                 else if ( rulestruct[rule_position].xbit_direction[i] == 2 ) {
@@ -663,40 +662,38 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Delete by 'ip_src' key %s", __FILE__, __LINE__, reply->element[j]->str);
                             }
 
-                            snprintf(redis_command, sizeof(redis_command), "ZREM xbit_src_index %s", reply->element[j]->str );
+                            if ( redis_msgslot < config->redis_max_writer_threads ) {
 
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
+                                snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
+                                         "ZREM xbit_src_index %s;"
+                                         "ZREM xbit_dst_index %s;"
+                                         "DEL %s",
+
+                                         reply->element[j]->str,
+                                         reply->element[j]->str,
+                                         reply->element[j]->str );
+
+                                redis_msgslot++;
+
+                                pthread_cond_signal(&SaganRedisDoWork);
+                                pthread_mutex_unlock(&SaganRedisWorkMutex);
+
+                            } else {
+
+                                Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_src'.  Skipping!");
+
+                                pthread_mutex_lock(&RedisWriterCounterMutex);
+                                counters->redis_writer_threads_drop++;
+                                pthread_mutex_unlock(&RedisWriterCounterMutex);
+
                             }
-
-                            snprintf(redis_command, sizeof(redis_command), "ZREM xbit_dst_index %s", reply->element[j]->str );
-
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
-
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
-                            }
-
-                            snprintf(redis_command, sizeof(redis_command), "DEL %s", reply->element[j]->str );
-
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
-
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
-                            }
-
-                            pthread_mutex_unlock(&RedisMutex);
 
                         }
-
                     }
-                }
 
+                    pthread_mutex_unlock(&RedisMutex);
+                }
 
                 /* direction: ip_dst */
 
@@ -723,7 +720,6 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                         return;
                     }
 
-
                     for (j = 0; j < reply->elements; j++) {
 
                         snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
@@ -741,39 +737,38 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Delete by 'ip_dst' key %s", __FILE__, __LINE__, reply->element[j]->str);
                             }
 
-                            snprintf(redis_command, sizeof(redis_command), "ZREM xbit_src_index %s", reply->element[j]->str );
+                            if ( redis_msgslot < config->redis_max_writer_threads ) {
 
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
+                                snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
+                                         "ZREM xbit_dst_index %s;"
+                                         "ZREM xbit_src_index %s;"
+                                         "DEL %s",
+
+                                         reply->element[j]->str,
+                                         reply->element[j]->str,
+                                         reply->element[j]->str );
+
+                                redis_msgslot++;
+
+                                pthread_cond_signal(&SaganRedisDoWork);
+                                pthread_mutex_unlock(&SaganRedisWorkMutex);
+
+                            } else {
+
+                                Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
+
+                                pthread_mutex_lock(&RedisWriterCounterMutex);
+                                counters->redis_writer_threads_drop++;
+                                pthread_mutex_unlock(&RedisWriterCounterMutex);
+
                             }
 
-                            snprintf(redis_command, sizeof(redis_command), "ZREM xbit_dst_index %s", reply->element[j]->str );
+                        }
+                    }
 
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
-
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
-                            }
-
-                            snprintf(redis_command, sizeof(redis_command), "DEL %s", reply->element[j]->str );
-
-                            reply_3 = redisCommand(config->c_reader_redis, redis_command);
-
-                            if ( debug->debugredis ) {
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_3->str);
-                            }
-
-                            pthread_mutex_unlock(&RedisMutex);
-
-                        } /* if ( !strcmp(tmp_xbit_name, reply_2->str ) */
-                    } /* for (j = 0; j < reply->elements; j++) */
-                } /* if ( rulestruct[rule_position].xbit_direction[i] == 3 ) */
-
+                    pthread_mutex_unlock(&RedisMutex);
+                }
 
                 tmp_xbit_name = strtok_r(NULL, "&", &tok);
 
