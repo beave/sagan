@@ -508,8 +508,6 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 if ( redis_msgslot < config->redis_max_writer_threads ) {
 
-                    pthread_mutex_lock(&SaganRedisWorkMutex);
-
                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
                              "HMSET %u active 1 name %s src_ip %u dst_ip %u timestamp %s expire %d sensor %s;"
@@ -588,36 +586,36 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     if ( reply->element[0]->str != NULL ) {
 
-                        snprintf(redis_command, sizeof(redis_command), "ZREMRANGEBYSCORE xbit_src_index %u %u", ip_src, ip_src);
+                        if ( redis_msgslot < config->redis_max_writer_threads ) {
 
-                        reply = redisCommand(config->c_reader_redis, redis_command);
+                            snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
-                        if ( debug->debugredis ) {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+                                     "ZREMRANGEBYSCORE xbit_dst_index %u %u;"
+                                     "ZREMRANGEBYSCORE xbit_dst_index %u %u;"
+                                     "DEL %u",
+
+                                     ip_src, ip_src,
+                                     ip_dst, ip_dst,
+                                     djb2_hash );
+
+                            redis_msgslot++;
+
+                            pthread_cond_signal(&SaganRedisDoWork);
+                            pthread_mutex_unlock(&SaganRedisWorkMutex);
+
+                        } else {
+
+                            Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'both'.  Skipping!");
+
+                            pthread_mutex_lock(&RedisWriterCounterMutex);
+                            counters->redis_writer_threads_drop++;
+                            pthread_mutex_unlock(&RedisWriterCounterMutex);
+
                         }
 
-                        snprintf(redis_command, sizeof(redis_command), "ZREMRANGEBYSCORE xbit_dst_index %u %u", ip_dst, ip_dst);
-
-                        reply = redisCommand(config->c_reader_redis, redis_command);
-
-                        if ( debug->debugredis ) {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                        }
-
-                        snprintf(redis_command, sizeof(redis_command), "DEL %u", djb2_hash);
-
-                        reply = redisCommand(config->c_reader_redis, redis_command);
-
-                        if ( debug->debugredis ) {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                        }
                     }
 
                     pthread_mutex_unlock(&RedisMutex);
-
 
                 } /* End of unset / both */
 
