@@ -104,14 +104,6 @@ struct _SaganDebug *debug;
 #ifdef HAVE_LIBHIREDIS
 #include <hiredis/hiredis.h>
 #include "redis.h"
-
-pthread_mutex_t RedisMutex=PTHREAD_MUTEX_INITIALIZER;
-
-//int redis_msgslot = 0;
-//pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
-//pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
-
-
 #endif
 
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
@@ -170,8 +162,8 @@ int main(int argc, char **argv)
     /****************************************************************************/
 
 #ifdef HAVE_LIBHIREDIS
-    char redis_tmp[5];
-    redisReply *reply;
+    char redis_reply[5];
+    char redis_command[300];
 #endif
 
     /****************************************************************************/
@@ -857,11 +849,10 @@ int main(int argc, char **argv)
 
         if ( config->redis_password[0] != '\0' ) {
 
-            pthread_mutex_lock(&RedisMutex);
-            reply = redisCommand(config->c_reader_redis, "AUTH %s", config->redis_password);
-            pthread_mutex_unlock(&RedisMutex);
+            snprintf(redis_command, sizeof(redis_command), "AUTH %s", config->redis_password);
+            Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
 
-            if (!strcmp(reply->str, "OK")) {
+            if (!strcmp(redis_reply, "OK")) {
                 Sagan_Log(S_NORMAL, "Authentication success for 'reader' to Redis server at %s:%d.", config->redis_server, config->redis_port);
             } else {
 
@@ -870,15 +861,13 @@ int main(int argc, char **argv)
             }
         }
 
-        pthread_mutex_lock(&RedisMutex);
-        reply = redisCommand(config->c_reader_redis, "PING");
-        pthread_mutex_unlock(&RedisMutex);
+        strlcpy(redis_command, "PING", sizeof(redis_command));
+        Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
 
-        if (!strcmp(reply->str, "PONG")) {
+        if (!strcmp(redis_reply, "PONG")) {
             Sagan_Log(S_NORMAL, "Got 'reader' PONG from Redis at %s:%d.", config->redis_server, config->redis_port);
         }
 
-        freeReplyObject(reply);
         Sagan_Log(S_NORMAL, "");
 
     }

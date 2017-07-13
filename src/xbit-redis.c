@@ -64,12 +64,17 @@ struct _Sagan_Redis *SaganRedis;
  ready.  This is to test the functionality of using Redis as a
  backend to store "xbits" (making them "global" xbits.
 
- NOTES:  Would likely want to deploy a thread pool for Redis ?
-
+ NOTES:
 	 src/dst do not need to be part of the HMSET.
          Do we event need "active" in HMSET?
 
          How to deal with ZADD to index? Manually delete? ignore?
+	 "clean up?" evevy "x" times?
+
+	 What if HGET is null during unset?
+	 side note: sagan.c counters all need _seperate locks!_
+
+
 
  ****************************************************************/
 
@@ -95,9 +100,12 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
     redisReply *reply_2;
     redisReply *reply_3;
 
-    char redis_tmp[256] = { 0 };
-    char redis_command[256] = { 0 };
-    char tmp[128] = { 0 };
+    char redis_tmp[256];
+
+    char redis_command[256];
+    char redis_reply[16];
+
+    char tmp[128];
     char *tmp_xbit_name = NULL;
     char *tok = NULL;
 
@@ -170,25 +178,17 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
 
                     /* Since we have source, destination and xbit name,  we can generate the
-                               DJB2 hash without having to dig to far into Redis */
+                       DJB2 hash without having to dig to far into Redis */
 
                     snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
                     djb2_hash = Djb2_Hash(redis_tmp);
 
                     snprintf(redis_command, sizeof(redis_command), "HGET %u name", djb2_hash);
-
-                    pthread_mutex_lock(&RedisMutex);
-
-                    reply = redisCommand(config->c_reader_redis, redis_command);
-
-                    if ( debug->debugredis ) {
-                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-                    }
+                    Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
 
                     /* If the xbit is found ... */
 
-                    if ( reply->str != NULL ) {
+                    if ( redis_reply[0] != '\0' ) {
 
                         /* isset */
 
@@ -206,9 +206,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                                     Sagan_Log(S_DEBUG, "[%s, line %d] '|' set or only one xbit used, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
                                 }
 
-                                pthread_mutex_unlock(&RedisMutex);
                                 return(true);
-
                             }
 
                             /* No | in the rule,  so increment the match counter */
@@ -237,7 +235,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                                     Sagan_Log(S_DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
                                 }
 
-                                pthread_mutex_unlock(&RedisMutex);
                                 return(true);
 
                             }

@@ -43,6 +43,8 @@ int redis_msgslot;
 pthread_cond_t SaganRedisDoWork;
 pthread_mutex_t SaganRedisWorkMutex;
 
+pthread_mutex_t RedisMutex;
+
 struct _Sagan_Redis *SaganRedis = NULL;
 
 void Redis_Writer_Init ( void )
@@ -161,16 +163,40 @@ void Redis_Writer ( void )
 
                 Sagan_Log(S_DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
 
-
             }
 
             freeReplyObject(reply);
-
 
             split_redis_command = strtok_r(NULL, ";", &tok);
         }
 
     }
+
+}
+
+
+void Redis_Reader ( char *redis_command, char *str, size_t size )
+{
+
+    redisReply *reply;
+
+    pthread_mutex_lock(&RedisMutex);
+    reply = redisCommand(config->c_reader_redis, redis_command);
+    pthread_mutex_unlock(&RedisMutex);
+
+    if ( debug->debugredis ) {
+        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+    }
+
+
+    //if ( reply->str != NULL ) {
+    snprintf(str, size, reply->str);
+    //} else {
+    //snprintf(str, size, "(null)");
+    //}
+
+    freeReplyObject(reply);
 
 }
 
