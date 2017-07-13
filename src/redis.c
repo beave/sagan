@@ -43,7 +43,7 @@ int redis_msgslot;
 pthread_cond_t SaganRedisDoWork;
 pthread_mutex_t SaganRedisWorkMutex;
 
-pthread_mutex_t RedisMutex;
+pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Redis *SaganRedis = NULL;
 
@@ -180,9 +180,9 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
 
     redisReply *reply;
 
-    pthread_mutex_lock(&RedisMutex);
+    pthread_mutex_lock(&RedisReaderMutex);
     reply = redisCommand(config->c_reader_redis, redis_command);
-    pthread_mutex_unlock(&RedisMutex);
+    pthread_mutex_unlock(&RedisReaderMutex);
 
     if ( debug->debugredis ) {
         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
@@ -190,12 +190,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
     }
 
 
-    //if ( reply->str != NULL ) {
     snprintf(str, size, reply->str);
-    //} else {
-    //snprintf(str, size, "(null)");
-    //}
-
     freeReplyObject(reply);
 
 }

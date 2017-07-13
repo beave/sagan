@@ -46,8 +46,7 @@ struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
 pthread_mutex_t RedisWriterCounterMutex=PTHREAD_MUTEX_INITIALIZER;
-
-pthread_mutex_t RedisMutex;
+pthread_mutex_t RedisMutex=PTHREAD_MUTEX_INITIALIZER;
 
 int redis_msgslot = 0;
 pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
@@ -247,8 +246,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                     } /* End of else reply->str != NULL */
 
-                    pthread_mutex_unlock(&RedisMutex);
-
                 } /* End of if (rulestruct[rule_position].xbit_direction[i] == 1 || both ) */
 
                 /*******************************/
@@ -336,17 +333,11 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                     for (j = 0; j < reply->elements; j++) {
 
                         snprintf(redis_command, sizeof(redis_command), "HGET %s name", reply->element[j]->str);
-                        reply_2 = redisCommand(config->c_reader_redis, redis_command);
-
-                        if ( debug->debugredis ) {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply_2->str);
-                        }
-
+                        Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
 
                         /* Does the flowbit in the rule match what is in Redis? */
 
-                        if ( !strcmp(tmp_xbit_name, reply_2->str ) ) {
+                        if ( !strcmp(tmp_xbit_name, redis_reply ) ) {
 
                             /* The xbit in the rule and Redis match */
 
