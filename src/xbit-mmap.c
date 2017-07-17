@@ -50,7 +50,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterMutex;	/* From sagan-engine.c */
+pthread_mutex_t CounterXbitCountMutex;	/* From processors/engine.c */
 
 struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_IPC_Xbit *xbit_ipc;
@@ -1518,11 +1518,11 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                 }
 
                 File_Lock(config->shm_counters);
-                pthread_mutex_lock(&CounterMutex);
+                pthread_mutex_lock(&CounterXbitCountMutex);
 
                 counters_ipc->xbit_count++;
 
-                pthread_mutex_unlock(&CounterMutex);
+                pthread_mutex_unlock(&CounterXbitCountMutex);
                 File_Unlock(config->shm_counters);
 
             }

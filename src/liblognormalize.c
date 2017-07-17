@@ -86,8 +86,10 @@ void Liblognorm_Load(char *infile)
 
     Sagan_Log(S_NORMAL, "Loading %s for normalization.", infile);
 
+    /* Remember - On reload,  file access will be by the "sagan" user! */
+
     if (stat(infile, &liblognorm_fileinfo)) {
-        Sagan_Log(S_ERROR, "%s was not fonnd.", infile);
+        Sagan_Log(S_ERROR, "[%s, line %d] Error accessing '%s'. Abort.", __FILE__, __LINE__, infile);
     }
 
     ln_loadSamples(ctx, infile);

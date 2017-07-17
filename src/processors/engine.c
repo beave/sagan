@@ -78,7 +78,7 @@ struct _SaganConfig *config;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
-pthread_mutex_t CounterMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t CounterXbitCountMutex=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t CounterAfterTotalMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t	CounterThresholdTotalMutex=PTHREAD_MUTEX_INITIALIZER;

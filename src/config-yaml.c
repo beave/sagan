@@ -92,6 +92,10 @@ struct _Rule_Struct *rulestruct;
 
 sbool reload_rules;
 
+pthread_mutex_t SaganRulesLoadedMutex;
+pthread_mutex_t CounterLoadConfigGenericMutex=PTHREAD_MUTEX_INITIALIZER;
+
+
 #ifdef HAVE_LIBYAML
 
 void Load_YAML_Config( char *yaml_file )
@@ -404,7 +408,10 @@ void Load_YAML_Config( char *yaml_file )
                                 Sagan_Log(S_DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
                             }
 
+                            pthread_mutex_lock(&CounterLoadConfigGenericMutex);
                             counters->var_count++;
+                            pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
                             toggle = 1;
 
                         }
@@ -1728,8 +1735,6 @@ void Load_YAML_Config( char *yaml_file )
                 Var_To_Value(value, tmp, sizeof(tmp));
                 Load_Rules( (char*)tmp );
 
-                /* Store rule names into an array in case we're using dynamic_load */
-
                 rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 
                 if ( rules_loaded == NULL ) {
@@ -1738,7 +1743,10 @@ void Load_YAML_Config( char *yaml_file )
 
                 Var_To_Value(value, tmp, sizeof(tmp));
                 strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, tmp, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
+
+                pthread_mutex_lock(&CounterLoadConfigGenericMutex);
                 counters->rules_loaded_count++;
+                pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
 
             }
 

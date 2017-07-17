@@ -56,6 +56,8 @@ struct _Class_Struct *classstruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
+pthread_mutex_t CounterClassMutex=PTHREAD_MUTEX_INITIALIZER;
+
 void Load_Classifications( const char *ruleset )
 {
 
@@ -68,7 +70,9 @@ void Load_Classifications( const char *ruleset )
     char tmpbuf2[5];
     int  linecount=0;
 
+    pthread_mutex_lock(&CounterClassMutex);
     counters->classcount = 0;
+    pthread_mutex_unlock(&CounterClassMutex);
 
     Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
 
@@ -130,7 +134,9 @@ void Load_Classifications( const char *ruleset )
             Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
         }
 
+        pthread_mutex_lock(&CounterClassMutex);
         counters->classcount++;
+        pthread_mutex_unlock(&CounterClassMutex);
 
     }
     fclose(classfile);

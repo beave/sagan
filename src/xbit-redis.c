@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
 
-pthread_mutex_t RedisWriterCounterMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t CounterRedisWriterThreadsDrop=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisMutex=PTHREAD_MUTEX_INITIALIZER;
 
 int redis_msgslot = 0;
@@ -520,9 +520,9 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'set'.  Skipping!");
 
-                    pthread_mutex_lock(&RedisWriterCounterMutex);
+                    pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                     counters->redis_writer_threads_drop++;
-                    pthread_mutex_unlock(&RedisWriterCounterMutex);
+                    pthread_mutex_unlock(&CounterRedisWriterThreadsDrop);
 
                 }
 
@@ -595,9 +595,9 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                             Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'both'.  Skipping!");
 
-                            pthread_mutex_lock(&RedisWriterCounterMutex);
+                            pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                             counters->redis_writer_threads_drop++;
-                            pthread_mutex_unlock(&RedisWriterCounterMutex);
+                            pthread_mutex_unlock(&CounterRedisWriterThreadsDrop);
 
                         }
 
@@ -671,9 +671,9 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                                 Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_src'.  Skipping!");
 
-                                pthread_mutex_lock(&RedisWriterCounterMutex);
+                                pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                 counters->redis_writer_threads_drop++;
-                                pthread_mutex_unlock(&RedisWriterCounterMutex);
+                                pthread_mutex_unlock(&CounterRedisWriterThreadsDrop);
 
                             }
 
@@ -746,9 +746,9 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                                 Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
 
-                                pthread_mutex_lock(&RedisWriterCounterMutex);
+                                pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                 counters->redis_writer_threads_drop++;
-                                pthread_mutex_unlock(&RedisWriterCounterMutex);
+                                pthread_mutex_unlock(&CounterRedisWriterThreadsDrop);
 
                             }
 

@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -39,6 +40,8 @@
 struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
+
+pthread_mutex_t CountDropListMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * "ignore" list.
@@ -78,7 +81,11 @@ void Load_Ignore_List ( void )
                 Remove_Return(droplistbuf);
 
                 strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, droplistbuf, sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
+
+                pthread_mutex_lock(&CountDropListMutex);
                 counters->droplist_count++;
+                pthread_mutex_unlock(&CountDropListMutex);
+
             }
         }
     }
