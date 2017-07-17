@@ -54,7 +54,6 @@ void Alert_JSON( _Sagan_Event *Event )
 
     }
 
-
     fflush(config->eve_stream);
 
 }

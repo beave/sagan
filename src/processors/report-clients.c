@@ -56,6 +56,10 @@ struct _SaganConfig *config;
 struct _Sagan_Processor_Info *processor_info_track_client = NULL;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 
+pthread_mutex_t IPCTrackClientsStatus=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t IPCTrackClientsDown=PTHREAD_MUTEX_INITIALIZER;
+
+
 /****************************************************************************
  * Sagan_Track_Clients_Init - Initialize shared memory object for the
  * tracking client processor to use
@@ -140,13 +144,21 @@ void Sagan_Report_Clients ( void )
                     /* Update status and seen time */
 
                     File_Lock(config->shm_track_clients);
+                    pthread_mutex_lock(&IPCTrackClientsStatus);
+
                     SaganTrackClients_ipc[i].status = 0;
+
                     File_Unlock(config->shm_track_clients);
+                    pthread_mutex_unlock(&IPCTrackClientsStatus);
 
                     /* Update counters */
 
                     File_Lock(config->shm_counters);
+                    pthread_mutex_lock(&IPCTrackClientsDown);
+
                     counters_ipc->track_clients_down--;
+
+                    pthread_mutex_unlock(&IPCTrackClientsDown);
                     File_Unlock(config->shm_counters);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
@@ -194,13 +206,21 @@ void Sagan_Report_Clients ( void )
                     /* Update status and utime */
 
                     File_Lock(config->shm_track_clients);
+                    pthread_mutex_lock(&IPCTrackClientsStatus);
+
                     SaganTrackClients_ipc[i].status = 1;
+
+                    pthread_mutex_unlock(&IPCTrackClientsStatus);
                     File_Unlock(config->shm_track_clients);
 
                     /* Update counters */
 
                     File_Lock(config->shm_counters);
+                    pthread_mutex_lock(&IPCTrackClientsDown);
+
                     counters_ipc->track_clients_down++;
+
+                    pthread_mutex_unlock(&IPCTrackClientsDown);
                     File_Unlock(config->shm_counters);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));

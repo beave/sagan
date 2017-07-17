@@ -37,6 +37,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 
 #include "sagan.h"
@@ -64,6 +65,8 @@ struct _Sagan_BroIntel_Intel_Email *Sagan_BroIntel_Intel_Email;
 struct _Sagan_BroIntel_Intel_User_Name *Sagan_BroIntel_Intel_User_Name;
 struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
 struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
+
+pthread_mutex_t CounterBroIntelGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /*****************************************************************************
  * Sagan_BroIntel_Init - Sets up globals.  Not really used yet.
@@ -174,7 +177,9 @@ void Sagan_BroIntel_Load_File ( void )
     char *brointel_filename = NULL;
     char brointelbuf[MAX_BROINTEL_LINE_SIZE] = { 0 };
 
+    pthread_mutex_lock(&CounterBroIntelGenericMutex);
     counters->brointel_dups = 0;
+    pthread_mutex_unlock(&CounterBroIntelGenericMutex);
 
     brointel_filename = strtok_r(config->brointel_files, ",", &ptmp);
 
@@ -220,7 +225,11 @@ void Sagan_BroIntel_Load_File ( void )
 
                         if ( u32_ip == Sagan_BroIntel_Intel_Addr[i].u32_ip ) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -234,7 +243,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         Sagan_BroIntel_Intel_Addr[counters->brointel_addr_count].u32_ip = IP2Bit(value);
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_addr_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
 
                 }
@@ -249,7 +261,11 @@ void Sagan_BroIntel_Load_File ( void )
                     for (i=0; i < counters-> brointel_domain_count; i++) {
                         if (!strcmp(Sagan_BroIntel_Intel_Domain[i].domain, value)) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::DOMAIN '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -262,7 +278,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain, value, sizeof(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_domain_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
 
                 }
@@ -274,9 +293,15 @@ void Sagan_BroIntel_Load_File ( void )
                     found_flag_array = 0;
 
                     for (i=0; i < counters->brointel_file_hash_count; i++) {
+
                         if (!strcmp(Sagan_BroIntel_Intel_File_Hash[i].hash, value)) {
+
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::FILE_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -306,13 +331,18 @@ void Sagan_BroIntel_Load_File ( void )
                     for (i=0; i < counters->brointel_url_count; i++) {
                         if (!strcmp(Sagan_BroIntel_Intel_URL[i].url, value)) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::URL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
 
 
                     if ( found_flag_array == 0 ) {
+
                         Sagan_BroIntel_Intel_URL = (_Sagan_BroIntel_Intel_URL *) realloc(Sagan_BroIntel_Intel_URL, (counters->brointel_url_count+1) * sizeof(_Sagan_BroIntel_Intel_URL));
 
                         if ( Sagan_BroIntel_Intel_URL == NULL ) {
@@ -320,7 +350,11 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url, value, sizeof(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_url_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                     }
 
                 }
@@ -335,9 +369,15 @@ void Sagan_BroIntel_Load_File ( void )
                     found_flag_array = 0;
 
                     for (i=0; i < counters->brointel_software_count++; i++) {
+
                         if (!strcmp(Sagan_BroIntel_Intel_Software[i].software, value)) {
+
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::SOFTWARE '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -351,7 +391,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software, value, sizeof(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_software_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
 
                     }
                 }
@@ -365,8 +408,13 @@ void Sagan_BroIntel_Load_File ( void )
                     for (i=0; i < counters->brointel_email_count; i++) {
                         if (!strcmp(Sagan_BroIntel_Intel_Email[i].email, value)) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::EMAIL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
+
                         }
                     }
 
@@ -379,7 +427,11 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email, value, sizeof(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_email_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                         found_flag = 1;
                     }
 
@@ -395,7 +447,11 @@ void Sagan_BroIntel_Load_File ( void )
                     for (i=0; i < counters->brointel_user_name_count; i++) {
                         if (!strcmp(Sagan_BroIntel_Intel_User_Name[i].username, value)) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::USER_NAME '%s' in %s on line %.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -410,7 +466,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username, value, sizeof(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_user_name_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
                 }
 
@@ -422,9 +481,15 @@ void Sagan_BroIntel_Load_File ( void )
                     found_flag_array = 0;
 
                     for (i=0; i < counters->brointel_file_name_count; i++) {
+
                         if (!strcmp(Sagan_BroIntel_Intel_File_Name[i].file_name, value)) {
+
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::FILE_NAME '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -439,7 +504,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name, value, sizeof(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_file_name_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
 
                 }
@@ -453,7 +521,11 @@ void Sagan_BroIntel_Load_File ( void )
                     for (i=0; i < counters->brointel_cert_hash_count; i++) {
                         if (!strcmp(Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, value)) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::CERT_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+
+                            pthread_mutex_lock(&CounterBroIntelGenericMutex);
                             counters->brointel_dups++;
+                            pthread_mutex_unlock(&CounterBroIntelGenericMutex);
+
                             found_flag_array = 1;
                         }
                     }
@@ -466,7 +538,10 @@ void Sagan_BroIntel_Load_File ( void )
                         }
 
                         strlcpy(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash, value, sizeof(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash));
+
+                        pthread_mutex_lock(&CounterBroIntelGenericMutex);
                         counters->brointel_cert_hash_count++;
+                        pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
                 }
 

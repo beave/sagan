@@ -53,6 +53,7 @@ struct _SaganCounters *counters;
 sbool reload_rules;
 
 pthread_mutex_t SaganRulesLoadedMutex;
+pthread_mutex_t CounterDynamicGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_position, _Sagan_Processor_Info *processor_info_engine, char *ip_src, char *ip_dst )
 {
@@ -89,7 +90,9 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, rulestruct[rule_position].dynamic_ruleset, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
 
+    pthread_mutex_lock(&CounterDynamicGenericMutex);
     counters->rules_loaded_count++;
+    pthread_mutex_unlock(&CounterDynamicGenericMutex);
 
     /* Done here,  release so others can process */
 

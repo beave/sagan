@@ -45,7 +45,6 @@
 
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
-struct _SaganCounters *counters;
 
 void Alert_Syslog( _Sagan_Event *Event )
 {

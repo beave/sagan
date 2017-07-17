@@ -51,7 +51,7 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
-pthread_mutex_t SaganProcBlacklistWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t	CounterBlacklistGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Sagan_Blacklist_Init - Init any global memory structures we might need
@@ -60,7 +60,9 @@ pthread_mutex_t SaganProcBlacklistWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Blacklist_Init ( void )
 {
 
+    pthread_mutex_lock(&CounterBlacklistGenericMutex);
     counters->blacklist_count=0;
+    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
     SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
 
@@ -98,9 +100,9 @@ void Sagan_Blacklist_Load ( void )
 
     sbool found = 0;
 
-    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+    pthread_mutex_lock(&CounterBlacklistGenericMutex);
     counters->blacklist_count=0;
-    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
     blacklist_filename = strtok_r(config->blacklist_files, ",", &ptmp);
 
@@ -200,9 +202,9 @@ void Sagan_Blacklist_Load ( void )
                     SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
                     SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
 
-                    pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                    pthread_mutex_lock(&CounterBlacklistGenericMutex);
                     counters->blacklist_count++;
-                    pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+                    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
                 }
             }
@@ -228,14 +230,13 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
     counters->blacklist_lookup_count++;
 
-
     for ( i = 0; i < counters->blacklist_count; i++) {
 
         if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) ) {
 
-            pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+            pthread_mutex_lock(&CounterBlacklistGenericMutex);
             counters->blacklist_hit_count++;
-            pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+            pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
             return(true);
         }
@@ -272,16 +273,18 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
 
         ip = IP2Bit(results);
 
+        pthread_mutex_lock(&CounterBlacklistGenericMutex);
         counters->blacklist_lookup_count++;
+        pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
         for ( b = 0; b < counters->blacklist_count; b++ ) {
             if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
 
             {
 
-                pthread_mutex_lock(&SaganProcBlacklistWorkMutex);
+                pthread_mutex_lock(&CounterBlacklistGenericMutex);
                 counters->blacklist_hit_count++;
-                pthread_mutex_unlock(&SaganProcBlacklistWorkMutex);
+                pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
                 return(true);
             }

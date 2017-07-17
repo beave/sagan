@@ -136,7 +136,6 @@ struct _Sagan_IPC_Counters {
 
 };
 
-
 typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters {
 

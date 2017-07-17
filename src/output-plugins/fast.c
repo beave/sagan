@@ -42,7 +42,6 @@
 
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
-struct _SaganCounters *counters;
 
 void Fast_File( _Sagan_Event *Event )
 {
