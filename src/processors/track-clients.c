@@ -77,39 +77,46 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
         return(false);
     }
 
-    /*************************/
-    /** Record Clients Here **/
-    /*************************/
+    /********************************************/
+    /** Record update tracking if record exsist */
+    /********************************************/
 
     for (i=0; i<counters_ipc->track_clients_client_count; i++) {
+
         if ( SaganTrackClients_ipc[i].host_u32 == host_u32 ) {
 
+	    pthread_mutex_lock(&IPCTrackClientCounter);
             File_Lock(config->shm_track_clients);
-            pthread_mutex_lock(&IPCTrackClientCounter);
 
             SaganTrackClients_ipc[i].utime = utime_u64;
             SaganTrackClients_ipc[i].expire = expired_time;
 
-            pthread_mutex_unlock(&IPCTrackClientCounter);
             File_Unlock(config->shm_track_clients);
+	    pthread_mutex_unlock(&IPCTrackClientCounter);
+
             return(true);
         }
     }
 
     if ( counters_ipc->track_clients_client_count < config->max_track_clients ) {
 
+	pthread_mutex_lock(&IPCTrackClientCounter);
+
         File_Lock(config->shm_track_clients);
-        pthread_mutex_lock(&IPCTrackClientCounter);
 
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
 
+	File_Lock(config->shm_counters);
+
         counters_ipc->track_clients_client_count++;
 
-        pthread_mutex_unlock(&IPCTrackClientCounter);
         File_Unlock(config->shm_counters);
+	File_Unlock(config->shm_track_clients);
+
+	pthread_mutex_unlock(&IPCTrackClientCounter);
 
         return(false);
 

@@ -20,7 +20,7 @@
 
 /* report-clients.c
 *
-* Simple pre-processors that keeps track of reporting syslog clients/agents.
+* Simple processors that keeps track of reporting syslog clients/agents.
 * This is based off the IP address the clients,  not based on normalization.
 * If a client/agent hasn't sent a syslog/event message in X minutes,  then
 * generate an alert.
@@ -143,23 +143,23 @@ void Sagan_Report_Clients ( void )
 
                     /* Update status and seen time */
 
+		    pthread_mutex_lock(&IPCTrackClientsStatus);
+
                     File_Lock(config->shm_track_clients);
-                    pthread_mutex_lock(&IPCTrackClientsStatus);
 
                     SaganTrackClients_ipc[i].status = 0;
-
-                    File_Unlock(config->shm_track_clients);
-                    pthread_mutex_unlock(&IPCTrackClientsStatus);
 
                     /* Update counters */
 
                     File_Lock(config->shm_counters);
-                    pthread_mutex_lock(&IPCTrackClientsDown);
 
                     counters_ipc->track_clients_down--;
 
+		    File_Unlock(config->shm_counters);
+		    File_Unlock(config->shm_track_clients);
+		    
                     pthread_mutex_unlock(&IPCTrackClientsDown);
-                    File_Unlock(config->shm_counters);
+
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 
@@ -203,25 +203,25 @@ void Sagan_Report_Clients ( void )
                 /**** Check if last seen time of host has exceeded track time meaning it's down! ****/
 
                 if ( ( utime_u32 - SaganTrackClients_ipc[i].utime ) >= expired_time ) {
+
                     /* Update status and utime */
 
+		    pthread_mutex_lock(&IPCTrackClientsStatus);
+
                     File_Lock(config->shm_track_clients);
-                    pthread_mutex_lock(&IPCTrackClientsStatus);
 
                     SaganTrackClients_ipc[i].status = 1;
-
-                    pthread_mutex_unlock(&IPCTrackClientsStatus);
-                    File_Unlock(config->shm_track_clients);
 
                     /* Update counters */
 
                     File_Lock(config->shm_counters);
-                    pthread_mutex_lock(&IPCTrackClientsDown);
 
                     counters_ipc->track_clients_down++;
 
+		    File_Unlock(config->shm_counters);
+		    File_Unlock(config->shm_track_clients);
+
                     pthread_mutex_unlock(&IPCTrackClientsDown);
-                    File_Unlock(config->shm_counters);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 
