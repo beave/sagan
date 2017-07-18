@@ -50,7 +50,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterXbitCountMutex;	/* From processors/engine.c */
+pthread_mutex_t CounterXbitCountMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_IPC_Xbit *xbit_ipc;
