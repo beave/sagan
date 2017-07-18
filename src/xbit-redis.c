@@ -71,7 +71,9 @@ struct _Sagan_Redis *SaganRedis;
 	 "clean up?" evevy "x" times?
 
 	 What if HGET is null during unset?
-	 side note: sagan.c counters all need _seperate locks!_
+         Not very good config checks being done.  You can set
+         xbit-storage to "redis", but NOT have a redis-server:
+	 sections!
 
 
 
