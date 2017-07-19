@@ -50,7 +50,6 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterXbitCountMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_IPC_Xbit *xbit_ipc;
@@ -1510,20 +1509,18 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
                 strlcpy(xbit_ipc[counters_ipc->xbit_count].xbit_name, xbit_track[i].xbit_name, sizeof(xbit_ipc[counters_ipc->xbit_count].xbit_name));
 
-                pthread_mutex_unlock(&Xbit_Mutex);
-                File_Unlock(config->shm_xbit);
-
                 if ( debug->debugxbit) {
                     Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d],", __FILE__, __LINE__, counters_ipc->xbit_count, xbit_ipc[counters_ipc->xbit_count].xbit_name, ip_src_char, xbit_track[i].xbit_srcport, ip_dst_char, xbit_track[i].xbit_dstport);
                 }
 
                 File_Lock(config->shm_counters);
-                pthread_mutex_lock(&CounterXbitCountMutex);
 
                 counters_ipc->xbit_count++;
 
-                pthread_mutex_unlock(&CounterXbitCountMutex);
                 File_Unlock(config->shm_counters);
+                File_Unlock(config->shm_xbit);
+
+                pthread_mutex_unlock(&Xbit_Mutex);
 
             }
         }
