@@ -38,6 +38,8 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <unistd.h>
         
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -47,6 +49,7 @@
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "send-alert.h"
+#include "util-time.h"
 
 #include "processors/track-clients.h"
 
