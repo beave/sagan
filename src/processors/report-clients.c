@@ -57,8 +57,6 @@ struct _Sagan_Processor_Info *processor_info_track_client = NULL;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 
 pthread_mutex_t IPCTrackClientsStatus=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t IPCTrackClientsDown=PTHREAD_MUTEX_INITIALIZER;
-
 
 /****************************************************************************
  * Sagan_Track_Clients_Init - Initialize shared memory object for the
@@ -129,7 +127,9 @@ void Sagan_Report_Clients ( void )
         }
 
         /*********************************/
-        /* Look through "known" system */
+        /* Look through "known" system   */
+	/*********************************/
+
 
         for (i=0; i<counters_ipc->track_clients_client_count; i++) {
 
@@ -158,7 +158,7 @@ void Sagan_Report_Clients ( void )
 		    File_Unlock(config->shm_counters);
 		    File_Unlock(config->shm_track_clients);
 		    
-                    pthread_mutex_unlock(&IPCTrackClientsDown);
+                    pthread_mutex_unlock(&IPCTrackClientsStatus);
 
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
@@ -221,7 +221,7 @@ void Sagan_Report_Clients ( void )
 		    File_Unlock(config->shm_counters);
 		    File_Unlock(config->shm_track_clients);
 
-                    pthread_mutex_unlock(&IPCTrackClientsDown);
+                    pthread_mutex_unlock(&IPCTrackClientsStatus);
 
                     Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
 

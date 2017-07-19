@@ -57,7 +57,7 @@ struct _SaganConfig *config;
  * are reporting or not.
  ****************************************************************************/
 
-int Sagan_Track_Clients ( uint32_t host_u32 )
+void Sagan_Track_Clients ( uint32_t host_u32 )
 {
 
     char utime_tmp[20] = { 0 };
@@ -72,21 +72,16 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
     utime_u64 = atol(utime_tmp);
     int expired_time = config->pp_sagan_track_clients * 60;
 
-    if ( host_u32 == 0 ) {
-        Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
-        return(false);
-    }
-
     /********************************************/
     /** Record update tracking if record exsist */
     /********************************************/
 
+    pthread_mutex_lock(&IPCTrackClientCounter);
+    File_Lock(config->shm_track_clients);
+
     for (i=0; i<counters_ipc->track_clients_client_count; i++) {
 
         if ( SaganTrackClients_ipc[i].host_u32 == host_u32 ) {
-
-	    pthread_mutex_lock(&IPCTrackClientCounter);
-            File_Lock(config->shm_track_clients);
 
             SaganTrackClients_ipc[i].utime = utime_u64;
             SaganTrackClients_ipc[i].expire = expired_time;
@@ -94,15 +89,11 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
             File_Unlock(config->shm_track_clients);
 	    pthread_mutex_unlock(&IPCTrackClientCounter);
 
-            return(true);
+            return;
         }
     }
 
     if ( counters_ipc->track_clients_client_count < config->max_track_clients ) {
-
-	pthread_mutex_lock(&IPCTrackClientCounter);
-
-        File_Lock(config->shm_track_clients);
 
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
@@ -118,13 +109,15 @@ int Sagan_Track_Clients ( uint32_t host_u32 )
 
 	pthread_mutex_unlock(&IPCTrackClientCounter);
 
-        return(false);
+        return;
 
     } else {
+
+	File_Unlock(config->shm_track_clients);
+	pthread_mutex_unlock(&IPCTrackClientCounter);
 
         Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
 
     }
 
-    return(true);
-} /* CLose sagan_track_clients */
+} /* Close sagan_track_clients */

@@ -36,4 +36,4 @@ struct _Sagan_Track_Clients_IPC {
     sbool    status;
 };
 
-int Sagan_Track_Clients ( uint32_t host_u32 );
+void Sagan_Track_Clients ( uint32_t host_u32 );

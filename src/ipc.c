@@ -1500,13 +1500,6 @@ void IPC_Init(void)
             Sagan_Log(S_NORMAL, "+ Sagan_track_clients shared object (new).");
             new_object=1;
 
-            /* Reset any track_clients_client_count's to 0! */
-
-            File_Lock(config->shm_counters);
-            counters_ipc->track_clients_client_count = 0;
-            counters_ipc->track_clients_down = 0;
-            File_Unlock(config->shm_counters);
-
         } else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 1 ) {
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
