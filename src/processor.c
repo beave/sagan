@@ -144,7 +144,7 @@ outside_loop:
             }
 
             if ( config->sagan_track_clients_flag ) {
-                Sagan_Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
+                Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
             }
 
         } // End if if (ignore_Flag)

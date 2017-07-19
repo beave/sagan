@@ -27,8 +27,20 @@
 *
 */
 
-typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
 
+#define PROCESSOR_NAME "Sagan_Track_Clients"
+#define PROCESSOR_FACILITY "daemon"
+#define PROCESSOR_PRIORITY "warning"
+#define PROCESSOR_PRI 1
+#define PROCESSOR_CLASS "None"
+#define PROCESSOR_REV "0"
+#define PROCESSOR_TAG NULL
+#define PROCESSOR_GENERATOR_ID 100
+
+void Track_Clients_Thread_Init ( void );
+void Track_Clients_Thread ( void );
+
+typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
 struct _Sagan_Track_Clients_IPC {
     uint32_t host_u32;
     long     utime;
@@ -36,4 +48,4 @@ struct _Sagan_Track_Clients_IPC {
     sbool    status;
 };
 
-void Sagan_Track_Clients ( uint32_t host_u32 );
+void Track_Clients ( uint32_t host_u32 );

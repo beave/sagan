@@ -77,7 +77,6 @@
 #include "processors/engine.h"
 #include "processors/blacklist.h"
 #include "processors/track-clients.h"
-#include "processors/report-clients.h"
 #include "processors/perfmon.h"
 #include "processors/bro-intel.h"
 
@@ -669,11 +668,11 @@ int main(int argc, char **argv)
 
     if ( config->sagan_track_clients_flag ) {
 
-        Sagan_Track_Clients_Init();
+        Track_Clients_Thread_Init();
 
         /* We run a thread for client_tracker_report */
 
-        rc = pthread_create( &ct_report_thread, NULL, (void *)Sagan_Report_Clients, NULL );
+        rc = pthread_create( &ct_report_thread, NULL, (void *)Track_Clients_Thread, NULL );
 
         if ( rc != 0 ) {
             Remove_Lock_File();

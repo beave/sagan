@@ -58,7 +58,6 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 						       output-plugins/eve.c \
                                                        processors/engine.c \
                                                        processors/track-clients.c \
-                                                       processors/report-clients.c \
                                                        processors/bluedot.c \
                                                        processors/blacklist.c \
                                                        processors/perfmon.c \
