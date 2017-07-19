@@ -37,6 +37,11 @@
 #include <pthread.h>
 #include <arpa/inet.h>
 #include <stdbool.h>
+#include <errno.h>
+        
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif 
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -162,6 +167,8 @@ void Track_Clients_Thread ( void )
 {
 
     for(;;) {
+
+        (void)SetThreadName("SaganClientTrck");
 
         struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
 

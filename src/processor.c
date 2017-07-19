@@ -31,6 +31,11 @@
 #include <pthread.h>
 #include <string.h>
 #include <stdbool.h>
+#include <errno.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -66,6 +71,8 @@ pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 
 void Processor ( void )
 {
+
+    (void)SetThreadName("SaganWorker");
 
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));

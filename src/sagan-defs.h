@@ -187,3 +187,5 @@
 
 #define XBIT_STORAGE_MMAP		0
 #define XBIT_STORAGE_REDIS		1
+
+#define	THREAD_NAME_LEN			16

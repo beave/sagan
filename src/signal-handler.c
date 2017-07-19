@@ -37,6 +37,11 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <errno.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 #include "version.h"
 
@@ -106,6 +111,8 @@ pthread_mutex_t SaganRulesLoadedMutex;
 
 void Sig_Handler( void )
 {
+
+    (void)SetThreadName("SaganSignal");
 
     sigset_t signal_set;
     int sig;

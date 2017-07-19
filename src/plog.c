@@ -48,6 +48,11 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
+#include <errno.h>                                                                                  |
+|
+#ifdef HAVE_SYS_PRCTL_H                                                                             |
+#include <sys/prctl.h>                                                                              |
+#endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -72,6 +77,8 @@ static  int   outf;
 
 void Plog_Handler( void )
 {
+
+    (void)SetThreadName("SaganPlog");
 
     pcap_t                  *bp;
     struct  bpf_program     filtr;

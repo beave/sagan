@@ -29,7 +29,13 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include <errno.h>
 #include <hiredis/hiredis.h>
+
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 #include "sagan.h"
 #include "sagan-config.h"
@@ -80,6 +86,8 @@ void Redis_Reader_Connect ( void )
 
 void Redis_Writer ( void )
 {
+
+    (void)SetThreadName("SaganRedisWriter");
 
     redisReply *reply;
     redisContext *c_writer_redis;

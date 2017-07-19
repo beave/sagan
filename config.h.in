@@ -243,6 +243,9 @@
 /* Define to 1 if you have the <sys/mmap.h> header file. */
 #undef HAVE_SYS_MMAP_H
 
+/* Define to 1 if you have the <sys/prctl.h> header file. */
+#undef HAVE_SYS_PRCTL_H
+
 /* Define to 1 if you have the <sys/select.h> header file. */
 #undef HAVE_SYS_SELECT_H
 

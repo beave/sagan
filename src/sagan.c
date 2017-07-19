@@ -70,6 +70,10 @@
 #include "ipc.h"
 #include "parsers/parsers.h"
 
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
+
 #ifdef HAVE_LIBPCAP
 #include "plog.h"
 #endif
@@ -125,6 +129,8 @@ pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char **argv)
 {
+
+    (void)SetThreadName("SaganMain");
 
     const struct option long_options[] = {
         { "help",         no_argument,          NULL,   'h' },

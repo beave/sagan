@@ -33,6 +33,12 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <pthread.h>
+#include <string.h>
+#include <errno.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 #include "version.h"
 
@@ -45,6 +51,8 @@ struct _SaganConfig *config;
 
 void Key_Handler( void )
 {
+
+    (void)SetThreadName("SaganKeyhandler");
 
     while(1) {
 

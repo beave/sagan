@@ -36,6 +36,11 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <string.h>
+#include <errno.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -56,6 +61,8 @@ struct _Sagan_IPC_Counters *counters_ipc;
 
 void Sagan_Perfmonitor_Handler( void )
 {
+
+    (void)SetThreadName("SaganPerfmon");
 
     unsigned long total=0;
     unsigned long seconds=0;
