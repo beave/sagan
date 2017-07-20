@@ -1058,9 +1058,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbysrc_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
-                                                                                afterbysrc_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrc_ipc[i].count=1;
                                                                                     afterbysrc_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
@@ -1127,9 +1125,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbysrcport_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
-                                                                                afterbysrcport_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrcport_ipc[i].count=1;
                                                                                     afterbysrcport_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
@@ -1194,9 +1190,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbydst_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
-                                                                                afterbydst_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbydst_ipc[i].count=1;
                                                                                     afterbydst_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
@@ -1260,9 +1254,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbysrcport_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
-                                                                                afterbysrcport_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrcport_ipc[i].count=1;
                                                                                     afterbysrcport_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
@@ -1324,9 +1316,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbydstport_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
-                                                                                afterbydstport_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbydstport_ipc[i].count=1;
                                                                                     afterbydstport_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
@@ -1388,9 +1378,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                 afterbyusername_ipc[i].count++;
                                                                                 after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
-                                                                                afterbyusername_ipc[i].utime = atol(timet);
-
-                                                                                if ( after_oldtime > rulestruct[b].after_seconds ) {
+                                                                                if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbyusername_ipc[i].count=1;
                                                                                     afterbyusername_ipc[i].utime = atol(timet);
                                                                                     after_log_flag = true;
