@@ -26,7 +26,7 @@
  *
  */
 
-/* DEBUG: need to add dstport, srcport for threshold/after */
+/* TODO: need to add dstport, srcport for threshold/after */
 
 
 #include <stdio.h>
@@ -312,13 +312,13 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_src >= 1 ) {
 
         printf("\n***  After by source (%d) ***\n", counters_ipc->after_count_by_src);
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
+        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "SRC IP", "Counter","Timestamp added", "Total", "SID", "Expire" );
+        printf("-----------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->after_count_by_src; i++) {
             ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].total_count, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
     }
 
@@ -348,14 +348,14 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_dst >= 1 ) {
 
         printf("\n***  After by destination (%d)***\n", counters_ipc->after_count_by_dst);
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
+        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "DST IP", "Counter","Timestamp added", "Total", "SID", "Expire" );
+        printf("-----------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->after_count_by_dst; i++) {
             ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
 
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].total_count, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
     }
 
@@ -385,14 +385,15 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_username >= 1 ) {
 
         printf("\n***  After by username ***(%d)\n", counters_ipc->after_count_by_username);
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
+        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "Username", "Counter","Timestamp added", "Total", "SID", "Expire" );
+        printf("-----------------------------------------------------------------------------------------------------\n");
+
 
 
 
         for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].total_count, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
     }
 

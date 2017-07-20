@@ -1057,6 +1057,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Src_Mutex);
 
                                                                                 afterbysrc_ipc[i].count++;
+                                                                                afterbysrc_ipc[i].total_count++;
+
                                                                                 after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrc_ipc[i].count=1;
@@ -1124,6 +1126,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                                 afterbysrcport_ipc[i].count++;
+                                                                                afterbysrcport_ipc[i].total_count++;
+
                                                                                 after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrcport_ipc[i].count=1;
@@ -1189,6 +1193,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Dst_Mutex);
 
                                                                                 afterbydst_ipc[i].count++;
+                                                                                afterbydst_ipc[i].total_count++;
+
                                                                                 after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbydst_ipc[i].count=1;
@@ -1253,6 +1259,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Src_Port_Mutex);
 
                                                                                 afterbysrcport_ipc[i].count++;
+                                                                                afterbysrcport_ipc[i].total_count++;
+
                                                                                 after_oldtime = atol(timet) - afterbysrcport_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbysrcport_ipc[i].count=1;
@@ -1315,6 +1323,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Dst_Port_Mutex);
 
                                                                                 afterbydstport_ipc[i].count++;
+                                                                                afterbydstport_ipc[i].total_count++;
+
                                                                                 after_oldtime = atol(timet) - afterbydstport_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbydstport_ipc[i].count=1;
@@ -1377,6 +1387,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                 pthread_mutex_lock(&After_By_Username_Mutex);
 
                                                                                 afterbyusername_ipc[i].count++;
+                                                                                afterbyusername_ipc[i].total_count;
+
                                                                                 after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
                                                                                 if ( after_oldtime > rulestruct[b].after_seconds || afterbysrc_ipc[i].count == 0 ) {
                                                                                     afterbyusername_ipc[i].count=1;

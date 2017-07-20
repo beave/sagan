@@ -473,7 +473,8 @@ struct thresh_by_username_ipc {
 typedef struct after_by_src_ipc after_by_src_ipc;
 struct after_by_src_ipc {
     uint32_t ipsrc;
-    int  count;
+    uintmax_t count;
+    uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
@@ -485,6 +486,7 @@ typedef struct after_by_dst_ipc after_by_dst_ipc;
 struct after_by_dst_ipc {
     uint32_t ipdst;
     int  count;
+    uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
@@ -495,7 +497,8 @@ struct after_by_dst_ipc {
 typedef struct after_by_srcport_ipc after_by_srcport_ipc;
 struct after_by_srcport_ipc {
     uint32_t ipsrcport;
-    int  count;
+    uintmax_t count;
+    uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
@@ -506,7 +509,8 @@ struct after_by_srcport_ipc {
 typedef struct after_by_dstport_ipc after_by_dstport_ipc;
 struct after_by_dstport_ipc {
     uint32_t ipdstport;
-    int  count;
+    uintmax_t count;
+    uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
@@ -517,7 +521,8 @@ struct after_by_dstport_ipc {
 typedef struct after_by_username_ipc after_by_username_ipc;
 struct after_by_username_ipc {
     char username[128];
-    int  count;
+    uintmax_t count;
+    uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;

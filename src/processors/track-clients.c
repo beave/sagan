@@ -40,10 +40,10 @@
 #include <errno.h>
 #include <sys/time.h>
 #include <unistd.h>
-        
+
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
-#endif 
+#endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
