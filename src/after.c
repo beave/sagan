@@ -94,13 +94,17 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
             afterbysrc_ipc[rule_position].total_count++;
 
             after_oldtime = atol(timet) - afterbysrc_ipc[rule_position].utime;
+
             if ( after_oldtime > rulestruct[rule_position].after_seconds || afterbysrc_ipc[rule_position].count == 0 ) {
+
                 afterbysrc_ipc[rule_position].count=1;
                 afterbysrc_ipc[rule_position].utime = atol(timet);
+
                 after_log_flag = true;
             }
 
             if ( rulestruct[rule_position].after_count < afterbysrc_ipc[rule_position].count ) {
+
                 after_log_flag = false;
 
                 if ( debug->debuglimits ) {
