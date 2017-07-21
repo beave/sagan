@@ -165,17 +165,20 @@
 #define DEFAULT_IPC_THRESH_BY_USERNAME	10000
 #define DEFAULT_IPC_XBITS		10000
 
+
 #define AFTER_BY_SRC			1
 #define AFTER_BY_DST			2
 #define AFTER_BY_DSTPORT		3
 #define AFTER_BY_USERNAME		4
-#define THRESH_BY_SRC			5
-#define THRESH_BY_DST			6
-#define THRESH_BY_DSTPORT		7
-#define THRESH_BY_USERNAME		8
-#define XBIT				9
-#define THRESH_BY_SRCPORT		10
-#define AFTER_BY_SRCPORT		11
+#define AFTER_BY_SRCPORT                5
+
+#define THRESH_BY_SRC			6
+#define THRESH_BY_DST			7
+#define THRESH_BY_DSTPORT		8
+#define THRESH_BY_USERNAME		9
+#define THRESH_BY_SRCPORT               10
+
+#define XBIT				11
 
 #define PARSE_HASH_MD5			1
 #define	PARSE_HASH_SHA1			2

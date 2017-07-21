@@ -35,6 +35,8 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        aetas.c \
                                                        ipc.c \
                                                        util.c \
+						       after.c \
+						       threshold.c \
                                                        util-time.c \
                                                        util-strlcpy.c \
                                                        util-strlcat.c \
