@@ -25,8 +25,6 @@
  *
  */
 
-/* TODO:  Need to test IPC limits for threshold/after/client tracking */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -86,20 +84,6 @@ pthread_mutex_t CountersFlowFlowTotal=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t CountersGeoIPHit=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t CounterSaganFoundMutex=PTHREAD_MUTEX_INITIALIZER;
 
-/*
-pthread_mutex_t Thresh_By_Src_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t Thresh_By_Dst_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t Thresh_By_Src_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t Thresh_By_Dst_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t Thresh_By_Username_Mutex=PTHREAD_MUTEX_INITIALIZER;
-
-struct thresh_by_src_ipc *threshbysrc_ipc;
-struct thresh_by_dst_ipc *threshbydst_ipc;
-struct thresh_by_srcport_ipc *threshbysrcport_ipc;
-struct thresh_by_dstport_ipc *threshbydstport_ipc;
-struct thresh_by_username_ipc *threshbyusername_ipc;
-*/
-
 void Sagan_Engine_Init ( void )
 {
 
@@ -135,15 +119,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int processor_info_engine_alertid = 0;
 
     sbool after_log_flag = false;
-//    sbool after_flag = false;
+    sbool thresh_log_flag = false;
 
     int threadid = 0;
 
     int i = 0;
     int b = 0;
     int z = 0;
-
-
 
     sbool match = false;
     int sagan_match = 0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
@@ -200,13 +182,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char  timet[20];
 
     struct timeval tp;
-
-//    uintmax_t thresh_oldtime;
-//    uintmax_t after_oldtime;
-
-//    sbool thresh_flag = false;
-    sbool thresh_log_flag = false;
-
     int proto = 0;
 
     sbool brointel_results = 0;

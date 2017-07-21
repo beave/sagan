@@ -20,6 +20,9 @@
 
 /* threshold.c - Logic for "threshold" in rules */
 
+/* TODO:  Need to test IPC limits for threshold/after/client tracking */
+
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -27,6 +30,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"

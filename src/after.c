@@ -18,7 +18,10 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */  
 
-/* after.c - Logic for "after" in Saga rule */
+/* after.c - Logic for "after" in Sagan rule */
+
+/* TODO:  Need to test IPC limits for threshold/after/client tracking */
+
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -27,6 +30,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
