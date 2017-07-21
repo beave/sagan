@@ -1,7 +1,7 @@
 /*
 ** Copyright (C) 2009-2017 Quadrant Information Security <quadrantsec.com>
 ** Copyright (C) 2009-2017 Champ Clark III <cclark@quadrantsec.com>
-**            
+**
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
 ** published by the Free Software Foundation.  You may not use, modify or
@@ -16,7 +16,7 @@
 ** You should have received a copy of the GNU General Public License
 ** along with this program; if not, write to the Free Software
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/  
+*/
 
 sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 );
 sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 );

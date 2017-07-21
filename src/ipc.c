@@ -98,28 +98,29 @@ struct _SaganDebug *debug;
 sbool Clean_IPC_Object( int type )
 {
 
-    time_t t;
-    struct tm *now;
-
-    int i;
-    int utime = 0;
-    int new_count = 0;
-    int old_count = 0;
-
-    char timet[20];
-
-    if ( debug->debugipc ) {
-        Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
-    }
-
-    /* Afterbysrc_IPC */
+    /* After by src */
 
     if ( type == AFTER_BY_SRC && config->max_after_by_src < counters_ipc->after_count_by_src ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
         strftime(timet, sizeof(timet), "%s",  now);
         utime = atol(timet);
+
+
+        if ( debug->debugipc ) {
+            Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
+        }
 
         File_Lock(config->shm_after_by_src);
         pthread_mutex_lock(&After_By_Src_Mutex);
@@ -180,6 +181,16 @@ sbool Clean_IPC_Object( int type )
     /* Afterbydst_IPC */
 
     else if ( type == AFTER_BY_DST && config->max_after_by_dst < counters_ipc->after_count_by_dst ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -245,10 +256,21 @@ sbool Clean_IPC_Object( int type )
 
     }
 
-
     /* Afterbysrcport_IPC */
 
     else if ( type == AFTER_BY_SRCPORT && config->max_after_by_srcport < counters_ipc->after_count_by_srcport ) {
+
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
+
         t = time(NULL);
         now=localtime(&t);
         strftime(timet, sizeof(timet), "%s",  now);
@@ -313,10 +335,21 @@ sbool Clean_IPC_Object( int type )
 
     }
 
-
     /* Afterbydstport_IPC */
 
     else if ( type == AFTER_BY_DSTPORT && config->max_after_by_dstport < counters_ipc->after_count_by_dstport ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
+
+
         t = time(NULL);
         now=localtime(&t);
         strftime(timet, sizeof(timet), "%s",  now);
@@ -384,6 +417,16 @@ sbool Clean_IPC_Object( int type )
     /* AfterbyUsername_IPC */
 
     else if ( type == AFTER_BY_USERNAME && config->max_after_by_username < counters_ipc->after_count_by_username ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -453,6 +496,16 @@ sbool Clean_IPC_Object( int type )
 
     else if ( type == THRESH_BY_SRC && config->max_threshold_by_src < counters_ipc->thresh_count_by_src ) {
 
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
+
         t = time(NULL);
         now=localtime(&t);
         strftime(timet, sizeof(timet), "%s",  now);
@@ -517,10 +570,19 @@ sbool Clean_IPC_Object( int type )
 
     }
 
-
     /* Threshbydst_IPC */
 
     else if ( type == THRESH_BY_SRC && config->max_threshold_by_dst < counters_ipc->thresh_count_by_dst ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -586,10 +648,19 @@ sbool Clean_IPC_Object( int type )
 
     }
 
-
     /* Threshbysrcport_IPC */
 
     else if ( type == THRESH_BY_SRCPORT && config->max_threshold_by_srcport < counters_ipc->thresh_count_by_srcport ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -655,10 +726,19 @@ sbool Clean_IPC_Object( int type )
 
     }
 
-
     /* Threshbydstport_IPC */
 
     else if ( type == THRESH_BY_DSTPORT && config->max_threshold_by_dstport < counters_ipc->thresh_count_by_dstport ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -728,6 +808,16 @@ sbool Clean_IPC_Object( int type )
 
     else if ( type == THRESH_BY_USERNAME && config->max_threshold_by_username < counters_ipc->thresh_count_by_username ) {
 
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
+
         t = time(NULL);
         now=localtime(&t);
         strftime(timet, sizeof(timet), "%s",  now);
@@ -795,6 +885,16 @@ sbool Clean_IPC_Object( int type )
     /* Xbit_IPC */
 
     else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count && config->xbit_storage == XBIT_STORAGE_MMAP ) {
+
+        time_t t;
+        struct tm *now;
+
+        int i;
+        int utime = 0;
+        int new_count = 0;
+        int old_count = 0;
+
+        char timet[20];
 
         t = time(NULL);
         now=localtime(&t);
@@ -865,6 +965,7 @@ sbool Clean_IPC_Object( int type )
     return(0);
 
 }
+
 /*****************************************************************************
  * IPC_Check_Object - If "counters" have been reset,   we want to
  * recreate the other objects (hence the unlink).  This function tests for
