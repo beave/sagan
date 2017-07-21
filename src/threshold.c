@@ -31,12 +31,14 @@
 #include <pthread.h>
 #include <time.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "rules.h"
 #include "threshold.h"
+#include "ipc.h"
 
 pthread_mutex_t Thresh_By_Src_Mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t Thresh_By_Dst_Mutex=PTHREAD_MUTEX_INITIALIZER;

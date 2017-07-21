@@ -123,7 +123,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int threadid = 0;
 
-    int i = 0;
     int b = 0;
     int z = 0;
 
@@ -176,10 +175,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char s_msg[1024];
     char alter_content[MAX_SYSLOGMSG];
     char meta_alter_content[MAX_SYSLOGMSG];
-
-    time_t t;
-    struct tm *now;
-    char  timet[20];
 
     struct timeval tp;
     int proto = 0;

@@ -31,12 +31,14 @@
 #include <pthread.h>
 #include <time.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "rules.h"
 #include "after.h"
+#include "ipc.h"
 
 pthread_mutex_t After_By_Src_Mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t After_By_Dst_Mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -262,7 +264,7 @@ sbool After_By_Username( int rule_position, char *normalize_username )
             pthread_mutex_lock(&After_By_Username_Mutex);
 
             afterbyusername_ipc[rule_position].count++;
-            afterbyusername_ipc[rule_position].total_count;
+            afterbyusername_ipc[rule_position].total_count++;
 
             after_oldtime = atol(timet) - afterbyusername_ipc[rule_position].utime;
             if ( after_oldtime > rulestruct[rule_position].after_seconds || afterbysrc_ipc[rule_position].count == 0 ) {
