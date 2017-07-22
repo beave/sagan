@@ -83,32 +83,29 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
     for (i = 0; i < counters_ipc->after_count_by_src; i++ ) {
 
-        if ( afterbysrc_ipc[rule_position].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
+        if ( afterbysrc_ipc[i].ipsrc == ip_src_u32  && !strcmp(afterbysrc_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
             after_flag = true;
 
             File_Lock(config->shm_after_by_src);
             pthread_mutex_lock(&After_By_Src_Mutex);
 
-            afterbysrc_ipc[rule_position].count++;
-            afterbysrc_ipc[rule_position].total_count++;
+            afterbysrc_ipc[i].count++;
+            afterbysrc_ipc[i].total_count++;
 
-            after_oldtime = atol(timet) - afterbysrc_ipc[rule_position].utime;
+            after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
 
-            if ( after_oldtime > rulestruct[rule_position].after_seconds || afterbysrc_ipc[rule_position].count == 0 ) {
-
-                afterbysrc_ipc[rule_position].count=1;
-                afterbysrc_ipc[rule_position].utime = atol(timet);
-
+            if ( after_oldtime > rulestruct[rule_position].after_seconds || afterbysrc_ipc[i].count == 0 ) {
+                afterbysrc_ipc[i].count=1;
+                afterbysrc_ipc[i].utime = atol(timet);
                 after_log_flag = true;
             }
 
-            if ( rulestruct[rule_position].after_count < afterbysrc_ipc[rule_position].count ) {
-
+            if ( rulestruct[rule_position].after_count < afterbysrc_ipc[i].count ) {
                 after_log_flag = false;
 
                 if ( debug->debuglimits ) {
-                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[rule_position].sid, ip_src);
+                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
                 }
 
                 counters->after_total++;
@@ -145,8 +142,9 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
     }
 
-    return(after_log_flag);
+return(after_log_flag);
 }
+
 
 /************************/
 /* After by Destination */

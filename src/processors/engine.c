@@ -999,7 +999,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                     case(AFTER_BY_SRC):
                                                                         after_log_flag = After_By_Src(b, ip_src, ip_src_u32);
                                                                         break;
-
+/*
                                                                     case(AFTER_BY_DST):
                                                                         after_log_flag = After_By_Dst(b, ip_dst, ip_dst_u32);
                                                                         break;
@@ -1018,6 +1018,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                             after_log_flag = After_By_Username(b, normalize_username );
                                                                         }
+*/
 
                                                                     } /*switch */
 
