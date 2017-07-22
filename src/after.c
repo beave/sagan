@@ -96,15 +96,19 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
             after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
 
+	    /* Reset counter if it's expired */
+
             if ( after_oldtime > rulestruct[rule_position].after_seconds || 
 		 afterbysrc_ipc[i].count == 0 ) {
 
                 afterbysrc_ipc[i].count=1;
                 afterbysrc_ipc[i].utime = atol(timet);
+
                 after_log_flag = true;
             }
 
             if ( rulestruct[rule_position].after_count < afterbysrc_ipc[i].count ) {
+
                 after_log_flag = false;
 
                 if ( debug->debuglimits ) {
@@ -117,13 +121,15 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
             pthread_mutex_unlock(&After_By_Src_Mutex);
             File_Unlock(config->shm_after_by_src);
 
+	    return(after_log_flag);    
+	    
         }
     }
 
 
     /* If not found,  add it to the array */
 
-    if ( after_flag == false ) {
+   // if ( after_flag == false ) {
 
         if ( Clean_IPC_Object(AFTER_BY_SRC) == 0 ) {
 
@@ -143,7 +149,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
         }
 
-    }
+//    }
 
     return(after_log_flag);
 }
