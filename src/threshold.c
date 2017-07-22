@@ -70,7 +70,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_flag = false;
+//    sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
     uintmax_t thresh_oldtime;
@@ -87,7 +87,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
         if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            thresh_flag = true;
+//            thresh_flag = true;
 
             File_Lock(config->shm_thresh_by_src);
             pthread_mutex_lock(&Thresh_By_Src_Mutex);
@@ -115,12 +115,15 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
             File_Unlock(config->shm_thresh_by_src);
+
+	    return(thresh_log_flag); 
+
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( thresh_flag == false ) {
+//    if ( thresh_flag == false ) {
 
         if ( Clean_IPC_Object(THRESH_BY_SRC) == 0 ) {
 
@@ -138,9 +141,9 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
             File_Unlock(config->shm_thresh_by_src);
         }
-    }
+ //   }
 
-    return(thresh_log_flag);
+    return(true);
 }
 
 /****************************/
@@ -154,7 +157,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_flag = false;
+//    sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
     uintmax_t thresh_oldtime;
@@ -171,7 +174,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
 
         if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            thresh_flag = true;
+//            thresh_flag = true;
 
             File_Lock(config->shm_thresh_by_dst);
             pthread_mutex_lock(&Thresh_By_Dst_Mutex);
@@ -202,12 +205,14 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
 
             pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
             File_Unlock(config->shm_thresh_by_dst);
+
+	    return(thresh_log_flag);
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( thresh_flag == false ) {
+//    if ( thresh_flag == false ) {
 
         if ( Clean_IPC_Object(THRESH_BY_DST) == 0 ) {
 
@@ -225,9 +230,9 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
             pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
             File_Unlock(config->shm_thresh_by_dst);
         }
-    }
+//    }
 
-    return(thresh_log_flag);
+    return(true);
 }
 
 /*************************/
@@ -241,7 +246,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_flag = false;
+//    sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
     uintmax_t thresh_oldtime;
@@ -258,7 +263,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
 
         if ( !strcmp(threshbyusername_ipc[rule_position].username, normalize_username) && !strcmp(threshbyusername_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
-            thresh_flag = true;
+//            thresh_flag = true;
 
             File_Lock(config->shm_thresh_by_username);
             pthread_mutex_lock(&Thresh_By_Username_Mutex);
@@ -287,12 +292,14 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
             pthread_mutex_unlock(&Thresh_By_Username_Mutex);
             File_Unlock(config->shm_thresh_by_username);
 
+	    return(thresh_log_flag);
+
         }
     }
 
     /* Username not found, add it to array */
 
-    if ( thresh_flag == false ) {
+//    if ( thresh_flag == false ) {
 
         if ( Clean_IPC_Object(THRESH_BY_USERNAME) == 0 ) {
 
@@ -310,9 +317,9 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
             pthread_mutex_unlock(&Thresh_By_Username_Mutex);
             File_Unlock(config->shm_thresh_by_username);
         }
-    }
+//    }
 
-    return(thresh_log_flag);
+    return(true);
 }
 
 /*********************************/
@@ -326,7 +333,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_flag = false;
+//    sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
     uintmax_t thresh_oldtime;
@@ -343,7 +350,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
 
         if ( threshbydstport_ipc[rule_position].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
-            thresh_flag = true;
+//            thresh_flag = true;
 
             File_Lock(config->shm_thresh_by_dstport);
             pthread_mutex_lock(&Thresh_By_Dst_Port_Mutex);
@@ -372,12 +379,14 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
             File_Unlock(config->shm_thresh_by_dstport);
 
+	    return(thresh_log_flag);
+
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( thresh_flag == false ) {
+//    if ( thresh_flag == false ) {
 
         if ( Clean_IPC_Object(THRESH_BY_DSTPORT) == 0 ) {
 
@@ -396,9 +405,9 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
             File_Unlock(config->shm_thresh_by_dstport);
         }
-    }
+//    }
 
-    return(thresh_log_flag);
+    return(true);
 }
 
 /****************************/
@@ -412,7 +421,7 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_flag = false;
+//    sbool thresh_flag = false;
     sbool thresh_log_flag = false;
 
     uintmax_t thresh_oldtime;
@@ -429,7 +438,7 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
 
         if ( threshbysrcport_ipc[rule_position].ipsrcport == ip_srcport_u32 && !strcmp(threshbysrcport_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
-            thresh_flag = true;
+//            thresh_flag = true;
 
             File_Lock(config->shm_thresh_by_srcport);
             pthread_mutex_lock(&Thresh_By_Src_Port_Mutex);
@@ -458,12 +467,14 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
             File_Unlock(config->shm_thresh_by_srcport);
 
+	    return(thresh_log_flag);
+
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( thresh_flag == false ) {
+//    if ( thresh_flag == false ) {
 
         if ( Clean_IPC_Object(THRESH_BY_SRCPORT) == 0 ) {
 
@@ -482,8 +493,8 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
             File_Unlock(config->shm_thresh_by_srcport);
         }
-    }
+//    }
 
-    return(thresh_log_flag);
+    return(true);
 }
 

@@ -67,7 +67,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 {
 
     sbool after_log_flag = true;
-    sbool after_flag = false;
+//    sbool after_flag = false;
 
     time_t t;
     struct tm *now;
@@ -86,7 +86,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
         if ( afterbysrc_ipc[i].ipsrc == ip_src_u32 && 
 	     !strcmp(afterbysrc_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            after_flag = true;
+//            after_flag = true;
 
             File_Lock(config->shm_after_by_src);
             pthread_mutex_lock(&After_By_Src_Mutex);
@@ -151,7 +151,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 
 //    }
 
-    return(after_log_flag);
+    return(true);
 }
 
 /************************/
@@ -162,7 +162,7 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
 {
 
     sbool after_log_flag = true;
-    sbool after_flag = false;
+//    sbool after_flag = false;
 
     time_t t;
     struct tm *now;
@@ -181,7 +181,7 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
         if ( afterbydst_ipc[i].ipdst == ip_dst_u32 && 
 	     !strcmp(afterbydst_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            after_flag = true;
+//            after_flag = true;
 
             File_Lock(config->shm_after_by_dst);
             pthread_mutex_lock(&After_By_Dst_Mutex);
@@ -213,13 +213,15 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
             pthread_mutex_unlock(&After_By_Dst_Mutex);
             File_Unlock(config->shm_after_by_dst);
 
+	    return(after_log_flag); 
+
         }
     }
 
 
     /* If not found,  add it to the array */
 
-    if ( after_flag == false ) {
+//    if ( after_flag == false ) {
 
         if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
@@ -239,9 +241,9 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
 
         }
 
-    }
+//    }
 
-    return(after_log_flag);
+    return(true);
 
 }
 
@@ -253,7 +255,7 @@ sbool After_By_Username( int rule_position, char *normalize_username )
 {
 
     sbool after_log_flag = true;
-    sbool after_flag = false;
+//    sbool after_flag = false;
 
     time_t t;
     struct tm *now;
@@ -274,7 +276,7 @@ sbool After_By_Username( int rule_position, char *normalize_username )
             if ( !strcmp(afterbyusername_ipc[i].username, normalize_username) && 
 		 !strcmp(afterbyusername_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-                after_flag = true;
+ //               after_flag = true;
 
                 File_Lock(config->shm_after_by_username);
                 pthread_mutex_lock(&After_By_Username_Mutex);
@@ -289,6 +291,7 @@ sbool After_By_Username( int rule_position, char *normalize_username )
 
                     afterbyusername_ipc[i].count=1;
                     afterbyusername_ipc[i].utime = atol(timet);
+
                     after_log_flag = true;
                 }
 
@@ -306,12 +309,14 @@ sbool After_By_Username( int rule_position, char *normalize_username )
                 pthread_mutex_unlock(&After_By_Username_Mutex);
                 File_Unlock(config->shm_after_by_username);
 
+		return(after_log_flag);
+
             }
         }
 
         /* If not found, add to the username array */
 
-        if ( after_flag == false ) {
+//        if ( after_flag == false ) {
 
             if ( Clean_IPC_Object(AFTER_BY_DST) == 0 ) {
 
@@ -329,9 +334,9 @@ sbool After_By_Username( int rule_position, char *normalize_username )
                 pthread_mutex_unlock(&After_By_Username_Mutex);
                 File_Unlock(config->shm_after_by_username);
             }
-        }
+//        }
 
-return(after_log_flag);
+return(true);
 
 } /* End of After */
 
@@ -343,7 +348,7 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
 {
 
     sbool after_log_flag = true;
-    sbool after_flag = false;
+//    sbool after_flag = false;
 
     time_t t;
     struct tm *now;
@@ -363,7 +368,7 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
         if ( afterbysrcport_ipc[i].ipsrcport == ip_srcport_u32 &&
              !strcmp(afterbysrcport_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            after_flag = true;
+//            after_flag = true;
 
             File_Lock(config->shm_after_by_srcport);
             pthread_mutex_lock(&After_By_Src_Port_Mutex);
@@ -394,12 +399,14 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
             File_Unlock(config->shm_after_by_srcport);
 
+	    return(after_log_flag);
+
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( after_flag == false ) {
+//    if ( after_flag == false ) {
 
         if ( Clean_IPC_Object(AFTER_BY_SRCPORT) == 0 ) {
 
@@ -418,9 +425,9 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
             File_Unlock(config->shm_after_by_srcport);
 
         }
-    }
+//    }
 
-    return(after_log_flag);
+    return(true);
 
 }
 
@@ -432,7 +439,7 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
 {
 
     sbool after_log_flag = true;
-    sbool after_flag = false;
+//    sbool after_flag = false;
 
     time_t t;
     struct tm *now;
@@ -452,7 +459,7 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
         if ( afterbydstport_ipc[i].ipdstport == ip_dstport_u32 &&
              !strcmp(afterbydstport_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
-            after_flag = true;
+//            after_flag = true;
 
             File_Lock(config->shm_after_by_dstport);
             pthread_mutex_lock(&After_By_Dst_Port_Mutex);
@@ -484,12 +491,14 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
             pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
             File_Unlock(config->shm_after_by_dstport);
 
+	    return(after_log_flag);
+
         }
     }
 
     /* If not found,  add it to the array */
 
-    if ( after_flag == false ) {
+//    if ( after_flag == false ) {
 
         if ( Clean_IPC_Object(AFTER_BY_DSTPORT) == 0 ) {
 
@@ -508,8 +517,8 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
             File_Unlock(config->shm_after_by_dstport);
 
         }
-    }
+ //   }
 
-    return(after_log_flag);
+    return(true);
 
 }
