@@ -265,7 +265,7 @@ sbool After_By_Username( int rule_position, char *normalize_username )
             pthread_mutex_lock(&After_By_Username_Mutex);
 
             afterbyusername_ipc[i].count++;
-            afterbyusername_ipc[i].total_count;
+            afterbyusername_ipc[i].total_count++;
 
             after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
 
