@@ -1218,7 +1218,7 @@ sbool Check_Content_Not( char *s )
  * Bernstein.  See http://www.cse.yorku.ca/~oz/hash.html.
  ***************************************************************************/
 
-uint32_t Djb2_Hash(unsigned char *str)
+uint32_t Djb2_Hash(char *str)
 {
 
     uint32_t hash = 5381;

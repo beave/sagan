@@ -48,16 +48,17 @@
 #include <netinet/ip.h>
 #include <netinet/udp.h>
 #include <arpa/inet.h>
-#include <errno.h>                                                                                  |
-|
-#ifdef HAVE_SYS_PRCTL_H                                                                             |
-#include <sys/prctl.h>                                                                              |
+#include <errno.h>
+
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
 #endif
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "signal-handler.h"
+#include "lockfile.h"
 #include "plog.h"
 
 struct _SaganDebug *debug;

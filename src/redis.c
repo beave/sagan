@@ -39,6 +39,7 @@
 
 #include "sagan.h"
 #include "sagan-config.h"
+#include "lockfile.h"
 #include "redis.h"
 
 struct _SaganConfig *config;
@@ -64,9 +65,7 @@ void Redis_Writer_Init ( void )
 void Redis_Reader_Connect ( void )
 {
 
-    redisReply *reply;
-
-    struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+    struct timeval timeout = { 1, 500000 }; // 5.5 seconds
     config->c_reader_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
 
     if (config->c_reader_redis == NULL || config->c_reader_redis->err) {
@@ -95,7 +94,6 @@ void Redis_Writer ( void )
     char *tok = NULL;
     char *split_redis_command = NULL;
     char tmp_redis_command[2048] = { 0 };
-    char tmp_reply[8] = { 0 };
 
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     c_writer_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);

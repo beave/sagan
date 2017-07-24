@@ -745,6 +745,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     CURL *curl;
     CURLcode res;
+
     struct curl_slist *headers = NULL;
     char *response=NULL;
 
@@ -764,7 +765,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     int i;
 
     char tmp[64] = { 0 };
-    const char ptrtmp;
 
     char  timet[20] = { 0 };
     time_t t;

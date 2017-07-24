@@ -1535,7 +1535,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
  * to "off"
  *****************************************************************************/
 
-static void Xbit_Cleanup_MMAP(void)
+void Xbit_Cleanup_MMAP(void)
 {
 
     int i = 0;

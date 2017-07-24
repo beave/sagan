@@ -130,7 +130,7 @@ sbool     Is_IP (char *str);
 sbool     File_Lock ( int );
 sbool     File_Unlock ( int );
 sbool     Check_Content_Not( char * );
-uint32_t  Djb2_Hash(unsigned char *);
+uint32_t  Djb2_Hash( char * );
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void      Set_Pipe_Size( FILE * );

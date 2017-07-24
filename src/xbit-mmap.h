@@ -24,7 +24,7 @@
 
 void Xbit_Set_MMAP( int, char *, char *, int, int );
 sbool Xbit_Condition_MMAP ( int, char *, char *, int, int );
-static void Xbit_Cleanup_MMAP( void );
+void Xbit_Cleanup_MMAP( void );
 sbool Xbit_Count_MMAP( int, char *, char * );
 
 typedef struct _Sagan_Xbit_Track _Sagan_Xbit_Track;

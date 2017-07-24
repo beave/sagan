@@ -38,6 +38,7 @@
 #include "xbit.h"
 #include "xbit-mmap.h"
 #include "xbit-redis.h"
+#include "parsers/parsers.h"
 #include "redis.h"
 
 struct _SaganConfig *config;
@@ -88,7 +89,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 {
 
     int i;
-    int a;
     int j;
 
     int xbit_total_match = 0;
@@ -98,13 +98,11 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
     char  timet[20];
 
     redisReply *reply;
-    redisReply *reply_2;
-    redisReply *reply_3;
 
-    char redis_tmp[256];
+    char redis_tmp[256] = { 0 };
 
-    char redis_command[256];
-    char redis_reply[16];
+    char redis_command[256] = { 0 };
+    char redis_reply[16] = { 0 };
 
     char tmp[128];
     char *tmp_xbit_name = NULL;
@@ -463,7 +461,6 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
     redisReply *reply;
     redisReply *reply_2;
-    redisReply *reply_3;
 
     char redis_tmp[256] = { 0 };
     char redis_command[256] = { 0 };
@@ -493,7 +490,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
             while( tmp_xbit_name != NULL ) {
 
-                snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
+                snprintf( redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
                 djb2_hash = Djb2_Hash(redis_tmp);
 
                 if ( redis_msgslot < config->redis_max_writer_threads ) {
