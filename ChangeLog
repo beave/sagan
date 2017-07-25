@@ -1,3 +1,58 @@
+2017/07/25 -	Sagan 1.1.8 released.
+
+		* Big stability fixes in this release.  Mostly involving protecting data with in
+		  global structures (xbit, threshold, after, client tracking, etc).  If upgrading, 
+		  you'll want to remove all old/legacy IPC data from /var/sagan/ipc or whatever
+		  what you have "ipc-directory" configuration option.
+
+		  https://github.com/beave/sagan/commit/d10a92c9d0a6ec39f26c149179ce0494a4ceba96
+		  https://github.com/beave/sagan/commit/d10a92c9d0a6ec39f26c149179ce0494a4ceba96
+		  https://github.com/beave/sagan/commit/d2802f9d6cbe26836195e5400e92a707d0cf0062
+
+		* Speed up's....
+		
+		  https://github.com/beave/sagan/commit/466a5ea722209ec63cec544c52622f261659dbae
+		  https://github.com/beave/sagan/commit/295221aa6836b017c578663b0185ac63535bfa84
+
+		* Sagan threads are now "named".  This allows for easier debugging.  Thread names
+		  are SaganMain, SaganWorker, SaganKey, SaganPlog, SaganSignal, etc.
+
+		  https://github.com/beave/sagan/commit/6767ec707044de62166d00fb7f35d7d3050921c5
+
+		* Fixes for "parse_hash" rule option.  This allows Sagan to automatically extract
+		  MD5, SHA1, SHA256 hashes for lookups.
+
+		  https://github.com/beave/sagan/commit/58f00606f7912b4c122a4c20eb4321c081842882
+
+		* Beta Redis "xbit" sharing code added.  This is a work in progress.  This allows
+		  Sagan to "share" xbits between devices on the network.
+
+		  https://github.com/beave/sagan/commit/d25b8e92e00f136623f08f2aee5da442073e5978
+		  https://github.com/beave/sagan/commit/77e33538a054c09ed615a01c6be0e0fc7b373c83
+		  https://github.com/beave/sagan/commit/6a1d6c04c652d4f598e2951949d812578ad53085
+		  https://github.com/beave/sagan/commit/1f288bb6d178ed15859d7fb3cf8ae1ea0ea1e445
+		  https://github.com/beave/sagan/commit/8c2031e21f86a4ec84c62a6d7e0b46d386c3da68
+		  https://github.com/beave/sagan/commit/6828a0ac9cab651046739cd371db8f14cbe0029e
+		  https://github.com/beave/sagan/commit/823163aa8dfe1a205d03d6c975ac0f5a8673c0f8
+		  https://github.com/beave/sagan/commit/d1656a1ba8eb6ffa68fc8224d09d88d97d89e1ec
+		  https://github.com/beave/sagan/commit/c61c0908177129503e839a81007ec2e8139698cb
+		  https://github.com/beave/sagan/commit/8e42d3450afc3c66b5b013b1924df2aed6b13226
+
+		* Split after.c and threshold.c from processors/engine.c
+
+		  https://github.com/beave/sagan/commit/b445cd3aba2c1c6c6128bf819337206f6f253653
+		  https://github.com/beave/sagan/commit/7385473512c6b3aa9ed01a34f9dbc4519a471d3f
+
+		* Typo fix issue #95 reported by "CyberTaoFlow".
+
+		https://github.com/beave/sagan/commit/b490cf2a9cc3b9d702b1f0c12468a248d2e3e283
+
+		* Removed the confusing "email by priority" option. If you want Sagan to e-mail 
+		  you event(s), the rule must contain the 'email' rule option.
+
+		  https://github.com/beave/sagan/commit/8149e923bb37d7a5ff0ec88ff5c5be57c2388ab1
+		
+
 2017/05/31 -	Sagan 1.1.7 released.
 
 		* The largest and most fundamental change relates to how Sagan rules are written. As of this release,  Sagan 
