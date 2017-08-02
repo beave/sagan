@@ -65,7 +65,7 @@ struct _Sagan_Bluedot_Cat_List {
 
 typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
 struct _Sagan_Bluedot_IP_Cache {
-    uint32_t host;
+    unsigned char host[MAXIPBIT];
     uintmax_t mdate_utime;
     uintmax_t cdate_utime;
     uintmax_t cache_utime;
@@ -96,7 +96,7 @@ struct _Sagan_Bluedot_Filename_Cache {
 
 typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
 struct _Sagan_Bluedot_IP_Queue {
-    uint32_t host;
+    unsigned char host[MAXIPBIT];
 };
 
 typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;

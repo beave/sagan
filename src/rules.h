@@ -33,14 +33,18 @@ struct _Rules_Loaded {
 
 typedef struct arr_flow_1 arr_flow_1;
 struct arr_flow_1 {
-    uint32_t lo;
-    uint32_t hi;
+    struct {
+        unsigned char ipbits[MAXIPBIT];
+        unsigned char maskbits[MAXIPBIT];
+    } range;
 };
 
 typedef struct arr_flow_2 arr_flow_2;
 struct arr_flow_2 {
-    uint32_t lo;
-    uint32_t hi;
+    struct {
+        unsigned char ipbits[MAXIPBIT];
+        unsigned char maskbits[MAXIPBIT];
+    } range;
 };
 
 typedef struct arr_port_1 arr_port_1;

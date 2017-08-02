@@ -24,6 +24,8 @@
 
 #ifdef HAVE_LIBLOGNORM
 
+#include <json.h>
+
 #include "sagan-defs.h"
 
 /* liblognorm struct */
@@ -46,6 +48,8 @@ typedef struct _SaganNormalizeLiblognorm {
     char src_host[MAXHOST];
     char dst_host[MAXHOST];
 
+    char selector[MAXSELECTOR];
+
     int  src_port;
     int  dst_port;
 
@@ -64,4 +68,4 @@ typedef struct _SaganNormalizeLiblognorm {
 
 
 void Liblognorm_Load( char * );
-void Normalize_Liblognorm( char * );
+json_object *Normalize_Liblognorm( char * );

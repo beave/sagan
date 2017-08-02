@@ -85,7 +85,7 @@ struct _Sagan_Redis *SaganRedis;
  and "isnotset"
  *****************************************************************************/
 
-sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
     int i;
@@ -107,9 +107,6 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
     char tmp[128];
     char *tmp_xbit_name = NULL;
     char *tok = NULL;
-
-    uint32_t ip_src = IP2Bit(ip_src_char);
-    uint32_t ip_dst = IP2Bit(ip_dst_char);
 
     uint32_t djb2_hash;
 
@@ -179,7 +176,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                     /* Since we have source, destination and xbit name,  we can generate the
                        DJB2 hash without having to dig to far into Redis */
 
-                    snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
+                    snprintf(redis_tmp, sizeof(redis_tmp), "%s-%s-%s-%s", tmp_xbit_name, selector, ip_src_char, ip_dst_char);
                     djb2_hash = Djb2_Hash(redis_tmp);
 
                     snprintf(redis_command, sizeof(redis_command), "HGET %u name", djb2_hash);
@@ -258,23 +255,27 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                 if ( rulestruct[rule_position].xbit_direction[i] == 2 ||
                      rulestruct[rule_position].xbit_direction[i] == 3 ) {
 
+                    pthread_mutex_lock(&RedisMutex);
+
                     if ( rulestruct[rule_position].xbit_direction[i] == 2 ) {
 
                         src_or_dst = "xbit_src_index";
                         src_or_dst_type = "ip_src";
 
+                        snprintf( redis_tmp, sizeof(redis_tmp), "%s-%s", selector, ip_src_char);
                     } else {
 
                         src_or_dst = "xbit_dst_index";
                         src_or_dst_type = "ip_dst";
 
+                        snprintf( redis_tmp, sizeof(redis_tmp), "%s-%s", selector, ip_dst_char);
                     }
 
-                    pthread_mutex_lock(&RedisMutex);
+                    djb2_hash = Djb2_Hash(redis_tmp);
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE %s %u %u", src_or_dst, djb2_hash, djb2_hash);
 
                     /* Look for the source or destination in our "index" */
 
-                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE %s %u %u", src_or_dst, ip_src, ip_src);
                     reply = redisCommand(config->c_reader_redis, redis_command);
 
                     if ( debug->debugredis ) {
@@ -446,7 +447,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
  * Xbit_Set_Redis - This will "set" and "unset" xbits in Redis
  *****************************************************************************/
 
-void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
     time_t t;
@@ -465,15 +466,24 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     char redis_tmp[256] = { 0 };
     char redis_command[256] = { 0 };
 
-    uint32_t ip_src = IP2Bit(ip_src_char);
-    uint32_t ip_dst = IP2Bit(ip_dst_char);
-
     uint32_t djb2_hash;
+    uint32_t djb2_hash_src;
+    uint32_t djb2_hash_dst;
 
 
     if ( debug->debugredis ) {
         Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
     }
+
+    snprintf( redis_tmp, sizeof(redis_tmp), "%s-%s-%s-%s", tmp_xbit_name, selector, ip_src_char, ip_dst_char);
+    djb2_hash = Djb2_Hash(redis_tmp);
+
+    snprintf( redis_tmp, sizeof(redis_tmp), "%s-%s", selector, ip_src_char);
+    djb2_hash_src = Djb2_Hash(redis_tmp);
+
+    snprintf( redis_tmp, sizeof(redis_tmp), "%s-%s", selector, ip_dst_char);
+    djb2_hash_dst = Djb2_Hash(redis_tmp);
+
 
     for (i = 0; i < rulestruct[rule_position].xbit_count; i++) {
 
@@ -490,25 +500,22 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
             while( tmp_xbit_name != NULL ) {
 
-                snprintf( redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
-                djb2_hash = Djb2_Hash(redis_tmp);
-
-                if ( redis_msgslot < config->redis_max_writer_threads ) {
+                 if ( redis_msgslot < config->redis_max_writer_threads ) {
 
                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
-                             "HMSET %u active 1 name %s src_ip %u dst_ip %u timestamp %s expire %d sensor %s;"
+                             "HMSET %u-%s active 1 name %s selector %s src_ip %s dst_ip %s timestamp %s expire %d sensor %s;"
                              "EXPIRE %u %d;"
                              "ZADD xbit_src_index %u %u;"
                              "ZADD xbit_dst_index %u %u;",
 
-                             djb2_hash, tmp_xbit_name, ip_src, ip_dst,  timet, rulestruct[rule_position].xbit_timeout[i],
+                             djb2_hash, selector, tmp_xbit_name, selector, ip_src_char, ip_dst_char,  timet, rulestruct[rule_position].xbit_timeout[i],
                              config->sagan_sensor_name,
 
                              djb2_hash, rulestruct[rule_position].xbit_timeout[i],
 
-                             ip_src, djb2_hash,
-                             ip_dst, djb2_hash );
+                             djb2_hash, djb2_hash_src,
+                             djb2_hash, djb2_hash_dst );
 
                     redis_msgslot++;
 
@@ -555,7 +562,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                 else if ( rulestruct[rule_position].xbit_direction[i] == 1 ) {
 
-                    snprintf(redis_tmp, sizeof(redis_tmp), "%s-%u-%u", tmp_xbit_name, ip_src, ip_dst);
+                    snprintf(redis_tmp, sizeof(redis_tmp), "%s-%s-%s-%s", tmp_xbit_name, selector, ip_src_char, ip_dst_char);
                     djb2_hash = Djb2_Hash(redis_tmp);
 
                     pthread_mutex_lock(&RedisMutex);
@@ -581,8 +588,8 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                      "ZREMRANGEBYSCORE xbit_dst_index %u %u;"
                                      "DEL %u",
 
-                                     ip_src, ip_src,
-                                     ip_dst, ip_dst,
+                                     djb2_hash_src, djb2_hash_src,
+                                     djb2_hash_dst, djb2_hash_dst,
                                      djb2_hash );
 
                             redis_msgslot++;
@@ -612,7 +619,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     pthread_mutex_lock(&RedisMutex);
 
-                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_src_index %u %u", ip_src, ip_src);
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_src_index %u %u", djb2_hash_src, djb2_hash_src);
 
                     reply = redisCommand(config->c_reader_redis, redis_command);
 
@@ -688,7 +695,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                     pthread_mutex_lock(&RedisMutex);
 
-                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_dst_index %u %u", ip_dst, ip_dst);
+                    snprintf(redis_command, sizeof(redis_command), "ZRANGEBYSCORE xbit_dst_index %u %u", djb2_hash_dst, djb2_hash_dst);
 
                     reply = redisCommand(config->c_reader_redis, redis_command);
 

@@ -85,15 +85,15 @@ void Sagan_Blacklist_Load ( void )
     FILE *blacklist;
     char *tok=NULL;
     char *tmpmask=NULL;
-    int mask=0;
     char tmp[1024] = { 0 };
+    int mask = 0;
     char *iprange=NULL;
     char blacklistbuf[1024] = { 0 };
     char *blacklist_filename = NULL;
     char *ptmp = NULL;
 
-    uint32_t u32_lower;
-    uint32_t u32_higher;
+    unsigned char ipbits[MAXIPBIT] = { 0 };
+    unsigned char maskbits[MAXIPBIT]={ 0 };
 
     int line_count;
     int i;
@@ -167,7 +167,7 @@ void Sagan_Blacklist_Load ( void )
                     found = 1;
                 }
 
-                if ( mask == 0 ) {
+                if ( mask == 0 || !Mask2Bit(mask, maskbits)) {
 
                     Sagan_Log(S_ERROR, "[%s, line %d] Invalid mask in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
                     found = 1;
@@ -184,23 +184,25 @@ void Sagan_Blacklist_Load ( void )
 
 
                 if ( found == 0 ) {
+                    if (!IP2Bit(iprange, ipbits)) {
+                        Sagan_Log(S_WARN, "[%s, line %d] Got invalid blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
+                        found = 1;
+                    } else {
+                        for ( i = 0; i < counters->blacklist_count; i++ ) {
 
-                    u32_lower = IP2Bit(iprange);
-                    u32_higher = u32_lower + (pow(2,32-mask)-1);
-
-                    for ( i = 0; i < counters->blacklist_count; i++ ) {
-
-                        if ( SaganBlacklist[i].u32_lower == u32_lower && SaganBlacklist[i].u32_higher == u32_higher ) {
-                            Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
-                            found = 1;
+                            if ( 0 == memcmp(SaganBlacklist[i].range.ipbits, ipbits, sizeof(ipbits)) && 
+                                 0 == memcmp(SaganBlacklist[i].range.maskbits, maskbits, sizeof(maskbits))) {
+                                Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
+                                found = 1;
+                            }
                         }
                     }
                 }
 
                 if ( found == 0 ) {
 
-                    SaganBlacklist[counters->blacklist_count].u32_lower = u32_lower;
-                    SaganBlacklist[counters->blacklist_count].u32_higher = u32_higher;
+                    memcpy(SaganBlacklist[counters->blacklist_count].range.ipbits, ipbits, sizeof(ipbits));
+                    memcpy(SaganBlacklist[counters->blacklist_count].range.maskbits, maskbits, sizeof(maskbits));
 
                     pthread_mutex_lock(&CounterBlacklistGenericMutex);
                     counters->blacklist_count++;
@@ -219,11 +221,11 @@ void Sagan_Blacklist_Load ( void )
 
 
 /***************************************************************************
- * Sagan_Blacklist_IPADDR - Looks up the 32 bit IP address in the Blacklist
+ * Sagan_Blacklist_IPADDR - Looks up the IP address in the Blacklist
  * array.  If found,  returns TRUE.
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
+sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
 {
 
     int i;
@@ -232,7 +234,7 @@ sbool Sagan_Blacklist_IPADDR ( uint32_t u32_ipaddr )
 
     for ( i = 0; i < counters->blacklist_count; i++) {
 
-        if ( ( u32_ipaddr > SaganBlacklist[i].u32_lower && u32_ipaddr < SaganBlacklist[i].u32_higher ) || ( u32_ipaddr == SaganBlacklist[i].u32_lower ) ) {
+        if ( is_inrange(ipaddr, (unsigned char *)&SaganBlacklist[i].range, 1) ) {
 
             pthread_mutex_lock(&CounterBlacklistGenericMutex);
             counters->blacklist_hit_count++;
@@ -257,28 +259,27 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
     int i;
     int b;
 
-    uint32_t ip;
+    unsigned char ip[MAXIPBIT] = { 0 };
 
-    char results[16] = { 0 };
+    char results[MAXIP] = {0};
 
     for (i = 1; i < MAX_PARSE_IP; i++) {
 
-        Parse_IP(syslog_message, i, results, sizeof(results));
-
         /* Failed to find next IP,  short circuit the process */
-
-        if (!strcmp(results, "0")) {
+        if (!Parse_IP(syslog_message, i, results, sizeof(results))) {
             return(false);
         }
 
-        ip = IP2Bit(results);
+        if (!IP2Bit(results, ip)) {
+            continue;
+        }
 
         pthread_mutex_lock(&CounterBlacklistGenericMutex);
         counters->blacklist_lookup_count++;
         pthread_mutex_unlock(&CounterBlacklistGenericMutex);
 
         for ( b = 0; b < counters->blacklist_count; b++ ) {
-            if ( ( ip > SaganBlacklist[b].u32_lower && ip < SaganBlacklist[b].u32_higher ) || ( ip == SaganBlacklist[b].u32_lower ) )
+            if ( is_inrange(ip, (unsigned char *)&SaganBlacklist[b].range, 1) )
 
             {
 

@@ -144,7 +144,7 @@ int Parse_Src_Port (char *msg)
             token = strtok_r(NULL, " ", &saveptr2);
             if ( token == NULL ) break;
 
-            result = inet_pton(AF_INET, token,  &(sa.sin_addr));
+            result = Is_IP(token);
 
             /* Found IP,  get the port */
             if ( result != 0 ) {

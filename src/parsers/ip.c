@@ -9,7 +9,7 @@
 ** Public License.
 **
 ** This program is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** but WITHOUT ANY WARRANTY; withstr even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU General Public License for more details.
 **
@@ -34,9 +34,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <string.h>
 
 #include "sagan.h"
@@ -48,104 +50,119 @@
 
 struct _SaganConfig *config;
 
-void Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
+sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
 {
 
-    int result_space, result_nonspace, i, b;
+    sbool last_is_host = false;
+    struct addrinfo hints = {0};
+    struct addrinfo *result = NULL;
 
-    int flag=0;
-    int current_pos=0;
-    int notfound=0;
+    int rc = -1;
+    sbool ret = 0;
+    int current_pos = 0;
 
-    char ctmp[2] = { 0 };
-
-    char lastgood[16] = { 0 };
-
-    char msg[MAX_SYSLOGMSG] = { 0 };
-    char tmpmsg[MAX_SYSLOGMSG] = { 0 };
+    char ctmp = '\0';
 
     char *tok=NULL;
     char *ptmp=NULL;
+    char *stmp=NULL;
+    char *etmp=NULL;
+    char *letmp=NULL;
 
-    struct sockaddr_in sa;
-
-    snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
-
-    ptmp = strtok_r(tmpmsg, " ", &tok);
-
-    while (ptmp != NULL ) {
-
-        if (Sagan_strstr(ptmp, ".")) {
-
-            result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
-
-            /* If we already have a good IP,  return it.  We can sometimes skips
-             * the next steps */
-
-            if ( result_space != 0 && strcmp(ptmp, "127.0.0.1")) {
-
-                current_pos++;
-
-                if ( current_pos == pos ) {
-
-                    snprintf(str, size, "%s", ptmp);
-                    return;
-
-                }
-
-            } else {
-
-                notfound = 1;
-            }
-
-            /* Start tearing apart the substring */
-
-            if ( notfound == 1 ) {
-
-                for (b=0; b < strlen(ptmp); b++) {
-                    for (i = b; i < strlen(ptmp); i++) {
-
-                        snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
-                        strlcat(msg, ctmp, sizeof(msg));
-
-                        result_nonspace = inet_pton(AF_INET, msg,  &(sa.sin_addr));
-
-                        if ( result_nonspace != 0 ) {
-                            strlcpy(lastgood, msg, sizeof(lastgood));
-                            flag=1;
-                        }
-
-                        if ( flag == 1 && result_nonspace == 0 ) {
-
-                            current_pos++;
-
-                            if ( current_pos == pos ) {
-
-                                if (!strcmp(lastgood, "127.0.0.1")) {
-
-                                    snprintf(str, size, "%s", config->sagan_host);
-                                    return;
-
-                                }
-
-                                snprintf(str, size, "%s", lastgood);
-                                return;
-                            }
-
-                            flag = 0;
-                            i=i+strlen(lastgood);
-                            b=b+strlen(lastgood);
-                            break;
-                        }
-                    }
-                    strlcpy(msg, "", sizeof(msg));
-                }
-            }
-            notfound = 0;
-        }
-        ptmp = strtok_r(NULL, " ", &tok);
+    // Just use the existing message, if no space use the whole message
+    ptmp = strtok_r(syslogmessage, " ", &tok);
+    if (ptmp == NULL) {
+        ptmp = syslogmessage;
     }
 
-    snprintf(str, size, "0");
+    stmp = ptmp;
+    while (ptmp != NULL) {
+        // If we have no '.' or ':' can't be an address.
+        // The next token will be skipped to at the end
+        if ((strstr(ptmp, ".") || strstr(ptmp, ":"))) {
+            // Can't start with a '.', let's get to possible starting chars
+            while (
+                    stmp[0] != '\0' &&
+                    stmp[0] != ':' &&
+                    (stmp[0] < '0' || stmp[0] > '9') &&
+                    (stmp[0] < 'A' || stmp[0] > 'F') &&
+                    (stmp[0] < 'a' || stmp[0] > 'f')
+            ) {
+                stmp++;
+                continue;
+            }
+
+            // If we ended with a NULL then we are done with this token
+            if (stmp[0] == '\0') {
+                break;
+            }
+
+            // Store the last match so we can get the longest match
+            letmp = NULL;
+            etmp = stmp;
+            // Try each char until we get a non-match
+            while (
+                     etmp[0] == ':' ||
+                     etmp[0] == '.' ||
+                    (etmp[0] >= '0' && etmp[0] <= '9') ||
+                    (etmp[0] >= 'A' && etmp[0] <= 'F') ||
+                    (etmp[0] >= 'a' && etmp[0] <= 'f')
+            ) {
+                etmp++;
+
+                if (Starts_With(stmp, "127.0.0.1") || Starts_With(stmp, "::1")) {
+                    letmp = NULL;
+                    last_is_host = true;
+                    break;
+                }
+
+                // Just re-use the string to save a copy, put a NULL byte then put back the previous byte
+                ctmp = etmp[0];
+                etmp[0] = '\0';
+
+                // Use getaddrinfo so we can get ipv4 or 6
+                hints.ai_family = AF_UNSPEC;
+                hints.ai_socktype = SOCK_DGRAM;
+                hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+
+                rc = getaddrinfo(stmp, NULL, &hints, &result);
+                etmp[0] = ctmp;
+
+                // If it was a match and ipv4 or ipv6, save it as the longest match
+                if (0 == rc && (
+                            ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET6 ||
+                            ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET)
+                    
+                   ) {
+                    letmp = etmp;
+                }
+            }
+            // If we finished matching in the token and have a match, check the position
+            if ((last_is_host || NULL != letmp) && ++current_pos == pos) {
+                ret = true;
+                if (last_is_host) {
+                    strncpy(str, config->sagan_host, size);
+                } else {
+                    ctmp = letmp[0];
+                    letmp[0] = '\0';
+                    strncpy(str, stmp, size);
+                    letmp[0] = ctmp;
+                }
+                break;
+            } else if (NULL != letmp) {
+                last_is_host = false;
+            }
+            // Otherwise, start and next char in token and go again
+            stmp++;
+            etmp=stmp;
+            continue;
+        }
+
+        // Move to next token
+        ptmp = strtok_r(NULL, " ", &tok);
+        stmp = ptmp;
+    }
+
+    return ret;
 }
 

@@ -136,10 +136,14 @@ sbool Clean_IPC_Object( int type )
             if ( (utime - afterbysrc_ipc[i].utime) < afterbysrc_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrc_IPC : Keeping %u.", __FILE__, __LINE__, afterbysrc_ipc[i].ipsrc);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__, 
+                                    htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[0]), 
+                                    htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[1]), 
+                                    htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[2]), 
+                                    htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[3]));
                 }
 
-                temp_afterbysrc_ipc[new_count].ipsrc = afterbysrc_ipc[i].ipsrc;
+                memcpy(temp_afterbysrc_ipc[new_count].ipsrc, afterbysrc_ipc[i].ipsrc, sizeof(afterbysrc_ipc[i].ipsrc));
                 temp_afterbysrc_ipc[new_count].count = afterbysrc_ipc[i].count;
                 temp_afterbysrc_ipc[new_count].utime = afterbysrc_ipc[i].utime;
                 temp_afterbysrc_ipc[new_count].expire = afterbysrc_ipc[i].expire;
@@ -150,7 +154,7 @@ sbool Clean_IPC_Object( int type )
 
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
-                afterbysrc_ipc[i].ipsrc = temp_afterbysrc_ipc[i].ipsrc;
+                memcpy(afterbysrc_ipc[i].ipsrc, temp_afterbysrc_ipc[i].ipsrc, sizeof(temp_afterbysrc_ipc[i].ipsrc));
                 afterbysrc_ipc[i].count = temp_afterbysrc_ipc[i].count;
                 afterbysrc_ipc[i].utime = temp_afterbysrc_ipc[i].utime;
                 afterbysrc_ipc[i].expire = temp_afterbysrc_ipc[i].expire;
@@ -214,10 +218,15 @@ sbool Clean_IPC_Object( int type )
             if ( (utime - afterbydst_ipc[i].utime) < afterbydst_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbydst_IPC : Keeping %u.", __FILE__, __LINE__, afterbydst_ipc[i].ipdst);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__, 
+                                    htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[0]), 
+                                    htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[1]), 
+                                    htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[2]), 
+                                    htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[3]));
                 }
 
-                temp_afterbydst_ipc[new_count].ipdst = afterbydst_ipc[i].ipdst;
+
+                memcpy(temp_afterbydst_ipc[new_count].ipdst, afterbydst_ipc[i].ipdst, sizeof(afterbydst_ipc[i].ipdst));
                 temp_afterbydst_ipc[new_count].count = afterbydst_ipc[i].count;
                 temp_afterbydst_ipc[new_count].utime = afterbydst_ipc[i].utime;
                 temp_afterbydst_ipc[new_count].expire = afterbydst_ipc[i].expire;
@@ -228,7 +237,7 @@ sbool Clean_IPC_Object( int type )
 
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
-                afterbydst_ipc[i].ipdst = temp_afterbydst_ipc[i].ipdst;
+                memcpy(afterbydst_ipc[i].ipdst, temp_afterbydst_ipc[i].ipdst, sizeof(temp_afterbydst_ipc[i].ipdst));
                 afterbydst_ipc[i].count = temp_afterbydst_ipc[i].count;
                 afterbydst_ipc[i].utime = temp_afterbydst_ipc[i].utime;
                 afterbydst_ipc[i].expire = temp_afterbydst_ipc[i].expire;
@@ -528,10 +537,14 @@ sbool Clean_IPC_Object( int type )
             if ( (utime - threshbysrc_ipc[i].utime) < threshbysrc_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrc_IPC : Keeping %u.", __FILE__, __LINE__, threshbysrc_ipc[i].ipsrc);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__, 
+                                    htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[0]), 
+                                    htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[1]), 
+                                    htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[2]), 
+                                    htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[3]));
                 }
 
-                temp_threshbysrc_ipc[new_count].ipsrc = threshbysrc_ipc[i].ipsrc;
+                memcpy(temp_threshbysrc_ipc[new_count].ipsrc, threshbysrc_ipc[i].ipsrc, sizeof(threshbysrc_ipc[i].ipsrc));
                 temp_threshbysrc_ipc[new_count].count = threshbysrc_ipc[i].count;
                 temp_threshbysrc_ipc[new_count].utime = threshbysrc_ipc[i].utime;
                 temp_threshbysrc_ipc[new_count].expire = threshbysrc_ipc[i].expire;
@@ -542,7 +555,7 @@ sbool Clean_IPC_Object( int type )
 
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
-                threshbysrc_ipc[i].ipsrc = temp_threshbysrc_ipc[i].ipsrc;
+                memcpy(threshbysrc_ipc[i].ipsrc, temp_threshbysrc_ipc[i].ipsrc, sizeof(temp_threshbysrc_ipc[i].ipsrc));
                 threshbysrc_ipc[i].count = temp_threshbysrc_ipc[i].count;
                 threshbysrc_ipc[i].utime = temp_threshbysrc_ipc[i].utime;
                 threshbysrc_ipc[i].expire = temp_threshbysrc_ipc[i].expire;
@@ -606,10 +619,14 @@ sbool Clean_IPC_Object( int type )
             if ( (utime - threshbydst_ipc[i].utime) < threshbydst_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping %u.", __FILE__, __LINE__, threshbydst_ipc[i].ipdst);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__, 
+                                    htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[0]), 
+                                    htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[1]), 
+                                    htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[2]), 
+                                    htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[3]));
                 }
 
-                temp_threshbydst_ipc[new_count].ipdst = threshbydst_ipc[i].ipdst;
+                memcpy(temp_threshbydst_ipc[new_count].ipdst, threshbydst_ipc[i].ipdst, sizeof(threshbydst_ipc[i].ipdst));
                 temp_threshbydst_ipc[new_count].count = threshbydst_ipc[i].count;
                 temp_threshbydst_ipc[new_count].utime = threshbydst_ipc[i].utime;
                 temp_threshbydst_ipc[new_count].expire = threshbydst_ipc[i].expire;
@@ -620,7 +637,7 @@ sbool Clean_IPC_Object( int type )
 
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
-                threshbydst_ipc[i].ipdst = temp_threshbydst_ipc[i].ipdst;
+                memcpy(threshbydst_ipc[i].ipdst, temp_threshbydst_ipc[i].ipdst, sizeof(temp_threshbydst_ipc[i].ipdst));
                 threshbydst_ipc[i].count = temp_threshbydst_ipc[i].count;
                 threshbydst_ipc[i].utime = temp_threshbydst_ipc[i].utime;
                 threshbydst_ipc[i].expire = temp_threshbydst_ipc[i].expire;
@@ -918,12 +935,20 @@ sbool Clean_IPC_Object( int type )
             if ( (utime - xbit_ipc[i].xbit_expire) < xbit_ipc[i].expire ) {
 
                 if ( debug->debugipc ) {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping '%s'.", __FILE__, __LINE__, xbit_ipc[i].ip_src, xbit_ipc[i].ip_dst);
+                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__, 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_src)[0]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_src)[1]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_src)[2]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_src)[3]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[0]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[1]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[2]), 
+                                    htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[3])); 
                 }
 
                 temp_xbit_ipc[new_count].xbit_state = xbit_ipc[i].xbit_state;
-                temp_xbit_ipc[new_count].ip_src = xbit_ipc[i].ip_src;
-                temp_xbit_ipc[new_count].ip_dst = xbit_ipc[i].ip_dst;
+                memcpy(temp_xbit_ipc[new_count].ip_src, xbit_ipc[i].ip_src, sizeof(xbit_ipc[i].ip_src));
+                memcpy(temp_xbit_ipc[new_count].ip_dst, xbit_ipc[i].ip_dst, sizeof(xbit_ipc[i].ip_dst));
                 temp_xbit_ipc[new_count].xbit_expire = xbit_ipc[i].xbit_expire;
                 temp_xbit_ipc[new_count].expire = xbit_ipc[i].expire;
                 strlcpy(temp_xbit_ipc[new_count].xbit_name, xbit_ipc[i].xbit_name, sizeof(temp_xbit_ipc[new_count].xbit_name));
@@ -935,8 +960,8 @@ sbool Clean_IPC_Object( int type )
         if ( new_count > 0 ) {
             for ( i = 0; i < new_count; i++ ) {
                 xbit_ipc[i].xbit_state = temp_xbit_ipc[i].xbit_state;
-                xbit_ipc[i].ip_src = temp_xbit_ipc[i].ip_src;
-                xbit_ipc[i].ip_dst = temp_xbit_ipc[i].ip_dst;
+                memcpy(temp_xbit_ipc[i].ip_src, temp_xbit_ipc[i].ip_src, sizeof(temp_xbit_ipc[i].ip_src));
+                memcpy(temp_xbit_ipc[i].ip_dst, temp_xbit_ipc[i].ip_dst, sizeof(temp_xbit_ipc[i].ip_dst));
                 xbit_ipc[i].xbit_expire = temp_xbit_ipc[i].xbit_expire;
                 xbit_ipc[i].expire = temp_xbit_ipc[i].expire;
                 strlcpy(xbit_ipc[i].xbit_name, temp_xbit_ipc[i].xbit_name, sizeof(xbit_ipc[i].xbit_name));
@@ -1003,10 +1028,10 @@ void IPC_Init(void)
     char tmp_object_check[255];
     char time_buf[80];
 
-    /* For convert 32 bit IP to octet */
+    char ip_src[MAXIP];
+    char ip_dst[MAXIP];
 
-    struct in_addr ip_addr_src;
-    struct in_addr ip_addr_dst;
+    /* For convert 32 bit IP to octet */
 
     Sagan_Log(S_NORMAL, "Initializing shared memory objects.");
     Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
@@ -1071,21 +1096,28 @@ void IPC_Init(void)
 
             Sagan_Log(S_DEBUG, "");
             Sagan_Log(S_DEBUG, "*** Xbits ***");
-            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-2s| %-25s| %-16s| %-16s| %-21s| %s", "S", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-            Sagan_Log(S_DEBUG, "------------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(S_DEBUG, "%-2s| %-45s| %-25s| %-45s| %-45s| %-21s| %s", "S", "Selector", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+            Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
 
             for (i= 0; i < counters_ipc->xbit_count; i++ ) {
 
-                ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
-                ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
+                Bit2IP(xbit_ipc[i].ip_src, ip_src, sizeof(ip_src));
+                Bit2IP(xbit_ipc[i].ip_dst, ip_dst, sizeof(ip_dst));
 
                 if ( xbit_ipc[i].xbit_state == 1 ) {
 
                     u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-2d| %-25s| %-16s| %-16s| %-21s| %d", xbit_ipc[i].xbit_state, xbit_ipc[i].xbit_name, inet_ntoa(ip_addr_src), inet_ntoa(ip_addr_dst), time_buf, xbit_ipc[i].expire );
+                    Sagan_Log(S_DEBUG, "%-2d| %-45s| %-25s| %-45s| %-45s| %-21s| %d", 
+                                xbit_ipc[i].xbit_state, 
+                                xbit_ipc[i].selector,
+                                xbit_ipc[i].xbit_name, 
+                                ip_src, 
+                                ip_dst, 
+                                time_buf, xbit_ipc[i].expire );
+
                 }
 
             }
@@ -1131,17 +1163,17 @@ void IPC_Init(void)
 
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** Threshold by source ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_src; i++) {
 
-            ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
+            Bit2IP(threshbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
             u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbysrc_ipc[i].selector, ip_src, threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
         }
 
@@ -1181,17 +1213,17 @@ void IPC_Init(void)
 
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** Threshold by destination ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++) {
 
-            ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
+            Bit2IP(threshbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
 
             u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbydst_ipc[i].selector, ip_dst, threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
 
         }
 
@@ -1232,9 +1264,9 @@ void IPC_Init(void)
 
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** Threshold by source port ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRCPORT IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_srcport; i++) {
 
@@ -1242,15 +1274,12 @@ void IPC_Init(void)
 
             u32_Time_To_Human(threshbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbysrcport_ipc[i].selector, srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
 
         }
 
         Sagan_Log(S_DEBUG, "");
     }
-
-
-
 
     /* Threshold by destination port */
 
@@ -1285,9 +1314,9 @@ void IPC_Init(void)
 
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** Threshold by destination port ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DSTPORT IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_dstport; i++) {
 
@@ -1295,7 +1324,7 @@ void IPC_Init(void)
 
             u32_Time_To_Human(threshbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbydstport_ipc[i].selector, dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
 
         }
 
@@ -1335,15 +1364,15 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->thresh_count_by_username >= 1 ) {
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** Threshold by username ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
 
             u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].selector, threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
 
     }
@@ -1381,17 +1410,16 @@ void IPC_Init(void)
 
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** After by source ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_src; i++ ) {
-
-            ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
+            Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
             u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1429,17 +1457,17 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->after_count_by_dst >= 1 ) {
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** After by destination ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_dst; i++) {
 
-            ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
+            Bit2IP(afterbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
 
             u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbydst_ipc[i].selector, ip_dst, afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1478,9 +1506,9 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->after_count_by_srcport >= 1 ) {
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** After by source port ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "SRCPORT", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_srcport; i++) {
 
@@ -1488,7 +1516,7 @@ void IPC_Init(void)
 
             u32_Time_To_Human(afterbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbysrcport_ipc[i].selector, srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1527,9 +1555,9 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->after_count_by_dstport >= 1 ) {
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** After by destination port ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "DSTPORT", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_dstport; i++) {
 
@@ -1537,7 +1565,7 @@ void IPC_Init(void)
 
             u32_Time_To_Human(afterbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16d| %-11d| %-21s| %-11s| %d", dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbydstport_ipc[i].selector, dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1575,15 +1603,15 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->after_count_by_username >= 1 ) {
         Sagan_Log(S_DEBUG, "");
         Sagan_Log(S_DEBUG, "*** After by username ***");
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
-        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
-        Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
         for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
 
             u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
-            Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].selector, afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
 
         Sagan_Log(S_DEBUG, "");
@@ -1625,9 +1653,9 @@ void IPC_Init(void)
                 {
                     Sagan_Log(S_DEBUG, "");
                     Sagan_Log(S_DEBUG, "*** After by username ***");
-                    Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+                    Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                     Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
-                    Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------");
+                    Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
                     for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                         {

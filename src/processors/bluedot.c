@@ -209,6 +209,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
     uint32_t ip_u32;
     int i=0;
+    unsigned char ip[MAXIPBIT] = {0};
 
     int tmp_bluedot_queue_count=0;
 
@@ -216,8 +217,11 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
     /* Remove IP address from lookup queue */
 
     if ( type == BLUEDOT_LOOKUP_IP ) {
+        if (!IP2Bit(data, ip)) {
+            return(false);
+        }
 
-        ip_u32  = IP2Bit(data);		/* Convert "data" to u32 int. */
+        IP2Bit(data, ip);		/* Convert "data" to bits. */
 
         struct _Sagan_Bluedot_IP_Queue *TmpSaganBluedotIPQueue;
         TmpSaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
@@ -229,14 +233,14 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
         memset(TmpSaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
         for (i=0; i<bluedot_ip_queue; i++) {
-            if ( ip_u32 == SaganBluedotIPQueue[i].host ) {
+            if ( 0 == memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip))) {
                 TmpSaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(TmpSaganBluedotIPQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
                 if ( TmpSaganBluedotIPQueue == NULL ) {
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
                 }
 
-                TmpSaganBluedotIPQueue[tmp_bluedot_queue_count].host = ip_u32;
+                memcpy(TmpSaganBluedotIPQueue[tmp_bluedot_queue_count].host, ip, sizeof(ip));
                 tmp_bluedot_queue_count++;
             }
         }
@@ -254,7 +258,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
                 Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
             }
 
-            SaganBluedotIPQueue[bluedot_ip_queue].host = TmpSaganBluedotIPQueue[i].host;
+            memcpy(SaganBluedotIPQueue[bluedot_ip_queue].host, TmpSaganBluedotIPQueue[i].host, sizeof(TmpSaganBluedotIPQueue[i].host));
             bluedot_ip_queue++;
         }
 
@@ -568,7 +572,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPCache. Abort!", __FILE__, __LINE__);
                 }
 
-                TmpSaganBluedotIPCache[timeout_count].host = SaganBluedotIPCache[i].host;
+                memcpy(TmpSaganBluedotIPCache[timeout_count].host, SaganBluedotIPCache[i].host, sizeof(SaganBluedotIPCache[i].host));
                 TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cache_utime;
                 TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].mdate_utime;
                 TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cdate_utime;
@@ -579,7 +583,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
         }
 
         for (i=0; i<timeout_count; i++) {
-            SaganBluedotIPCache[i].host = TmpSaganBluedotIPCache[i].host;
+            memcpy(SaganBluedotIPCache[i].host, TmpSaganBluedotIPCache[i].host, sizeof(TmpSaganBluedotIPCache[i].host));
             SaganBluedotIPCache[i].cache_utime = TmpSaganBluedotIPCache[i].cache_utime;
             SaganBluedotIPCache[i].mdate_utime = TmpSaganBluedotIPCache[i].mdate_utime;
             SaganBluedotIPCache[i].cdate_utime = TmpSaganBluedotIPCache[i].cdate_utime;
@@ -770,7 +774,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     time_t t;
     struct tm *now=NULL;
 
-    uintmax_t ip = 0;
+    unsigned char ip[MAXIPBIT] = {0};
 
     t = time(NULL);
     now=localtime(&t);
@@ -784,9 +788,11 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     if ( type == BLUEDOT_LOOKUP_IP ) {
 
-        ip = IP2Bit(data);
+        if (!IP2Bit(data, ip)) {
+            return(false);
+        }
 
-        if ( is_rfc1918(ip) ) {
+        if ( is_notroutable(ip) ) {
 
             if ( debug->debugbluedot ) {
                 Sagan_Log(S_DEBUG, "[%s, line %d] %s is RFC1918, link local or invalid.", __FILE__, __LINE__, data);
@@ -797,7 +803,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
         for (i=0; i<counters->bluedot_ip_cache_count; i++) {
 
-            if ( ip == SaganBluedotIPCache[i].host) {
+            if ( 0 == memcmp(ip, SaganBluedotIPCache[i].host, sizeof(ip))) {
 
                 if (debug->debugbluedot) {
                     Sagan_Log(S_DEBUG, "[%s, line %d] Pulled %s (u32 IP: %u / cdate: %d / mdate: %d) from Bluedot cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotIPCache[i].host, SaganBluedotIPCache[i].cdate_utime, SaganBluedotIPCache[i].mdate_utime, SaganBluedotIPCache[i].alertid);
@@ -850,7 +856,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         /* Check Bluedot IP Queue,  make sure we aren't looking up something that is already being looked up */
 
         for (i=0; i < bluedot_ip_queue; i++) {
-            if ( ip == SaganBluedotIPQueue[i].host ) {
+            if ( 0 == memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip))) {
                 if (debug->debugbluedot) {
                     Sagan_Log(S_DEBUG, "[%s, line %d] %s (%u) is already being looked up. Skipping....", __FILE__, __LINE__, data, SaganBluedotIPQueue[i].host);
                 }
@@ -868,7 +874,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
         }
 
-        SaganBluedotIPQueue[bluedot_ip_queue].host = ip;
+        memcpy(SaganBluedotIPQueue[bluedot_ip_queue].host, ip, sizeof(ip));
         bluedot_ip_queue++;
         pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
@@ -1091,7 +1097,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
         /* Store data into cache */
 
-        SaganBluedotIPCache[counters->bluedot_ip_cache_count].host = ip;
+        memcpy(SaganBluedotIPCache[counters->bluedot_ip_cache_count].host, ip, sizeof(ip));
         SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = atol(timet);                   /* store utime */
         SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
         SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
@@ -1294,18 +1300,15 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
 {
 
     int i;
-    char results[16];
+    char results[MAXIP] = {0};
 
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
     for ( i = 1; i < MAX_PARSE_IP; i++ ) {
 
-        Parse_IP(syslog_message, i, results, sizeof(results));
-
         /* Failed to find next IP,  short circuit the process */
-
-        if ( results[0] == '0' ) {
+        if (!Parse_IP(syslog_message, i, results, sizeof(results))) {
             return(false);
         }
 

@@ -130,6 +130,9 @@ void Unified2( _Sagan_Event *Event )
     Serial_Unified2IDSEvent_legacy alertdata;
     uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2IDSEvent_legacy);
     int i=0;
+    unsigned char tmp_ip[MAXIPBIT] = {0};
+    uint32_t *tmp_ip_u32 = (uint32_t *)&tmp_ip[0];
+
 
     memset(&alertdata, 0, sizeof(alertdata));
 
@@ -155,8 +158,12 @@ void Unified2( _Sagan_Event *Event )
     alertdata.protocol = Event->ip_proto;					// Protocol
     alertdata.generator_id = htonl(Event->generatorid); 			// From gen-msg.map
 
-    alertdata.ip_source = htonl(IP2Bit(Event->ip_src));
-    alertdata.ip_destination = htonl(IP2Bit(Event->ip_dst));
+    // *NOTE*: These will be wrong for IPv6 addresses
+    IP2Bit(Event->ip_src, tmp_ip);
+    alertdata.ip_source = htonl(*tmp_ip_u32);
+
+    IP2Bit(Event->ip_src, tmp_ip);
+    alertdata.ip_destination = htonl(*tmp_ip_u32);
 
     alertdata.sport_itype = htons(Event->src_port);
     alertdata.dport_icode = htons(Event->dst_port);
@@ -203,6 +210,8 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     uint32_t pkt_length = 0;
     uint32_t i = 0;
     uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2Packet) - 4;
+    unsigned char tmp_ip[MAXIPBIT] = {0};
+    uint32_t *tmp_ip_u32 = (uint32_t *)&tmp_ip[0];
 
     /* Ethernet */
 
@@ -330,8 +339,14 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     ip->ip_p = Event->ip_proto;		 		// Protocol
     ip->ip_sum = 0;
 
-    ip->ip_src = htonl(IP2Bit(Event->ip_src));
-    ip->ip_dst = htonl(IP2Bit(Event->ip_dst));
+    // *NOTE*: These will be wrong for IPv6 addresses
+    // *TODO*: Even though the legacy format doesn't take the IPv6 address
+    //         it should be possible to provide a fake IPv6 packet here.
+    IP2Bit(Event->ip_src, tmp_ip);
+    ip->ip_src = htonl(*tmp_ip_u32);
+
+    IP2Bit(Event->ip_src, tmp_ip);
+    ip->ip_dst = htonl(*tmp_ip_u32);
 
     p_iphdr = iphdr_buf + IP_HDR_LEN;
     len_iphdr = p_iphdr - iphdr_buf;
@@ -637,17 +652,23 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
     uint8_t *write_end = NULL;
     uint8_t *ptr = NULL;
 
-    uint32_t ip;
     uint8_t *buffer = NULL;
+    unsigned char ipbits[MAXIPBIT] = {0};
+    uint32_t *tmp_ip_u32 = (uint32_t *)&ipbits[0];
+    uint32_t ip;
+
 
     uint32_t len;
     uint32_t write_len;
 
     switch(type) {
 
+    // *NOTE*: This will be incorrect for IPv6
+    // *TODO*: Should fire an IPv6 event for IPv6
     case EVENT_INFO_XFF_IPV4:
 
-        ip = htonl(IP2Bit(Event->host));
+        IP2Bit(Event->ip_src, ipbits);
+        ip = htonl(*tmp_ip_u32);
         buffer = (void *)&ip;
         break;
 

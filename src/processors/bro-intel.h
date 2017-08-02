@@ -42,7 +42,7 @@
 
 typedef struct _Sagan_BroIntel_Intel_Addr _Sagan_BroIntel_Intel_Addr;
 struct _Sagan_BroIntel_Intel_Addr {
-    uint32_t u32_ip;
+    unsigned char bits_ip[MAXIPBIT];
 };
 
 typedef struct _Sagan_BroIntel_Intel_Domain _Sagan_BroIntel_Intel_Domain;
@@ -89,7 +89,7 @@ struct _Sagan_BroIntel_Intel_Cert_Hash {
 void Sagan_BroIntel_Init(void);
 void Sagan_BroIntel_Load_File(void);
 
-sbool  Sagan_BroIntel_IPADDR ( uint32_t );
+sbool  Sagan_BroIntel_IPADDR ( unsigned char * );
 sbool  Sagan_BroIntel_IPADDR_All ( char * );
 
 sbool  Sagan_BroIntel_DOMAIN ( char * );

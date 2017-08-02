@@ -22,10 +22,12 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-void Xbit_Set_MMAP( int, char *, char *, int, int );
-sbool Xbit_Condition_MMAP ( int, char *, char *, int, int );
+#include "sagan-defs.h"
+
+void Xbit_Set_MMAP( int, char *, char *, int, int, char * );
+sbool Xbit_Condition_MMAP ( int, char *, char *, int, int, char * );
 void Xbit_Cleanup_MMAP( void );
-sbool Xbit_Count_MMAP( int, char *, char * );
+sbool Xbit_Count_MMAP( int, char *, char *, char * );
 
 typedef struct _Sagan_Xbit_Track _Sagan_Xbit_Track;
 struct _Sagan_Xbit_Track {
@@ -39,13 +41,14 @@ typedef struct _Sagan_IPC_Xbit _Sagan_IPC_Xbit;
 struct _Sagan_IPC_Xbit {
     char xbit_name[64];
     sbool xbit_state;
-    uint32_t ip_src;
-    uint32_t ip_dst;
+    unsigned char ip_src[MAXIPBIT];
+    unsigned char ip_dst[MAXIPBIT];
     int src_port;
     int dst_port;
     char username[64];
     uintmax_t xbit_date;
     uintmax_t xbit_expire;
     int expire;
+    char selector[MAXSELECTOR]; // No need to clean this, as we always set it when tracking
 };
 

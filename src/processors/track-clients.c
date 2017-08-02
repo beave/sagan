@@ -68,7 +68,7 @@ struct _SaganConfig *config;
  * are reporting or not.
  ****************************************************************************/
 
-void Track_Clients ( uint32_t host_u32 )
+void Track_Clients ( char *host )
 {
 
     char utime_tmp[20] = { 0 };
@@ -76,12 +76,18 @@ void Track_Clients ( uint32_t host_u32 )
     struct tm *now;
     int i;
     uintmax_t utime_u64;
+    unsigned char hostbits[MAXIPBIT] = { 0 };
 
     t = time(NULL);
     now=localtime(&t);
     strftime(utime_tmp, sizeof(utime_tmp), "%s",  now);
     utime_u64 = atol(utime_tmp);
     int expired_time = config->pp_sagan_track_clients * 60;
+
+    if ( !IP2Bit(host, hostbits) ) {
+        Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
+        return;
+    }
 
     /********************************************/
     /** Record update tracking if record exsist */
@@ -91,8 +97,7 @@ void Track_Clients ( uint32_t host_u32 )
     File_Lock(config->shm_track_clients);
 
     for (i=0; i<counters_ipc->track_clients_client_count; i++) {
-
-        if ( SaganTrackClients_ipc[i].host_u32 == host_u32 ) {
+        if ( 0 == memcmp(SaganTrackClients_ipc[i].hostbits, hostbits, sizeof(hostbits)) ) {
 
             SaganTrackClients_ipc[i].utime = utime_u64;
             SaganTrackClients_ipc[i].expire = expired_time;
@@ -105,8 +110,7 @@ void Track_Clients ( uint32_t host_u32 )
     }
 
     if ( counters_ipc->track_clients_client_count < config->max_track_clients ) {
-
-        SaganTrackClients_ipc[counters_ipc->track_clients_client_count].host_u32 = host_u32;
+        memcpy(SaganTrackClients_ipc[counters_ipc->track_clients_client_count].hostbits, hostbits, sizeof(hostbits));
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].utime = utime_u64;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].status = 0;
         SaganTrackClients_ipc[counters_ipc->track_clients_client_count].expire = expired_time;
@@ -178,7 +182,7 @@ void Track_Clients_Thread ( void )
         int alertid;
         int i;
 
-        char tmp_ip[16] = { 0 };
+        const char *tmp_ip = NULL;
 
         char utime_tmp[20] = { 0 };
         time_t t;
@@ -237,7 +241,7 @@ void Track_Clients_Thread ( void )
                     pthread_mutex_unlock(&IPCTrackClientsStatus);
 
 
-                    Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
+                    tmp_ip = Bit2IP(SaganTrackClients_ipc[i].hostbits, NULL, 0);
 
                     Sagan_Log(S_WARN, "[Processor: %s] Logs are being received from %s again.",  PROCESSOR_NAME, tmp_ip );
 
@@ -262,6 +266,7 @@ void Track_Clients_Thread ( void )
                     /* Send alert to output plugins */
 
                     Send_Alert(SaganProcSyslog_LOCAL,
+                               NULL,
                                processor_info_track_client,
                                SaganProcSyslog_LOCAL->syslog_host,
                                config->sagan_host,
@@ -299,7 +304,7 @@ void Track_Clients_Thread ( void )
 
                     pthread_mutex_unlock(&IPCTrackClientsStatus);
 
-                    Bit2IP(SaganTrackClients_ipc[i].host_u32, tmp_ip, sizeof(tmp_ip));
+                    tmp_ip = Bit2IP(SaganTrackClients_ipc[i].hostbits, NULL, 0);
 
                     Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
 
@@ -325,6 +330,7 @@ void Track_Clients_Thread ( void )
                     /* Send alert to output plugins */
 
                     Send_Alert(SaganProcSyslog_LOCAL,
+                               NULL,
                                processor_info_track_client,
                                SaganProcSyslog_LOCAL->syslog_host,
                                config->sagan_host,

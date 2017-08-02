@@ -40,12 +40,14 @@
 void Track_Clients_Thread_Init ( void );
 void Track_Clients_Thread ( void );
 
+#include "sagan-defs.h"
+
 typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
 struct _Sagan_Track_Clients_IPC {
-    uint32_t host_u32;
+    unsigned char  hostbits[MAXIPBIT];
     long     utime;
     int	     expire;
     sbool    status;
 };
 
-void Track_Clients ( uint32_t host_u32 );
+void Track_Clients ( char *host );

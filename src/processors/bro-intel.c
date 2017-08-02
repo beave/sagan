@@ -172,7 +172,7 @@ void Sagan_BroIntel_Load_File ( void )
     int line_count;
     int i;
 
-    uint32_t u32_ip;
+    unsigned char bits_ip[MAXIPBIT] = {0};
 
     char *brointel_filename = NULL;
     char brointelbuf[MAX_BROINTEL_LINE_SIZE] = { 0 };
@@ -212,9 +212,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                 found_flag = 0;
 
-                if (!strcmp(type, "Intel::ADDR")) {
-
-                    u32_ip = IP2Bit(value);
+                if (!strcmp(type, "Intel::ADDR") && IP2Bit(value, bits_ip)) {
 
                     found_flag = 1; 			/* Used to short circuit other 'type' lookups */
                     found_flag_array = 0;		/* Used to short circuit/warn when dups are found.  This way we don't waste memory/CPU */
@@ -223,7 +221,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                     for (i=0; i < counters->brointel_addr_count; i++) {
 
-                        if ( u32_ip == Sagan_BroIntel_Intel_Addr[i].u32_ip ) {
+                        if ( memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, sizeof(bits_ip)) ) {
                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                             pthread_mutex_lock(&CounterBroIntelGenericMutex);
@@ -242,9 +240,8 @@ void Sagan_BroIntel_Load_File ( void )
                             Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
                         }
 
-                        Sagan_BroIntel_Intel_Addr[counters->brointel_addr_count].u32_ip = IP2Bit(value);
-
                         pthread_mutex_lock(&CounterBroIntelGenericMutex);
+                        memcpy( Sagan_BroIntel_Intel_Addr[counters->brointel_addr_count].bits_ip, bits_ip, sizeof(bits_ip) );
                         counters->brointel_addr_count++;
                         pthread_mutex_unlock(&CounterBroIntelGenericMutex);
                     }
@@ -562,14 +559,14 @@ void Sagan_BroIntel_Load_File ( void )
  * Sagan_BroIntel_IPADDR - Search array for blacklisted IP addresses
  *****************************************************************************/
 
-sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
+sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
 {
 
     int i;
 
-    /* If RFC1918,  we can short circuit here */
+    /* If RFC1918 and friends,  we can short circuit here */
 
-    if ( is_rfc1918(ip)) {
+    if ( !is_notroutable(ip)) {
 
         if ( debug->debugbrointel ) {
             Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918, link local or invalid.", __FILE__, __LINE__, ip);
@@ -582,7 +579,7 @@ sbool Sagan_BroIntel_IPADDR ( uint32_t ip )
 
     for ( i = 0; i < counters->brointel_addr_count; i++) {
 
-        if ( Sagan_BroIntel_Intel_Addr[i].u32_ip == ip ) {
+        if ( 0 == memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, ip, sizeof(Sagan_BroIntel_Intel_Addr[i].bits_ip)) ) {
             if ( debug->debugbrointel ) {
                 Sagan_Log(S_DEBUG, "[%s, line %d] Found IP %u.", __FILE__, __LINE__, ip);
             }
@@ -607,26 +604,24 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message )
     int i;
     int b;
 
-    uint32_t ip;
-
-    char results[16] = { 0 };
+    char results[MAXIP] = {0};
+    unsigned char ip[MAXIPBIT] = {0};
 
 
     for (i = 1; i < MAX_PARSE_IP; i++) {
 
-        Parse_IP(syslog_message, i, results, sizeof(results));
-
         /* Failed to find next IP,  short circuit the process */
-
-        if (!strcmp(results, "0")) {
+        if (!Parse_IP(syslog_message, i, results, sizeof(results))) {
             return(false);
         }
 
-        ip = IP2Bit(results);
+        if (!IP2Bit(results, ip)) {
+            return(false);
+        }
 
         for ( b = 0; b < counters->brointel_addr_count; b++ ) {
 
-            if ( Sagan_BroIntel_Intel_Addr[b].u32_ip == ip ) {
+            if ( 0 == memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip))) {
                 return(true);
             }
         }

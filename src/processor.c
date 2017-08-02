@@ -55,6 +55,7 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 
 int proc_msgslot; 		/* Comes from sagan.c */
+int proc_running;       /* Comes from sagan.c */
 sbool dynamic_rule_flag;
 
 pthread_cond_t SaganProcDoWork;
@@ -97,6 +98,7 @@ void Processor ( void )
             pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
         }
 
+        proc_running++;
         proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
 					 * original value */
 
@@ -151,12 +153,15 @@ outside_loop:
             }
 
             if ( config->sagan_track_clients_flag ) {
-                Track_Clients( IP2Bit(SaganProcSyslog_LOCAL->syslog_host) );
+                Track_Clients( SaganProcSyslog_LOCAL->syslog_host );
             }
 
         } // End if if (ignore_Flag)
 
 
+        pthread_mutex_lock(&SaganProcWorkMutex);
+        proc_running--;
+        pthread_mutex_unlock(&SaganProcWorkMutex);
     } //  for (;;)
 
     Sagan_Log(S_WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);

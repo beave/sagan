@@ -45,29 +45,29 @@ struct _Rule_Struct *rulestruct;
 /* 3 = match ip     */ /************************/ /*****************/
 /********************/ /************************/ /*****************/
 
-sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port)
+sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize_src_port, unsigned char *ip_dst_bits, int normalize_dst_port)
 {
 
-    uint32_t *src;
-    uint32_t *dst;
-
-    uint32_t ip_src;
-    uint32_t ip_dst;
+    unsigned char *src;
+    unsigned char *dst;
 
     int port_src;
     int port_dst;
 
-    src = &ip_src_u32;
-    dst = &ip_dst_u32;
+    unsigned char *ip_src;
+    unsigned char *ip_dst;
+
+    src = ip_src_bits;
+    dst = ip_dst_bits;
 
     if(rulestruct[b].direction == 0 || rulestruct[b].direction == 1) {
-        ip_src = *src;
-        ip_dst = *dst;
+        ip_src = src;
+        ip_dst = dst;
         port_src = normalize_src_port;
         port_dst = normalize_dst_port;
     } else {
-        ip_src = *dst;
-        ip_dst = *src;
+        ip_src = dst;
+        ip_dst = src;
         port_src = normalize_dst_port;
         port_dst = normalize_src_port;
     }
@@ -148,22 +148,22 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
 
             if(f1 == 0) {
                 ne1++;
-                if(ip_src > rulestruct[b].flow_1[i].lo && ip_src < rulestruct[b].flow_1[i].hi) {
+                if(is_inrange(ip_src, (unsigned char *)&rulestruct[b].flow_1[i].range, 1)) {
                     ne1_val++;
                 }
             } else if(f1 == 1) {
                 eq1++;
-                if(ip_src > rulestruct[b].flow_1[i].lo && ip_src < rulestruct[b].flow_1[i].hi) {
+                if(is_inrange(ip_src, (unsigned char *)&rulestruct[b].flow_1[i].range, 1)) {
                     eq1_val++;
                 }
             } else if(f1 == 2) {
                 ne1++;
-                if(ip_src == rulestruct[b].flow_1[i].lo ) {
+                if(0 == memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) ) {
                     ne1_val++;
                 }
             } else if(f1 == 3) {
                 eq1++;
-                if(ip_src == rulestruct[b].flow_1[i].lo ) {
+                if(0 == memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) ) {
                     eq1_val++;
                 }
             }
@@ -262,22 +262,22 @@ sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_po
 
             if(f2 == 0) {
                 ne2++;
-                if(ip_dst > rulestruct[b].flow_2[i].lo && ip_dst < rulestruct[b].flow_2[i].hi) {
+                if(is_inrange(ip_dst, (unsigned char *)&rulestruct[b].flow_2[i].range, 1)) {
                     ne2_val++;
                 }
             } else if(f2 == 1) {
                 eq2++;
-                if(ip_dst > rulestruct[b].flow_2[i].lo && ip_dst < rulestruct[b].flow_2[i].hi) {
+                if(is_inrange(ip_dst, (unsigned char *)&rulestruct[b].flow_2[i].range, 1)) {
                     eq2_val++;
                 }
             } else if(f2 == 2) {
                 ne2++;
-                if(ip_dst == rulestruct[b].flow_2[i].lo) {
+                if(0 == memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) ) {
                     ne2_val++;
                 }
             } else if(f2 == 3) {
                 eq2++;
-                if(ip_dst == rulestruct[b].flow_2[i].lo) {
+                if(0 == memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) ) {
                     eq2_val++;
                 }
             }

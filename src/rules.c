@@ -184,6 +184,8 @@ void Load_Rules( const char *ruleset )
     int forward=0;
     int reverse=0;
 
+    sbool is_masked = false;
+
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
     strlcpy(ruleset_fullname, ruleset, sizeof(ruleset_fullname));
@@ -380,9 +382,8 @@ void Load_Rules( const char *ruleset )
                     rulestruct[counters->rulecount].flow_1_var = 0;	  /* 0 = any */
 
                 } else {
-
+                    
                     strlcpy(tmp3, flow_a, sizeof(tmp3));
-
                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow)) {
 
                         Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help));
@@ -393,59 +394,25 @@ void Load_Rules( const char *ruleset )
 
                         f1++;
 
-                        if(strchr(tok_help, '/')) {
+                        is_masked = Netaddr_To_Range(tok_help, (unsigned char *)&rulestruct[counters->rulecount].flow_1[flow_1_count].range);
 
-                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
+                        if(strchr(tmptoken, '/')) {
 
-                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
+                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
 
-                                if(strchr(flow_range, '-')) {
-
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_1_type[f1] = 0; /* 0 = not in group */
-
-                                } else {
-
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(flow_range);
-                                    rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* This was a /32, not a range */
-                                }
-
+                                rulestruct[counters->rulecount].flow_1_type[f1] = is_masked ? 0 : 2; /* 0 = not in group, 2 == IP not range */
                             } else {
 
-
-                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
-
-                                if(strchr(flow_range, '-')) {
-
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_1_type[f1] = 1; /* 1 = in group */
-
-                                } else {
-
-                                    rulestruct[counters->rulecount].flow_1[flow_1_count].lo = atol(flow_range);
-                                    rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* This was a /32, not a range */
-                                }
+                                rulestruct[counters->rulecount].flow_1_type[f1] = is_masked ? 1 : 3; /* 1 = in group, 3 == IP not range */
                             }
+                        } else if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
 
-
+                            rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* 2 = not match ip */
                         } else {
 
-                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
-
-                                rulestruct[counters->rulecount].flow_1_type[f1] = 2; /* 2 = not match ip */
-                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tok_help);
-
-                            } else {
-
-                                rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* 3 = match ip */
-                                rulestruct[counters->rulecount].flow_1[flow_1_count].lo = IP2Bit(tok_help);
-                            }
+                            rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* 3 = match ip */
                         }
-
                         flow_1_count++;
-
                         if( flow_1_count > 49 ) {
                             Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50'.", __FILE__, __LINE__);
                         }
@@ -546,70 +513,23 @@ void Load_Rules( const char *ruleset )
                         if(!Is_IP(tok_help)) {
                             Sagan_Log(S_WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
                         }
-
                         f2++;
+                        is_masked = Netaddr_To_Range(tok_help, (unsigned char *)&rulestruct[counters->rulecount].flow_2[flow_2_count].range);
 
-                        if(strchr(tok_help, '/')) {
-
-                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
-
-                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
-
-                                if(strchr(flow_range, '-')) {
-
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_2_type[f2] = 0; /* 0 = not in group */
-
-                                } else {
-
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(flow_range);
-                                    rulestruct[counters->rulecount].flow_2_type[f2] = 2; /* This was a /32, not a range */
-
-                                }
-
+                        if(strchr(tmptoken, '/')) {
+                            if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
+                                rulestruct[counters->rulecount].flow_2_type[f2] = is_masked ? 0 : 2; /* 0 = not in group, 2 == IP not range */
                             } else {
-
-
-
-
-
-                                Netaddr_To_Range(tok_help, flow_range, sizeof(flow_range));
-
-                                if(strchr(flow_range, '-')) {
-
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(strtok_r(flow_range, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].hi = atol(strtok_r(NULL, "-", &saveptrrange));
-                                    rulestruct[counters->rulecount].flow_2_type[f2] = 1; /* 1 = in group */
-
-                                } else {
-
-                                    rulestruct[counters->rulecount].flow_2[flow_2_count].lo = atol(flow_range);
-                                    rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* This was a /32, not a range */
-
-                                }
+                                rulestruct[counters->rulecount].flow_2_type[f2] = is_masked ? 1 : 3; /* 1 = in group, 3 == IP not range */
                             }
-
+                        } else if( !strncmp(tmptoken, "!", 1) || !strncmp("not", tmptoken, 3)) {
+                            rulestruct[counters->rulecount].flow_2_type[f2] = 2; /* 2 = not match ip */
                         } else {
-
-                            if( !strncmp(tok_help, "!", 1) || !strncmp("not", tok_help, 3)) {
-                                rulestruct[counters->rulecount].flow_2_type[f2] = 2; /* 2 = not match ip */
-                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(tok_help);
-
-                            } else {
-
-                                rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
-                                rulestruct[counters->rulecount].flow_2[flow_2_count].lo = IP2Bit(tok_help);
-
-                            }
+                            rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
                         }
-
-                        flow_2_count++;
-
                         if( flow_2_count > 49 ) {
                             Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of entries for follow_flow_2 '50'.", __FILE__, __LINE__);
                         }
-
                     }
                     rulestruct[counters->rulecount].flow_2_var = 1;   /* 1 = var */
                     rulestruct[counters->rulecount].flow_2_counter = flow_2_count;

@@ -19,6 +19,6 @@
 */
 
 
-void Xbit_Set_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port );
-sbool Xbit_Condition_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port );
+void Xbit_Set_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector );
+sbool Xbit_Condition_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector );
 

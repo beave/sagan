@@ -63,7 +63,7 @@ struct _SaganConfig *config;
 /* Threshold by source */
 /***********************/
 
-sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
+sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector )
 {
 
     time_t t;
@@ -83,8 +83,16 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
     /* Check array for matching src / sid */
 
     for (i = 0; i < counters_ipc->thresh_count_by_src; i++ ) {
+        // Short circuit if no selector match
+        if (
+                (NULL == selector && threshbysrc_ipc[i].selector[0] != '\0') || 
+                (NULL != selector && 0 != strcmp(selector, threshbysrc_ipc[i].selector))
+           ) {
 
-        if ( threshbysrc_ipc[i].ipsrc == ip_src_u32 && !strcmp(threshbysrc_ipc[i].sid, rulestruct[rule_position].s_sid )) {
+                continue;
+        }
+
+        if ( 0 == memcmp(threshbysrc_ipc[i].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[i].ipsrc)) && !strcmp(threshbysrc_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
             File_Lock(config->shm_thresh_by_src);
             pthread_mutex_lock(&Thresh_By_Src_Mutex);
@@ -125,8 +133,9 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
         File_Lock(config->shm_thresh_by_src);
         pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
-        threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc = ip_src_u32;
+        memcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc));
         strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[rule_position].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+        NULL == selector ? threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector[0] = '\0' : strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector, selector, MAXSELECTOR);
         threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
         threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
         threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[rule_position].threshold_seconds;
@@ -144,7 +153,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
 /* Threshold by destination */
 /****************************/
 
-sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
+sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector )
 {
 
     time_t t;
@@ -164,8 +173,16 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
     /* Check array for matching dst / sid */
 
     for (i = 0; i < counters_ipc->thresh_count_by_dst; i++ ) {
+        // Short circuit if no selector match
+        if (
+                (NULL == selector && threshbydst_ipc[i].selector[0] != '\0') || 
+                (NULL != selector && 0 != strcmp(selector, threshbydst_ipc[i].selector))
+           ) {
 
-        if ( threshbydst_ipc[i].ipdst == ip_dst_u32 && !strcmp(threshbydst_ipc[i].sid, rulestruct[rule_position].s_sid )) {
+                continue;
+        }
+
+        if ( 0 == memcmp(threshbydst_ipc[i].ipdst, ip_dst_bits, sizeof(threshbydst_ipc[i].ipdst)) && !strcmp(threshbydst_ipc[i].sid, rulestruct[rule_position].s_sid )) {
 
             File_Lock(config->shm_thresh_by_dst);
             pthread_mutex_lock(&Thresh_By_Dst_Mutex);
@@ -208,8 +225,9 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
         File_Lock(config->shm_thresh_by_dst);
         pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
-        threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst = ip_dst_u32;
+        memcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst, ip_dst_bits, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst));
         strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[rule_position].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
+        NULL == selector ? threshbydst_ipc[counters_ipc->thresh_count_by_dst].selector[0] = '\0' : strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].selector, selector, MAXSELECTOR);
         threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
         threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
         threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[rule_position].threshold_seconds;
@@ -227,7 +245,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
 /* Threshold by username */
 /*************************/
 
-sbool Thresh_By_Username( int rule_position, char *normalize_username )
+sbool Thresh_By_Username( int rule_position, char *normalize_username, char *selector )
 {
 
     time_t t;
@@ -247,6 +265,14 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
     /* Check array fror matching username / sid */
 
     for (i = 0; i < counters_ipc->thresh_count_by_username; i++) {
+        // Short circuit if no selector match
+        if (
+                (NULL == selector && threshbyusername_ipc[i].selector[0] != '\0') || 
+                (NULL != selector && 0 != strcmp(selector, threshbyusername_ipc[i].selector))
+           ) {
+
+                continue;
+        }
 
         if ( !strcmp(threshbyusername_ipc[rule_position].username, normalize_username) && !strcmp(threshbyusername_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
@@ -291,6 +317,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
 
         strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
         strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[rule_position].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
+        NULL == selector ? threshbyusername_ipc[counters_ipc->thresh_count_by_username].selector[0] = '\0' : strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].selector, selector, MAXSELECTOR);
         threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
         threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
         threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[rule_position].threshold_seconds;
@@ -308,7 +335,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
 /* Threshold by destination port */
 /*********************************/
 
-sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
+sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector )
 {
 
     time_t t;
@@ -328,6 +355,14 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
     /* Check array for matching dst port / sid */
 
     for (i = 0; i < counters_ipc->thresh_count_by_dstport; i++ ) {
+        // Short circuit if no selector match
+        if (
+                (NULL == selector && threshbydstport_ipc[i].selector[0] != '\0') || 
+                (NULL != selector && 0 != strcmp(selector, threshbydstport_ipc[i].selector))
+           ) {
+
+                continue;
+        }
 
         if ( threshbydstport_ipc[rule_position].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
@@ -373,6 +408,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
 
         threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
         strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[rule_position].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
+        NULL == selector ? threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].selector[0] = '\0' : strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].selector, selector, MAXSELECTOR);
         threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
         threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
         threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].expire = rulestruct[rule_position].threshold_seconds;
@@ -390,7 +426,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
 /* Threshold by source port */
 /****************************/
 
-sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
+sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector )
 {
 
     time_t t;
@@ -410,6 +446,14 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
     /* Check array for matching src port / sid */
 
     for (i = 0; i < counters_ipc->thresh_count_by_srcport; i++ ) {
+        // Short circuit if no selector match
+        if (
+                (NULL == selector && threshbysrcport_ipc[i].selector[0] != '\0') || 
+                (NULL != selector && 0 != strcmp(selector, threshbysrcport_ipc[i].selector))
+           ) {
+
+                continue;
+        }
 
         if ( threshbysrcport_ipc[rule_position].ipsrcport == ip_srcport_u32 && !strcmp(threshbysrcport_ipc[rule_position].sid, rulestruct[rule_position].s_sid )) {
 
@@ -455,6 +499,7 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
 
         threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].ipsrcport = ip_srcport_u32;
         strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid, rulestruct[rule_position].s_sid, sizeof(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid));
+        NULL == selector ? threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].selector[0] = '\0' : strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].selector, selector, MAXSELECTOR);
         threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].count = 1;
         threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].utime = atol(timet);
         threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].expire = rulestruct[rule_position].threshold_seconds;

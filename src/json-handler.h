@@ -30,6 +30,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *, char *, size_t);
 
 /* Suricata EVE Alert output */
 
-#define EVE_ALERT "{\"timestamp\":\"\%s\",\"flow_id\":%" PRIu64 ",\"in_iface\":\"%s\",\"event_type\":\"alert\",\"src_ip\":\"%s\",\"src_port\":%d,\"dest_ip\":\"%s\",\"dest_port\":%d,\"proto\":\"%s\",\"alert\":{\"action\":\"%s\",\"gid\":%lu,\"signature_id\":%s,\"rev\":%s,\"signature\":\"%s\",\"category\":\"%s\",\"severity\":%d},\"payload\":\"%s\",\"stream\":0,\"packet\":\"%s\",\"packet_info\":{\"linktype\":1}}"
+#define EVE_ALERT "{\"timestamp\":\"\%s\",\"flow_id\":%" PRIu64 ",\"in_iface\":\"%s\",\"event_type\":\"alert\",\"src_ip\":\"%s\",\"src_port\":%d,\"dest_ip\":\"%s\",\"dest_port\":%d,\"proto\":\"%s\",\"alert\":{\"action\":\"%s\",\"gid\":%lu,\"signature_id\":%s,\"rev\":%s,\"signature\":\"%s\",\"category\":\"%s\",\"severity\":%d},\"payload\":\"%s\",\"stream\":0,\"packet\":\"%s\",\"packet_info\":{\"linktype\":1},\"normalize\":%s}"
 
 
