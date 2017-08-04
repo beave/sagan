@@ -134,6 +134,9 @@ sbool     File_Unlock ( int );
 sbool     Check_Content_Not( char * );
 uint32_t  Djb2_Hash( char * );
 sbool     Starts_With(const char *str, const char *prefix);
+char      *strrpbrk(const char *str, const char *accept);
+
+
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void      Set_Pipe_Size( FILE * );
@@ -560,6 +563,15 @@ struct _Sagan_Processor_Info {
     char *processor_tag;
     char *processor_rev;
     int   processor_generator_id;
+};
+
+/* IP Lookup cache */
+
+typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Entry;
+struct _Sagan_Lookup_Cache_Entry {
+    sbool searched;
+    ptrdiff_t offset;
+    char ip[MAXIP];
 };
 
 

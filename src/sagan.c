@@ -1193,7 +1193,6 @@ int main(int argc, char **argv)
 
                 }
 
-
                 /* Strip any \n or \r from the syslog_msg */
 
                 if ( strcspn ( syslog_msg, "\n" ) < strlen(syslog_msg) ) {

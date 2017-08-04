@@ -109,6 +109,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     char tmp_host[254] = { 0 };
 
     int rc = 0;
+    int rc_normalize = 0;
 
     const char *cstr = NULL;
     const char *tmp = NULL;
@@ -141,7 +142,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
     /* int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p); */
-    ln_normalize(ctx, buf, strlen(buf), &json);
+    rc_normalize = ln_normalize(ctx, buf, strlen(buf), &json);
 
     cstr = (char*)json_object_to_json_string(json);
 
@@ -282,7 +283,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     }
 
     if ( debug->debugnormalize ) {
-        Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
+        Sagan_Log(S_DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
         Sagan_Log(S_DEBUG, "---------------------------------------------------");
         Sagan_Log(S_DEBUG, "Log message to normalize: |%s|", syslog_msg);
         Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
@@ -305,6 +306,10 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     }
 
 
+    if (0 != rc_normalize && json) {
+        json_object_put(json);
+        json = NULL;
+    }
     return json;
 }
 

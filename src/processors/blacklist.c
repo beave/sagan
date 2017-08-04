@@ -51,7 +51,7 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
-pthread_mutex_t	CounterBlacklistGenericMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t    CounterBlacklistGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Sagan_Blacklist_Init - Init any global memory structures we might need
@@ -253,24 +253,23 @@ sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
  * blacklist IP's in memory!
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message )
+sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size) 
 {
 
     int i;
+    int j;
     int b;
 
     unsigned char ip[MAXIPBIT] = { 0 };
 
-    char results[MAXIP] = {0};
-
-    for (i = 1; i < MAX_PARSE_IP; i++) {
+    for (i = 0; i < cache_size; i++) {
 
         /* Failed to find next IP,  short circuit the process */
-        if (!Parse_IP(syslog_message, i, results, sizeof(results))) {
+        if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, ip, sizeof(ip), lookup_cache, cache_size)) {
             return(false);
         }
 
-        if (!IP2Bit(results, ip)) {
+        if (!IP2Bit(lookup_cache[i].ip, ip)) {
             continue;
         }
 

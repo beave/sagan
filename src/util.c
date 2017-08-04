@@ -1306,3 +1306,19 @@ uint32_t Djb2_Hash(char *str)
     return(hash);
 }
 
+char *strrpbrk(const char *str, const char *accept)
+{
+    const char *test = NULL;
+    const char *pstr = str+strlen(str);
+    while (pstr >= str) {
+        test = accept;
+        while (test[0] != '\0') {
+            if ((test++)[0] == pstr[0]) {
+                return (char *)pstr;
+            }
+        }
+        pstr--;
+    }
+    return NULL;
+}
+

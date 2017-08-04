@@ -1296,19 +1296,20 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
  * message and preforms a Bluedot query.
  ***************************************************************************/
 
-int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position )
+int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size) 
 {
 
     int i;
-    char results[MAXIP] = {0};
+    int j;
 
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
-    for ( i = 1; i < MAX_PARSE_IP; i++ ) {
+
+    for (i = 0; i < cache_size; i++) {
 
         /* Failed to find next IP,  short circuit the process */
-        if (!Parse_IP(syslog_message, i, results, sizeof(results))) {
+        if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, ip, sizeof(ip), lookup_cache, cache_size)) {
             return(false);
         }
 
