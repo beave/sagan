@@ -64,6 +64,7 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
     int num_colons = 0;
     int current_pos = 0;
     sbool valid = false;
+    sbool is_host = false;
 
     char *tok=NULL;
     char *stmp=NULL;
@@ -161,11 +162,16 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
                 ctmp = etmp[0];
                 etmp[0] = '\0';
 
+                is_host = false;
+
+                // current_pos is 0 based here and real_pos-pos will give us the delta between
+                //   what position was requested and where we are starting
                 if (lookup_cache) {
                     lookup_cache[current_pos+(real_pos-pos)].searched = true;
                     if (0 == strcmp(stmp, "127.0.0.1") ||
                         0 == strcmp(stmp, "::1") ||
                         0 == strcmp(stmp, "::ffff:127.0.0.1")) { 
+                        is_host = true;
                         strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, config->sagan_host, size);
                     } else{
                         strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, stmp, size);
@@ -176,7 +182,7 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
                 if (++current_pos == pos) {
                     ret = true;
                     if (NULL != str) {
-                        strlcpy(str, lookup_cache[current_pos+(real_pos-pos)].ip, size);
+                        strlcpy(str, is_host ? config->sagan_host : stmp, size);
                     }
                     break;
                 }
