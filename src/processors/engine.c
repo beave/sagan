@@ -1094,7 +1094,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         break;
 
                                                                     case(THRESH_BY_USERNAME):
-                                                                        thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector);
+                                                                        if ( normalize_username[0] != '\0' ) {
+                                                                            thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector);
+                                                                        }
                                                                         break;
 
                                                                     case(THRESH_BY_SRCPORT):

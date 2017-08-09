@@ -165,7 +165,6 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     /* Used for tracking in multi-tenant environment */
 
     if (config->selector_flag) {
-        Sagan_Log(S_DEBUG, "Trying to get selector: %s", config->selector_name[0] != '\0' ? config->selector_name : "selector");
         json_object_object_get_ex(json, config->selector_name[0] != '\0' ? config->selector_name : "selector", &string_obj);
         tmp = json_object_get_string(string_obj);
 
