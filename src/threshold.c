@@ -137,7 +137,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, uint32_t ip_src_u32 )
         File_Unlock(config->shm_thresh_by_src);
     }
 
-    return(true);
+    return(false);
 }
 
 /****************************/
@@ -220,7 +220,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, uint32_t ip_dst_u32 )
         File_Unlock(config->shm_thresh_by_dst);
     }
 
-    return(true);
+    return(false);
 }
 
 /*************************/
@@ -301,7 +301,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username )
         File_Unlock(config->shm_thresh_by_username);
     }
 
-    return(true);
+    return(false);
 }
 
 /*********************************/
@@ -383,7 +383,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32 )
         File_Unlock(config->shm_thresh_by_dstport);
     }
 
-    return(true);
+    return(false);
 }
 
 /****************************/
@@ -465,6 +465,6 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32 )
         File_Unlock(config->shm_thresh_by_srcport);
     }
 
-    return(true);
+    return(false);
 }
 
