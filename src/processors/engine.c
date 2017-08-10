@@ -216,6 +216,80 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     /* This needs to be included,  even if liblognorm isn't in use */
 
     sbool liblognorm_status = 0;
+    json_object *json_normalize = NULL;
+
+#ifdef HAVE_LIBLOGNORM
+    pthread_mutex_lock(&Lognorm_Mutex);
+
+    json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
+
+    if (SaganNormalizeLiblognorm->ip_src[0] != '0') {
+        strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
+        ip_src_flag = 1;
+        liblognorm_status = 1;
+    }
+
+
+    if (SaganNormalizeLiblognorm->ip_dst[0] != '0' ) {
+        strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst));
+        ip_dst_flag = 1;
+        liblognorm_status = 1;
+    }
+
+    if ( SaganNormalizeLiblognorm->src_port != 0 ) {
+        normalize_src_port = SaganNormalizeLiblognorm->src_port;
+        liblognorm_status = 1;
+    }
+
+    if ( SaganNormalizeLiblognorm->dst_port != 0 ) {
+        normalize_dst_port = SaganNormalizeLiblognorm->dst_port;
+        liblognorm_status = 1;
+    }
+
+    if ( SaganNormalizeLiblognorm->username[0] != '\0' ) {
+        strlcpy(normalize_username, SaganNormalizeLiblognorm->username, sizeof(normalize_username));
+        liblognorm_status = 1;
+    }
+
+    if ( config->selector_flag && SaganNormalizeLiblognorm->selector[0] != '\0' ) {
+        strlcpy(normalize_selector, SaganNormalizeLiblognorm->selector, sizeof(normalize_selector));
+        liblognorm_status = 1;
+        pnormalize_selector = normalize_selector;
+    }
+
+    if ( SaganNormalizeLiblognorm->http_uri[0] != '\0' ) {
+        strlcpy(normalize_http_uri, SaganNormalizeLiblognorm->http_uri, sizeof(normalize_http_uri));
+        liblognorm_status = 1;
+    }
+
+    if ( SaganNormalizeLiblognorm->filename[0] != '\0' ) {
+        strlcpy(normalize_filename, SaganNormalizeLiblognorm->filename, sizeof(normalize_filename));
+        liblognorm_status = 1;
+    }
+
+
+    if ( SaganNormalizeLiblognorm->hash_sha256[0] != '\0' ) {
+        strlcpy(normalize_sha256_hash, SaganNormalizeLiblognorm->hash_sha256, sizeof(normalize_sha256_hash));
+        liblognorm_status = 1;
+    }
+
+
+    if ( SaganNormalizeLiblognorm->hash_sha1[0] != '\0' ) {
+        strlcpy(normalize_sha1_hash, SaganNormalizeLiblognorm->hash_sha1, sizeof(normalize_sha1_hash));
+        liblognorm_status = 1;
+    }
+
+    if ( SaganNormalizeLiblognorm->hash_md5[0] != '\0' ) {
+
+        strlcpy(normalize_md5_hash, SaganNormalizeLiblognorm->hash_md5, sizeof(normalize_md5_hash));
+        liblognorm_status = 1;
+
+    }
+
+    pthread_mutex_unlock(&Lognorm_Mutex);
+
+#endif
+
 
     /* Search for matches */
 
@@ -225,8 +299,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     for(b=0; b < counters->rulecount; b++) {
         ip_src[0] = '\0';
         ip_dst[0] = '\0';
-
-        json_object *json_normalize = NULL;
 
         memset(ip_src_bits, 0, sizeof(ip_src_bits));
         memset(ip_dst_bits, 0, sizeof(ip_dst_bits));
@@ -491,97 +563,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     ip_src_flag = 0;
                     ip_dst_flag = 0;
-                    pnormalize_selector = NULL;
-
-                    normalize_dst_port=0;
-                    normalize_src_port=0;
-                    normalize_md5_hash[0] = '\0';
-                    normalize_sha1_hash[0] = '\0';
-                    normalize_sha256_hash[0] = '\0';
-                    normalize_filename[0] = '\0';
-                    normalize_http_uri[0] = '\0';
-                    normalize_http_hostname[0] = '\0';
-
-                    normalize_username[0] = '\0';
-                    normalize_selector[0] = '\0';
-
-#ifdef HAVE_LIBLOGNORM
-                    if ( rulestruct[b].normalize == 1 ) {
-
-                        pthread_mutex_lock(&Lognorm_Mutex);
-
-                        liblognorm_status = 0;
-
-                        json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message);
-
-                        if (SaganNormalizeLiblognorm->ip_src[0] != '0') {
-                            strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
-                            ip_src_flag = 1;
-                            liblognorm_status = 1;
-                        }
-
-
-                        if (SaganNormalizeLiblognorm->ip_dst[0] != '0' ) {
-                            strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst));
-                            ip_dst_flag = 1;
-                            liblognorm_status = 1;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->src_port != 0 ) {
-                            normalize_src_port = SaganNormalizeLiblognorm->src_port;
-                            liblognorm_status = 1;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->dst_port != 0 ) {
-                            normalize_dst_port = SaganNormalizeLiblognorm->dst_port;
-                            liblognorm_status = 1;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->username[0] != '\0' ) {
-                            strlcpy(normalize_username, SaganNormalizeLiblognorm->username, sizeof(normalize_username));
-                            liblognorm_status = 1;
-                        }
-
-                        if ( config->selector_flag && SaganNormalizeLiblognorm->selector[0] != '\0' ) {
-                            strlcpy(normalize_selector, SaganNormalizeLiblognorm->selector, sizeof(normalize_selector));
-                            liblognorm_status = 1;
-                            pnormalize_selector = normalize_selector;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->http_uri[0] != '\0' ) {
-                            strlcpy(normalize_http_uri, SaganNormalizeLiblognorm->http_uri, sizeof(normalize_http_uri));
-                            liblognorm_status = 1;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->filename[0] != '\0' ) {
-                            strlcpy(normalize_filename, SaganNormalizeLiblognorm->filename, sizeof(normalize_filename));
-                            liblognorm_status = 1;
-                        }
-
-
-                        if ( SaganNormalizeLiblognorm->hash_sha256[0] != '\0' ) {
-                            strlcpy(normalize_sha256_hash, SaganNormalizeLiblognorm->hash_sha256, sizeof(normalize_sha256_hash));
-                            liblognorm_status = 1;
-                        }
-
-
-                        if ( SaganNormalizeLiblognorm->hash_sha1[0] != '\0' ) {
-                            strlcpy(normalize_sha1_hash, SaganNormalizeLiblognorm->hash_sha1, sizeof(normalize_sha1_hash));
-                            liblognorm_status = 1;
-                        }
-
-                        if ( SaganNormalizeLiblognorm->hash_md5[0] != '\0' ) {
-
-                            strlcpy(normalize_md5_hash, SaganNormalizeLiblognorm->hash_md5, sizeof(normalize_md5_hash));
-                            liblognorm_status = 1;
-
-                        }
-
-                        pthread_mutex_unlock(&Lognorm_Mutex);
-
-                    }
-
-#endif
 
                     /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port,
                      * _unless_ liblognorm fails and both are in a rule */
@@ -1215,13 +1196,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
         } /* If normal or dynamic rule */
 
-        if (NULL != json_normalize) {
-            json_object_put(json_normalize);
-            json_normalize = NULL;
-        }
     } /* End for for loop */
 
     free(processor_info_engine);
 
+    if (NULL != json_normalize) {
+        json_object_put(json_normalize);
+        json_normalize = NULL;
+    }
     return(0);
 }
