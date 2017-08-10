@@ -89,7 +89,9 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
         strlcpy(toparse, syslogmessage, MAX_SYSLOGMSG);
     }
 
-    str[0] = '\0';
+    if (NULL != str) {
+        str[0] = '\0';
+    }
 
     // Just use the existing message, if no space use the whole message
     stmp = strtok_r(toparse, " ", &tok);

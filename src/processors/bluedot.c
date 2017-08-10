@@ -1309,7 +1309,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 0; i < cache_size; i++) {
 
         /* Failed to find next IP,  short circuit the process */
-        if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, ip, sizeof(ip), lookup_cache, cache_size)) {
+        if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size)) {
             return(false);
         }
 
