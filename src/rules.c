@@ -96,6 +96,7 @@ void Load_Rules( const char *ruleset )
     struct stat filecheck;
 
     sbool found = 0;
+    sbool bad_rule = 0;
 
     const char *error;
     int erroffset;
@@ -196,7 +197,25 @@ void Load_Rules( const char *ruleset )
 
     Sagan_Log(S_NORMAL, "Loading %s rule file.", ruleset_fullname);
 
-    while (fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
+    while ( fgets(rulebuf, sizeof(rulebuf), rulesfile) != NULL ) {
+        /* Reset for next rule */
+
+        bad_rule = 0;
+        pcre_count=0;
+        content_count=0;
+        meta_content_count=0;
+        meta_content_converted_count=0;
+        xbit_count=0;
+        netcount=0;
+        ref_count=0;
+        flow_1_count=0;
+        flow_2_count=0;
+        port_1_count=0;
+        port_2_count=0;
+        memset(netstr, 0, sizeof(netstr));
+        memset(rulestr, 0, sizeof(rulestr));
+
+
 
         int f1=0; /* Need for flow_direction, must reset every rule, not every group */
         int f2=0; /* Need for flow_direction, must reset every rule, not every group */
@@ -213,6 +232,7 @@ void Load_Rules( const char *ruleset )
 
             /* Allocate memory for rules, but not comments */
 
+            // realloc of same size is a noop, cleaner to not worry about skipped rules
             rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
 
             if ( rulestruct == NULL ) {
@@ -229,19 +249,23 @@ void Load_Rules( const char *ruleset )
 
         if (!strchr(rulebuf, ';') || !strchr(rulebuf, ':') ||
             !strchr(rulebuf, '(') || !strchr(rulebuf, ')')) {
-            Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d]  %s on line %d appears to be incorrect, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
         if (!Sagan_strstr(rulebuf, "sid:")) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'sid'", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d] %s on line %d appears to not have a 'sid', skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
         if (!Sagan_strstr(rulebuf, "rev:")) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'rev'", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d] %s on line %d appears to not have a 'rev', skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
         if (!Sagan_strstr(rulebuf, "msg:")) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'msg'", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d] %s on line %d appears to not have a 'msg', skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
 
@@ -256,7 +280,8 @@ void Load_Rules( const char *ruleset )
         }
 
         if ( rc == 2 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop'", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d] %s on line %d appears to not have a 'alert' or 'drop', skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
         rc=0;
@@ -283,7 +308,8 @@ void Load_Rules( const char *ruleset )
         }
 
         if ( rc >= 5 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d appears to not have a protocol type (any/tcp/udp/icmp/syslog)", __FILE__, __LINE__, ruleset_fullname, linecount);
+            Sagan_Log(S_WARN, "[%s, line %d] %s on line %d appears to not have a protocol type (any/tcp/udp/icmp/syslog), skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+            continue;
         }
 
         /* Parse forward for the first '(' */
@@ -331,7 +357,7 @@ void Load_Rules( const char *ruleset )
 
         tokennet = strtok_r(netstring, " ", &saveptrnet);
 
-        while ( tokennet != NULL ) {
+        while ( tokennet != NULL && !bad_rule) {
 
             Remove_Spaces(tokennet);
 
@@ -414,7 +440,9 @@ void Load_Rules( const char *ruleset )
                         }
                         flow_1_count++;
                         if( flow_1_count > 49 ) {
-                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50'.", __FILE__, __LINE__);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50', skipping rule.", __FILE__, __LINE__);
+                            continue;
                         }
 
                     }
@@ -468,7 +496,9 @@ void Load_Rules( const char *ruleset )
                         port_1_count++;
 
                         if( port_1_count > MAX_CHECK_FLOWS ) {
-                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_1 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                            Sagan_Log(S_WARN,"[%s, line %d] You have exceeded the amount of Ports for port_1 '%d', skipping rule.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                            bad_rule = true;
+                            continue;
                         }
 
                     }
@@ -528,7 +558,9 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
                         }
                         if( flow_2_count > 49 ) {
-                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of entries for follow_flow_2 '50'.", __FILE__, __LINE__);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN,"[%s, line %d] You have exceeded the amount of entries for follow_flow_2 '50', skipping.", __FILE__, __LINE__);
+                            continue;
                         }
                     }
                     rulestruct[counters->rulecount].flow_2_var = 1;   /* 1 = var */
@@ -582,7 +614,9 @@ void Load_Rules( const char *ruleset )
                         port_2_count++;
 
                         if( port_2_count > MAX_CHECK_FLOWS ) {
-                            Sagan_Log(S_ERROR,"[%s, line %d] You have exceeded the amount of Ports for port_2 '%d'.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN,"[%s, line %d] You have exceeded the amount of Ports for port_2 '%d', skipping.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
+                            continue;
                         }
 
                     }
@@ -605,6 +639,9 @@ void Load_Rules( const char *ruleset )
             netcount++;
         }
 
+        if (bad_rule) {
+            continue;
+        }
 
         /*****************************************************************************/
         /* Parse the rule set!                                                       */
@@ -618,7 +655,7 @@ void Load_Rules( const char *ruleset )
 
         tokenrule = strtok_r(rulestring, ";", &saveptrrule1);
 
-        while ( tokenrule != NULL ) {
+        while ( tokenrule != NULL && !bad_rule ) {
 
             rulesplit = strtok_r(tokenrule, ":", &saveptrrule2);
             Remove_Spaces(rulesplit);
@@ -645,7 +682,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"default_proto\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
@@ -670,7 +709,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_src_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"default_src_port\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
@@ -685,7 +726,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"default_dst_port\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"default_dst_port\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
@@ -704,7 +747,9 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].s_find_src_ip = true;
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_src_ip\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"parse_src_ip\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].s_find_src_pos = atoi(arg);
@@ -716,7 +761,9 @@ void Load_Rules( const char *ruleset )
                 rulestruct[counters->rulecount].s_find_dst_ip = 1;
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_dst_ip\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"parse_dst_ip\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].s_find_dst_pos = atoi(arg);
@@ -727,7 +774,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"parse_hash\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -749,7 +798,9 @@ void Load_Rules( const char *ruleset )
                 }
 
                 if ( rulestruct[counters->rulecount].s_find_hash_type == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256'.", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"parse_hash\" option appears to be invalid at line %d in %s. Valid values are 'md5', 'sha1' and 'sha256', skipping rule.", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
 
@@ -763,7 +814,9 @@ void Load_Rules( const char *ruleset )
                 tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
                 if ( tmptoken == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Incomplete 'xbit' option at %d in '%s'", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Incomplete 'xbit' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(tmptoken);
@@ -775,7 +828,9 @@ void Load_Rules( const char *ruleset )
                      strcmp(tmptoken, "count") ) {
 
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset' or 'count' but got '%s' at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset' or 'count' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                    continue;
 
                 }
 
@@ -794,7 +849,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -808,7 +865,9 @@ void Load_Rules( const char *ruleset )
                     rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     xbit_count++;
@@ -823,7 +882,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected \"direction\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected \"direction\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -837,7 +898,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -855,7 +918,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -868,7 +933,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -884,7 +951,9 @@ void Load_Rules( const char *ruleset )
                     if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
                          Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") ) {
 
-                        Sagan_Log(S_ERROR, "[%s, line %d] Syntax error at line %d in %s. 'isset' cannot have | and & operators", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Syntax error at line %d in %s. 'isset' cannot have | and & operators, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&")) {
@@ -907,7 +976,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -920,7 +991,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Return(tmptoken);
@@ -937,7 +1010,9 @@ void Load_Rules( const char *ruleset )
                     if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
                          Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") ) {
 
-                        Sagan_Log(S_ERROR, "[%s, line %d] Syntax error at line %d in %s. 'isnotset' cannot have | and & operators", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Syntax error at line %d in %s. 'isnotset' cannot have | and & operators, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
 
@@ -962,7 +1037,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -976,7 +1053,9 @@ void Load_Rules( const char *ruleset )
                     rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                        continue;
                     }
 
                     xbit_count++;
@@ -991,7 +1070,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -1005,7 +1086,9 @@ void Load_Rules( const char *ruleset )
                     rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     xbit_count++;
@@ -1020,7 +1103,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -1034,7 +1119,9 @@ void Load_Rules( const char *ruleset )
                     rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
                     if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     xbit_count++;
@@ -1049,14 +1136,18 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
 
                     if ( strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst") ) {
 
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected count 'by_src' or 'by_dst'.  Got '%s' instead at line %d in %s", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected count 'by_src' or 'by_dst'.  Got '%s' instead at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                        continue;
 
                     }
 
@@ -1077,7 +1168,9 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit name to count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit name to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -1086,14 +1179,18 @@ void Load_Rules( const char *ruleset )
                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected xbit value to count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected xbit value to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     strlcpy(tmp1, tmptoken, sizeof(tmp1));
                     Remove_Spaces(tmp1);
 
                     if ( tmp1[0] != '>' && tmp1[0] != '<' && tmp1[0] != '=' ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected '>', '<' or '=' operator in xbit count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected '>', '<' or '=' operator in xbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
 
                     }
 
@@ -1115,7 +1212,9 @@ void Load_Rules( const char *ruleset )
                     }
 
                     if ( tmptoken == NULL ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] Expected value to look for in xbit count at line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] Expected value to look for in xbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                        continue;
                     }
 
                     Remove_Spaces(tmptoken);
@@ -1137,14 +1236,18 @@ void Load_Rules( const char *ruleset )
 
                 if ( config->dynamic_load_sample_rate == 0 ) {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Attempting to load a dynamic rule but the 'dynamic_load' processor hasn't been configured.  Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Attempting to load a dynamic rule but the 'dynamic_load' processor hasn't been configured, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
 
                 }
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] 'dynamic_load' specified but not complete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] 'dynamic_load' specified but not complete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
@@ -1163,26 +1266,34 @@ void Load_Rules( const char *ruleset )
                 /* Have the requirements for GeoIP2 been loaded (Maxmind DB, etc) */
 
                 if (!config->have_geoip2) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Rule %s at line %d has GeoIP2 option,  but Sagan configuration lacks GeoIP2!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Rule %s at line %d has GeoIP2 option,  but Sagan configuration lacks GeoIP2 - skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
                 tmptoken = strtok_r(arg, " ", &saveptrrule2);
 
                 if (strcmp(tmptoken, "track")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected 'track' in 'country_code' option at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                 if ( tmptoken == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Incomplete country_code option at %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Incomplete country_code option at %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(tmptoken);
 
                 if (strcmp(tmptoken, "by_src") && strcmp(tmptoken, "by_dst")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected 'by_src' or 'by_dst' in 'country_code' option at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 if (!strcmp(tmptoken, "by_src")) {
@@ -1196,13 +1307,17 @@ void Load_Rules( const char *ruleset )
                 tmptoken = strtok_r(NULL, " ", &saveptrrule2);
 
                 if ( tmptoken == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Incomplete country_code option at %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Incomplete country_code option at %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(tmptoken);
 
                 if (strcmp(tmptoken, "is") && strcmp(tmptoken, "isnot")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected 'is' or 'isnot' in 'country_code' option at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 if (!strcmp(tmptoken, "isnot")) {
@@ -1234,7 +1349,9 @@ void Load_Rules( const char *ruleset )
             if (!strcmp(rulesplit, "meta_content")) {
 
                 if ( meta_content_count > MAX_META_CONTENT ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] There is to many \"meta_content\" types in the rule at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] There is to many \"meta_content\" types in the rule at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -1246,7 +1363,9 @@ void Load_Rules( const char *ruleset )
                 tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
                 if ( tmptoken == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected a meta_content 'helper',  but none was found at line %d in %s - skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Between_Quotes(tmptoken, tmp2, sizeof(tmp2));
@@ -1258,7 +1377,9 @@ void Load_Rules( const char *ruleset )
                 tmptoken = strtok_r(NULL, ";", &saveptrrule2);           /* Grab Search data */
 
                 if ( tmptoken == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Expected some sort of meta_content,  but none was found at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
@@ -1305,7 +1426,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"rev\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"rev\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1316,7 +1439,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"classtype\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"classtype\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1332,8 +1457,10 @@ void Load_Rules( const char *ruleset )
                 }
 
                 if ( found == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The classtype \"%s\" was not found on line %d in %s! "
-                              "Are you attempting loading a rule set before loading the classification.config?", __FILE__, __LINE__, rulestruct[counters->rulecount].s_classtype, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The classtype \"%s\" was not found on line %d in %s! "
+                              "Are you attempting loading a rule set before loading the classification.config? - skipping rule", __FILE__, __LINE__, rulestruct[counters->rulecount].s_classtype, linecount, ruleset_fullname);
+                    continue;
                 }
 
             }
@@ -1342,7 +1469,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"program\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"program\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Var_To_Value(arg, tmp1, sizeof(tmp1));
@@ -1356,7 +1485,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"reference\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"reference\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1369,7 +1500,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"sid\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"sid\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1380,7 +1513,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"tag\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"tag\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1391,7 +1526,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"facility\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"facility\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1402,7 +1539,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"level\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"level\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1414,7 +1553,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"priority\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"priority\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1427,11 +1568,15 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, " ", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"email\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"email\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 if (!strcmp(config->sagan_esmtp_server, "" )) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s", __FILE__, __LINE__, linecount, ruleset_fullname, config->sagan_config);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Line %d of %s has the \"email:\" option,  but no SMTP server is specified in the %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname, config->sagan_config);
+                    continue;
                 }
 
                 Remove_Spaces(arg);
@@ -1471,7 +1616,9 @@ void Load_Rules( const char *ruleset )
                 Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"msg\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"msg\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 strlcpy(rulestruct[counters->rulecount].s_msg, tmp2, sizeof(rulestruct[counters->rulecount].s_msg));
@@ -1481,7 +1628,9 @@ void Load_Rules( const char *ruleset )
 
             if (!strcmp(rulesplit, "content" )) {
                 if ( content_count > MAX_CONTENT ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] There is to many \"content\" types in the rule at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] There is to many \"content\" types in the rule at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 arg = strtok_r(NULL, ";", &saveptrrule2);
@@ -1495,7 +1644,9 @@ void Load_Rules( const char *ruleset )
                 Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"content\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 /* Convert HEX encoded data */
@@ -1524,7 +1675,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"offset\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"offset\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].s_offset[content_count - 1] = atoi(arg);
@@ -1534,7 +1687,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_offset\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"meta_offset\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].meta_offset[meta_content_count - 1] = atoi(arg);
@@ -1545,7 +1700,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"depth\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"depth\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].s_depth[content_count - 1] = atoi(arg);
@@ -1555,7 +1712,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_depth\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"meta_depth\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].meta_depth[meta_content_count - 1] = atoi(arg);
@@ -1566,7 +1725,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"distance\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"distance\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].s_distance[content_count - 1] = atoi(arg);
@@ -1576,7 +1737,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_distance\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"meta_distance\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].meta_distance[meta_content_count - 1] = atoi(arg);
@@ -1587,7 +1750,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"within\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"within\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
                 rulestruct[counters->rulecount].s_within[content_count - 1] = atoi(arg);
             }
@@ -1597,7 +1762,9 @@ void Load_Rules( const char *ruleset )
                 arg = strtok_r(NULL, ":", &saveptrrule2);
 
                 if (arg == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The \"meta_within\" appears to be missing at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] The \"meta_within\" appears to be missing at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
                 rulestruct[counters->rulecount].meta_within[meta_content_count - 1] = atoi(arg);
             }
@@ -1608,7 +1775,9 @@ void Load_Rules( const char *ruleset )
             if (!strcmp(rulesplit, "pcre" )) {
 
                 if ( pcre_count > MAX_PCRE ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] There is to many \"pcre\" types in the rule at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] There is to many \"pcre\" types in the rule at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    continue;
                 }
 
                 arg = strtok_r(NULL, ";", &saveptrrule2);
@@ -1616,7 +1785,7 @@ void Load_Rules( const char *ruleset )
                 Between_Quotes(arg, tmp2, sizeof(tmp2));
 
                 if (tmp2[0] == '\0' ) {
-                    Sagan_Log(S_ERROR, "The \"pcre\" appears to be incomplete at line %d in %s", __FILE__, __LINE__, linecount, ruleset_fullname);
+                    Sagan_Log(S_WARN, "The \"pcre\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                 }
 
                 pcreflag=0;
@@ -1687,7 +1856,9 @@ void Load_Rules( const char *ruleset )
 
 
                 if ( pcreflag == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Missing last '/' in pcre: %s at line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] Missing last '/' in pcre: %s at line %d, skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
 
@@ -1720,8 +1891,10 @@ void Load_Rules( const char *ruleset )
 #endif
 
                 if (  rulestruct[counters->rulecount].re_pcre[pcre_count]  == NULL ) {
+                    bad_rule = true;
                     Remove_Lock_File();
-                    Sagan_Log(S_ERROR, "[%s, line %d] PCRE failure at %d: %s", __FILE__, __LINE__, erroffset, error);
+                    Sagan_Log(S_WARN, "[%s, line %d] PCRE failure at %d: %s, skipping rule", __FILE__, __LINE__, erroffset, error);
+                    continue;
                 }
 
                 pcre_count++;
@@ -1784,7 +1957,9 @@ void Load_Rules( const char *ruleset )
                         Remove_Spaces(tmptok_tmp);
 
                         if (strlen(tmptok_tmp) > 7 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] To many days (%s) in 'alert_time' in %s at line %d.", __FILE__, __LINE__, tmptok_tmp, ruleset_fullname, linecount);
+                            Sagan_Log(S_WARN, "[%s, line %d] To many days (%s) in 'alert_time' in %s at line %d, skipping rule.", __FILE__, __LINE__, tmptok_tmp, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            continue;
                         }
 
                         strlcpy(alert_time_tmp, tmptok_tmp, sizeof(alert_time_tmp));
@@ -1793,7 +1968,9 @@ void Load_Rules( const char *ruleset )
                             snprintf(tmp, sizeof(tmp), "%c", alert_time_tmp[i]);
 
                             if (!Is_Numeric(tmp)) {
-                                Sagan_Log(S_ERROR, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d.", __FILE__, __LINE__,  alert_time_tmp[i], ruleset_fullname, linecount);
+                                bad_rule = true;
+                                Sagan_Log(S_WARN, "[%s, line %d] The day '%c' 'alert_time / days' is invalid in %s at line %d, skipping rule.", __FILE__, __LINE__,  alert_time_tmp[i], ruleset_fullname, linecount);
+                                continue;
                             }
 
                             if ( atoi(tmp) == 0 ) rulestruct[counters->rulecount].alert_days ^= SUNDAY;
@@ -1815,7 +1992,9 @@ void Load_Rules( const char *ruleset )
                         Remove_Spaces(tmptok_tmp);
 
                         if ( strlen(tmptok_tmp) > 9 || strlen(tmptok_tmp) < 9 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Improper 'alert_time' format in %s at line %d.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] Improper 'alert_time' format in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         snprintf(alert_time_tmp, sizeof(alert_time_tmp), "%s", tmptok_tmp);
@@ -1825,13 +2004,17 @@ void Load_Rules( const char *ruleset )
                         snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp[0], alert_time_tmp[1]);
 
                         if ( atoi(alert_tmp_hour) > 23 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Starting 'alert_time' hour cannot be over 23 in %s at line %d.",  __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] Starting 'alert_time' hour cannot be over 23 in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp[2], alert_time_tmp[3]);
 
                         if ( atoi(alert_tmp_minute) > 59 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Starting 'alert_time' minute cannot be over 59 in %s at line %d.",  __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] Starting 'alert_time' minute cannot be over 59 in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
@@ -1842,13 +2025,17 @@ void Load_Rules( const char *ruleset )
                         snprintf(alert_tmp_hour, sizeof(alert_tmp_hour), "%c%c", alert_time_tmp[5], alert_time_tmp[6]);
 
                         if ( atoi(alert_tmp_hour) > 23 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Ending 'alert_time' hour cannot be over 23 in %s at line %d.",  __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] Ending 'alert_time' hour cannot be over 23 in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         snprintf(alert_tmp_minute, sizeof(alert_tmp_minute), "%c%c", alert_time_tmp[7], alert_time_tmp[8]);
 
                         if ( atoi(alert_tmp_minute) > 59 ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Ending 'alert_time' minute cannot be over 59 in %s at line %d.",  __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] Ending 'alert_time' minute cannot be over 59 in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         snprintf(alert_time_all, sizeof(alert_time_all), "%s%s", alert_tmp_hour, alert_tmp_minute);
@@ -1978,7 +2165,9 @@ void Load_Rules( const char *ruleset )
                 tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( tok_tmp == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"blacklist:\" options appear incomplete.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d]  %s on line %d appears to be incorrect.  \"blacklist:\" options appear incomplete, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 Remove_Spaces(tok_tmp);
@@ -2024,7 +2213,9 @@ void Load_Rules( const char *ruleset )
                 tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( tok_tmp == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"bro-intel:\" options appear incomplete.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d]  %s on line %d appears to be incorrect.  \"bro-intel:\" options appear incomplete, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 Remove_Spaces(tok_tmp);
@@ -2108,7 +2299,9 @@ void Load_Rules( const char *ruleset )
                     }
 
                     if ( found == 0 ) {
-                        Sagan_Log(S_ERROR, "[%s, line %d] %s on line %d has an unknown \"brointel\" option \"%s\".", __FILE__, __LINE__, ruleset_fullname, linecount, tmptoken);
+                        bad_rule = true;
+                        Sagan_Log(S_WARN, "[%s, line %d] %s on line %d has an unknown \"brointel\" option \"%s\", skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount, tmptoken);
+                        continue;
                     }
 
                     tmptoken = strtok_r(NULL, ",", &saveptrrule3);
@@ -2121,17 +2314,23 @@ void Load_Rules( const char *ruleset )
                 tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
 
                 if ( tok_tmp == NULL ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option  but not external 'program' is specified!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'external' option  but not external 'program' is specified, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 Remove_Spaces(tok_tmp);
 
                 if (stat(tok_tmp, &filecheck) != 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' does not exist! Abort!", __FILE__, __LINE__, ruleset_fullname, linecount, tok_tmp);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'external' option but external program '%s' does not exist, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tok_tmp);
+                    continue;
                 }
 
                 if (access(tok_tmp, X_OK) == -1) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'external' option but external program '%s' is not executable! Abort!", __FILE__, __LINE__, ruleset_fullname, linecount, tok_tmp);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'external' option but external program '%s' is not executable, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tok_tmp);
+                    continue;
                 }
 
                 rulestruct[counters->rulecount].external_flag = 1;
@@ -2144,13 +2343,17 @@ void Load_Rules( const char *ruleset )
             if (!strcmp(rulesplit, "bluedot")) {
 
                 if ( config->bluedot_flag == 0 ) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has 'bluedot' option enabled,  but 'processor bluedot' is not configured!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has 'bluedot' option enabled,  but 'processor bluedot' is not configured, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                 if (!Sagan_strstr(tmptoken, "type")) {
-                    Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'type' found in %s at line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    bad_rule = true;
+                    Sagan_Log(S_WARN, "[%s, line %d] No Bluedot 'type' found in %s at line %d, skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+                    continue;
                 }
 
                 if ( Sagan_strstr(tmptoken, "type" )) {
@@ -2180,7 +2383,9 @@ void Load_Rules( const char *ruleset )
                             }
 
                             if ( rulestruct[counters->rulecount].bluedot_ipaddr_type == 0 ) {
-                                Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot by_src, by_dst, both or all specified in %s at line %d.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                bad_rule = true;
+                                Sagan_Log(S_WARN, "[%s, line %d] No Bluedot by_src, by_dst, both or all specified in %s at line %d, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                continue;
                             }
 
                         }
@@ -2188,7 +2393,9 @@ void Load_Rules( const char *ruleset )
                         tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                         if (!Sagan_strstr(tmptoken, "mdate_effective_period" ) && !Sagan_strstr(tmptoken, "cdate_effective_period" ) && !Sagan_strstr(tmptoken, "none" )) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] No Bluedot 'mdate_effective_period', 'cdate_effective_period' or 'none' not specified in %s at line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] No Bluedot 'mdate_effective_period', 'cdate_effective_period' or 'none' not specified in %s at line %d, skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         if (!Sagan_strstr(tmptoken, "none")) {
@@ -2200,13 +2407,17 @@ void Load_Rules( const char *ruleset )
                                 bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
 
                                 if ( bluedot_time == NULL ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot numeric time value, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
 
                                 if ( bluedot_type == NULL ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 Remove_Spaces(bluedot_time);
@@ -2215,7 +2426,9 @@ void Load_Rules( const char *ruleset )
                                 bluedot_time_u32 = atol(bluedot_time);
 
                                 if ( bluedot_time_u32 == 0 ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 rulestruct[counters->rulecount].bluedot_mdate_effective_period = Value_To_Seconds(bluedot_type, bluedot_time_u32);
@@ -2223,13 +2436,17 @@ void Load_Rules( const char *ruleset )
                                 bluedot_time = strtok_r(NULL, " ", &saveptrrule3);
 
                                 if ( bluedot_time == NULL ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot numeric time value.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot numeric time value, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 bluedot_type = strtok_r(NULL, " ", &saveptrrule3);
 
                                 if ( bluedot_type == NULL ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has not Bluedot timeframe type (hour, week, month, year, etc) specified, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 Remove_Spaces(bluedot_time);
@@ -2238,7 +2455,9 @@ void Load_Rules( const char *ruleset )
                                 bluedot_time_u32 = atol(bluedot_time);
 
                                 if ( bluedot_time_u32 == 0 ) {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    bad_rule = true;
+                                    Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no or invalid Bluedot timeframe, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    continue;
                                 }
 
                                 rulestruct[counters->rulecount].bluedot_cdate_effective_period = Value_To_Seconds(bluedot_type, bluedot_time_u32);
@@ -2254,7 +2473,9 @@ void Load_Rules( const char *ruleset )
                         tmptoken = strtok_r(NULL, ";", &saveptrrule2);
 
                         if ( tmptoken == NULL ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot categories defined, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount);
+                            continue;
                         }
 
                         Remove_Spaces(tmptoken);
@@ -2270,7 +2491,9 @@ void Load_Rules( const char *ruleset )
                         tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 
                         if ( tmptok_tmp == NULL ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot categories defined, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            continue;
                         }
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
@@ -2286,7 +2509,9 @@ void Load_Rules( const char *ruleset )
                         tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 
                         if ( tmptok_tmp == NULL ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot categories defined, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            continue;
                         }
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
@@ -2301,7 +2526,9 @@ void Load_Rules( const char *ruleset )
                         tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 
                         if ( tmptok_tmp == NULL ) {
-                            Sagan_Log(S_ERROR, "[%s, line %d] %s at line %d has no Bluedot categories defined!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            bad_rule = true;
+                            Sagan_Log(S_WARN, "[%s, line %d] %s at line %d has no Bluedot categories defined, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                            continue;
                         }
 
                         Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
@@ -2318,7 +2545,9 @@ void Load_Rules( const char *ruleset )
 #ifndef WITH_BLUEDOT
 
             if (!strcmp(rulesplit, "bluedot")) {
-                Sagan_Log(S_ERROR, "%s has Bluedot rules,  but support isn't compiled in! Abort!", ruleset_fullname);
+                bad_rule = true;
+                Sagan_Log(S_WARN, "%s has Bluedot rules,  but support isn't compiled in, skipping rule!", ruleset_fullname);
+                continue;
             }
 #endif
 
@@ -2326,6 +2555,10 @@ void Load_Rules( const char *ruleset )
             /* -< Go to next line >- */
 
             tokenrule = strtok_r(NULL, ";", &saveptrrule1);
+        }
+
+        if (bad_rule) {
+            continue;
         }
 
         /* Some new stuff (normalization) stuff needs to be added */
@@ -2359,23 +2592,6 @@ void Load_Rules( const char *ruleset )
                 Sagan_Log(S_DEBUG, "= [%d] reference: \"%s\"", i,  rulestruct[counters->rulecount].s_reference[i]);
             }
         }
-
-        /* Reset for next rule */
-
-
-        pcre_count=0;
-        content_count=0;
-        meta_content_count=0;
-        meta_content_converted_count=0;
-        xbit_count=0;
-        netcount=0;
-        ref_count=0;
-        flow_1_count=0;
-        flow_2_count=0;
-        port_1_count=0;
-        port_2_count=0;
-        memset(netstr, 0, sizeof(netstr));
-        memset(rulestr, 0, sizeof(rulestr));
 
         counters->rulecount++;
 
