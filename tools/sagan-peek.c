@@ -45,6 +45,7 @@
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
 #include "../src/xbit-mmap.h"
+#include "../src/util-time.h"
 
 #include "../src/processors/track-clients.h"
 
@@ -121,10 +122,11 @@ int main(int argc, char **argv)
     struct after_by_dst_ipc *afterbydst_ipc;
     struct after_by_username_ipc *afterbyusername_ipc;
 
-    /* For convert 32 bit IP to octet */
+    /* For convert to IP string */
+    char ip_src[MAXIP];
+    char ip_dst[MAXIP];
 
-    struct in_addr ip_addr_src;
-    struct in_addr ip_addr_dst;
+    char time_buf[80];
 
     /* Shared memory descriptors */
 
@@ -198,17 +200,20 @@ int main(int argc, char **argv)
 
 
         printf("\n***  Threshold by source (%d) ***\n", counters_ipc->thresh_count_by_src);
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-45s| %-11s| %-21s| %-11s| %s\n", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_src; i++) {
 
-            ip_addr_src.s_addr = htonl(threshbysrc_ipc[i].ipsrc);
+            Bit2IP(threshbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_src), threshbysrc_ipc[i].count, u32_time_to_human(threshbysrc_ipc[i].utime), threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+            u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-45s| %-11d| %-21s| %-11s| %d\n", threshbysrc_ipc[i].selector, ip_src, threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
         }
+
     }
 
     /*** Get "threshold by destination" data ***/
@@ -236,16 +241,19 @@ int main(int argc, char **argv)
 
     if ( counters_ipc->thresh_count_by_dst >= 1 ) {
 
-
-        printf("\n***  Threshold by destination (%d)***\n", counters_ipc->thresh_count_by_dst );
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
+        printf("\n***  Threshold by destination (%d) ***\n", counters_ipc->thresh_count_by_dst);
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-45s| %-11s| %-21s| %-11s| %s\n", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++) {
-            ip_addr_dst.s_addr = htonl(threshbydst_ipc[i].ipdst);
 
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", inet_ntoa(ip_addr_dst), threshbydst_ipc[i].count, u32_time_to_human(threshbydst_ipc[i].utime), threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+            Bit2IP(threshbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
+
+            u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-45s| %-11d| %-21s| %-11s| %d\n", threshbydst_ipc[i].selector, ip_dst, threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+
         }
 
     }
@@ -275,15 +283,16 @@ int main(int argc, char **argv)
 
     if ( counters_ipc->thresh_count_by_username >= 1 ) {
 
-
         printf("\n***  Threshold by username (%d) ***\n", counters_ipc->thresh_count_by_username);
-        printf("---------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-11s| %s\n", "Username", "Counter","Date added/modified", "SID", "Expire" );
-        printf("---------------------------------------------------------------------------------\n");
-
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-16s| %-11s| %-21s| %-11s| %s\n", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->thresh_count_by_username; i++) {
-            printf("%-16s| %-15d| %-21s| %-11s| %d\n", threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, u32_time_to_human(threshbyusername_ipc[i].utime), threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+
+            u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-16s| %-11d| %-21s| %-11s| %d\n", threshbyusername_ipc[i].selector, threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
         }
     }
 
@@ -312,14 +321,18 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_src >= 1 ) {
 
         printf("\n***  After by source (%d) ***\n", counters_ipc->after_count_by_src);
-        printf("-----------------------------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "SRC IP", "Counter","Timestamp added", "Total", "SID", "Expire" );
-        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-45s| %-11s| %-21s| %-11s| %s\n", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
-        for ( i = 0; i < counters_ipc->after_count_by_src; i++) {
-            ip_addr_src.s_addr = htonl(afterbysrc_ipc[i].ipsrc);
-            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", inet_ntoa(ip_addr_src), afterbysrc_ipc[i].count, u32_time_to_human(afterbysrc_ipc[i].utime), afterbysrc_ipc[i].total_count, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+        for ( i = 0; i < counters_ipc->after_count_by_src; i++ ) {
+            Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
+
+            u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-45s| %-11ld| %-21s| %-11s| %d\n", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
         }
+
     }
 
 
@@ -348,14 +361,17 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_dst >= 1 ) {
 
         printf("\n***  After by destination (%d)***\n", counters_ipc->after_count_by_dst);
-        printf("-----------------------------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "DST IP", "Counter","Timestamp added", "Total", "SID", "Expire" );
-        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-45s| %-11s| %-21s| %-11s| %s\n", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->after_count_by_dst; i++) {
-            ip_addr_dst.s_addr = htonl(afterbydst_ipc[i].ipdst);
 
-            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", inet_ntoa(ip_addr_dst), afterbydst_ipc[i].count, u32_time_to_human(afterbydst_ipc[i].utime), afterbydst_ipc[i].total_count, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+            Bit2IP(afterbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
+
+            u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-45s| %-11d| %-21s| %-11s| %d\n", afterbydst_ipc[i].selector, ip_dst, afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
         }
     }
 
@@ -385,15 +401,15 @@ int main(int argc, char **argv)
     if ( counters_ipc->after_count_by_username >= 1 ) {
 
         printf("\n***  After by username ***(%d)\n", counters_ipc->after_count_by_username);
-        printf("-----------------------------------------------------------------------------------------------------\n");
-        printf("%-16s| %-15s| %-21s| %-15s| %-11s| %s\n", "Username", "Counter","Timestamp added", "Total", "SID", "Expire" );
-        printf("-----------------------------------------------------------------------------------------------------\n");
-
-
-
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-45s| %-16s| %-11s| %-21s| %-11s| %s\n", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+        printf("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
         for ( i = 0; i < counters_ipc->after_count_by_username; i++) {
-            printf("%-16s| %-15d| %-21s| %-15d| %-11s| %d\n", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, u32_time_to_human(afterbyusername_ipc[i].utime), afterbyusername_ipc[i].total_count, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+
+            u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
+
+            printf("%-45s| %-16s| %-11ld| %-21s| %-11s| %d\n", afterbyusername_ipc[i].selector, afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
         }
     }
 
@@ -423,28 +439,29 @@ int main(int argc, char **argv)
     if ( counters_ipc->xbit_count >= 1 ) {
 
         printf("\n*** Xbits (%d) ****\n", counters_ipc->xbit_count);
-        printf("----------------------------------------------------------------------------------------------------------------------------------------------\n");
-        printf("%-9s| %-25s| %-16s| %-16s| %-8s| %-8s| %-21s| %s\n", "S", "Xbit name", "SRC IP", "DST IP", "SRC PRT", "DST PRT", "Date added/modified", "Expire");
-        printf("----------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+        printf("%-9s| %-45s| %-25s| %-45s| %-45s| %-8s| %-8s| %-21s| %s\n", "S", "Selector", "Xbit name", "SRC IP", "DST IP", "SRC PRT", "DST PRT", "Date added/modified", "Expire");
+        printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
-        for ( i = 0; i < counters_ipc->xbit_count; i++) {
+        for (i= 0; i < counters_ipc->xbit_count; i++ ) {
 
-            ip_addr_src.s_addr = htonl(xbit_ipc[i].ip_src);
-            ip_addr_dst.s_addr = htonl(xbit_ipc[i].ip_dst);
+            Bit2IP(xbit_ipc[i].ip_src, ip_src, sizeof(ip_src));
+            Bit2IP(xbit_ipc[i].ip_dst, ip_dst, sizeof(ip_dst));
 
             if ( xbit_ipc[i].xbit_state == 1 ) {
 
-                printf("ACTIVE   | %-25s| ", xbit_ipc[i].xbit_name);
-            } else {
-                printf("INACTIVE | %-25s| ", xbit_ipc[i].xbit_name);
-            }
+                u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-            printf("%-16s| ", inet_ntoa(ip_addr_src));
-            printf("%-16s| ", inet_ntoa(ip_addr_dst));
-            printf("%-8d| ", xbit_ipc[i].src_port);
-            printf("%-8d| ", xbit_ipc[i].dst_port);
-            printf("%-21s| ", u32_time_to_human(xbit_ipc[i].xbit_date));
-            printf("%d (%s)\n", xbit_ipc[i].expire, u32_time_to_human(xbit_ipc[i].xbit_date + xbit_ipc[i].expire));
+                printf("%-9s| %-45s| %-25s| %-45s| %-45s| %-8d| %8d| %-21s| %d",
+                       1 == xbit_ipc[i].xbit_state ? "ACTIVE" : "INACTIVE",
+                       xbit_ipc[i].selector,
+                       xbit_ipc[i].xbit_name,
+                       ip_src,
+                       ip_dst,
+                       xbit_ipc[i].src_port,
+                       xbit_ipc[i].dst_port,
+                       time_buf, xbit_ipc[i].expire );
+            }
 
         }
     }
@@ -471,21 +488,23 @@ int main(int argc, char **argv)
         if ( counters_ipc->track_clients_client_count >= 1 ) {
 
             printf("\n*** Client Tracking (%d) ****\n", counters_ipc->track_clients_client_count);
-            printf("-----------------------------------------------------------------------------------------------\n");
-            printf("%-9s| %-16s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes" );
-            printf("-----------------------------------------------------------------------------------------------\n");
+            printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+            printf("%-9s| %-45s| %-25s| %s\n", "State", "IP Address", "Last Seen Time", "Expire Seconds/Minutes");
+            printf("--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
 
             for ( i = 0; i < counters_ipc->track_clients_client_count; i++) {
 
-                ip_addr_src.s_addr = htonl(SaganTrackClients_ipc[i].host_u32);
+                Bit2IP(SaganTrackClients_ipc[i].hostbits, ip_src, sizeof(SaganTrackClients_ipc[i].hostbits));
 
-                if ( SaganTrackClients_ipc[i].status == 0 ) {
-                    printf("ACTIVE   | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
-                } else {
-                    printf("INACTIVE | %-16s| %-25s| %d/%d \n", inet_ntoa(ip_addr_src), u32_time_to_human(SaganTrackClients_ipc[i].utime), SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60 );
+                u32_Time_To_Human(SaganTrackClients_ipc[i].expire, time_buf, sizeof(time_buf));
 
-                }
-
+                printf("%-9s| %-45s| %-25s| %d/%d\n",
+                       0 == SaganTrackClients_ipc[i].status ? "ACTIVE" : "INACTIVE",
+                       ip_src,
+                       time_buf, 
+                       SaganTrackClients_ipc[i].expire, 
+                       SaganTrackClients_ipc[i].expire / 60 );
+ 
             }
         }
 
@@ -493,7 +512,7 @@ int main(int argc, char **argv)
 
     } /* object_check */
 
-    return(0);		/* Clean exit */
+    return(0);        /* Clean exit */
 
 }
 

@@ -40,7 +40,7 @@
 void Track_Clients_Thread_Init ( void );
 void Track_Clients_Thread ( void );
 
-#include "sagan-defs.h"
+#include "../sagan-defs.h"
 
 typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
 struct _Sagan_Track_Clients_IPC {
