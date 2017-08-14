@@ -1240,6 +1240,10 @@ int PageSupportsRWX(void)
     }
     return retval;
 }
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> 49a7e96... * Fixed sagan-peek.c
 #endif /* HAVE_SYS_MMAN_H */
 
 /***************************************************************************
