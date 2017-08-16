@@ -156,7 +156,6 @@ void      Set_Pipe_Size( FILE * );
 int       PageSupportsRWX(void);
 #endif /* HAVE_SYS_MMAN_H */
 #endif
-#endif
 
 
 typedef struct _SaganDNSCache _SaganDNSCache;
