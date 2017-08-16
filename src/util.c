@@ -1221,8 +1221,9 @@ sbool Is_IP (char *str)
  ***************************************************************************/
 
 #ifndef HAVE_SYS_MMAN_H
-#ifndef PageSupportRWX
+#ifndef PageSupportsRWX
 #define PageSupportsRWX 1
+#endif
 #else
 #include <sys/mman.h>
 
@@ -1239,7 +1240,6 @@ int PageSupportsRWX(void)
     }
     return retval;
 }
-#endif
 #endif /* HAVE_SYS_MMAN_H */
 
 /***************************************************************************

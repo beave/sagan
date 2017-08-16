@@ -191,14 +191,12 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL ) {
         strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
 
-        if ( SaganNormalizeLiblognorm->ip_src[0] == '0' ) {
+        if ( SaganNormalizeLiblognorm->ip_src[0] == '0' && config->syslog_src_lookup) {
 
-            rc = DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host));
-
-            if ( rc == -1 ) {
-                Sagan_Log(S_WARN, "Failed to do a DNS lookup for source '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->src_host, config->sagan_host);
-                strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host));
+            if (0 == DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host))) {
+                strlcpy(SaganNormalizeLiblognorm->ip_src, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_src));
             }
+
         }
 
     }
@@ -209,13 +207,10 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL ) {
         strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
 
-        if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' ) {
+        if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' && config->syslog_src_lookup) {
 
-            rc = DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host));
-
-            if ( rc == -1 ) {
-                Sagan_Log(S_WARN, "Failed to do a DNS lookup for destination '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->dst_host, config->sagan_host);
-                strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host));
+            if (0 == DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host))) {
+                strlcpy(SaganNormalizeLiblognorm->ip_dst, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
             }
         }
     }

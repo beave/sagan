@@ -146,15 +146,15 @@ void      Set_Pipe_Size( FILE * );
 #ifdef __OpenBSD__
 /* OpenBSD won't allow for this test:
  * "suricata(...): mprotect W^X violation" */
-#ifndef PageSupportRWX
+#ifndef PageSupportsRWX()
 #define PageSupportsRWX() 0
+#endif
 #else
 #ifndef HAVE_SYS_MMAN_H
 #define PageSupportsRWX() 1
 #else
 int       PageSupportsRWX(void);
 #endif /* HAVE_SYS_MMAN_H */
-#endif
 #endif
 
 
