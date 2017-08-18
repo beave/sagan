@@ -1313,7 +1313,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
             return(false);
         }
 
-        bluedot_results = Sagan_Bluedot_Lookup(results, BLUEDOT_LOOKUP_IP, rule_position);
+        bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position);
         bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
         if ( bluedot_flag == 1 ) {

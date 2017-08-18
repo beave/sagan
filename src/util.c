@@ -455,7 +455,7 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count) {
     int i,j,k;
     sbool inrange = false;
-    for (i=0;i<count;i++) {
+    for (i=0;i<count*MAXIPBIT*2;i+=MAXIPBIT*2) {
         inrange = true;
         // We can stop if the mask is 0.  We only handle wellformed masks.
         for(j=0,k=16;j<16 && tests[i+k] != 0x00;j++,k++) {
