@@ -27,7 +27,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#include <json.h>
 #include <stdio.h>
 #include <string.h>
 #include "sagan.h"

@@ -123,7 +123,7 @@ void Load_YAML_Config( char *yaml_file )
 
     char tmp[CONFBUF] = { 0 };
 
-    char last_pass[128];
+    char last_pass[128] = { 0 };
 
     int a;
 

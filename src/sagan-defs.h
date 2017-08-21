@@ -31,6 +31,13 @@
 
 #include <syslog.h>
 
+#if defined HAVE_LIBLOGNORM || defined WITH_BLUEDOT
+#include <json.h>
+#else
+typedef void json_object;
+#define json_object_to_json_string_ext(x, y) "{}"
+#endif
+
 #define PCRE_OVECCOUNT		 30
 
 /* Various buffers used during configurations loading */

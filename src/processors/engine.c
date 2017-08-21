@@ -29,7 +29,6 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#include <json.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -40,6 +39,7 @@
 #include <sys/mman.h>
 
 #include "sagan.h"
+#include "sagan-defs.h"
 #include "aetas.h"
 #include "meta-content.h"
 #include "send-alert.h"
@@ -217,7 +217,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     sbool liblognorm_status = 0;
     json_object *json_normalize = NULL;
-
 
     /* Search for matches */
 
@@ -1206,9 +1205,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     free(processor_info_engine);
 
+#ifdef HAVE_LIBLOGNORM
     if (NULL != json_normalize) {
         json_object_put(json_normalize);
         json_normalize = NULL;
     }
+#endif
+
     return(0);
 }

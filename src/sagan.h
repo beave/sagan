@@ -29,9 +29,9 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#include <json.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <pcre.h>
 #include <time.h>
 #include <arpa/inet.h>

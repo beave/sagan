@@ -87,8 +87,8 @@ int liblognorm_count;
 #define PCRE_STUDY_JIT_COMPILE 0
 #endif
 
-struct _Rule_Struct *rulestruct;
-struct _Class_Struct *classstruct;
+struct _Rule_Struct *rulestruct = NULL;
+struct _Class_Struct *classstruct = NULL;
 
 void Load_Rules( const char *ruleset )
 {
@@ -238,6 +238,8 @@ void Load_Rules( const char *ruleset )
             if ( rulestruct == NULL ) {
                 Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);
             }
+
+            memset(&rulestruct[counters->rulecount], 0, sizeof(struct _Rule_Struct));
 
         }
 

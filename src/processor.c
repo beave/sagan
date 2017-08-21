@@ -56,7 +56,7 @@ struct _Rule_Struct *rulestruct;
 
 int proc_msgslot; 		/* Comes from sagan.c */
 int proc_running;       /* Comes from sagan.c */
-sbool dynamic_rule_flag;
+unsigned char dynamic_rule_flag; /* Comes from sagan.c */
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
