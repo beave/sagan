@@ -143,6 +143,9 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
 
     /* int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p); */
     rc_normalize = ln_normalize(ctx, buf, strlen(buf), &json);
+    if (NULL == json) {
+        return NULL;
+    }
 
     cstr = (char*)json_object_to_json_string(json);
 

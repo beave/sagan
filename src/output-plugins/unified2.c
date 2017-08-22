@@ -160,10 +160,12 @@ void Unified2( _Sagan_Event *Event )
 
     // *NOTE*: These will be wrong for IPv6 addresses
     IP2Bit(Event->ip_src, tmp_ip);
-    alertdata.ip_source = htonl(*tmp_ip_u32);
+    // Already in network byte order
+    alertdata.ip_source = *tmp_ip_u32;
 
-    IP2Bit(Event->ip_src, tmp_ip);
-    alertdata.ip_destination = htonl(*tmp_ip_u32);
+    IP2Bit(Event->ip_dst, tmp_ip);
+    // Already in network byte order
+    alertdata.ip_destination = *tmp_ip_u32;
 
     alertdata.sport_itype = htons(Event->src_port);
     alertdata.dport_icode = htons(Event->dst_port);
