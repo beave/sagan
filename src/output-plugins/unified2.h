@@ -29,11 +29,14 @@
 #include <stdint.h>
 #include <stdio.h>
 
-
-
 #define UNIFIED2_PACKET              2
 #define UNIFIED2_IDS_EVENT           7
-#define UNIFIED2_EXTRA_DATA	     110
+#define UNIFIED2_IDS_EVENT_IPV6      72
+#define UNIFIED2_IDS_EVENT_MPLS      99
+#define UNIFIED2_IDS_EVENT_IPV6_MPLS 100
+#define UNIFIED2_IDS_EVENT_VLAN      104
+#define UNIFIED2_IDS_EVENT_IPV6_VLAN 105
+#define UNIFIED2_EXTRA_DATA          110
 
 #define SAGAN_SNPRINTF_ERROR -1
 #define SAGAN_SNPRINTF_TRUNCATION 1
@@ -103,9 +106,6 @@ typedef struct _Serial_Unified2IDSEvent_legacy {
     uint8_t  blocked;
 } Serial_Unified2IDSEvent_legacy;
 
-/* Not used 'yet'.  - Champ Clark III - 02/14/2011 */
-
-/*
 typedef struct _Serial_Unified2IDSEventIPv6_legacy
 {
     uint32_t sensor_id;
@@ -126,7 +126,29 @@ typedef struct _Serial_Unified2IDSEventIPv6_legacy
     uint8_t  impact;
     uint8_t  blocked;
 } Serial_Unified2IDSEventIPv6_legacy;
-*/
+
+#define UNIFIED_SET(legacy, type, member, value) { \
+    if (type == UNIFIED2_IDS_EVENT_IPV6) { \
+        ((Serial_Unified2IDSEventIPv6_legacy *)legacy)->member = value; \
+    } else { \
+        ((Serial_Unified2IDSEvent_legacy *)legacy)->member = value; \
+    } \
+}
+#define UNIFIED_OFF(legacy, type, member) ( \
+    type == UNIFIED2_IDS_EVENT_IPV6 ?  \
+        offsetof(Serial_Unified2IDSEventIPv6_legacy, member) :  \
+        offsetof(Serial_Unified2IDSEvent_legacy, member) \
+)
+#define UNIFIED_SIZE(legacy, type) ( \
+    type == UNIFIED2_IDS_EVENT_IPV6 ?  \
+        sizeof(Serial_Unified2IDSEventIPv6_legacy) : \
+        sizeof(Serial_Unified2IDSEvent_legacy) \
+)
+#define UNIFIED_MEMBER_SIZE(legacy, type, member) ( \
+    type == UNIFIED2_IDS_EVENT_IPV6 ?  \
+        sizeof(((Serial_Unified2IDSEventIPv6_legacy *)legacy)->member) :  \
+        sizeof(((Serial_Unified2IDSEvent_legacy *)legacy)->member) \
+)
 
 /* The below is from packet.h from Snort */
 

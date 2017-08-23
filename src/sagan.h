@@ -129,6 +129,7 @@ int       Check_Var(const char *);
 sbool     Netaddr_To_Range( char *, unsigned char * );
 void      Strip_Chars(const char *string, const char *chars, char *str, size_t size);
 sbool     Is_IP (char *str);
+sbool     Is_IPv6 (char *str);
 sbool     File_Lock ( int );
 sbool     File_Unlock ( int );
 sbool     Check_Content_Not( char * );

@@ -97,7 +97,7 @@ void Output( _Sagan_Event *Event )
         Unified2LogPacketAlert( Event );
 
         if ( Event->host[0] != '\0' ) {
-            Unified2WriteExtraData( Event, EVENT_INFO_XFF_IPV4 );
+            Unified2WriteExtraData( Event, Is_IPv6(Event->ip_src) ?  EVENT_INFO_XFF_IPV6 : EVENT_INFO_XFF_IPV4 );
         }
 
         /* These get normalized in engine.c and passed via

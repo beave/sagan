@@ -689,13 +689,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                     }
 
                     /* If the "source" is 127.0.0.1 that is not useful.  Replace with config->sagan_host
-                     * (defined by user in sagan.conf */
+                     * (defined by user in sagan.conf. For now keep ::1 as there needs to be another option for that value  */
 
-                    if ( !strcmp(ip_src, "127.0.0.1") || !strcmp(ip_src, "::1") ) {
+                    if ( !strcmp(ip_src, "127.0.0.1") ) {
                         strlcpy(ip_src, config->sagan_host, sizeof(ip_src));
                     }
 
-                    if ( !strcmp(ip_dst, "127.0.0.1") || !strcmp(ip_dst, "::1" ) ) {
+                    if ( !strcmp(ip_dst, "127.0.0.1") ) {
                         strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
                     }
 
