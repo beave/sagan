@@ -364,10 +364,10 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     // *TODO*: Even though the legacy format doesn't take the IPv6 address
     //         it should be possible to provide a fake IPv6 packet here.
     IP2Bit(Event->ip_src, tmp_ip);
-    ip->ip_src = htonl(*tmp_ip_u32);
+    ip->ip_src = *tmp_ip_u32;
 
-    IP2Bit(Event->ip_src, tmp_ip);
-    ip->ip_dst = htonl(*tmp_ip_u32);
+    IP2Bit(Event->ip_dst, tmp_ip);
+    ip->ip_dst = *tmp_ip_u32;
 
     p_iphdr = iphdr_buf + IP_HDR_LEN;
     len_iphdr = p_iphdr - iphdr_buf;
