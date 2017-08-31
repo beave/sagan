@@ -1049,7 +1049,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                         break;
 
                                                                     case(AFTER_BY_DSTPORT):
-                                                                        after_log_flag = After_By_SrcPort(b, ip_srcport_u32, pnormalize_selector);
+                                                                        after_log_flag = After_By_DstPort(b, ip_dstport_u32, pnormalize_selector);
                                                                         break;
 
                                                                     case(AFTER_BY_USERNAME):
@@ -1113,8 +1113,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                     }
 
-                                                                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
+                                                                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count ) {
                                                                         Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port, pnormalize_selector);
+                                                                    }
 
                                                                     threadid++;
 

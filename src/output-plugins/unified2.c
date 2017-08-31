@@ -675,8 +675,6 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 
     uint8_t *buffer = NULL;
     unsigned char ipbits[MAXIPBIT] = {0};
-    uint32_t *tmp_ip_u32 = (uint32_t *)&ipbits[0];
-    uint32_t ip;
 
 
     uint32_t len;
@@ -684,17 +682,13 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 
     switch(type) {
 
-    // *NOTE*: This will be incorrect for IPv6
-    // *TODO*: Should fire an IPv6 event for IPv6
     case EVENT_INFO_XFF_IPV4:
-
-        IP2Bit(Event->ip_src, ipbits);
-        ip = *tmp_ip_u32;
-        buffer = (void *)&ip;
-        len = sizeof(ip);
+        IP2Bit(Event->host, ipbits);
+        buffer = (void *)ipbits;
+        len = sizeof(uint32_t);
         break;
     case EVENT_INFO_XFF_IPV6:
-        IP2Bit(Event->ip_src, ipbits);
+        IP2Bit(Event->host, ipbits);
         buffer = (void *)ipbits;
         len = MAXIPBIT;
         break;
