@@ -140,6 +140,7 @@ sagan-core:
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
+    xbit-storage: mmap
 
   # Experimental Code!!!
   #
@@ -150,7 +151,7 @@ sagan-core:
 
   redis-server:
 
-    enabled: yes
+    enabled: no
     server: 127.0.0.1
     port: 6379
     password: "mypassword"  # Comment out to disable authentication.
