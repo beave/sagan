@@ -30,7 +30,8 @@ void Xbit_Cleanup_MMAP( void );
 sbool Xbit_Count_MMAP( int, char *, char *, char * );
 
 typedef struct _Sagan_Xbit_Track _Sagan_Xbit_Track;
-struct _Sagan_Xbit_Track {
+struct _Sagan_Xbit_Track
+{
     char	xbit_name[64];
     int		xbit_timeout;
     int		xbit_srcport;
@@ -38,7 +39,8 @@ struct _Sagan_Xbit_Track {
 };
 
 typedef struct _Sagan_IPC_Xbit _Sagan_IPC_Xbit;
-struct _Sagan_IPC_Xbit {
+struct _Sagan_IPC_Xbit
+{
     char xbit_name[64];
     sbool xbit_state;
     unsigned char ip_src[MAXIPBIT];

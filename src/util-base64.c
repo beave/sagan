@@ -46,35 +46,39 @@ int Base64Encode(const unsigned char *in,  unsigned long inlen,
 {
     unsigned long i, len2, leven;
     unsigned char *p;
-    if(in == NULL || out == NULL || outlen == NULL) {
-        return -1;
-    }
+    if(in == NULL || out == NULL || outlen == NULL)
+        {
+            return -1;
+        }
     /* valid output size ? */
     len2 = 4 * ((inlen + 2) / 3);
-    if (*outlen < len2 + 1) {
-        *outlen = len2 + 1;
-        return -1;
-    }
+    if (*outlen < len2 + 1)
+        {
+            *outlen = len2 + 1;
+            return -1;
+        }
     p = out;
     leven = 3*(inlen / 3);
-    for (i = 0; i < leven; i += 3) {
-        *p++ = b64codes[(in[0] >> 2) & 0x3F];
-        *p++ = b64codes[(((in[0] & 3) << 4) + (in[1] >> 4)) & 0x3F];
-        *p++ = b64codes[(((in[1] & 0xf) << 2) + (in[2] >> 6)) & 0x3F];
-        *p++ = b64codes[in[2] & 0x3F];
-        in += 3;
-    }
+    for (i = 0; i < leven; i += 3)
+        {
+            *p++ = b64codes[(in[0] >> 2) & 0x3F];
+            *p++ = b64codes[(((in[0] & 3) << 4) + (in[1] >> 4)) & 0x3F];
+            *p++ = b64codes[(((in[1] & 0xf) << 2) + (in[2] >> 6)) & 0x3F];
+            *p++ = b64codes[in[2] & 0x3F];
+            in += 3;
+        }
 
     /* Pad it if necessary...  */
-    if (i < inlen) {
-        unsigned a = in[0];
-        unsigned b = (i+1 < inlen) ? in[1] : 0;
+    if (i < inlen)
+        {
+            unsigned a = in[0];
+            unsigned b = (i+1 < inlen) ? in[1] : 0;
 
-        *p++ = b64codes[(a >> 2) & 0x3F];
-        *p++ = b64codes[(((a & 3) << 4) + (b >> 4)) & 0x3F];
-        *p++ = (i+1 < inlen) ? b64codes[(((b & 0xf) << 2)) & 0x3F] : '=';
-        *p++ = '=';
-    }
+            *p++ = b64codes[(a >> 2) & 0x3F];
+            *p++ = b64codes[(((a & 3) << 4) + (b >> 4)) & 0x3F];
+            *p++ = (i+1 < inlen) ? b64codes[(((b & 0xf) << 2)) & 0x3F] : '=';
+            *p++ = '=';
+        }
     /* append a NULL byte */
     *p = '\0';
     /* return ok */

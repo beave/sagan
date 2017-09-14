@@ -46,13 +46,14 @@ void Alert_JSON( _Sagan_Event *Event )
 
     char alert_data[MAX_SYSLOGMSG+1024];
 
-    if ( config->eve_alerts == true ) {
+    if ( config->eve_alerts == true )
+        {
 
-        Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
+            Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
 
-        fprintf(config->eve_stream, "%s\n", alert_data);
+            fprintf(config->eve_stream, "%s\n", alert_data);
 
-    }
+        }
 
     fflush(config->eve_stream);
 

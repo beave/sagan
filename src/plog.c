@@ -64,7 +64,8 @@
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
-struct my_udphdr {
+struct my_udphdr
+{
     u_int16_t uh_sport;           /* source port */
     u_int16_t uh_dport;           /* destination port */
     u_int16_t uh_ulen;            /* udp length */
@@ -94,39 +95,45 @@ void Plog_Handler( void )
     Sagan_Log(S_NORMAL, "Packet filter: \"%s\"", config->plog_filter);
     Sagan_Log(S_NORMAL, "Log device: %s", config->plog_logdev);
 
-    if ( config->plog_promiscuous ) {
-        Sagan_Log(S_NORMAL, "Promiscuous is enabled.");
-    }
+    if ( config->plog_promiscuous )
+        {
+            Sagan_Log(S_NORMAL, "Promiscuous is enabled.");
+        }
 
     Sagan_Log(S_NORMAL, "");
 
-    if(iface == (char *)0) {
-        if((iface = pcap_lookupdev(eb)) == (char *)0)
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
-    }
+    if(iface == (char *)0)
+        {
+            if((iface = pcap_lookupdev(eb)) == (char *)0)
+                Sagan_Log(S_ERROR, "[%s, line %d] Cannot get device: %s", __FILE__, __LINE__, eb);
+        }
 
     bp = pcap_open_live(iface,4096,config->plog_promiscuous,0,eb);
 
-    if(bp == (pcap_t *)0) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
-    }
+    if(bp == (pcap_t *)0)
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open interface %s: %s", __FILE__, __LINE__, iface, eb);
+        }
 
     /* Apply user defined filter */
 
-    if(pcap_compile(bp,&filtr,config->plog_filter,1,0)) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
-    }
+    if(pcap_compile(bp,&filtr,config->plog_filter,1,0))
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot compile filter: %s", __FILE__, __LINE__, eb);
+        }
 
-    if(pcap_setfilter(bp,&filtr)) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
-    }
+    if(pcap_setfilter(bp,&filtr))
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot install filter in %s: %s", __FILE__, __LINE__, iface, eb);
+        }
 
     /* wireup /dev/log; we can't use openlog() because these are going to be raw inputs */
 
-    if(wiredevlog(config)) {
-        Remove_Lock_File();
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
-    }
+    if(wiredevlog(config))
+        {
+            Remove_Lock_File();
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s (Syslog not using SOCK_DGRAM?)", __FILE__, __LINE__, config->plog_logdev);
+        }
 
     /* endless loop */
 
@@ -149,75 +156,83 @@ logpkt(u_char *pass_args,const struct pcap_pkthdr *p,const u_char *pkt)
     int                     len;
     char                    *l;
 
-    if ( config->plog_flag ) {
+    if ( config->plog_flag )
+        {
 
-        /* crack the ethernet header */
-        eh = (struct ether_header *)pkt;
-        if(ntohs(eh->ether_type) != ETHERTYPE_IP)
-            goto bad;
+            /* crack the ethernet header */
+            eh = (struct ether_header *)pkt;
+            if(ntohs(eh->ether_type) != ETHERTYPE_IP)
+                goto bad;
 
-        /* crack the IP header */
-        ih = (struct ip *)(pkt + sizeof(struct ether_header));
-        off = ntohs(ih->ip_off);
-        len = ntohs(ih->ip_len);
+            /* crack the IP header */
+            ih = (struct ip *)(pkt + sizeof(struct ether_header));
+            off = ntohs(ih->ip_off);
+            len = ntohs(ih->ip_len);
 
-        /* short packet */
-        if(len > p->len) {
-            goto bad;
-        }
+            /* short packet */
+            if(len > p->len)
+                {
+                    goto bad;
+                }
 
-        /* frags we don't deal with */
-        if((off & 0x1fff) != 0) {
-            goto bad;
-        }
+            /* frags we don't deal with */
+            if((off & 0x1fff) != 0)
+                {
+                    goto bad;
+                }
 
-        /* weird - we ASKED for UDP */
-        if(ih->ip_p != IPPROTO_UDP) {
-            goto bad;
-        }
+            /* weird - we ASKED for UDP */
+            if(ih->ip_p != IPPROTO_UDP)
+                {
+                    goto bad;
+                }
 
-        /* line the UDP header up */
-        u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
+            /* line the UDP header up */
+            u = (struct my_udphdr *)(pkt + sizeof(struct ether_header) + (ih->ip_hl * 4));
 
-        if(ntohs(u->uh_ulen < 8)) {
-            goto bad;
-        }
+            if(ntohs(u->uh_ulen < 8))
+                {
+                    goto bad;
+                }
 
-        /* our log message ought to be just past the UDP header now... */
-        l = (char *)u + sizeof(struct udphdr);
-        len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
+            /* our log message ought to be just past the UDP header now... */
+            l = (char *)u + sizeof(struct udphdr);
+            len = ntohs(u->uh_ulen) - sizeof(struct udphdr);
 
-        if(debug->debugplog) {
+            if(debug->debugplog)
+                {
 
-            int     x;
+                    int     x;
 
-            /* I can't use Sagan_Log() here,  so we dump to strerr.
-             * have the check the tty (isatty()) before dumping or
-             * strange things happen if detached and threaded
-             * - Champ Clark III Jan 7th 2011
-             */
-
-
-            for(x = 0; x < len; x++) {
-                if(isprint(l[x]) && (isatty(1)) )
-                    fprintf(stderr,"%c",(int)(l[x]));
-                else
-                    fprintf(stderr,"[0x%x]",(int)(l[x]));
-            }
-            if (isatty(1)) fprintf(stderr,"\n");
-        }
+                    /* I can't use Sagan_Log() here,  so we dump to strerr.
+                     * have the check the tty (isatty()) before dumping or
+                     * strange things happen if detached and threaded
+                     * - Champ Clark III Jan 7th 2011
+                     */
 
 
-        /* send it! */
-        if(send(outf,l,len,0) < 0) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
-        }
+                    for(x = 0; x < len; x++)
+                        {
+                            if(isprint(l[x]) && (isatty(1)) )
+                                fprintf(stderr,"%c",(int)(l[x]));
+                            else
+                                fprintf(stderr,"[0x%x]",(int)(l[x]));
+                        }
+                    if (isatty(1)) fprintf(stderr,"\n");
+                }
 
-        return;
+
+            /* send it! */
+            if(send(outf,l,len,0) < 0)
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Send error", __FILE__, __LINE__);
+                }
+
+            return;
 bad:
-        Sagan_Log(S_WARN, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
+            Sagan_Log(S_WARN, "[%s, line %d] Malformed packet received.", __FILE__, __LINE__);
 
-    }
+        }
 }
 
 static  int
@@ -231,13 +246,15 @@ wiredevlog( _SaganConfig *config )
     /* Might want to investigate SOCK_STREAM (see syslog-ng) in the future.
      * Right now,  the syslog server must use SOCK_DGRAM */
 
-    if((outf = socket(AF_UNIX,SOCK_DGRAM,0)) < 0) {
-        return(true);
-    }
+    if((outf = socket(AF_UNIX,SOCK_DGRAM,0)) < 0)
+        {
+            return(true);
+        }
 
-    if(connect(outf,&s,sizeof(s))) {
-        return(true);
-    }
+    if(connect(outf,&s,sizeof(s)))
+        {
+            return(true);
+        }
 
     return(false);
 }

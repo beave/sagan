@@ -43,7 +43,8 @@ void Track_Clients_Thread ( void );
 #include "../sagan-defs.h"
 
 typedef struct _Sagan_Track_Clients_IPC _Sagan_Track_Clients_IPC;
-struct _Sagan_Track_Clients_IPC {
+struct _Sagan_Track_Clients_IPC
+{
     unsigned char  hostbits[MAXIPBIT];
     long     utime;
     int	     expire;

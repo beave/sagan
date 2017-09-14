@@ -47,21 +47,25 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, json_object *json_n
     struct _Sagan_Event *SaganProcessorEvent = NULL;
     SaganProcessorEvent = malloc(sizeof(struct _Sagan_Event));
 
-    if ( SaganProcessorEvent == NULL ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
-    }
+    if ( SaganProcessorEvent == NULL )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
+        }
 
     memset(SaganProcessorEvent, 0, sizeof(_Sagan_Event));
 
-    if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID ) {
+    if ( processor_info->processor_generator_id != SAGAN_PROCESSOR_GENERATOR_ID )
+        {
 
-        Generator_Lookup(processor_info->processor_generator_id, alertid, tmp, sizeof(tmp));
-        SaganProcessorEvent->f_msg           =       tmp;
+            Generator_Lookup(processor_info->processor_generator_id, alertid, tmp, sizeof(tmp));
+            SaganProcessorEvent->f_msg           =       tmp;
 
-    } else {
+        }
+    else
+        {
 
-        SaganProcessorEvent->f_msg           =       processor_info->processor_name;
-    }
+            SaganProcessorEvent->f_msg           =       processor_info->processor_name;
+        }
 
     SaganProcessorEvent->message         =       SaganProcSyslog_LOCAL->syslog_message;
     SaganProcessorEvent->program         =       processor_info->processor_name;

@@ -68,18 +68,22 @@ void Redis_Reader_Connect ( void )
     struct timeval timeout = { 1, 500000 }; // 5.5 seconds
     config->c_reader_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
 
-    if (config->c_reader_redis == NULL || config->c_reader_redis->err) {
+    if (config->c_reader_redis == NULL || config->c_reader_redis->err)
+        {
 
-        if (config->c_reader_redis) {
+            if (config->c_reader_redis)
+                {
 
-            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_reader_redis->errstr);
-            redisFree(config->c_reader_redis);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_reader_redis->errstr);
+                    redisFree(config->c_reader_redis);
 
-        } else {
+                }
+            else
+                {
 
-            Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
+                }
         }
-    }
 
 }
 
@@ -98,85 +102,99 @@ void Redis_Writer ( void )
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     c_writer_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
 
-    if (c_writer_redis == NULL || c_writer_redis->err) {
+    if (c_writer_redis == NULL || c_writer_redis->err)
+        {
 
-        if (c_writer_redis) {
+            if (c_writer_redis)
+                {
 
-            redisFree(c_writer_redis);
-            Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - %s. Abort!", __FILE__, __LINE__, c_writer_redis->errstr);
+                    redisFree(c_writer_redis);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - %s. Abort!", __FILE__, __LINE__, c_writer_redis->errstr);
 
-        } else {
+                }
+            else
+                {
 
-            Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - Can't allocate Redis context", __FILE__, __LINE__);
+                    Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - Can't allocate Redis context", __FILE__, __LINE__);
 
+                }
         }
-    }
 
     /******************/
     /* Log into Redis */
     /******************/
 
-    if ( config->redis_password[0] != '\0' ) {
+    if ( config->redis_password[0] != '\0' )
+        {
 
-        reply = redisCommand(c_writer_redis, "AUTH %s", config->redis_password);
+            reply = redisCommand(c_writer_redis, "AUTH %s", config->redis_password);
 
-        if (!strcmp(reply->str, "OK")) {
+            if (!strcmp(reply->str, "OK"))
+                {
 
-            if ( debug->debugredis ) {
+                    if ( debug->debugredis )
+                        {
 
-                Sagan_Log( S_DEBUG, "Authentication success for 'writer' to Redis server at %s:%d (pthread ID: %lu).", config->redis_server, config->redis_port, pthread_self() );
+                            Sagan_Log( S_DEBUG, "Authentication success for 'writer' to Redis server at %s:%d (pthread ID: %lu).", config->redis_server, config->redis_port, pthread_self() );
 
-            }
+                        }
 
-        } else {
+                }
+            else
+                {
 
-            Remove_Lock_File();
-            Sagan_Log(S_ERROR, "Authentication failure for 'writer' to to Redis server at %s:%d (pthread ID: %lu). Abort!", config->redis_server, config->redis_port, pthread_self() );
+                    Remove_Lock_File();
+                    Sagan_Log(S_ERROR, "Authentication failure for 'writer' to to Redis server at %s:%d (pthread ID: %lu). Abort!", config->redis_server, config->redis_port, pthread_self() );
 
-        }
-    }
-
-    for (;;) {
-
-        pthread_mutex_lock(&SaganRedisWorkMutex);
-
-        while ( redis_msgslot == 0 ) pthread_cond_wait(&SaganRedisDoWork, &SaganRedisWorkMutex);
-
-        redis_msgslot--;
-
-        strlcpy(tmp_redis_command, SaganRedis[redis_msgslot].redis_command, sizeof(tmp_redis_command));
-
-        pthread_mutex_unlock(&SaganRedisWorkMutex);
-
-        if ( debug->debugredis ) {
-
-            Sagan_Log(S_DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
+                }
         }
 
-        split_redis_command = strtok_r(tmp_redis_command, ";", &tok);
+    for (;;)
+        {
 
-        while ( split_redis_command != NULL ) {
+            pthread_mutex_lock(&SaganRedisWorkMutex);
 
-            if ( debug->debugredis ) {
+            while ( redis_msgslot == 0 ) pthread_cond_wait(&SaganRedisDoWork, &SaganRedisWorkMutex);
 
-                Sagan_Log(S_DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
+            redis_msgslot--;
 
-            }
+            strlcpy(tmp_redis_command, SaganRedis[redis_msgslot].redis_command, sizeof(tmp_redis_command));
 
-            reply = redisCommand(c_writer_redis, split_redis_command);
+            pthread_mutex_unlock(&SaganRedisWorkMutex);
 
-            if ( debug->debugredis ) {
+            if ( debug->debugredis )
+                {
 
-                Sagan_Log(S_DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
+                    Sagan_Log(S_DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
+                }
 
-            }
+            split_redis_command = strtok_r(tmp_redis_command, ";", &tok);
 
-            freeReplyObject(reply);
+            while ( split_redis_command != NULL )
+                {
 
-            split_redis_command = strtok_r(NULL, ";", &tok);
+                    if ( debug->debugredis )
+                        {
+
+                            Sagan_Log(S_DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
+
+                        }
+
+                    reply = redisCommand(c_writer_redis, split_redis_command);
+
+                    if ( debug->debugredis )
+                        {
+
+                            Sagan_Log(S_DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
+
+                        }
+
+                    freeReplyObject(reply);
+
+                    split_redis_command = strtok_r(NULL, ";", &tok);
+                }
+
         }
-
-    }
 
 }
 
@@ -190,10 +208,11 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
     reply = redisCommand(config->c_reader_redis, redis_command);
     pthread_mutex_unlock(&RedisReaderMutex);
 
-    if ( debug->debugredis ) {
-        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-        Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
-    }
+    if ( debug->debugredis )
+        {
+            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+        }
 
 
     strlcpy(str, reply->str, size);

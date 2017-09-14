@@ -79,10 +79,11 @@ void Chroot(const char *chrootdir )
 
     printf("[*] Chroot to %s\n", chrootdir);
 
-    if (chroot(chrootdir) != 0 || chdir ("/") != 0) {
-        fprintf(stderr, "[E] Could not chroot to '%s'.\n",  chrootdir);
-        exit(1);		/* sagan.log isn't open yet */
-    }
+    if (chroot(chrootdir) != 0 || chdir ("/") != 0)
+        {
+            fprintf(stderr, "[E] Could not chroot to '%s'.\n",  chrootdir);
+            exit(1);		/* sagan.log isn't open yet */
+        }
 }
 
 /************************************************
@@ -98,44 +99,52 @@ void Droppriv(void)
 
     pw = getpwnam(config->sagan_runas);
 
-    if (!pw) {
-        Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
-    }
-
-    if ( getuid() == 0 ) {
-
-        Sagan_Log(S_NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
-
-        /*
-         * We chown certain log files to our Sagan user.  This is done so no files are "owned"
-         * by "root".  This prevents problems in the future when doing things like handling
-             * SIGHUP's and what not.
-             *
-             * Champ Clark (04/14/2015)
-             */
-
-        if ( config->sagan_is_file == false ) {	/* Don't change ownsership/etc if we're processing a file */
-
-            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
-            }
-
-            if (stat(config->sagan_fifo, &fifocheck) != 0 ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
-            }
-
+    if (!pw)
+        {
+            Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
         }
 
-        if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
-            setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu - %s!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, strerror(errno));
-        }
+    if ( getuid() == 0 )
+        {
 
-    } else {
-        Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
-    }
+            Sagan_Log(S_NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+
+            /*
+             * We chown certain log files to our Sagan user.  This is done so no files are "owned"
+             * by "root".  This prevents problems in the future when doing things like handling
+                 * SIGHUP's and what not.
+                 *
+                 * Champ Clark (04/14/2015)
+                 */
+
+            if ( config->sagan_is_file == false )  	/* Don't change ownsership/etc if we're processing a file */
+                {
+
+                    ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+                    if ( ret < 0 )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                        }
+
+                    if (stat(config->sagan_fifo, &fifocheck) != 0 )
+                        {
+                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
+                        }
+
+                }
+
+            if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
+                    setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
+                {
+                    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu - %s!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, strerror(errno));
+                }
+
+        }
+    else
+        {
+            Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
+        }
 }
 
 /********************
@@ -167,10 +176,11 @@ void Remove_Spaces(char *s)
 void To_UpperC(char *const s)
 {
     char* cur = s;
-    while (*cur) {
-        *cur = toupper(*cur);
-        ++cur;
-    }
+    while (*cur)
+        {
+            *cur = toupper(*cur);
+            ++cur;
+        }
 }
 
 /**********************************
@@ -180,10 +190,11 @@ void To_UpperC(char *const s)
 void To_LowerC(char *const s)
 {
     char* cur = s;
-    while (*cur) {
-        *cur = tolower(*cur);
-        ++cur;
-    }
+    while (*cur)
+        {
+            *cur = tolower(*cur);
+            ++cur;
+        }
 }
 
 /******************************************************
@@ -204,29 +215,34 @@ void Sagan_Log (int type, const char *format,... )
     now=localtime(&t);
     strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
-    if ( type == 1 ) {
-        chr="E";
-    }
+    if ( type == 1 )
+        {
+            chr="E";
+        }
 
-    if ( type == 2 ) {
-        chr="W";
-    }
+    if ( type == 2 )
+        {
+            chr="W";
+        }
 
-    if ( type == 3 ) {
-        chr="D";
-    }
+    if ( type == 3 )
+        {
+            chr="D";
+        }
 
     vsnprintf(buf, sizeof(buf), format, ap);
     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
     fflush(config->sagan_log_stream);
 
-    if ( config->daemonize == 0 && config->quiet == 0 ) {
-        printf("[%s] %s\n", chr, buf);
-    }
+    if ( config->daemonize == 0 && config->quiet == 0 )
+        {
+            printf("[%s] %s\n", chr, buf);
+        }
 
-    if ( type == 1 ) {
-        exit(1);
-    }
+    if ( type == 1 )
+        {
+            exit(1);
+        }
 
 }
 
@@ -245,25 +261,29 @@ int Check_Endian()
 }
 
 
-sbool Mask2Bit(int mask, unsigned char *out) {
+sbool Mask2Bit(int mask, unsigned char *out)
+{
     int i;
     bool ret = false;
 
-    if (mask < 1 || mask > 128) {
-        return false;
-    }
+    if (mask < 1 || mask > 128)
+        {
+            return false;
+        }
 
     ret = true;
 
-    for (i=0;i<mask;i+=8) {
-        out[i/8] = i+8 <= mask ? 0xff : ~((1 << (8 - mask%8)) - 1);
-    }
+    for (i=0; i<mask; i+=8)
+        {
+            out[i/8] = i+8 <= mask ? 0xff : ~((1 << (8 - mask%8)) - 1);
+        }
     return ret;
 
 }
 
 
-sbool Is_IPv6 (char  *ipaddr) {
+sbool Is_IPv6 (char  *ipaddr)
+{
     sbool ret = false;
     struct addrinfo hints = {0};
     struct addrinfo *result = NULL;
@@ -274,24 +294,29 @@ sbool Is_IPv6 (char  *ipaddr) {
     hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
 
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
-    if (!ret) {
-        Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
-    } else {
-        switch (((struct sockaddr_storage *)result->ai_addr)->ss_family) {
-        case AF_INET:
-            ret = false;
-            break;
-        case AF_INET6:
-            ret = true;
-            break;
-        default:
-            ret = false;
-            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+    if (!ret)
+        {
+            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
         }
-    } 
-    if (NULL != result) {
-        freeaddrinfo(result);
-    }
+    else
+        {
+            switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
+                {
+                case AF_INET:
+                    ret = false;
+                    break;
+                case AF_INET6:
+                    ret = true;
+                    break;
+                default:
+                    ret = false;
+                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+                }
+        }
+    if (NULL != result)
+        {
+            freeaddrinfo(result);
+        }
 
     return ret;
 }
@@ -310,29 +335,36 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
     hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
 
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
-    if (!ret) {
-        Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
-    } else {
-        switch (((struct sockaddr_storage *)result->ai_addr)->ss_family) {
-        case AF_INET:
-            ret = true;
-            if (NULL != out) {
-                memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
-            }
-            break;
-        case AF_INET6:
-            ret = true;
-            if (NULL != out) {
-                memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
-            }
-            break;
-        default:
-            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+    if (!ret)
+        {
+            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
         }
-    } 
-    if (NULL != result) {
-        freeaddrinfo(result);
-    }
+    else
+        {
+            switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
+                {
+                case AF_INET:
+                    ret = true;
+                    if (NULL != out)
+                        {
+                            memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
+                        }
+                    break;
+                case AF_INET6:
+                    ret = true;
+                    if (NULL != out)
+                        {
+                            memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
+                        }
+                    break;
+                default:
+                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+                }
+        }
+    if (NULL != result)
+        {
+            freeaddrinfo(result);
+        }
 
     return ret;
 }
@@ -344,11 +376,14 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
 sbool Is_Numeric (char *str)
 {
 
-    if(strlen(str) == strspn(str, "0123456789")) {
-        return(true);
-    } else {
-        return(false);
-    }
+    if(strlen(str) == strspn(str, "0123456789"))
+        {
+            return(true);
+        }
+    else
+        {
+            return(false);
+        }
 
 }
 
@@ -365,20 +400,23 @@ void Between_Quotes(char *instr, char *str, size_t size)
     char tmp1[2];
     char tmp2[512] = { 0 };
 
-    for ( i=0; i<strlen(instr); i++) {
+    for ( i=0; i<strlen(instr); i++)
+        {
 
-        if ( flag == 1 && instr[i] == '\"' ) {
-            flag = 0;
+            if ( flag == 1 && instr[i] == '\"' )
+                {
+                    flag = 0;
+                }
+
+            if ( flag == 1 )
+                {
+                    snprintf(tmp1, sizeof(tmp1), "%c", instr[i]);
+                    strlcat(tmp2, tmp1, sizeof(tmp2));
+                }
+
+            if ( instr[i] == '\"' ) flag++;
+
         }
-
-        if ( flag == 1 ) {
-            snprintf(tmp1, sizeof(tmp1), "%c", instr[i]);
-            strlcat(tmp2, tmp1, sizeof(tmp2));
-        }
-
-        if ( instr[i] == '\"' ) flag++;
-
-    }
 
     snprintf(str, size, "%s", tmp2);
 }
@@ -391,11 +429,14 @@ double CalcPct(uintmax_t cnt, uintmax_t total)
 {
     double pct = 0.0;
 
-    if (total == 0.0) {
-        pct = (double)cnt;
-    } else {
-        pct = (double)cnt / (double)total;
-    }
+    if (total == 0.0)
+        {
+            pct = (double)cnt;
+        }
+    else
+        {
+            pct = (double)cnt / (double)total;
+        }
 
     pct *= 100.0;
 
@@ -418,42 +459,48 @@ int DNS_Lookup( char *host, char *str, size_t size )
 
     /* Short circuit if it's a "localhost" lookup */
 
-    if ( !strcmp(host, "localhost" ) ) {
-        snprintf(str, size, "%s", config->sagan_host);
-        return(0);
-    }
+    if ( !strcmp(host, "localhost" ) )
+        {
+            snprintf(str, size, "%s", config->sagan_host);
+            return(0);
+        }
 
-    if ( config->disable_dns_warnings == 0 ) {
+    if ( config->disable_dns_warnings == 0 )
+        {
 
-        Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-        Sagan_Log(S_WARN, "Sagan DNS lookup need for '%s'.", host);
-        Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
-        Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-        Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-    }
+            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+            Sagan_Log(S_WARN, "Sagan DNS lookup need for '%s'.", host);
+            Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
+            Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+        }
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;     /* AF_INET or AF_INET6 to force version */
     hints.ai_socktype = SOCK_STREAM;
 
-    if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0) {
+    if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0)
+        {
 
-        Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
-        return -1;
+            Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
+            return -1;
 
-    }
+        }
 
-    if (res->ai_family == AF_INET) { /* IPv4 */
+    if (res->ai_family == AF_INET)   /* IPv4 */
+        {
 
-        struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
-        addr = &(ipv4->sin_addr);
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)res->ai_addr;
+            addr = &(ipv4->sin_addr);
 
-    } else { /* IPv6 */
+        }
+    else     /* IPv6 */
+        {
 
-        struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res->ai_addr;
-        addr = &(ipv6->sin6_addr);
+            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)res->ai_addr;
+            addr = &(ipv6->sin6_addr);
 
-    }
+        }
 
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
     freeaddrinfo(res);
@@ -472,10 +519,11 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
     char buffer[4096] = { 0 };
     char *p = NULL;
 
-    if(!(p = strstr(in_str, orig))) {
-        snprintf(str, size, "%s", in_str);
-        return;
-    }
+    if(!(p = strstr(in_str, orig)))
+        {
+            snprintf(str, size, "%s", in_str);
+            return;
+        }
 
     strlcpy(buffer, in_str, p-in_str);
     buffer[p-in_str] = '\0';
@@ -485,22 +533,27 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 
 }
 
-sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count) {
+sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
+{
     int i,j,k;
     sbool inrange = false;
-    for (i=0;i<count*MAXIPBIT*2;i+=MAXIPBIT*2) {
-        inrange = true;
-        // We can stop if the mask is 0.  We only handle wellformed masks.
-        for(j=0,k=16;j<16 && tests[i+k] != 0x00;j++,k++) {
-            if((tests[i+j] & tests[i+k]) != (ip[j] & tests[i+k])) {
-                inrange = false;
-                break;
-            }
+    for (i=0; i<count*MAXIPBIT*2; i+=MAXIPBIT*2)
+        {
+            inrange = true;
+            // We can stop if the mask is 0.  We only handle wellformed masks.
+            for(j=0,k=16; j<16 && tests[i+k] != 0x00; j++,k++)
+                {
+                    if((tests[i+j] & tests[i+k]) != (ip[j] & tests[i+k]))
+                        {
+                            inrange = false;
+                            break;
+                        }
+                }
+            if (inrange)
+                {
+                    break;
+                }
         }
-        if (inrange) {
-            break;
-        }
-    }
     return inrange;
 }
 
@@ -514,7 +567,8 @@ sbool is_notroutable ( unsigned char *ip )
 {
     sbool notroutable = false;
     // Start of subnet followd by mask
-    static unsigned char tests[][32] = {
+    static unsigned char tests[][32] =
+    {
         // IPv6 Multicast - ff00::/8
         {
             0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -636,21 +690,23 @@ void Var_To_Value(char *in_str, char *str, size_t size)
 
     snprintf(tmp, sizeof(tmp), "%s", in_str);		/* Segfault with strlcpy */
 
-    for (i=0; i<counters->var_count; i++) {
+    for (i=0; i<counters->var_count; i++)
+        {
 
-        ptmp = strtok_r(tmp, " ", &tok);
+            ptmp = strtok_r(tmp, " ", &tok);
 
-        while (ptmp != NULL ) {
+            while (ptmp != NULL )
+                {
 
-            Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
-            snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
-            strlcat(tmp_result, tmp3, sizeof(tmp_result));
-            ptmp = strtok_r(NULL, " ", &tok);
+                    Replace_String(ptmp, var[i].var_name, var[i].var_value, tmp2, sizeof(tmp2));
+                    snprintf(tmp3, sizeof(tmp3), "%s ", tmp2);
+                    strlcat(tmp_result, tmp3, sizeof(tmp_result));
+                    ptmp = strtok_r(NULL, " ", &tok);
+                }
+
+            strlcpy(tmp, tmp_result, sizeof(tmp));
+            memset(tmp_result, 0, sizeof(tmp_result));
         }
-
-        strlcpy(tmp, tmp_result, sizeof(tmp));
-        memset(tmp_result, 0, sizeof(tmp_result));
-    }
 
 
     tmp[strlen(tmp)-1] = 0;		/* Remove trailing space */
@@ -668,13 +724,17 @@ sbool Validate_HEX (const char *string)
 
     const char *curr = string;
 
-    while (*curr != 0) {
-        if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9')) {
-            ++curr;
-        } else {
-            return(false);
+    while (*curr != 0)
+        {
+            if (('A' <= *curr && *curr <= 'F') || ('a' <= *curr && *curr <= 'f') || ('0' <= *curr && *curr <= '9'))
+                {
+                    ++curr;
+                }
+            else
+                {
+                    return(false);
+                }
         }
-    }
     return(true);
 }
 
@@ -688,13 +748,15 @@ int Check_Var(const char *string)
     int i;
     int flag = 0;
 
-    for (i=0; i<counters->var_count; i++) {
+    for (i=0; i<counters->var_count; i++)
+        {
 
-        if (!strcmp(string, var[i].var_name)) {
-            flag = 1;
-            break;
+            if (!strcmp(string, var[i].var_name))
+                {
+                    flag = 1;
+                    break;
+                }
         }
-    }
 
     return(flag);
 }
@@ -725,48 +787,57 @@ void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str
 
     pipe_flag = 0;
 
-    for ( i=0; i<strlen(tmp2); i++) {
+    for ( i=0; i<strlen(tmp2); i++)
+        {
 
-        if ( tmp2[i] == '|' && pipe_flag == 0 ) {
-            pipe_flag = 1;              /* First | has been found */
+            if ( tmp2[i] == '|' && pipe_flag == 0 )
+                {
+                    pipe_flag = 1;              /* First | has been found */
+                }
+
+            /* If we haven't found any |'s,  just copy the content verbatium */
+
+            if ( pipe_flag == 0 )
+                {
+                    snprintf(final_content_tmp, sizeof(final_content_tmp), "%c", tmp2[i]);
+                    strncat(final_content, final_content_tmp, 1);
+                }
+
+            /* If | has been found,  start the conversion */
+
+            if ( pipe_flag == 1 )
+                {
+
+                    if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' )
+                        {
+                            Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
+                        }
+
+                    snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
+
+                    if (!Validate_HEX(final_content_tmp))
+                        {
+                            Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+                        }
+
+                    sscanf(final_content_tmp, "%x", &x);        /* Convert hex to dec */
+                    snprintf(tmp, sizeof(tmp), "%c", x);        /* Convert dec to ASCII */
+                    strncat(final_content, tmp, 1);             /* Append value */
+
+                    /* Last | found,  but continue processing rest of content as normal */
+
+                    if ( tmp2[i+3] == '|' )
+                        {
+                            pipe_flag = 0;
+                            i=i+3;
+                        }
+                    else
+                        {
+                            i = i+2;
+                        }
+                }
+
         }
-
-        /* If we haven't found any |'s,  just copy the content verbatium */
-
-        if ( pipe_flag == 0 ) {
-            snprintf(final_content_tmp, sizeof(final_content_tmp), "%c", tmp2[i]);
-            strncat(final_content, final_content_tmp, 1);
-        }
-
-        /* If | has been found,  start the conversion */
-
-        if ( pipe_flag == 1 ) {
-
-            if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' ) {
-                Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
-            }
-
-            snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
-
-            if (!Validate_HEX(final_content_tmp)) {
-                Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
-            }
-
-            sscanf(final_content_tmp, "%x", &x);        /* Convert hex to dec */
-            snprintf(tmp, sizeof(tmp), "%c", x);        /* Convert dec to ASCII */
-            strncat(final_content, tmp, 1);             /* Append value */
-
-            /* Last | found,  but continue processing rest of content as normal */
-
-            if ( tmp2[i+3] == '|' ) {
-                pipe_flag = 0;
-                i=i+3;
-            } else {
-                i = i+2;
-            }
-        }
-
-    }
 
     snprintf(str, size, "%s", final_content);
 }
@@ -788,28 +859,35 @@ void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
 
     strlcpy(string, string_in, sizeof(string));
 
-    for (i = 0; i < strlen(string); i++) {
+    for (i = 0; i < strlen(string); i++)
+        {
 
-        if ( string[i] == '%' ) {
+            if ( string[i] == '%' )
+                {
 
-            if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
-                 string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' ) {
+                    if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
+                            string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' )
+                        {
 
-                strlcat(new_string, replace, sizeof(new_string));
+                            strlcat(new_string, replace, sizeof(new_string));
 
-                i = i + 6;  /* Skip to end of %sagan% */
+                            i = i + 6;  /* Skip to end of %sagan% */
 
-            } else {
+                        }
+                    else
+                        {
 
-                strlcat(new_string, "%", sizeof(new_string));
-            }
-        } else {
+                            strlcat(new_string, "%", sizeof(new_string));
+                        }
+                }
+            else
+                {
 
-            snprintf(tmp, sizeof(tmp), "%c", string[i]);
-            strlcat(new_string, tmp, sizeof(new_string));
+                    snprintf(tmp, sizeof(tmp), "%c", string[i]);
+                    strlcat(new_string, tmp, sizeof(new_string));
 
+                }
         }
-    }
 
 
     snprintf(str, size, "%s", new_string);
@@ -839,14 +917,16 @@ int Character_Count ( char *string_in, char *char_to_count)
 
     to_count = (int)tmp[0];
 
-    for (i = 0; i < strlen(str_to_count); i++) {
+    for (i = 0; i < strlen(str_to_count); i++)
+        {
 
-        /* Search for and count int char[i] */
+            /* Search for and count int char[i] */
 
-        if ( (int)str_to_count[i] == to_count ) {
-            return_count++;
+            if ( (int)str_to_count[i] == to_count )
+                {
+                    return_count++;
+                }
         }
-    }
 
     return(return_count);
 }
@@ -862,87 +942,108 @@ int Character_Count ( char *string_in, char *char_to_count)
 
 sbool Wildcard( char *first, char *second )
 {
-    if (*first == '\0' && *second == '\0') {
-        return true;
-    }
+    if (*first == '\0' && *second == '\0')
+        {
+            return true;
+        }
 
-    if (*first == '*' && *(first+1) != '\0' && *second == '\0') {
-        return false;
-    }
+    if (*first == '*' && *(first+1) != '\0' && *second == '\0')
+        {
+            return false;
+        }
 
-    if (*first == '?' || *first == *second) {
-        return Wildcard(first+1, second+1);
-    }
+    if (*first == '?' || *first == *second)
+        {
+            return Wildcard(first+1, second+1);
+        }
 
-    if (*first == '*') {
-        return Wildcard(first+1, second) || Wildcard(first, second+1);
-    }
+    if (*first == '*')
+        {
+            return Wildcard(first+1, second) || Wildcard(first, second+1);
+        }
 
     return false;
 }
 
-void CloseStream( FILE *stream, int *fd ) {
-    if (NULL != stream) {
-        fclose(stream);
-    }
-    if (NULL != fd && *fd >= 0) {
-        close(*fd);
-        *fd = -1;
-    }
+void CloseStream( FILE *stream, int *fd )
+{
+    if (NULL != stream)
+        {
+            fclose(stream);
+        }
+    if (NULL != fd && *fd >= 0)
+        {
+            close(*fd);
+            *fd = -1;
+        }
 }
 
-FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gid ) {
+FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gid )
+{
     FILE *ret = NULL;
     char *_path = NULL;
     struct sockaddr_un name = {0};
 
-    if (NULL == fd || NULL == path) {
-        fprintf(stderr, "[E] [%s, line %d] Invalid (null) argument(s) passed to OpenStream!\n", __FILE__, __LINE__);
-    }
+    if (NULL == fd || NULL == path)
+        {
+            fprintf(stderr, "[E] [%s, line %d] Invalid (null) argument(s) passed to OpenStream!\n", __FILE__, __LINE__);
+        }
 
     _path = strstr(path, "://");
 
-    if (NULL == _path) {
-        _path = path;
-    } else {
-        _path += 3;
-    }
+    if (NULL == _path)
+        {
+            _path = path;
+        }
+    else
+        {
+            _path += 3;
+        }
 
     // TODO: Add cases here for UDP and TCP
-    if (Starts_With(path, "unix://")) {
-        /* Create socket from which to write. Currently only stream mode is supported */
-        *fd = socket(AF_UNIX, SOCK_STREAM, 0);
-        if (*fd < 0) {
-            fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
-        }
-        /* Create name. */
-        name.sun_family = AF_UNIX;
-        strncpy(name.sun_path, _path, sizeof(name.sun_path)-1);
+    if (Starts_With(path, "unix://"))
+        {
+            /* Create socket from which to write. Currently only stream mode is supported */
+            *fd = socket(AF_UNIX, SOCK_STREAM, 0);
+            if (*fd < 0)
+                {
+                    fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
+                }
+            /* Create name. */
+            name.sun_family = AF_UNIX;
+            strncpy(name.sun_path, _path, sizeof(name.sun_path)-1);
 
-        /* Bind the UNIX domain address to the created socket */
-        if (connect(*fd, (struct sockaddr *) &name, sizeof(struct sockaddr_un))) {
-            fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to connect to socket %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
-            goto ErrorExit;
-        } else {
-            Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
-            ret = fdopen(*fd, "a");
+            /* Bind the UNIX domain address to the created socket */
+            if (connect(*fd, (struct sockaddr *) &name, sizeof(struct sockaddr_un)))
+                {
+                    fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to connect to socket %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
+                    goto ErrorExit;
+                }
+            else
+                {
+                    Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
+                    ret = fdopen(*fd, "a");
+                }
         }
-    } else {
-        *fd = -1;
-        ret = fopen(_path, "a");
-    }
+    else
+        {
+            *fd = -1;
+            ret = fopen(_path, "a");
+        }
 
     /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
-    if ( chown(_path, pw_uid,pw_gid) < 0 ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
-    }
+    if ( chown(_path, pw_uid,pw_gid) < 0 )
+        {
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
+        }
 
 ErrorExit:
 
-    if (NULL == ret && *fd >= 0) {
-        close(*fd);
-        *fd = -1;
-    }
+    if (NULL == ret && *fd >= 0)
+        {
+            close(*fd);
+            *fd = -1;
+        }
 
     return ret;
 }
@@ -961,70 +1062,84 @@ void Open_Log_File( sbool state, int type )
 
     pw = getpwnam(config->sagan_runas);
 
-    if( pw == NULL) {
-        fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);
-        exit(1);
-    }
-
-    if ( type == SAGAN_LOG || type == ALL_LOGS ) {
-
-        /* For SIGHUP */
-
-        if ( state == REOPEN ) {
-            CloseStream(config->sagan_log_stream, &config->sagan_log_fd);
-        }
-
-        if ((config->sagan_log_stream = OpenStream(config->sagan_log_filepath, &config->sagan_log_fd,(unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid)) == NULL) {
-            fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+    if( pw == NULL)
+        {
+            fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);
             exit(1);
         }
-    }
 
+    if ( type == SAGAN_LOG || type == ALL_LOGS )
+        {
 
-    if ( type == ALERT_LOG || type == ALL_LOGS ) {
+            /* For SIGHUP */
 
-        /* For SIGHUP */
+            if ( state == REOPEN )
+                {
+                    CloseStream(config->sagan_log_stream, &config->sagan_log_fd);
+                }
 
-        if ( state == REOPEN && config->eve_flag == true ) {
-            CloseStream(config->eve_stream, &config->eve_fd);
-        }
-
-        if ( state == REOPEN && config->alert_flag == true ) {
-            CloseStream(config->sagan_alert_stream, &config->sagan_alert_fd);
-        }
-
-        if ( state == REOPEN && config->fast_flag == true ) {
-            CloseStream(config->sagan_fast_stream, &config->sagan_fast_fd);
-        }
-
-        if ( config->eve_flag ) {
-
-            if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
-                Remove_Lock_File();
-                Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
-            }
-
-
-        }
-        if ( config->fast_flag ) {
-
-            if (( config->sagan_fast_stream = OpenStream(config->fast_filename, &config->sagan_fast_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
-                Remove_Lock_File();
-                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
-            }
-
+            if ((config->sagan_log_stream = OpenStream(config->sagan_log_filepath, &config->sagan_log_fd,(unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid)) == NULL)
+                {
+                    fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+                    exit(1);
+                }
         }
 
 
-        if ( config->alert_flag ) {
+    if ( type == ALERT_LOG || type == ALL_LOGS )
+        {
 
-            if (( config->sagan_alert_stream = OpenStream(config->sagan_alert_filepath, &config->sagan_alert_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
-                Remove_Lock_File();
-                Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
-            }
+            /* For SIGHUP */
 
+            if ( state == REOPEN && config->eve_flag == true )
+                {
+                    CloseStream(config->eve_stream, &config->eve_fd);
+                }
+
+            if ( state == REOPEN && config->alert_flag == true )
+                {
+                    CloseStream(config->sagan_alert_stream, &config->sagan_alert_fd);
+                }
+
+            if ( state == REOPEN && config->fast_flag == true )
+                {
+                    CloseStream(config->sagan_fast_stream, &config->sagan_fast_fd);
+                }
+
+            if ( config->eve_flag )
+                {
+
+                    if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
+                        {
+                            Remove_Lock_File();
+                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+                        }
+
+
+                }
+            if ( config->fast_flag )
+                {
+
+                    if (( config->sagan_fast_stream = OpenStream(config->fast_filename, &config->sagan_fast_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
+                        {
+                            Remove_Lock_File();
+                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+                        }
+
+                }
+
+
+            if ( config->alert_flag )
+                {
+
+                    if (( config->sagan_alert_stream = OpenStream(config->sagan_alert_filepath, &config->sagan_alert_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
+                        {
+                            Remove_Lock_File();
+                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                        }
+
+                }
         }
-    }
 
 }
 
@@ -1042,30 +1157,36 @@ void Set_Pipe_Size ( FILE *fd )
     int fd_results;
 
 
-    if ( config->sagan_fifo_size != 0 ) {
+    if ( config->sagan_fifo_size != 0 )
+        {
 
-        fd_int = fileno(fd);
-        current_fifo_size = fcntl(fd_int, F_GETPIPE_SZ);
+            fd_int = fileno(fd);
+            current_fifo_size = fcntl(fd_int, F_GETPIPE_SZ);
 
-        if ( current_fifo_size == config->sagan_fifo_size ) {
+            if ( current_fifo_size == config->sagan_fifo_size )
+                {
 
-            Sagan_Log(S_NORMAL, "FIFO capacity already set to %d bytes.", config->sagan_fifo_size);
+                    Sagan_Log(S_NORMAL, "FIFO capacity already set to %d bytes.", config->sagan_fifo_size);
 
-        } else {
+                }
+            else
+                {
 
-            Sagan_Log(S_NORMAL, "FIFO capacity is %d bytes.  Changing to %d bytes.", current_fifo_size, config->sagan_fifo_size);
+                    Sagan_Log(S_NORMAL, "FIFO capacity is %d bytes.  Changing to %d bytes.", current_fifo_size, config->sagan_fifo_size);
 
-            fd_results = fcntl(fd_int, F_SETPIPE_SZ, config->sagan_fifo_size );
+                    fd_results = fcntl(fd_int, F_SETPIPE_SZ, config->sagan_fifo_size );
 
-            if ( fd_results == -1 ) {
-                Sagan_Log(S_WARN, "FIFO capacity could not be changed.  Continuing anyways...");
-            }
+                    if ( fd_results == -1 )
+                        {
+                            Sagan_Log(S_WARN, "FIFO capacity could not be changed.  Continuing anyways...");
+                        }
 
-            if ( fd_results > config->sagan_fifo_size ) {
-                Sagan_Log(S_WARN, "FIFO capacity was rounded up to the next page size of %d bytes.", fd_results);
-            }
+                    if ( fd_results > config->sagan_fifo_size )
+                        {
+                            Sagan_Log(S_WARN, "FIFO capacity was rounded up to the next page size of %d bytes.", fd_results);
+                        }
+                }
         }
-    }
 }
 
 #endif
@@ -1086,9 +1207,10 @@ sbool File_Lock ( int fd )
     fl.l_len = 0;
     fl.l_pid = getpid();
 
-    if (fcntl(fd, F_SETLKW, &fl) == -1) {
-        Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
-    }
+    if (fcntl(fd, F_SETLKW, &fl) == -1)
+        {
+            Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
+        }
 
     return(0);
 }
@@ -1109,9 +1231,10 @@ sbool File_Unlock( int fd )
     fl.l_len = 0;
     fl.l_pid = getpid();
 
-    if (fcntl(fd, F_SETLK, &fl) == -1) {
-        Sagan_Log(S_WARN, "[%s, line %d] Unable to get UNLOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
-    }
+    if (fcntl(fd, F_SETLK, &fl) == -1)
+        {
+            Sagan_Log(S_WARN, "[%s, line %d] Unable to get UNLOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
+        }
 
     return(0);
 }
@@ -1130,12 +1253,14 @@ const char *Bit2IP(unsigned char *ipbits, char *str, size_t size)
 
     const char *ret = NULL;
 
-    for (i=4;i<16;i++) {
-        if (ipbits[i] != 0x00) {
-            ss_family = AF_INET6;
-            break;
+    for (i=4; i<16; i++)
+        {
+            if (ipbits[i] != 0x00)
+                {
+                    ss_family = AF_INET6;
+                    break;
+                }
         }
-    }
     ret = inet_ntop(ss_family, ipbits, NULL == str ? retbuf : str, NULL == str ? sizeof(retbuf) : size);
 
     return ret;
@@ -1155,19 +1280,24 @@ sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
     int maxmask = NULL != strchr(ipstr, ':') ? 128 : 32;
 
 
-    if ( t = strchr(ipstr, '/') ) {
-        mask = atoi(t+1);
-    } else {
-        mask = maxmask;
-    }
-    if (NULL != t) {
-        _t = t[0];
-        t[0] = '\0'; 
-    }
+    if ( t = strchr(ipstr, '/') )
+        {
+            mask = atoi(t+1);
+        }
+    else
+        {
+            mask = maxmask;
+        }
+    if (NULL != t)
+        {
+            _t = t[0];
+            t[0] = '\0';
+        }
     IP2Bit(ipstr, out);
-    if (NULL != t) {
-        t[0] = _t; 
-    }
+    if (NULL != t)
+        {
+            t[0] = _t;
+        }
     Mask2Bit(mask, out+16);
 
     return mask != maxmask;
@@ -1189,15 +1319,18 @@ void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
 {
     int counter = 0;
 
-    for ( ; *string,counter<size; string++) {
-        if (!strchr(chars, *string)) {
-            str[ counter ] = *string;
-            ++ counter;
+    for ( ; *string,counter<size; string++)
+        {
+            if (!strchr(chars, *string))
+                {
+                    str[ counter ] = *string;
+                    ++ counter;
+                }
         }
-    }
-    if (counter >= size) {
-        counter = size - 1;
-    }
+    if (counter >= size)
+        {
+            counter = size - 1;
+        }
 
     str[counter] = 0;
 }
@@ -1216,34 +1349,44 @@ sbool Is_IP (char *str)
     unsigned int ipint = 0;
     unsigned char ipbits[MAXIP] = {0};
 
-    if(strlen(str) == strspn(str, "0123456789./:")) {
+    if(strlen(str) == strspn(str, "0123456789./:"))
+        {
 
-        if(strspn(str, "./") == 0) {
-            ipint = atol(str); 
-            memcpy(ipbits, &ipint, sizeof(ipint));
-            if ( Bit2IP(ipbits, NULL, 0) == 0 ) {
-                return(false);
-            }
+            if(strspn(str, "./") == 0)
+                {
+                    ipint = atol(str);
+                    memcpy(ipbits, &ipint, sizeof(ipint));
+                    if ( Bit2IP(ipbits, NULL, 0) == 0 )
+                        {
+                            return(false);
+                        }
+                }
+
+            if ( strchr(str, '/') )
+                {
+                    ip = strtok_r(str, "/", &tmp);
+                    prefix = atoi(strtok_r(NULL, "/", &tmp));
+                    if(prefix < 1 || prefix > 128 || !IP2Bit(ip, NULL))
+                        {
+                            return(false);
+                        }
+                }
+            else
+                {
+                    if ( !IP2Bit(str, NULL) )
+                        {
+                            return(false);
+                        }
+                }
+
+            return(true);
+
         }
+    else
+        {
 
-        if ( strchr(str, '/') ) {
-            ip = strtok_r(str, "/", &tmp);
-            prefix = atoi(strtok_r(NULL, "/", &tmp));
-            if(prefix < 1 || prefix > 128 || !IP2Bit(ip, NULL)) {
-                return(false);
-            }
-        } else {
-            if ( !IP2Bit(str, NULL) ) {
-                return(false);
-            }
+            return(false);
         }
-
-        return(true);
-
-    } else {
-
-        return(false);
-    }
 
 }
 
@@ -1265,12 +1408,14 @@ int PageSupportsRWX(void)
     int retval = 1;
     void *ptr;
     ptr = mmap(0, getpagesize(), PROT_READ|PROT_WRITE, MAP_ANON|MAP_SHARED, -1, 0);
-    if (ptr != MAP_FAILED) {
-        if (mprotect(ptr, getpagesize(), PROT_READ|PROT_WRITE|PROT_EXEC) == -1) {
-            retval = 0;
+    if (ptr != MAP_FAILED)
+        {
+            if (mprotect(ptr, getpagesize(), PROT_READ|PROT_WRITE|PROT_EXEC) == -1)
+                {
+                    retval = 0;
+                }
+            munmap(ptr, getpagesize());
         }
-        munmap(ptr, getpagesize());
-    }
     return retval;
 }
 #endif /* HAVE_SYS_MMAN_H */
@@ -1300,24 +1445,27 @@ sbool Check_Content_Not( char *s )
 
     strlcpy(rule_tmp, s, sizeof(rule_tmp));
 
-    for (i=0; i<strlen(rule_tmp); i++) {
+    for (i=0; i<strlen(rule_tmp); i++)
+        {
 
-        /* We found the first ",  no need to go any further */
+            /* We found the first ",  no need to go any further */
 
-        if ( rule_tmp[i] == '"' ) {
+            if ( rule_tmp[i] == '"' )
+                {
 
-            return(false);
+                    return(false);
 
+                }
+
+            /* Got ! .  This is a content:! or meta_content:! rule! */
+
+            else if ( rule_tmp[i] == '!' )
+                {
+
+                    return(true);
+
+                }
         }
-
-        /* Got ! .  This is a content:! or meta_content:! rule! */
-
-        else if ( rule_tmp[i] == '!' ) {
-
-            return(true);
-
-        }
-    }
 
     return(false);
 }
@@ -1344,15 +1492,18 @@ char *strrpbrk(const char *str, const char *accept)
 {
     const char *test = NULL;
     const char *pstr = str+strlen(str);
-    while (pstr >= str) {
-        test = accept;
-        while (test[0] != '\0') {
-            if ((test++)[0] == pstr[0]) {
-                return (char *)pstr;
-            }
+    while (pstr >= str)
+        {
+            test = accept;
+            while (test[0] != '\0')
+                {
+                    if ((test++)[0] == pstr[0])
+                        {
+                            return (char *)pstr;
+                        }
+                }
+            pstr--;
         }
-        pstr--;
-    }
     return NULL;
 }
 

@@ -26,9 +26,11 @@ sbool Sagan_Blacklist_IPADDR( unsigned char * );
 sbool Sagan_Blacklist_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size);
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
-struct _Sagan_Blacklist {
+struct _Sagan_Blacklist
+{
 
-    struct {
+    struct
+    {
         unsigned char ipbits[MAXIPBIT];
         unsigned char maskbits[MAXIPBIT];
     } range;

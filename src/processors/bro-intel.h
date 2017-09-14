@@ -41,47 +41,56 @@
 
 
 typedef struct _Sagan_BroIntel_Intel_Addr _Sagan_BroIntel_Intel_Addr;
-struct _Sagan_BroIntel_Intel_Addr {
+struct _Sagan_BroIntel_Intel_Addr
+{
     unsigned char bits_ip[MAXIPBIT];
 };
 
 typedef struct _Sagan_BroIntel_Intel_Domain _Sagan_BroIntel_Intel_Domain;
-struct _Sagan_BroIntel_Intel_Domain {
+struct _Sagan_BroIntel_Intel_Domain
+{
     char domain[255];
 };
 
 typedef struct _Sagan_BroIntel_Intel_File_Hash _Sagan_BroIntel_Intel_File_Hash;
-struct _Sagan_BroIntel_Intel_File_Hash {
+struct _Sagan_BroIntel_Intel_File_Hash
+{
     char hash[64];
 };
 
 typedef struct _Sagan_BroIntel_Intel_URL _Sagan_BroIntel_Intel_URL;
-struct _Sagan_BroIntel_Intel_URL {
+struct _Sagan_BroIntel_Intel_URL
+{
     char url[10240];
 };
 
 typedef struct _Sagan_BroIntel_Intel_Software _Sagan_BroIntel_Intel_Software;
-struct _Sagan_BroIntel_Intel_Software {
+struct _Sagan_BroIntel_Intel_Software
+{
     char software[128];
 };
 
 typedef struct _Sagan_BroIntel_Intel_Email _Sagan_BroIntel_Intel_Email;
-struct _Sagan_BroIntel_Intel_Email {
+struct _Sagan_BroIntel_Intel_Email
+{
     char email[128];
 };
 
 typedef struct _Sagan_BroIntel_Intel_User_Name _Sagan_BroIntel_Intel_User_Name;
-struct _Sagan_BroIntel_Intel_User_Name {
+struct _Sagan_BroIntel_Intel_User_Name
+{
     char username[64];
 };
 
 typedef struct _Sagan_BroIntel_Intel_File_Name _Sagan_BroIntel_Intel_File_Name;
-struct _Sagan_BroIntel_Intel_File_Name {
+struct _Sagan_BroIntel_Intel_File_Name
+{
     char file_name[128];
 };
 
 typedef struct _Sagan_BroIntel_Intel_Cert_Hash _Sagan_BroIntel_Intel_Cert_Hash;
-struct _Sagan_BroIntel_Intel_Cert_Hash {
+struct _Sagan_BroIntel_Intel_Cert_Hash
+{
     char cert_hash[64];
 };
 

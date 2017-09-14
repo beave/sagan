@@ -54,14 +54,16 @@ void Key_Handler( void )
 
     (void)SetThreadName("SaganKeyhandler");
 
-    while(1) {
+    while(1)
+        {
 
-        int key;
+            int key;
 
-        key=getchar();
-        if ( key != 0 ) {
-            Statistics();
+            key=getchar();
+            if ( key != 0 )
+                {
+                    Statistics();
+                }
+
         }
-
-    }
 }

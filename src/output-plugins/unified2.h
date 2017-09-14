@@ -65,14 +65,16 @@ void Unified2CleanExit( void );
 void Unified2WriteExtraData( _Sagan_Event *, int );
 
 /* Data structure used for serialization of Unified2 Records */
-typedef struct _Serial_Unified2_Header {
+typedef struct _Serial_Unified2_Header
+{
     uint32_t   type;
     uint32_t   length;
 } Serial_Unified2_Header;
 
 //UNIFIED2_PACKET = type 2
 
-typedef struct _Serial_Unified2Packet {
+typedef struct _Serial_Unified2Packet
+{
     uint32_t sensor_id;
     uint32_t event_id;
     uint32_t event_second;
@@ -86,7 +88,8 @@ typedef struct _Serial_Unified2Packet {
 //---------------LEGACY, type '7'
 //These structures are not used anymore in the product
 
-typedef struct _Serial_Unified2IDSEvent_legacy {
+typedef struct _Serial_Unified2IDSEvent_legacy
+{
     uint32_t sensor_id;
     uint32_t event_id;
     uint32_t event_second;
@@ -152,12 +155,14 @@ typedef struct _Serial_Unified2IDSEventIPv6_legacy
 
 /* The below is from packet.h from Snort */
 
-struct sf_timeval32 {
+struct sf_timeval32
+{
     uint32_t tv_sec;      /* seconds */
     uint32_t tv_usec;     /* microseconds */
 };
 
-typedef struct _Event {
+typedef struct _Event
+{
     uint32_t sig_generator;   /* which part of snort generated the alert? */
     uint32_t sig_id;          /* sig id for this generator */
     uint32_t sig_rev;         /* sig revision for this id */
@@ -172,13 +177,15 @@ typedef struct _Event {
 } Event;
 
 
-typedef enum _EventDataType {
+typedef enum _EventDataType
+{
     EVENT_DATA_TYPE_BLOB = 1,
     EVENT_DATA_TYPE_MAX
 } EventDataType;
 
 //UNIFIED2_EXTRA_DATA - type 110
-typedef struct _SerialUnified2ExtraData {
+typedef struct _SerialUnified2ExtraData
+{
     uint32_t sensor_id;
     uint32_t event_id;
     uint32_t event_second;
@@ -187,13 +194,15 @@ typedef struct _SerialUnified2ExtraData {
     uint32_t blob_length;       /* Length of the data + sizeof(blob_length) + sizeof(data_type)*/
 } SerialUnified2ExtraData;
 
-typedef struct _Unified2ExtraDataHdr {
+typedef struct _Unified2ExtraDataHdr
+{
     uint32_t event_type;
     uint32_t event_length;
 
 } Unified2ExtraDataHdr;
 
-typedef enum _EventInfoEnum {
+typedef enum _EventInfoEnum
+{
     EVENT_INFO_XFF_IPV4 = 1,
     EVENT_INFO_XFF_IPV6,
     EVENT_INFO_REVIEWED_BY,

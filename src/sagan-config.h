@@ -29,7 +29,8 @@
 /* Sagan configuration struct (global) */
 
 typedef struct _SaganConfig _SaganConfig;
-struct _SaganConfig {
+struct _SaganConfig
+{
 
     /* Non-dependent var's */
 
