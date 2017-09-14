@@ -9,7 +9,7 @@
 ** Public License.
 **
 ** This program is distributed in the hope that it will be useful,
-** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** but WITHOUT ANY WARRANTY; withstr even the implied warranty of
 ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ** GNU General Public License for more details.
 **
@@ -34,9 +34,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <netdb.h>
 #include <string.h>
 
 #include "sagan.h"
@@ -48,104 +50,171 @@
 
 struct _SaganConfig *config;
 
-void Parse_IP( char *syslogmessage, int pos, char *str, size_t size )
+sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
 {
 
-    int result_space, result_nonspace, i, b;
+    struct addrinfo hints = {0};
+    char toparse[MAX_SYSLOGMSG];
+    struct addrinfo *result = NULL;
 
-    int flag=0;
-    int current_pos=0;
-    int notfound=0;
-
-    char ctmp[2] = { 0 };
-
-    char lastgood[16] = { 0 };
-
-    char msg[MAX_SYSLOGMSG] = { 0 };
-    char tmpmsg[MAX_SYSLOGMSG] = { 0 };
+    int i;
+    sbool ret = 0;
+    int num_dots = 0;
+    int real_pos = pos;
+    int num_colons = 0;
+    int current_pos = 0;
+    sbool valid = false;
+    sbool is_host = false;
 
     char *tok=NULL;
+    char *stmp=NULL;
+    char *etmp=NULL;
     char *ptmp=NULL;
+    char *pstmp=NULL;
+    char *petmp=NULL;
 
-    struct sockaddr_in sa;
+    char ctmp = '\0';
 
-    snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
+    ptrdiff_t offset = 0;
 
-    ptmp = strtok_r(tmpmsg, " ", &tok);
-
-    while (ptmp != NULL ) {
-
-        if (Sagan_strstr(ptmp, ".")) {
-
-            result_space = inet_pton(AF_INET, ptmp,  &(sa.sin_addr));
-
-            /* If we already have a good IP,  return it.  We can sometimes skips
-             * the next steps */
-
-            if ( result_space != 0 && strcmp(ptmp, "127.0.0.1")) {
-
-                current_pos++;
-
-                if ( current_pos == pos ) {
-
-                    snprintf(str, size, "%s", ptmp);
-                    return;
-
-                }
-
-            } else {
-
-                notfound = 1;
-            }
-
-            /* Start tearing apart the substring */
-
-            if ( notfound == 1 ) {
-
-                for (b=0; b < strlen(ptmp); b++) {
-                    for (i = b; i < strlen(ptmp); i++) {
-
-                        snprintf(ctmp, sizeof(ctmp), "%c", ptmp[i]);
-                        strlcat(msg, ctmp, sizeof(msg));
-
-                        result_nonspace = inet_pton(AF_INET, msg,  &(sa.sin_addr));
-
-                        if ( result_nonspace != 0 ) {
-                            strlcpy(lastgood, msg, sizeof(lastgood));
-                            flag=1;
-                        }
-
-                        if ( flag == 1 && result_nonspace == 0 ) {
-
-                            current_pos++;
-
-                            if ( current_pos == pos ) {
-
-                                if (!strcmp(lastgood, "127.0.0.1")) {
-
-                                    snprintf(str, size, "%s", config->sagan_host);
-                                    return;
-
-                                }
-
-                                snprintf(str, size, "%s", lastgood);
-                                return;
-                            }
-
-                            flag = 0;
-                            i=i+strlen(lastgood);
-                            b=b+strlen(lastgood);
-                            break;
-                        }
-                    }
-                    strlcpy(msg, "", sizeof(msg));
-                }
-            }
-            notfound = 0;
-        }
-        ptmp = strtok_r(NULL, " ", &tok);
+    if (NULL != lookup_cache && pos <= cache_size) {
+        lookup_cache[pos-1].searched = true;
     }
 
-    snprintf(str, size, "0");
+    if (NULL != lookup_cache && pos > 1 && pos <= cache_size && lookup_cache[pos-2].searched) {
+        offset = lookup_cache[pos-2].offset;
+        strlcpy(toparse, syslogmessage+offset, MAX_SYSLOGMSG);
+        pos = 1;
+    } else {
+        strlcpy(toparse, syslogmessage, MAX_SYSLOGMSG);
+    }
+
+    if (NULL != str) {
+        str[0] = '\0';
+    }
+
+    // Just use the existing message, if no space use the whole message
+    stmp = strtok_r(toparse, " ", &tok);
+    if (stmp == NULL) {
+        stmp = toparse;
+    }
+
+    // Use getaddrinfo so we can get ipv4 or 6
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+
+    // Can't start after the the last ':' or '.'
+    pstmp = strrpbrk(stmp, ":.");
+    while (stmp != NULL) {
+        // If we have no '.' or ':' can't be an address.
+        // The next token will be skipped to at the end
+        if (NULL == pstmp || stmp[0] == '\0' || stmp > pstmp) {
+            // Move to next token
+            stmp = strtok_r(NULL, " ", &tok);
+            if(stmp) {
+                // Can't start after the the last ':' or '.'
+                pstmp = strrpbrk(stmp, ":.");
+            }
+        } else {
+            // Can't start with a '.', skip ahead to first possible starting char
+            stmp += strcspn(stmp, ":ABCDEFabcdef0123456789");
+
+            // If we ended with a NULL or past what could be valid, then we are done with this token
+            if (stmp[0] == '\0' || stmp > pstmp) {
+                continue;
+            }
+            // Get Max length
+            etmp = stmp + strspn(stmp, ":ABCDEFabcdef0123456789.");  
+
+            // Compute the last place we could end at and still have at least 2 ':' or 3 '.'
+            ptmp = stmp;
+            num_dots = 0;
+            petmp = NULL;
+            num_colons = 0;
+            while(ptmp < etmp && num_colons < 2 && num_dots < 3) {
+                if ((ptmp[0] == ':' && ++num_colons >= 2) || (ptmp[0] == '.' && ++num_dots >= 3)) {
+                    petmp = ptmp;
+                } 
+                ptmp++;
+            }
+
+            // If it's not possible to have at least 2 ':' or 3 '.' then move the start of the token to 
+            //   the end of our span 
+            if (NULL == petmp) {
+                stmp=etmp-1;
+                valid = false;
+            } else {
+                // Keep trying the longest string in the span until we match or move past ending in a viable spot
+                do {
+                    ctmp = etmp[0];
+                    etmp[0] = '\0';
+                    valid = 0 == getaddrinfo(stmp, NULL, &hints, &result) && (
+                            ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET6 ||
+                            ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET);
+                    etmp[0] = ctmp;
+                    if (NULL != result) {
+                        freeaddrinfo(result);
+                        result = NULL;
+                    }
+                } while(!valid && --etmp >= petmp);
+            }
+
+            if (valid) {
+                ctmp = etmp[0];
+                etmp[0] = '\0';
+
+                is_host = false;
+
+                // current_pos is 0 based here and real_pos-pos will give us the delta between
+                //   what position was requested and where we are starting
+                if (lookup_cache) {
+                    lookup_cache[current_pos+(real_pos-pos)].searched = true;
+                    if (0 == strcmp(stmp, "127.0.0.1") ||
+                        0 == strcmp(stmp, "::1") ||
+                        0 == strcmp(stmp, "::ffff:127.0.0.1")) { 
+                        is_host = true;
+                        strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, config->sagan_host, size);
+                    } else{
+                        strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, stmp, size);
+                    }
+                    lookup_cache[current_pos+(real_pos-pos)].offset = (ptrdiff_t)(etmp - &toparse[0]) + offset;
+                }
+
+                if (++current_pos == pos) {
+                    ret = true;
+                    if (NULL != str) {
+                        strlcpy(str, is_host ? config->sagan_host : stmp, size);
+                    }
+                    break;
+                }
+
+                // Since this is a longest string valid match, just skip past it
+                stmp += strlen(stmp);
+
+                // We only have to put it back if we are not done
+                etmp[0] = ctmp;
+
+            } else {
+                // Otherwise, start at next char in token and go again
+                stmp++;
+            }
+
+        }
+
+    }
+
+    if (NULL != result) {
+        freeaddrinfo(result);
+        result = NULL;
+    }
+
+    if (false == ret && NULL != lookup_cache) {
+        for(i=pos-1; i < cache_size;i++) {
+            lookup_cache[i].searched = true;
+        }
+    }
+
+    return ret;
 }
 

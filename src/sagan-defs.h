@@ -31,6 +31,13 @@
 
 #include <syslog.h>
 
+#if defined HAVE_LIBLOGNORM || defined WITH_BLUEDOT
+#include <json.h>
+#else
+typedef void json_object;
+#define json_object_to_json_string_ext(x, y) "{}"
+#endif
+
 #define PCRE_OVECCOUNT		 30
 
 /* Various buffers used during configurations loading */
@@ -71,7 +78,9 @@
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
-#define MAXIP			16		/* Max IP length.  Change to 64 for future IPv6 support */
+#define MAXIP			64		/* Max IP length */
+#define MAXIPBIT	    16		/* Max IP length in bytes */
+#define MAXSELECTOR		64		/* Max tracking selector length */
 
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"
 #define SAGANLOG		"/var/log/sagan/sagan.log"

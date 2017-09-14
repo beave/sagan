@@ -42,6 +42,9 @@ struct _SaganConfig {
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
+    sbool    selector_flag;
+    char     selector_name[MAXSELECTOR];
+
     sbool	 alert_flag;
 
     sbool	 	eve_flag; 			/* 0 = file */
@@ -49,6 +52,7 @@ struct _SaganConfig {
     char		eve_interface[32];
     char 		eve_filename[MAXPATH];
     FILE		*eve_stream;
+    int		    eve_fd;
     sbool		eve_alerts;
     sbool		eve_logs;
 
@@ -58,9 +62,12 @@ struct _SaganConfig {
     char	 sagan_sensor_name[64];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
-    FILE	 *sagan_fast_stream;
+    int          sagan_alert_fd;
+    FILE	     *sagan_fast_stream;
+    int	         sagan_fast_fd;
     char         sagan_log_filepath[MAXPATH];
     FILE         *sagan_log_stream;
+    int          sagan_log_fd;
     char         sagan_lockfile[MAXPATH];
     char         sagan_fifo[MAXPATH];
     sbool        sagan_is_file;                       /* FIFO or FILE */
@@ -106,6 +113,7 @@ struct _SaganConfig {
     int		perfmonitor_time;
     char	perfmonitor_file_name[MAXPATH];
     FILE	*perfmonitor_file_stream;
+    int	    perfmonitor_file_fd;
 
     sbool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
@@ -199,6 +207,7 @@ struct _SaganConfig {
     char         unified2_filepath[MAXPATH];
     uint32_t     unified2_timestamp;
     FILE         *unified2_stream;
+    int          unified2_fd;
     unsigned int unified2_limit;
     unsigned int unified2_current;
     int          unified2_nostamp;

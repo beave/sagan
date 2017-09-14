@@ -45,7 +45,7 @@
 int Sagan_Bluedot_Cat_Compare ( unsigned char, int, unsigned char );
 int Sagan_Bluedot ( _Sagan_Proc_Syslog *, int  );
 unsigned char Sagan_Bluedot_Lookup(char *, unsigned char, int);			/* what to lookup,  lookup type */
-int Sagan_Bluedot_IP_Lookup_All(char *, int);
+int Sagan_Bluedot_IP_Lookup_All ( char *, int , _Sagan_Lookup_Cache_Entry *, size_t);
 
 void Sagan_Bluedot_Clean_Cache ( void );
 void Sagan_Bluedot_Init(void);
@@ -65,7 +65,7 @@ struct _Sagan_Bluedot_Cat_List {
 
 typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
 struct _Sagan_Bluedot_IP_Cache {
-    uint32_t host;
+    unsigned char host[MAXIPBIT];
     uintmax_t mdate_utime;
     uintmax_t cdate_utime;
     uintmax_t cache_utime;
@@ -96,7 +96,7 @@ struct _Sagan_Bluedot_Filename_Cache {
 
 typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
 struct _Sagan_Bluedot_IP_Queue {
-    uint32_t host;
+    unsigned char host[MAXIPBIT];
 };
 
 typedef struct _Sagan_Bluedot_Hash_Queue _Sagan_Bluedot_Hash_Queue;

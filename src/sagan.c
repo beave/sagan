@@ -112,6 +112,7 @@ struct _SaganDebug *debug;
 struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 
 int proc_msgslot = 0;
+int proc_running = 0;
 
 unsigned char dynamic_rule_flag = 0;
 sbool reload_rules = false;
@@ -222,10 +223,10 @@ int main(int argc, char **argv)
     char *syslog_program=NULL;
     char *syslog_msg=NULL;
 
+    char *psyslogstring = NULL;
     char syslogstring[MAX_SYSLOGMSG];
 
     signed char c;
-    char *tok;
     int rc=0;
 
     int i;
@@ -974,6 +975,7 @@ int main(int argc, char **argv)
 
 
             while(fgets(syslogstring, sizeof(syslogstring), fd) != NULL) {
+                psyslogstring = syslogstring;
 
                 /* If the FIFO was in a error state,  let user know the FIFO writer has resumed */
 
@@ -998,14 +1000,15 @@ int main(int argc, char **argv)
                     dynamic_line_count++;
                 }
 
-                syslog_host = strtok_r(syslogstring, "|", &tok);
+                syslog_host = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
 
                 /* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
                  * here.  We cache both good and bad lookups to not over load our DNS server(s).
                  * The only way DNS cache can be cleared is to restart Sagan */
 
                 if (config->syslog_src_lookup ) {
-                    if ( inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0 ) { 	/* Is inbound a valid IP? */
+
+                    if ( !Is_IP(syslog_host) ) { 	/* Is inbound a valid IP? */
                         dns_flag = false;
 
                         for(i=0; i <= counters->dns_cache_count ; i++) {			/* Check cache first */
@@ -1056,7 +1059,7 @@ int main(int argc, char **argv)
                     /* We check to see if values from our FIFO are valid.  If we aren't doing DNS related
                     * stuff (above),  we start basic check with the syslog_host */
 
-                    if (syslog_host == NULL || inet_pton(AF_INET, syslog_host, &(sa.sin_addr)) == 0  ) {
+                    if (syslog_host == NULL || !Is_IP(syslog_host) ) {
                         syslog_host = config->sagan_host;
 
                         pthread_mutex_lock(&SaganMalformedCounter);
@@ -1064,15 +1067,14 @@ int main(int argc, char **argv)
                         pthread_mutex_unlock(&SaganMalformedCounter);
 
                         if ( debug->debugmalformed ) {
-                            Sagan_Log(S_WARN, "Sagan received a malformed 'host' (replaced with %s)", config->sagan_host);
+                            Sagan_Log(S_WARN, "Sagan received a malformed 'host': '%s' (replaced with %s)", syslog_host, config->sagan_host);
                         }
                     }
                 }
 
                 /* We now check the rest of the values */
 
-                syslog_facility=strtok_r(NULL, "|", &tok);
-
+                syslog_facility = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_facility == NULL ) {
 
                     syslog_facility = "SAGAN: FACILITY ERROR";
@@ -1086,8 +1088,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                syslog_priority=strtok_r(NULL, "|", &tok);
-
+                syslog_priority = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_priority == NULL ) {
 
                     syslog_priority = "SAGAN: PRIORITY ERROR";
@@ -1101,8 +1102,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                syslog_level=strtok_r(NULL, "|", &tok);
-
+                syslog_level = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_level == NULL ) {
 
                     syslog_level = "SAGAN: LEVEL ERROR";
@@ -1116,8 +1116,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                syslog_tag=strtok_r(NULL, "|", &tok);
-
+                syslog_tag = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_tag == NULL ) {
 
                     syslog_tag = "SAGAN: TAG ERROR";
@@ -1131,8 +1130,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                syslog_date=strtok_r(NULL, "|", &tok);
-
+                syslog_date = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_date == NULL ) {
 
                     syslog_date = "SAGAN: DATE ERROR";
@@ -1146,8 +1144,7 @@ int main(int argc, char **argv)
                     }
                 }
 
-                syslog_time=strtok_r(NULL, "|", &tok);
-
+                syslog_time = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_time == NULL ) {
 
                     syslog_time = "SAGAN: TIME ERROR";
@@ -1162,8 +1159,7 @@ int main(int argc, char **argv)
                 }
 
 
-                syslog_program=strtok_r(NULL, "|", &tok);
-
+                syslog_program = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
                 if ( syslog_program == NULL ) {
 
                     syslog_program = "SAGAN: PROGRAM ERROR";
@@ -1176,8 +1172,7 @@ int main(int argc, char **argv)
                         Sagan_Log(S_WARN, "Sagan received a malformed 'program'");
                     }
                 }
-
-                syslog_msg=strtok_r(NULL, "", &tok);		/* In case the message has | in it,  we delimit on "" */
+                syslog_msg = NULL != psyslogstring ? strsep(&psyslogstring, "") : NULL; /* In case the message has | in it,  we delimit on "" */
 
                 if ( syslog_msg == NULL ) {
 
@@ -1197,7 +1192,6 @@ int main(int argc, char **argv)
                     counters->sagan_log_drop++;
 
                 }
-
 
                 /* Strip any \n or \r from the syslog_msg */
 
@@ -1276,8 +1270,8 @@ int main(int argc, char **argv)
                     Sagan_Log(S_NORMAL, "EOF reached. Waiting for threads to catch up....");
                     Sagan_Log(S_NORMAL, "");
 
-                    while(proc_msgslot != 0) {
-                        Sagan_Log(S_NORMAL, "Waiting on %d threads....", proc_msgslot);
+                    while(proc_msgslot != 0 || proc_running != 0) {
+                        Sagan_Log(S_NORMAL, "Waiting on %d/%d threads....", proc_msgslot, proc_running);
                         sleep(1);
                     }
 

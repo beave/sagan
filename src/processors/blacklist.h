@@ -18,16 +18,20 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include "sagan-defs.h"
+
 void Sagan_Blacklist_Load ( void );
 void Sagan_Blacklist_Init( void );
-sbool Sagan_Blacklist_IPADDR( uint32_t );
-sbool Sagan_Blacklist_IPADDR_All ( char * );
+sbool Sagan_Blacklist_IPADDR( unsigned char * );
+sbool Sagan_Blacklist_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size);
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist {
 
-    uint32_t u32_lower;
-    uint32_t u32_higher;
+    struct {
+        unsigned char ipbits[MAXIPBIT];
+        unsigned char maskbits[MAXIPBIT];
+    } range;
 
 };
 

@@ -126,20 +126,27 @@ void Unified2( _Sagan_Event *Event )
 {
 
 
-    Serial_Unified2_Header hdr;
-    Serial_Unified2IDSEvent_legacy alertdata;
-    uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2IDSEvent_legacy);
     int i=0;
+    uint32_t write_len = 0;
+    unsigned char ip_src[MAXIPBIT] = {0};
+    unsigned char ip_dst[MAXIPBIT] = {0};
+    Serial_Unified2_Header *hdr = (Serial_Unified2_Header *)&write_pkt_buffer[0];
+    uint8_t *alertdata = (uint8_t*)hdr + sizeof(Serial_Unified2_Header);
+    int type = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? UNIFIED2_IDS_EVENT_IPV6 : UNIFIED2_IDS_EVENT;
 
-    memset(&alertdata, 0, sizeof(alertdata));
+    memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
 
-    alertdata.event_id = htonl(unified_event_id);  					// Event ID (increments)
+    hdr->type = htonl(type);				// EXTRA DATA type
 
-    alertdata.event_second = htonl(Event->event_time.tv_sec); 				// Event epoch
-    alertdata.event_microsecond = htonl( Event->event_time.tv_usec );			// Event microseconds
+    hdr->length = htonl(UNIFIED_SIZE(alertdata, type));
 
-    alertdata.signature_id = htonl(atoi(Event->sid));
-    alertdata.signature_revision = htonl(atoi(Event->rev));				// Rule Revision
+    UNIFIED_SET(alertdata, type, event_id, htonl(unified_event_id));  					// Event ID (increments)
+
+    UNIFIED_SET(alertdata, type, event_second, htonl(Event->event_time.tv_sec)); 				// Event epoch
+    UNIFIED_SET(alertdata, type, event_microsecond, htonl( Event->event_time.tv_usec));			// Event microseconds
+
+    UNIFIED_SET(alertdata, type, signature_id, htonl(atoi(Event->sid)));
+    UNIFIED_SET(alertdata, type, signature_revision, htonl(atoi(Event->rev)));				// Rule Revision
 
     /* Search for the classification type. */
 
@@ -147,45 +154,64 @@ void Unified2( _Sagan_Event *Event )
 
     for(i=0; i < counters->classcount; i++) {
         if (!strcmp(Event->class, classstruct[i].s_shortname)) {
-            alertdata.classification_id = htonl(i + 1);
+            UNIFIED_SET(alertdata, type, classification_id, htonl(i + 1));
         }
     }
 
-    alertdata.priority_id = htonl(Event->pri);					// Priority
-    alertdata.protocol = Event->ip_proto;					// Protocol
-    alertdata.generator_id = htonl(Event->generatorid); 			// From gen-msg.map
+    UNIFIED_SET(alertdata, type, priority_id, htonl(Event->pri));					// Priority
+    UNIFIED_SET(alertdata, type, protocol, Event->ip_proto);					// Protocol
+    UNIFIED_SET(alertdata, type, generator_id, htonl(Event->generatorid)); 			// From gen-msg.map
 
-    alertdata.ip_source = htonl(IP2Bit(Event->ip_src));
-    alertdata.ip_destination = htonl(IP2Bit(Event->ip_dst));
+    IP2Bit(Event->ip_src, ip_src);
+    // Already in network byte order. 
+    // *NOTE* For now, if one side isn't IPv6 but the other is, just convert to IPv4-mapped address.
+    //   This is probably not the best solution
+    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_src)) {
+        memset(alertdata + 
+                UNIFIED_OFF(alertdata, type, ip_source) + 
+                UNIFIED_MEMBER_SIZE(alertdata, type, ip_source) - 
+                UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_source) - 2, 
+               0xff, 2);
 
-    alertdata.sport_itype = htons(Event->src_port);
-    alertdata.dport_icode = htons(Event->dst_port);
+        memcpy(alertdata + 
+                UNIFIED_OFF(alertdata, type, ip_source) + 
+                UNIFIED_MEMBER_SIZE(alertdata, type, ip_source) - 
+                UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_source), ip_src,
+               UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_source)); 
+    } else {
+        memcpy(alertdata + UNIFIED_OFF(alertdata, type, ip_source), ip_src, UNIFIED_MEMBER_SIZE(alertdata, type, ip_source)); 
+    }
+
+    IP2Bit(Event->ip_dst, ip_dst);
+    // Already in network byte order.
+    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_dst)) {
+        memset(alertdata + 
+                UNIFIED_OFF(alertdata, type, ip_destination) + 
+                UNIFIED_MEMBER_SIZE(alertdata, type, ip_destination) - 
+                UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_destination) - 2, 
+               0xff, 2);
+
+        memcpy(alertdata + 
+                UNIFIED_OFF(alertdata, type, ip_destination) + 
+                UNIFIED_MEMBER_SIZE(alertdata, type, ip_destination) - 
+                UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_destination), ip_dst,
+               UNIFIED_MEMBER_SIZE(alertdata, UNIFIED2_IDS_EVENT, ip_destination)); 
+
+    } else {
+        memcpy(alertdata + UNIFIED_OFF(alertdata, type, ip_destination), ip_dst, UNIFIED_MEMBER_SIZE(alertdata, type, ip_destination)); 
+    }
+
+    UNIFIED_SET(alertdata, type, sport_itype, htons(Event->src_port));
+    UNIFIED_SET(alertdata, type, dport_icode, htons(Event->dst_port));
 
     /* Rotate if log has gotten to big */
 
+    write_len = sizeof(Serial_Unified2_Header) + UNIFIED_SIZE(alertdata, type);
     if ((config->unified2_current + write_len) > config->unified2_limit) {
         Unified2RotateFile();
     }
 
-
-    hdr.length = htonl(sizeof(Serial_Unified2IDSEvent_legacy));
-    hdr.type = htonl(UNIFIED2_IDS_EVENT);				// EXTRA DATA type
-
-    if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
-                   write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header", __FILE__, __LINE__);
-        return;
-    }
-
-    if (SafeMemcpy(write_pkt_buffer + sizeof(Serial_Unified2_Header),
-                   &alertdata, sizeof(Serial_Unified2IDSEvent_legacy),
-                   write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2IDSEvent_legacy", __FILE__, __LINE__);
-        return;
-    }
-
     Unified2Write(write_pkt_buffer, write_len);
-
 }
 
 /*****************************************************************************/
@@ -203,6 +229,10 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     uint32_t pkt_length = 0;
     uint32_t i = 0;
     uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2Packet) - 4;
+    unsigned char tmp_ip[MAXIPBIT] = {0};
+    uint32_t *tmp_ip_u32 = (uint32_t *)&tmp_ip[0];
+
+    memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
 
     /* Ethernet */
 
@@ -330,8 +360,14 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     ip->ip_p = Event->ip_proto;		 		// Protocol
     ip->ip_sum = 0;
 
-    ip->ip_src = htonl(IP2Bit(Event->ip_src));
-    ip->ip_dst = htonl(IP2Bit(Event->ip_dst));
+    // *NOTE*: These will be wrong for IPv6 addresses
+    // *TODO*: Even though the legacy format doesn't take the IPv6 address
+    //         it should be possible to provide a fake IPv6 packet here.
+    IP2Bit(Event->ip_src, tmp_ip);
+    ip->ip_src = *tmp_ip_u32;
+
+    IP2Bit(Event->ip_dst, tmp_ip);
+    ip->ip_dst = *tmp_ip_u32;
 
     p_iphdr = iphdr_buf + IP_HDR_LEN;
     len_iphdr = p_iphdr - iphdr_buf;
@@ -637,8 +673,9 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
     uint8_t *write_end = NULL;
     uint8_t *ptr = NULL;
 
-    uint32_t ip;
     uint8_t *buffer = NULL;
+    unsigned char ipbits[MAXIPBIT] = {0};
+
 
     uint32_t len;
     uint32_t write_len;
@@ -646,19 +683,25 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
     switch(type) {
 
     case EVENT_INFO_XFF_IPV4:
-
-        ip = htonl(IP2Bit(Event->host));
-        buffer = (void *)&ip;
+        IP2Bit(Event->host, ipbits);
+        buffer = (void *)ipbits;
+        len = sizeof(uint32_t);
         break;
-
+    case EVENT_INFO_XFF_IPV6:
+        IP2Bit(Event->host, ipbits);
+        buffer = (void *)ipbits;
+        len = MAXIPBIT;
+        break;
     case EVENT_INFO_HTTP_URI:
 
         buffer = (uint8_t*)Event->normalize_http_uri;
+        len = strlen(buffer);
         break;
 
     case EVENT_INFO_HTTP_HOSTNAME:
 
         buffer = (uint8_t*)Event->normalize_http_hostname;
+        len = strlen(buffer);
         break;
 
     default:
@@ -668,7 +711,6 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 
     }
 
-    len = sizeof(buffer);
 
     write_len = sizeof(Serial_Unified2_Header) + sizeof(Unified2ExtraDataHdr);
 

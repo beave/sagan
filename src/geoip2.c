@@ -99,7 +99,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
 
     int gai_error;
-    int  mmdb_error;
+    int mmdb_error;
     int res;
 
     char *ptmp = NULL;
@@ -107,8 +107,9 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     char country[2];
     char tmp[1024];
+    unsigned char tmp_ip[MAXIPBIT] = {0};
 
-    if (is_rfc1918(IP2Bit(ipaddr))) {
+    if (!IP2Bit(ipaddr, tmp_ip) || is_notroutable(tmp_ip)) {
         if (debug->debuggeoip2) {
             Sagan_Log(S_DEBUG, "IP address %s is RFC1918, skipping GeoIP2 lookup.", ipaddr);
         }

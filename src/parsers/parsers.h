@@ -24,7 +24,7 @@
 
 #include "parsers/strstr-asm/strstr-hook.h"
 
-void  Parse_IP( char *, int, char *str, size_t size );
+sbool  Parse_IP( char *, int, char *str, size_t size, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size);
 int   Parse_Src_Port( char * );
 int   Parse_Dst_Port( char * );
 int   Parse_Proto( char * );

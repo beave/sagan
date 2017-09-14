@@ -40,6 +40,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/socket.h>
+#include <sys/un.h>
 #include <string.h>
 #include <pthread.h>
 #include <unistd.h>
@@ -244,33 +245,96 @@ int Check_Endian()
 }
 
 
-/*****************************************************************************
- * Converts IP address.  For IPv4,  we convert the quad IP string to a 32 bit
- * value.  We return the unsigned long value as a pointer to a string because
- * that's the way IPv6 is done.  Basically,  we'll probably want IPv6 when
- * snort supports DB IPv6.
- *****************************************************************************/
+sbool Mask2Bit(int mask, unsigned char *out) {
+    int i;
+    bool ret = false;
 
-uint32_t IP2Bit (char *ipaddr)
+    if (mask < 1 || mask > 128) {
+        return false;
+    }
+
+    ret = true;
+
+    for (i=0;i<mask;i+=8) {
+        out[i/8] = i+8 <= mask ? 0xff : ~((1 << (8 - mask%8)) - 1);
+    }
+    return ret;
+
+}
+
+
+sbool Is_IPv6 (char  *ipaddr) {
+    sbool ret = false;
+    struct addrinfo hints = {0};
+    struct addrinfo *result = NULL;
+
+    // Use getaddrinfo so we can get ipv4 or 6
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+
+    ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
+    if (!ret) {
+        Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
+    } else {
+        switch (((struct sockaddr_storage *)result->ai_addr)->ss_family) {
+        case AF_INET:
+            ret = false;
+            break;
+        case AF_INET6:
+            ret = true;
+            break;
+        default:
+            ret = false;
+            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+        }
+    } 
+    if (NULL != result) {
+        freeaddrinfo(result);
+    }
+
+    return ret;
+}
+
+/* Converts IP address.  We assume that out is at least 16 bytes.  */
+sbool IP2Bit(char *ipaddr, unsigned char *out)
 {
 
-    struct sockaddr_in ipv4;
-    uint32_t ip;
+    sbool ret = false;
+    struct addrinfo hints = {0};
+    struct addrinfo *result = NULL;
 
-    /* Change to AF_UNSPEC for future ipv6 */
-    /* Champ Clark III - 01/18/2011 */
+    // Use getaddrinfo so we can get ipv4 or 6
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_DGRAM;
+    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
 
-    if (!inet_pton(AF_INET, ipaddr, &ipv4.sin_addr)) {
-        Sagan_Log(S_WARN, "Warning: Got a inet_pton() error for \"%s\" but continuing...", ipaddr);
-    }
-
-    if ( config->endian == 0 ) {
-        ip = htonl(ipv4.sin_addr.s_addr);
+    ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
+    if (!ret) {
+        Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
     } else {
-        ip = ipv4.sin_addr.s_addr;
+        switch (((struct sockaddr_storage *)result->ai_addr)->ss_family) {
+        case AF_INET:
+            ret = true;
+            if (NULL != out) {
+                memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
+            }
+            break;
+        case AF_INET6:
+            ret = true;
+            if (NULL != out) {
+                memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
+            }
+            break;
+        default:
+            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+        }
+    } 
+    if (NULL != result) {
+        freeaddrinfo(result);
     }
 
-    return(ip);
+    return ret;
 }
 
 /****************************************
@@ -348,7 +412,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
 
     char ipstr[INET6_ADDRSTRLEN] = { 0 };
 
-    struct addrinfo hints, *res;
+    struct addrinfo hints = {0}, *res = NULL;
     int status;
     void *addr;
 
@@ -392,7 +456,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
     }
 
     inet_ntop(res->ai_family, addr, ipstr, sizeof ipstr);
-    free(res);
+    freeaddrinfo(res);
 
     snprintf(str, size, "%s", ipstr);
     return 0;
@@ -421,43 +485,136 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 
 }
 
-/****************************************************************************
- * s_rfc1918
- *
- * Checks to see if an ip address is RFC1918 or not
- ****************************************************************************/
+sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count) {
+    int i,j,k;
+    sbool inrange = false;
+    for (i=0;i<count*MAXIPBIT*2;i+=MAXIPBIT*2) {
+        inrange = true;
+        // We can stop if the mask is 0.  We only handle wellformed masks.
+        for(j=0,k=16;j<16 && tests[i+k] != 0x00;j++,k++) {
+            if((tests[i+j] & tests[i+k]) != (ip[j] & tests[i+k])) {
+                inrange = false;
+                break;
+            }
+        }
+        if (inrange) {
+            break;
+        }
+    }
+    return inrange;
+}
 
-sbool is_rfc1918 ( uint32_t ipint )
+/****************************************************************************/
+/* is_notroutable                                                           */
+/*                                                                          */
+/* Checks to see if an ip address is routable or not                        */
+/****************************************************************************/
+
+sbool is_notroutable ( unsigned char *ip )
 {
-
-    if ( ipint > 167772160 && ipint < 184549375 ) {	/* 10.X.X.X */
-        return(true);
-    }
-
-    if ( ipint > 3232235520 && ipint < 3232301055 ) { 	/* 192.168.X.X */
-        return(true);
-    }
-
-    if ( ipint > 2886729728 && ipint < 2887778303 ) {  	/* 172.16/31.X.X */
-        return(true);
-    }
-
-    if ( ipint > 2851995648 && ipint < 2852061183 ) {	/* 169.254.X.X Link Local */
-        return(true);
-    }
-
-    if ( ipint == 2130706433 ) {		 	/* 127.0.0.1 */
-        return(true);
-    }
-
-    /* Invalid IP addresses */
-
-    if ( ipint < 16777216 ) {				/* Must be larger than than 1.0.0.0 */
-        return(false);
-    }
-
-    return(false);
-
+    sbool notroutable = false;
+    // Start of subnet followd by mask
+    static unsigned char tests[][32] = {
+        // IPv6 Multicast - ff00::/8
+        {
+            0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv6 Link Local fe80::/10
+        {
+            0xFE, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0xC0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv6 RFC4193 - fc00::/7
+        {
+            0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv6  LocalHost - ::1/128
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+        },
+        // IPv4 RFC1918 - 10.0.0.0/8
+        {
+            0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv4-mapped RFC1918 - ::ffff:10.0.0.0/104
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xFF, 0xFF, 0xA0, 0x00, 0x00, 0x00,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00
+        },
+        // IPv4 RFC1918 - 192.168.0.0/16
+        {
+            0xC0, 0xA8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv4-mapped RFC1918 - ::ffff:192.168.0.0/112
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xFF, 0xFF, 0xC0, 0xA8, 0x00, 0x00,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00
+        },
+        // IPv4 localhost - 127.0.0.0/8
+        {
+            0x7F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv4-mapped localhost - ::ffff:127.0.0.0/104
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xFF, 0xFF, 0x7F, 0x00, 0x00, 0x00,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00
+        },
+        // IPv4  Mulitcast - 224.0.0.0/4
+        {
+            0xE0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv4-mapped  Mulitcast - ::ffff:224.0.0.0/100
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xFF, 0xFF, 0xE0, 0x00, 0x00, 0x00,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xF0, 0x00, 0x00, 0x00
+        },
+        // IPv4  Broadcast - 255.255.255.255/32
+        {
+            0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+        },
+        // IPv4-mapped  Broadcast - ::ffff:255.255.255.255/128
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+        }
+    };
+    return is_inrange(ip, (unsigned char *)tests, sizeof(tests)/(sizeof(char[32])));
 }
 
 /****************************************************************************
@@ -724,6 +881,72 @@ sbool Wildcard( char *first, char *second )
     return false;
 }
 
+void CloseStream( FILE *stream, int *fd ) {
+    if (NULL != stream) {
+        fclose(stream);
+    }
+    if (NULL != fd && *fd >= 0) {
+        close(*fd);
+        *fd = -1;
+    }
+}
+
+FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gid ) {
+    FILE *ret = NULL;
+    char *_path = NULL;
+    struct sockaddr_un name = {0};
+
+    if (NULL == fd || NULL == path) {
+        fprintf(stderr, "[E] [%s, line %d] Invalid (null) argument(s) passed to OpenStream!\n", __FILE__, __LINE__);
+    }
+
+    _path = strstr(path, "://");
+
+    if (NULL == _path) {
+        _path = path;
+    } else {
+        _path += 3;
+    }
+
+    // TODO: Add cases here for UDP and TCP
+    if (Starts_With(path, "unix://")) {
+        /* Create socket from which to write. Currently only stream mode is supported */
+        *fd = socket(AF_UNIX, SOCK_STREAM, 0);
+        if (*fd < 0) {
+            fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
+        }
+        /* Create name. */
+        name.sun_family = AF_UNIX;
+        strncpy(name.sun_path, _path, sizeof(name.sun_path)-1);
+
+        /* Bind the UNIX domain address to the created socket */
+        if (connect(*fd, (struct sockaddr *) &name, sizeof(struct sockaddr_un))) {
+            fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to connect to socket %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
+            goto ErrorExit;
+        } else {
+            Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
+            ret = fdopen(*fd, "a");
+        }
+    } else {
+        *fd = -1;
+        ret = fopen(_path, "a");
+    }
+
+    /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
+    if ( chown(_path, pw_uid,pw_gid) < 0 ) {
+        Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
+    }
+
+ErrorExit:
+
+    if (NULL == ret && *fd >= 0) {
+        close(*fd);
+        *fd = -1;
+    }
+
+    return ret;
+}
+
 /****************************************************************************
  * Open_Log_File - This controls the opening and/or re-opening of log
  * files.  This is useful for situation like SIGHUP,  where we want to
@@ -748,22 +971,13 @@ void Open_Log_File( sbool state, int type )
         /* For SIGHUP */
 
         if ( state == REOPEN ) {
-            fclose(config->sagan_log_stream);
+            CloseStream(config->sagan_log_stream, &config->sagan_log_fd);
         }
 
-        if ((config->sagan_log_stream = fopen(config->sagan_log_filepath, "a")) == NULL) {
+        if ((config->sagan_log_stream = OpenStream(config->sagan_log_filepath, &config->sagan_log_fd,(unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid)) == NULL) {
             fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
             exit(1);
         }
-
-        /* Chown the log files in case we get a SIGHUP or whatnot later (due to Chroot()) */
-
-        ret = chown(config->sagan_log_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-        if ( ret < 0 ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_log_filepath, config->sagan_runas, strerror(errno));
-        }
-
     }
 
 
@@ -772,60 +986,43 @@ void Open_Log_File( sbool state, int type )
         /* For SIGHUP */
 
         if ( state == REOPEN && config->eve_flag == true ) {
-            fclose(config->eve_stream);
+            CloseStream(config->eve_stream, &config->eve_fd);
         }
 
         if ( state == REOPEN && config->alert_flag == true ) {
-            fclose(config->sagan_alert_stream);
+            CloseStream(config->sagan_alert_stream, &config->sagan_alert_fd);
         }
 
         if ( state == REOPEN && config->fast_flag == true ) {
-            fclose(config->sagan_fast_stream);
+            CloseStream(config->sagan_fast_stream, &config->sagan_fast_fd);
         }
 
         if ( config->eve_flag ) {
 
-            if (( config->eve_stream = fopen(config->eve_filename, "a" )) == NULL ) {
+            if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
                 Remove_Lock_File();
-                Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+                Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
             }
 
-            ret = chown(config->eve_filename, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
-            }
 
         }
-
-
         if ( config->fast_flag ) {
 
-            if (( config->sagan_fast_stream = fopen(config->fast_filename, "a" )) == NULL ) {
+            if (( config->sagan_fast_stream = OpenStream(config->fast_filename, &config->sagan_fast_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
             }
 
-            ret = chown(config->fast_filename, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
-            }
         }
 
 
         if ( config->alert_flag ) {
 
-            if (( config->sagan_alert_stream = fopen(config->sagan_alert_filepath, "a" )) == NULL ) {
+            if (( config->sagan_alert_stream = OpenStream(config->sagan_alert_filepath, &config->sagan_alert_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL ) {
                 Remove_Lock_File();
                 Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
             }
 
-            ret = chown(config->sagan_alert_filepath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-            if ( ret < 0 ) {
-                Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_alert_filepath, config->sagan_runas, strerror(errno));
-            }
         }
     }
 
@@ -920,175 +1117,89 @@ sbool File_Unlock( int fd )
 }
 
 /****************************************************************************
- * Bit2IP - Takes a 32 bit IP address and returns an octet notation
+ * Bit2IP - Takes a 16 byte char IP address and returns a string
  ****************************************************************************/
 
-void Bit2IP(uint32_t ip_u32, char *str, size_t size)
+const char *Bit2IP(unsigned char *ipbits, char *str, size_t size)
 {
 
-    struct in_addr ip_addr_convert;
+    int i;
+    int ss_family = AF_INET;
+    static __thread char retbuf[MAXIP];
+    memset(retbuf,0,sizeof(retbuf));
 
-    ip_addr_convert.s_addr = htonl(ip_u32);
-    snprintf(str, size, "%s", inet_ntoa(ip_addr_convert));
+    const char *ret = NULL;
 
+    for (i=4;i<16;i++) {
+        if (ipbits[i] != 0x00) {
+            ss_family = AF_INET6;
+            break;
+        }
+    }
+    ret = inet_ntop(ss_family, ipbits, NULL == str ? retbuf : str, NULL == str ? sizeof(retbuf) : size);
+
+    return ret;
 }
 
-/****************************************
- * Compute netmask address given prefix
- ****************************************/
-
-static in_addr_t Netmask( int prefix )
+/************************************************************************/
+/* Convert an IP or IP/CIDR into 128bit IP and 128bit mask.             */
+/* Return if masked.  Assume that out is at least 32 bytes              */
+/************************************************************************/
+sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
 {
 
-    if ( prefix == 0 || prefix == 32 )
-        return( ~((in_addr_t) -1) );
-    else
-        return( ~((1 << (32 - prefix)) - 1) );
-
-} /* netmask() */
-
-
-/******************************************************
- * Compute broadcast address given address and prefix
- ******************************************************/
-
-static in_addr_t Broadcast( in_addr_t addr, int prefix )
-{
-
-    return( addr | ~Netmask(prefix) );
-
-} /* broadcast() */
-
-
-/****************************************************
- * Compute network address given address and prefix
- ****************************************************/
-
-static in_addr_t Network( in_addr_t addr, int prefix )
-{
-
-    return( addr & Netmask(prefix) );
-
-} /* network() */
-
-/*************************************************************
- * Convert an A.B.C.D address into a 32-bit host-order value
- *************************************************************/
-
-static in_addr_t A_To_Hl( char *ipstr )
-{
-
-    struct in_addr in;
-
-    if ( !inet_aton(ipstr, &in) ) {
-        Sagan_Log(S_ERROR, "[%s, line %d] Invalid address %s!", __FILE__, __LINE__, ipstr );
-    }
-
-    return( ntohl(in.s_addr) );
-
-} /* a_to_hl() */
-
-/*******************************************************************
- * Convert a network address char string into a host-order network
- * address and an integer prefix value
- *******************************************************************/
-
-static network_addr_t Str_To_Netaddr( char *ipstr )
-{
-
-    long int prefix = 32;
-    char *prefixstr;
-    network_addr_t netaddr;
-
-    if ( (prefixstr = strchr(ipstr, '/')) ) {
-
-        *prefixstr = '\0';
-        prefixstr++;
-        prefix = strtol( prefixstr, (char **) NULL, 10 );
-
-        if (*prefixstr == '\0' || prefix < 1 || prefix > 32) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Invalid IP %s/%s in your config file var declaration!\n", __FILE__, __LINE__, ipstr, prefixstr );
-        }
-
-        if ( (prefix < 8) ) {
-            Sagan_Log(S_ERROR, "[%s, line %d] Your wildcard for '%s' is less than /8,", __FILE__, __LINE__, ipstr );
-        }
-    }
-
-    netaddr.pfx = (int) prefix;
-    netaddr.addr = Network( A_To_Hl(ipstr), prefix );
-
-    return( netaddr );
-
-} /* str_to_netaddr() */
-
-/***************************************************************************
- * Convert an IP or IP/CIDR into 32bit decimal single IP or 32bit decimal
- * IP low and high range
- ***************************************************************************/
-
-void Netaddr_To_Range( char ipstr[21], char *str, size_t size)
-{
-
-    network_addr_t *netaddrs = NULL;
-    uint32_t lo, hi;
+    int mask;
     char *t = NULL;
-    char my_str[50] = { 0 };
-    char my_str2[101] = { 0 };
-    char tmp[512] = { 0 };
-    char tmp2[512] = { 0 };
+    char _t = '\0';
+    char *ip = ipstr;
+    int maxmask = NULL != strchr(ipstr, ':') ? 128 : 32;
 
-    if ( ( t = strchr(ipstr, '/') ) ) {
 
-        netaddrs = realloc( netaddrs, 2 * sizeof(network_addr_t) );
-        netaddrs[0] = Str_To_Netaddr( ipstr );
-
-        lo = netaddrs[0].addr;
-        hi = Broadcast( netaddrs[0].addr, netaddrs[0].pfx );
-
-        if(lo != hi) {
-
-            snprintf(tmp , sizeof(tmp), "%lu-", (unsigned long)lo);
-            snprintf(tmp2 , sizeof(tmp2), "%lu", (unsigned long)hi);
-            strlcpy(my_str, tmp, sizeof(my_str));
-            strlcpy(my_str2, tmp2, sizeof(my_str2));
-            strcat(my_str, my_str2);
-            snprintf(str, size, "%s", my_str);
-            return;
-
-        } else {
-
-            snprintf( str, size, "%lu", (unsigned long)lo);
-            return;
-
-        }
-
+    if ( t = strchr(ipstr, '/') ) {
+        mask = atoi(t+1);
     } else {
-
-        snprintf( str, size, "%lu", (unsigned long)IP2Bit(ipstr));
-        return;
-
+        mask = maxmask;
     }
+    if (NULL != t) {
+        _t = t[0];
+        t[0] = '\0'; 
+    }
+    IP2Bit(ipstr, out);
+    if (NULL != t) {
+        t[0] = _t; 
+    }
+    Mask2Bit(mask, out+16);
+
+    return mask != maxmask;
 } /* netaddr_to_range() */
 
-/**********************************
- * Strip characters from a string
- **********************************/
+
+sbool Starts_With(const char *str, const char *prefix)
+{
+    size_t lenpre = strlen(prefix),
+           lenstr = strlen(str);
+    return lenstr < lenpre ? false : strncmp(prefix, str, lenpre) == 0;
+}
+
+/**********************************/
+/* Strip characters from a string */
+/**********************************/
 
 void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
 {
-    char * newstr = malloc(strlen(string) + 1);
     int counter = 0;
 
-    for ( ; *string; string++) {
+    for ( ; *string,counter<size; string++) {
         if (!strchr(chars, *string)) {
-            newstr[ counter ] = *string;
+            str[ counter ] = *string;
             ++ counter;
         }
     }
+    if (counter >= size) {
+        counter = size - 1;
+    }
 
-    newstr[counter] = 0;
-    snprintf(str, size, "%s", newstr);
+    str[counter] = 0;
 }
 
 /***************************************************
@@ -1102,17 +1213,15 @@ sbool Is_IP (char *str)
     char *tmp = NULL;
     char *ip = NULL;
     int prefix;
-    struct in_addr addr;
+    unsigned int ipint = 0;
+    unsigned char ipbits[MAXIP] = {0};
 
-    char tmp_ip[16] = { 0 };
-
-    if(strlen(str) == strspn(str, "0123456789./")) {
+    if(strlen(str) == strspn(str, "0123456789./:")) {
 
         if(strspn(str, "./") == 0) {
-
-            Bit2IP(atol(str), tmp_ip, sizeof(tmp_ip));
-
-            if ( inet_aton(tmp_ip, &addr) == 0 ) {
+            ipint = atol(str); 
+            memcpy(ipbits, &ipint, sizeof(ipint));
+            if ( Bit2IP(ipbits, NULL, 0) == 0 ) {
                 return(false);
             }
         }
@@ -1120,11 +1229,11 @@ sbool Is_IP (char *str)
         if ( strchr(str, '/') ) {
             ip = strtok_r(str, "/", &tmp);
             prefix = atoi(strtok_r(NULL, "/", &tmp));
-            if(inet_aton(ip, &addr) == 0 || prefix < 1 || prefix > 32) {
+            if(prefix < 1 || prefix > 128 || !IP2Bit(ip, NULL)) {
                 return(false);
             }
         } else {
-            if ( inet_aton(str, &addr) == 0 ) {
+            if ( !IP2Bit(str, NULL) ) {
                 return(false);
             }
         }
@@ -1145,7 +1254,9 @@ sbool Is_IP (char *str)
  ***************************************************************************/
 
 #ifndef HAVE_SYS_MMAN_H
+#ifndef PageSupportsRWX
 #define PageSupportsRWX 1
+#endif
 #else
 #include <sys/mman.h>
 
@@ -1162,7 +1273,6 @@ int PageSupportsRWX(void)
     }
     return retval;
 }
-
 #endif /* HAVE_SYS_MMAN_H */
 
 /***************************************************************************
@@ -1228,5 +1338,21 @@ uint32_t Djb2_Hash(char *str)
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
     return(hash);
+}
+
+char *strrpbrk(const char *str, const char *accept)
+{
+    const char *test = NULL;
+    const char *pstr = str+strlen(str);
+    while (pstr >= str) {
+        test = accept;
+        while (test[0] != '\0') {
+            if ((test++)[0] == pstr[0]) {
+                return (char *)pstr;
+            }
+        }
+        pstr--;
+    }
+    return NULL;
 }
 

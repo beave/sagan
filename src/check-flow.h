@@ -22,5 +22,4 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-sbool Check_Flow( int b, int ip_proto, uint32_t ip_src_u32, int normalize_src_port, uint32_t ip_dst_u32, int normalize_dst_port);
-
+sbool Check_Flow( int b, int ip_porto, unsigned char *ip_src_bits, int normalize_src_port, unsigned char *ip_dst_bits, int normalize_dst_port);

@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <pcre.h>
 #include <time.h>
 #include <arpa/inet.h>
@@ -40,7 +41,6 @@
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
 #endif
-
 
 #ifndef HAVE_STRLCAT
 size_t strlcat(char *, const char *, size_t );
@@ -100,7 +100,7 @@ typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX
 sbool     Is_Numeric (char *);
 void      To_UpperC(char* const );
 void      To_LowerC(char* const );
-int	  Check_Endian( void );
+int	      Check_Endian( void );
 void      Usage( void );
 void      Chroot( const char * );
 void	  Remove_Return(char *);
@@ -114,23 +114,30 @@ void      Sagan_Log( int, const char *, ... );
 void      Droppriv( void );
 int       DNS_Lookup( char *, char *str, size_t size );
 void      Var_To_Value(char *, char *str, size_t size);
-uint32_t  IP2Bit (char * );
-void      Bit2IP(uint32_t, char *str, size_t size);
+sbool     IP2Bit (char *, unsigned char * );
+sbool     Mask2Bit (int, unsigned char * );
+const char *Bit2IP(unsigned char *, char *str, size_t size);
 sbool     Validate_HEX (const char *);
 void      Content_Pipe(char *, int, const char *, char *, size_t size);
-sbool     is_rfc1918 ( uint32_t );
+sbool     is_notroutable ( unsigned char * );
+sbool     is_inrange ( unsigned char *, unsigned char *, int );
 void      Replace_Sagan( char *, char *, char *str, size_t size);
 int       Character_Count ( char *, char *);
 sbool     Wildcard( char *, char *);
 void      Open_Log_File( sbool, int );
 int       Check_Var(const char *);
-void      Netaddr_To_Range( char *, char *str, size_t size );
+sbool     Netaddr_To_Range( char *, unsigned char * );
 void      Strip_Chars(const char *string, const char *chars, char *str, size_t size);
 sbool     Is_IP (char *str);
+sbool     Is_IPv6 (char *str);
 sbool     File_Lock ( int );
 sbool     File_Unlock ( int );
 sbool     Check_Content_Not( char * );
 uint32_t  Djb2_Hash( char * );
+sbool     Starts_With(const char *str, const char *prefix);
+char      *strrpbrk(const char *str, const char *accept);
+
+
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void      Set_Pipe_Size( FILE * );
@@ -140,7 +147,9 @@ void      Set_Pipe_Size( FILE * );
 #ifdef __OpenBSD__
 /* OpenBSD won't allow for this test:
  * "suricata(...): mprotect W^X violation" */
+#ifndef PageSupportsRWX()
 #define PageSupportsRWX() 0
+#endif
 #else
 #ifndef HAVE_SYS_MMAN_H
 #define PageSupportsRWX() 1
@@ -370,6 +379,8 @@ struct _Sagan_Event {
     int   dst_port;
     int   src_port;
 
+    char *selector;
+
     struct timeval event_time;
 
     int  found;
@@ -406,7 +417,7 @@ struct _Sagan_Event {
     unsigned long generatorid;
     unsigned long alertid;
 
-
+    json_object *json_normalize;
 };
 
 
@@ -414,11 +425,12 @@ struct _Sagan_Event {
 
 typedef struct thresh_by_src_ipc thresh_by_src_ipc;
 struct thresh_by_src_ipc {
-    uint32_t ipsrc;
+    unsigned char ipsrc[MAXIPBIT];
     int  count;
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 
@@ -426,11 +438,12 @@ struct thresh_by_src_ipc {
 
 typedef struct thresh_by_dst_ipc thresh_by_dst_ipc;
 struct thresh_by_dst_ipc {
-    uint32_t ipdst;
+    unsigned char ipdst[MAXIPBIT];
     int  count;
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 
@@ -443,6 +456,7 @@ struct thresh_by_srcport_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* Thresholding structure by destination port */
@@ -454,6 +468,7 @@ struct thresh_by_dstport_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 
@@ -466,30 +481,33 @@ struct thresh_by_username_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* After structure by source */
 
 typedef struct after_by_src_ipc after_by_src_ipc;
 struct after_by_src_ipc {
-    uint32_t ipsrc;
+    unsigned char ipsrc[MAXIPBIT];
     uintmax_t count;
     uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* After structure by destination */
 
 typedef struct after_by_dst_ipc after_by_dst_ipc;
 struct after_by_dst_ipc {
-    uint32_t ipdst;
+    unsigned char ipdst[MAXIPBIT];
     int  count;
     uintmax_t total_count;
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* After structure by source port */
@@ -502,6 +520,7 @@ struct after_by_srcport_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* After structure by destination port */
@@ -514,6 +533,7 @@ struct after_by_dstport_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 /* After structure by username */
@@ -526,6 +546,7 @@ struct after_by_username_ipc {
     uintmax_t utime;
     char sid[20];
     int expire;
+    char selector[MAXSELECTOR]; 
 };
 
 typedef struct _SaganVar _SaganVar;
@@ -533,11 +554,6 @@ struct _SaganVar {
     char var_name[MAX_VAR_NAME_SIZE];
     char var_value[MAX_VAR_VALUE_SIZE];
 };
-
-typedef struct network_addr {
-    in_addr_t addr;
-    int pfx;
-} network_addr_t;
 
 typedef struct _Sagan_Processor_Info _Sagan_Processor_Info;
 struct _Sagan_Processor_Info {
@@ -550,6 +566,15 @@ struct _Sagan_Processor_Info {
     char *processor_tag;
     char *processor_rev;
     int   processor_generator_id;
+};
+
+/* IP Lookup cache */
+
+typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Entry;
+struct _Sagan_Lookup_Cache_Entry {
+    sbool searched;
+    ptrdiff_t offset;
+    char ip[MAXIP];
 };
 
 

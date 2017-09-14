@@ -123,7 +123,7 @@ void Load_YAML_Config( char *yaml_file )
 
     char tmp[CONFBUF] = { 0 };
 
-    char last_pass[128];
+    char last_pass[128] = { 0 };
 
     int a;
 
@@ -162,11 +162,17 @@ void Load_YAML_Config( char *yaml_file )
         config->sagan_proto = 17;           /* Default to UDP */
         config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
+		config->eve_fd              = -1;
+		config->sagan_alert_fd      = -1;
+		config->sagan_fast_fd       = -1;
+		config->sagan_log_fd        = -1;
+		config->perfmonitor_file_fd = -1;
+
         /* Copy default FIFO */
 
-        config->sagan_fifo[0] = '\0';
-
         if ( config->sagan_is_file == false ) {
+            config->sagan_fifo[0] = '\0';
+
             strlcpy(config->sagan_fifo, FIFO, sizeof(config->sagan_fifo));
         }
 
@@ -444,6 +450,10 @@ void Load_YAML_Config( char *yaml_file )
 
                 if (!strcmp(value, "core")) {
                     sub_type = YAML_SAGAN_CORE_CORE;
+                }
+
+                else if (!strcmp(value, "selector" )) {
+                    sub_type = YAML_SAGAN_CORE_SELECTOR;
                 }
 
                 else if (!strcmp(value, "redis-server" )) {
@@ -940,6 +950,30 @@ void Load_YAML_Config( char *yaml_file )
                     }
                 }
 #endif
+                if ( sub_type == YAML_SAGAN_CORE_SELECTOR ) {
+
+                    if (!strcmp(last_pass, "enabled")) {
+
+                        if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") ) {
+
+                            config->selector_flag = true;
+
+                        }
+                    }
+
+                    if ( config->selector_flag == true ) {
+
+                        if (!strcmp(last_pass, "name")) {
+
+                            Var_To_Value(value, tmp, sizeof(tmp));
+                            strlcpy(config->selector_name, tmp, sizeof(config->selector_name));
+
+                        }
+                    }
+
+                } /* if sub_type == YAML_SAGAN_CORE_SELECTOR */
+
+
             } /*  else if ( type == YAML_TYPE_SAGAN_CORE ) */
 
             else if ( type == YAML_TYPE_PROCESSORS ) {

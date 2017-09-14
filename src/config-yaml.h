@@ -55,6 +55,7 @@
 #define 	YAML_SAGAN_CORE_LIBLOGNORM	5
 #define		YAML_SAGAN_CORE_PLOG		6
 #define		YAML_SAGAN_CORE_REDIS		7
+#define		YAML_SAGAN_CORE_SELECTOR    8
 
 /* Processors */
 

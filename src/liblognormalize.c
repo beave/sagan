@@ -102,13 +102,14 @@ void Liblognorm_Load(char *infile)
  * Locates interesting log data via Rainer's liblognorm library
  ***********************************************************************/
 
-void Normalize_Liblognorm(char *syslog_msg)
+json_object *Normalize_Liblognorm(char *syslog_msg)
 {
 
     char buf[10*1024] = { 0 };
     char tmp_host[254] = { 0 };
 
     int rc = 0;
+    int rc_normalize = 0;
 
     const char *cstr = NULL;
     const char *tmp = NULL;
@@ -121,6 +122,8 @@ void Normalize_Liblognorm(char *syslog_msg)
     SaganNormalizeLiblognorm->ip_src[1] = '\0';
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
     SaganNormalizeLiblognorm->ip_dst[1] = '\0';
+
+    SaganNormalizeLiblognorm->selector[0] = '\0';
 
     SaganNormalizeLiblognorm->username[0] = '\0';
     SaganNormalizeLiblognorm->src_host[0] = '\0';
@@ -139,7 +142,10 @@ void Normalize_Liblognorm(char *syslog_msg)
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
     /* int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p); */
-    ln_normalize(ctx, buf, strlen(buf), &json);
+    rc_normalize = ln_normalize(ctx, buf, strlen(buf), &json);
+    if (NULL == json) {
+        return NULL;
+    }
 
     cstr = (char*)json_object_to_json_string(json);
 
@@ -157,6 +163,17 @@ void Normalize_Liblognorm(char *syslog_msg)
 
     if ( tmp != NULL ) {
         snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
+    }
+
+    /* Used for tracking in multi-tenant environment */
+
+    if (config->selector_flag) {
+        json_object_object_get_ex(json, config->selector_name[0] != '\0' ? config->selector_name : "selector", &string_obj);
+        tmp = json_object_get_string(string_obj);
+
+        if ( tmp != NULL ) {
+            snprintf(SaganNormalizeLiblognorm->selector, sizeof(SaganNormalizeLiblognorm->selector), "%s", tmp);
+        }
     }
 
     /* Get username information - Will be used in the future */
@@ -177,14 +194,12 @@ void Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL ) {
         strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
 
-        if ( SaganNormalizeLiblognorm->ip_src[0] == '0' ) {
+        if ( SaganNormalizeLiblognorm->ip_src[0] == '0' && config->syslog_src_lookup) {
 
-            rc = DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host));
-
-            if ( rc == -1 ) {
-                Sagan_Log(S_WARN, "Failed to do a DNS lookup for source '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->src_host, config->sagan_host);
-                strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host));
+            if (0 == DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host))) {
+                strlcpy(SaganNormalizeLiblognorm->ip_src, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_src));
             }
+
         }
 
     }
@@ -195,13 +210,10 @@ void Normalize_Liblognorm(char *syslog_msg)
     if ( tmp != NULL ) {
         strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
 
-        if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' ) {
+        if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' && config->syslog_src_lookup) {
 
-            rc = DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host));
-
-            if ( rc == -1 ) {
-                Sagan_Log(S_WARN, "Failed to do a DNS lookup for destination '%s'. Using '%s' instead.", SaganNormalizeLiblognorm->dst_host, config->sagan_host);
-                strlcpy(SaganNormalizeLiblognorm->src_host, config->sagan_host, sizeof(SaganNormalizeLiblognorm->src_host));
+            if (0 == DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host))) {
+                strlcpy(SaganNormalizeLiblognorm->ip_dst, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
             }
         }
     }
@@ -268,10 +280,11 @@ void Normalize_Liblognorm(char *syslog_msg)
     }
 
     if ( debug->debugnormalize ) {
-        Sagan_Log(S_DEBUG, "Liblognorm DEBUG output:");
+        Sagan_Log(S_DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
         Sagan_Log(S_DEBUG, "---------------------------------------------------");
         Sagan_Log(S_DEBUG, "Log message to normalize: |%s|", syslog_msg);
         Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
+        Sagan_Log(S_DEBUG, "Slector: %s", SaganNormalizeLiblognorm->selector);
         Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
         Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
         Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
@@ -290,7 +303,11 @@ void Normalize_Liblognorm(char *syslog_msg)
     }
 
 
-    json_object_put(json);
+    if (0 != rc_normalize && json) {
+        json_object_put(json);
+        json = NULL;
+    }
+    return json;
 }
 
 #endif

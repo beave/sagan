@@ -110,8 +110,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
         gettimeofday(&tp, 0);
 
         /* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
-
         Send_Alert(SaganProcSyslog_LOCAL,
+                   NULL,
                    processor_info_engine,
                    ip_src,
                    ip_dst,
@@ -157,6 +157,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
         gettimeofday(&tp, 0);
 
         Send_Alert(SaganProcSyslog_LOCAL,
+                   NULL,
                    processor_info_engine,
                    ip_src,
                    ip_dst,

@@ -196,7 +196,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
     }
 
 
-    snprintf(str, size, reply->str);
+    strlcpy(str, reply->str, size);
     freeReplyObject(reply);
 
 }

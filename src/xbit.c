@@ -48,44 +48,44 @@
 
 struct _SaganConfig *config;
 
-sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
 #ifdef HAVE_LIBHIREDIS
 
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS ) {
 
-        return(Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port));
+        return(Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
     }
 
 #endif
 
-    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port));
+    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
 
 }
 
 
-sbool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char )
+sbool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
 {
 
-    return(Xbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char ));
+    return(Xbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char, selector ));
 
 }
 
-void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
 #ifdef HAVE_LIBHIREDIS
 
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS ) {
 
-        Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port );
+        Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector );
         return;
     }
 
 #endif
 
-    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port );
+    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector );
 
 }
 
