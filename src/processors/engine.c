@@ -648,10 +648,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( rulestruct[b].s_find_src_ip == 1 )
                                                 {
                                                     check_pos = rulestruct[b].s_find_src_pos - 1;
+
                                                     // Cache the parsing to avoid doing this for every rule
+
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
                                                             strlcpy(ip_src, lookup_cache[check_pos].ip, sizeof(ip_src));
+
                                                             // This case handles if we already found the previous index
                                                         }
                                                     else
@@ -661,10 +664,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                      ip_src,
                                                                      sizeof(ip_src),
                                                                      lookup_cache,
+
                                                                      MAX_PARSE_IP);
+
+							/* If Parse_IP is successful,  we set the flag */
+
+							if ( ip_src[0] != '\0' ) {
+								ip_src_flag = true;
+							}
+
+
                                                         }
 
-                                                    ip_src_flag = 1;
                                                 }
 
                                             /* parse_dst_ip: {postion} */
@@ -672,10 +683,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( rulestruct[b].s_find_dst_ip == 1 )
                                                 {
                                                     check_pos = rulestruct[b].s_find_dst_pos - 1;
+
                                                     // Cache the parsing to avoid doing this for every rule
+
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
                                                             strlcpy(ip_dst, lookup_cache[check_pos].ip, sizeof(ip_dst));
+
                                                             // This case handles if we already found the previous index
                                                         }
                                                     else
@@ -688,7 +702,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                      MAX_PARSE_IP);
                                                         }
 
-                                                    ip_dst_flag = 1;
+							/* If Parse_IP is successful,  we set the flag */
+
+                                                        if ( ip_dst[0] != '\0' ) {
+                                                                ip_dst_flag = true;
+                                                        }
+
                                                 }
 
                                             /* parse_port */
@@ -697,6 +716,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
                                                     normalize_src_port = Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
                                                     normalize_dst_port = Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
+
                                                 }
 
                                             /* parse_hash: md5 */
