@@ -1,10 +1,10 @@
 CC = gcc
 PROGRAM = sagan-peek
-PROGRAM_FILES = sagan-peek.c ../src/util-time.c ../src/util.c ../src/parsers/strstr-asm/strstr-hook.c ../src/lockfile.c
+PROGRAM_FILES = sagan-peek.c ../src/util-time.c ../src/util.c ../src/parsers/strstr-asm/strstr-hook.c ../src/lockfile.c ../src/util-strlcpy.c ../src/util-strlcat.c
 
-CFLAGS	+= -I../src -g -D_GNU_SOURCE=1 `pkg-config --cflags libfastjson libbsd`
+CFLAGS	+= -I../src -g -D_GNU_SOURCE=1
 LDFLAGS	+= -g   
-LIBS 	+= -lrt `pkg-config --libs libfastjson libbsd`
+LIBS 	+= 
 
 all: $(PROGRAM)
 
