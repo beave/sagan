@@ -494,7 +494,7 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                            printf("%-9s| %-10s| %-25s| %-45s| %-45s| %-8d| %8d| %-21s| %d",
+                            printf("%-9s| %-10s| %-25s| %-45s| %-45s| %-8d| %8d| %-21s| %d\n",
                                    1 == xbit_ipc[i].xbit_state ? "ACTIVE" : "INACTIVE",
                                    xbit_ipc[i].selector,
                                    xbit_ipc[i].xbit_name,
