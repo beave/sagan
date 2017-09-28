@@ -938,6 +938,7 @@ int main(int argc, char **argv)
                 }
 
             strlcpy(redis_command, "PING", sizeof(redis_command));
+
             Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
 
             if (!strcmp(redis_reply, "PONG"))

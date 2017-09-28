@@ -546,6 +546,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     ip_src_flag = 0;
                                     ip_dst_flag = 0;
+		
+				    normalize_src_port = 0; 	
+				    normalize_dst_port = 0;
 
 #ifdef HAVE_LIBLOGNORM
                                     if ( 0 == liblognorm_status && rulestruct[b].normalize == 1 )

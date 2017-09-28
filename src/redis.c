@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* redis.c - Threads to write/read from redis databases */
+/* redis.c - Function that access/write to Redis database */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -31,7 +31,6 @@
 #include <string.h>
 #include <errno.h>
 #include <hiredis/hiredis.h>
-
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -54,6 +53,10 @@ pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Redis *SaganRedis = NULL;
 
+/*****************************************************************************
+ * Redis_Writer_Init - Redis "writer" threads initialization.
+ *****************************************************************************/
+
 void Redis_Writer_Init ( void )
 {
 
@@ -61,6 +64,9 @@ void Redis_Writer_Init ( void )
 
 }
 
+/*****************************************************************************
+ * Redis_Reader_Connect - Connectin for "read" operations
+ *****************************************************************************/
 
 void Redis_Reader_Connect ( void )
 {
@@ -86,6 +92,11 @@ void Redis_Reader_Connect ( void )
         }
 
 }
+
+/*****************************************************************************
+ * Redis_Writer - Threads that "write" to Redis.  We spawn up several to
+ * avoid blocking.  Writer accepts "stacked" commands seperated by ;
+ *****************************************************************************/
 
 void Redis_Writer ( void )
 {
@@ -149,6 +160,8 @@ void Redis_Writer ( void )
                 }
         }
 
+    /* Redis "threaded" operations */
+
     for (;;)
         {
 
@@ -198,6 +211,11 @@ void Redis_Writer ( void )
 
 }
 
+/*****************************************************************************
+ * Redis_Reader - This is _not_ a threaded operation and can't be :( This
+ * function only returns _one_ result (not an array), even if they query
+ * returns more than one result.
+ *****************************************************************************/
 
 void Redis_Reader ( char *redis_command, char *str, size_t size )
 {
@@ -206,7 +224,6 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
 
     pthread_mutex_lock(&RedisReaderMutex);
     reply = redisCommand(config->c_reader_redis, redis_command);
-    pthread_mutex_unlock(&RedisReaderMutex);
 
     if ( debug->debugredis )
         {
@@ -214,8 +231,31 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
         }
 
+    if ( reply->elements == 0 )
+        {
 
-    strlcpy(str, reply->str, size);
+            /* strlcpy doesn't like to pass str as a \0.  This
+               "works" around that issue (causes segfault otherwise) */
+
+            if ( reply->str != '\0' )
+                {
+                    strlcpy(str, reply->str, size);
+                }
+            else
+                {
+                    strlcpy(str, " ", size);
+                }
+
+        }
+    else
+        {
+
+            strlcpy(str, reply->element[0]->str, size);
+
+        }
+
+
+    pthread_mutex_unlock(&RedisReaderMutex);
     freeReplyObject(reply);
 
 }
