@@ -111,7 +111,6 @@ json_object *Normalize_Liblognorm(char *syslog_msg)
     char buf[10*1024] = { 0 };
     char tmp_host[254] = { 0 };
 
-    int rc = 0;
     int rc_normalize = 0;
 
     const char *cstr = NULL;

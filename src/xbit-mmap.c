@@ -933,7 +933,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src_char, char *ip_dst_char, 
     unsigned char ip_dst[MAXIPBIT] = {0};
 
     sbool has_ip_src = IP2Bit(ip_src_char, ip_src);
-    sbool has_ip_dst = IP2Bit(ip_dst_char, ip_dst);
+    //sbool has_ip_dst = IP2Bit(ip_dst_char, ip_dst);
 
     for (i = 0; i < rulestruct[rule_position].xbit_count_count; i++)
         {

@@ -67,7 +67,7 @@ struct _Sagan_Redis *SaganRedis;
  ready.  This is to test the functionality of using Redis as a
  backend to store "xbits" (making them "global" xbits).
 
- /* store what "Set" an xbit in redis?
+ store what "Set" an xbit in redis?
 
  ****************************************************************/
 

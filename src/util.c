@@ -565,7 +565,7 @@ sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
 
 sbool is_notroutable ( unsigned char *ip )
 {
-    sbool notroutable = false;
+
     // Start of subnet followd by mask
     static unsigned char tests[][32] =
     {
@@ -1058,7 +1058,6 @@ void Open_Log_File( sbool state, int type )
 {
 
     struct passwd *pw = NULL;
-    int ret;
 
     pw = getpwnam(config->sagan_runas);
 
@@ -1276,7 +1275,7 @@ sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
     int mask;
     char *t = NULL;
     char _t = '\0';
-    char *ip = ipstr;
+    //char *ip = ipstr;
     int maxmask = NULL != strchr(ipstr, ':') ? 128 : 32;
 
 

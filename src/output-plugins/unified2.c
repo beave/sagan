@@ -756,7 +756,7 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
         case EVENT_INFO_HTTP_HOSTNAME:
 
             buffer = (uint8_t*)Event->normalize_http_hostname;
-            len = strlen(buffer);
+            len = strlen((const char *)buffer);
             break;
 
         default:

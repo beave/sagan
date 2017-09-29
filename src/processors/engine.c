@@ -126,7 +126,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int threadid = 0;
 
-    int i = 0;
+    //int i = 0;
     int b = 0;
     int z = 0;
 
@@ -169,7 +169,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int check_pos = 0;
     struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { 0 };
 
-    char ip_parse_cache[MAX_PARSE_IP][MAXIP] = {0};
+//    char ip_parse_cache[MAX_PARSE_IP][MAXIP] = { 0 };
     ptrdiff_t ip_parse_cache_used[MAX_PARSE_IP];
 
     char ip_src[MAXIP];
@@ -546,9 +546,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     ip_src_flag = 0;
                                     ip_dst_flag = 0;
-		
-				    normalize_src_port = 0; 	
-				    normalize_dst_port = 0;
+
+                                    normalize_src_port = 0;
+                                    normalize_dst_port = 0;
 
 #ifdef HAVE_LIBLOGNORM
                                     if ( 0 == liblognorm_status && rulestruct[b].normalize == 1 )
@@ -670,11 +670,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                      MAX_PARSE_IP);
 
-							/* If Parse_IP is successful,  we set the flag */
+                                                            /* If Parse_IP is successful,  we set the flag */
 
-							if ( ip_src[0] != '\0' ) {
-								ip_src_flag = true;
-							}
+                                                            if ( ip_src[0] != '\0' )
+                                                                {
+                                                                    ip_src_flag = true;
+                                                                }
 
 
                                                         }
@@ -705,10 +706,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                      MAX_PARSE_IP);
                                                         }
 
-							/* If Parse_IP is successful,  we set the flag */
+                                                    /* If Parse_IP is successful,  we set the flag */
 
-                                                        if ( ip_dst[0] != '\0' ) {
-                                                                ip_dst_flag = true;
+                                                    if ( ip_dst[0] != '\0' )
+                                                        {
+                                                            ip_dst_flag = true;
                                                         }
 
                                                 }

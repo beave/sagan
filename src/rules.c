@@ -120,7 +120,6 @@ void Load_Rules( const char *ruleset )
     char *saveptrrule2;
     char *saveptrrule3=NULL;
     char *saveptrflow;
-    char *saveptrrange;
     char *saveptrport;
     char *saveptrportrange;
     char *tmptoken;
@@ -153,7 +152,6 @@ void Load_Rules( const char *ruleset )
 
     char flow_a[128];
     char flow_b[128];
-    char flow_range[256];
 
     char alert_time_tmp[10];
     char alert_tmp_minute[3];

@@ -207,9 +207,7 @@ int main(int argc, char **argv)
     pthread_attr_init(&ct_report_thread_attr);
     pthread_attr_setdetachstate(&ct_report_thread_attr,  PTHREAD_CREATE_DETACHED);
 
-
-    struct sockaddr_in sa;
-    char src_dns_lookup[20];
+    char src_dns_lookup[20] = { 0 };
 
     sbool dns_flag = false;
     sbool fifoerr = false;

@@ -279,7 +279,6 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
 {
 
     int i;
-    int j;
     int b;
 
     unsigned char ip[MAXIPBIT] = { 0 };

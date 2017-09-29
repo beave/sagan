@@ -668,7 +668,6 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
 {
 
     int i;
-    int j;
     int b;
 
     unsigned char ip[MAXIPBIT] = {0};
