@@ -1475,7 +1475,7 @@ sbool Check_Content_Not( char *s )
  * Djd2_Hash - creates a hash based off a string.  This code is from Dan
  * Bernstein.  See http://www.cse.yorku.ca/~oz/hash.html.
  ***************************************************************************/
-
+/*
 uint32_t Djb2_Hash(char *str)
 {
 
@@ -1483,10 +1483,11 @@ uint32_t Djb2_Hash(char *str)
     int32_t c;
 
     while ( (c = *str++ ) )
-        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+        hash = ((hash << 5) + hash) + c;
 
     return(hash);
 }
+*/
 
 char *strrpbrk(const char *str, const char *accept)
 {
@@ -1507,3 +1508,36 @@ char *strrpbrk(const char *str, const char *accept)
     return NULL;
 }
 
+/***************************************************************************
+ * Escape_Chars - Escapes characters.  For example, " becomes \".  This
+ * might be expanded on
+ ***************************************************************************/
+
+void Escape_Chars( char *str_in, char *str, size_t size)
+{
+
+    int i;
+    char log_orig[size];
+    char alter_log[size*2];
+
+    char tmp[2] = { 0 };
+
+    strlcpy(log_orig, str_in, sizeof(log_orig));
+
+    for ( i = 0; i < strlen(log_orig); i++ )
+        {
+
+            if ( log_orig[i] == '\"' )
+                {
+                    strlcat(alter_log, "\\\"", sizeof(alter_log));
+                }
+            else
+                {
+                    snprintf(tmp, sizeof(tmp), "%c", log_orig[i]);
+                    strlcat(alter_log, tmp, sizeof(alter_log));
+                }
+        }
+
+    snprintf(str, size, "%s", alter_log);
+
+}

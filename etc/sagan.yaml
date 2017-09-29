@@ -135,26 +135,30 @@ sagan-core:
     source-lookup: disabled		
     fifo-size: 1048576		# System must support F_GETPIPE_SZ/F_SETPIPE_SZ. 
     max-threads: 100
-    xbit-storage: mmap		# xbit storage engine. ("mmap" or "redis")
     classification: "$RULE_PATH/classification.config"
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    xbit-storage: mmap
+    xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
-  # Experimental Code!!!
-  #
-  # This is a work in progress! 
-  #
-  # Redis configuration.  Redis can be used to act as a global storage 
-  # engine for things like xbits. 
+  # The "selector" adds "multi-tenancy" into Sagan.  Using the "selector" allows Sagan to 
+  # track IP source, IP destinations, etc. in order to ensure overlapping logs from different
+  # environments are tracked separately. 
+
+  selector:
+    enabled: no
+    name: "selector name"        # Log entry must be normalized and this value must 
+                                 # be present in the normalized result
+
+  # Redis configuration.  Redis can be used to act as a global storage engine for data
+  # like xbits.
 
   redis-server:
 
     enabled: no
     server: 127.0.0.1
     port: 6379
-    password: "mypassword"  # Comment out to disable authentication.
+    #password: "mypassword"  # Comment out to disable authentication.
     writer_threads: 10
 
 
@@ -573,13 +577,13 @@ rules-files:
   - $RULE_PATH/apache.rules
   - $RULE_PATH/apc-emu.rules
   - $RULE_PATH/arp.rules
-  - $RULE_PATH/artillery.rules
+  #- $RULE_PATH/artillery.rules
   - $RULE_PATH/asterisk.rules
   - $RULE_PATH/attack.rules
   - $RULE_PATH/barracuda.rules
   - $RULE_PATH/bash.rules
   - $RULE_PATH/bind.rules
-  - $RULE_PATH/bit9.rules
+  - $RULE_PATH/carbonblack.rules
   - $RULE_PATH/bonding.rules
   - $RULE_PATH/bro-ids.rules
   - $RULE_PATH/cacti-thold.rules
@@ -595,7 +599,7 @@ rules-files:
   - $RULE_PATH/courier.rules
   - $RULE_PATH/cylance.rules
   #- $RULE_PATH/deleted.rules
-  - $RULE_PATH/digitalpersona.rules
+  #- $RULE_PATH/digitalpersona.rules
   - $RULE_PATH/dovecot.rules
   - $RULE_PATH/f5-big-ip.rules
   - $RULE_PATH/fatpipe.rules
@@ -604,13 +608,13 @@ rules-files:
   - $RULE_PATH/ftpd.rules
   - $RULE_PATH/grsec.rules
   - $RULE_PATH/honeyd.rules
-  - $RULE_PATH/hordeimp.rules
-  - $RULE_PATH/hostapd.rules
+  #- $RULE_PATH/hordeimp.rules
+  #- $RULE_PATH/hostapd.rules
   - $RULE_PATH/huawei.rules
   - $RULE_PATH/imapd.rules
   - $RULE_PATH/ipop3d.rules
   - $RULE_PATH/juniper.rules
-  - $RULE_PATH/kismet.rules
+  #- $RULE_PATH/kismet.rules
   - $RULE_PATH/knockd.rules
   - $RULE_PATH/linux-kernel.rules
   - $RULE_PATH/milter.rules
@@ -656,7 +660,7 @@ rules-files:
   - $RULE_PATH/vpopmail.rules
   - $RULE_PATH/vsftpd.rules
   - $RULE_PATH/web-attack.rules
-  - $RULE_PATH/weblabrinth.rules
+  #- $RULE_PATH/weblabrinth.rules
   - $RULE_PATH/windows-applocker.rules
   - $RULE_PATH/windows-auth.rules
   - $RULE_PATH/windows-emet.rules

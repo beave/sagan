@@ -601,4 +601,5 @@ struct _Sagan_Lookup_Cache_Entry
 /* Function that require the above arrays */
 
 int64_t   FlowGetId( _Sagan_Event *);
+void 	  Escape_Chars( char *str_in, char *str, size_t size);
 

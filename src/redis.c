@@ -108,7 +108,7 @@ void Redis_Writer ( void )
 
     char *tok = NULL;
     char *split_redis_command = NULL;
-    char tmp_redis_command[2048] = { 0 };
+    char tmp_redis_command[16384] = { 0 };
 
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     c_writer_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);

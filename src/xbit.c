@@ -73,7 +73,7 @@ sbool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char 
 
 }
 
-void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
 #ifdef HAVE_LIBHIREDIS
@@ -81,7 +81,7 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_p
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
 
-            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector );
+            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL );
             return;
         }
 

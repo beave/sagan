@@ -1299,7 +1299,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                                                                     if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
                                                                                                                                         {
-                                                                                                                                            Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port, pnormalize_selector);
+                                                                                                                                            Xbit_Set(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port, pnormalize_selector, SaganProcSyslog_LOCAL);
                                                                                                                                         }
 
                                                                                                                                     threadid++;

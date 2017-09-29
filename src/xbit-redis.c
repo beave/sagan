@@ -90,9 +90,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     redisReply *reply;
 
-    char redis_tmp[256] = { 0 };
-
-    char redis_command[256] = { 0 };
+    char redis_command[1024] = { 0 };
     char redis_reply[32] = { 0 };
 
     char tmp[128];
@@ -406,7 +404,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
  * Xbit_Set_Redis - This will "set" and "unset" xbits in Redis
  *****************************************************************************/
 
-void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     time_t t;
@@ -422,8 +420,10 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     redisReply *reply;
     redisReply *reply_2;
 
-    char redis_tmp[256] = { 0 };
-    char redis_command[256] = { 0 };
+    char redis_command[16384] = { 0 };
+
+    char fullsyslog_orig[400 + MAX_SYSLOGMSG] = { 0 };
+    char altered_syslog[ (400*2) + (MAX_SYSLOGMSG*2)] = { 0 };
 
     t = time(NULL);
     now=localtime(&t);
@@ -436,13 +436,34 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     uint32_t utime = atoi(timet);
     uint32_t utime_plus_timeout;
 
+    char notnull_selector[MAXSELECTOR] = { 0 };
 
     if ( debug->debugredis )
         {
             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
         }
 
-    char notnull_selector[MAXSELECTOR] = { 0 };
+    snprintf(fullsyslog_orig, sizeof(fullsyslog_orig), "%s|%s|%s|%s|%s|%s|%s|%s|%s",
+             SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_facility,
+             SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level,
+             SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog_LOCAL->syslog_date,
+             SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog_LOCAL->syslog_program,
+             SaganProcSyslog_LOCAL->syslog_message );
+
+    for ( i = 0; i < strlen(fullsyslog_orig); i++ )
+        {
+
+            if ( fullsyslog_orig[i] == ' ' )
+                {
+                    strlcat(altered_syslog, "_", sizeof(altered_syslog));
+                }
+            else
+                {
+                    snprintf(tmp, sizeof(tmp), "%c", fullsyslog_orig[i]);
+                    strlcat(altered_syslog, tmp, sizeof(altered_syslog));
+                }
+        }
+
 
     /* If "selector" is in use, make it ready for redis */
 
@@ -471,17 +492,19 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                                     /* First, clean up */
 
-                                    Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector);
+                                    Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                     utime_plus_timeout = utime + rulestruct[rule_position].xbit_timeout[i];
 
                                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                              "ZADD %s%s:by_src %lu %s;"
                                              "ZADD %s%s:by_dst %lu %s;"
-                                             "ZADD %s%s:both %lu %s:%s",
+                                             "ZADD %s%s:both %lu %s:%s;"
+                                             "ZADD %s%s:%s:%s:set_log %lu %s",
                                              notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_src_char,
                                              notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_dst_char,
-                                             notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_src_char, ip_dst_char );
+                                             notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_src_char, ip_dst_char,
+                                             notnull_selector, tmp_xbit_name, ip_src_char, ip_dst_char, utime_plus_timeout, altered_syslog );
 
                                     redis_msgslot++;
 
@@ -537,15 +560,17 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector);
+                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
                                                      "ZREM %s%s:by_src %s;"
                                                      "ZREM %s%s:by_dst %s;"
-                                                     "ZREM %s%s:both %s:%s",
+                                                     "ZREM %s%s:both %s:%s"
+                                                     "ZREM %s%s:%s:%s:set_log",
                                                      notnull_selector, tmp_xbit_name, ip_src_char,
                                                      notnull_selector, tmp_xbit_name, ip_dst_char,
+                                                     notnull_selector, tmp_xbit_name, ip_src_char, ip_dst_char,
                                                      notnull_selector, tmp_xbit_name, ip_src_char, ip_dst_char );
 
 
@@ -574,7 +599,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector);
+                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                                      "ZREM %s%s:by_src %s",
@@ -610,7 +635,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector);
+                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                                      "ZREM %s%s:by_dst %s",
@@ -649,7 +674,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
  *****************************************************************************/
 
 
-void Xbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector )
+void Xbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector, char *ip_src_char, char *ip_dst_char )
 {
 
     if ( redis_msgslot < config->redis_max_writer_threads )
@@ -659,10 +684,12 @@ void Xbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector
             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                      "ZREMRANGEBYSCORE %s%s:by_src -inf %lu;"
                      "ZREMRANGEBYSCORE %s%s:by_dst -inf %lu;"
-                     "ZREMRANGEBYSCORE %s%s:both -inf %lu",
+                     "ZREMRANGEBYSCORE %s%s:both -inf %lu;"
+                     "ZREMRANGEBYSCORE %s%s:%s:%s:set_log -inf %lu",
                      notnull_selector, xbit_name, utime,
                      notnull_selector, xbit_name, utime,
-                     notnull_selector, xbit_name, utime );
+                     notnull_selector, xbit_name, utime,
+                     notnull_selector, xbit_name, ip_src_char, ip_dst_char, utime );
 
             redis_msgslot++;
 
