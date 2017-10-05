@@ -101,12 +101,6 @@ pthread_mutex_t CounterLoadConfigGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 void Load_YAML_Config( char *yaml_file )
 {
 
-    typedef struct _Includes _Includes;
-    struct _Includes
-    {
-        char include_file[MAXPATH];
-    };
-
     struct stat filecheck;
 
     yaml_parser_t parser;

@@ -126,7 +126,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int threadid = 0;
 
-    //int i = 0;
     int b = 0;
     int z = 0;
 
@@ -169,17 +168,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int check_pos = 0;
     struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { 0 };
 
-//    char ip_parse_cache[MAX_PARSE_IP][MAXIP] = { 0 };
     ptrdiff_t ip_parse_cache_used[MAX_PARSE_IP];
 
     char ip_src[MAXIP];
-    sbool ip_src_flag = 0;
+    sbool ip_src_flag = false;
 
     uint32_t ip_srcport_u32;
     unsigned char ip_src_bits[MAXIPBIT] = { 0 };
 
     char ip_dst[MAXIP];
-    sbool ip_dst_flag = 0;
+    sbool ip_dst_flag = false;
 
     uint32_t ip_dstport_u32 = 0;
     unsigned char ip_dst_bits[MAXIPBIT] = { 0 };
@@ -544,8 +542,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                             if ( match == false )
                                 {
 
-                                    ip_src_flag = 0;
-                                    ip_dst_flag = 0;
+                                    ip_src_flag = false;
+                                    ip_dst_flag = false;
 
                                     normalize_src_port = 0;
                                     normalize_dst_port = 0;
@@ -563,7 +561,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if (SaganNormalizeLiblognorm->ip_src[0] != '0')
                                                 {
                                                     strlcpy(ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(ip_src));
-                                                    ip_src_flag = 1;
+                                                    ip_src_flag = true;
                                                     liblognorm_status = 1;
                                                 }
 
@@ -571,7 +569,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if (SaganNormalizeLiblognorm->ip_dst[0] != '0' )
                                                 {
                                                     strlcpy(ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(ip_dst));
-                                                    ip_dst_flag = 1;
+                                                    ip_dst_flag = true;
                                                     liblognorm_status = 1;
                                                 }
 
@@ -769,12 +767,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                                        use */
 
-                                    if ( ip_src_flag == 0 || ip_src[0] == '0' )
+                                    if ( ip_src_flag == false )
                                         {
                                             strlcpy(ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_src));
                                         }
 
-                                    if ( ip_dst_flag == 0 || ip_dst[0] == '0' )
+                                    if ( ip_dst_flag == false )
                                         {
                                             strlcpy(ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(ip_dst));
                                         }
@@ -814,8 +812,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             strlcpy(ip_dst, config->sagan_host, sizeof(ip_dst));
                                         }
 
-                                    ip_src_flag = ip_src[0] != '\0' && IP2Bit(ip_src, ip_src_bits);
-                                    ip_dst_flag = ip_dst[0] != '\0' && IP2Bit(ip_dst, ip_dst_bits);
+				    ip_src_flag && IP2Bit(ip_src, ip_src_bits);
+				    ip_dst_flag && IP2Bit(ip_dst, ip_dst_bits);
 
                                     ip_dstport_u32 = normalize_dst_port;
                                     ip_srcport_u32 = normalize_src_port;
