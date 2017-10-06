@@ -655,6 +655,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
                                                             strlcpy(ip_src, lookup_cache[check_pos].ip, sizeof(ip_src));
+							    ip_src_flag = true;
 
                                                             // This case handles if we already found the previous index
                                                         }
@@ -691,6 +692,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
                                                             strlcpy(ip_dst, lookup_cache[check_pos].ip, sizeof(ip_dst));
+							    ip_dst_flag = true;
 
                                                             // This case handles if we already found the previous index
                                                         }
