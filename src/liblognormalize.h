@@ -71,4 +71,4 @@ typedef struct _SaganNormalizeLiblognorm
 
 
 void Liblognorm_Load( char * );
-json_object *Normalize_Liblognorm( char * );
+json_object *Normalize_Liblognorm(char *, struct _SaganNormalizeLiblognorm *);

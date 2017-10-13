@@ -105,7 +105,7 @@ void Liblognorm_Load(char *infile)
  * Locates interesting log data via Rainer's liblognorm library
  ***********************************************************************/
 
-json_object *Normalize_Liblognorm(char *syslog_msg)
+json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm)
 {
 
     char buf[10*1024] = { 0 };
