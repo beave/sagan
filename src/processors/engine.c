@@ -130,7 +130,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int z = 0;
 
     sbool match = false;
-    int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
+    int sagan_match = 0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
 
     int rc = 0;
     int ovector[PCRE_OVECCOUNT];
@@ -167,6 +167,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int check_pos = 0;
     struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { 0 };
+
+    ptrdiff_t ip_parse_cache_used[MAX_PARSE_IP];
 
     char ip_src[MAXIP];
     sbool ip_src_flag = false;
@@ -207,6 +209,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     sbool bluedot_filename_flag = 0;
 
 #endif
+
+    // Set all to -1 to facilitate easier checking
+    memset((char *)ip_parse_cache_used, -1, sizeof(ip_parse_cache_used));
 
     /* This needs to be included,  even if liblognorm isn't in use */
 
@@ -649,14 +654,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
-
-							    // Set flag based type of data in cache. 
-
-                                                            if ( lookup_cache[check_pos].ip[0] != 0 ) { 
-                                                                ip_src_flag = true;
-                                                            } 
-
                                                             strlcpy(ip_src, lookup_cache[check_pos].ip, sizeof(ip_src));
+							    ip_src_flag = true;
 
                                                             // This case handles if we already found the previous index
                                                         }
@@ -672,7 +671,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                             /* If Parse_IP is successful,  we set the flag */
 
-                                                            if ( ip_src[0] != 0 )
+                                                            if ( ip_src[0] != '\0' )
                                                                 {
                                                                     ip_src_flag = true;
                                                                 }
@@ -692,13 +691,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
                                                         {
-
-							    if ( lookup_cache[check_pos].ip[0] != 0 ) { 
-	   						        ip_dst_flag = true;
-							    } 
-
-							        strlcpy(ip_dst, lookup_cache[check_pos].ip, sizeof(ip_dst));
-								
+                                                            strlcpy(ip_dst, lookup_cache[check_pos].ip, sizeof(ip_dst));
+							    ip_dst_flag = true;
 
                                                             // This case handles if we already found the previous index
                                                         }
@@ -714,7 +708,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     /* If Parse_IP is successful,  we set the flag */
 
-                                                    if ( ip_dst[0] != 0 )
+                                                    if ( ip_dst[0] != '\0' )
                                                         {
                                                             ip_dst_flag = true;
                                                         }
