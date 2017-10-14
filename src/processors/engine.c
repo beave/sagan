@@ -135,22 +135,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     /* We don't tie these to HAVE_LIBMAXMINDDB because we might have other
      * methods to extract the informaton */
 
-    char normalize_ip_src[MAXIP] = { 0 };
-    char normalize_ip_dst[MAXIP] = { 0 };
-    char normalize_selector[MAXSELECTOR] = { 0 };
-    char normalize_username[MAX_USERNAME_SIZE] = { 0 };
-    char normalize_md5_hash[MD5_HASH_SIZE+1] = { 0 };
-    char normalize_sha1_hash[SHA1_HASH_SIZE+1] = { 0 };
-    char normalize_sha256_hash[SHA256_HASH_SIZE+1] = { 0 };
-
-    char normalize_filename[MAX_FILENAME_SIZE] = { 0 };
-    char normalize_http_uri[MAX_URL_SIZE] = { 0 };
-    char normalize_http_hostname[MAX_HOSTNAME_SIZE] = { 0 };
-
     char *pnormalize_selector = NULL;
-
-    int  normalize_src_port = 0;
-    int  normalize_dst_port = 0;
 
     int check_pos = 0;
     struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { 0 };
@@ -190,6 +175,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char *sha1_hash = NULL;
     char *sha256_hash = NULL;
 
+    /* These do not need to be reset each time as they are _only_ 
+     * set through normalize */
+    char *normalize_username = NULL;
+    char *normalize_filename = NULL;
+    char *normalize_http_uri = NULL;
+    char *normalize_http_hostname = NULL;
+
 #ifdef HAVE_LIBMAXMINDDB
 
     unsigned char geoip2_return = 0;
@@ -209,15 +201,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 #ifdef HAVE_LIBLOGNORM
 
-    struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));
+    static __thread struct _SaganNormalizeLiblognorm SaganNormalizeLiblognorm = { 0 };
 
-    if ( SaganNormalizeLiblognorm == NULL )
-        {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganNormalizeLiblognorm. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
-
+    memset((char *)&SaganNormalizeLiblognorm, 0, sizeof(struct _SaganNormalizeLiblognorm));
 #endif
 
 
@@ -575,121 +561,86 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             // Set that normalization has been tried work isn't repeated
                                             liblognorm_status = -1;
 
-                                            json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, SaganNormalizeLiblognorm);
+                                            json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
 
-                                            if ( SaganNormalizeLiblognorm->ip_src[0] != '0' )
+                                            if ( SaganNormalizeLiblognorm.ip_src[0] != '0'  ||
+                                                 SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
+                                                 SaganNormalizeLiblognorm.src_port != 0  ||
+                                                 SaganNormalizeLiblognorm.dst_port != 0  ||
+                                                 SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
+                                                 SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
+                                                 SaganNormalizeLiblognorm.hash_md5[0] != '\0' )
+
                                                 {
-                                                    strlcpy(normalize_ip_src, SaganNormalizeLiblognorm->ip_src, sizeof(normalize_ip_src));
                                                     liblognorm_status = 1;
                                                 }
 
-
-                                            if ( SaganNormalizeLiblognorm->ip_dst[0] != '0' )
-                                                {
-                                                    strlcpy(normalize_ip_dst, SaganNormalizeLiblognorm->ip_dst, sizeof(normalize_ip_dst));
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->src_port != 0 )
-                                                {
-                                                    normalize_src_port = SaganNormalizeLiblognorm->src_port;
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->dst_port != 0 )
-                                                {
-                                                    normalize_dst_port = SaganNormalizeLiblognorm->dst_port;
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->username[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_username, SaganNormalizeLiblognorm->username, sizeof(normalize_username));
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( config->selector_flag && SaganNormalizeLiblognorm->selector[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_selector, SaganNormalizeLiblognorm->selector, sizeof(normalize_selector));
-                                                    liblognorm_status = 1;
-                                                    pnormalize_selector = normalize_selector;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->http_uri[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_http_uri, SaganNormalizeLiblognorm->http_uri, sizeof(normalize_http_uri));
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->filename[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_filename, SaganNormalizeLiblognorm->filename, sizeof(normalize_filename));
-                                                    liblognorm_status = 1;
-                                                }
-
-
-                                            if ( SaganNormalizeLiblognorm->hash_sha256[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_sha256_hash, SaganNormalizeLiblognorm->hash_sha256, sizeof(normalize_sha256_hash));
-                                                    liblognorm_status = 1;
-                                                }
-
-
-                                            if ( SaganNormalizeLiblognorm->hash_sha1[0] != '\0' )
-                                                {
-                                                    strlcpy(normalize_sha1_hash, SaganNormalizeLiblognorm->hash_sha1, sizeof(normalize_sha1_hash));
-                                                    liblognorm_status = 1;
-                                                }
-
-                                            if ( SaganNormalizeLiblognorm->hash_md5[0] != '\0' )
+                                            /* These are _only_ set here */ 
+                                            if ( SaganNormalizeLiblognorm.username[0] != '\0' ) 
                                                 {
 
-                                                    strlcpy(normalize_md5_hash, SaganNormalizeLiblognorm->hash_md5, sizeof(normalize_md5_hash));
                                                     liblognorm_status = 1;
-
+                                                    normalize_username = SaganNormalizeLiblognorm.username;
                                                 }
 
+                                            if ( config->selector_flag && SaganNormalizeLiblognorm.selector[0] != '\0' )
+                                                {
+                                                    liblognorm_status = 1;
+                                                    pnormalize_selector = SaganNormalizeLiblognorm.username;
+                                                }
+
+                                            if ( SaganNormalizeLiblognorm.http_uri[0] != '\0' )
+                                                {
+                                                    liblognorm_status = 1;
+                                                    normalize_http_uri = SaganNormalizeLiblognorm.http_uri;
+                                                }
+
+                                            if ( SaganNormalizeLiblognorm.filename[0] != '\0' )
+                                                {
+                                                    liblognorm_status = 1;
+                                                    normalize_filename = SaganNormalizeLiblognorm.filename;
+                                                }
                                         }
 
                                     if ( 1 == liblognorm_status && rulestruct[b].normalize == 1 )
                                         {
-                                            if ( normalize_ip_src[0] != '\0')
+                                            if ( SaganNormalizeLiblognorm.ip_src[0] != '0')
                                                 {
                                                     ip_src_flag = true;
-                                                    ip_src = normalize_ip_src;
+                                                    ip_src = SaganNormalizeLiblognorm.ip_src;
                                                 }
 
 
-                                            if ( normalize_ip_dst[0] != '\0' )
+                                            if ( SaganNormalizeLiblognorm.ip_dst[0] != '0' )
                                                 {
                                                     ip_dst_flag = true;
-                                                    ip_dst = normalize_ip_dst;
+                                                    ip_dst = SaganNormalizeLiblognorm.ip_dst;
                                                 }
 
-                                            if ( normalize_src_port != 0 ) 
+                                            if ( SaganNormalizeLiblognorm.src_port != 0 ) 
                                                 {
-                                                    ip_srcport_u32 = normalize_src_port;
+                                                    ip_srcport_u32 = SaganNormalizeLiblognorm.src_port;
                                                 }
 
 
-                                            if ( normalize_dst_port != 0 ) 
+                                            if ( SaganNormalizeLiblognorm.dst_port != 0 ) 
                                                 {
-                                                    ip_dstport_u32 = normalize_dst_port;
+                                                    ip_dstport_u32 = SaganNormalizeLiblognorm.dst_port;
                                                 }
 
-                                            if ( normalize_md5_hash[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_md5[0] != '\0' ) 
                                                 {
-                                                    md5_hash = normalize_md5_hash;
+                                                    md5_hash = SaganNormalizeLiblognorm.hash_md5;
                                                 }
 
-                                            if ( normalize_sha1_hash[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' ) 
                                                 {
-                                                    sha1_hash = normalize_sha1_hash;
+                                                    sha256_hash = SaganNormalizeLiblognorm.hash_sha1;
                                                 }
 
-                                            if ( normalize_sha256_hash[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' ) 
                                                 {
-                                                    sha256_hash = normalize_sha256_hash;
+                                                    sha256_hash = SaganNormalizeLiblognorm.hash_sha256;
                                                 }
 
                                         }
@@ -784,28 +735,28 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_hash: md5 */
 
-                                    if ( md5_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 )
+                                    if ( md5_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 )
                                         {
                                             Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5, parse_md5_hash, sizeof(parse_md5_hash));
                                             md5_hash = parse_md5_hash;
                                         }
 
-                                    else if ( sha1_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 )
+                                    else if ( sha1_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 )
                                         {
-                                            Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, parse_sha1_hash, sizeof(parse_sha1_hash));
+                                            Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, parse_sha256_hash, sizeof(parse_sha1_hash));
                                             sha1_hash = parse_sha1_hash;
                                         }
 
-                                    else if ( sha256_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
+                                    else if ( sha256_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
                                         {
                                             Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, parse_sha256_hash, sizeof(parse_sha256_hash));
                                             sha256_hash = parse_sha256_hash;
                                         }
 
                                     /*  DEBUG
-                                    else if ( normalize_sha256_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
+                                    else if ( sha256_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
                                         {
-                                    Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, parse_sha256_hash, sizeof(parse_sha256_hash));
+                                    Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, sha256_hash, sizeof(sha256_hash));
                                             sha256_hash = parse_sha256_hash;
                                                       }
                                                       */
@@ -830,14 +781,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     if ( ip_src_flag == false )
                                         {
-                                            // XXX: May be possible to avoid copy by just pointing ip_src to syslog struct
-                                            strlcpy(parse_ip_src, SaganProcSyslog_LOCAL->syslog_host, sizeof(parse_ip_src));
+                                            ip_src = config->sagan_host;
                                         }
 
                                     if ( ip_dst_flag == false )
                                         {
-                                            // XXX: May be possible to avoid copy by just pointing ip_dst to syslog struct
-                                            strlcpy(parse_ip_dst, SaganProcSyslog_LOCAL->syslog_host, sizeof(parse_ip_dst));
+                                            ip_dst = config->sagan_host;
                                         }
 
                                     /* No source port was normalized, Use the rules default */
@@ -894,7 +843,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( rulestruct[b].has_flow == 1 )
                                         {
 
-                                            check_flow_return = Check_Flow( b, proto, ip_src_bits, normalize_src_port, ip_dst_bits, normalize_dst_port);
+                                            check_flow_return = Check_Flow( b, proto, ip_src_bits, ip_srcport_u32, ip_dst_bits, ip_dstport_u32);
 
                                             if(check_flow_return == false)
                                                 {
@@ -920,7 +869,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( rulestruct[b].xbit_condition_count )
                                                 {
-                                                    xbit_return = Xbit_Condition(b, ip_src, ip_dst, normalize_src_port, normalize_dst_port, pnormalize_selector);
+                                                    xbit_return = Xbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
                                                 }
 
                                             if ( rulestruct[b].xbit_count_flag )
@@ -1095,7 +1044,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 
                                             if ( rulestruct[b].bluedot_file_hash && ( md5_hash[0] != '\0' ||
-                                                    sha1_hash[0] != '\0' || sha256_hash[0] != '\0') )
+                                                    sha256_hash[0] != '\0' || sha256_hash[0] != '\0') )
                                                 {
 
                                                     if ( md5_hash[0] != '\0')
@@ -1106,10 +1055,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                         }
 
-                                                    if ( sha1_hash[0] != '\0' )
+                                                    if ( sha256_hash[0] != '\0' )
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( sha1_hash, BLUEDOT_LOOKUP_HASH, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b);
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1124,7 +1073,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                 }
 
-                                            if ( rulestruct[b].bluedot_url && normalize_http_uri != '\0' )
+                                            if ( rulestruct[b].bluedot_url && normalize_http_uri != NULL )
                                                 {
 
                                                     bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b);
@@ -1132,7 +1081,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                 }
 
-                                            if ( rulestruct[b].bluedot_filename && normalize_filename[0] != '\0' )
+                                            if ( rulestruct[b].bluedot_filename && normalize_filename != NULL )
                                                 {
 
                                                     bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b);
@@ -1299,7 +1248,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                                                                         case(AFTER_BY_USERNAME):
 
-                                                                                                                                            if ( normalize_username[0] != '\0' )
+                                                                                                                                            if ( NULL != normalize_username )
                                                                                                                                                 {
 
                                                                                                                                                     after_log_flag = After_By_Username(b, normalize_username, pnormalize_selector );
@@ -1328,7 +1277,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                             break;
 
                                                                                                                                         case(THRESH_BY_USERNAME):
-                                                                                                                                            if ( normalize_username[0] != '\0' )
+                                                                                                                                            if ( NULL != normalize_username )
                                                                                                                                                 {
                                                                                                                                                     thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector);
                                                                                                                                                 }
@@ -1470,16 +1419,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
             json_normalize = NULL;
         }
 #endif
-
-#ifdef HAVE_LIBLOGNORM
-
-    if ( NULL != SaganNormalizeLiblognorm )
-        {
-            free(SaganNormalizeLiblognorm);
-        }
-
-#endif
-
 
     return(0);
 }
