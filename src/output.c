@@ -109,12 +109,12 @@ void Output( _Sagan_Event *Event )
              * send-alert.c.  When adding more,  remember to add
              * them there! */
 
-            if ( Event->normalize_http_uri[0] != '\0' )
+            if ( Event->normalize_http_uri != NULL )
                 {
                     Unified2WriteExtraData( Event, EVENT_INFO_HTTP_URI );
                 }
 
-            if ( Event->normalize_http_hostname[0] != '\0' )
+            if ( Event->normalize_http_hostname != NULL )
                 {
                     Unified2WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
                 }

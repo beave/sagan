@@ -293,6 +293,10 @@ sbool Is_IPv6 (char  *ipaddr)
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
 
+    if ( ipaddr == NULL || ipaddr[0] == '\0' ) 
+        {
+            return false;
+        }
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
     if (!ret)
         {
@@ -333,6 +337,11 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+
+    if ( ipaddr == NULL || ipaddr[0] == '\0' ) 
+        {
+            return false;
+        }
 
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
     if (!ret)
