@@ -824,15 +824,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             ip_dst = config->sagan_host;
                                         }
 
-                                    if ( ip_src_flag ) 
-                                        {
-                                            IP2Bit(ip_src, ip_src_bits);
-                                        }
-
-                                    if ( ip_dst_flag ) 
-                                        {
-                                            IP2Bit(ip_dst, ip_dst_bits);
-                                        }
+                                    IP2Bit(ip_src, ip_src_bits);
+                                    IP2Bit(ip_dst, ip_dst_bits);
 
                                     strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
 
