@@ -567,7 +567,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                  SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
                                                  SaganNormalizeLiblognorm.src_port != 0  ||
                                                  SaganNormalizeLiblognorm.dst_port != 0  ||
-                                                 SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
+                                                 SaganNormalizeLiblognorm.hash_sha1[0] != '\0'  ||
                                                  SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
                                                  SaganNormalizeLiblognorm.hash_md5[0] != '\0' )
 
@@ -633,9 +633,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     md5_hash = SaganNormalizeLiblognorm.hash_md5;
                                                 }
 
-                                            if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_sha1[0] != '\0' ) 
                                                 {
-                                                    sha256_hash = SaganNormalizeLiblognorm.hash_sha1;
+                                                    sha1_hash = SaganNormalizeLiblognorm.hash_sha1;
                                                 }
 
                                             if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' ) 
