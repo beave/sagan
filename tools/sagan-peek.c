@@ -489,9 +489,6 @@ int main(int argc, char **argv)
                     Bit2IP(xbit_ipc[i].ip_src, ip_src, sizeof(ip_src));
                     Bit2IP(xbit_ipc[i].ip_dst, ip_dst, sizeof(ip_dst));
 
-                    if ( xbit_ipc[i].xbit_state == 1 )
-                        {
-
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
                             printf("%-9s| %-10s| %-25s| %-45s| %-45s| %-8d| %8d| %-21s| %d\n",
@@ -503,8 +500,6 @@ int main(int argc, char **argv)
                                    xbit_ipc[i].src_port,
                                    xbit_ipc[i].dst_port,
                                    time_buf, xbit_ipc[i].expire );
-                        }
-
                 }
         }
 
