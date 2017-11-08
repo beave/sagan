@@ -7,6 +7,7 @@
 
 #   2016/07/05 - Champ Clark - Replaced jsonc -> libfastjson
 #   2017/06/25 - Added "--enable-redis".
+#   2017/11/07 - Added test for "saganpeek". 
 
 # Champ Clark III 
 
@@ -35,6 +36,8 @@ echo "**** STANDARD BUILD | NO FLAGS ****"
 echo "**** STANDARD BUILD | NO FLAGS ****" >> $LOG
 
 make clean
+cd tools && make clean && cd ..
+
 CFLAGS=-Wall ./configure
 
 if [ "$?" != "0" ]
@@ -44,6 +47,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
 	then
@@ -55,6 +59,8 @@ echo "**** ALL FLAGS ****"
 echo "**** ALL FLAGS ****" >> $LOG
 
 make clean
+cd tools && make clean && cd .. 
+
 CFLAGS=-Wall ./configure $ALLFLAGS
 
 if [ "$?" != "0" ]
@@ -64,6 +70,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -75,6 +82,8 @@ echo "****  NO FLAGS ****"
 echo "****  NO FLAGS ****" >> $LOG
 
 make clean
+cd tools && make clean && cd ..
+
 CFLAGS=-Wall ./configure $NOFLAG
 
 if [ "$?" != "0" ]
@@ -84,6 +93,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -95,6 +105,7 @@ for I in $STANDARD
 do
 
 make clean
+cd tools && make clean && cd ..
 
 echo "**** FLAGS $I *****"
 echo "**** FLAGS $I *****" >> $LOG
@@ -108,6 +119,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -120,6 +132,7 @@ for I in $ALLFLAGS
 do
 
 make clean
+cd tools && make clean && cd .. 
 
 echo "**** FLAGS $I *****"
 echo "**** FLAGS $I *****" >> $LOG
@@ -133,6 +146,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ]
         then
@@ -145,6 +159,7 @@ for I in $NOFLAGS
 do
 
 make clean
+cd tools && make clean && cd ..
 
 echo "**** FLAGS $I *****"
 echo "**** FLAGS $I *****" >> $LOG
@@ -158,6 +173,7 @@ if [ "$?" != "0" ]
         fi
 
 make 2>> $LOG
+cd tools && make && cd .. 2>> $LOG
 
 if [ "$?" != "0" ]
         then
