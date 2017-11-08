@@ -646,7 +646,8 @@ AC_DEFINE_UNQUOTED(PACKAGE_VERSION, "$VERSION" )
 
 AC_CONFIG_FILES([ \
 Makefile \
-src/Makefile])
+src/Makefile \
+tools/Makefile])
 
 
 # AC_OUTPUT(Makefile)
