@@ -6,7 +6,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
               saganpeek_CPPFLAGS = -I../src $(LIBFASTJSON_CFLAGS) $(LIBESTR_CFLAGS)
               saganpeek_LDADD = $(LIBFASTJSON_LIBS) $(LIBLOGNORM_LIBS) $(LIBESTR_LIBS)
 
-              saganpeek_SOURCES = sagan-peek.c \
+              saganpeek_SOURCES = saganpeek.c \
 	    			../src/util-strlcpy.c \
 				../src/util-strlcat.c \
 				../src/util.c \

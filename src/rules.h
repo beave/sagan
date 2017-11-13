@@ -77,7 +77,7 @@ typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
     unsigned s_size_rule;
-    char s_msg[256];
+    char s_msg[MAX_SAGAN_MSG];
 
     pcre *re_pcre[MAX_PCRE];
     pcre_extra *pcre_extra[MAX_PCRE];

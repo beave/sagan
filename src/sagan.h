@@ -439,6 +439,8 @@ struct thresh_by_src_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
 };
 
 
@@ -453,6 +455,8 @@ struct thresh_by_dst_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
 };
 
 
@@ -494,6 +498,8 @@ struct thresh_by_username_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
 };
 
 /* After structure by source */
@@ -508,6 +514,8 @@ struct after_by_src_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
 };
 
 /* After structure by destination */
@@ -522,6 +530,9 @@ struct after_by_dst_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
+
 };
 
 /* After structure by source port */
@@ -564,6 +575,8 @@ struct after_by_username_ipc
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
 };
 
 typedef struct _SaganVar _SaganVar;

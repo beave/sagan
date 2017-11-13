@@ -1224,11 +1224,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                         {
 
                                                                                                                                         case(AFTER_BY_SRC):
-                                                                                                                                            after_log_flag = After_By_Src(b, ip_src, ip_src_bits, pnormalize_selector);
+                                                                                                                                            after_log_flag = After_By_Src(b, ip_src, ip_src_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                             break;
 
                                                                                                                                         case(AFTER_BY_DST):
-                                                                                                                                            after_log_flag = After_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector);
+                                                                                                                                            after_log_flag = After_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                             break;
 
                                                                                                                                         case(AFTER_BY_SRCPORT):
@@ -1244,7 +1244,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                             if ( NULL != normalize_username )
                                                                                                                                                 {
 
-                                                                                                                                                    after_log_flag = After_By_Username(b, normalize_username, pnormalize_selector );
+                                                                                                                                                    after_log_flag = After_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                                 }
 
 
@@ -1262,17 +1262,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                         {
 
                                                                                                                                         case(THRESH_BY_SRC):
-                                                                                                                                            thresh_log_flag = Thresh_By_Src(b, ip_src, ip_src_bits, pnormalize_selector);
+                                                                                                                                            thresh_log_flag = Thresh_By_Src(b, ip_src, ip_src_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                             break;
 
                                                                                                                                         case(THRESH_BY_DST):
-                                                                                                                                            thresh_log_flag = Thresh_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector);
+                                                                                                                                            thresh_log_flag = Thresh_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                             break;
 
                                                                                                                                         case(THRESH_BY_USERNAME):
                                                                                                                                             if ( NULL != normalize_username )
                                                                                                                                                 {
-                                                                                                                                                    thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector);
+                                                                                                                                                    thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                                 }
                                                                                                                                             break;
 

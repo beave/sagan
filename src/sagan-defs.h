@@ -58,6 +58,9 @@ typedef void json_object;
 #define MAXTAG			32		/* Max syslog 'tag' length */
 #define MAXLEVEL		15		/* Max syslog 'level' length */
 
+#define MAX_SAGAN_MSG		256		/* Max "msg" option size */
+
+
 #define MAX_PCRE_SIZE		1024		/* Max pcre length in a rule */
 
 #define MAX_FIFO_SIZE		1048576		/* Max pipe/FIFO size in bytes/pages */
@@ -79,7 +82,7 @@ typedef void json_object;
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
 #define MAXIP			64		/* Max IP length */
-#define MAXIPBIT	    16		/* Max IP length in bytes */
+#define MAXIPBIT	     	16		/* Max IP length in bytes */
 #define MAXSELECTOR		64		/* Max tracking selector length */
 
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"
@@ -143,7 +146,7 @@ typedef void json_object;
 
 /* Locations of IPC/Share memory "files" */
 
-#define IPC_DIRECTORY			"/var/run/sagan"
+#define IPC_DIRECTORY			"/var/sagan/ipc"
 
 #define COUNTERS_IPC_FILE 		"sagan-counters.shared"
 #define XBIT_IPC_FILE 	     	        "sagan-xbits.shared"

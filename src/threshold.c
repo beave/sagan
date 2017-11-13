@@ -22,6 +22,7 @@
 
 /* TODO:  Need to test IPC limits for threshold/after/client tracking */
 
+/* DEBUG: Forgot port information */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -63,7 +64,7 @@ struct _SaganConfig *config;
 /* Threshold by source */
 /***********************/
 
-sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector )
+sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
 {
 
     time_t t;
@@ -105,6 +106,9 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 
                     threshbysrc_ipc[i].utime = atol(timet);
 
+                    strlcpy(threshbysrc_ipc[i].syslog_message, syslog_message, sizeof(threshbysrc_ipc[i].syslog_message));
+                    strlcpy(threshbysrc_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbysrc_ipc[i].signature_msg));
+
                     if ( thresh_oldtime > rulestruct[rule_position].threshold_seconds )
                         {
                             threshbysrc_ipc[i].count=1;
@@ -142,10 +146,15 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 
             memcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc));
             strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[rule_position].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+
             NULL == selector ? threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector[0] = '\0' : strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector, selector, MAXSELECTOR);
+
             threshbysrc_ipc[counters_ipc->thresh_count_by_src].count = 1;
             threshbysrc_ipc[counters_ipc->thresh_count_by_src].utime = atol(timet);
             threshbysrc_ipc[counters_ipc->thresh_count_by_src].expire = rulestruct[rule_position].threshold_seconds;
+
+            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].syslog_message, syslog_message, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].syslog_message));
+            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].signature_msg));
 
             counters_ipc->thresh_count_by_src++;
 
@@ -160,7 +169,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 /* Threshold by destination */
 /****************************/
 
-sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector )
+sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
 {
 
     time_t t;
@@ -201,6 +210,9 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
                     thresh_oldtime = atol(timet) - threshbydst_ipc[i].utime;
 
                     threshbydst_ipc[i].utime = atol(timet);
+
+                    strlcpy(threshbydst_ipc[i].syslog_message, syslog_message, sizeof(threshbydst_ipc[i].syslog_message));
+                    strlcpy(threshbydst_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbydst_ipc[i].signature_msg));
 
                     if ( thresh_oldtime > rulestruct[rule_position].threshold_seconds )
                         {
@@ -246,6 +258,9 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
             threshbydst_ipc[counters_ipc->thresh_count_by_dst].expire = rulestruct[rule_position].threshold_seconds;
 
+            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].syslog_message, syslog_message, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].syslog_message));
+            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].signature_msg));
+
             counters_ipc->thresh_count_by_dst++;
 
             pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
@@ -259,7 +274,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
 /* Threshold by username */
 /*************************/
 
-sbool Thresh_By_Username( int rule_position, char *normalize_username, char *selector )
+sbool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
 {
 
     time_t t;
@@ -299,6 +314,10 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username, char *sel
                     threshbyusername_ipc[rule_position].count++;
                     thresh_oldtime = atol(timet) - threshbyusername_ipc[rule_position].utime;
                     threshbyusername_ipc[rule_position].utime = atol(timet);
+
+                    strlcpy(threshbyusername_ipc[i].syslog_message, syslog_message, sizeof(threshbyusername_ipc[i].syslog_message));
+                    strlcpy(threshbyusername_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbyusername_ipc[i].signature_msg));
+
 
                     if ( thresh_oldtime > rulestruct[rule_position].threshold_seconds )
                         {
@@ -342,6 +361,10 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username, char *sel
             threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
             threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
             threshbyusername_ipc[counters_ipc->thresh_count_by_username].expire = rulestruct[rule_position].threshold_seconds;
+
+            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].syslog_message, syslog_message, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].syslog_message));
+            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].signature_msg, rulestruct[rule_position].s_msg, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].signature_msg));
+
 
             counters_ipc->thresh_count_by_username++;
 

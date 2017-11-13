@@ -87,7 +87,7 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_p
 
 #endif
 
-    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector );
+    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL->syslog_message );
 
 }
 

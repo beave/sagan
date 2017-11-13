@@ -63,7 +63,7 @@ struct _Sagan_IPC_Counters *counters_ipc;
 /* After by source */
 /*******************/
 
-sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector )
+sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
 {
 
     sbool after_log_flag = true;
@@ -95,6 +95,10 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
                     afterbysrc_ipc[i].total_count++;
 
                     after_oldtime = atol(timet) - afterbysrc_ipc[i].utime;
+
+                    strlcpy(afterbysrc_ipc[i].syslog_message, syslog_message, sizeof(afterbysrc_ipc[i].syslog_message));
+                    strlcpy(afterbysrc_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbysrc_ipc[i].signature_msg));
+
 
                     /* Reset counter if it's expired */
 
@@ -145,6 +149,9 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
             afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
             afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[rule_position].after_seconds;
 
+            strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].syslog_message, syslog_message, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].syslog_message));
+            strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].signature_msg));
+
             counters_ipc->after_count_by_src++;
 
             pthread_mutex_unlock(&After_By_Src_Mutex);
@@ -159,7 +166,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
 /* After by Destination */
 /************************/
 
-sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector )
+sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
 {
 
     sbool after_log_flag = true;
@@ -191,6 +198,9 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
                     afterbydst_ipc[i].total_count++;
 
                     after_oldtime = atol(timet) - afterbydst_ipc[i].utime;
+
+                    strlcpy(afterbydst_ipc[i].syslog_message, syslog_message, sizeof(afterbydst_ipc[i].syslog_message));
+                    strlcpy(afterbydst_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbydst_ipc[i].signature_msg));
 
                     if ( after_oldtime > rulestruct[rule_position].after_seconds ||
                             afterbydst_ipc[i].count == 0 )
@@ -238,6 +248,10 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
             afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
             afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[rule_position].after_seconds;
 
+            strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].syslog_message, syslog_message, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].syslog_message));
+            strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].signature_msg));
+
+
             counters_ipc->after_count_by_dst++;
 
             pthread_mutex_unlock(&After_By_Dst_Mutex);
@@ -253,7 +267,7 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
 /* After by username */
 /*********************/
 
-sbool After_By_Username( int rule_position, char *normalize_username, char *selector )
+sbool After_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
 {
 
     sbool after_log_flag = true;
@@ -296,6 +310,9 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
                     afterbyusername_ipc[i].total_count++;
 
                     after_oldtime = atol(timet) - afterbyusername_ipc[i].utime;
+
+                    strlcpy(afterbyusername_ipc[i].syslog_message, syslog_message, sizeof(afterbyusername_ipc[i].syslog_message));
+                    strlcpy(afterbyusername_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbyusername_ipc[i].signature_msg));
 
                     if ( after_oldtime > rulestruct[rule_position].after_seconds ||
                             afterbysrc_ipc[i].count == 0 )
@@ -342,6 +359,9 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
             afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
             afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[rule_position].after_seconds;
+
+            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].syslog_message, syslog_message, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].syslog_message));
+            strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].signature_msg));
 
             counters_ipc->after_count_by_username++;
 

@@ -24,7 +24,7 @@
 
 #include "sagan-defs.h"
 
-void Xbit_Set_MMAP( int, char *, char *, int, int, char * );
+void Xbit_Set_MMAP( int, char *, char *, int, int, char *, char * );
 sbool Xbit_Condition_MMAP ( int, char *, char *, int, int, char * );
 void Xbit_Cleanup_MMAP( void );
 sbool Xbit_Count_MMAP( int, char *, char *, char * );
@@ -52,5 +52,9 @@ struct _Sagan_IPC_Xbit
     uintmax_t xbit_expire;
     int expire;
     char selector[MAXSELECTOR]; // No need to clean this, as we always set it when tracking
+    char syslog_message[MAX_SYSLOGMSG];
+    char sid[20];
+    char signature_msg[MAX_SAGAN_MSG];
+
 };
 
