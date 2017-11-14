@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 
                             Bit2IP(threshbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
-                            printf("Type: Threshold by source.\n");
+                            printf("Type: Threshold by source [%d].\n", i);
 
                             u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                            printf("Type: Threshold by destination.\n");
+                            printf("Type: Threshold by destination [%d].\n", i);
 
                             printf("Selector: ");
 
@@ -426,7 +426,7 @@ int main(int argc, char **argv)
                     for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
                         {
 
-                            printf("Type: Threshold by username.\n");
+                            printf("Type: Threshold by username [%d].\n", i);
 
                             u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
@@ -489,7 +489,7 @@ int main(int argc, char **argv)
                         {
                             Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
-                            printf("Type: After by source.\n");
+                            printf("Type: After by source [%d].\n", i);
 
                             u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
@@ -549,7 +549,7 @@ int main(int argc, char **argv)
 
                             Bit2IP(afterbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
 
-                            printf("Type: After by destination.\n");
+                            printf("Type: After by destination [%d].\n", i);
 
                             u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
@@ -607,7 +607,7 @@ int main(int argc, char **argv)
                         {
 
 
-                            printf("Type: After by username.\n");
+                            printf("Type: After by username [%d].\n", i);
 
                             u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
@@ -675,7 +675,7 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                            printf("Type: xbit.\n");
+                            printf("Type: xbit [%d].\n", i);
                             printf("Selector: ");
 
                             if ( xbit_ipc[i].selector[0] == 0 )
@@ -690,6 +690,7 @@ int main(int argc, char **argv)
                             printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
 			    printf("IP: %s:%d -> %s:%d\n", ip_src, xbit_ipc[i].src_port, ip_dst, xbit_ipc[i].dst_port);
                             printf("Signature: \"%s\" (%s)\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
+			    printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
                             printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
                         }
@@ -732,7 +733,7 @@ int main(int argc, char **argv)
                                     u32_Time_To_Human(SaganTrackClients_ipc[i].expire, time_buf, sizeof(time_buf));
 
 
-                                    printf("Type: Tracking.\n");
+                                    printf("Type: Tracking. [%d]\n", i);
                                     printf("State: %s.\n", 0 == SaganTrackClients_ipc[i].status ? "ACTIVE" : "INACTIVE");
                                     printf("Source tracking: %s\n", ip_src);
                                     printf("Last seen: %d (%d)\n\n", SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60);
