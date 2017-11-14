@@ -1811,6 +1811,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
                                     strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
                                     strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
+				    strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
+	                            strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
+
                                     xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
                                     xbit_track[xbit_track_count].xbit_srcport = src_port;
                                     xbit_track[xbit_track_count].xbit_dstport = dst_port;
@@ -1851,6 +1854,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
                             xbit_ipc[counters_ipc->xbit_count].expire = xbit_track[i].xbit_timeout;
 
                             strlcpy(xbit_ipc[counters_ipc->xbit_count].xbit_name, xbit_track[i].xbit_name, sizeof(xbit_ipc[counters_ipc->xbit_count].xbit_name));
+                            strlcpy(xbit_ipc[counters_ipc->xbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[counters_ipc->xbit_count].signature_msg));
+                            strlcpy(xbit_ipc[counters_ipc->xbit_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[counters_ipc->xbit_count].sid));
                             strlcpy(xbit_ipc[counters_ipc->xbit_count].syslog_message, syslog_message, sizeof(xbit_ipc[counters_ipc->xbit_count].syslog_message));
 
 

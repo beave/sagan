@@ -688,8 +688,7 @@ int main(int argc, char **argv)
                                 }
 
                             printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
-                            printf("Source: %s:%d\n", ip_src, xbit_ipc[i].src_port);
-                            printf("Destination: %s:%d\n", ip_dst, xbit_ipc[i].dst_port);
+			    printf("IP: %s:%d -> %s:%d\n", ip_src, xbit_ipc[i].src_port, ip_dst, xbit_ipc[i].dst_port);
                             printf("Signature: \"%s\" (%s)\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
                             printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
