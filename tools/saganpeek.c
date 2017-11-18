@@ -670,9 +670,6 @@ int main(int argc, char **argv)
                     for (i= 0; i < counters_ipc->xbit_count; i++ )
                         {
 
-                            Bit2IP(xbit_ipc[i].ip_src, ip_src, sizeof(ip_src));
-                            Bit2IP(xbit_ipc[i].ip_dst, ip_dst, sizeof(ip_dst));
-
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
                             printf("Type: xbit [%d].\n", i);
@@ -688,9 +685,11 @@ int main(int argc, char **argv)
                                 }
 
                             printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
-			    printf("IP: %s:%d -> %s:%d\n", ip_src, xbit_ipc[i].src_port, ip_dst, xbit_ipc[i].dst_port);
+                            printf("State: %s\n", xbit_ipc[i].xbit_state == 1 ? "ACTIVE" : "INACTIVE");
+
+                            printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
                             printf("Signature: \"%s\" (%s)\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
-			    printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
+                            printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
                             printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
                         }

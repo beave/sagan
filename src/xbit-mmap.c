@@ -59,7 +59,7 @@ struct _Sagan_IPC_Xbit *xbit_ipc;
  * rule condition is tested here and returned.
  *****************************************************************************/
 
-sbool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
 {
 
     time_t t;
@@ -72,18 +72,12 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_cha
     int i;
     int a;
 
-    unsigned char ip_src[MAXIPBIT] = {0};
-    unsigned char ip_dst[MAXIPBIT] = {0};
-
     sbool xbit_match = false;
     int xbit_total_match = 0;
 
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
-
-    sbool has_ip_src = IP2Bit(ip_src_char, ip_src);
-    sbool has_ip_dst = IP2Bit(ip_dst_char, ip_dst);
 
     sbool and_or = false;
 
@@ -102,364 +96,245 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_cha
                     for (a = 0; a < counters_ipc->xbit_count; a++)
                         {
 
-                            strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
+                            /* Short circuit if no selector match */
 
-                            if (Sagan_strstr(rulestruct[rule_position].xbit_name[i], "|"))
-                                {
-                                    tmp_xbit_name = strtok_r(tmp, "|", &tok);
-                                    and_or = true;
-                                }
-                            else
-                                {
-                                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
-                                    and_or = false;
-                                }
-
-                            // Short circuit if no selector match
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                (selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                (selector != NULL && strcmp(selector, xbit_ipc[a].selector) != 0)
                             )
                                 {
 
                                     continue;
                                 }
 
-                            while (tmp_xbit_name != NULL )
+                            if (!strcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name) &&
+                                    xbit_ipc[a].xbit_state == true )
                                 {
 
-                                    if (!strcmp(tmp_xbit_name, xbit_ipc[a].xbit_name) &&
-                                            xbit_ipc[a].xbit_state == true )
+                                    /* direction: by_src - most common check */
+
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
+                                            memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
+
                                         {
 
-                                            /* direction: by_src - most common check */
-
-                                            if ( rulestruct[rule_position].xbit_direction[i] == 2 && has_ip_src &&
-                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
-
+                                            if ( debug->debugxbit )
                                                 {
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]);
                                                 }
 
-                                            /* direction: none */
+                                            return(true);
 
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 0 )
-
-                                                {
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-
-                                                }
-
-                                            /* direction: both */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-
-                                                }
-
-                                            /* direction: by_dst */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: reverse */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
-
-                                                {
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: src_xbitdst */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: dst_xbitsrc */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: both_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].src_port == src_port &&
-                                                      xbit_ipc[a].dst_port == dst_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: by_src_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      xbit_ipc[a].ip_src == ip_src &&
-                                                      xbit_ipc[a].src_port == src_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: by_dst_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].ip_dst == ip_dst &&
-                                                      xbit_ipc[a].dst_port == dst_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: reverse_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                      xbit_ipc[a].src_port == dst_port &&
-                                                      xbit_ipc[a].dst_port == src_port )
-
-
-                                                {
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: src_xbitdst_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                      xbit_ipc[a].dst_port == src_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                            /* direction: dst_xbitsrc_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].ip_src == ip_dst &&
-                                                      xbit_ipc[a].src_port == dst_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    xbit_total_match++;
-
-                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                    if ( counters_ipc->xbit_count == 1 )
-                                                        {
-                                                            break;
-                                                        }
-                                                }
-
-                                        } /* End of strcmp xbit_name & xbit_state = 1 */
-
-
-                                    if ( and_or == true )
-                                        {
-                                            tmp_xbit_name = strtok_r(NULL, "|", &tok);
-                                        }
-                                    else
-                                        {
-                                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
                                         }
 
-                                } /* End of "while tmp_xbit_name" */
+                                    /* direction: none */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: both */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0  &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: by_dst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: reverse */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 )
+
+                                        {
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: src_xbitdst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: dst_xbitsrc */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: both_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              xbit_ipc[a].src_port == src_port &&
+                                              xbit_ipc[a].dst_port == dst_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: by_src_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                              xbit_ipc[a].src_port == src_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: by_dst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              xbit_ipc[a].dst_port == dst_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: reverse_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                              xbit_ipc[a].src_port == dst_port &&
+                                              xbit_ipc[a].dst_port == src_port )
+
+
+                                        {
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: src_xbitdst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                              xbit_ipc[a].dst_port == src_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                    /* direction: dst_xbitsrc_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              xbit_ipc[a].src_port == dst_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            return(true);
+
+                                        }
+
+                                } /* End of strcmp xbit_name & xbit_state = 1 */
+
 
                         } /* End of "for a" */
+
+                    return(false);
 
                 } /* End "if" xbit_type == 3 (ISSET) */
 
@@ -467,451 +342,492 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_cha
             *    ISNOTSET     *
             *******************/
 
-            else if ( rulestruct[rule_position].xbit_type[i] == 4 )
+            if ( rulestruct[rule_position].xbit_type[i] == 4 )
                 {
-
-                    xbit_match = false;
 
                     for (a = 0; a < counters_ipc->xbit_count; a++)
                         {
 
-                            strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
+                            /* Short circuit if no selector match */
 
-                            if (Sagan_strstr(rulestruct[rule_position].xbit_name[i], "|"))
-                                {
-
-                                    tmp_xbit_name = strtok_r(tmp, "|", &tok);
-                                    and_or = true;
-
-                                }
-                            else
-                                {
-
-                                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
-                                    and_or = false;
-
-                                }
-
-                            // Short circuit if no selector match
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && strcmp(selector, xbit_ipc[a].selector) != 0 )
                             )
                                 {
 
                                     continue;
                                 }
 
-                            while (tmp_xbit_name != NULL )
+                            if (!strcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name))
                                 {
 
-                                    if (!strcmp(tmp_xbit_name, xbit_ipc[a].xbit_name))
+                                    /* direction: by_src  - most common check */
+
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 2 )
                                         {
 
-                                            xbit_match = true;
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
+                                                {
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+                                                }
+                                        }
+
+                                    /* direction: none */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 0 )
+                                        {
 
                                             if ( xbit_ipc[a].xbit_state == false )
                                                 {
 
-                                                    /* direction: by_src  - most common check */
-
-                                                    if ( rulestruct[rule_position].xbit_direction[i] == 2 )
+                                                    if ( debug->debugxbit )
                                                         {
-
-                                                            if ( xbit_ipc[a].ip_src == ip_src )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
+                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
                                                         }
 
-                                                    /* direction: none */
+                                                    return(true);
 
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 0 )
+                                                }
+                                            else
+                                                {
+
+                                                    if ( debug->debugxbit )
                                                         {
-
-                                                            if ( debug->debugxbit)
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            xbit_total_match++;
-
-                                                            /* Only 1 xbit, not need to continue loop */
-
-                                                            if ( counters_ipc->xbit_count == 1 )
-                                                                {
-                                                                    break;
-                                                                }
-
+                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
                                                         }
 
-                                                    /* direction: both */
+                                                    return(false);
 
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 1 )
-                                                        {
+                                                }
 
 
-                                                            if ( has_ip_src && has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-
-                                                                }
-                                                        }
-
-                                                    /* direction: by_dst */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 3 )
-                                                        {
-
-                                                            if ( has_ip_dst && 0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                    /* direction: reverse */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 4 )
-                                                        {
-
-                                                            if ( has_ip_src && has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-
-                                                                }
-                                                        }
-
-                                                    /* direction: src_xbitdst */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 5 )
-                                                        {
-
-                                                            if ( xbit_ipc[a].ip_dst == ip_src )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-
-                                                                }
-                                                        }
-
-                                                    /* direction: dst_xbitsrc */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 6 )
-                                                        {
-
-                                                            if ( xbit_ipc[a].ip_src == ip_dst )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-
-                                                                }
-                                                        }
-
-                                                    /* direction: both_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 7 )
-                                                        {
-
-
-                                                            if ( has_ip_src && has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                                    xbit_ipc[a].src_port == src_port &&
-                                                                    xbit_ipc[a].dst_port == dst_port )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"both_y\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-
-                                                                }
-                                                        }
-
-                                                    /* direction: by_src_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 8 )
-                                                        {
-
-                                                            if ( has_ip_src &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                                    xbit_ipc[a].src_port == src_port )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                    /* direction: by_dst_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 9 )
-                                                        {
-
-                                                            if ( has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                                    xbit_ipc[a].dst_port == dst_port )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                    /* direction: reverse_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 10 )
-                                                        {
-
-                                                            if ( has_ip_src && has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                                    xbit_ipc[a].src_port == dst_port &&
-                                                                    xbit_ipc[a].dst_port == src_port)
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                    /* direction: src_xbitdst_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 11 )
-                                                        {
-
-                                                            if ( has_ip_src &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                                    xbit_ipc[a].dst_port == src_port )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                    /* direction: dst_xbitsrc_p */
-
-                                                    else if ( rulestruct[rule_position].xbit_direction[i] == 12 )
-                                                        {
-
-                                                            if ( has_ip_dst &&
-                                                                    0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                                    xbit_ipc[a].src_port == dst_port )
-                                                                {
-
-                                                                    if ( debug->debugxbit)
-                                                                        {
-                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                                        }
-
-                                                                    xbit_total_match++;
-
-                                                                    /* Only 1 xbit, not need to continue loop */
-
-                                                                    if ( counters_ipc->xbit_count == 1 )
-                                                                        {
-                                                                            break;
-                                                                        }
-                                                                }
-                                                        }
-
-                                                } /* End xbit_state == 0 */
-
-                                        } /* End of strcmp xbit_name */
-
-                                    if ( and_or == true)
-                                        {
-                                            tmp_xbit_name = strtok_r(NULL, "|", &tok);
-                                        }
-                                    else
-                                        {
-                                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
                                         }
 
-                                } /* End of "while tmp_xbit_name" */
-                        } /* End of "for a" */
+                                    /* direction: both */
 
-                    if ( and_or == true && xbit_match == true )
-                        {
-                            xbit_total_match = rulestruct[rule_position].xbit_condition_count;	/* Do we even need this for OR? */
-                        }
-
-                    if ( and_or == false && xbit_match == false )
-                        {
-                            xbit_total_match = rulestruct[rule_position].xbit_condition_count;
-                        }
-
-                } /* End of "xbit_type[i] == 4" */
-
-            else if ( rulestruct[rule_position].xbit_type[i] == 4 )
-                {
-
-                }
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 1 )
+                                        {
 
 
-        } /* End of "for i" */
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                                {
 
-    /* IF we match all criteria for isset/isnotset
-     *
-     * If we match the xbit_conditon_count (number of concurrent xbits)
-     * we trigger.  It it's an "or" statement,  we trigger if any of the
-     * xbits are set.
-     *
-     */
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
 
-    if ( ( rulestruct[rule_position].xbit_condition_count == xbit_total_match ) || ( and_or == true && xbit_total_match != 0 ) )
-        {
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                                }
 
-            if ( debug->debugxbit)
-                {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
-                }
+                                                            return(true);
 
-            return(true);
-        }
+                                                        }
+                                                    else
+                                                        {
 
-    /* isset/isnotset failed. */
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                                }
 
-    if ( debug->debugxbit)
-        {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d matches.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
-        }
+                                                            return(false);
 
-    return(false);
+                                                        }
+
+                                                }
+                                        }
+
+                                    /* direction: by_dst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 3 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+                                                }
+                                        }
+
+                                    /* direction: reverse */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 4 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                                    memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 )
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+                                                }
+                                        }
+
+                                    /* direction: src_xbitdst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 5 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_dst)) == 0 )
+                                                {
+
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    /* direction: dst_xbitsrc */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 6 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) == 0 )
+
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"dst_xbitsrc\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+
+                                                }
+                                        }
+
+                                    /* direction: both_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 7 )
+                                        {
+
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                                    xbit_ipc[a].src_port == src_port &&
+                                                    xbit_ipc[a].dst_port == dst_port )
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"both_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port, ip_dst, dst_port);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"both_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port, ip_dst, dst_port);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+                                                }
+                                        }
+
+                                    /* direction: by_src_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 8 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src) == 0) &&
+                                                    xbit_ipc[a].src_port == src_port )
+                                                {
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_src_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+                                                }
+                                        }
+
+                                    /* direction: by_dst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 9 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                                    xbit_ipc[a].dst_port == dst_port )
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_dst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+                                                }
+                                        }
+
+                                    /* direction: reverse_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 10 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                                    memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                                    xbit_ipc[a].src_port == dst_port &&
+                                                    xbit_ipc[a].dst_port == src_port)
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, dst_port, ip_dst, src_port);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, dst_port, ip_dst, src_port);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+
+                                                }
+                                        }
+
+                                    /* direction: src_xbitdst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 11 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                                    xbit_ipc[a].dst_port == src_port )
+                                                {
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+
+                                                }
+                                        }
+
+                                    /* direction: dst_xbitsrc_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 12 )
+                                        {
+
+                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                                    xbit_ipc[a].src_port == dst_port )
+                                                {
+
+                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc_p\")", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(true);
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            if ( debug->debugxbit )
+                                                                {
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"dst_xbitsrc_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                }
+
+                                                            return(false);
+
+                                                        }
+
+
+                                                }
+                                        }
+
+
+                                } /* End of strcmp xbit_name */
+
+                        } /* for a */
+
+                    return(true); /* Xbit by name was not found */
+
+                } /* rulestruct[rule_position].xbit_type[i] == 4 */
+
+        } /* for i */
+
+    Sagan_Log(S_WARN, "[%s, line %d] Shouldn't make it this far in Xbit_Condition() !!", __FILE__, __LINE__);
 
 }  /* End of Xbit_Condition(); */
 
@@ -1013,7 +929,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src_char, char *ip_dst_char, 
  * "unset" happen here.
  *****************************************************************************/
 
-void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, char *syslog_message )
+void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector, char *syslog_message )
 {
 
     int i = 0;
@@ -1029,12 +945,6 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
     sbool xbit_match = false;
     sbool xbit_unset_match = 0;
-
-    unsigned char ip_src[MAXIPBIT] = {0};
-    unsigned char ip_dst[MAXIPBIT] = {0};
-
-    sbool has_ip_src = IP2Bit(ip_src_char, ip_src);
-    sbool has_ip_dst = IP2Bit(ip_dst_char, ip_dst);
 
     t = time(NULL);
     now=localtime(&t);
@@ -1065,371 +975,349 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
             if ( rulestruct[rule_position].xbit_type[i] == 2 )
                 {
 
-                    /* Xbits & (ie - bit1&bit2) */
-
-                    strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
-                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
-
-                    while( tmp_xbit_name != NULL )
+                    for (a = 0; a < counters_ipc->xbit_count; a++)
                         {
+                            /* Short circuit if no selector match */
 
-
-                            for (a = 0; a < counters_ipc->xbit_count; a++)
+                            if (
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && strcmp(selector, xbit_ipc[a].selector) != 0 )
+                            )
                                 {
-                                    // Short circuit if no selector match
-                                    if (
-                                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
-                                    )
+
+                                    continue;
+                                }
+
+
+                            if ( !strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i] ))
+                                {
+
+                                    /* direction: none */
+
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 0 )
                                         {
 
-                                            continue;
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                }
+
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = false;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
                                         }
 
 
-                                    if ( !strcmp(tmp_xbit_name, xbit_ipc[a].xbit_name ))
+                                    /* direction: both */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  )
                                         {
 
-                                            /* direction: none */
-
-                                            if ( rulestruct[rule_position].xbit_direction[i] == 0 )
+                                            if ( debug->debugxbit)
                                                 {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                        }
-
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = false;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
                                                 }
 
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
 
-                                            /* direction: both */
+                                            xbit_ipc[a].xbit_state = false;
 
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
-                                                {
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
 
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = false;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: by_src */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = false;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-
-                                            /* direction: by_dst */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = false;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: reverse */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = false;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: src_xbitdst */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: dst_xbitsrc */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: both_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                                      has_ip_src && has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].src_port == src_port &&
-                                                      xbit_ipc[a].dst_port == dst_port )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: by_src_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                      xbit_ipc[a].src_port == src_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-
-                                            /* direction: by_dst_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].dst_port == dst_port )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: reverse_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                                      has_ip_dst &&  has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].src_port == dst_port &&
-                                                      xbit_ipc[a].dst_port == src_port )
-
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: src_xbitdst_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                                      has_ip_src &&
-                                                      0 == memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                                      xbit_ipc[a].dst_port == src_port )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
-
-                                            /* direction: dst_xbitsrc_p */
-
-                                            else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                                      has_ip_dst &&
-                                                      0 == memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                      xbit_ipc[a].src_port == dst_port )
-                                                {
-
-                                                    if ( debug->debugxbit)
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst_char);
-                                                        }
-
-                                                    File_Lock(config->shm_xbit);
-                                                    pthread_mutex_lock(&Xbit_Mutex);
-
-                                                    xbit_ipc[a].xbit_state = 0;
-
-                                                    pthread_mutex_unlock(&Xbit_Mutex);
-                                                    File_Unlock(config->shm_xbit);
-
-                                                    xbit_unset_match = 1;
-
-                                                }
+                                            xbit_unset_match = 1;
 
                                         }
-                                }
 
-                            if ( debug->debugxbit && xbit_unset_match == 0 )
-                                {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] No xbit found to \"unset\" for %s.", __FILE__, __LINE__, tmp_xbit_name);
-                                }
+                                    /* direction: by_src */
 
-                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = false;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+
+                                    /* direction: by_dst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = false;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: reverse */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = false;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: src_xbitdst */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: dst_xbitsrc */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: both_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              xbit_ipc[a].src_port == src_port &&
+                                              xbit_ipc[a].dst_port == dst_port )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: by_src_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0  &&
+                                              xbit_ipc[a].src_port == src_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+
+                                    /* direction: by_dst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              xbit_ipc[a].dst_port == dst_port )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: reverse_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              xbit_ipc[a].src_port == dst_port &&
+                                              xbit_ipc[a].dst_port == src_port )
+
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: src_xbitdst_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
+                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  &&
+                                              xbit_ipc[a].dst_port == src_port )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                    /* direction: dst_xbitsrc_p */
+
+                                    else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
+                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              xbit_ipc[a].src_port == dst_port )
+                                        {
+
+                                            if ( debug->debugxbit)
+                                                {
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                }
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            xbit_ipc[a].xbit_state = 0;
+
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+                                            File_Unlock(config->shm_xbit);
+
+                                            xbit_unset_match = 1;
+
+                                        }
+
+                                }
                         }
+
+                    if ( debug->debugxbit && xbit_unset_match == 0 )
+                        {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] No xbit found to \"unset\" for %s.", __FILE__, __LINE__, tmp_xbit_name);
+                        }
+
                 } /* While & xbits (ie - bit1&bit2) */
 
             /*******************
@@ -1439,100 +1327,87 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
             else if ( rulestruct[rule_position].xbit_type[i] == 1 )
                 {
 
-                    xbit_match = false;
+                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                        {
+                            /* Short circuit if no selector match */
 
-                    /* Xbits & (ie - bit1&bit2) */
+                            if (
+                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
+                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                            )
+                                {
 
-                    strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
-                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
+                                    continue;
+                                }
 
-                    while( tmp_xbit_name != NULL )
+                            /* Do we have the xbit already in memory?  If so,  update the information */
+
+                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                                    memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) == 0 &&
+                                    xbit_ipc[a].src_port == config->sagan_port &&
+                                    xbit_ipc[a].dst_port == config->sagan_port )
+                                {
+
+                                    File_Lock(config->shm_xbit);
+                                    pthread_mutex_lock(&Xbit_Mutex);
+
+                                    xbit_ipc[a].xbit_date = atol(timet);
+                                    xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
+                                    xbit_ipc[a].xbit_state = true;
+                                    strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
+                                    strlcpy(xbit_ipc[a].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[a].signature_msg));
+                                    strlcpy(xbit_ipc[a].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[a].sid));
+
+
+                                    if ( debug->debugxbit)
+                                        {
+                                            Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
+                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
+                                                      xbit_ipc[a].selector
+                                                     );
+
+                                        }
+
+                                    pthread_mutex_unlock(&Xbit_Mutex);
+                                    File_Unlock(config->shm_xbit);
+
+                                    xbit_match = true;
+                                }
+
+                        }
+
+
+                    /* If the xbit isn't in memory,  store it to be created later */
+
+                    if ( xbit_match == false )
                         {
 
-                            for (a = 0; a < counters_ipc->xbit_count; a++)
+                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+
+                            if ( xbit_track == NULL )
                                 {
-                                    // Short circuit if no selector match
-                                    if (
-                                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
-                                    )
-                                        {
-
-                                            continue;
-                                        }
-
-                                    /* Do we have the xbit already in memory?  If so,  update the information */
-
-                                    if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) &&
-                                            xbit_ipc[a].src_port == config->sagan_port &&
-                                            xbit_ipc[a].dst_port == config->sagan_port )
-                                        {
-
-                                            File_Lock(config->shm_xbit);
-                                            pthread_mutex_lock(&Xbit_Mutex);
-
-                                            xbit_ipc[a].xbit_date = atol(timet);
-                                            xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                                            xbit_ipc[a].xbit_state = true;
-                                            strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
-                                            strlcpy(xbit_ipc[a].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[a].signature_msg));
-                                            strlcpy(xbit_ipc[a].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[a].sid));
-
-
-                                            if ( debug->debugxbit)
-                                                {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
-                                                              xbit_ipc[a].selector
-                                                             );
-
-                                                }
-
-                                            pthread_mutex_unlock(&Xbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
-
-                                            xbit_match = true;
-                                        }
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
+                            strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
+                            strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
 
-                            /* If the xbit isn't in memory,  store it to be created later */
+                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
+                            xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
+                            xbit_track_count++;
 
-                            if ( xbit_match == false )
-                                {
-
-                                    xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
-
-                                    if ( xbit_track == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
-                                        }
-
-                                    strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
-                                    strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                                    strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
-                                    strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
-
-                                    xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                                    xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
-                                    xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
-                                    xbit_track_count++;
-
-                                }
-
-                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
-
-                        } /* While & xbits (ie - bit1&bit2) */
+                        }
 
                 } /* if xbit_type == 1 */
 
@@ -1811,8 +1686,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
                                     strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
                                     strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-				    strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
-	                            strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
+                                    strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
+                                    strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
 
                                     xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
                                     xbit_track[xbit_track_count].xbit_srcport = src_port;
@@ -1861,7 +1736,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, int 
 
                             if ( debug->debugxbit)
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d],", __FILE__, __LINE__, counters_ipc->xbit_count, xbit_ipc[counters_ipc->xbit_count].xbit_name, ip_src_char, xbit_track[i].xbit_srcport, ip_dst_char, xbit_track[i].xbit_dstport);
+                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d]", __FILE__, __LINE__, counters_ipc->xbit_count, xbit_ipc[counters_ipc->xbit_count].xbit_name, ip_src, xbit_track[i].xbit_srcport, ip_dst, xbit_track[i].xbit_dstport);
                                 }
 
                             File_Lock(config->shm_counters);
@@ -1899,9 +1774,9 @@ void Xbit_Cleanup_MMAP(void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-
     for (i=0; i<counters_ipc->xbit_count; i++)
         {
+
             if (  xbit_ipc[i].xbit_state == true && atol(timet) >= xbit_ipc[i].xbit_expire )
                 {
                     if (debug->debugxbit)
