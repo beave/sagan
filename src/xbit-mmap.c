@@ -24,6 +24,8 @@
  *
  */
 
+/* DEBUG - !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src))  <- needs to be
+   sizeof(xbit_ipc[a].ip_src)? */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -72,8 +74,9 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     int i;
     int a;
 
-    sbool xbit_match = false;
     int xbit_total_match = 0;
+    sbool xbit_match = 0;
+    sbool xbit_name_match = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -93,6 +96,13 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
             if ( rulestruct[rule_position].xbit_type[i] == 3 )
                 {
 
+
+                    if ( debug->debugxbit )
+                        {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Condition \"isset\" found in rule.", __FILE__, __LINE__);
+                        }
+
+
                     for (a = 0; a < counters_ipc->xbit_count; a++)
                         {
 
@@ -107,23 +117,23 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     continue;
                                 }
 
-                            if (!strcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name) &&
+                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) &&
                                     xbit_ipc[a].xbit_state == true )
                                 {
 
                                     /* direction: by_src - most common check */
 
                                     if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                                            memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
+                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
 
                                         {
 
                                             if ( debug->debugxbit )
                                                 {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]);
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
@@ -138,15 +148,15 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: both */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0  &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
 
                                         {
 
@@ -155,14 +165,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: by_dst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
 
                                         {
 
@@ -171,15 +181,15 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: reverse */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
 
                                         {
                                             if ( debug->debugxbit)
@@ -187,14 +197,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: src_xbitdst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
 
                                         {
 
@@ -203,14 +213,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: dst_xbitsrc */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
 
                                         {
 
@@ -219,15 +229,15 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: both_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].src_port == src_port &&
                                               xbit_ipc[a].dst_port == dst_port )
 
@@ -238,14 +248,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: by_src_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
                                               xbit_ipc[a].src_port == src_port )
 
                                         {
@@ -255,14 +265,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: by_dst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst))  &&
                                               xbit_ipc[a].dst_port == dst_port )
 
                                         {
@@ -272,15 +282,15 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: reverse_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
                                               xbit_ipc[a].src_port == dst_port &&
                                               xbit_ipc[a].dst_port == src_port )
 
@@ -291,14 +301,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: src_xbitdst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
                                               xbit_ipc[a].dst_port == src_port )
 
                                         {
@@ -308,14 +318,14 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                     /* direction: dst_xbitsrc_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].src_port == dst_port )
 
                                         {
@@ -325,16 +335,13 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
                                                 }
 
-                                            return(true);
+                                            xbit_total_match++;
 
                                         }
 
                                 } /* End of strcmp xbit_name & xbit_state = 1 */
 
-
                         } /* End of "for a" */
-
-                    return(false);
 
                 } /* End "if" xbit_type == 3 (ISSET) */
 
@@ -345,119 +352,74 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
             if ( rulestruct[rule_position].xbit_type[i] == 4 )
                 {
 
+
+                    if ( debug->debugxbit )
+                        {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Condition \"isnotset\" found in rule.", __FILE__, __LINE__);
+                        }
+
+                    xbit_match = false;
+
                     for (a = 0; a < counters_ipc->xbit_count; a++)
                         {
-
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && strcmp(selector, xbit_ipc[a].selector) != 0 )
-                            )
+                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) )
                                 {
-
-                                    continue;
-                                }
-
-                            if (!strcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name))
-                                {
-
-                                    /* direction: by_src  - most common check */
-
-                                    if ( rulestruct[rule_position].xbit_direction[i] == 2 )
-                                        {
-
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
-                                                {
-                                                    if ( xbit_ipc[a].xbit_state == false )
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
-                                                                }
-
-                                                            return(true);
-
-                                                        }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-                                                }
-                                        }
 
                                     /* direction: none */
 
-                                    else if ( rulestruct[rule_position].xbit_direction[i] == 0 )
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 0 )
                                         {
 
-                                            if ( xbit_ipc[a].xbit_state == false )
+                                            if ( xbit_ipc[a].xbit_state == true )
                                                 {
-
                                                     if ( debug->debugxbit )
                                                         {
                                                             Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+
                                                         }
 
-                                                    return(true);
-
+                                                    xbit_match = true;
                                                 }
-                                            else
-                                                {
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                        }
-
-                                                    return(false);
-
-                                                }
-
-
                                         }
 
                                     /* direction: both */
 
-                                    else if ( rulestruct[rule_position].xbit_direction[i] == 1 )
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 1 )
                                         {
 
-
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
+                                                }
+                                        }
 
+                                    /* direction: by_src */
+
+                                    if ( rulestruct[rule_position].xbit_direction[i] == 2 )
+                                        {
+
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                                                {
+                                                    if ( xbit_ipc[a].xbit_state == true )
+                                                        {
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+
                                                                 }
 
-                                                            return(false);
-
+                                                            xbit_match = true;
                                                         }
-
                                                 }
                                         }
 
@@ -466,32 +428,18 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
                                                 }
                                         }
 
@@ -500,70 +448,40 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
-                                                    memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
                                                 }
                                         }
 
-                                    /* direction: src_xbitdst */
+                                    /* direciton: src_xbitdst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_dst)) == 0 )
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_dst)) )
                                                 {
-
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
                                                 }
-
                                         }
 
                                     /* direction: dst_xbitsrc */
@@ -571,34 +489,18 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) == 0 )
-
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) )
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"dst_xbitsrc\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
-
                                                 }
                                         }
 
@@ -607,34 +509,21 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 )
                                         {
 
-
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                                     xbit_ipc[a].src_port == src_port &&
                                                     xbit_ipc[a].dst_port == dst_port )
+
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"both_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port, ip_dst, dst_port);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+
                                                                 }
 
-                                                            return(true);
-
-                                                        }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"both_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port, ip_dst, dst_port);
-                                                                }
-
-                                                            return(false);
-
+                                                            xbit_match = true;
                                                         }
                                                 }
                                         }
@@ -644,30 +533,19 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src) == 0) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src) ) &&
                                                     xbit_ipc[a].src_port == src_port )
+
                                                 {
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src_p\"). (%s:%d -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port);
+
                                                                 }
 
-                                                            return(true);
-
-                                                        }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_src_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            return(false);
-
+                                                            xbit_match = true;
                                                         }
                                                 }
                                         }
@@ -677,33 +555,20 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                                     xbit_ipc[a].dst_port == dst_port )
+
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, dst_port);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"by_dst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
                                                 }
                                         }
 
@@ -712,36 +577,21 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
-                                                    memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
                                                     xbit_ipc[a].src_port == dst_port &&
                                                     xbit_ipc[a].dst_port == src_port)
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
                                                                     Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, dst_port, ip_dst, src_port);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, dst_port, ip_dst, src_port);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
-
                                                 }
                                         }
 
@@ -750,33 +600,20 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
                                                     xbit_ipc[a].dst_port == src_port )
+
                                                 {
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
-
                                                 }
                                         }
 
@@ -785,81 +622,91 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 12 )
                                         {
 
-                                            if ( memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
                                                     xbit_ipc[a].src_port == dst_port )
                                                 {
-
-                                                    if ( xbit_ipc[a].xbit_state == false )
+                                                    if ( xbit_ipc[a].xbit_state == true )
                                                         {
-
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc_p\")", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc_p\"). (%s:%d-> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, dst_port);
+
                                                                 }
 
-                                                            return(true);
-
+                                                            xbit_match = true;
                                                         }
-                                                    else
-                                                        {
-
-                                                            if ( debug->debugxbit )
-                                                                {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" false (direction: \"dst_xbitsrc_p\").", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
-                                                                }
-
-                                                            return(false);
-
-                                                        }
-
-
                                                 }
                                         }
 
+                                } /* if memcmp(rulestruct[rule_position].xbit_name[i] */
+                        } /* for a = 0 */
 
-                                } /* End of strcmp xbit_name */
+                    /* xbit wasn't found for isnotset */
 
-                        } /* for a */
-
-                    return(true); /* Xbit by name was not found */
+                    if ( xbit_match == false )
+                        {
+                            xbit_total_match++;
+                        }
 
                 } /* rulestruct[rule_position].xbit_type[i] == 4 */
 
-        } /* for i */
+        } /* for (i = 0; i < rulestruct[rule_position].xbit_count; i++) */
 
-    Sagan_Log(S_WARN, "[%s, line %d] Shouldn't make it this far in Xbit_Condition() !!", __FILE__, __LINE__);
+
+    if ( xbit_total_match == rulestruct[rule_position].xbit_condition_count )
+        {
+
+            if ( debug->debugxbit )
+                {
+                    Sagan_Log(S_DEBUG, "[%s, line %d] Got %d xbits & needed %d. Got corrent number of xbits, return true!", __FILE__, __LINE__, xbit_total_match, rulestruct[rule_position].xbit_condition_count );
+                }
+
+            return(true);
+
+        }
+    else
+        {
+
+            if ( debug->debugxbit )
+                {
+                    Sagan_Log(S_DEBUG, "[%s, line %d] Got %d xbits, needed %d", __FILE__, __LINE__, xbit_total_match, rulestruct[rule_position].xbit_condition_count );
+                }
+
+            return(false);
+
+        }
+
+    Sagan_Log(S_WARN, "Shouldn't make it this far in Xbit_Condition()!\n");
 
 }  /* End of Xbit_Condition(); */
 
 
 /*****************************************************************************
- * Xbit_Count - Used to determine how many xbits has been set based on a
+ * Xbit_Count - Used to determine how many xbits have been set based on a
  * source or destination address.  This is useful for identification of
  * distributed attacks.
  *****************************************************************************/
 
-sbool Xbit_Count_MMAP( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
+// DEBUG NEEDED?
+
+sbool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
 {
 
     uint32_t a = 0;
     uint32_t i = 0;
     uint32_t counter = 0;
 
-    unsigned char ip_src[MAXIPBIT] = {0};
-    unsigned char ip_dst[MAXIPBIT] = {0};
-
-    sbool has_ip_src = IP2Bit(ip_src_char, ip_src);
-    //sbool has_ip_dst = IP2Bit(ip_dst_char, ip_dst);
-
     for (i = 0; i < rulestruct[rule_position].xbit_count_count; i++)
         {
 
             for (a = 0; a < counters_ipc->xbit_count; a++)
                 {
-                    // Short circuit if no selector match
+                    /* Short circuit if no selector match */
+
                     if (
-                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                        (selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                        (selector != NULL && 0 != strcmp(selector, xbit_ipc[a].selector))
                     )
                         {
 
@@ -867,8 +714,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src_char, char *ip_dst_char, 
                         }
 
                     if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                            has_ip_src &&
-                            0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
                         {
 
                             counter++;
@@ -891,8 +737,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src_char, char *ip_dst_char, 
                         }
 
                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                              has_ip_src &&
-                              0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
                         {
 
                             counter++;
@@ -1019,8 +864,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: both */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -1043,7 +888,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_src */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
 
                                         {
 
@@ -1068,7 +913,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_dst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -1091,8 +936,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: reverse */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
 
                                         {
 
@@ -1116,7 +961,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: src_xbitdst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -1139,7 +984,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: dst_xbitsrc */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -1162,8 +1007,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: both_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].src_port == src_port &&
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
@@ -1188,7 +1033,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_src_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
                                               xbit_ipc[a].src_port == src_port )
 
                                         {
@@ -1214,7 +1059,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_dst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
 
@@ -1238,8 +1083,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: reverse_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0 &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].src_port == dst_port &&
                                               xbit_ipc[a].dst_port == src_port )
 
@@ -1265,7 +1110,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: src_xbitdst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                              memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
                                               xbit_ipc[a].dst_port == src_port )
                                         {
 
@@ -1289,7 +1134,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: dst_xbitsrc_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                              memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) == 0  &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
                                               xbit_ipc[a].src_port == dst_port )
                                         {
 
@@ -1343,11 +1188,12 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             /* Do we have the xbit already in memory?  If so,  update the information */
 
                             if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
-                                    memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) == 0 &&
-                                    memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_src)) == 0 &&
+                                    !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                     xbit_ipc[a].src_port == config->sagan_port &&
                                     xbit_ipc[a].dst_port == config->sagan_port )
                                 {
+
 
                                     File_Lock(config->shm_xbit);
                                     pthread_mutex_lock(&Xbit_Mutex);
@@ -1362,17 +1208,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                                     if ( debug->debugxbit)
                                         {
-                                            Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
-                                                      htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
-                                                      xbit_ipc[a].selector
-                                                     );
+
+                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], ip_src, xbit_ipc[a].src_port, ip_dst, xbit_ipc[a].dst_port);
 
                                         }
 
@@ -1443,8 +1280,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* Do we have the xbit already in memory?  If so,  update the information */
 
                                     if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                             xbit_ipc[a].src_port == src_port &&
                                             xbit_ipc[a].dst_port == config->sagan_port )
                                         {
@@ -1539,8 +1376,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* Do we have the xbit already in memory?  If so,  update the information */
 
                                     if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                             xbit_ipc[a].src_port == config->sagan_port &&
                                             xbit_ipc[a].dst_port == dst_port )
                                         {
@@ -1635,8 +1472,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* Do we have the xbit already in memory?  If so,  update the information */
 
                                     if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            0 == memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            0 == memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
                                             xbit_ipc[a].src_port == src_port &&
                                             xbit_ipc[a].dst_port == dst_port )
                                         {
