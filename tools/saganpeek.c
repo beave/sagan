@@ -687,6 +687,8 @@ int main(int argc, char **argv)
                             printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
                             printf("State: %s\n", xbit_ipc[i].xbit_state == 1 ? "ACTIVE" : "INACTIVE");
 
+//				printf("|%s|\n", xbit_ipc[i].ip_src); 
+
                             printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
                             printf("Signature: \"%s\" (%s)\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
                             printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);

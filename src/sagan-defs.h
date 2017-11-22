@@ -83,6 +83,7 @@ typedef void json_object;
 
 #define MAXIP			46		/* Max IP length */
 #define MAXIPBIT	     	46		/* Max IP length in bytes */
+
 #define MAXSELECTOR		64		/* Max tracking selector length */
 
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"

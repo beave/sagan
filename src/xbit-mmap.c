@@ -24,9 +24,6 @@
  *
  */
 
-/* DEBUG - !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src))  <- needs to be
-   sizeof(xbit_ipc[a].ip_src)? */
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -68,7 +65,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     struct tm *now;
     char  timet[20];
     char  tmp[128] = { 0 };
-    char *tmp_xbit_name = NULL;
     char *tok = NULL;
 
     int i;
@@ -76,7 +72,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
 
     int xbit_total_match = 0;
     sbool xbit_match = 0;
-    sbool xbit_name_match = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -124,13 +119,13 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: by_src - most common check */
 
                                     if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) )
 
                                         {
 
                                             if ( debug->debugxbit )
                                                 {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, xbit_ipc[a].ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -155,8 +150,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: both */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
 
                                         {
 
@@ -172,7 +167,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: by_dst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
 
                                         {
 
@@ -188,8 +183,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: reverse */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
 
                                         {
                                             if ( debug->debugxbit)
@@ -204,7 +199,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: src_xbitdst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
 
                                         {
 
@@ -220,7 +215,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: dst_xbitsrc */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) )
 
                                         {
 
@@ -236,8 +231,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: both_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].src_port == src_port &&
                                               xbit_ipc[a].dst_port == dst_port )
 
@@ -255,7 +250,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: by_src_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                               xbit_ipc[a].src_port == src_port )
 
                                         {
@@ -272,7 +267,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: by_dst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst))  &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst))  &&
                                               xbit_ipc[a].dst_port == dst_port )
 
                                         {
@@ -289,8 +284,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: reverse_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].src_port == dst_port &&
                                               xbit_ipc[a].dst_port == src_port )
 
@@ -308,7 +303,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: src_xbitdst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].dst_port == src_port )
 
                                         {
@@ -325,7 +320,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     /* direction: dst_xbitsrc_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
                                               xbit_ipc[a].src_port == dst_port )
 
                                         {
@@ -387,8 +382,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     if ( rulestruct[rule_position].xbit_direction[i] == 1 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -408,7 +403,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     if ( rulestruct[rule_position].xbit_direction[i] == 2 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -428,7 +423,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -448,8 +443,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) &&
-                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -469,7 +464,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_dst)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -489,7 +484,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_src)) )
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
@@ -509,8 +504,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                                     xbit_ipc[a].src_port == src_port &&
                                                     xbit_ipc[a].dst_port == dst_port )
 
@@ -533,7 +528,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src) ) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                                     xbit_ipc[a].src_port == src_port )
 
                                                 {
@@ -555,7 +550,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                                     xbit_ipc[a].dst_port == dst_port )
 
                                                 {
@@ -577,8 +572,8 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
-                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
+                                                    !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
                                                     xbit_ipc[a].src_port == dst_port &&
                                                     xbit_ipc[a].dst_port == src_port)
                                                 {
@@ -600,7 +595,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 )
                                         {
 
-                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
                                                     xbit_ipc[a].dst_port == src_port )
 
                                                 {
@@ -623,7 +618,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
                                         {
 
 
-                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                            if ( !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
                                                     xbit_ipc[a].src_port == dst_port )
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
@@ -688,8 +683,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
  * distributed attacks.
  *****************************************************************************/
 
-// DEBUG NEEDED?
-
 sbool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
 {
 
@@ -714,7 +707,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *sele
                         }
 
                     if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) )
                         {
 
                             counter++;
@@ -737,7 +730,7 @@ sbool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *sele
                         }
 
                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                         {
 
                             counter++;
@@ -864,8 +857,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: both */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 1 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -888,7 +881,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_src */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 2 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) )
 
                                         {
 
@@ -913,7 +906,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_dst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 3 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -936,8 +929,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: reverse */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 4 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) )
 
                                         {
 
@@ -961,7 +954,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: src_xbitdst */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 5 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) )
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -984,7 +977,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: dst_xbitsrc */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 6 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) )
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) )
                                         {
 
                                             if ( debug->debugxbit)
@@ -1007,8 +1000,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: both_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 7 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].src_port == src_port &&
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
@@ -1033,7 +1026,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_src_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 8 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                               xbit_ipc[a].src_port == src_port )
 
                                         {
@@ -1059,7 +1052,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: by_dst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 9 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
 
@@ -1083,8 +1076,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: reverse_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 10 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
                                               xbit_ipc[a].src_port == dst_port &&
                                               xbit_ipc[a].dst_port == src_port )
 
@@ -1110,7 +1103,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: src_xbitdst_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 11 &&
-                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(ip_src)) &&
+                                              !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) &&
                                               xbit_ipc[a].dst_port == src_port )
                                         {
 
@@ -1134,7 +1127,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     /* direction: dst_xbitsrc_p */
 
                                     else if ( rulestruct[rule_position].xbit_direction[i] == 12 &&
-                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(ip_dst)) &&
+                                              !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) &&
                                               xbit_ipc[a].src_port == dst_port )
                                         {
 
@@ -1209,7 +1202,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     if ( debug->debugxbit)
                                         {
 
-                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], ip_src, xbit_ipc[a].src_port, ip_dst, xbit_ipc[a].dst_port);
+                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
 
                                         }
 
@@ -1257,90 +1250,72 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    /* Xbits & (ie - bit1&bit2) */
+                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                        {
+                            /* Short circuit if no selector match */
 
-                    strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
-                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
+                            if (
+                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
+                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                            )
+                                {
 
-                    while( tmp_xbit_name != NULL )
+                                    continue;
+                                }
+
+                            /* Do we have the xbit already in memory?  If so,  update the information */
+
+                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                                    !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
+                                    xbit_ipc[a].src_port == src_port &&
+                                    xbit_ipc[a].dst_port == config->sagan_port )
+                                {
+
+                                    File_Lock(config->shm_xbit);
+                                    pthread_mutex_lock(&Xbit_Mutex);
+
+                                    xbit_ipc[a].xbit_date = atol(timet);
+                                    xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
+                                    xbit_ipc[a].xbit_state = true;
+                                    strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
+
+                                    if ( debug->debugxbit)
+                                        {
+
+                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set_srcport\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
+
+                                        }
+
+                                    pthread_mutex_unlock(&Xbit_Mutex);
+                                    File_Unlock(config->shm_xbit);
+
+                                    xbit_match = true;
+                                }
+
+                        }
+
+
+                    /* If the xbit isn't in memory,  store it to be created later */
+
+                    if ( xbit_match == false )
                         {
 
-                            for (a = 0; a < counters_ipc->xbit_count; a++)
+                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+
+                            if ( xbit_track == NULL )
                                 {
-                                    // Short circuit if no selector match
-                                    if (
-                                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
-                                    )
-                                        {
-
-                                            continue;
-                                        }
-
-                                    /* Do we have the xbit already in memory?  If so,  update the information */
-
-                                    if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                            xbit_ipc[a].src_port == src_port &&
-                                            xbit_ipc[a].dst_port == config->sagan_port )
-                                        {
-
-                                            File_Lock(config->shm_xbit);
-                                            pthread_mutex_lock(&Xbit_Mutex);
-
-                                            xbit_ipc[a].xbit_date = atol(timet);
-                                            xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                                            xbit_ipc[a].xbit_state = true;
-                                            strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
-
-                                            if ( debug->debugxbit)
-                                                {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_srcport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
-                                                              xbit_ipc[a].selector);
-                                                }
-
-                                            pthread_mutex_unlock(&Xbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
-
-                                            xbit_match = true;
-                                        }
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
+                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].xbit_srcport = src_port;
+                            xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
+                            xbit_track_count++;
 
-                            /* If the xbit isn't in memory,  store it to be created later */
-
-                            if ( xbit_match == false )
-                                {
-
-                                    xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
-
-                                    if ( xbit_track == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
-                                        }
-
-                                    strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
-                                    strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                                    xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                                    xbit_track[xbit_track_count].xbit_srcport = src_port;
-                                    xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
-                                    xbit_track_count++;
-
-                                }
-
-                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
-
-                        } /* While & xbits (ie - bit1&bit2) */
+                        }
 
                 } /* if xbit_type == 5 */
 
@@ -1353,90 +1328,72 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    /* Xbits & (ie - bit1&bit2) */
+                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                        {
+                            /* Short circuit if no selector match */
 
-                    strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
-                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
+                            if (
+                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
+                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                            )
+                                {
 
-                    while( tmp_xbit_name != NULL )
+                                    continue;
+                                }
+
+                            /* Do we have the xbit already in memory?  If so,  update the information */
+
+                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                                    !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
+                                    xbit_ipc[a].src_port == config->sagan_port &&
+                                    xbit_ipc[a].dst_port == dst_port )
+                                {
+
+                                    File_Lock(config->shm_xbit);
+                                    pthread_mutex_lock(&Xbit_Mutex);
+
+                                    xbit_ipc[a].xbit_date = atol(timet);
+                                    xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
+                                    xbit_ipc[a].xbit_state = true;
+                                    strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
+
+                                    if ( debug->debugxbit)
+                                        {
+
+                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set_dstport\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
+
+                                        }
+
+                                    pthread_mutex_unlock(&Xbit_Mutex);
+                                    File_Unlock(config->shm_xbit);
+
+                                    xbit_match = true;
+                                }
+
+                        }
+
+
+                    /* If the xbit isn't in memory,  store it to be created later */
+
+                    if ( xbit_match == false )
                         {
 
-                            for (a = 0; a < counters_ipc->xbit_count; a++)
+                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+
+                            if ( xbit_track == NULL )
                                 {
-                                    // Short circuit if no selector match
-                                    if (
-                                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
-                                    )
-                                        {
-
-                                            continue;
-                                        }
-
-                                    /* Do we have the xbit already in memory?  If so,  update the information */
-
-                                    if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                            xbit_ipc[a].src_port == config->sagan_port &&
-                                            xbit_ipc[a].dst_port == dst_port )
-                                        {
-
-                                            File_Lock(config->shm_xbit);
-                                            pthread_mutex_lock(&Xbit_Mutex);
-
-                                            xbit_ipc[a].xbit_date = atol(timet);
-                                            xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                                            xbit_ipc[a].xbit_state = true;
-                                            strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
-
-                                            if ( debug->debugxbit)
-                                                {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_dstport\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
-                                                              xbit_ipc[a].selector);
-                                                }
-
-                                            pthread_mutex_unlock(&Xbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
-
-                                            xbit_match = true;
-                                        }
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
+                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
+                            xbit_track[xbit_track_count].xbit_dstport = dst_port;
+                            xbit_track_count++;
 
-                            /* If the xbit isn't in memory,  store it to be created later */
-
-                            if ( xbit_match == false )
-                                {
-
-                                    xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
-
-                                    if ( xbit_track == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
-                                        }
-
-                                    strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
-                                    strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                                    xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                                    xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
-                                    xbit_track[xbit_track_count].xbit_dstport = dst_port;
-                                    xbit_track_count++;
-
-                                }
-
-                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
-
-                        } /* While & xbits (ie - bit1&bit2) */
+                        }
 
                 } /* if xbit_type == 6 */
 
@@ -1449,93 +1406,75 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    /* Xbits & (ie - bit1&bit2) */
+                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                        {
+                            /* Short circuit if no selector match */
 
-                    strlcpy(tmp, rulestruct[rule_position].xbit_name[i], sizeof(tmp));
-                    tmp_xbit_name = strtok_r(tmp, "&", &tok);
+                            if (
+                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
+                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                            )
+                                {
 
-                    while( tmp_xbit_name != NULL )
+                                    continue;
+                                }
+
+                            /* Do we have the xbit already in memory?  If so,  update the information */
+
+                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                                    !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
+                                    !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
+                                    xbit_ipc[a].src_port == src_port &&
+                                    xbit_ipc[a].dst_port == dst_port )
+                                {
+
+                                    File_Lock(config->shm_xbit);
+                                    pthread_mutex_lock(&Xbit_Mutex);
+
+                                    xbit_ipc[a].xbit_date = atol(timet);
+                                    xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
+                                    xbit_ipc[a].xbit_state = true;
+                                    strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
+
+                                    if ( debug->debugxbit)
+                                        {
+
+                                            Sagan_Log(S_DEBUG,"[%s, line %d] [%d] Updated via \"set_ports\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
+
+                                        }
+
+                                    pthread_mutex_unlock(&Xbit_Mutex);
+                                    File_Unlock(config->shm_xbit);
+
+                                    xbit_match = true;
+                                }
+
+                        }
+
+
+                    /* If the xbit isn't in memory,  store it to be created later */
+
+                    if ( xbit_match == false )
                         {
 
-                            for (a = 0; a < counters_ipc->xbit_count; a++)
+                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+
+                            if ( xbit_track == NULL )
                                 {
-                                    // Short circuit if no selector match
-                                    if (
-                                        (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                        (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
-                                    )
-                                        {
-
-                                            continue;
-                                        }
-
-                                    /* Do we have the xbit already in memory?  If so,  update the information */
-
-                                    if (!strcmp(xbit_ipc[a].xbit_name, tmp_xbit_name) &&
-                                            !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(ip_src)) &&
-                                            !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(ip_dst)) &&
-                                            xbit_ipc[a].src_port == src_port &&
-                                            xbit_ipc[a].dst_port == dst_port )
-                                        {
-
-                                            File_Lock(config->shm_xbit);
-                                            pthread_mutex_lock(&Xbit_Mutex);
-
-                                            xbit_ipc[a].xbit_date = atol(timet);
-                                            xbit_ipc[a].xbit_expire = atol(timet) + rulestruct[rule_position].xbit_timeout[i];
-                                            xbit_ipc[a].xbit_state = true;
-                                            strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
-
-                                            if ( debug->debugxbit)
-                                                {
-                                                    Sagan_Log(S_DEBUG, "[%s, line %d] [%d] Updated via \"set_ports\" for xbit \"%s\", [%d].  New expire time is %d (%d) [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X] (%s).", __FILE__, __LINE__, a, tmp_xbit_name, i, xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i],
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_src)[3]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[0]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[1]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[2]),
-                                                              htonl(((unsigned int *)&xbit_ipc[a].ip_dst)[3]),
-                                                              xbit_ipc[a].selector);
-                                                }
-
-                                            pthread_mutex_unlock(&Xbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
-
-                                            xbit_match = true;
-                                        }
-
+                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
+                            strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
+                            strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
 
-                            /* If the xbit isn't in memory,  store it to be created later */
+                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].xbit_srcport = src_port;
+                            xbit_track[xbit_track_count].xbit_dstport = dst_port;
+                            xbit_track_count++;
 
-                            if ( xbit_match == false )
-                                {
-
-                                    xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
-
-                                    if ( xbit_track == NULL )
-                                        {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
-                                        }
-
-                                    strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
-                                    strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                                    strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
-                                    strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
-
-                                    xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                                    xbit_track[xbit_track_count].xbit_srcport = src_port;
-                                    xbit_track[xbit_track_count].xbit_dstport = dst_port;
-                                    xbit_track_count++;
-
-                                }
-
-                            tmp_xbit_name = strtok_r(NULL, "&", &tok);
-
-                        } /* While & xbits (ie - bit1&bit2) */
+                        }
 
                 } /* if xbit_type == 7 */
 
@@ -1555,9 +1494,11 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
-                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(ip_src));
-                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(ip_dst));
-                            NULL == selector ? xbit_ipc[counters_ipc->xbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->xbit_count].selector, selector, MAXSELECTOR);
+                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
+                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
+
+                            selector == NULL ? xbit_ipc[counters_ipc->xbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->xbit_count].selector, selector, MAXSELECTOR);
+
                             xbit_ipc[counters_ipc->xbit_count].src_port = xbit_track[i].xbit_srcport;
                             xbit_ipc[counters_ipc->xbit_count].dst_port = xbit_track[i].xbit_dstport;
                             xbit_ipc[counters_ipc->xbit_count].xbit_date = atol(timet);
