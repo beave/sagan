@@ -64,7 +64,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     time_t t;
     struct tm *now;
     char  timet[20];
-    char  tmp[128] = { 0 };
 
     int i;
     int a;
@@ -774,9 +773,6 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
     struct tm *now;
     char  timet[20];
 
-    char tmp[128] = { 0 };
-    char *tmp_xbit_name = NULL;
-
     sbool xbit_match = false;
     sbool xbit_unset_match = 0;
 
@@ -1149,10 +1145,10 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     if ( debug->debugxbit && xbit_unset_match == 0 )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] No xbit found to \"unset\" for %s.", __FILE__, __LINE__, tmp_xbit_name);
+                            Sagan_Log(S_DEBUG, "[%s, line %d] No xbit found to \"unset\" for %s.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[i]);
                         }
 
-                } /* While & xbits (ie - bit1&bit2) */
+                } /* if ( rulestruct[rule_position].xbit_type[i] == 2 ) */
 
             /*******************
              *      SET        *
@@ -1304,7 +1300,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
                             xbit_track[xbit_track_count].xbit_srcport = src_port;
@@ -1382,7 +1378,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
                             xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
@@ -1460,7 +1456,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, tmp_xbit_name, sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
                             strlcpy(xbit_ipc[xbit_track_count].sid, rulestruct[rule_position].s_sid, sizeof(xbit_ipc[xbit_track_count].sid));
