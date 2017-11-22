@@ -65,7 +65,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     struct tm *now;
     char  timet[20];
     char  tmp[128] = { 0 };
-    char *tok = NULL;
 
     int i;
     int a;
@@ -76,8 +75,6 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
-
-    sbool and_or = false;
 
     Xbit_Cleanup_MMAP();
 
@@ -779,7 +776,6 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
     char tmp[128] = { 0 };
     char *tmp_xbit_name = NULL;
-    char *tok = NULL;
 
     sbool xbit_match = false;
     sbool xbit_unset_match = 0;
@@ -1494,8 +1490,11 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
-                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
-                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
+//                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
+//                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
+
+			    memcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
+			    memcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
 
                             selector == NULL ? xbit_ipc[counters_ipc->xbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->xbit_count].selector, selector, MAXSELECTOR);
 
