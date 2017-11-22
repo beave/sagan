@@ -81,8 +81,8 @@ typedef void json_object;
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
-#define MAXIP			64		/* Max IP length */
-#define MAXIPBIT	     	16		/* Max IP length in bytes */
+#define MAXIP			46		/* Max IP length */
+#define MAXIPBIT	     	46		/* Max IP length in bytes */
 #define MAXSELECTOR		64		/* Max tracking selector length */
 
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"
