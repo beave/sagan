@@ -239,7 +239,7 @@ void Sagan_BroIntel_Load_File ( void )
                                     for (i=0; i < counters->brointel_addr_count; i++)
                                         {
 
-                                            if ( memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, sizeof(bits_ip)) )
+                                            if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, sizeof(bits_ip)) )
                                                 {
                                                     Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -643,7 +643,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
     for ( i = 0; i < counters->brointel_addr_count; i++)
         {
 
-            if ( 0 == memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, ip, sizeof(Sagan_BroIntel_Intel_Addr[i].bits_ip)) )
+            if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, ip, sizeof(Sagan_BroIntel_Intel_Addr[i].bits_ip)) )
                 {
                     if ( debug->debugbrointel )
                         {
@@ -689,7 +689,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
             for ( b = 0; b < counters->brointel_addr_count; b++ )
                 {
 
-                    if ( 0 == memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip)))
+                    if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip)))
                         {
                             return(true);
                         }
