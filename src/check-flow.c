@@ -175,7 +175,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f1 == 2)
                         {
                             ne1++;
-                            if(0 == memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
+                            if(!memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
                                 {
                                     ne1_val++;
                                 }
@@ -183,7 +183,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f1 == 3)
                         {
                             eq1++;
-                            if(0 == memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
+                            if(!memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
                                 {
                                     eq1_val++;
                                 }
@@ -328,7 +328,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f2 == 2)
                         {
                             ne2++;
-                            if(0 == memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
+                            if(!memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
                                 {
                                     ne2_val++;
                                 }
@@ -336,7 +336,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f2 == 3)
                         {
                             eq2++;
-                            if(0 == memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
+                            if(!memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
                                 {
                                     eq2_val++;
                                 }

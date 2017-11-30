@@ -175,7 +175,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char *sha1_hash = NULL;
     char *sha256_hash = NULL;
 
-    /* These do not need to be reset each time as they are _only_ 
+    /* These do not need to be reset each time as they are _only_
      * set through normalize */
     char *normalize_username = NULL;
     char *normalize_filename = NULL;
@@ -556,7 +556,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                 {
 
 #ifdef HAVE_LIBLOGNORM
-                                    if ( 0 == liblognorm_status && rulestruct[b].normalize == 1 )
+                                    if ( liblognorm_status == 0 && rulestruct[b].normalize == 1 )
                                         {
                                             // Set that normalization has been tried work isn't repeated
                                             liblognorm_status = -1;
@@ -564,19 +564,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
 
                                             if ( SaganNormalizeLiblognorm.ip_src[0] != '0'  ||
-                                                 SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
-                                                 SaganNormalizeLiblognorm.src_port != 0  ||
-                                                 SaganNormalizeLiblognorm.dst_port != 0  ||
-                                                 SaganNormalizeLiblognorm.hash_sha1[0] != '\0'  ||
-                                                 SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
-                                                 SaganNormalizeLiblognorm.hash_md5[0] != '\0' )
+                                                    SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
+                                                    SaganNormalizeLiblognorm.src_port != 0  ||
+                                                    SaganNormalizeLiblognorm.dst_port != 0  ||
+                                                    SaganNormalizeLiblognorm.hash_sha1[0] != '\0'  ||
+                                                    SaganNormalizeLiblognorm.hash_sha256[0] != '\0'  ||
+                                                    SaganNormalizeLiblognorm.hash_md5[0] != '\0' )
 
                                                 {
                                                     liblognorm_status = 1;
                                                 }
 
-                                            /* These are _only_ set here */ 
-                                            if ( SaganNormalizeLiblognorm.username[0] != '\0' ) 
+                                            /* These are _only_ set here */
+                                            if ( SaganNormalizeLiblognorm.username[0] != '\0' )
                                                 {
 
                                                     liblognorm_status = 1;
@@ -617,28 +617,28 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     ip_dst = SaganNormalizeLiblognorm.ip_dst;
                                                 }
 
-                                            if ( SaganNormalizeLiblognorm.src_port != 0 ) 
+                                            if ( SaganNormalizeLiblognorm.src_port != 0 )
                                                 {
                                                     ip_srcport_u32 = SaganNormalizeLiblognorm.src_port;
                                                 }
 
 
-                                            if ( SaganNormalizeLiblognorm.dst_port != 0 ) 
+                                            if ( SaganNormalizeLiblognorm.dst_port != 0 )
                                                 {
                                                     ip_dstport_u32 = SaganNormalizeLiblognorm.dst_port;
                                                 }
 
-                                            if ( SaganNormalizeLiblognorm.hash_md5[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_md5[0] != '\0' )
                                                 {
                                                     md5_hash = SaganNormalizeLiblognorm.hash_md5;
                                                 }
 
-                                            if ( SaganNormalizeLiblognorm.hash_sha1[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_sha1[0] != '\0' )
                                                 {
                                                     sha1_hash = SaganNormalizeLiblognorm.hash_sha1;
                                                 }
 
-                                            if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' ) 
+                                            if ( SaganNormalizeLiblognorm.hash_sha256[0] != '\0' )
                                                 {
                                                     sha256_hash = SaganNormalizeLiblognorm.hash_sha256;
                                                 }
@@ -650,7 +650,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port,
                                      * _unless_ liblognorm fails and both are in a rule or liblognorm failed to get src or dst */
 
-                                    /* We don't need to set ip_src, et al to the parse_X version because it is reset at the top 
+                                    /* We don't need to set ip_src, et al to the parse_X version because it is reset at the top
                                      * and is only changed if normalize is valid */
 
                                     /* parse_src_ip: {position} */
@@ -1241,7 +1241,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                                                                                                         case(AFTER_BY_USERNAME):
 
-                                                                                                                                            if ( NULL != normalize_username )
+                                                                                                                                            if ( normalize_username != NULL )
                                                                                                                                                 {
 
                                                                                                                                                     after_log_flag = After_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
@@ -1270,7 +1270,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                             break;
 
                                                                                                                                         case(THRESH_BY_USERNAME):
-                                                                                                                                            if ( NULL != normalize_username )
+                                                                                                                                            if ( normalize_username != NULL )
                                                                                                                                                 {
                                                                                                                                                     thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                                 }
@@ -1406,7 +1406,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     free(processor_info_engine);
 
 #ifdef HAVE_LIBLOGNORM
-    if ( NULL != json_normalize )
+    if ( json_normalize != NULL )
         {
             json_object_put(json_normalize);
             json_normalize = NULL;

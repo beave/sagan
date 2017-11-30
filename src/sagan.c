@@ -1092,7 +1092,7 @@ int main(int argc, char **argv)
                                     dynamic_line_count++;
                                 }
 
-                            syslog_host = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_host = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
 
                             /* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
                              * here.  We cache both good and bad lookups to not over load our DNS server(s).
@@ -1177,7 +1177,7 @@ int main(int argc, char **argv)
 
                             /* We now check the rest of the values */
 
-                            syslog_facility = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_facility = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_facility == NULL )
                                 {
 
@@ -1193,7 +1193,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            syslog_priority = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_priority = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_priority == NULL )
                                 {
 
@@ -1209,7 +1209,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            syslog_level = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_level = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_level == NULL )
                                 {
 
@@ -1225,7 +1225,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            syslog_tag = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_tag = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_tag == NULL )
                                 {
 
@@ -1241,7 +1241,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            syslog_date = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_date = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_date == NULL )
                                 {
 
@@ -1257,7 +1257,7 @@ int main(int argc, char **argv)
                                         }
                                 }
 
-                            syslog_time = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_time = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_time == NULL )
                                 {
 
@@ -1274,7 +1274,7 @@ int main(int argc, char **argv)
                                 }
 
 
-                            syslog_program = NULL != psyslogstring ? strsep(&psyslogstring, "|") : NULL;
+                            syslog_program = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
                             if ( syslog_program == NULL )
                                 {
 
@@ -1289,7 +1289,7 @@ int main(int argc, char **argv)
                                             Sagan_Log(S_WARN, "Sagan received a malformed 'program'");
                                         }
                                 }
-                            syslog_msg = NULL != psyslogstring ? strsep(&psyslogstring, "") : NULL; /* In case the message has | in it,  we delimit on "" */
+                            syslog_msg = psyslogstring != NULL ? strsep(&psyslogstring, "") : NULL; /* In case the message has | in it,  we delimit on "" */
 
                             if ( syslog_msg == NULL )
                                 {

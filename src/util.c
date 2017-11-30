@@ -317,7 +317,7 @@ sbool Is_IPv6 (char  *ipaddr)
                     Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
                 }
         }
-    if (NULL != result)
+    if (result != NULL)
         {
             freeaddrinfo(result);
         }
@@ -354,14 +354,14 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
                 {
                 case AF_INET:
                     ret = true;
-                    if (NULL != out)
+                    if (out != NULL)
                         {
                             memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
                         }
                     break;
                 case AF_INET6:
                     ret = true;
-                    if (NULL != out)
+                    if (out != NULL)
                         {
                             memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
                         }
@@ -370,7 +370,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
                     Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
                 }
         }
-    if (NULL != result)
+    if (result != NULL)
         {
             freeaddrinfo(result);
         }
@@ -1012,11 +1012,12 @@ sbool Wildcard( char *first, char *second )
 
 void CloseStream( FILE *stream, int *fd )
 {
-    if (NULL != stream)
+    if (stream != NULL)
         {
             fclose(stream);
         }
-    if (NULL != fd && *fd >= 0)
+
+    if (fd != NULL && *fd >= 0)
         {
             close(*fd);
             *fd = -1;
@@ -1029,14 +1030,14 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
     char *_path = NULL;
     struct sockaddr_un name = {0};
 
-    if (NULL == fd || NULL == path)
+    if ( fd == NULL || path == NULL )
         {
             fprintf(stderr, "[E] [%s, line %d] Invalid (null) argument(s) passed to OpenStream!\n", __FILE__, __LINE__);
         }
 
     _path = strstr(path, "://");
 
-    if (NULL == _path)
+    if ( _path == NULL )
         {
             _path = path;
         }
@@ -1045,20 +1046,25 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
             _path += 3;
         }
 
-    // TODO: Add cases here for UDP and TCP
+    /* TODO: Add cases here for UDP and TCP */
+
     if (Starts_With(path, "unix://"))
         {
             /* Create socket from which to write. Currently only stream mode is supported */
+
             *fd = socket(AF_UNIX, SOCK_STREAM, 0);
             if (*fd < 0)
                 {
                     fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
                 }
+
             /* Create name. */
+
             name.sun_family = AF_UNIX;
             strncpy(name.sun_path, _path, sizeof(name.sun_path)-1);
 
             /* Bind the UNIX domain address to the created socket */
+
             if (connect(*fd, (struct sockaddr *) &name, sizeof(struct sockaddr_un)))
                 {
                     fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to connect to socket %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
@@ -1077,6 +1083,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
         }
 
     /* Chown the log files in case we get a SIGHUP or whatnot later (due to Sagan_Chroot()) */
+
     if ( chown(_path, pw_uid,pw_gid) < 0 )
         {
             Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
@@ -1084,7 +1091,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
 
 ErrorExit:
 
-    if (NULL == ret && *fd >= 0)
+    if ( ret == NULL && *fd >= 0 )
         {
             close(*fd);
             *fd = -1;
@@ -1305,7 +1312,7 @@ const char *Bit2IP(unsigned char *ipbits, char *str, size_t size)
                     break;
                 }
         }
-    ret = inet_ntop(ss_family, ipbits, NULL == str ? retbuf : str, NULL == str ? sizeof(retbuf) : size);
+    ret = inet_ntop(ss_family, ipbits, str == NULL ? retbuf : str, str == NULL ? sizeof(retbuf) : size);
 
     return ret;
 }
@@ -1320,7 +1327,6 @@ sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
     int mask;
     char *t = NULL;
     char _t = '\0';
-    //char *ip = ipstr;
     int maxmask = NULL != strchr(ipstr, ':') ? 128 : 32;
 
 
@@ -1332,13 +1338,16 @@ sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
         {
             mask = maxmask;
         }
-    if (NULL != t)
+
+    if (t != NULL)
         {
             _t = t[0];
             t[0] = '\0';
         }
+
     IP2Bit(ipstr, out);
-    if (NULL != t)
+
+    if (t != NULL)
         {
             t[0] = _t;
         }

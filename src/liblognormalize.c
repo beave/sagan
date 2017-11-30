@@ -144,8 +144,9 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
     /* int ln_normalize(ln_ctx ctx, const char *str, size_t strLen, struct json_object **json_p); */
+
     rc_normalize = ln_normalize(ctx, buf, strlen(buf), &json);
-    if (NULL == json)
+    if (json == NULL)
         {
             return NULL;
         }
@@ -206,7 +207,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             if ( SaganNormalizeLiblognorm->ip_src[0] == '0' && config->syslog_src_lookup)
                 {
 
-                    if (0 == DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host)))
+                    if (!DNS_Lookup(SaganNormalizeLiblognorm->src_host, tmp_host, sizeof(tmp_host)))
                         {
                             strlcpy(SaganNormalizeLiblognorm->ip_src, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_src));
                         }
@@ -225,7 +226,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' && config->syslog_src_lookup)
                 {
 
-                    if (0 == DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host)))
+                    if (!DNS_Lookup(SaganNormalizeLiblognorm->dst_host, tmp_host, sizeof(tmp_host)))
                         {
                             strlcpy(SaganNormalizeLiblognorm->ip_dst, tmp_host, sizeof(SaganNormalizeLiblognorm->ip_dst));
                         }

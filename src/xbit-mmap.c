@@ -1162,8 +1162,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             /* Short circuit if no selector match */
 
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && 0 != strcmp(selector, xbit_ipc[a].selector ))
                             )
                                 {
 
@@ -1247,8 +1247,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             /* Short circuit if no selector match */
 
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && 0 != strcmp(selector, xbit_ipc[a].selector ))
                             )
                                 {
 
@@ -1325,8 +1325,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             /* Short circuit if no selector match */
 
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && 0 != strcmp(selector, xbit_ipc[a].selector))
                             )
                                 {
 
@@ -1403,8 +1403,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             /* Short circuit if no selector match */
 
                             if (
-                                (NULL == selector && xbit_ipc[a].selector[0] != '\0') ||
-                                (NULL != selector && 0 != strcmp(selector, xbit_ipc[a].selector))
+                                ( selector == NULL && xbit_ipc[a].selector[0] != '\0') ||
+                                ( selector != NULL && 0 != strcmp(selector, xbit_ipc[a].selector))
                             )
                                 {
 
@@ -1486,11 +1486,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
-//                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
-//                            strlcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
-
-			    memcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
-			    memcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
+                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
+                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
 
                             selector == NULL ? xbit_ipc[counters_ipc->xbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->xbit_count].selector, selector, MAXSELECTOR);
 

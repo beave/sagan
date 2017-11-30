@@ -83,9 +83,9 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
     for (i = 0; i < counters_ipc->after_count_by_src; i++ )
         {
 
-            if ( 0 == memcmp(afterbysrc_ipc[i].ipsrc, ip_src_bits, sizeof(afterbysrc_ipc[i].ipsrc)) &&
+            if ( !memcmp(afterbysrc_ipc[i].ipsrc, ip_src_bits, sizeof(afterbysrc_ipc[i].ipsrc)) &&
                     !strcmp(afterbysrc_ipc[i].sid, rulestruct[rule_position].s_sid) &&
-                    (NULL == selector || 0 == strcmp(selector, afterbysrc_ipc[i].selector)) )
+                    ( selector == NULL || !strcmp(selector, afterbysrc_ipc[i].selector)) )
                 {
 
                     File_Lock(config->shm_after_by_src);
@@ -144,7 +144,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
 
             memcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc, ip_src_bits, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].ipsrc));
             strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].sid, rulestruct[rule_position].s_sid, sizeof(afterbysrc_ipc[counters_ipc->after_count_by_src].sid));
-            NULL == selector ? afterbysrc_ipc[counters_ipc->after_count_by_src].selector[0] = '\0' : strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].selector, selector, MAXSELECTOR);
+            selector == NULL ? afterbysrc_ipc[counters_ipc->after_count_by_src].selector[0] = '\0' : strlcpy(afterbysrc_ipc[counters_ipc->after_count_by_src].selector, selector, MAXSELECTOR);
             afterbysrc_ipc[counters_ipc->after_count_by_src].count = 1;
             afterbysrc_ipc[counters_ipc->after_count_by_src].utime = atol(timet);
             afterbysrc_ipc[counters_ipc->after_count_by_src].expire = rulestruct[rule_position].after_seconds;
@@ -186,9 +186,9 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
     for (i = 0; i < counters_ipc->after_count_by_dst; i++ )
         {
 
-            if ( 0 == memcmp(afterbydst_ipc[i].ipdst, ip_dst, sizeof(afterbydst_ipc[i].ipdst)) &&
+            if ( !memcmp(afterbydst_ipc[i].ipdst, ip_dst, sizeof(afterbydst_ipc[i].ipdst)) &&
                     !strcmp(afterbydst_ipc[i].sid, rulestruct[rule_position].s_sid ) &&
-                    (NULL == selector || 0 == strcmp(selector, afterbydst_ipc[i].selector)) )
+                    ( selector == NULL || !strcmp(selector, afterbydst_ipc[i].selector)) )
                 {
 
                     File_Lock(config->shm_after_by_dst);
@@ -243,7 +243,7 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
 
             memcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst, ip_dst_bits, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].ipdst));
             strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].sid, rulestruct[rule_position].s_sid, sizeof(afterbydst_ipc[counters_ipc->after_count_by_dst].sid));
-            NULL == selector ? afterbydst_ipc[counters_ipc->after_count_by_dst].selector[0] = '\0' : strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].selector, selector, MAXSELECTOR);
+            selector == NULL ? afterbydst_ipc[counters_ipc->after_count_by_dst].selector[0] = '\0' : strlcpy(afterbydst_ipc[counters_ipc->after_count_by_dst].selector, selector, MAXSELECTOR);
             afterbydst_ipc[counters_ipc->after_count_by_dst].count = 1;
             afterbydst_ipc[counters_ipc->after_count_by_dst].utime = atol(timet);
             afterbydst_ipc[counters_ipc->after_count_by_dst].expire = rulestruct[rule_position].after_seconds;
@@ -288,10 +288,11 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
 
     for (i = 0; i < counters_ipc->after_count_by_username; i++ )
         {
-            // Short circuit if no selector match
+            /* Short circuit if no selector match */
+
             if (
-                (NULL == selector && afterbyusername_ipc[i].selector[0] != '\0') ||
-                (NULL != selector && 0 != strcmp(selector, afterbyusername_ipc[i].selector))
+                ( selector == NULL && afterbyusername_ipc[i].selector[0] != '\0') ||
+                ( selector != NULL && 0 != strcmp(selector, afterbyusername_ipc[i].selector))
             )
                 {
 
@@ -355,7 +356,7 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
 
             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].username, normalize_username, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].username));
             strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].sid, rulestruct[rule_position].s_sid, sizeof(afterbyusername_ipc[counters_ipc->after_count_by_username].sid));
-            NULL == selector ? afterbyusername_ipc[counters_ipc->after_count_by_username].selector[0] = '\0' : strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].selector, selector, MAXSELECTOR);
+            selector == NULL ? afterbyusername_ipc[counters_ipc->after_count_by_username].selector[0] = '\0' : strlcpy(afterbyusername_ipc[counters_ipc->after_count_by_username].selector, selector, MAXSELECTOR);
             afterbyusername_ipc[counters_ipc->after_count_by_username].count = 1;
             afterbyusername_ipc[counters_ipc->after_count_by_username].utime = atol(timet);
             afterbyusername_ipc[counters_ipc->after_count_by_username].expire = rulestruct[rule_position].after_seconds;
@@ -397,10 +398,11 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 
     for (i = 0; i < counters_ipc->after_count_by_srcport; i++ )
         {
-            // Short circuit if no selector match
+            /* Short circuit if no selector match */
+
             if (
-                (NULL == selector && afterbysrcport_ipc[i].selector[0] != '\0') ||
-                (NULL != selector && 0 != strcmp(selector, afterbysrcport_ipc[i].selector))
+                ( selector == NULL && afterbysrcport_ipc[i].selector[0] != '\0') ||
+                ( selector != NULL  && 0 != strcmp(selector, afterbysrcport_ipc[i].selector))
             )
                 {
 
@@ -458,7 +460,7 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 
             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].ipsrcport = ip_srcport_u32;
             strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid, rulestruct[rule_position].s_sid, sizeof(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].sid));
-            NULL == selector ? afterbysrcport_ipc[counters_ipc->after_count_by_srcport].selector[0] = '\0' : strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].selector, selector, MAXSELECTOR);
+            selector == NULL ? afterbysrcport_ipc[counters_ipc->after_count_by_srcport].selector[0] = '\0' : strlcpy(afterbysrcport_ipc[counters_ipc->after_count_by_srcport].selector, selector, MAXSELECTOR);
             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].count = 1;
             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].utime = atol(timet);
             afterbysrcport_ipc[counters_ipc->after_count_by_srcport].expire = rulestruct[rule_position].after_seconds;
@@ -498,10 +500,11 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
 
     for (i = 0; i < counters_ipc->after_count_by_dstport; i++ )
         {
-            // Short circuit if no selector match
+            /* Short circuit if no selector match */
+
             if (
-                (NULL == selector && afterbydstport_ipc[i].selector[0] != '\0') ||
-                (NULL != selector && 0 != strcmp(selector, afterbydstport_ipc[i].selector))
+                ( selector == NULL && afterbydstport_ipc[i].selector[0] != '\0') ||
+                ( selector != NULL  && 0 != strcmp(selector, afterbydstport_ipc[i].selector))
             )
                 {
 
@@ -560,7 +563,7 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
 
             afterbydstport_ipc[counters_ipc->after_count_by_dstport].ipdstport = ip_dstport_u32;
             strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid, rulestruct[rule_position].s_sid, sizeof(afterbydstport_ipc[counters_ipc->after_count_by_dstport].sid));
-            NULL == selector ? afterbydstport_ipc[counters_ipc->after_count_by_dstport].selector[0] = '\0' : strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].selector, selector, MAXSELECTOR);
+            selector == NULL ? afterbydstport_ipc[counters_ipc->after_count_by_dstport].selector[0] = '\0' : strlcpy(afterbydstport_ipc[counters_ipc->after_count_by_dstport].selector, selector, MAXSELECTOR);
             afterbydstport_ipc[counters_ipc->after_count_by_dstport].count = 1;
             afterbydstport_ipc[counters_ipc->after_count_by_dstport].utime = atol(timet);
             afterbydstport_ipc[counters_ipc->after_count_by_dstport].expire = rulestruct[rule_position].after_seconds;

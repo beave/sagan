@@ -246,7 +246,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
             for (i=0; i<bluedot_ip_queue; i++)
                 {
-                    if ( 0 == memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip)))
+                    if ( !memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip)))
                         {
                             TmpSaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(TmpSaganBluedotIPQueue, (tmp_bluedot_queue_count+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
@@ -887,7 +887,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( 0 == memcmp(ip, SaganBluedotIPCache[i].host, sizeof(ip)))
+                    if ( !memcmp(ip, SaganBluedotIPCache[i].host, sizeof(ip)))
                         {
 
                             if (debug->debugbluedot)
@@ -949,7 +949,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             for (i=0; i < bluedot_ip_queue; i++)
                 {
-                    if ( 0 == memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip)))
+                    if ( !memcmp(ip, SaganBluedotIPQueue[i].host, sizeof(ip)))
                         {
                             if (debug->debugbluedot)
                                 {
@@ -1460,7 +1460,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
         {
 
             /* Failed to find next IP,  short circuit the process */
-            if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
+            if (( lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
                 {
                     return(false);
                 }

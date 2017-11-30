@@ -208,8 +208,8 @@ void Sagan_Blacklist_Load ( void )
                                             for ( i = 0; i < counters->blacklist_count; i++ )
                                                 {
 
-                                                    if ( 0 == memcmp(SaganBlacklist[i].range.ipbits, ipbits, sizeof(ipbits)) &&
-                                                            0 == memcmp(SaganBlacklist[i].range.maskbits, maskbits, sizeof(maskbits)))
+                                                    if ( !memcmp(SaganBlacklist[i].range.ipbits, ipbits, sizeof(ipbits)) &&
+                                                            !memcmp(SaganBlacklist[i].range.maskbits, maskbits, sizeof(maskbits)))
                                                         {
                                                             Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
                                                             found = 1;
@@ -287,7 +287,7 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
         {
 
             /* Failed to find next IP,  short circuit the process */
-            if ((lookup_cache[i].searched && 0 == lookup_cache[i].offset) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
+            if (( lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
                 {
                     return(false);
                 }

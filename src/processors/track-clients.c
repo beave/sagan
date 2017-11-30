@@ -99,7 +99,7 @@ void Track_Clients ( char *host )
 
     for (i=0; i<counters_ipc->track_clients_client_count; i++)
         {
-            if ( 0 == memcmp(SaganTrackClients_ipc[i].hostbits, hostbits, sizeof(hostbits)) )
+            if ( !memcmp(SaganTrackClients_ipc[i].hostbits, hostbits, sizeof(hostbits)) )
                 {
 
                     SaganTrackClients_ipc[i].utime = utime_u64;
