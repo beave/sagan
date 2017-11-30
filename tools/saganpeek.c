@@ -728,13 +728,12 @@ int main(int argc, char **argv)
                                 {
 
                                     Bit2IP(SaganTrackClients_ipc[i].hostbits, ip_src, sizeof(SaganTrackClients_ipc[i].hostbits));
-                                    u32_Time_To_Human(SaganTrackClients_ipc[i].expire, time_buf, sizeof(time_buf));
-
+                                    u32_Time_To_Human(SaganTrackClients_ipc[i].utime, time_buf, sizeof(time_buf));
 
                                     printf("Type: Tracking. [%d]\n", i);
                                     printf("State: %s.\n", 0 == SaganTrackClients_ipc[i].status ? "ACTIVE" : "INACTIVE");
                                     printf("Source tracking: %s\n", ip_src);
-                                    printf("Last seen: %d (%d)\n\n", SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60);
+                                    printf("Last seen: %s (%d/%d)\n\n", time_buf, SaganTrackClients_ipc[i].expire, SaganTrackClients_ipc[i].expire / 60);
 
                                 }
                         }
