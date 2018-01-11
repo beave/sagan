@@ -70,11 +70,6 @@ static int SafeMemcpy(void *, const void *, size_t, const void *, const void *);
 static int inBounds(const uint8_t *, const uint8_t *, const uint8_t *);
 static void Unified2RotateFile( void );
 
-/* Future note on IPv6 - This would have been
- * Serial_Unified2IDSEventIPv6_legacy.
- * - Champ Clark III - 02/15/2011
- */
-
 static uint8_t write_pkt_buffer[sizeof(Serial_Unified2_Header) +
                                 sizeof(Serial_Unified2IDSEvent_legacy) + IP_MAXPACKET];
 
@@ -141,17 +136,17 @@ void Unified2( _Sagan_Event *Event )
 
     memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
 
-    hdr->type = htonl(type);				// EXTRA DATA type
+    hdr->type = htonl(type);									// EXTRA DATA type
 
     hdr->length = htonl(UNIFIED_SIZE(alertdata, type));
 
-    UNIFIED_SET(alertdata, type, event_id, htonl(unified_event_id));  					// Event ID (increments)
+    UNIFIED_SET(alertdata, type, event_id, htonl(unified_event_id));  				// Event ID (increments)
 
-    UNIFIED_SET(alertdata, type, event_second, htonl(Event->event_time.tv_sec)); 				// Event epoch
-    UNIFIED_SET(alertdata, type, event_microsecond, htonl( Event->event_time.tv_usec));			// Event microseconds
+    UNIFIED_SET(alertdata, type, event_second, htonl(Event->event_time.tv_sec)); 		// Event epoch
+    UNIFIED_SET(alertdata, type, event_microsecond, htonl( Event->event_time.tv_usec));		// Event microseconds
 
     UNIFIED_SET(alertdata, type, signature_id, htonl(atoi(Event->sid)));
-    UNIFIED_SET(alertdata, type, signature_revision, htonl(atoi(Event->rev)));				// Rule Revision
+    UNIFIED_SET(alertdata, type, signature_revision, htonl(atoi(Event->rev)));			// Rule Revision
 
     /* Search for the classification type. */
 
@@ -170,9 +165,10 @@ void Unified2( _Sagan_Event *Event )
     UNIFIED_SET(alertdata, type, generator_id, htonl(Event->generatorid)); 			// From gen-msg.map
 
     IP2Bit(Event->ip_src, ip_src);
-    // Already in network byte order.
-    // *NOTE* For now, if one side isn't IPv6 but the other is, just convert to IPv4-mapped address.
-    //   This is probably not the best solution
+
+    /* Already in network byte order. *NOTE* For now, if one side isn't IPv6 but the other is, just convert to IPv4-mapped
+       address. This is probably not the best solution */
+
     if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_src))
         {
             memset(alertdata +
@@ -193,7 +189,9 @@ void Unified2( _Sagan_Event *Event )
         }
 
     IP2Bit(Event->ip_dst, ip_dst);
-    // Already in network byte order.
+
+    /* Already in network byte order. */
+
     if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_dst))
         {
             memset(alertdata +
@@ -245,6 +243,15 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2Packet) - 4;
     unsigned char tmp_ip[MAXIPBIT] = {0};
     uint32_t *tmp_ip_u32 = (uint32_t *)&tmp_ip[0];
+    int version = 4;
+
+    /* Barnyard2 doesn't really support IPv6 and throws errors when set this way.
+       We leave it as IPv4 as a kludge around this issue :( */
+
+    if ( !config->unified2_force_ipv4 )
+        {
+            version = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? 6 : 4;
+        }
 
     memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
 
@@ -282,7 +289,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     uint8_t packet_data[63556];
     int p_len = 0;
 
-    unsigned int len_payload = strlen(Event->message);		// Our payload 'length'
+    unsigned int len_payload = strlen(Event->message);		/* Our payload 'length' */
 
     /* Build the ethernet frame */
 
@@ -371,16 +378,18 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
 
     ip->ip_hl = 5;
     ip->ip_v = 4;
+
     ip->ip_tos = 0;
     ip->ip_id = 0;
     ip->ip_off = 0;
     ip->ip_ttl = IP_TTL_MAX;
-    ip->ip_p = Event->ip_proto;		 		// Protocol
+    ip->ip_p = Event->ip_proto;
     ip->ip_sum = 0;
 
-    // *NOTE*: These will be wrong for IPv6 addresses
-    // *TODO*: Even though the legacy format doesn't take the IPv6 address
-    //         it should be possible to provide a fake IPv6 packet here.
+    /* *NOTE*: These will be wrong for IPv6 addresses
+       *TODO*: Even though the legacy format doesn't take the IPv6 address
+               it should be possible to provide a fake IPv6 packet here. */
+
     IP2Bit(Event->ip_src, tmp_ip);
     ip->ip_src = *tmp_ip_u32;
 
@@ -392,7 +401,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
 
     pkt_length = strlen(Event->message) + p_len + len_iphdr;
     ip->ip_len = htons( len_payload + p_len + len_iphdr);  // Don't include eth frame.
-    ip_checksum(iphdr_buf, len_iphdr);		       // Valid checksum
+    ip_checksum(iphdr_buf, len_iphdr);		    	   // Valid checksum
 
     pkt_length = len_eth + len_iphdr + p_len + len_payload;
     write_len += pkt_length;
@@ -432,6 +441,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
      * the packet for use */
 
     /* Ethernet */
+
     for ( i = 0; i < len_eth; i++ )
         {
             packet_data[i] = eth_buf[i];
@@ -445,6 +455,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
         }
 
     /* UDP/TCP/ICMP header */
+
     for ( i = 0; i < p_len-1; i++ )
         {
             packet_data[i + len_eth + len_iphdr] = packet_buf[i];
@@ -527,6 +538,7 @@ int SaganSnprintf(char *buf, size_t buf_size, const char *format, ...)
     if (buf[buf_size - 1] != '\0' || (size_t)ret >= buf_size)
         {
             /* result was truncated */
+
             buf[buf_size - 1] = '\0';
             return SAGAN_SNPRINTF_TRUNCATION;
         }
@@ -581,17 +593,20 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
     int ffstatus = 0;
 
     /* Nothing to write or nothing to write to */
+
     if ((buf == NULL) || (config == NULL) || (config->unified2_stream == NULL))
         {
             return;
         }
 
     /* Don't use fsync().  It is a total performance killer */
+
     if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) != 1) ||
             ((ffstatus = fflush(config->unified2_stream)) != 0))
         {
             /* errno is saved just to avoid other intervening calls
              * (e.g. ErrorMessage) potentially reseting it to something else. */
+
             int error = errno;
             int max_retries = 3;
 
@@ -599,6 +614,7 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
              * EINTR or interrupt.  Only iterate a maximum of max_retries times so
              * there is no chance of infinite looping if for some reason the write
              * is constantly interrupted */
+
             while ((error != 0) && (max_retries != 0))
                 {
                     if (config->unified2_nostamp)
@@ -621,7 +637,9 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 
                             if (fwcount != 1)
                                 {
+
                                     /* fwrite() failed.  Redo fwrite and fflush */
+
                                     if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) == 1) &&
                                             ((ffstatus = fflush(config->unified2_stream)) == 0))
                                         {
@@ -642,7 +660,8 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                         }
 
                     /* If we've reached the maximum number of interrupt retries,
-                     * just bail out of the main while loop */
+                       just bail out of the main while loop */
+
                     if (max_retries == 0)
                         continue;
 
@@ -676,10 +695,12 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                             error = errno;
 
                             /* Loop again if interrupt */
+
                             if (error == EINTR)
                                 break;
 
                             /* Write out error message again, then fall through and fatal */
+
                             if (config->unified2_nostamp)
                                 {
                                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
@@ -738,15 +759,31 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
         {
 
         case EVENT_INFO_XFF_IPV4:
+
             IP2Bit(Event->host, ipbits);
             buffer = (void *)ipbits;
             len = sizeof(uint32_t);
             break;
+
         case EVENT_INFO_XFF_IPV6:
+
             IP2Bit(Event->host, ipbits);
             buffer = (void *)ipbits;
             len = MAXIPBIT;
             break;
+
+        case EVENT_INFO_IPV6_SRC:
+            IP2Bit(Event->ip_src, ipbits);
+            buffer = (void *)ipbits;
+            len = MAXIPBIT;
+            break;
+
+        case EVENT_INFO_IPV6_DST:
+            IP2Bit(Event->ip_dst, ipbits);
+            buffer = (void *)ipbits;
+            len = MAXIPBIT;
+            break;
+
         case EVENT_INFO_HTTP_URI:
 
             buffer = (uint8_t*)Event->normalize_http_uri;

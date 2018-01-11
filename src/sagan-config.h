@@ -213,6 +213,7 @@ struct _SaganConfig
     unsigned int unified2_current;
     int          unified2_nostamp;
     sbool        sagan_unified2_flag;
+    sbool	 unified2_force_ipv4;
 #endif
 
     /* Bluedot */

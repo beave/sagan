@@ -1597,6 +1597,16 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
+                                    else if ( !strcmp(last_pass, "force-ipv4") && config->sagan_unified2_flag == true )
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
+                                                {
+                                                    config->unified2_force_ipv4 = true;
+                                                }
+
+                                        }
+
                                 } /* if sub_type == YAML_OUTPUT_UNIFIED2  */
 
 #endif

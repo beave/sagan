@@ -385,6 +385,7 @@ outputs:
 
   - unified2:
       enabled: no
+      force-ipv4: no
       filename: "$LOG_PATH/unified2.alert"
       limit: 128				# Max size in MB
 
