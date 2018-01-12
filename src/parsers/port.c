@@ -81,7 +81,8 @@ int Parse_Src_Port (char *msg)
         {
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
-            for ( i = 0, str = portstring; ; i++ )
+
+            for ( i = 0 , str = portstring; ; i++ )
                 {
 
                     token = strtok_r(NULL, " ", &saveptr1);
@@ -124,6 +125,7 @@ int Parse_Src_Port (char *msg)
         {
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
+
             for ( i = 0, str = portstring; ; i++ )
                 {
 
@@ -152,6 +154,7 @@ int Parse_Src_Port (char *msg)
 
             portstring = strtok_r(tmpmsg, ":", &saveptr1);
             token = strtok_r(portstring, " ", &saveptr2);
+
             for ( i = 0, str = portstring; ; i++ )
                 {
                     token = strtok_r(NULL, " ", &saveptr2);
@@ -191,6 +194,7 @@ int Parse_Src_Port (char *msg)
 
             portstring = strtok_r(tmpmsg, "#", &saveptr1);
             token = strtok_r(portstring, " ", &saveptr2);
+
             for ( i = 0, str = portstring; ; i++ )
                 {
                     token = strtok_r(NULL, " ", &saveptr2);
@@ -241,7 +245,7 @@ int Parse_Dst_Port (char *msg)
 
     char *portstring=NULL;
     char *saveptr1=NULL;
-    //char *str=NULL;
+    char *str=NULL;
     char *token=NULL;
 
     int i;
@@ -259,8 +263,8 @@ int Parse_Dst_Port (char *msg)
         {
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
-            //for ( i = 0, str = portstring; ; i++ )		DEBUG: REMOVE
-	    for ( i = 0; ; i++ )
+
+            for ( i = 0 , str = portstring; ; i++ )	
                 {
 
                     token = strtok_r(NULL, " ", &saveptr1);
