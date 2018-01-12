@@ -71,7 +71,7 @@ struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 char *bluedot_time = NULL;
 char *bluedot_type = NULL;
 
-uintmax_t bluedot_time_u32 = 0;
+uint64_t bluedot_time_u32 = 0;
 
 #endif
 
@@ -133,7 +133,7 @@ void Load_Rules( const char *ruleset )
     char tok_help[64];
     char tok_help2[64];
 
-    uintmax_t fwsam_time_tmp;
+    uint64_t fwsam_time_tmp;
 
     char netstr[512];
     char rulestr[RULEBUF];

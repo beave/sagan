@@ -255,8 +255,8 @@ struct _Rule_Struct
     int   bluedot_ip_cats[BLUEDOT_MAX_CAT];
     int   bluedot_ip_cat_count;
 
-    uintmax_t bluedot_mdate_effective_period;
-    uintmax_t bluedot_cdate_effective_period;
+    uint64_t bluedot_mdate_effective_period;
+    uint64_t bluedot_cdate_effective_period;
 
     int   bluedot_hash_cats[BLUEDOT_MAX_CAT];
     int   bluedot_hash_cat_count;

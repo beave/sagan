@@ -68,9 +68,9 @@ typedef struct _Sagan_Bluedot_IP_Cache _Sagan_Bluedot_IP_Cache;
 struct _Sagan_Bluedot_IP_Cache
 {
     unsigned char host[MAXIPBIT];
-    uintmax_t mdate_utime;
-    uintmax_t cdate_utime;
-    uintmax_t cache_utime;
+    uint64_t mdate_utime;
+    uint64_t cdate_utime;
+    uint64_t cache_utime;
     int	alertid;
 };
 
@@ -78,7 +78,7 @@ typedef struct _Sagan_Bluedot_Hash_Cache _Sagan_Bluedot_Hash_Cache;
 struct _Sagan_Bluedot_Hash_Cache
 {
     char hash[SHA256_HASH_SIZE+1];
-    uintmax_t cache_utime;
+    uint64_t cache_utime;
     int alertid;
 };
 
@@ -86,7 +86,7 @@ typedef struct _Sagan_Bluedot_URL_Cache _Sagan_Bluedot_URL_Cache;
 struct _Sagan_Bluedot_URL_Cache
 {
     char url[8192];
-    uintmax_t cache_utime;
+    uint64_t cache_utime;
     int alertid;
 };
 
@@ -95,7 +95,7 @@ typedef struct _Sagan_Bluedot_Filename_Cache _Sagan_Bluedot_Filename_Cache;
 struct _Sagan_Bluedot_Filename_Cache
 {
     char filename[256];
-    uintmax_t cache_utime;
+    uint64_t cache_utime;
     int alertid;
 };
 

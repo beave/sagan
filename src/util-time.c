@@ -164,7 +164,7 @@ void u32_Time_To_Human ( uint32_t utime, char *str, size_t size )
  * 3600
  *************************************************************/
 
-uintmax_t Value_To_Seconds(char *type, uintmax_t number)
+uint64_t Value_To_Seconds(char *type, uint64_t number)
 {
 
     /* Covers both plural and non-plural (ie - minute/minutes) */

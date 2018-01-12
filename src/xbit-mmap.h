@@ -48,8 +48,8 @@ struct _Sagan_IPC_Xbit
     int src_port;
     int dst_port;
     char username[64];
-    uintmax_t xbit_date;
-    uintmax_t xbit_expire;
+    uint64_t xbit_date;
+    uint64_t xbit_expire;
     int expire;
     char selector[MAXSELECTOR]; // No need to clean this, as we always set it when tracking
     char syslog_message[MAX_SYSLOGMSG];

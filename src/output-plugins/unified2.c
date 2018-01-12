@@ -58,7 +58,7 @@
 
 sbool endian;
 
-uintmax_t unified_event_id;
+uint64_t unified_event_id;
 
 struct _Rule_Struct *rulestruct;
 struct _Class_Struct *classstruct;

@@ -434,7 +434,7 @@ void Between_Quotes(char *instr, char *str, size_t size)
  * CalcPct (Taken from Snort)
  *****************************/
 
-double CalcPct(uintmax_t cnt, uintmax_t total)
+double CalcPct(uint64_t cnt, uint64_t total)
 {
     double pct = 0.0;
 

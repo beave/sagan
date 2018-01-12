@@ -107,9 +107,9 @@ void	  Remove_Return(char *);
 int       Classtype_Lookup( const char *, char *, size_t size );
 void      Remove_Spaces(char *);
 void      Between_Quotes( char *, char *str, size_t size );
-double    CalcPct(uintmax_t, uintmax_t);
+double    CalcPct(uint64_t, uint64_t);
 void      Replace_String(char *, char *, char *, char *str, size_t size);
-uintmax_t Value_To_Seconds (char *, uintmax_t);
+uint64_t Value_To_Seconds (char *, uint64_t);
 void      Sagan_Log( int, const char *, ... );
 void      Droppriv( void );
 int       DNS_Lookup( char *, char *str, size_t size );
@@ -193,35 +193,35 @@ typedef struct _SaganCounters _SaganCounters;
 struct _SaganCounters
 {
 
-    uintmax_t threshold_total;
-    uintmax_t after_total;
-    uintmax_t sagantotal;
-    uintmax_t saganfound;
-    uintmax_t sagan_output_drop;
-    uintmax_t sagan_processor_drop;
-    uintmax_t sagan_log_drop;
-    uintmax_t dns_cache_count;
-    uintmax_t dns_miss_count;
-    uintmax_t fwsam_count;
-    uintmax_t ignore_count;
-    uintmax_t blacklist_count;
+    uint64_t threshold_total;
+    uint64_t after_total;
+    uint64_t sagantotal;
+    uint64_t saganfound;
+    uint64_t sagan_output_drop;
+    uint64_t sagan_processor_drop;
+    uint64_t sagan_log_drop;
+    uint64_t dns_cache_count;
+    uint64_t dns_miss_count;
+    uint64_t fwsam_count;
+    uint64_t ignore_count;
+    uint64_t blacklist_count;
 
-    uintmax_t alert_total;
+    uint64_t alert_total;
 
-    uintmax_t malformed_host;
-    uintmax_t malformed_facility;
-    uintmax_t malformed_priority;
-    uintmax_t malformed_level;
-    uintmax_t malformed_tag;
-    uintmax_t malformed_date;
-    uintmax_t malformed_time;
-    uintmax_t malformed_program;
-    uintmax_t malformed_message;
+    uint64_t malformed_host;
+    uint64_t malformed_facility;
+    uint64_t malformed_priority;
+    uint64_t malformed_level;
+    uint64_t malformed_tag;
+    uint64_t malformed_date;
+    uint64_t malformed_time;
+    uint64_t malformed_program;
+    uint64_t malformed_message;
 
-    uintmax_t worker_thread_exhaustion;
+    uint64_t worker_thread_exhaustion;
 
-    uintmax_t blacklist_hit_count;
-    uintmax_t blacklist_lookup_count;
+    uint64_t blacklist_hit_count;
+    uint64_t blacklist_lookup_count;
 
     int	     thread_output_counter;
     int	     thread_processor_counter;
@@ -257,41 +257,41 @@ struct _SaganCounters
 
     int	      rules_loaded_count;
 
-    uintmax_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
-    uintmax_t follow_flow_drop;	     		        /* Amount of flows that did not match and were dropped */
+    uint64_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
+    uint64_t follow_flow_drop;	     		        /* Amount of flows that did not match and were dropped */
 
 #ifdef HAVE_LIBMAXMINDDB
-    uintmax_t geoip2_hit;				/* GeoIP2 hit count */
-    uintmax_t geoip2_lookup;				/* Total lookups */
-    uintmax_t geoip2_miss;				/* Misses (country not found) */
+    uint64_t geoip2_hit;				/* GeoIP2 hit count */
+    uint64_t geoip2_lookup;				/* Total lookups */
+    uint64_t geoip2_miss;				/* Misses (country not found) */
 #endif
 
 #ifdef WITH_BLUEDOT
-    uintmax_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
-    uintmax_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
-    uintmax_t bluedot_ip_positive_hit;
-    uintmax_t bluedot_ip_total;
+    uint64_t bluedot_ip_cache_count;                      /* Bluedot cache processor */
+    uint64_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
+    uint64_t bluedot_ip_positive_hit;
+    uint64_t bluedot_ip_total;
 
-    uintmax_t bluedot_mdate;					   /* Hits , but where over a modification date */
-    uintmax_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
-    uintmax_t bluedot_mdate_cache;                                 /* Hits from cache , but where over a modification date */
-    uintmax_t bluedot_cdate_cache;      			   /* Hits from cache , but where over a create date */
-    uintmax_t bluedot_error_count;
+    uint64_t bluedot_mdate;					   /* Hits , but where over a modification date */
+    uint64_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
+    uint64_t bluedot_mdate_cache;                                 /* Hits from cache , but where over a modification date */
+    uint64_t bluedot_cdate_cache;      			   /* Hits from cache , but where over a create date */
+    uint64_t bluedot_error_count;
 
-    uintmax_t bluedot_hash_cache_count;
-    uintmax_t bluedot_hash_cache_hit;
-    uintmax_t bluedot_hash_positive_hit;
-    uintmax_t bluedot_hash_total;
+    uint64_t bluedot_hash_cache_count;
+    uint64_t bluedot_hash_cache_hit;
+    uint64_t bluedot_hash_positive_hit;
+    uint64_t bluedot_hash_total;
 
-    uintmax_t bluedot_url_cache_count;
-    uintmax_t bluedot_url_cache_hit;
-    uintmax_t bluedot_url_positive_hit;
-    uintmax_t bluedot_url_total;
+    uint64_t bluedot_url_cache_count;
+    uint64_t bluedot_url_cache_hit;
+    uint64_t bluedot_url_positive_hit;
+    uint64_t bluedot_url_total;
 
-    uintmax_t bluedot_filename_cache_count;
-    uintmax_t bluedot_filename_cache_hit;
-    uintmax_t bluedot_filename_positive_hit;
-    uintmax_t bluedot_filename_total;
+    uint64_t bluedot_filename_cache_count;
+    uint64_t bluedot_filename_cache_hit;
+    uint64_t bluedot_filename_positive_hit;
+    uint64_t bluedot_filename_total;
 
     int bluedot_cat_count;
 
@@ -299,12 +299,12 @@ struct _SaganCounters
 
 
 #ifdef HAVE_LIBESMTP
-    uintmax_t esmtp_count_success;
-    uintmax_t esmtp_count_failed;
+    uint64_t esmtp_count_success;
+    uint64_t esmtp_count_failed;
 #endif
 
 #ifdef HAVE_LIBHIREDIS
-    uintmax_t redis_writer_threads_drop;
+    uint64_t redis_writer_threads_drop;
 #endif
 
 };
@@ -435,7 +435,7 @@ struct thresh_by_src_ipc
 {
     unsigned char ipsrc[MAXIPBIT];
     int  count;
-    uintmax_t utime;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -451,7 +451,7 @@ struct thresh_by_dst_ipc
 {
     unsigned char ipdst[MAXIPBIT];
     int  count;
-    uintmax_t utime;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -467,7 +467,7 @@ struct thresh_by_srcport_ipc
 {
     uint32_t ipsrcport;
     int  count;
-    uintmax_t utime;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -480,7 +480,7 @@ struct thresh_by_dstport_ipc
 {
     uint32_t ipdstport;
     int  count;
-    uintmax_t utime;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -494,7 +494,7 @@ struct thresh_by_username_ipc
 {
     char username[128];
     int  count;
-    uintmax_t utime;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -508,9 +508,9 @@ typedef struct after_by_src_ipc after_by_src_ipc;
 struct after_by_src_ipc
 {
     unsigned char ipsrc[MAXIPBIT];
-    uintmax_t count;
-    uintmax_t total_count;
-    uintmax_t utime;
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -525,8 +525,8 @@ struct after_by_dst_ipc
 {
     unsigned char ipdst[MAXIPBIT];
     int  count;
-    uintmax_t total_count;
-    uintmax_t utime;
+    uint64_t total_count;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -541,9 +541,9 @@ typedef struct after_by_srcport_ipc after_by_srcport_ipc;
 struct after_by_srcport_ipc
 {
     uint32_t ipsrcport;
-    uintmax_t count;
-    uintmax_t total_count;
-    uintmax_t utime;
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -555,9 +555,9 @@ typedef struct after_by_dstport_ipc after_by_dstport_ipc;
 struct after_by_dstport_ipc
 {
     uint32_t ipdstport;
-    uintmax_t count;
-    uintmax_t total_count;
-    uintmax_t utime;
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];
@@ -569,9 +569,9 @@ typedef struct after_by_username_ipc after_by_username_ipc;
 struct after_by_username_ipc
 {
     char username[128];
-    uintmax_t count;
-    uintmax_t total_count;
-    uintmax_t utime;
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
     char sid[20];
     int expire;
     char selector[MAXSELECTOR];

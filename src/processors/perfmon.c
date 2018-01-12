@@ -75,30 +75,30 @@ void Sagan_Perfmonitor_Handler( void )
     now=localtime(&t);
     strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
 
-    uintmax_t last_sagantotal = 0;
-    uintmax_t last_saganfound = 0;
-    uintmax_t last_alert_total = 0;
-    uintmax_t last_after_total = 0;
-    uintmax_t last_threshold_total = 0;
-    uintmax_t last_sagan_processor_drop = 0;
-    uintmax_t last_ignore_count = 0;
+    uint64_t last_sagantotal = 0;
+    uint64_t last_saganfound = 0;
+    uint64_t last_alert_total = 0;
+    uint64_t last_after_total = 0;
+    uint64_t last_threshold_total = 0;
+    uint64_t last_sagan_processor_drop = 0;
+    uint64_t last_ignore_count = 0;
 
 #ifdef HAVE_LIBMAXMINDDB
-    uintmax_t last_geoip2_lookup = 0;
-    uintmax_t last_geoip2_hit = 0;
-    uintmax_t last_geoip2_miss = 0;
+    uint64_t last_geoip2_lookup = 0;
+    uint64_t last_geoip2_hit = 0;
+    uint64_t last_geoip2_miss = 0;
 #endif
 
 #ifdef WITH_BLUEDOT
-    uintmax_t last_bluedot_ip_cache_hit = 0;
-    uintmax_t last_bluedot_ip_positive_hit = 0;
-    uintmax_t last_bluedot_hash_cache_hit = 0;
-    uintmax_t last_bluedot_hash_positive_hit = 0;
-    uintmax_t last_bluedot_url_cache_hit = 0;
-    uintmax_t last_bluedot_url_positive_hit = 0;
-    uintmax_t last_bluedot_filename_cache_hit = 0;
-    uintmax_t last_bluedot_filename_positive_hit = 0;
-    uintmax_t last_bluedot_error_count = 0;
+    uint64_t last_bluedot_ip_cache_hit = 0;
+    uint64_t last_bluedot_ip_positive_hit = 0;
+    uint64_t last_bluedot_hash_cache_hit = 0;
+    uint64_t last_bluedot_hash_positive_hit = 0;
+    uint64_t last_bluedot_url_cache_hit = 0;
+    uint64_t last_bluedot_url_positive_hit = 0;
+    uint64_t last_bluedot_filename_cache_hit = 0;
+    uint64_t last_bluedot_filename_positive_hit = 0;
+    uint64_t last_bluedot_error_count = 0;
 
     unsigned long bluedot_ip_total;
     unsigned long bluedot_url_total;
@@ -107,14 +107,14 @@ void Sagan_Perfmonitor_Handler( void )
 #endif
 
 #ifdef HAVE_LIBESMTP
-    uintmax_t last_esmtp_count_success = 0;
-    uintmax_t last_esmtp_count_failed = 0;
+    uint64_t last_esmtp_count_success = 0;
+    uint64_t last_esmtp_count_failed = 0;
 #endif
 
-    uintmax_t last_blacklist_hit_count = 0;
-    uintmax_t last_sagan_output_drop = 0;
+    uint64_t last_blacklist_hit_count = 0;
+    uint64_t last_sagan_output_drop = 0;
 
-    uintmax_t last_dns_miss_count = 0;
+    uint64_t last_dns_miss_count = 0;
 
     while (1)
         {

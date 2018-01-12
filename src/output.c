@@ -54,7 +54,7 @@
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/unified2.h"
-uintmax_t unified_event_id;
+uint64_t unified_event_id;
 #endif
 
 struct _SaganCounters *counters;
@@ -105,7 +105,7 @@ void Output( _Sagan_Event *Event )
                     Unified2WriteExtraData( Event, Is_IPv6(Event->host) ?  EVENT_INFO_XFF_IPV6 : EVENT_INFO_XFF_IPV4 );
                 }
 
-	    /* Write IPv6 data to "extra" data */
+            /* Write IPv6 data to "extra" data */
 
             if ( Is_IPv6(Event->ip_src ) )
                 {

@@ -73,7 +73,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 
     sbool thresh_log_flag = false;
 
-    uintmax_t thresh_oldtime;
+    uint64_t thresh_oldtime;
 
     int i;
 
@@ -179,7 +179,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
 
     sbool thresh_log_flag = false;
 
-    uintmax_t thresh_oldtime;
+    uint64_t thresh_oldtime;
 
     int i;
 
@@ -285,7 +285,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username, char *sel
 
     sbool thresh_log_flag = false;
 
-    uintmax_t thresh_oldtime;
+    uint64_t thresh_oldtime;
 
     int i;
 
@@ -391,7 +391,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selec
 
     sbool thresh_log_flag = false;
 
-    uintmax_t thresh_oldtime;
+    uint64_t thresh_oldtime;
 
     int i;
 
@@ -490,7 +490,7 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selec
 
     sbool thresh_log_flag = false;
 
-    uintmax_t thresh_oldtime;
+    uint64_t thresh_oldtime;
 
     int i;
 

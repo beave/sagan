@@ -75,7 +75,7 @@ void Track_Clients ( char *host )
     time_t t;
     struct tm *now;
     int i;
-    uintmax_t utime_u64;
+    uint64_t utime_u64;
     unsigned char hostbits[MAXIPBIT] = { 0 };
 
     t = time(NULL);
@@ -196,7 +196,7 @@ void Track_Clients_Thread ( void )
             time_t t;
             struct tm *now;
 
-            uintmax_t utime_u32;
+            uint64_t utime_u32;
 
             struct timeval tp;
 
