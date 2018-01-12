@@ -377,7 +377,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     memset(ip, 0, sizeof(*ip));
 
     ip->ip_hl = 5;
-    ip->ip_v = 4;
+    ip->ip_v = version; 
 
     ip->ip_tos = 0;
     ip->ip_id = 0;
@@ -752,8 +752,8 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
     unsigned char ipbits[MAXIPBIT] = {0};
 
 
-    uint32_t len;
-    uint32_t write_len;
+    uint32_t len = 0;
+    uint32_t write_len = 0;
 
     switch(type)
         {

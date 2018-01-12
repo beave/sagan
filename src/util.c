@@ -1370,9 +1370,11 @@ sbool Starts_With(const char *str, const char *prefix)
 
 void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
 {
+
     int counter = 0;
 
-    for ( ; *string,counter<size; string++)
+      //for ( ; *string,counter<size; string++) - DEBUG: REMOVE 
+      for ( ; *string || counter<size; string++ )
         {
             if (!strchr(chars, *string))
                 {
@@ -1386,6 +1388,7 @@ void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
         }
 
     str[counter] = 0;
+
 }
 
 /***************************************************

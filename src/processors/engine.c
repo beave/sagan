@@ -138,7 +138,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char *pnormalize_selector = NULL;
 
     int check_pos = 0;
-    struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { 0 };
+    struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { { 0  } };
 
     ptrdiff_t ip_parse_cache_used[MAX_PARSE_IP];
 
@@ -201,7 +201,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 #ifdef HAVE_LIBLOGNORM
 
-    static __thread struct _SaganNormalizeLiblognorm SaganNormalizeLiblognorm = { 0 };
+    static __thread struct _SaganNormalizeLiblognorm SaganNormalizeLiblognorm = { { 0 } };
 
     memset((char *)&SaganNormalizeLiblognorm, 0, sizeof(struct _SaganNormalizeLiblognorm));
 #endif

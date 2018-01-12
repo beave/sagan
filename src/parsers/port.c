@@ -241,7 +241,7 @@ int Parse_Dst_Port (char *msg)
 
     char *portstring=NULL;
     char *saveptr1=NULL;
-    char *str=NULL;
+    //char *str=NULL;
     char *token=NULL;
 
     int i;
@@ -259,7 +259,8 @@ int Parse_Dst_Port (char *msg)
         {
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
-            for ( i = 0, str = portstring; ; i++ )
+            //for ( i = 0, str = portstring; ; i++ )		DEBUG: REMOVE
+	    for ( i = 0; ; i++ )
                 {
 
                     token = strtok_r(NULL, " ", &saveptr1);
