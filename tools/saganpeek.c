@@ -508,7 +508,7 @@ int main(int argc, char **argv)
                             printf("Signature: \"%s\" (%s)\n", afterbysrc_ipc[i].signature_msg, afterbysrc_ipc[i].sid);
                             printf("Syslog Message: \"%s\"\n", afterbysrc_ipc[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %d\n", afterbysrc_ipc[i].count);
+                            printf("Counter: %" PRIu64 "\n", afterbysrc_ipc[i].count);
                             printf("Expire Time: %d\n\n", afterbysrc_ipc[i].expire);
 
                         }
@@ -626,7 +626,7 @@ int main(int argc, char **argv)
                             printf("Signature: \"%s\" (%s)\n", afterbyusername_ipc[i].signature_msg, afterbyusername_ipc[i].sid);
                             printf("Syslog Message: \"%s\"\n", afterbyusername_ipc[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %d\n", afterbyusername_ipc[i].count);
+                            printf("Counter: %" PRIu64 "\n", afterbyusername_ipc[i].count);
                             printf("Expire Time: %d\n\n", afterbyusername_ipc[i].expire);
 
 
