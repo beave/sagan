@@ -1769,7 +1769,7 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-                    if (!strcmp(rulesplit, "pri" ))
+                    if ( !strcmp(rulesplit, "pri" ) || !strcmp(rulesplit, "priority" ) )
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
