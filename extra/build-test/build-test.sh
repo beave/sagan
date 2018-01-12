@@ -30,13 +30,13 @@ NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap 
 
 LOG="output.log" 
 
-#autoreconf -vfi
+autoreconf -vfi
 
 echo "**** STANDARD BUILD | NO FLAGS ****"
 echo "**** STANDARD BUILD | NO FLAGS ****" >> $LOG
 
-make clean
-cd tools && make clean && cd ..
+#make clean
+#cd tools && make clean && cd ..
 
 CFLAGS=-Wall ./configure
 
