@@ -938,44 +938,6 @@ void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
     snprintf(str, size, "%s", new_string);
 }
 
-
-/****************************************************************************
- * Character_Count - Simple routine that "counts" the number of
- * time "char_to_count" (single character) occurs.   Returns the int
- * value of what it found
- ****************************************************************************/
-
-int Character_Count ( char *string_in, char *char_to_count)
-{
-
-    char str_to_count[128] = { 0 };
-    char tmp[2] = { 0 };
-
-    int i = 0;
-    int to_count = 0;
-    int return_count = 0;
-
-    /* Convert to usable types */
-
-    strlcpy(tmp, char_to_count, 2);
-    strlcpy(str_to_count, string_in, sizeof(str_to_count));
-
-    to_count = (int)tmp[0];
-
-    for (i = 0; i < strlen(str_to_count); i++)
-        {
-
-            /* Search for and count int char[i] */
-
-            if ( (int)str_to_count[i] == to_count )
-                {
-                    return_count++;
-                }
-        }
-
-    return(return_count);
-}
-
 /****************************************************************************
  * Wildcard - Used for comparing strings with wildcard support.  This
  * function was taken from:
@@ -1373,7 +1335,7 @@ void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
 
     int counter = 0;
 
-      for ( ; *string,counter<size; string++ )
+    for ( ; *string,counter<size; string++ )
         {
             if (!strchr(chars, *string))
                 {

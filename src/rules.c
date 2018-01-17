@@ -1088,35 +1088,9 @@ void Load_Rules( const char *ruleset )
 
                                     strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                                    /* If we have multiple xbit conditions (bit1&bit2),
-                                     * we alter the xbit_conditon_count to reflect that.
-                                     * |'s are easy.  We just test to see if one of the
-                                     * xbits matched or not!
-                                     */
-
-                                    if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
-                                            Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") )
-                                        {
-
-                                            bad_rule = true;
-                                            Sagan_Log(S_WARN, "[%s, line %d] Syntax error at line %d in %s. 'isset' cannot have | and & operators, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
-                                            continue;
-                                        }
-
-                                    if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&"))
-                                        {
-
-                                            rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
-
-                                        }
-                                    else
-                                        {
-
-                                            rulestruct[counters->rulecount].xbit_condition_count++;
-
-                                        }
-
+                                    rulestruct[counters->rulecount].xbit_condition_count++;
                                     xbit_count++;
+
                                 }
 
                             /* ISNOTSET */
@@ -1153,36 +1127,7 @@ void Load_Rules( const char *ruleset )
 
                                     strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
 
-                                    /* If we have multiple xbit conditions (bit1&bit2),
-                                     * we alter the xbit_conditon_count to reflect that.
-                                     * |'s are easy.  We just test to see if one of the
-                                     * xbits matched or not!
-                                     */
-
-
-                                    if ( Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") &&
-                                            Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "|") )
-                                        {
-
-                                            bad_rule = true;
-                                            Sagan_Log(S_WARN, "[%s, line %d] Syntax error at line %d in %s. 'isnotset' cannot have | and & operators, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
-                                            continue;
-                                        }
-
-
-                                    if (Sagan_strstr(rulestruct[counters->rulecount].xbit_name[xbit_count], "&"))
-                                        {
-
-                                            rulestruct[counters->rulecount].xbit_condition_count = Character_Count(rulestruct[counters->rulecount].xbit_name[xbit_count], "&") + 1;
-
-                                        }
-                                    else
-                                        {
-
-                                            rulestruct[counters->rulecount].xbit_condition_count++;
-
-                                        }
-
+                                    rulestruct[counters->rulecount].xbit_condition_count++;
                                     xbit_count++;
 
                                 }
