@@ -781,12 +781,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     if ( ip_src_flag == false )
                                         {
-                                            ip_src = config->sagan_host;
+                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                         }
 
                                     if ( ip_dst_flag == false )
                                         {
-                                            ip_dst = config->sagan_host;
+                                            ip_dst = SaganProcSyslog_LOCAL->syslog_host;
                                         }
 
                                     /* No source port was normalized, Use the rules default */
