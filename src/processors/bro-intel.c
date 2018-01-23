@@ -627,7 +627,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
 
     /* If RFC1918 and friends,  we can short circuit here */
 
-    if ( !is_notroutable(ip))
+    if ( is_notroutable(ip) )
         {
 
             if ( debug->debugbrointel )
