@@ -60,6 +60,7 @@ int Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_c
                 {
                     if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                         {
+
                             if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
                                 {
                                     return(true);
@@ -67,6 +68,8 @@ int Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_c
                         }
                     else
                         {
+
+
                             if (Sagan_strstr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i]))
                                 {
                                     return(true);
@@ -84,6 +87,7 @@ int Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_c
                 {
                     if ( rulestruct[rule_position].meta_content_case[z] == 1 )
                         {
+
                             if (Sagan_stristr(syslog_msg, rulestruct[rule_position].meta_content_containers[z].meta_content_converted[i], true))
                                 {
                                     return(false);
