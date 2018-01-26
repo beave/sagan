@@ -1528,9 +1528,10 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
-                            Remove_Spaces(tmp1);
+			    Content_Pipe(tmp1, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
+                            Remove_Spaces(rule_tmp);
 
-                            strlcpy(tmp2, tmp1, sizeof(tmp2));
+                            strlcpy(tmp2, rule_tmp, sizeof(rule_tmp));
 
                             ptmp = strtok_r(tmp2, ",", &tok);
                             meta_content_converted_count = 0;
