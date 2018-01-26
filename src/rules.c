@@ -1500,7 +1500,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( Check_Content_Not(arg) == true )
                                 {
-                                    rulestruct[counters->rulecount].meta_content_not[content_count] = true;
+                                    rulestruct[counters->rulecount].meta_content_not[meta_content_count] = true;
                                 }
 
                             tmptoken = strtok_r(arg, ",", &saveptrrule2);
