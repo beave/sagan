@@ -81,7 +81,7 @@ typedef void json_object;
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
 
-/* TODO: These need to be labeled better! These directly affect 
+/* TODO: These need to be labeled better! These directly affect
    functions like is_notroutable(). Think before you alter */
 
 #define MAXIP			64		/* Max IP length */

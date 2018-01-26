@@ -735,19 +735,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_hash: md5 */
 
-                                    if ( md5_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 )
+                                    if ( parse_md5_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_MD5 )
                                         {
                                             Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_MD5, parse_md5_hash, sizeof(parse_md5_hash));
                                             md5_hash = parse_md5_hash;
                                         }
 
-                                    else if ( sha1_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 )
+                                    else if ( parse_sha1_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA1 )
                                         {
                                             Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA1, parse_sha256_hash, sizeof(parse_sha1_hash));
                                             sha1_hash = parse_sha1_hash;
                                         }
 
-                                    else if ( sha256_hash == NULL && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
+                                    else if ( parse_sha256_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_SHA256 )
                                         {
                                             Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, parse_sha256_hash, sizeof(parse_sha256_hash));
                                             sha256_hash = parse_sha256_hash;

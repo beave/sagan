@@ -42,11 +42,26 @@ struct _SaganConfig *config;
 void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 {
     char tmpmsg[MAX_SYSLOGMSG];
+
     char *ptmp=NULL;
     char *tok=NULL;
     char tmp[SHA256_HASH_SIZE+1];
 
+    int i;
+
     snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
+
+    /* Hashes are sometimes near :,=.  This strips that so we can extract the
+       hash more easily.  For example,  Sysmon does SHA1={HASH}.  This makes
+       it SHA1 {hash} */
+
+    for (i=0; i<strlen(tmpmsg); i++) 
+	{
+	   if ( tmpmsg[i] == '=' || tmpmsg[i] == ',' || tmpmsg[i] == ':' ) 
+		{
+		tmpmsg[i] = ' '; 
+		} 
+	}
 
     ptmp = strtok_r(tmpmsg, " ", &tok);
 

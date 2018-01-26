@@ -922,11 +922,12 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA256;
                                 }
-
+/*
                             else if (!strcmp(arg, "all"))
                                 {
                                     rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
                                 }
+*/
 
                             if ( rulestruct[counters->rulecount].s_find_hash_type == 0 )
                                 {
@@ -1499,7 +1500,7 @@ void Load_Rules( const char *ruleset )
 
                             if ( Check_Content_Not(arg) == true )
                                 {
-                                    rulestruct[counters->rulecount].meta_content_not[meta_content_count] = true;
+                                    rulestruct[counters->rulecount].meta_content_not[content_count] = true;
                                 }
 
                             tmptoken = strtok_r(arg, ",", &saveptrrule2);
@@ -1527,10 +1528,9 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
-			    Content_Pipe(tmp1, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
-                            Remove_Spaces(rule_tmp);
+                            Remove_Spaces(tmp1);
 
-                            strlcpy(tmp2, rule_tmp, sizeof(tmp2));
+                            strlcpy(tmp2, tmp1, sizeof(tmp2));
 
                             ptmp = strtok_r(tmp2, ",", &tok);
                             meta_content_converted_count = 0;
