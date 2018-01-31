@@ -54,8 +54,10 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
 {
 
     struct addrinfo hints = {0};
-    char toparse[MAX_SYSLOGMSG];
     struct addrinfo *result = NULL;
+    struct sockaddr_in sa;
+
+    char toparse[MAX_SYSLOGMSG];
 
     int i;
     sbool ret = 0;
@@ -180,15 +182,24 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
                                 {
                                     ctmp = etmp[0];
                                     etmp[0] = '\0';
-                                    valid = 0 == getaddrinfo(stmp, NULL, &hints, &result) && (
-                                                ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET6 ||
-                                                ((struct sockaddr_storage *)result->ai_addr)->ss_family == AF_INET);
+
+				    /* Kenneth Shelton @netwatcher had this using getaddrinfo.   We kept getting invalid/bad 
+                                       results in production. We reverted back to inet_pton and have much better results.  We
+				       aren't the only ones:
+
+				       'So, as of 2014, we consider getaddrinfo() to be avoided for IPv6 address conversions under any 
+					except the least demanding, single threaded, applications. Within PowerDNS, we have reverted to
+					using inet_pton() whenever we can get away with it – which is almost always, except in the
+					 case of scoped addresses.'
+
+					See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
+
+				    */
+
+				    valid =  inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
+
                                     etmp[0] = ctmp;
-                                    if (result != NULL)
-                                        {
-                                            freeaddrinfo(result);
-                                            result = NULL;
-                                        }
+
                                 }
                             while(!valid && --etmp >= petmp);
                         }
