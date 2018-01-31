@@ -53,8 +53,8 @@ struct _SaganConfig *config;
 sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
 {
 
-    struct addrinfo hints = {0};
-    struct addrinfo *result = NULL;
+//    struct addrinfo hints = {0};
+//    struct addrinfo *result = NULL;
     struct sockaddr_in sa;
 
     char toparse[MAX_SYSLOGMSG];
@@ -110,9 +110,9 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
 
     /* Use getaddrinfo so we can get ipv4 or 6 */
 
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+//    hints.ai_family = AF_UNSPEC;
+//    hints.ai_socktype = SOCK_DGRAM;
+//    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
 
     /* Can't start after the the last ':' or '.' */
 
@@ -261,11 +261,13 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
 
         }
 
+/*
     if (result != NULL)
         {
             freeaddrinfo(result);
             result = NULL;
         }
+*/
 
     if (false == ret && lookup_cache != NULL)
         {
