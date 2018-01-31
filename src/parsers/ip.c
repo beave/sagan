@@ -53,8 +53,6 @@ struct _SaganConfig *config;
 sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
 {
 
-//    struct addrinfo hints = {0};
-//    struct addrinfo *result = NULL;
     struct sockaddr_in sa;
 
     char toparse[MAX_SYSLOGMSG];
@@ -108,15 +106,10 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
             stmp = toparse;
         }
 
-    /* Use getaddrinfo so we can get ipv4 or 6 */
-
-//    hints.ai_family = AF_UNSPEC;
-//    hints.ai_socktype = SOCK_DGRAM;
-//    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
-
     /* Can't start after the the last ':' or '.' */
 
     pstmp = strrpbrk(stmp, ":.");
+
     while (stmp != NULL)
         {
             /* If we have no '.' or ':' can't be an address.
@@ -157,6 +150,7 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
                     num_dots = 0;
                     petmp = NULL;
                     num_colons = 0;
+
                     while(ptmp < etmp && num_colons < 2 && num_dots < 3)
                         {
                             if ((ptmp[0] == ':' && ++num_colons >= 2) || (ptmp[0] == '.' && ++num_dots >= 3))
@@ -196,13 +190,17 @@ sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Loo
 
 				    */
 
-				    valid =  inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
+				    valid = inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
 
                                     etmp[0] = ctmp;
 
                                 }
                             while(!valid && --etmp >= petmp);
                         }
+
+		    /* Final validation */
+
+		    valid = inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
 
                     if (valid)
                         {
