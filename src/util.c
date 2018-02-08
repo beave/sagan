@@ -284,45 +284,21 @@ sbool Mask2Bit(int mask, unsigned char *out)
 
 sbool Is_IPv6 (char  *ipaddr)
 {
-    sbool ret = false;
-    struct addrinfo hints = {0};
-    struct addrinfo *result = NULL;
 
-    // Use getaddrinfo so we can get ipv4 or 6
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
+struct sockaddr_in sa;
+sbool ret = false; 
+char ip[MAXIP];
 
-    if ( ipaddr == NULL || ipaddr[0] == '\0' )
-        {
-            return false;
-        }
-    ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
-    if (!ret)
-        {
-            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
-        }
-    else
-        {
-            switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
-                {
-                case AF_INET:
-                    ret = false;
-                    break;
-                case AF_INET6:
-                    ret = true;
-                    break;
-                default:
-                    ret = false;
-                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
-                }
-        }
-    if (result != NULL)
-        {
-            freeaddrinfo(result);
-        }
+strlcpy(ip, ipaddr, sizeof(ip));
 
-    return ret;
+/* We don't use getaddrinfo().  Here's why:
+ * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
+ */
+
+ret = inet_pton(AF_INET6, ip,  &(sa.sin_addr));
+
+return(ret); 
+
 }
 
 /* Converts IP address.  We assume that out is at least 16 bytes.  */
