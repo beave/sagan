@@ -320,32 +320,39 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
         }
 
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
+
+    /*
     if (!ret)
         {
             Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
         }
     else
         {
+    */
             switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
                 {
                 case AF_INET:
+
                     ret = true;
                     if (out != NULL)
                         {
                             memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
                         }
                     break;
+
                 case AF_INET6:
+
                     ret = true;
                     if (out != NULL)
                         {
                             memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
                         }
                     break;
-                default:
-                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+
+//                default:
+//                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
                 }
-        }
+//        }
     if (result != NULL)
         {
             freeaddrinfo(result);
