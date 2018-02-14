@@ -856,7 +856,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
-
                                                     config->redis_flag = true;
 
                                                 }

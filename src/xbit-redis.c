@@ -117,10 +117,12 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
             snprintf(notnull_selector, sizeof(notnull_selector), "%s:", selector);
         }
 
+/*
     if ( debug->debugredis )
         {
             Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Condition.", __FILE__, __LINE__);
         }
+*/
 
     /* Cycle through xbits in the rule */
 
@@ -423,7 +425,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     char redis_command[16384] = { 0 };
 
     char fullsyslog_orig[400 + MAX_SYSLOGMSG] = { 0 };
-    char altered_syslog[ (400*2) + (MAX_SYSLOGMSG*2)] = { 0 };
+//    char altered_syslog[ (400*2) + (MAX_SYSLOGMSG*2)] = { 0 };
 
     t = time(NULL);
     now=localtime(&t);
@@ -453,17 +455,18 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     for ( i = 0; i < strlen(fullsyslog_orig); i++ )
         {
 
-            if ( fullsyslog_orig[i] == ' ' )
-                {
-                    strlcat(altered_syslog, "_", sizeof(altered_syslog));
-                }
-            else
-                {
-                    snprintf(tmp, sizeof(tmp), "%c", fullsyslog_orig[i]);
-                    strlcat(altered_syslog, tmp, sizeof(altered_syslog));
-                }
-        }
+		switch(fullsyslog_orig[i]) {
 
+		case ' ':
+			fullsyslog_orig[i] = '_';
+			break;
+
+		case ';':
+			fullsyslog_orig[i] = ':'; 
+			break;
+
+		}
+        }
 
     /* If "selector" is in use, make it ready for redis */
 
@@ -504,7 +507,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                              notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_src_char,
                                              notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_dst_char,
                                              notnull_selector, tmp_xbit_name, utime_plus_timeout, ip_src_char, ip_dst_char,
-                                             notnull_selector, tmp_xbit_name, ip_src_char, ip_dst_char, utime_plus_timeout, altered_syslog );
+                                             notnull_selector, tmp_xbit_name, ip_src_char, ip_dst_char, utime_plus_timeout, fullsyslog_orig );
 
                                     redis_msgslot++;
 
