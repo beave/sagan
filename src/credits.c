@@ -83,7 +83,7 @@ void Credits(void)
     fprintf(stderr, "\"YoichSec\" (Github) (Yoichi Sagawa)\t\tXbit track by src/dst port code.\n");
     fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tChanging rules to match Suricata/Snort.\n");
     fprintf(stderr, "\"3vilJohn\" (Twitter)\t\t\t\tVarious bug reports & testing.\n");
-    fprintf(stderr, "Kenneth Shelton (@netwatcher)\t\tIPv6 support, the 'selector', bug fixes.\n");
+    fprintf(stderr, "Kenneth Shelton (@netwatcher)\t\t\tIPv6 support, the 'selector', bug fixes.\n");
 
     fprintf(stderr, "\n");
 
