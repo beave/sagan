@@ -1,3 +1,70 @@
+2018/02/XX -	Sagan 1.1.9 released
+
+		* Added IPv6 support. Thanks to Kenneth Shelton @ Netwatcher 
+		  (https://netwatcher.com). 
+
+		* Added multi-tenancy through the use of a "selector".  Thanks
+		  to Kenneth Shelton @ Netwatcher (https://netwatcher.com).
+
+		* "xbits", "after" and "threshold" now store the log
+		  information, signature name and ID used during triggering.
+		  This data can be displayed using the "saganpeek" utility when
+		  this data is using mmap storage. 
+
+		* Can now use pipes with "meta_content".  For example "|3a
+		  3a|"
+
+		  https://github.com/beave/sagan/commit/50ef014739d0e745e95769b32821d3372b81c430
+
+		* Moved liblognorm/normalization structure to thread local.
+		  This should improve normalization preformance. 
+
+		  https://github.com/beave/sagan/commit/2862ecad742f2e32e6fda3af54e03f3ab03bdcf0
+
+		* Some getaddrinfo() calls had to be converted back to
+		  inet_pton() due to performance/errors. 
+
+		  https://github.com/beave/sagan/commit/366cc257ab7f03f37b8e5a06520e5b14b5178095
+
+		* New "parse_hash" enhancements.  These allow extraction of
+		  MD5, SHA1, SHA256 automatically from logs.   Useful for Sysmon
+		  support. 
+
+		  https://github.com/beave/sagan/commit/2e6cedafdc9febc1886664734fdff8b33507dce1
+
+		* Removed legacy code for isset/isnotset/set for support for &
+		  and |.  This added unneeded complexity to the code. 
+
+		  https://github.com/beave/sagan/commit/4e9ddc431b0d2ca733ea75a36a3bf8f336e0df7b
+
+		* Fix for issue https://github.com/beave/sagan/issues/107.
+		  Rules should respond to "pri" as well as "priority" rule
+		  options.
+
+		  https://github.com/beave/sagan/commit/8eb159872c6c0ff99e4435fa2f5f1596dd1dbed7
+
+	        * Added "force-ipv4" Sagan configuration option.  Unified2 can
+		  be somewhat strange with Unified2.  This option keep the IP
+		  version type "4" even if an IPv6 address is encountered. 
+
+		  https://github.com/beave/sagan/commit/2dd9b66520c4d8be8c659834669e11e7358d9593
+
+	        * Sagan will now pass liblognorm JSON output to "external" (rule option) 
+		  programs.  This allows third party "external" programs to access already 
+		  normalized data. 
+
+		  https://github.com/beave/sagan/commit/84970a9bb8f8c3720dbda22914aaa16359687d58
+
+		* Fixed Bro-Intel address loading issue.  https://github.com/beave/sagan/issues/104
+		  Thanks to Psipher Diaz for reporting this.  
+
+		  https://github.com/beave/sagan/commit/8ee6c6ed1cf5ed27b14fc2ccaccb64674f058886
+
+		* A lot of minor bug fixes.  For full lists,  please see the
+		  Sagan issues page:  
+
+		  https://github.com/beave/sagan/commits/master
+
 2017/07/25 -	Sagan 1.1.8 released.
 
 		* Big stability fixes in this release.  Mostly involving protecting data with in
