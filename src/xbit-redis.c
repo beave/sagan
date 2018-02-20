@@ -117,12 +117,12 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
             snprintf(notnull_selector, sizeof(notnull_selector), "%s:", selector);
         }
 
-/*
-    if ( debug->debugredis )
-        {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Condition.", __FILE__, __LINE__);
-        }
-*/
+    /*
+        if ( debug->debugredis )
+            {
+                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Condition.", __FILE__, __LINE__);
+            }
+    */
 
     /* Cycle through xbits in the rule */
 
@@ -455,17 +455,18 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
     for ( i = 0; i < strlen(fullsyslog_orig); i++ )
         {
 
-		switch(fullsyslog_orig[i]) {
+            switch(fullsyslog_orig[i])
+                {
 
-		case ' ':
-			fullsyslog_orig[i] = '_';
-			break;
+                case ' ':
+                    fullsyslog_orig[i] = '_';
+                    break;
 
-		case ';':
-			fullsyslog_orig[i] = ':'; 
-			break;
+                case ';':
+                    fullsyslog_orig[i] = ':';
+                    break;
 
-		}
+                }
         }
 
     /* If "selector" is in use, make it ready for redis */

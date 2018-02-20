@@ -922,12 +922,12 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_SHA256;
                                 }
-/*
-                            else if (!strcmp(arg, "all"))
-                                {
-                                    rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
-                                }
-*/
+                            /*
+                                                        else if (!strcmp(arg, "all"))
+                                                            {
+                                                                rulestruct[counters->rulecount].s_find_hash_type = PARSE_HASH_ALL;
+                                                            }
+                            */
 
                             if ( rulestruct[counters->rulecount].s_find_hash_type == 0 )
                                 {
@@ -1528,7 +1528,7 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Var_To_Value(tmptoken, tmp1, sizeof(tmp1));
-			    Content_Pipe(tmp1, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
+                            Content_Pipe(tmp1, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
                             Remove_Spaces(rule_tmp);
 
                             strlcpy(tmp2, rule_tmp, sizeof(rule_tmp));
@@ -1543,6 +1543,13 @@ void Load_Rules( const char *ruleset )
                                     strlcpy(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count], tmp_help, sizeof(rulestruct[counters->rulecount].meta_content_containers[meta_content_count].meta_content_converted[meta_content_converted_count]));
 
                                     meta_content_converted_count++;
+
+                                    if ( meta_content_converted_count > MAX_META_ITEM_SIZE )
+                                        {
+
+                                            Sagan_Log(S_ERROR, "[%s, line %d] To many meta_content string values at %d in %s.  Max is %d", __FILE__, __LINE__, linecount, ruleset_fullname, MAX_META_ITEM_SIZE);
+
+                                        }
 
                                     ptmp = strtok_r(NULL, ",", &tok);
                                 }

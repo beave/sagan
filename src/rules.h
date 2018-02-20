@@ -69,7 +69,7 @@ struct arr_port_2
 typedef struct meta_content_conversion meta_content_conversion;
 struct meta_content_conversion
 {
-    char meta_content_converted[MAX_META_CONTENT][256];
+    char meta_content_converted[MAX_META_CONTENT_ITEMS][256];
     int  meta_counter;
 };
 
