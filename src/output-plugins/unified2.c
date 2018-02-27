@@ -248,7 +248,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     /* Barnyard2 doesn't really support IPv6 and throws errors when set this way.
        We leave it as IPv4 as a kludge around this issue :( */
 
-    if ( !config->unified2_force_ipv4 )
+    if ( config->unified2_force_ipv4 )
         {
             version = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? 6 : 4;
         }
