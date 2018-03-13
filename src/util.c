@@ -124,7 +124,7 @@ void Droppriv(void)
 
                     if ( ret < 0 )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
                         }
 
                     if (stat(config->sagan_fifo, &fifocheck) != 0 )
@@ -955,6 +955,10 @@ sbool Wildcard( char *first, char *second )
     return false;
 }
 
+/****************************************************************************
+ * CloseStream - Closes a log file/stream from OpenStream().
+ ****************************************************************************/
+
 void CloseStream( FILE *stream, int *fd )
 {
     if (stream != NULL)
@@ -969,6 +973,12 @@ void CloseStream( FILE *stream, int *fd )
         }
 }
 
+
+/****************************************************************************
+ * OpenStream - Used to open streams.  This function does NOT use Sagan_Log()
+ * since it is used before Sagan_Log() is initalized
+ ***************************************************************************/
+
 FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gid )
 {
     FILE *ret = NULL;
@@ -978,6 +988,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
     if ( fd == NULL || path == NULL )
         {
             fprintf(stderr, "[E] [%s, line %d] Invalid (null) argument(s) passed to OpenStream!\n", __FILE__, __LINE__);
+            exit(-1);
         }
 
     _path = strstr(path, "://");
@@ -998,9 +1009,11 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
             /* Create socket from which to write. Currently only stream mode is supported */
 
             *fd = socket(AF_UNIX, SOCK_STREAM, 0);
+
             if (*fd < 0)
                 {
                     fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
+                    exit(-1);
                 }
 
             /* Create name. */
@@ -1013,11 +1026,11 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
             if (connect(*fd, (struct sockaddr *) &name, sizeof(struct sockaddr_un)))
                 {
                     fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to connect to socket %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
-                    goto ErrorExit;
+                    exit(-1);
                 }
             else
                 {
-                    Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
+                    //Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
                     ret = fdopen(*fd, "a");
                 }
         }
@@ -1031,7 +1044,8 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
 
     if ( chown(_path, pw_uid,pw_gid) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username %s - %s", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
+            fprintf(stderr, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s\n", __FILE__, __LINE__, _path, config->sagan_runas, strerror(errno));
+            exit(-1);
         }
 
 ErrorExit:
@@ -1061,7 +1075,7 @@ void Open_Log_File( sbool state, int type )
     if( pw == NULL)
         {
             fprintf(stderr, "[E] [%s, line %d] Invalid user %s (use -u option to set a user)\n", __FILE__, __LINE__, config->sagan_runas);
-            exit(1);
+            exit(-1);
         }
 
     if ( type == SAGAN_LOG || type == ALL_LOGS )
@@ -1077,7 +1091,7 @@ void Open_Log_File( sbool state, int type )
             if ((config->sagan_log_stream = OpenStream(config->sagan_log_filepath, &config->sagan_log_fd,(unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid)) == NULL)
                 {
                     fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
-                    exit(1);
+                    exit(-1);
                 }
         }
 
