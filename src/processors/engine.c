@@ -177,6 +177,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     /* These do not need to be reset each time as they are _only_
      * set through normalize */
+
     char *normalize_username = NULL;
     char *normalize_filename = NULL;
     char *normalize_http_uri = NULL;

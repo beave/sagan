@@ -329,17 +329,17 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
                     //strlcpy(SaganBluedotHashQueue[bluedot_hash_queue].hash, TmpSaganBluedotHashQueue[i].hash, sizeof(SaganBluedotHashQueue[bluedot_hash_queue].hash));
 
-		    memcpy(SaganBluedotHashQueue[bluedot_hash_queue].hash, TmpSaganBluedotHashQueue[i].hash, sizeof(TmpSaganBluedotHashQueue[i].hash));
+                    memcpy(SaganBluedotHashQueue[bluedot_hash_queue].hash, TmpSaganBluedotHashQueue[i].hash, sizeof(TmpSaganBluedotHashQueue[i].hash));
                     bluedot_hash_queue++;
-                
 
-           if (debug->debugbluedot)
-                {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Going to query hash %s from Bluedot.", __FILE__, __LINE__, data);
+
+                    if (debug->debugbluedot)
+                        {
+                            Sagan_Log(S_DEBUG, "[%s, line %d] Going to query hash %s from Bluedot.", __FILE__, __LINE__, data);
+                        }
+
+
                 }
-
-
-		}
 
             pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
             free(TmpSaganBluedotHashQueue);
@@ -1019,7 +1019,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                 }
 
-           /* Check Bluedot Hash Queue,  make sure we aren't looking up something that is already being looked up */
+            /* Check Bluedot Hash Queue,  make sure we aren't looking up something that is already being looked up */
 
             for (i=0; i < bluedot_hash_queue; i++)
                 {
@@ -1035,7 +1035,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
 
-           /* If not in Bluedot IP queue,  add it */
+            /* If not in Bluedot IP queue,  add it */
 
             pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
             SaganBluedotHashQueue = (_Sagan_Bluedot_Hash_Queue *) realloc(SaganBluedotHashQueue, (bluedot_hash_queue+1) * sizeof(_Sagan_Bluedot_Hash_Queue));
@@ -1082,7 +1082,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                 }
 
-          /* Check Bluedot Hash Queue,  make sure we aren't looking up something that is already being looked up */
+            /* Check Bluedot Hash Queue,  make sure we aren't looking up something that is already being looked up */
 
             for (i=0; i < bluedot_url_queue; i++)
                 {
@@ -1098,13 +1098,13 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
 
-           /* If not in Bluedot IP queue,  add it */
+            /* If not in Bluedot IP queue,  add it */
 
             pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
             SaganBluedotURLQueue = (_Sagan_Bluedot_URL_Queue *) realloc(SaganBluedotURLQueue, (bluedot_url_queue+1) * sizeof(_Sagan_Bluedot_URL_Queue));
 
             if ( SaganBluedotURLQueue == NULL )
-                {   
+                {
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
                 }
 
@@ -1144,7 +1144,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                         }
                 }
 
-          /* Check Bluedot File Queue,  make sure we aren't looking up something that is already being looked up */
+            /* Check Bluedot File Queue,  make sure we aren't looking up something that is already being looked up */
 
             for (i=0; i < bluedot_filename_queue; i++)
                 {
@@ -1160,13 +1160,13 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
 
-           /* If not in Bluedot IP queue,  add it */
+            /* If not in Bluedot IP queue,  add it */
 
             pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
             SaganBluedotFilenameQueue = (_Sagan_Bluedot_Filename_Queue *) realloc(SaganBluedotFilenameQueue, (bluedot_filename_queue+1) * sizeof(_Sagan_Bluedot_Filename_Queue));
 
             if ( SaganBluedotFilenameQueue == NULL )
-                {   
+                {
                     Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
                 }
 
