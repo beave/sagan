@@ -203,7 +203,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
 
             pthread_mutex_lock(&CounterESMTPCountSuccess);
             counters->esmtp_count_success++;
-            pthread_mutex_lock(&CounterESMTPCountSuccess);
+            pthread_mutex_unlock(&CounterESMTPCountSuccess);
 
             if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
