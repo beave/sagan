@@ -243,14 +243,18 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     uint32_t write_len = sizeof(Serial_Unified2_Header) + sizeof(Serial_Unified2Packet) - 4;
     unsigned char tmp_ip[MAXIPBIT] = {0};
     uint32_t *tmp_ip_u32 = (uint32_t *)&tmp_ip[0];
-    int version = 4;
+    int version;
 
     /* Barnyard2 doesn't really support IPv6 and throws errors when set this way.
        We leave it as IPv4 as a kludge around this issue :( */
 
-    if ( config->unified2_force_ipv4 )
+    if ( !config->unified2_force_ipv4 )
         {
             version = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? 6 : 4;
+        }
+    else
+        {
+            version = 4;
         }
 
     memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
@@ -377,7 +381,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     memset(ip, 0, sizeof(*ip));
 
     ip->ip_hl = 5;
-    ip->ip_v = version; 
+    ip->ip_v = version;
 
     ip->ip_tos = 0;
     ip->ip_id = 0;

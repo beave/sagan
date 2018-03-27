@@ -377,7 +377,7 @@ outputs:
       filename: "$LOG_PATH/fast.log"
 
   # The 'unified2' output allows Sagan to write in Snort's unified2 format. 
-  # This allows events/alerts generates by SAgan to be read and queued for
+  # This allows events/alerts generates by Sagan to be read and queued for
   # external programs like Barnyard2 (http://www.securixlive.com/barnyard2/).
   # Barnyard2 can then record events to various formats (Sguil, PostgreSQL, 
   # MySQL, MS-SQL, Oracle, etc).  Sagan must be compiled with libdnet support
