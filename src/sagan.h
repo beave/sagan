@@ -100,7 +100,7 @@ typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX
 sbool     Is_Numeric (char *);
 void      To_UpperC(char* const );
 void      To_LowerC(char* const );
-int	      Check_Endian( void );
+sbool	  Check_Endian( void );
 void      Usage( void );
 void      Chroot( const char * );
 void	  Remove_Return(char *);

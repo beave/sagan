@@ -215,17 +215,17 @@ void Sagan_Log (int type, const char *format,... )
     now=localtime(&t);
     strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
-    if ( type == 1 )
+    if ( type == S_ERROR )
         {
             chr="E";
         }
 
-    if ( type == 2 )
+    if ( type == S_WARN )
         {
             chr="W";
         }
 
-    if ( type == 3 )
+    if ( type == S_DEBUG )
         {
             chr="D";
         }
@@ -239,7 +239,7 @@ void Sagan_Log (int type, const char *format,... )
             printf("[%s] %s\n", chr, buf);
         }
 
-    if ( type == 1 )
+    if ( type == S_ERROR )
         {
             exit(1);
         }
@@ -250,7 +250,7 @@ void Sagan_Log (int type, const char *format,... )
  * Check if system is big || little endian
  ******************************************/
 
-int Check_Endian()
+sbool Check_Endian()
 {
     int i = 1;
     char *p = (char *) &i;

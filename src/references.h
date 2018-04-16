@@ -27,7 +27,6 @@
 typedef struct _Ref_Struct _Ref_Struct;
 struct _Ref_Struct
 {
-    unsigned s_size_ref;
     char s_refid[512];
     char s_refurl[2048];
 };

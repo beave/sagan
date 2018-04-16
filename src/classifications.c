@@ -32,17 +32,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <pthread.h>
-#include <ctype.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #include <string.h>
-#include <getopt.h>
-#include <time.h>
-#include <signal.h>
-#include <pcre.h>
 
 #include "version.h"
 
@@ -78,7 +70,7 @@ void Load_Classifications( const char *ruleset )
 
     if (( classfile = fopen(ruleset, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file (%s)", __FILE__,  __LINE__, ruleset);
+            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file %s. [%s]", __FILE__,  __LINE__, ruleset, strerror(errno) );
         }
 
     while(fgets(classbuf, sizeof(classbuf), classfile) != NULL)
