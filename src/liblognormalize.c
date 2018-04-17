@@ -76,23 +76,23 @@ void Liblognorm_Load(char *infile)
 
     if ( SaganNormalizeLiblognorm == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganNormalizeLiblognorm. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganNormalizeLiblognorm. Abort!", __FILE__, __LINE__);
         }
 
     memset(SaganNormalizeLiblognorm, 0, sizeof(_SaganNormalizeLiblognorm));
 
     if((ctx = ln_initCtx()) == NULL)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot initialize liblognorm context.", __FILE__, __LINE__);
         }
 
-    Sagan_Log(S_NORMAL, "Loading %s for normalization.", infile);
+    Sagan_Log(NORMAL, "Loading %s for normalization.", infile);
 
     /* Remember - On reload,  file access will be by the "sagan" user! */
 
     if (stat(infile, &liblognorm_fileinfo))
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error accessing '%s'. Abort.", __FILE__, __LINE__, infile);
+            Sagan_Log(ERROR, "[%s, line %d] Error accessing '%s'. Abort.", __FILE__, __LINE__, infile);
         }
 
     ln_loadSamples(ctx, infile);
@@ -304,26 +304,26 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
 
     if ( debug->debugnormalize )
         {
-            Sagan_Log(S_DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
-            Sagan_Log(S_DEBUG, "---------------------------------------------------");
-            Sagan_Log(S_DEBUG, "Log message to normalize: |%s|", syslog_msg);
-            Sagan_Log(S_DEBUG, "Parsed: %s", cstr);
-            Sagan_Log(S_DEBUG, "Slector: %s", SaganNormalizeLiblognorm->selector);
-            Sagan_Log(S_DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
-            Sagan_Log(S_DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
-            Sagan_Log(S_DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
-            Sagan_Log(S_DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
-            Sagan_Log(S_DEBUG, "Source Host: %s", SaganNormalizeLiblognorm->src_host);
-            Sagan_Log(S_DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
-            Sagan_Log(S_DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
-            Sagan_Log(S_DEBUG, "MD5 Hash: %s", SaganNormalizeLiblognorm->hash_md5);
-            Sagan_Log(S_DEBUG, "SHA1 Hash: %s", SaganNormalizeLiblognorm->hash_sha1);
-            Sagan_Log(S_DEBUG, "SHA265 Hash: %s", SaganNormalizeLiblognorm->hash_sha256);
-            Sagan_Log(S_DEBUG, "HTTP URI: %s", SaganNormalizeLiblognorm->http_uri);
-            Sagan_Log(S_DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
-            Sagan_Log(S_DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
+            Sagan_Log(DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
+            Sagan_Log(DEBUG, "---------------------------------------------------");
+            Sagan_Log(DEBUG, "Log message to normalize: |%s|", syslog_msg);
+            Sagan_Log(DEBUG, "Parsed: %s", cstr);
+            Sagan_Log(DEBUG, "Slector: %s", SaganNormalizeLiblognorm->selector);
+            Sagan_Log(DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
+            Sagan_Log(DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
+            Sagan_Log(DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);
+            Sagan_Log(DEBUG, "Destination Port: %d", SaganNormalizeLiblognorm->dst_port);
+            Sagan_Log(DEBUG, "Source Host: %s", SaganNormalizeLiblognorm->src_host);
+            Sagan_Log(DEBUG, "Destination Host: %s", SaganNormalizeLiblognorm->dst_host);
+            Sagan_Log(DEBUG, "Username: %s", SaganNormalizeLiblognorm->username);
+            Sagan_Log(DEBUG, "MD5 Hash: %s", SaganNormalizeLiblognorm->hash_md5);
+            Sagan_Log(DEBUG, "SHA1 Hash: %s", SaganNormalizeLiblognorm->hash_sha1);
+            Sagan_Log(DEBUG, "SHA265 Hash: %s", SaganNormalizeLiblognorm->hash_sha256);
+            Sagan_Log(DEBUG, "HTTP URI: %s", SaganNormalizeLiblognorm->http_uri);
+            Sagan_Log(DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
+            Sagan_Log(DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
 

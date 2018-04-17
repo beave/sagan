@@ -121,7 +121,7 @@ sbool Clean_IPC_Object( int type )
 
             if ( debug->debugipc )
                 {
-                    Sagan_Log(S_DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
+                    Sagan_Log(DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
                 }
 
             File_Lock(config->shm_after_by_src);
@@ -141,7 +141,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[0]),
                                               htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[1]),
                                               htonl(((unsigned int *)&afterbysrc_ipc[i].ipsrc)[2]),
@@ -174,7 +174,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_src.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean after_by_src.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_afterbysrc_ipc);
                     pthread_mutex_unlock(&After_By_Src_Mutex);
                     File_Unlock(config->shm_after_by_src);
@@ -182,7 +182,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_src", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_src", __FILE__, __LINE__, new_count, old_count);
             free(temp_afterbysrc_ipc);
 
             pthread_mutex_unlock(&After_By_Src_Mutex);
@@ -231,7 +231,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[0]),
                                               htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[1]),
                                               htonl(((unsigned int *)&afterbydst_ipc[i].ipdst)[2]),
@@ -265,7 +265,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dst.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean after_by_dst.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_afterbydst_ipc);
                     pthread_mutex_unlock(&After_By_Dst_Mutex);
                     File_Unlock(config->shm_after_by_dst);
@@ -273,7 +273,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dst", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dst", __FILE__, __LINE__, new_count, old_count);
             free(temp_afterbydst_ipc);
 
             pthread_mutex_unlock(&After_By_Dst_Mutex);
@@ -323,7 +323,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, afterbysrcport_ipc[i].ipsrcport);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, afterbysrcport_ipc[i].ipsrcport);
                                 }
 
                             temp_afterbysrcport_ipc[new_count].ipsrcport = afterbysrcport_ipc[i].ipsrcport;
@@ -352,7 +352,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean after_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_afterbysrcport_ipc);
                     pthread_mutex_unlock(&After_By_Src_Port_Mutex);
                     File_Unlock(config->shm_after_by_srcport);
@@ -360,7 +360,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_srcport", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_srcport", __FILE__, __LINE__, new_count, old_count);
             free(temp_afterbysrcport_ipc);
 
             pthread_mutex_unlock(&After_By_Src_Port_Mutex);
@@ -410,7 +410,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbydstport_IPC : Keeping %u.", __FILE__, __LINE__, afterbydstport_ipc[i].ipdstport);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbydstport_IPC : Keeping %u.", __FILE__, __LINE__, afterbydstport_ipc[i].ipdstport);
                                 }
 
                             temp_afterbydstport_ipc[new_count].ipdstport = afterbydstport_ipc[i].ipdstport;
@@ -439,7 +439,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean after_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_afterbydstport_ipc);
                     pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
                     File_Unlock(config->shm_after_by_dstport);
@@ -447,7 +447,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dstport", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_dstport", __FILE__, __LINE__, new_count, old_count);
             free(temp_afterbydstport_ipc);
 
             pthread_mutex_unlock(&After_By_Dst_Port_Mutex);
@@ -496,7 +496,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, afterbyusername_ipc[i].username);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, afterbyusername_ipc[i].username);
                                 }
 
                             temp_afterbyusername_ipc[new_count].count = afterbyusername_ipc[i].count;
@@ -526,7 +526,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean after_by_username.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean after_by_username.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_afterbyusername_ipc);
                     pthread_mutex_unlock(&After_By_Username_Mutex);
                     File_Unlock(config->shm_after_by_username);
@@ -534,7 +534,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_username", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for after_by_username", __FILE__, __LINE__, new_count, old_count);
             free(temp_afterbyusername_ipc);
 
             pthread_mutex_unlock(&After_By_Username_Mutex);
@@ -582,7 +582,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Threshbysrc_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[0]),
                                               htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[1]),
                                               htonl(((unsigned int *)&threshbysrc_ipc[i].ipsrc)[2]),
@@ -615,7 +615,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_src.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean thresh_by_src.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_threshbysrc_ipc);
                     pthread_mutex_unlock(&Thresh_By_Src_Mutex);
                     File_Unlock(config->shm_thresh_by_src);
@@ -623,7 +623,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_src", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_src", __FILE__, __LINE__, new_count, old_count);
             free(temp_threshbysrc_ipc);
 
             pthread_mutex_unlock(&Thresh_By_Src_Mutex);
@@ -672,7 +672,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Threshbydst_IPC : Keeping 0x%.08X%.08X%.08X%.08X.", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[0]),
                                               htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[1]),
                                               htonl(((unsigned int *)&threshbydst_ipc[i].ipdst)[2]),
@@ -705,7 +705,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dst.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean thresh_by_dst.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_threshbydst_ipc);
                     pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
                     File_Unlock(config->shm_thresh_by_dst);
@@ -713,7 +713,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dst", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dst", __FILE__, __LINE__, new_count, old_count);
             free(temp_threshbydst_ipc);
 
             pthread_mutex_unlock(&Thresh_By_Dst_Mutex);
@@ -762,7 +762,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, threshbysrcport_ipc[i].ipsrcport);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Threshbysrcport_IPC : Keeping %u.", __FILE__, __LINE__, threshbysrcport_ipc[i].ipsrcport);
                                 }
 
                             temp_threshbysrcport_ipc[new_count].ipsrcport = threshbysrcport_ipc[i].ipsrcport;
@@ -791,7 +791,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean thresh_by_srcport.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_threshbysrcport_ipc);
                     pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
                     File_Unlock(config->shm_thresh_by_src);
@@ -799,7 +799,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_srcport", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_srcport", __FILE__, __LINE__, new_count, old_count);
             free(temp_threshbysrcport_ipc);
 
             pthread_mutex_unlock(&Thresh_By_Src_Port_Mutex);
@@ -848,7 +848,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Threshbydstport_IPC : Keeping %u.", __FILE__, __LINE__, threshbydstport_ipc[i].ipdstport);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Threshbydstport_IPC : Keeping %u.", __FILE__, __LINE__, threshbydstport_ipc[i].ipdstport);
                                 }
 
                             temp_threshbydstport_ipc[new_count].ipdstport = threshbydstport_ipc[i].ipdstport;
@@ -877,7 +877,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean thresh_by_dstport.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_threshbydstport_ipc);
                     pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
                     File_Unlock(config->shm_thresh_by_dst);
@@ -885,7 +885,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dstport", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_dstport", __FILE__, __LINE__, new_count, old_count);
             free(temp_threshbydstport_ipc);
 
             pthread_mutex_unlock(&Thresh_By_Dst_Port_Mutex);
@@ -934,7 +934,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, threshbyusername_ipc[i].username);
+                                    Sagan_Log(DEBUG, "[%s, %d line] Afterbyusername_IPC : Keeping '%s'.", __FILE__, __LINE__, threshbyusername_ipc[i].username);
                                 }
 
                             temp_threshbyusername_ipc[new_count].count = threshbyusername_ipc[i].count;
@@ -964,7 +964,7 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean thresh_by_username.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean thresh_by_username.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_threshbyusername_ipc);
                     pthread_mutex_unlock(&Thresh_By_Username_Mutex);
                     File_Unlock(config->shm_thresh_by_username);
@@ -972,7 +972,7 @@ sbool Clean_IPC_Object( int type )
 
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_username", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for thresh_by_username", __FILE__, __LINE__, new_count, old_count);
             free(temp_threshbyusername_ipc);
 
             pthread_mutex_unlock(&Thresh_By_Username_Mutex);
@@ -1020,7 +1020,7 @@ sbool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, %d line] Flowbot_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Flowbot_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&xbit_ipc[i].ip_src)[0]),
                                               htonl(((unsigned int *)&xbit_ipc[i].ip_src)[1]),
                                               htonl(((unsigned int *)&xbit_ipc[i].ip_src)[2]),
@@ -1060,14 +1060,14 @@ sbool Clean_IPC_Object( int type )
             else
                 {
 
-                    Sagan_Log(S_WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_xbit_ipc);
                     pthread_mutex_unlock(&Xbit_Mutex);
                     File_Unlock(config->shm_xbit);
                     return(1);
                 }
 
-            Sagan_Log(S_NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Xbit.", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Xbit.", __FILE__, __LINE__, new_count, old_count);
             free(temp_xbit_ipc);
 
             pthread_mutex_unlock(&Xbit_Mutex);
@@ -1095,10 +1095,10 @@ void IPC_Check_Object(char *tmp_object_check, sbool new_counters, char *object_n
         {
             if ( unlink(tmp_object_check) == -1 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not unlink %s memory object! [%s]", __FILE__, __LINE__, object_name, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Could not unlink %s memory object! [%s]", __FILE__, __LINE__, object_name, strerror(errno));
                 }
 
-            Sagan_Log(S_NORMAL, "* Stale %s memory object found & unlinked.", object_name);
+            Sagan_Log(NORMAL, "* Stale %s memory object found & unlinked.", object_name);
         }
 }
 
@@ -1124,8 +1124,8 @@ void IPC_Init(void)
 
     /* For convert 32 bit IP to octet */
 
-    Sagan_Log(S_NORMAL, "Initializing shared memory objects.");
-    Sagan_Log(S_NORMAL, "---------------------------------------------------------------------------");
+    Sagan_Log(NORMAL, "Initializing shared memory objects.");
+    Sagan_Log(NORMAL, "---------------------------------------------------------------------------");
 
     /* Init counters first.  Need to track all other share memory objects */
 
@@ -1133,29 +1133,29 @@ void IPC_Init(void)
 
     if ((config->shm_counters = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Counters shared object (new).");
+            Sagan_Log(NORMAL, "+ Counters shared object (new).");
             new_counters = 1;
 
         }
 
     else if ((config->shm_counters = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for counters. [%s:%s]", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for counters. [%s:%s]", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
     else
         {
-            Sagan_Log(S_NORMAL, "- Counters shared object (reload)");
+            Sagan_Log(NORMAL, "- Counters shared object (reload)");
         }
 
 
     if ( ftruncate(config->shm_counters, sizeof(_Sagan_IPC_Counters)) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate counters. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate counters. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( counters_ipc = mmap(0, sizeof(_Sagan_IPC_Counters), (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_counters, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     /* Xbit memory object - File based mmap() */
@@ -1169,28 +1169,28 @@ void IPC_Init(void)
 
             if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
                 {
-                    Sagan_Log(S_NORMAL, "+ Xbit shared object (new).");
+                    Sagan_Log(NORMAL, "+ Xbit shared object (new).");
                     new_object=1;
                 }
 
             else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
             if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if ( new_object == 0)
                 {
-                    Sagan_Log(S_NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
+                    Sagan_Log(NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
                 }
 
             new_object = 0;
@@ -1198,11 +1198,11 @@ void IPC_Init(void)
             if ( debug->debugipc && counters_ipc->xbit_count >= 1 )
                 {
 
-                    Sagan_Log(S_DEBUG, "");
-                    Sagan_Log(S_DEBUG, "*** Xbits ***");
-                    Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                    Sagan_Log(S_DEBUG, "%-2s| %-45s| %-25s| %-45s| %-45s| %-21s| %s", "S", "Selector", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
-                    Sagan_Log(S_DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                    Sagan_Log(DEBUG, "");
+                    Sagan_Log(DEBUG, "*** Xbits ***");
+                    Sagan_Log(DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                    Sagan_Log(DEBUG, "%-2s| %-45s| %-25s| %-45s| %-45s| %-21s| %s", "S", "Selector", "Xbit name", "SRC IP", "DST IP", "Date added/modified", "Expire");
+                    Sagan_Log(DEBUG, "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
 
                     for (i= 0; i < counters_ipc->xbit_count; i++ )
@@ -1216,7 +1216,7 @@ void IPC_Init(void)
 
                                     u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                                    Sagan_Log(S_DEBUG, "%-2d| %-45s| %-25s| %-45s| %-45s| %-21s| %d",
+                                    Sagan_Log(DEBUG, "%-2d| %-45s| %-25s| %-45s| %-45s| %-21s| %d",
                                               xbit_ipc[i].xbit_state,
                                               xbit_ipc[i].selector,
                                               xbit_ipc[i].xbit_name,
@@ -1227,13 +1227,13 @@ void IPC_Init(void)
                                 }
 
                         }
-                    Sagan_Log(S_DEBUG, "");
+                    Sagan_Log(DEBUG, "");
                 }
         }
     else      /* if ( config->xbit_storage == XBIT_STORAGE_MMAP ) */
         {
 
-            Sagan_Log(S_NORMAL, "- Xbit shared object (Objects stored in Redis)");
+            Sagan_Log(NORMAL, "- Xbit shared object (Objects stored in Redis)");
 
         }
 
@@ -1246,28 +1246,28 @@ void IPC_Init(void)
 
     if ((config->shm_thresh_by_src = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Thresh_by_src shared object (new).");
+            Sagan_Log(NORMAL, "+ Thresh_by_src shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_thresh_by_src = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_src (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh_by_src (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_thresh_by_src, sizeof(thresh_by_src_ipc) * config->max_threshold_by_src ) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( threshbysrc_ipc = mmap(0, sizeof(thresh_by_src_ipc) * config->max_threshold_by_src, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_src, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for thresh_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0)
         {
-            Sagan_Log(S_NORMAL, "- Thresh_by_src shared object reloaded (%d sources loaded / max: %d).", counters_ipc->thresh_count_by_src, config->max_threshold_by_src);
+            Sagan_Log(NORMAL, "- Thresh_by_src shared object reloaded (%d sources loaded / max: %d).", counters_ipc->thresh_count_by_src, config->max_threshold_by_src);
         }
 
     new_object = 0;
@@ -1275,11 +1275,11 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->thresh_count_by_src >= 1 )
         {
 
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** Threshold by source ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** Threshold by source ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_src; i++)
                 {
@@ -1288,11 +1288,11 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(threshbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbysrc_ipc[i].selector, ip_src, threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbysrc_ipc[i].selector, ip_src, threshbysrc_ipc[i].count, time_buf, threshbysrc_ipc[i].sid, threshbysrc_ipc[i].expire);
 
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
     /* Threshold by destination */
@@ -1303,28 +1303,28 @@ void IPC_Init(void)
 
     if ((config->shm_thresh_by_dst = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Thresh_by_dst shared object (new).");
+            Sagan_Log(NORMAL, "+ Thresh_by_dst shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_thresh_by_dst = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_dst (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh_by_dst (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_thresh_by_dst, sizeof(thresh_by_dst_ipc) * config->max_threshold_by_dst) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( threshbydst_ipc = mmap(0, sizeof(thresh_by_dst_ipc) * config->max_threshold_by_dst, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dst, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_dst object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for thresh_by_dst object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0)
         {
-            Sagan_Log(S_NORMAL, "- Thresh_by_dst shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->thresh_count_by_dst, config->max_threshold_by_dst);
+            Sagan_Log(NORMAL, "- Thresh_by_dst shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->thresh_count_by_dst, config->max_threshold_by_dst);
         }
 
     new_object = 0;
@@ -1332,11 +1332,11 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->thresh_count_by_dst >= 1 )
         {
 
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** Threshold by destination ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** Threshold by destination ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dst; i++)
                 {
@@ -1345,11 +1345,11 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(threshbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbydst_ipc[i].selector, ip_dst, threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", threshbydst_ipc[i].selector, ip_dst, threshbydst_ipc[i].count, time_buf, threshbydst_ipc[i].sid, threshbydst_ipc[i].expire);
 
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
 
@@ -1361,28 +1361,28 @@ void IPC_Init(void)
 
     if ((config->shm_thresh_by_srcport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Thresh_by_srcport shared object (new).");
+            Sagan_Log(NORMAL, "+ Thresh_by_srcport shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_thresh_by_srcport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( ftruncate(config->shm_thresh_by_srcport, sizeof(thresh_by_srcport_ipc) * config->max_threshold_by_srcport) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( threshbysrcport_ipc = mmap(0, sizeof(thresh_by_srcport_ipc) * config->max_threshold_by_srcport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_srcport, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_srcport object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for thresh_by_srcport object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0)
         {
-            Sagan_Log(S_NORMAL, "- Thresh_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->thresh_count_by_srcport, config->max_threshold_by_srcport);
+            Sagan_Log(NORMAL, "- Thresh_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->thresh_count_by_srcport, config->max_threshold_by_srcport);
         }
 
     new_object = 0;
@@ -1390,11 +1390,11 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->thresh_count_by_srcport >= 1 )
         {
 
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** Threshold by source port ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** Threshold by source port ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_srcport; i++)
                 {
@@ -1403,11 +1403,11 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(threshbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbysrcport_ipc[i].selector, srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbysrcport_ipc[i].selector, srcport, threshbysrcport_ipc[i].count, time_buf, threshbysrcport_ipc[i].sid, threshbysrcport_ipc[i].expire);
 
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
     /* Threshold by destination port */
@@ -1418,28 +1418,28 @@ void IPC_Init(void)
 
     if ((config->shm_thresh_by_dstport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Thresh_by_dstport shared object (new).");
+            Sagan_Log(NORMAL, "+ Thresh_by_dstport shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_thresh_by_dstport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_dstport (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh_by_dstport (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( ftruncate(config->shm_thresh_by_dstport, sizeof(thresh_by_dstport_ipc) * config->max_threshold_by_dstport) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_dstport. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh_by_dstport. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( threshbydstport_ipc = mmap(0, sizeof(thresh_by_dstport_ipc) * config->max_threshold_by_dstport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_dstport, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_dstport object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for thresh_by_dstport object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0)
         {
-            Sagan_Log(S_NORMAL, "- Thresh_by_dstport shared object reloaded (%d destination ports loaded / max: %d).", counters_ipc->thresh_count_by_dstport, config->max_threshold_by_dstport);
+            Sagan_Log(NORMAL, "- Thresh_by_dstport shared object reloaded (%d destination ports loaded / max: %d).", counters_ipc->thresh_count_by_dstport, config->max_threshold_by_dstport);
         }
 
     new_object = 0;
@@ -1447,11 +1447,11 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->thresh_count_by_dstport >= 1 )
         {
 
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** Threshold by destination port ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** Threshold by destination port ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_dstport; i++)
                 {
@@ -1460,11 +1460,11 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(threshbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbydstport_ipc[i].selector, dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", threshbydstport_ipc[i].selector, dstport, threshbydstport_ipc[i].count, time_buf, threshbydstport_ipc[i].sid, threshbydstport_ipc[i].expire);
 
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
 
@@ -1476,46 +1476,46 @@ void IPC_Init(void)
 
     if ((config->shm_thresh_by_username = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ Thresh_by_username shared object (new).");
+            Sagan_Log(NORMAL, "+ Thresh_by_username shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_thresh_by_username = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for thresh_by_username (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh_by_username (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_thresh_by_username, sizeof(thresh_by_username_ipc) * config->max_threshold_by_username ) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate thresh_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( threshbyusername_ipc = mmap(0, sizeof(thresh_by_username_ipc) * config->max_threshold_by_username, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh_by_username, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for thresh_by_username object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for thresh_by_username object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- Thresh_by_username shared object reloaded (%d usernames loaded / max: %d).", counters_ipc->thresh_count_by_username, config->max_threshold_by_username);
+            Sagan_Log(NORMAL, "- Thresh_by_username shared object reloaded (%d usernames loaded / max: %d).", counters_ipc->thresh_count_by_username, config->max_threshold_by_username);
         }
 
     new_object = 0;
 
     if ( debug->debugipc && counters_ipc->thresh_count_by_username >= 1 )
         {
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** Threshold by username ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** Threshold by username ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->thresh_count_by_username; i++)
                 {
 
                     u32_Time_To_Human(threshbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].selector, threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", threshbyusername_ipc[i].selector, threshbyusername_ipc[i].username, threshbyusername_ipc[i].count, time_buf, threshbyusername_ipc[i].sid, threshbyusername_ipc[i].expire);
                 }
 
         }
@@ -1528,28 +1528,28 @@ void IPC_Init(void)
 
     if ((config->shm_after_by_src = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ After_by_src shared object (new).");
+            Sagan_Log(NORMAL, "+ After_by_src shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_after_by_src = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_src (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after_by_src (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_after_by_src, sizeof(after_by_src_ipc) * config->max_after_by_src ) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) * config->max_after_by_src, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_src, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- After_by_src shared object reloaded (%d sources loaded / max: %d).", counters_ipc->after_count_by_src, config->max_after_by_src);
+            Sagan_Log(NORMAL, "- After_by_src shared object reloaded (%d sources loaded / max: %d).", counters_ipc->after_count_by_src, config->max_after_by_src);
         }
 
     new_object = 0;
@@ -1557,11 +1557,11 @@ void IPC_Init(void)
     if ( debug->debugipc && counters_ipc->after_count_by_src >= 1 )
         {
 
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** After by source ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** After by source ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
                 {
@@ -1569,10 +1569,10 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
     /* After by destination */
@@ -1583,39 +1583,39 @@ void IPC_Init(void)
 
     if ((config->shm_after_by_dst = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ After_by_dst shared object (new).");
+            Sagan_Log(NORMAL, "+ After_by_dst shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_after_by_dst = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_dst (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after_by_dst (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_after_by_dst, sizeof(after_by_dst_ipc) * config->max_after_by_dst) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_dst. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) * config->max_after_by_dst, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dst, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- After_by_dst shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->after_count_by_dst, config->max_after_by_dst);
+            Sagan_Log(NORMAL, "- After_by_dst shared object reloaded (%d destinations loaded / max: %d).", counters_ipc->after_count_by_dst, config->max_after_by_dst);
         }
 
     new_object = 0;
 
     if ( debug->debugipc && counters_ipc->after_count_by_dst >= 1 )
         {
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** After by destination ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** After by destination ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "DST IP", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
                 {
@@ -1624,10 +1624,10 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbydst_ipc[i].selector, ip_dst, afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbydst_ipc[i].selector, ip_dst, afterbydst_ipc[i].count, time_buf, afterbydst_ipc[i].sid, afterbydst_ipc[i].expire);
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
 
@@ -1639,39 +1639,39 @@ void IPC_Init(void)
 
     if ((config->shm_after_by_srcport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ After_by_srcport shared object (new).");
+            Sagan_Log(NORMAL, "+ After_by_srcport shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_after_by_srcport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after_by_srcport (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( ftruncate(config->shm_after_by_srcport, sizeof(after_by_srcport_ipc) * config->max_after_by_srcport) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_srcport. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( afterbysrcport_ipc = mmap(0, sizeof(after_by_srcport_ipc) * config->max_after_by_srcport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_srcport, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- After_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->after_count_by_srcport, config->max_after_by_srcport);
+            Sagan_Log(NORMAL, "- After_by_srcport shared object reloaded (%d source ports loaded / max: %d).", counters_ipc->after_count_by_srcport, config->max_after_by_srcport);
         }
 
     new_object = 0;
 
     if ( debug->debugipc && counters_ipc->after_count_by_srcport >= 1 )
         {
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** After by source port ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** After by source port ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "SRCPORT", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_srcport; i++)
                 {
@@ -1680,10 +1680,10 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(afterbysrcport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbysrcport_ipc[i].selector, srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbysrcport_ipc[i].selector, srcport, afterbysrcport_ipc[i].count, time_buf, afterbysrcport_ipc[i].sid, afterbysrcport_ipc[i].expire);
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
 
@@ -1695,39 +1695,39 @@ void IPC_Init(void)
 
     if ((config->shm_after_by_dstport = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ After_by_dstport shared object (new).");
+            Sagan_Log(NORMAL, "+ After_by_dstport shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_after_by_dstport = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_dstport (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after_by_dstport (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( ftruncate(config->shm_after_by_dstport, sizeof(after_by_dstport_ipc) * config->max_after_by_dstport) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_dstport. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_dstport. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( afterbydstport_ipc = mmap(0, sizeof(after_by_dstport_ipc) * config->max_after_by_dstport, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_dstport, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- After_by_dstport shared object reloaded (%d destinations ports loaded / max: %d).", counters_ipc->after_count_by_dstport, config->max_after_by_dstport);
+            Sagan_Log(NORMAL, "- After_by_dstport shared object reloaded (%d destinations ports loaded / max: %d).", counters_ipc->after_count_by_dstport, config->max_after_by_dstport);
         }
 
     new_object = 0;
 
     if ( debug->debugipc && counters_ipc->after_count_by_dstport >= 1 )
         {
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** After by destination port ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** After by destination port ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "DSTPORT", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_dstport; i++)
                 {
@@ -1736,10 +1736,10 @@ void IPC_Init(void)
 
                     u32_Time_To_Human(afterbydstport_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbydstport_ipc[i].selector, dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16d| %-11d| %-21s| %-11s| %d", afterbydstport_ipc[i].selector, dstport, afterbydstport_ipc[i].count, time_buf, afterbydstport_ipc[i].sid, afterbydstport_ipc[i].expire);
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
     /* After by username */
@@ -1750,49 +1750,49 @@ void IPC_Init(void)
 
     if ((config->shm_after_by_username = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(S_NORMAL, "+ After_by_username shared object (new).");
+            Sagan_Log(NORMAL, "+ After_by_username shared object (new).");
             new_object=1;
         }
 
     else if ((config->shm_after_by_username = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for after_by_username (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after_by_username (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
     if ( ftruncate(config->shm_after_by_username, sizeof(after_by_username_ipc) * config->max_after_by_username ) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate after_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_username. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) * config->max_after_by_username, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after_by_username, 0)) == MAP_FAILED )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for after_by_src object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
     if ( new_object == 0 )
         {
-            Sagan_Log(S_NORMAL, "- After_by_username shared object reloaded (%d usernames loaded / max: %d).", counters_ipc->after_count_by_username, config->max_after_by_username);
+            Sagan_Log(NORMAL, "- After_by_username shared object reloaded (%d usernames loaded / max: %d).", counters_ipc->after_count_by_username, config->max_after_by_username);
         }
 
     new_object = 0;
 
     if ( debug->debugipc && counters_ipc->after_count_by_username >= 1 )
         {
-            Sagan_Log(S_DEBUG, "");
-            Sagan_Log(S_DEBUG, "*** After by username ***");
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
-            Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "");
+            Sagan_Log(DEBUG, "*** After by username ***");
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            Sagan_Log(DEBUG, "%-45s| %-16s| %-11s| %-21s| %-11s| %s", "Selector", "Username", "Counter","Date added/modified", "SID", "Expire" );
+            Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
             for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                 {
 
                     u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                    Sagan_Log(S_DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].selector, afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+                    Sagan_Log(DEBUG, "%-45s| %-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].selector, afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                 }
 
-            Sagan_Log(S_DEBUG, "");
+            Sagan_Log(DEBUG, "");
         }
 
     /* Client tracking */
@@ -1806,51 +1806,51 @@ void IPC_Init(void)
 
             if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
                 {
-                    Sagan_Log(S_NORMAL, "+ Sagan_track_clients shared object (new).");
+                    Sagan_Log(NORMAL, "+ Sagan_track_clients shared object (new).");
                     new_object=1;
 
                 }
             else if ((config->shm_track_clients = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 1 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
 
             if ( ftruncate(config->shm_track_clients, sizeof(_Sagan_Track_Clients_IPC) * config->max_track_clients ) != 0 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to ftruncate _Sagan_Track_Clients_IPC. [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate _Sagan_Track_Clients_IPC. [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if (( SaganTrackClients_ipc = mmap(0, sizeof(_Sagan_Track_Clients_IPC) * config->max_track_clients, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_track_clients, 0)) == MAP_FAILED )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Error allocating memory for _Sagan_Track_Clients_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for _Sagan_Track_Clients_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
 
             if ( new_object == 0 )
                 {
-                    Sagan_Log(S_NORMAL, "- Sagan_track_clients shared object reloaded (%d clients loaded / max: %d).", counters_ipc->track_clients_client_count, config->max_track_clients);
+                    Sagan_Log(NORMAL, "- Sagan_track_clients shared object reloaded (%d clients loaded / max: %d).", counters_ipc->track_clients_client_count, config->max_track_clients);
                 }
 
             new_object = 0;
             /*
                 if ( debug->debugipc && counters_ipc->track_client_count >= 1 )
                     {
-                        Sagan_Log(S_DEBUG, "");
-                        Sagan_Log(S_DEBUG, "*** After by username ***");
-                        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        Sagan_Log(S_DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
-                        Sagan_Log(S_DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                        Sagan_Log(DEBUG, "");
+                        Sagan_Log(DEBUG, "*** After by username ***");
+                        Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                        Sagan_Log(DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
+                        Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 
                         for ( i = 0; i < counters_ipc->after_count_by_username; i++)
                             {
 
             	    u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
 
-                                Sagan_Log(S_DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
+                                Sagan_Log(DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
                             }
 
-                        Sagan_Log(S_DEBUG, "");
+                        Sagan_Log(DEBUG, "");
                     }
 
             */

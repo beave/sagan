@@ -66,11 +66,11 @@ void Load_Classifications( const char *ruleset )
     counters->classcount = 0;
     pthread_mutex_unlock(&CounterClassMutex);
 
-    Sagan_Log(S_NORMAL, "Loading classifications.conf file. [%s]", ruleset);
+    Sagan_Log(NORMAL, "Loading classifications.conf file. [%s]", ruleset);
 
     if (( classfile = fopen(ruleset, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file %s. [%s]", __FILE__,  __LINE__, ruleset, strerror(errno) );
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open rule file %s. [%s]", __FILE__,  __LINE__, ruleset, strerror(errno) );
         }
 
     while(fgets(classbuf, sizeof(classbuf), classfile) != NULL)
@@ -91,7 +91,7 @@ void Load_Classifications( const char *ruleset )
 
                     if ( classstruct == NULL )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for classstruct. Abort!", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for classstruct. Abort!", __FILE__, __LINE__);
                         }
                 }
 
@@ -102,7 +102,7 @@ void Load_Classifications( const char *ruleset )
 
             if ( laststring == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
                 }
 
             Remove_Spaces(laststring);
@@ -112,7 +112,7 @@ void Load_Classifications( const char *ruleset )
 
             if ( laststring == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
                 }
 
             strlcpy(classstruct[counters->classcount].s_desc, laststring, sizeof(classstruct[counters->classcount].s_desc));
@@ -121,7 +121,7 @@ void Load_Classifications( const char *ruleset )
 
             if ( laststring == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
                 }
 
             strlcpy(tmpbuf2, laststring, sizeof(tmpbuf2));
@@ -129,12 +129,12 @@ void Load_Classifications( const char *ruleset )
 
             if ( classstruct[counters->classcount].s_priority == 0 )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                    Sagan_Log(ERROR, "[%s, line %d] Classification error at line number %d in %s", __FILE__, __LINE__, linecount, ruleset);
                 }
 
             if (debug->debugload)
                 {
-                    Sagan_Log(S_DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
+                    Sagan_Log(DEBUG, "[D-%d] Classification: %s|%s|%d", counters->classcount, classstruct[counters->classcount].s_shortname, classstruct[counters->classcount].s_desc, classstruct[counters->classcount].s_priority);
                 }
 
             pthread_mutex_lock(&CounterClassMutex);
@@ -144,7 +144,7 @@ void Load_Classifications( const char *ruleset )
         }
     fclose(classfile);
 
-    Sagan_Log(S_NORMAL, "%d classifications loaded", counters->classcount);
+    Sagan_Log(NORMAL, "%d classifications loaded", counters->classcount);
 
 }
 

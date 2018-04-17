@@ -57,7 +57,7 @@ void Load_Gen_Map( const char *genmap )
     char *gen2=NULL;
     char *gen3=NULL;
 
-    Sagan_Log(S_NORMAL, "Loading gen-msg.map file. [%s]", genmap);
+    Sagan_Log(NORMAL, "Loading gen-msg.map file. [%s]", genmap);
 
     pthread_mutex_lock(&CounterGenMapMutex);
     counters->genmapcount=0;
@@ -65,7 +65,7 @@ void Load_Gen_Map( const char *genmap )
 
     if (( genmapfile = fopen(genmap, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open generator file (%s)", __FILE__, __LINE__, genmap);
         }
 
     while(fgets(genbuf, 1024, genmapfile) != NULL)
@@ -84,7 +84,7 @@ void Load_Gen_Map( const char *genmap )
 
                     if ( generator == NULL )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
                         }
 
                 }
@@ -93,7 +93,7 @@ void Load_Gen_Map( const char *genmap )
 
             if ( gen1 == NULL )
                 {
-                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen1) ", genmap);
+                    Sagan_Log(ERROR, "%s is incorrect or not correctly formated (gen1) ", genmap);
                 }
 
             Remove_Return(gen1);
@@ -102,7 +102,7 @@ void Load_Gen_Map( const char *genmap )
 
             if ( gen2 == NULL )
                 {
-                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen2) ", genmap);
+                    Sagan_Log(ERROR, "%s is incorrect or not correctly formated (gen2) ", genmap);
                 }
 
             Remove_Return(gen2);
@@ -111,7 +111,7 @@ void Load_Gen_Map( const char *genmap )
 
             if ( gen3 == NULL )
                 {
-                    Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (gen3) ", genmap);
+                    Sagan_Log(ERROR, "%s is incorrect or not correctly formated (gen3) ", genmap);
                 }
 
             Remove_Return(gen3);
@@ -126,7 +126,7 @@ void Load_Gen_Map( const char *genmap )
         }
 
     fclose(genmapfile);
-    Sagan_Log(S_NORMAL, "%d generators loaded.", counters->genmapcount);
+    Sagan_Log(NORMAL, "%d generators loaded.", counters->genmapcount);
 }
 
 

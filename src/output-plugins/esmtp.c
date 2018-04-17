@@ -104,7 +104,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
                       Event->message,
                       tmpref)) < 0)
         {
-            Sagan_Log(S_NORMAL, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
+            Sagan_Log(NORMAL, "[%s, line %d] Cannot build mail.",  __FILE__, __LINE__);
             goto failure;
         }
 
@@ -124,7 +124,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
 
     if((session = smtp_create_session ()) == NULL)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -132,7 +132,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if((message = smtp_add_message (session)) == NULL)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -140,7 +140,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if(!smtp_set_server (session, config->sagan_esmtp_server))
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -148,7 +148,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if((r = FixLF(config, tmpb, tmpa)) <= 0)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot FixLF.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot FixLF.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -156,7 +156,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if(!smtp_set_message_str (message, tmpb))
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -164,7 +164,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if(!smtp_set_reverse_path (message, config->sagan_esmtp_from))
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -172,7 +172,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
         }
     if((recipient = smtp_add_recipient (message, rulestruct[Event->found].email)) == NULL)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -188,7 +188,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
              * we might be storing alerts another way
              */
 
-            Sagan_Log(S_WARN, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
+            Sagan_Log(WARN, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
             pthread_mutex_lock(&CounterESMTPCountFailed);
             counters->esmtp_count_failed++;
             pthread_mutex_unlock(&CounterESMTPCountFailed);
@@ -205,7 +205,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
             counters->esmtp_count_success++;
             pthread_mutex_unlock(&CounterESMTPCountSuccess);
 
-            if ( debug->debugesmtp ) Sagan_Log(S_DEBUG, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
+            if ( debug->debugesmtp ) Sagan_Log(DEBUG, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 
         }
 
@@ -237,7 +237,7 @@ FixLF( _SaganConfig *config, char *d, char *s)
         {
             s[MAX_EMAILSIZE]='\0';
             sl=MAX_EMAILSIZE;
-            Sagan_Log(S_WARN, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
         }
 
     for(i=0; i<sl; i++)
@@ -245,7 +245,7 @@ FixLF( _SaganConfig *config, char *d, char *s)
             if(j>=MAX_EMAILSIZE)
                 {
                     d[MAX_EMAILSIZE]='\0';
-                    Sagan_Log(S_WARN, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Mail too large.", __FILE__, __LINE__);
                     break;
                 }
             if(i>0 && s[i] == '\n' && s[i-1] != '\r')

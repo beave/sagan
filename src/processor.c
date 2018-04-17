@@ -80,7 +80,7 @@ void Processor ( void )
 
     if ( SaganProcSyslog_LOCAL == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
         }
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
@@ -173,7 +173,7 @@ outside_loop:
             pthread_mutex_unlock(&SaganProcWorkMutex);
         } //  for (;;)
 
-    Sagan_Log(S_WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
+    Sagan_Log(WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
     free(SaganProcSyslog_LOCAL);		/* Should never make it here */
 }
 

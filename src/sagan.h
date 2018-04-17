@@ -60,7 +60,7 @@ size_t strlcpy(char *, const char *, size_t );
 #define SetThreadName(n) ({ \
     char tname[16] = ""; \
     if (strlen(n) > 16) \
-        Sagan_Log(S_WARN, "Thread name is too long, truncating it..."); \
+        Sagan_Log(WARN, "Thread name is too long, truncating it..."); \
     strlcpy(tname, n, 16); \
     pthread_set_name_np(pthread_self(), tname); \
     0; \
@@ -81,11 +81,11 @@ size_t strlcpy(char *, const char *, size_t );
 #define SetThreadName(n) ({ \
     char tname[THREAD_NAME_LEN + 1] = ""; \
     if (strlen(n) > THREAD_NAME_LEN) \
-        Sagan_Log(S_WARN, "Thread name is too long, truncating it..."); \
+        Sagan_Log(WARN, "Thread name is too long, truncating it..."); \
     strlcpy(tname, n, THREAD_NAME_LEN); \
     int ret = 0; \
     if ((ret = prctl(PR_SET_NAME, tname, 0, 0, 0)) < 0) \
-        Sagan_Log(S_WARN, "Error setting thread name \"%s\": %s", tname, strerror(errno)); \
+        Sagan_Log(WARN, "Error setting thread name \"%s\": %s", tname, strerror(errno)); \
     ret; \
 })
 #else

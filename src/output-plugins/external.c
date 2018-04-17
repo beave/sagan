@@ -66,7 +66,7 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
 
     if ( debug->debugexternal )
         {
-            Sagan_Log(S_WARN, "[%s, line %d] In External_Thread()", __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] In External_Thread()", __FILE__, __LINE__);
         }
 
 
@@ -126,20 +126,20 @@ Liblognorm JSON:%s\n\
     if ( pipe(in) < 0 )
         {
             Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot create input pipe!", __FILE__, __LINE__);
         }
 
 
     if ( pipe(out) < 0 )
         {
             Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot create output pipe!", __FILE__, __LINE__);
         }
 
     pid=fork();
     if ( pid < 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot create external program process", __FILE__, __LINE__);
         }
     else if ( pid == 0 )
         {
@@ -159,7 +159,7 @@ Liblognorm JSON:%s\n\
             execl(execute_script, execute_script, NULL, (char *)NULL);
 
             Remove_Lock_File();
-            Sagan_Log(S_WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_external_command);
+            Sagan_Log(WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_external_command);
         }
 
     close(in[0]);
@@ -180,7 +180,7 @@ Liblognorm JSON:%s\n\
 
     if ( debug->debugexternal == 1 )
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_external_command);
+            Sagan_Log(DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_external_command);
         }
 
 }

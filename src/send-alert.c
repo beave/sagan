@@ -49,7 +49,7 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, json_object *json_n
 
     if ( SaganProcessorEvent == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcessorEvent. Abort!", __FILE__, __LINE__);
         }
 
     memset(SaganProcessorEvent, 0, sizeof(_Sagan_Event));

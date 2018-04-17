@@ -123,7 +123,7 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
+                                    Sagan_Log(NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
                                 }
 
                             counters->threshold_total++;
@@ -232,7 +232,7 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                    Sagan_Log(NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
                                 }
 
                             counters->threshold_total++;
@@ -336,7 +336,7 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username, char *sel
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "Threshold SID %s by_username / by_string. [%s]", threshbyusername_ipc[rule_position].sid, normalize_username);
+                                    Sagan_Log(NORMAL, "Threshold SID %s by_username / by_string. [%s]", threshbyusername_ipc[rule_position].sid, normalize_username);
                                 }
 
                             counters->threshold_total++;
@@ -438,7 +438,7 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selec
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "Threshold SID %s by destination IP port. [%s]", threshbydstport_ipc[rule_position].sid, ip_dstport_u32);
+                                    Sagan_Log(NORMAL, "Threshold SID %s by destination IP port. [%s]", threshbydstport_ipc[rule_position].sid, ip_dstport_u32);
                                 }
 
                             counters->threshold_total++;
@@ -537,7 +537,7 @@ sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selec
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "Threshold SID %s by source IP port. [%s]", threshbysrcport_ipc[rule_position].sid, ip_srcport_u32);
+                                    Sagan_Log(NORMAL, "Threshold SID %s by source IP port. [%s]", threshbysrcport_ipc[rule_position].sid, ip_srcport_u32);
                                 }
 
                             counters->threshold_total++;

@@ -60,7 +60,7 @@ void Load_Ignore_List ( void )
 
             if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
+                    Sagan_Log(ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
                     config->sagan_droplist_flag=0;
                 }
 
@@ -82,7 +82,7 @@ void Load_Ignore_List ( void )
 
                             if ( SaganIgnorelist == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
                                 }
 
                             Remove_Return(droplistbuf);

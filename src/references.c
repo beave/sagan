@@ -62,11 +62,11 @@ void Load_Reference( const char *ruleset )
 
     counters->refcount = 0;
 
-    Sagan_Log(S_NORMAL, "Loading references.conf file. [%s]" , ruleset);
+    Sagan_Log(NORMAL, "Loading references.conf file. [%s]" , ruleset);
 
     if (( reffile = fopen(ruleset, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open rule file %s. [%s]", __FILE__, __LINE__, ruleset, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open rule file %s. [%s]", __FILE__, __LINE__, ruleset, strerror(errno));
         }
 
     while(fgets(refbuf, 1024, reffile) != NULL)
@@ -91,7 +91,7 @@ void Load_Reference( const char *ruleset )
 
                     if ( refstruct == NULL )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
                         }
                 }
 
@@ -102,7 +102,7 @@ void Load_Reference( const char *ruleset )
 
             if ( laststring == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
                 }
 
             strlcpy(refstruct[counters->refcount].s_refid, laststring, sizeof(refstruct[counters->refcount].s_refid));
@@ -111,7 +111,7 @@ void Load_Reference( const char *ruleset )
 
             if ( laststring == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
+                    Sagan_Log(ERROR, "[%s, line %d] The file %s at line %d is improperly formated. Abort!", __FILE__, __LINE__, ruleset, linecount);
                 }
 
             strlcpy(refstruct[counters->refcount].s_refurl, laststring, sizeof(refstruct[counters->refcount].s_refurl));
@@ -119,14 +119,14 @@ void Load_Reference( const char *ruleset )
 
             if (debug->debugload)
                 {
-                    Sagan_Log(S_DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
+                    Sagan_Log(DEBUG, "[D-%d] Reference: %s|%s", counters->refcount, refstruct[counters->refcount].s_refid, refstruct[counters->refcount].s_refurl);
                 }
 
             counters->refcount++;
 
         }
     fclose(reffile);
-    Sagan_Log(S_NORMAL, "%d references loaded.", counters->refcount);
+    Sagan_Log(NORMAL, "%d references loaded.", counters->refcount);
 }
 
 

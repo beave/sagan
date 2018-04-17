@@ -81,7 +81,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_Addr == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_Addr, 0, sizeof(_Sagan_BroIntel_Intel_Addr));
@@ -90,7 +90,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_Domain == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_Domain, 0, sizeof(_Sagan_BroIntel_Intel_Domain));
@@ -99,7 +99,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_File_Hash == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_File_Hash, 0, sizeof(_Sagan_BroIntel_Intel_File_Hash));
@@ -108,7 +108,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_URL == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_URL, 0, sizeof(_Sagan_BroIntel_Intel_URL));
@@ -117,7 +117,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_Software == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_Software, 0, sizeof(_Sagan_BroIntel_Intel_Software));
@@ -126,7 +126,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_Email == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_Email, 0, sizeof(_Sagan_BroIntel_Intel_Email));
@@ -135,7 +135,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_User_Name == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_User_Name, 0, sizeof(_Sagan_BroIntel_Intel_User_Name));
@@ -144,7 +144,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_File_Name == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
         }
 
     memset(Sagan_BroIntel_Intel_File_Name, 0, sizeof(_Sagan_BroIntel_Intel_File_Name));
@@ -153,7 +153,7 @@ void Sagan_BroIntel_Init(void)
 
     if ( Sagan_BroIntel_Intel_Cert_Hash == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
         }
 
 }
@@ -195,11 +195,11 @@ void Sagan_BroIntel_Load_File ( void )
     while ( brointel_filename != NULL )
         {
 
-            Sagan_Log(S_NORMAL, "Bro Intel Processor Loading File: %s.", brointel_filename);
+            Sagan_Log(NORMAL, "Bro Intel Processor Loading File: %s.", brointel_filename);
 
             if (( brointel_file = fopen(brointel_filename, "r")) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not load Bro Intel file! (%s - %s)", __FILE__, __LINE__, brointel_filename, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Could not load Bro Intel file! (%s - %s)", __FILE__, __LINE__, brointel_filename, strerror(errno));
                 }
 
             while(fgets(brointelbuf, MAX_BROINTEL_LINE_SIZE, brointel_file) != NULL)
@@ -223,7 +223,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                             if ( value == NULL || type == NULL || description == NULL )
                                 {
-                                    Sagan_Log(S_WARN, "[%s, line %d] Got invalid line at %d in %s", __FILE__, __LINE__, line_count, brointel_filename);
+                                    Sagan_Log(WARN, "[%s, line %d] Got invalid line at %d in %s", __FILE__, __LINE__, line_count, brointel_filename);
                                 }
 
                             found_flag = 0;
@@ -241,7 +241,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, sizeof(bits_ip)) )
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -258,7 +258,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_Addr == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             pthread_mutex_lock(&CounterBroIntelGenericMutex);
@@ -281,7 +281,7 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             if (!strcmp(Sagan_BroIntel_Intel_Domain[i].domain, value))
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::DOMAIN '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::DOMAIN '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -297,7 +297,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_Domain == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain, value, sizeof(Sagan_BroIntel_Intel_Domain[counters->brointel_domain_count].domain));
@@ -322,7 +322,7 @@ void Sagan_BroIntel_Load_File ( void )
                                             if (!strcmp(Sagan_BroIntel_Intel_File_Hash[i].hash, value))
                                                 {
 
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::FILE_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::FILE_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -339,7 +339,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_File_Hash == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_File_Hash[counters->brointel_file_hash_count].hash, value, sizeof(Sagan_BroIntel_Intel_File_Hash[counters->brointel_file_hash_count].hash));
@@ -361,7 +361,7 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             if (!strcmp(Sagan_BroIntel_Intel_URL[i].url, value))
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::URL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::URL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -379,7 +379,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_URL == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url, value, sizeof(Sagan_BroIntel_Intel_URL[counters->brointel_url_count].url));
@@ -408,7 +408,7 @@ void Sagan_BroIntel_Load_File ( void )
                                             if (!strcmp(Sagan_BroIntel_Intel_Software[i].software, value))
                                                 {
 
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::SOFTWARE '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::SOFTWARE '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -425,7 +425,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_Software == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software, value, sizeof(Sagan_BroIntel_Intel_Software[counters->brointel_software_count].software));
@@ -448,7 +448,7 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             if (!strcmp(Sagan_BroIntel_Intel_Email[i].email, value))
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::EMAIL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::EMAIL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -466,7 +466,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_Email == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email, value, sizeof(Sagan_BroIntel_Intel_Email[counters->brointel_email_count].email));
@@ -492,7 +492,7 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             if (!strcmp(Sagan_BroIntel_Intel_User_Name[i].username, value))
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::USER_NAME '%s' in %s on line %.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::USER_NAME '%s' in %s on line %.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -510,7 +510,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_User_Name == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username, value, sizeof(Sagan_BroIntel_Intel_User_Name[counters->brointel_user_name_count].username));
@@ -535,7 +535,7 @@ void Sagan_BroIntel_Load_File ( void )
                                             if (!strcmp(Sagan_BroIntel_Intel_File_Name[i].file_name, value))
                                                 {
 
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::FILE_NAME '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::FILE_NAME '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -553,7 +553,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_File_Name == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name, value, sizeof(Sagan_BroIntel_Intel_File_Name[counters->brointel_file_name_count].file_name));
@@ -576,7 +576,7 @@ void Sagan_BroIntel_Load_File ( void )
                                         {
                                             if (!strcmp(Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, value))
                                                 {
-                                                    Sagan_Log(S_WARN, "[%s, line %d] Got duplicate Intel::CERT_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
+                                                    Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::CERT_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
                                                     pthread_mutex_lock(&CounterBroIntelGenericMutex);
                                                     counters->brointel_dups++;
@@ -592,7 +592,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                             if ( Sagan_BroIntel_Intel_Cert_Hash == NULL )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             strlcpy(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash, value, sizeof(Sagan_BroIntel_Intel_Cert_Hash[counters->brointel_cert_hash_count].cert_hash));
@@ -632,7 +632,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
 
             if ( debug->debugbrointel )
                 {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] %u is RFC1918, link local or invalid.", __FILE__, __LINE__, ip);
+                    Sagan_Log(DEBUG, "[%s, line %d] %u is RFC1918, link local or invalid.", __FILE__, __LINE__, ip);
                 }
 
             return(false);
@@ -647,7 +647,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found IP %u.", __FILE__, __LINE__, ip);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found IP %u.", __FILE__, __LINE__, ip);
                         }
 
                     return(true);
@@ -716,7 +716,7 @@ sbool Sagan_BroIntel_DOMAIN ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found domain %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_Domain[i].domain);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found domain %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_Domain[i].domain);
                         }
 
                     return(true);
@@ -744,7 +744,7 @@ sbool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found file hash %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Hash[i].hash);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found file hash %s.", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Hash[i].hash);
                         }
 
                     return(true);
@@ -772,7 +772,7 @@ sbool Sagan_BroIntel_URL ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found URL \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_URL[i].url);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found URL \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_URL[i].url);
                         }
 
                     return(true);
@@ -799,7 +799,7 @@ sbool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found software \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Software[i].software);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found software \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Software[i].software);
                         }
 
                     return(true);
@@ -826,7 +826,7 @@ sbool Sagan_BroIntel_EMAIL ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found e-mail address \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Email[i].email);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found e-mail address \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Email[i].email);
                         }
 
                     return(true);
@@ -853,7 +853,7 @@ sbool Sagan_BroIntel_USER_NAME ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found the username \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_User_Name[i].username);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found the username \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_User_Name[i].username);
                         }
 
                     return(true);
@@ -880,7 +880,7 @@ sbool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found the file name \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Name[i].file_name);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found the file name \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_File_Name[i].file_name);
                         }
 
                     return(true);
@@ -907,7 +907,7 @@ sbool Sagan_BroIntel_CERT_HASH ( char *syslog_message )
                 {
                     if ( debug->debugbrointel )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] Found the CERT_HASH \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash);
+                            Sagan_Log(DEBUG, "[%s, line %d] Found the CERT_HASH \"%s\".", __FILE__, __LINE__, Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash);
                         }
 
                     return(true);

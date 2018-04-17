@@ -120,7 +120,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
     /*
         if ( debug->debugredis )
             {
-                Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Condition.", __FILE__, __LINE__);
+                Sagan_Log(DEBUG, "[%s, line %d] Redis Xbit Condition.", __FILE__, __LINE__);
             }
     */
 
@@ -165,7 +165,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                                 {
 
                                     {
-                                        Sagan_Log(S_WARN, "[%s, line %d] Call for \"isset\" or \"isnotset\" xbit \"%s\" with Redis is not supported! \"unset\" needs an IP source or destination", __FILE__, __LINE__, tmp_xbit_name);
+                                        Sagan_Log(WARN, "[%s, line %d] Call for \"isset\" or \"isnotset\" xbit \"%s\" with Redis is not supported! \"unset\" needs an IP source or destination", __FILE__, __LINE__, tmp_xbit_name);
                                     }
 
                                 }
@@ -179,7 +179,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                     if ( debug->debugxbit )
                                         {
-                                            Sagan_Log(S_DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, tmp_xbit_name, ip_src_char, ip_dst_char);
+                                            Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, tmp_xbit_name, ip_src_char, ip_dst_char);
                                         }
 
 
@@ -201,7 +201,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                                     if ( debug->debugxbit )
                                                         {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Found xbit '%s' for 'isset'.", __FILE__, __LINE__, tmp_xbit_name );
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Found xbit '%s' for 'isset'.", __FILE__, __LINE__, tmp_xbit_name );
                                                         }
 
                                                     /* The rule has a |, we can short circuit here */
@@ -211,7 +211,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] '|' set or only one xbit used, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] '|' set or only one xbit used, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
                                                                 }
 
                                                             return(true);
@@ -236,7 +236,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                                     if ( debug->debugxbit )
                                                         {
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Did not find xbit '%s' for 'isnotset'.", __FILE__, __LINE__, tmp_xbit_name );
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Did not find xbit '%s' for 'isnotset'.", __FILE__, __LINE__, tmp_xbit_name );
                                                         }
 
                                                     /* If the run contains &'s we can short circuit here */
@@ -246,7 +246,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
                                                                 }
 
                                                             return(true);
@@ -313,7 +313,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
                                                             if ( debug->debugxbit )
                                                                 {
 
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] xbit found, return TRUE", __FILE__, __LINE__ );
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] xbit found, return TRUE", __FILE__, __LINE__ );
                                                                 }
 
                                                             return(true);
@@ -340,7 +340,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
                                                             if ( debug->debugxbit )
                                                                 {
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Single xbit or '&' found in xbit set. Returning TRUE", __FILE__, __LINE__ );
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] Single xbit or '&' found in xbit set. Returning TRUE", __FILE__, __LINE__ );
                                                                 }
 
                                                             return(true);
@@ -386,7 +386,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
             if ( debug->debugxbit)
                 {
-                    Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
+                    Sagan_Log(DEBUG, "[%s, line %d] Condition of xbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
                 }
 
             return(true);
@@ -396,7 +396,7 @@ sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_ch
 
     if ( debug->debugxbit)
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
+            Sagan_Log(DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
         }
 
     return(false);
@@ -442,7 +442,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
     if ( debug->debugredis )
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
+            Sagan_Log(DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
         }
 
     snprintf(fullsyslog_orig, sizeof(fullsyslog_orig), "%s|%s|%s|%s|%s|%s|%s|%s|%s",
@@ -519,7 +519,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                             else
                                 {
 
-                                    Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'set'.  Skipping!");
+                                    Sagan_Log(WARN, "Out of Redis 'writer' threads for 'set'.  Skipping!");
 
                                     pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                     counters->redis_writer_threads_drop++;
@@ -550,7 +550,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                 {
 
                                     {
-                                        Sagan_Log(S_WARN, "[%s, line %d] Call for \"unset\" xbit \"%s\" with Redis is not supported! \"unset\" needs an IP source or destination", __FILE__, __LINE__, tmp_xbit_name);
+                                        Sagan_Log(WARN, "[%s, line %d] Call for \"unset\" xbit \"%s\" with Redis is not supported! \"unset\" needs an IP source or destination", __FILE__, __LINE__, tmp_xbit_name);
                                     }
 
                                 }
@@ -587,7 +587,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     else
                                         {
 
-                                            Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'both'.  Skipping!");
+                                            Sagan_Log(WARN, "Out of Redis 'writer' threads for 'unset' by 'both'.  Skipping!");
 
                                             pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                             counters->redis_writer_threads_drop++;
@@ -619,7 +619,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     else
                                         {
 
-                                            Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_src'.  Skipping!");
+                                            Sagan_Log(WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_src'.  Skipping!");
 
                                             pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                             counters->redis_writer_threads_drop++;
@@ -655,7 +655,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     else
                                         {
 
-                                            Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
+                                            Sagan_Log(WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
 
                                             pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
                                             counters->redis_writer_threads_drop++;
@@ -704,7 +704,7 @@ void Xbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector
     else
         {
 
-            Sagan_Log(S_WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
+            Sagan_Log(WARN, "Out of Redis 'writer' threads for 'unset' by 'ip_dst'.  Skipping!");
 
             pthread_mutex_lock(&CounterRedisWriterThreadsDrop);
             counters->redis_writer_threads_drop++;

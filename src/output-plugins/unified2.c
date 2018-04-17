@@ -93,7 +93,7 @@ void Unified2InitFile( void )
 
     if (config == NULL)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ );
+            Sagan_Log(ERROR, "[%s, line %d] Could not init Unified2. Config data is null", __FILE__, __LINE__ );
         }
 
     config->unified2_timestamp = (uint32_t)time(NULL);
@@ -102,7 +102,7 @@ void Unified2InitFile( void )
         {
             if (SaganSnprintf(filepath, sizeof(filepath), "%s.%u",
                               config->unified2_filepath, config->unified2_timestamp) != SAGAN_SNPRINTF_SUCCESS)
-                Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Unified2 file path", __FILE__, __LINE__);
+                Sagan_Log(ERROR, "[%s, line %d] Failed to copy Unified2 file path", __FILE__, __LINE__);
 
             fname_ptr = filepath;
         }
@@ -113,7 +113,7 @@ void Unified2InitFile( void )
 
     if ((config->unified2_stream = fopen(fname_ptr, "wb")) == NULL)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open file %s.", __FILE__, __LINE__, fname_ptr);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open file %s.", __FILE__, __LINE__, fname_ptr);
         }
 }
 
@@ -313,7 +313,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
 
     if ( Event->ip_proto == 0 )
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Protocol set to 0! NOT logging to unfied2!", __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Protocol set to 0! NOT logging to unfied2!", __FILE__, __LINE__);
             return;
         }
 
@@ -429,7 +429,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
     if (SafeMemcpy(write_pkt_buffer, &hdr, sizeof(Serial_Unified2_Header),
                    write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
             return;
         }
 
@@ -437,7 +437,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
                    &logheader, sizeof(Serial_Unified2Packet) - 4,
                    write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2Packet.", __FILE__, __LINE__ );
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy Serial_Unified2Packet.", __FILE__, __LINE__ );
             return;
         }
 
@@ -479,7 +479,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
                    packet_data, pkt_length,
                    write_pkt_buffer, write_pkt_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy pseudo packet data.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy pseudo packet data.", __FILE__, __LINE__);
             return;
         }
 
@@ -623,11 +623,11 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                 {
                     if (config->unified2_nostamp)
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to write Unified2 file (%s): %s", __FILE__, __LINE__, config->unified2_filepath, strerror(error));
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to write Unified2 file (%s): %s", __FILE__, __LINE__, config->unified2_filepath, strerror(error));
                         }
                     else
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to write to Unified2 file. (%s.%u): %s", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp, strerror(error));
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to write to Unified2 file. (%s.%u): %s", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp, strerror(error));
                         }
 
                     while ((error == EINTR) && (max_retries != 0))
@@ -637,7 +637,7 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                             /* Supposedly an interrupt can only occur before anything
                              * has been written.  Try again */
 
-                            Sagan_Log(S_WARN, "[%s, line %d] Got interrupt. Retry write to Unified2.", __FILE__, __LINE__);
+                            Sagan_Log(WARN, "[%s, line %d] Got interrupt. Retry write to Unified2.", __FILE__, __LINE__);
 
                             if (fwcount != 1)
                                 {
@@ -647,20 +647,20 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                                     if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) == 1) &&
                                             ((ffstatus = fflush(config->unified2_stream)) == 0))
                                         {
-                                            Sagan_Log(S_NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
+                                            Sagan_Log(NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                                             error = 0;
                                             break;
                                         }
                                 }
                             else if ((ffstatus = fflush(config->unified2_stream)) == 0)
                                 {
-                                    Sagan_Log(S_NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
+                                    Sagan_Log(NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                                     error = 0;
                                     break;
                                 }
 
                             error = errno;
-                            Sagan_Log(S_ERROR, "[%s, line %d] Retrying write to Unified2 file failed", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Retrying write to Unified2 file failed", __FILE__, __LINE__);
                         }
 
                     /* If we've reached the maximum number of interrupt retries,
@@ -675,23 +675,23 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                             break;
 
                         case EIO:
-                            Sagan_Log(S_ERROR, "[%s, line %d] Unified2 file is corrupt", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Unified2 file is corrupt", __FILE__, __LINE__);
 
                             Unified2RotateFile();
 
                             if (config->unified2_nostamp)
                                 {
-                                    Sagan_Log(S_NORMAL, "[%s, line %d] New Unified2 file: %s", __FILE__, __LINE__, config->unified2_filepath);
+                                    Sagan_Log(NORMAL, "[%s, line %d] New Unified2 file: %s", __FILE__, __LINE__, config->unified2_filepath);
                                 }
                             else
                                 {
-                                    Sagan_Log(S_NORMAL, "[%s, line %d] New Unified2 file: %s.%u", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp);
+                                    Sagan_Log(NORMAL, "[%s, line %d] New Unified2 file: %s.%u", __FILE__, __LINE__, config->unified2_filepath, config->unified2_timestamp);
                                 }
 
                             if (((fwcount = fwrite(buf, (size_t)buf_len, 1, config->unified2_stream)) == 1) &&
                                     ((ffstatus = fflush(config->unified2_stream)) == 0))
                                 {
-                                    Sagan_Log(S_NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
+                                    Sagan_Log(NORMAL, "[%s, line %d] Write to Unified2 file succeeded!", __FILE__, __LINE__);
                                     error = 0;
                                     break;
                                 }
@@ -707,11 +707,11 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
 
                             if (config->unified2_nostamp)
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
                                 }
                             else
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to write to Unified2 file", __FILE__, __LINE__);
                                 }                    /* Fall through */
 
                         case EAGAIN:  /* We're not in non-blocking mode */
@@ -722,13 +722,13 @@ static void Unified2Write( uint8_t *buf, uint32_t buf_len )
                         case ENOSPC:
                         case EPIPE:
                         default:
-                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot write to device", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot write to device", __FILE__, __LINE__);
                         }
                 }
 
             if ((max_retries == 0) && (error != 0))
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Maximum number of interrupts exceeded.", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Maximum number of interrupts exceeded.", __FILE__, __LINE__);
                 }
         }
     config->unified2_current += buf_len;
@@ -802,7 +802,7 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 
         default:
 
-            Sagan_Log(S_ERROR,"[%s, line %d] Whoa. Unknown Unified2 Extra Data type passed! Abort!!", __FILE__, __LINE__);
+            Sagan_Log(ERROR,"[%s, line %d] Whoa. Unknown Unified2 Extra Data type passed! Abort!!", __FILE__, __LINE__);
             break;
 
         }
@@ -837,28 +837,28 @@ void Unified2WriteExtraData( _Sagan_Event *Event, int type )
 
     if (SafeMemcpy(ptr, &hdr, sizeof(hdr), write_buffer, write_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy Serial_Unified2_Header.", __FILE__, __LINE__);
         }
 
     ptr = ptr +  sizeof(hdr);
 
     if (SafeMemcpy(ptr, &alertHdr, sizeof(alertHdr), write_buffer, write_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy Unified2ExtraDataHdr.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy Unified2ExtraDataHdr.", __FILE__, __LINE__);
         }
 
     ptr = ptr + sizeof(alertHdr);
 
     if (SafeMemcpy(ptr, &alertdata, sizeof(alertdata), write_buffer, write_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy SerialUnified2ExtraData.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy SerialUnified2ExtraData.", __FILE__, __LINE__);
         }
 
     ptr = ptr + sizeof(alertdata);
 
     if (SafeMemcpy(ptr, buffer, len, write_buffer, write_end) != SAFEMEM_SUCCESS)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to copy extra data buffer.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to copy extra data buffer.", __FILE__, __LINE__);
         }
 
     Unified2Write(write_buffer, write_len);

@@ -229,19 +229,19 @@ void Load_YAML_Config( char *yaml_file )
 
     if (stat(config->sagan_config, &filecheck) != false )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] The configuration file '%s' cannot be found! Abort!", __FILE__, __LINE__, config->sagan_config);
+            Sagan_Log(ERROR, "[%s, line %d] The configuration file '%s' cannot be found! Abort!", __FILE__, __LINE__, config->sagan_config);
         }
 
     FILE *fh = fopen(yaml_file, "r");
 
     if (!yaml_parser_initialize(&parser))
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to initialize the libyaml parser. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to initialize the libyaml parser. Abort!", __FILE__, __LINE__);
         }
 
     if (fh == NULL)
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to open the configuration file '%s' Abort!", __FILE__, __LINE__, yaml_file);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to open the configuration file '%s' Abort!", __FILE__, __LINE__, yaml_file);
         }
 
     /* Set input file */
@@ -257,7 +257,7 @@ void Load_YAML_Config( char *yaml_file )
                     /* Useful YAML vars: parser.context_mark.line+1, parser.context_mark.column+1, parser.problem, parser.problem_mark.line+1,
                        parser.problem_mark.column+1 */
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] libyam parse error at line %d in '%s'", __FILE__, __LINE__, parser.problem_mark.line+1, config->sagan_config);
+                    Sagan_Log(ERROR, "[%s, line %d] libyam parse error at line %d in '%s'", __FILE__, __LINE__, parser.problem_mark.line+1, config->sagan_config);
 
                 }
 
@@ -266,14 +266,14 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( debug->debugload )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
+                            Sagan_Log(DEBUG, "[%s, line %d] YAML_DOCUMENT_START_EVENT", __FILE__, __LINE__);
                         }
 
                     yaml_version_directive_t *ver = event.data.document_start.version_directive;
 
                     if ( ver == NULL )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Invalid configuration file. Configuration must start with \"%%YAML 1.1\"", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Invalid configuration file. Configuration must start with \"%%YAML 1.1\"", __FILE__, __LINE__);
                         }
 
                     int major = ver->major;
@@ -281,7 +281,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if (! (major == YAML_VERSION_MAJOR && minor == YAML_VERSION_MINOR) )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Configuration has a invalid YAML version.  Must be 1.1 or above", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Configuration has a invalid YAML version.  Must be 1.1 or above", __FILE__, __LINE__);
                         }
 
                 }
@@ -293,7 +293,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( debug->debugload )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_STREAM_END_EVENT", __FILE__, __LINE__);
+                            Sagan_Log(DEBUG, "[%s, line %d] YAML_STREAM_END_EVENT", __FILE__, __LINE__);
                         }
                 }
 
@@ -304,7 +304,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( debug->debugload )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_MAPPING_START_EVENT", __FILE__, __LINE__);
+                            Sagan_Log(DEBUG, "[%s, line %d] YAML_MAPPING_START_EVENT", __FILE__, __LINE__);
                         }
                 }
 
@@ -316,7 +316,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( debug->debugload )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_MAPPING_END_EVENT", __FILE__, __LINE__);
+                            Sagan_Log(DEBUG, "[%s, line %d] YAML_MAPPING_END_EVENT", __FILE__, __LINE__);
                         }
                 }
 
@@ -327,7 +327,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( debug->debugload )
                         {
-                            Sagan_Log(S_DEBUG, "[%s, line %d] YAML_SCALAR_EVENT - Value: \"%s\"", __FILE__, __LINE__, value);
+                            Sagan_Log(DEBUG, "[%s, line %d] YAML_SCALAR_EVENT - Value: \"%s\"", __FILE__, __LINE__, value);
                         }
 
                     /****** Primary Types *******************************************/
@@ -346,7 +346,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                     if ( var == NULL )
                                         {
-                                            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
+                                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
                                         }
 
                                     snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", value);
@@ -402,7 +402,7 @@ void Load_YAML_Config( char *yaml_file )
                                                             if ( debug->debugload )
                                                                 {
 
-                                                                    Sagan_Log(S_DEBUG, "[%s, line %d] Variable from file \"%s\" var \"%s\" loaded: \"%s\"", __FILE__, __LINE__, filename, var[counters->var_count].var_name, tmpbuf);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] Variable from file \"%s\" var \"%s\" loaded: \"%s\"", __FILE__, __LINE__, filename, var[counters->var_count].var_name, tmpbuf);
                                                                 }
 
                                                             if ( check == 0 )
@@ -423,7 +423,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     if ( debug->debugload )
                                                         {
 
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Final load from file for \"%s\" value \"%s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Final load from file for \"%s\" value \"%s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
 
                                                         }
 
@@ -440,7 +440,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     if ( debug->debugload )
                                                         {
 
-                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
                                                         }
 
                                                     pthread_mutex_lock(&CounterLoadConfigGenericMutex);
@@ -470,7 +470,7 @@ void Load_YAML_Config( char *yaml_file )
 
 
                                     Var_To_Value(value, tmp, sizeof(tmp));
-                                    Sagan_Log(S_NORMAL, "Loading included file '%s'.", tmp);
+                                    Sagan_Log(NORMAL, "Loading included file '%s'.", tmp);
                                     Load_YAML_Config(tmp);
 
                                     toggle = 1;
@@ -545,7 +545,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->sagan_port == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -570,7 +570,7 @@ void Load_YAML_Config( char *yaml_file )
                                             else if ( strcasecmp(value, "tcp") && strcasecmp(value, "udp") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'default_proto' can only be TCP, UDP or ICMP.", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'default_proto' can only be TCP, UDP or ICMP.", __FILE__, __LINE__);
 
                                                 }
 
@@ -605,7 +605,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->sagan_fifo_size == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'fifo-size' is set to zero. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'fifo-size' is set to zero. Abort!", __FILE__, __LINE__);
                                                 }
 
                                             if ( config->sagan_fifo_size != 65536 &&
@@ -615,7 +615,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     config->sagan_fifo_size != 1048576 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'fifo-size' is invalid.  Valid value are 65536, 131072, 262144, 524288, and 1048576. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'fifo-size' is invalid.  Valid value are 65536, 131072, 262144, 524288, and 1048576. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -628,7 +628,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_processor_threads  == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan:core 'max_threads' is zero/invalid. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'max_threads' is zero/invalid. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -673,7 +673,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if (strcmp(tmp, "mmap") && strcmp(tmp, "redis"))
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|xbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|xbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
 
                                                 }
 
@@ -712,7 +712,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_xbits == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'xbits' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'xbits' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -724,7 +724,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_threshold_by_src == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -736,7 +736,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_threshold_by_dst == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -748,7 +748,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_threshold_by_username == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -760,7 +760,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_after_by_src == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -772,7 +772,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_after_by_dst == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -784,7 +784,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_after_by_username == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -796,7 +796,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_track_clients == 0 )
                                                 {
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'track-clients' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'track-clients' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -839,7 +839,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Sagan was not compiled with hiredis (Redis) support!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with hiredis (Redis) support!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -881,7 +881,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                                     if ( config->redis_port == 0 )
                                                         {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                            Sagan_Log(ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'port' is set to zero.  Abort!", __FILE__, __LINE__);
                                                         }
                                                 }
 
@@ -900,7 +900,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                                     if ( config->redis_max_writer_threads == 0 )
                                                         {
-                                                            Sagan_Log(S_ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'writer_threads' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                            Sagan_Log(ERROR, "[%s, line %d] sagan-core|redis-server - Redis 'writer_threads' is set to zero.  Abort!", __FILE__, __LINE__);
                                                         }
 
                                                 }
@@ -922,7 +922,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Sagan was not compiled with Maxmind's \"GeoIP2\" support!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with Maxmind's \"GeoIP2\" support!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -973,7 +973,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Sagan was not compiled with liblognorm support!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with liblognorm support!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -1022,7 +1022,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] Sagan was not compiled with libpcap support!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with libpcap support!", __FILE__, __LINE__);
 
                                                 }
 
@@ -1170,7 +1170,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->pp_sagan_track_clients == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'processor' : 'track_clients' - 'timeout' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'track_clients' - 'timeout' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
 
                                                 }
 
@@ -1198,7 +1198,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->perfmonitor_time == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'processor' : 'perfmonitor' - 'time' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'perfmonitor' - 'time' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -1245,7 +1245,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] The Sagan's configuration file has Bluedot enabled, but Sagan wasn't compiled with Bluedot support! Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] The Sagan's configuration file has Bluedot enabled, but Sagan wasn't compiled with Bluedot support! Abort!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -1283,7 +1283,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->bluedot_max_cache == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -1297,7 +1297,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->bluedot_timeout == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'cache-timeout' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'cache-timeout' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -1364,7 +1364,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->dynamic_load_sample_rate == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'processor' : 'dynamic_load' - 'sample_rate' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'dynamic_load' - 'sample_rate' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
 
                                                 }
 
@@ -1554,7 +1554,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'unified2' output is enabled, but Sagan is not compiled with libdnet support. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'unified2' output is enabled, but Sagan is not compiled with libdnet support. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -1592,7 +1592,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->unified2_limit == 0 )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'outputs' : 'unified2' - 'limit' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'outputs' : 'unified2' - 'limit' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
                                         }
 
@@ -1644,7 +1644,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'smtp' output is enabled, but Sagan is not compiled with libesmtp support. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'smtp' output is enabled, but Sagan is not compiled with libesmtp support. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -1704,7 +1704,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'snortsam' output is enabled, but Sagan is not compiled with Snortsam support. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'snortsam' output is enabled, but Sagan is not compiled with Snortsam support. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -1747,7 +1747,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(S_ERROR, "[%s, line %d] 'syslog' output is enabled, but Sagan is not compiled with syslog support. Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'syslog' output is enabled, but Sagan is not compiled with syslog support. Abort!", __FILE__, __LINE__);
                                                 }
 
                                         }
@@ -2074,7 +2074,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( rules_loaded == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
                                 }
 
                             Var_To_Value(value, tmp, sizeof(tmp));
@@ -2101,7 +2101,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found variables ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found variables ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_VAR;
@@ -2118,7 +2118,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found include ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found include ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_INCLUDES;
@@ -2135,7 +2135,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found Sagan Core ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found Sagan Core ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_SAGAN_CORE;
@@ -2153,7 +2153,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found Processors ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found Processors ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_PROCESSORS;
@@ -2170,7 +2170,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found Output ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found Output ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_OUTPUT;
@@ -2187,7 +2187,7 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( debug->debugload )
                                 {
-                                    Sagan_Log(S_DEBUG, "[%s, line %d] **** Found Rule-Files ****", __FILE__, __LINE__);
+                                    Sagan_Log(DEBUG, "[%s, line %d] **** Found Rule-Files ****", __FILE__, __LINE__);
                                 }
 
                             type = YAML_TYPE_RULES;
@@ -2241,7 +2241,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if (!strcmp (rulestruct[check].s_sid, rulestruct[a].s_sid ))
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
+                            Sagan_Log(ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
                         }
                 }
         }
@@ -2249,12 +2249,12 @@ void Load_YAML_Config( char *yaml_file )
 
     if ( config->sagan_is_file == false && config->sagan_fifo[0] == '\0' )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] No FIFO option found which is required! Aborting!", __FILE__, __LINE__);
         }
 
     if ( config->sagan_host[0] == '\0' )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
         }
 
 
@@ -2265,12 +2265,12 @@ void Load_YAML_Config( char *yaml_file )
 
             if ( config->sagan_esmtp_from[0] == '\0' )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] SMTP output is enabled but no 'from' address is specified. Abort!");
+                    Sagan_Log(ERROR, "[%s, line %d] SMTP output is enabled but no 'from' address is specified. Abort!");
                 }
 
             else if ( config->sagan_esmtp_server[0] == '\0' )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] SMTP output is enabled but not 'server' address is specified. Abort!");
+                    Sagan_Log(ERROR, "[%s, line %d] SMTP output is enabled but not 'server' address is specified. Abort!");
                 }
 
         }
@@ -2285,10 +2285,10 @@ void Load_YAML_Config( char *yaml_file )
             if ( Check_Var("$HOME_COUNTRY") == false )
                 {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] GeoIP2 is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] GeoIP2 is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
                 }
 
-            Sagan_Log(S_NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+            Sagan_Log(NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
             Open_GeoIP2_Database();
 
         }
@@ -2300,7 +2300,7 @@ void Load_YAML_Config( char *yaml_file )
     if ( config->liblognorm_load == false )
         {
 
-            Sagan_Log(S_ERROR, "[%s, line %d] liblognorm is in use but is not set up.  Abort.", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] liblognorm is in use but is not set up.  Abort.", __FILE__, __LINE__);
 
         }
 
@@ -2313,12 +2313,12 @@ void Load_YAML_Config( char *yaml_file )
 
             if ( config->bluedot_cat[0] == '\0' )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
                 }
 
             if ( config->bluedot_url[0] == '\0' )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Bluedot \"url\" option is missing.", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Bluedot \"url\" option is missing.", __FILE__, __LINE__);
                 }
         }
 

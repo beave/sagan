@@ -80,14 +80,14 @@ void Redis_Reader_Connect ( void )
             if (config->c_reader_redis)
                 {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_reader_redis->errstr);
+                    Sagan_Log(ERROR, "[%s, line %d] Redis connection error - %s. Abort!", __FILE__, __LINE__, config->c_reader_redis->errstr);
                     redisFree(config->c_reader_redis);
 
                 }
             else
                 {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Redis connection error - Can't allocate Redis context", __FILE__, __LINE__);
                 }
         }
 
@@ -120,13 +120,13 @@ void Redis_Writer ( void )
                 {
 
                     redisFree(c_writer_redis);
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - %s. Abort!", __FILE__, __LINE__, c_writer_redis->errstr);
+                    Sagan_Log(ERROR, "[%s, line %d] Redis 'writer' connection error - %s. Abort!", __FILE__, __LINE__, c_writer_redis->errstr);
 
                 }
             else
                 {
 
-                    Sagan_Log(S_ERROR, "[%s, line %d] Redis 'writer' connection error - Can't allocate Redis context", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Redis 'writer' connection error - Can't allocate Redis context", __FILE__, __LINE__);
 
                 }
         }
@@ -146,7 +146,7 @@ void Redis_Writer ( void )
                     if ( debug->debugredis )
                         {
 
-                            Sagan_Log( S_DEBUG, "Authentication success for 'writer' to Redis server at %s:%d (pthread ID: %lu).", config->redis_server, config->redis_port, pthread_self() );
+                            Sagan_Log( DEBUG, "Authentication success for 'writer' to Redis server at %s:%d (pthread ID: %lu).", config->redis_server, config->redis_port, pthread_self() );
 
                         }
 
@@ -155,7 +155,7 @@ void Redis_Writer ( void )
                 {
 
                     Remove_Lock_File();
-                    Sagan_Log(S_ERROR, "Authentication failure for 'writer' to to Redis server at %s:%d (pthread ID: %lu). Abort!", config->redis_server, config->redis_port, pthread_self() );
+                    Sagan_Log(ERROR, "Authentication failure for 'writer' to to Redis server at %s:%d (pthread ID: %lu). Abort!", config->redis_server, config->redis_port, pthread_self() );
 
                 }
         }
@@ -178,7 +178,7 @@ void Redis_Writer ( void )
             if ( debug->debugredis )
                 {
 
-                    Sagan_Log(S_DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
+                    Sagan_Log(DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
                 }
 
             split_redis_command = strtok_r(tmp_redis_command, ";", &tok);
@@ -189,7 +189,7 @@ void Redis_Writer ( void )
                     if ( debug->debugredis )
                         {
 
-                            Sagan_Log(S_DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
+                            Sagan_Log(DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
 
                         }
 
@@ -198,7 +198,7 @@ void Redis_Writer ( void )
                     if ( debug->debugredis )
                         {
 
-                            Sagan_Log(S_DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
+                            Sagan_Log(DEBUG, "Thread %u reply-str: '%s'", pthread_self(), reply->str);
 
                         }
 
@@ -227,8 +227,8 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
 
     if ( debug->debugredis )
         {
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
-            Sagan_Log(S_DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
+            Sagan_Log(DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
+            Sagan_Log(DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
         }
 
     if ( reply->elements == 0 )

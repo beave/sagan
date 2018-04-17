@@ -347,7 +347,7 @@ void Sagan_Perfmonitor_Open(void)
     if (( config->perfmonitor_file_stream = fopen(config->perfmonitor_file_name, "a" )) == NULL )
         {
             Remove_Lock_File();
-            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
         }
 
     fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);

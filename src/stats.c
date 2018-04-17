@@ -98,29 +98,29 @@ void Statistics( void )
         {
 
 
-            Sagan_Log(S_NORMAL, " ,-._,-.  -[ Sagan Version %s - Engine Statistics ]-", VERSION);
-            Sagan_Log(S_NORMAL, " \\/)\"(\\/");
-            Sagan_Log(S_NORMAL, "  (_o_)    Events processed         : %" PRIu64 "", counters->sagantotal);
-            Sagan_Log(S_NORMAL, "  /   \\/)  Signatures matched       : %" PRIu64 " (%.3f%%)", counters->saganfound, CalcPct(counters->saganfound, counters->sagantotal ) );
-            Sagan_Log(S_NORMAL, " (|| ||)   Alerts                   : %" PRIu64 " (%.3f%%)",  counters->alert_total, CalcPct( counters->alert_total, counters->sagantotal) );
-            Sagan_Log(S_NORMAL, "  oo-oo    After                    : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
-            Sagan_Log(S_NORMAL, "           Threshold                : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
-            Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
+            Sagan_Log(NORMAL, " ,-._,-.  -[ Sagan Version %s - Engine Statistics ]-", VERSION);
+            Sagan_Log(NORMAL, " \\/)\"(\\/");
+            Sagan_Log(NORMAL, "  (_o_)    Events processed         : %" PRIu64 "", counters->sagantotal);
+            Sagan_Log(NORMAL, "  /   \\/)  Signatures matched       : %" PRIu64 " (%.3f%%)", counters->saganfound, CalcPct(counters->saganfound, counters->sagantotal ) );
+            Sagan_Log(NORMAL, " (|| ||)   Alerts                   : %" PRIu64 " (%.3f%%)",  counters->alert_total, CalcPct( counters->alert_total, counters->sagantotal) );
+            Sagan_Log(NORMAL, "  oo-oo    After                    : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->sagantotal) );
+            Sagan_Log(NORMAL, "           Threshold                : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->sagantotal) );
+            Sagan_Log(NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->sagantotal) );
 
-//        Sagan_Log(S_NORMAL, "           Malformed                : h:%" PRIu64 "|f:%" PRIu64 "|p:%" PRIu64 "|l:%" PRIu64 "|T:%" PRIu64 "|d:%" PRIu64 "|T:%" PRIu64 "|P:%" PRIu64 "|M:%" PRIu64 "", counters->malformed_host, counters->malformed_facility, counters->malformed_priority, counters->malformed_level, counters->malformed_tag, counters->malformed_date, counters->malformed_time, counters->malformed_program, counters->malformed_message);
+//        Sagan_Log(NORMAL, "           Malformed                : h:%" PRIu64 "|f:%" PRIu64 "|p:%" PRIu64 "|l:%" PRIu64 "|T:%" PRIu64 "|d:%" PRIu64 "|T:%" PRIu64 "|P:%" PRIu64 "|M:%" PRIu64 "", counters->malformed_host, counters->malformed_facility, counters->malformed_priority, counters->malformed_level, counters->malformed_tag, counters->malformed_date, counters->malformed_time, counters->malformed_program, counters->malformed_message);
 
-            Sagan_Log(S_NORMAL, "           Thread Exhaustion        : %" PRIu64 " (%.3f%%)", counters->worker_thread_exhaustion,  CalcPct( counters->worker_thread_exhaustion, counters->sagantotal) );
+            Sagan_Log(NORMAL, "           Thread Exhaustion        : %" PRIu64 " (%.3f%%)", counters->worker_thread_exhaustion,  CalcPct( counters->worker_thread_exhaustion, counters->sagantotal) );
 
 
             if (config->sagan_droplist_flag)
                 {
-                    Sagan_Log(S_NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->sagantotal) );
+                    Sagan_Log(NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->sagantotal) );
                 }
 
 #ifdef HAVE_LIBMAXMINDDB
-            Sagan_Log(S_NORMAL, "           GeoIP2 Hits:             : %" PRIu64 " (%.3f%%)", counters->geoip2_hit, CalcPct( counters->geoip2_hit, counters->sagantotal) );
-            Sagan_Log(S_NORMAL, "           GeoIP2 Lookups:          : %" PRIu64 "", counters->geoip2_lookup);
-            Sagan_Log(S_NORMAL, "           GeoIP2 Misses            : %" PRIu64 "", counters->geoip2_miss);
+            Sagan_Log(NORMAL, "           GeoIP2 Hits:             : %" PRIu64 " (%.3f%%)", counters->geoip2_hit, CalcPct( counters->geoip2_hit, counters->sagantotal) );
+            Sagan_Log(NORMAL, "           GeoIP2 Lookups:          : %" PRIu64 "", counters->geoip2_lookup);
+            Sagan_Log(NORMAL, "           GeoIP2 Misses            : %" PRIu64 "", counters->geoip2_miss);
 #endif
 
             uptime_days = seconds / 86400;
@@ -130,7 +130,7 @@ void Statistics( void )
             uptime_minutes = uptime_abovehours / 60;
             uptime_seconds = uptime_abovehours % 60;
 
-            Sagan_Log(S_NORMAL, "           Uptime                   : %d days, %d hours, %d minutes, %d seconds.", uptime_days, uptime_hours, uptime_minutes, uptime_seconds);
+            Sagan_Log(NORMAL, "           Uptime                   : %d days, %d hours, %d minutes, %d seconds.", uptime_days, uptime_hours, uptime_minutes, uptime_seconds);
 
             /* If processing from a file,  don't display events per/second */
 
@@ -139,124 +139,124 @@ void Statistics( void )
 
                     if ( seconds < 60 || seconds == 0 )
                         {
-                            Sagan_Log(S_NORMAL, "           Avg. events per/second   : %lu [%lu of 60 seconds. Calculating...]", total, seconds);
+                            Sagan_Log(NORMAL, "           Avg. events per/second   : %lu [%lu of 60 seconds. Calculating...]", total, seconds);
                         }
                     else
                         {
-                            Sagan_Log(S_NORMAL, "           Avg. events per/second   : %lu", total);
+                            Sagan_Log(NORMAL, "           Avg. events per/second   : %lu", total);
                         }
                 }
             else
                 {
 
-                    Sagan_Log(S_NORMAL, "           Avg. events per/second   : %lu", total);
+                    Sagan_Log(NORMAL, "           Avg. events per/second   : %lu", total);
 
                 }
 
 
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "          -[ Sagan Processor Statistics ]-");
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop, CalcPct(counters->sagan_processor_drop, counters->sagantotal) );
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "          -[ Sagan Processor Statistics ]-");
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop, CalcPct(counters->sagan_processor_drop, counters->sagantotal) );
 
             if (config->blacklist_flag)
                 {
-                    Sagan_Log(S_NORMAL, "           Blacklist Lookups        : %" PRIu64 " (%.3f%%)", counters->blacklist_lookup_count, CalcPct(counters->blacklist_lookup_count, counters->sagantotal) );
-                    Sagan_Log(S_NORMAL, "           Blacklist Hits           : %" PRIu64 " (%.3f%%)", counters->blacklist_hit_count, CalcPct(counters->blacklist_hit_count, counters->sagantotal) );
+                    Sagan_Log(NORMAL, "           Blacklist Lookups        : %" PRIu64 " (%.3f%%)", counters->blacklist_lookup_count, CalcPct(counters->blacklist_lookup_count, counters->sagantotal) );
+                    Sagan_Log(NORMAL, "           Blacklist Hits           : %" PRIu64 " (%.3f%%)", counters->blacklist_hit_count, CalcPct(counters->blacklist_hit_count, counters->sagantotal) );
 
                 }
 
             if (config->sagan_track_clients_flag)
                 {
-                    Sagan_Log(S_NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters_ipc->track_clients_client_count, counters_ipc->track_clients_down, config->pp_sagan_track_clients);
+                    Sagan_Log(NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters_ipc->track_clients_client_count, counters_ipc->track_clients_down, config->pp_sagan_track_clients);
                 }
 
 
             if (config->output_thread_flag)
                 {
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          -[ Sagan Output Plugin Statistics ]-");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL,"           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          -[ Sagan Output Plugin Statistics ]-");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL,"           Dropped                  : %" PRIu64 " (%.3f%%)", counters->sagan_output_drop, CalcPct(counters->sagan_output_drop, counters->sagantotal) );
                 }
 
 #ifdef HAVE_LIBESMTP
             if ( config->sagan_esmtp_flag )
                 {
-                    Sagan_Log(S_NORMAL, "           Email Success/Failed     : %" PRIu64 " / %" PRIu64 "" , counters->esmtp_count_success, counters->esmtp_count_failed);
+                    Sagan_Log(NORMAL, "           Email Success/Failed     : %" PRIu64 " / %" PRIu64 "" , counters->esmtp_count_success, counters->esmtp_count_failed);
                 }
 #endif
 
 
             if (config->syslog_src_lookup)
                 {
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          -[ Sagan DNS Cache Statistics ]-");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "           Cached                   : %" PRIu64 "", counters->dns_cache_count);
-                    Sagan_Log(S_NORMAL, "           Missed                   : %" PRIu64 " (%.3f%%)", counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          -[ Sagan DNS Cache Statistics ]-");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "           Cached                   : %" PRIu64 "", counters->dns_cache_count);
+                    Sagan_Log(NORMAL, "           Missed                   : %" PRIu64 " (%.3f%%)", counters->dns_miss_count, CalcPct(counters->dns_miss_count, counters->dns_cache_count));
                 }
 
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "          -[ Sagan follow_flow Statistics ]-");
-            Sagan_Log(S_NORMAL, "");
-            Sagan_Log(S_NORMAL, "           Total                    : %" PRIu64 "", counters->follow_flow_total);
-            Sagan_Log(S_NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->follow_flow_drop, CalcPct(counters->follow_flow_drop, counters->follow_flow_total));
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "          -[ Sagan follow_flow Statistics ]-");
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "           Total                    : %" PRIu64 "", counters->follow_flow_total);
+            Sagan_Log(NORMAL, "           Dropped                  : %" PRIu64 " (%.3f%%)", counters->follow_flow_drop, CalcPct(counters->follow_flow_drop, counters->follow_flow_total));
 
 #ifdef WITH_BLUEDOT
 
             if (config->bluedot_flag)
                 {
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          -[ Sagan Bluedot Processor ]-");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          * IP Reputation *");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          IP addresses in cache         : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
-                    Sagan_Log(S_NORMAL, "          IP hits from cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
-                    Sagan_Log(S_NORMAL, "          IP/Bluedot hits in logs       : %" PRIu64 "", counters->bluedot_ip_positive_hit);
-                    Sagan_Log(S_NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate);
-                    Sagan_Log(S_NORMAL, "          IP with date > cdate          : %" PRIu64 "", counters->bluedot_cdate);
-                    Sagan_Log(S_NORMAL, "          IP with date > mdate [cache]  : %" PRIu64 "", counters->bluedot_mdate_cache);
-                    Sagan_Log(S_NORMAL, "          IP with date > cdate [cache]  : %" PRIu64 "", counters->bluedot_cdate_cache);
-                    Sagan_Log(S_NORMAL, "          IP queries per/second         : %lu", bluedot_ip_total);
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          -[ Sagan Bluedot Processor ]-");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * IP Reputation *");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          IP addresses in cache         : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(NORMAL, "          IP hits from cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
+                    Sagan_Log(NORMAL, "          IP/Bluedot hits in logs       : %" PRIu64 "", counters->bluedot_ip_positive_hit);
+                    Sagan_Log(NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate);
+                    Sagan_Log(NORMAL, "          IP with date > cdate          : %" PRIu64 "", counters->bluedot_cdate);
+                    Sagan_Log(NORMAL, "          IP with date > mdate [cache]  : %" PRIu64 "", counters->bluedot_mdate_cache);
+                    Sagan_Log(NORMAL, "          IP with date > cdate [cache]  : %" PRIu64 "", counters->bluedot_cdate_cache);
+                    Sagan_Log(NORMAL, "          IP queries per/second         : %lu", bluedot_ip_total);
 
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          * File Hash *");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          Hashes in cache               : %" PRIu64 " (%.3f%%)", counters->bluedot_hash_cache_count, CalcPct(counters->bluedot_hash_cache_count, config->bluedot_max_cache));
-                    Sagan_Log(S_NORMAL, "          Hash hits from cache          : %" PRIu64 " (%.3f%%)", counters->bluedot_hash_cache_hit, CalcPct(counters->bluedot_hash_cache_hit, counters->bluedot_hash_cache_count));
-                    Sagan_Log(S_NORMAL, "          Hash/Bluedot hits in logs     : %" PRIu64 "", counters->bluedot_hash_positive_hit);
-                    Sagan_Log(S_NORMAL, "          Hash queries per/second       : %lu", bluedot_hash_total);
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * File Hash *");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          Hashes in cache               : %" PRIu64 " (%.3f%%)", counters->bluedot_hash_cache_count, CalcPct(counters->bluedot_hash_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(NORMAL, "          Hash hits from cache          : %" PRIu64 " (%.3f%%)", counters->bluedot_hash_cache_hit, CalcPct(counters->bluedot_hash_cache_hit, counters->bluedot_hash_cache_count));
+                    Sagan_Log(NORMAL, "          Hash/Bluedot hits in logs     : %" PRIu64 "", counters->bluedot_hash_positive_hit);
+                    Sagan_Log(NORMAL, "          Hash queries per/second       : %lu", bluedot_hash_total);
 
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          * URL Reputation *");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          URLs in cache                 : %" PRIu64 " (%.3f%%)", counters->bluedot_url_cache_count, CalcPct(counters->bluedot_url_cache_count, config->bluedot_max_cache));
-                    Sagan_Log(S_NORMAL, "          URL hits from cache           : %" PRIu64 " (%.3f%%)", counters->bluedot_url_cache_hit, CalcPct(counters->bluedot_url_cache_hit, counters->bluedot_url_cache_count));
-                    Sagan_Log(S_NORMAL, "          URL/Bluedot hits in logs      : %" PRIu64 "", counters->bluedot_url_positive_hit);
-                    Sagan_Log(S_NORMAL, "          URL queries per/second        : %lu", bluedot_url_total);
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * URL Reputation *");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          URLs in cache                 : %" PRIu64 " (%.3f%%)", counters->bluedot_url_cache_count, CalcPct(counters->bluedot_url_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(NORMAL, "          URL hits from cache           : %" PRIu64 " (%.3f%%)", counters->bluedot_url_cache_hit, CalcPct(counters->bluedot_url_cache_hit, counters->bluedot_url_cache_count));
+                    Sagan_Log(NORMAL, "          URL/Bluedot hits in logs      : %" PRIu64 "", counters->bluedot_url_positive_hit);
+                    Sagan_Log(NORMAL, "          URL queries per/second        : %lu", bluedot_url_total);
 
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          * Filename Reputation *");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          Filenames in cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_count, CalcPct(counters->bluedot_filename_cache_count, config->bluedot_max_cache));
-                    Sagan_Log(S_NORMAL, "          Filename hits from cache      : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_hit, CalcPct(counters->bluedot_filename_cache_hit, counters->bluedot_filename_cache_count));
-                    Sagan_Log(S_NORMAL, "          Filename/Bluedot hits in logs : %" PRIu64 "", counters->bluedot_filename_positive_hit);
-                    Sagan_Log(S_NORMAL, "          URL queries per/second        : %lu", bluedot_filename_total);
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * Filename Reputation *");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          Filenames in cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_count, CalcPct(counters->bluedot_filename_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(NORMAL, "          Filename hits from cache      : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_hit, CalcPct(counters->bluedot_filename_cache_hit, counters->bluedot_filename_cache_count));
+                    Sagan_Log(NORMAL, "          Filename/Bluedot hits in logs : %" PRIu64 "", counters->bluedot_filename_positive_hit);
+                    Sagan_Log(NORMAL, "          URL queries per/second        : %lu", bluedot_filename_total);
 
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          * Bluedot Combined Statistics *");
-                    Sagan_Log(S_NORMAL, "");
-                    Sagan_Log(S_NORMAL, "          Lookup error count            : %" PRIu64 "", counters->bluedot_error_count);
-                    Sagan_Log(S_NORMAL, "          Total query rate/per second   : %lu", bluedot_ip_total + bluedot_hash_total + bluedot_url_total + bluedot_filename_total);
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * Bluedot Combined Statistics *");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          Lookup error count            : %" PRIu64 "", counters->bluedot_error_count);
+                    Sagan_Log(NORMAL, "          Total query rate/per second   : %lu", bluedot_ip_total + bluedot_hash_total + bluedot_url_total + bluedot_filename_total);
 
 
                 }
 #endif
 
 
-            Sagan_Log(S_NORMAL, "-------------------------------------------------------------------------------");
+            Sagan_Log(NORMAL, "-------------------------------------------------------------------------------");
 
 
         }

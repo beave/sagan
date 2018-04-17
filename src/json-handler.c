@@ -101,7 +101,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     if ( debug->debugjson )
         {
 
-            Sagan_Log(S_DEBUG, "[%s, line %d] JSON Output: %s", __FILE__, __LINE__, str);
+            Sagan_Log(DEBUG, "[%s, line %d] JSON Output: %s", __FILE__, __LINE__, str);
 
         }
 

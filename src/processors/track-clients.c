@@ -86,7 +86,7 @@ void Track_Clients ( char *host )
 
     if ( !IP2Bit(host, hostbits) )
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
+            Sagan_Log(WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
             return;
         }
 
@@ -137,7 +137,7 @@ void Track_Clients ( char *host )
             File_Unlock(config->shm_track_clients);
             pthread_mutex_unlock(&IPCTrackClientCounter);
 
-            Sagan_Log(S_WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
+            Sagan_Log(WARN, "[%s, line %d] Client tracking has reached it's max! (%d).  Increase 'track_clients' in your configuration!", __FILE__, __LINE__, config->max_track_clients);
 
         }
 
@@ -155,7 +155,7 @@ void Track_Clients_Thread_Init ( void )
 
     if ( processor_info_track_client == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for processor_info_track_client. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for processor_info_track_client. Abort!", __FILE__, __LINE__);
         }
 
     memset(processor_info_track_client, 0, sizeof(_Sagan_Processor_Info));
@@ -213,7 +213,7 @@ void Track_Clients_Thread ( void )
 
             if ( SaganProcSyslog_LOCAL == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog_LOCAL. Abort!", __FILE__, __LINE__);
                 }
 
             /*********************************/
@@ -255,7 +255,7 @@ void Track_Clients_Thread ( void )
 
                                     tmp_ip = Bit2IP(SaganTrackClients_ipc[i].hostbits, NULL, 0);
 
-                                    Sagan_Log(S_WARN, "[Processor: %s] Logs are being received from %s again.",  PROCESSOR_NAME, tmp_ip );
+                                    Sagan_Log(WARN, "[Processor: %s] Logs are being received from %s again.",  PROCESSOR_NAME, tmp_ip );
 
                                     /* Populate SaganProcSyslog_LOCAL for output plugins */
 
@@ -321,7 +321,7 @@ void Track_Clients_Thread ( void )
 
                                     tmp_ip = Bit2IP(SaganTrackClients_ipc[i].hostbits, NULL, 0);
 
-                                    Sagan_Log(S_WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
+                                    Sagan_Log(WARN, "[Processor: %s] Logs have not been seen from %s for %d minute(s).", PROCESSOR_NAME, tmp_ip, config->pp_sagan_track_clients);
 
                                     /* Populate SaganProcSyslog_LOCAL for output plugins */
 

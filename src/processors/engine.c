@@ -96,7 +96,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     if ( processor_info_engine == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for processor_info_engine. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for processor_info_engine. Abort!", __FILE__, __LINE__);
         }
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
@@ -1300,10 +1300,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                                                                                     if ( debug->debugengine )
                                                                                                                                         {
 
-                                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
-                                                                                                                                            Sagan_Log(S_DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
+                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                                                                                         }
 

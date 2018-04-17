@@ -119,7 +119,7 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
+                                    Sagan_Log(NORMAL, "After SID %s by source IP address. [%s]", afterbysrc_ipc[i].sid, ip_src);
                                 }
 
                             counters->after_total++;
@@ -218,7 +218,7 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
+                                    Sagan_Log(NORMAL, "After SID %s by destination IP address. [%s]", afterbydst_ipc[i].sid, ip_dst);
                                 }
 
                             counters->after_total++;
@@ -331,7 +331,7 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "After SID %s by_username. [%s]", afterbyusername_ipc[i].sid, normalize_username);
+                                    Sagan_Log(NORMAL, "After SID %s by_username. [%s]", afterbyusername_ipc[i].sid, normalize_username);
                                 }
 
                             counters->after_total++;
@@ -436,7 +436,7 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_srcport_u32);
+                                    Sagan_Log(NORMAL, "After SID %s by source IP port. [%d]", afterbysrcport_ipc[i].sid, ip_srcport_u32);
                                 }
 
                             counters->after_total++;
@@ -539,7 +539,7 @@ sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(S_NORMAL, "After SID %s by destination IP port. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
+                                    Sagan_Log(NORMAL, "After SID %s by destination IP port. [%d]", afterbydstport_ipc[i].sid, ip_dstport_u32);
                                 }
 
                             counters->after_total++;

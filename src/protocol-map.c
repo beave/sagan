@@ -58,12 +58,12 @@ void Load_Protocol_Map( const char *map )
     counters->mapcount_message = 0;
     counters->mapcount_program = 0;
 
-    Sagan_Log(S_NORMAL, "Loading protocol map file. [%s]", map);
+    Sagan_Log(NORMAL, "Loading protocol map file. [%s]", map);
 
 
     if (( mapfile = fopen(map, "r" )) == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open protocol map file (%s)", __FILE__, __LINE__, map);
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open protocol map file (%s)", __FILE__, __LINE__, map);
         }
 
     while(fgets(mapbuf, 1024, mapfile) != NULL)
@@ -83,7 +83,7 @@ void Load_Protocol_Map( const char *map )
 
                     if ( map1 == NULL )
                         {
-                            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map1)", map);
+                            Sagan_Log(ERROR, "%s is incorrect or not correctly formated (map1)", map);
                         }
 
                     Remove_Return(map1);
@@ -93,7 +93,7 @@ void Load_Protocol_Map( const char *map )
 
                     if ( map2 == NULL )
                         {
-                            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map2)", map);
+                            Sagan_Log(ERROR, "%s is incorrect or not correctly formated (map2)", map);
                         }
 
                     Remove_Return(map2);
@@ -103,7 +103,7 @@ void Load_Protocol_Map( const char *map )
 
                     if ( map3 == NULL )
                         {
-                            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map3)", map);
+                            Sagan_Log(ERROR, "%s is incorrect or not correctly formated (map3)", map);
                         }
 
                     Remove_Return(map3);
@@ -113,7 +113,7 @@ void Load_Protocol_Map( const char *map )
 
                     if ( map4 == NULL )
                         {
-                            Sagan_Log(S_ERROR, "%s is incorrect or not correctly formated (map4)", map);
+                            Sagan_Log(ERROR, "%s is incorrect or not correctly formated (map4)", map);
                         }
 
                     Remove_Return(map4);
@@ -126,7 +126,7 @@ void Load_Protocol_Map( const char *map )
 
                             if ( map_message == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for map_message. Abort!", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for map_message. Abort!", __FILE__, __LINE__);
                                 }
 
                             map_message[counters->mapcount_message].proto = atoi(map2);
@@ -141,7 +141,7 @@ void Load_Protocol_Map( const char *map )
 
                             if ( map_program == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for map_program. Abort!", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for map_program. Abort!", __FILE__, __LINE__);
                                 }
 
                             map_program[counters->mapcount_program].proto = atoi(map2);
@@ -155,7 +155,7 @@ void Load_Protocol_Map( const char *map )
         }
 
     fclose(mapfile);
-    Sagan_Log(S_NORMAL, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount_message + counters->mapcount_program, counters->mapcount_message, counters->mapcount_program);
+    Sagan_Log(NORMAL, "%d protocols loaded [Message search: %d|Program search: %d]", counters->mapcount_message + counters->mapcount_program, counters->mapcount_message, counters->mapcount_program);
 
 }
 

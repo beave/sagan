@@ -160,7 +160,7 @@ int Xbit_Type ( char *type, int linecount, const char *ruleset )
             return(12);
         }
 
-    Sagan_Log(S_ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst', 'reverse', 'src_xbitdst', 'dst_xbitsrc','both_p', by_src_p', 'by_dst_p', 'reverse_p', 'src_xbitdst_p', or 'dst_xbitsrc_p'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
+    Sagan_Log(ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst', 'reverse', 'src_xbitdst', 'dst_xbitsrc','both_p', by_src_p', 'by_dst_p', 'reverse_p', 'src_xbitdst_p', or 'dst_xbitsrc_p'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
 
     return(0); 	/* Should never make it here */
 

@@ -204,7 +204,7 @@ uint64_t Value_To_Seconds(char *type, uint64_t number)
             return(number * 60 * 60 * 24 * 365);
         }
 
-    Sagan_Log(S_WARN, "'%s' type is unknown!", type);
+    Sagan_Log(WARN, "'%s' type is unknown!", type);
     return(0);
 
 }

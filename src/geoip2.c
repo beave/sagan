@@ -77,16 +77,16 @@ void Open_GeoIP2_Database( void )
 
     if ( status != 0 )
         {
-            Sagan_Log(S_WARN, "Cannot open '%s' [%s]!",  config->geoip2_country_file, strerror(errno));
-            Sagan_Log(S_WARN, "Make sure the GeoIP database '%s' is readable by '%s'.", config->geoip2_country_file, config->sagan_runas);
-            Sagan_Log(S_ERROR, "Sagan is NOT loading the GeoIP database data! Abort!");
+            Sagan_Log(WARN, "Cannot open '%s' [%s]!",  config->geoip2_country_file, strerror(errno));
+            Sagan_Log(WARN, "Make sure the GeoIP database '%s' is readable by '%s'.", config->geoip2_country_file, config->sagan_runas);
+            Sagan_Log(ERROR, "Sagan is NOT loading the GeoIP database data! Abort!");
         }
 
     status = MMDB_open(config->geoip2_country_file, MMDB_MODE_MMAP, &config->geoip2);
 
     if ( status != 0 )
         {
-            Sagan_Log(S_ERROR, "Error loading Maxmind GeoIP2 data (%s).  Are you trying to load an older, non-GeoIP2 database?", config->geoip2_country_file);
+            Sagan_Log(ERROR, "Error loading Maxmind GeoIP2 data (%s).  Are you trying to load an older, non-GeoIP2 database?", config->geoip2_country_file);
         }
 
 }
@@ -115,7 +115,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(S_DEBUG, "IP address %s is RFC1918, skipping GeoIP2 lookup.", ipaddr);
+                    Sagan_Log(DEBUG, "IP address %s is RFC1918, skipping GeoIP2 lookup.", ipaddr);
                 }
 
             return(GEOIP_NOT_FOUND);
@@ -132,7 +132,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
             counters->geoip2_miss++;
             pthread_mutex_unlock(&CountGeoIP2MissMutex);
 
-            Sagan_Log(S_WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
+            Sagan_Log(WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
             return(GEOIP_NOT_FOUND);
 
         }
@@ -146,7 +146,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
             if ( debug->debuggeoip2 )
                 {
-                    Sagan_Log(S_DEBUG, "Country code for %s not found in GeoIP2 DB", ipaddr);
+                    Sagan_Log(DEBUG, "Country code for %s not found in GeoIP2 DB", ipaddr);
                 }
             return(GEOIP_NOT_FOUND);
         }
@@ -156,9 +156,9 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     if (debug->debuggeoip2)
         {
-            Sagan_Log(S_DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
-            Sagan_Log(S_DEBUG, "Country Codes    : |%s|", rulestruct[rule_position].geoip2_country_codes);
-            Sagan_Log(S_DEBUG, "Found in GeoIP DB: %s", country);
+            Sagan_Log(DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
+            Sagan_Log(DEBUG, "Country Codes    : |%s|", rulestruct[rule_position].geoip2_country_codes);
+            Sagan_Log(DEBUG, "Found in GeoIP DB: %s", country);
         }
 
 
@@ -168,14 +168,14 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(S_DEBUG, "GeoIP2 rule string parsing %s|%s", ptmp, country);
+                    Sagan_Log(DEBUG, "GeoIP2 rule string parsing %s|%s", ptmp, country);
                 }
 
             if (!strcmp(ptmp, country))
                 {
                     if (debug->debuggeoip2)
                         {
-                            Sagan_Log(S_DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
+                            Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
                         }
 
                     return(GEOIP_FOUND_WAS_USER_DEFINED);  /* GeoIP was found / there was a hit */
@@ -184,7 +184,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
             ptmp = strtok_r(NULL, ",", &tok);
         }
 
-    if (debug->debuggeoip2) Sagan_Log(S_DEBUG, "GeoIP Status: Not found in user defined values.");
+    if (debug->debuggeoip2) Sagan_Log(DEBUG, "GeoIP Status: Not found in user defined values.");
 
     return(GEOIP_FOUND_NOT_USER_DEFINED);
 }

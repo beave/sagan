@@ -138,7 +138,7 @@ void Sig_Handler( void )
                 case SIGSEGV:
                 case SIGABRT:
 
-                    Sagan_Log(S_NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+                    Sagan_Log(NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
                     Statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
@@ -188,56 +188,56 @@ void Sig_Handler( void )
 
                     if ( close(config->shm_counters) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_xbit);
 
                     if ( close(config->shm_xbit) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_thresh_by_src);
 
                     if ( close(config->shm_thresh_by_src) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_thresh_by_dst);
 
                     if ( close(config->shm_thresh_by_dst) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_thresh_by_username);
 
                     if ( close(config->shm_thresh_by_username) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_after_by_src);
 
                     if ( close(config->shm_after_by_src) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_after_by_dst);
 
                     if ( close(config->shm_after_by_dst) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_after_by_username);
 
                     if ( close(config->shm_after_by_username) != 0 )
                         {
-                            Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     if ( config->sagan_track_clients_flag )
@@ -247,7 +247,7 @@ void Sig_Handler( void )
 
                             if ( close(config->shm_track_clients) != 0 )
                                 {
-                                    Sagan_Log(S_WARN, "[%s, line %d] Cannot close IPC _Sagan_Track_Clients! [%s]", __FILE__, __LINE__, strerror(errno));
+                                    Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _Sagan_Track_Clients! [%s]", __FILE__, __LINE__, strerror(errno));
                                 }
 
                         }
@@ -268,7 +268,7 @@ void Sig_Handler( void )
 
                     pthread_mutex_lock(&SaganReloadMutex);
 
-                    Sagan_Log(S_NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
+                    Sagan_Log(NORMAL, "[Reloading Sagan version %s.]-------", VERSION);
 
                     /*
                     * Close and re-open log files.  This is for logrotate and such
@@ -412,7 +412,7 @@ void Sig_Handler( void )
                                 }
                             else
                                 {
-                                    Sagan_Log(S_WARN, "** 'perfmonitor' must be loaded at runtime! NOT loading 'perfmonitor'!");
+                                    Sagan_Log(WARN, "** 'perfmonitor' must be loaded at runtime! NOT loading 'perfmonitor'!");
                                     config->perfmonitor_flag = 0;
                                 }
                         }
@@ -428,7 +428,7 @@ void Sig_Handler( void )
                                 }
                             else
                                 {
-                                    Sagan_Log(S_WARN, "** 'plog' must be loaded at runtime! NOT loading 'plog'!");
+                                    Sagan_Log(WARN, "** 'plog' must be loaded at runtime! NOT loading 'plog'!");
                                     config->plog_flag = 0;
                                 }
                         }
@@ -451,7 +451,7 @@ void Sig_Handler( void )
 
                     if ( config->sagan_track_clients_flag )
                         {
-                            Sagan_Log(S_NORMAL, "Reset Sagan Track Client.");
+                            Sagan_Log(NORMAL, "Reset Sagan Track Client.");
                         }
 
 
@@ -460,11 +460,11 @@ void Sig_Handler( void )
                     if ( config->sagan_droplist_flag )
                         {
                             Load_Ignore_List();
-                            Sagan_Log(S_NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
+                            Sagan_Log(NORMAL, "Loaded %d ignore/drop list item(s).", counters->droplist_count);
                         }
 
 #ifdef HAVE_LIBMAXMINDDB
-                    Sagan_Log(S_NORMAL, "Reloading GeoIP2 data.");
+                    Sagan_Log(NORMAL, "Reloading GeoIP2 data.");
                     Open_GeoIP2_Database();
 #endif
 
@@ -473,7 +473,7 @@ void Sig_Handler( void )
 
                     config->sagan_reload = 0;
 
-                    Sagan_Log(S_NORMAL, "Configuration reloaded.");
+                    Sagan_Log(NORMAL, "Configuration reloaded.");
                     break;
 
                 /* Signals to ignore */
@@ -486,7 +486,7 @@ void Sig_Handler( void )
                     break;
 
                 default:
-                    Sagan_Log(S_NORMAL, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
+                    Sagan_Log(NORMAL, "[Received signal %d. Sagan doesn't know how to deal with]", sig);
                 }
         }
 }

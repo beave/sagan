@@ -88,7 +88,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     if ( rules_loaded == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for rules_loaded. Abort!", __FILE__, __LINE__);
         }
 
     strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, rulestruct[rule_position].dynamic_ruleset, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
@@ -109,7 +109,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
     if ( config->dynamic_load_type == 0 )
         {
 
-            Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Dynamically loading '%s'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
+            Sagan_Log(NORMAL, "Detected dynamic signature '%s'. Dynamically loading '%s'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
             gettimeofday(&tp, 0);
 
@@ -146,7 +146,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
     else if ( config->dynamic_load_type == 1 )
         {
 
-            Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'log_only'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
+            Sagan_Log(NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'log_only'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
         }
 
@@ -157,7 +157,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
     else if ( config->dynamic_load_type == 2 )
         {
 
-            Sagan_Log(S_NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'alert'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
+            Sagan_Log(NORMAL, "Detected dynamic signature '%s'. Sagan would automatically load '%s' but the 'dynamic_load' processor is set to 'alert'.", rulestruct[rule_position].s_msg, rulestruct[rule_position].dynamic_ruleset);
 
 
             gettimeofday(&tp, 0);

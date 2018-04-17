@@ -112,10 +112,10 @@ typedef void json_object;
 
 #define TRACK_TIME		1440
 
-#define S_NORMAL		0
-#define S_ERROR			1
-#define S_WARN			2
-#define S_DEBUG			3
+#define NORMAL			0
+#define ERROR			1
+#define WARN			2
+#define DEBUG			3
 
 #define DEFAULT_SYSLOG_FACILITY	LOG_AUTH
 #define DEFAULT_SYSLOG_PRIORITY LOG_ALERT

@@ -101,13 +101,13 @@ void Droppriv(void)
 
     if (!pw)
         {
-            Sagan_Log(S_ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
+            Sagan_Log(ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
         }
 
     if ( getuid() == 0 )
         {
 
-            Sagan_Log(S_NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
+            Sagan_Log(NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 
             /*
              * We chown certain log files to our Sagan user.  This is done so no files are "owned"
@@ -124,12 +124,12 @@ void Droppriv(void)
 
                     if ( ret < 0 )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
                         }
 
                     if (stat(config->sagan_fifo, &fifocheck) != 0 )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s FIFO - %s!",  __FILE__, __LINE__, config->sagan_fifo, strerror(errno));
                         }
 
                 }
@@ -137,13 +137,13 @@ void Droppriv(void)
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu - %s!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Could not drop privileges to uid: %lu gid: %lu - %s!", __FILE__, __LINE__, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid, strerror(errno));
                 }
 
         }
     else
         {
-            Sagan_Log(S_NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
+            Sagan_Log(NORMAL, "Not dropping privileges.  Already running as a non-privileged user");
         }
 }
 
@@ -215,17 +215,17 @@ void Sagan_Log (int type, const char *format,... )
     now=localtime(&t);
     strftime(curtime, sizeof(curtime), "%m/%d/%Y %H:%M:%S",  now);
 
-    if ( type == S_ERROR )
+    if ( type == ERROR )
         {
             chr="E";
         }
 
-    if ( type == S_WARN )
+    if ( type == WARN )
         {
             chr="W";
         }
 
-    if ( type == S_DEBUG )
+    if ( type == DEBUG )
         {
             chr="D";
         }
@@ -239,7 +239,7 @@ void Sagan_Log (int type, const char *format,... )
             printf("[%s] %s\n", chr, buf);
         }
 
-    if ( type == S_ERROR )
+    if ( type == ERROR )
         {
             exit(1);
         }
@@ -324,7 +324,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
     /*
     if (!ret)
         {
-            Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
+            Sagan_Log(WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
         }
     else
         {
@@ -350,7 +350,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
             break;
 
 //                default:
-//                    Sagan_Log(S_WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+//                    Sagan_Log(WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
         }
 //        }
     if (result != NULL)
@@ -460,11 +460,11 @@ int DNS_Lookup( char *host, char *str, size_t size )
     if ( config->disable_dns_warnings == 0 )
         {
 
-            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
-            Sagan_Log(S_WARN, "Sagan DNS lookup need for '%s'.", host);
-            Sagan_Log(S_WARN, "This can affect performance.  Please see:" );
-            Sagan_Log(S_WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-            Sagan_Log(S_WARN, "--------------------------------------------------------------------------");
+            Sagan_Log(WARN, "--------------------------------------------------------------------------");
+            Sagan_Log(WARN, "Sagan DNS lookup need for '%s'.", host);
+            Sagan_Log(WARN, "This can affect performance.  Please see:" );
+            Sagan_Log(WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+            Sagan_Log(WARN, "--------------------------------------------------------------------------");
         }
 
     memset(&hints, 0, sizeof hints);
@@ -474,7 +474,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
     if ((status = getaddrinfo(host, NULL, &hints, &res)) != 0)
         {
 
-            Sagan_Log(S_WARN, "%s: %s", gai_strerror(status), host);
+            Sagan_Log(WARN, "%s: %s", gai_strerror(status), host);
             return -1;
 
         }
@@ -838,14 +838,14 @@ void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str
 
                     if ( tmp2[i+1] == ' ' || tmp2[i+2] == ' ' )
                         {
-                            Sagan_Log(S_ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
+                            Sagan_Log(ERROR, "The 'content' option with hex formatting (|HEX|) appears to be incorrect. at line %d in %s", linecount, ruleset);
                         }
 
                     snprintf(final_content_tmp, sizeof(final_content_tmp), "%c%c", tmp2[i+1], tmp2[i+2]);       /* Copy the hex value - ie 3a, 1B, etc */
 
                     if (!Validate_HEX(final_content_tmp))
                         {
-                            Sagan_Log(S_ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
+                            Sagan_Log(ERROR, "Invalid '%s' Hex detected at line %d in %s", final_content_tmp, linecount, ruleset);
                         }
 
                     sscanf(final_content_tmp, "%x", &x);        /* Convert hex to dec */
@@ -1030,7 +1030,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
                 }
             else
                 {
-                    //Sagan_Log(S_NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
+                    //Sagan_Log(NORMAL, "[%s, line %d] Connected to unix socket: %s: %d", __FILE__, __LINE__, name.sun_path, *fd);
                     ret = fdopen(*fd, "a");
                 }
         }
@@ -1122,7 +1122,7 @@ void Open_Log_File( sbool state, int type )
                     if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
                         {
                             Remove_Lock_File();
-                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+                            Sagan_Log(ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
                         }
 
 
@@ -1133,7 +1133,7 @@ void Open_Log_File( sbool state, int type )
                     if (( config->sagan_fast_stream = OpenStream(config->fast_filename, &config->sagan_fast_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
                         {
                             Remove_Lock_File();
-                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
+                            Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
                         }
 
                 }
@@ -1145,7 +1145,7 @@ void Open_Log_File( sbool state, int type )
                     if (( config->sagan_alert_stream = OpenStream(config->sagan_alert_filepath, &config->sagan_alert_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
                         {
                             Remove_Lock_File();
-                            Sagan_Log(S_ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                            Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
                         }
 
                 }
@@ -1176,24 +1176,24 @@ void Set_Pipe_Size ( FILE *fd )
             if ( current_fifo_size == config->sagan_fifo_size )
                 {
 
-                    Sagan_Log(S_NORMAL, "FIFO capacity already set to %d bytes.", config->sagan_fifo_size);
+                    Sagan_Log(NORMAL, "FIFO capacity already set to %d bytes.", config->sagan_fifo_size);
 
                 }
             else
                 {
 
-                    Sagan_Log(S_NORMAL, "FIFO capacity is %d bytes.  Changing to %d bytes.", current_fifo_size, config->sagan_fifo_size);
+                    Sagan_Log(NORMAL, "FIFO capacity is %d bytes.  Changing to %d bytes.", current_fifo_size, config->sagan_fifo_size);
 
                     fd_results = fcntl(fd_int, F_SETPIPE_SZ, config->sagan_fifo_size );
 
                     if ( fd_results == -1 )
                         {
-                            Sagan_Log(S_WARN, "FIFO capacity could not be changed.  Continuing anyways...");
+                            Sagan_Log(WARN, "FIFO capacity could not be changed.  Continuing anyways...");
                         }
 
                     if ( fd_results > config->sagan_fifo_size )
                         {
-                            Sagan_Log(S_WARN, "FIFO capacity was rounded up to the next page size of %d bytes.", fd_results);
+                            Sagan_Log(WARN, "FIFO capacity was rounded up to the next page size of %d bytes.", fd_results);
                         }
                 }
         }
@@ -1219,7 +1219,7 @@ sbool File_Lock ( int fd )
 
     if (fcntl(fd, F_SETLKW, &fl) == -1)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(WARN, "[%s, line %d] Unable to get LOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     return(0);
@@ -1243,7 +1243,7 @@ sbool File_Unlock( int fd )
 
     if (fcntl(fd, F_SETLK, &fl) == -1)
         {
-            Sagan_Log(S_WARN, "[%s, line %d] Unable to get UNLOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(WARN, "[%s, line %d] Unable to get UNLOCK on file. (%s)", __FILE__, __LINE__, strerror(errno));
         }
 
     return(0);

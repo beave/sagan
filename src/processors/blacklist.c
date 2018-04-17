@@ -68,7 +68,7 @@ void Sagan_Blacklist_Init ( void )
 
     if ( SaganBlacklist == NULL )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
         }
 
     memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
@@ -110,12 +110,12 @@ void Sagan_Blacklist_Load ( void )
     while ( blacklist_filename != NULL )
         {
 
-            Sagan_Log(S_NORMAL, "Blacklist Processor Loading File: %s.", blacklist_filename);
+            Sagan_Log(NORMAL, "Blacklist Processor Loading File: %s.", blacklist_filename);
 
 
             if (( blacklist = fopen(blacklist_filename, "r" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Could not load blacklist file! (%s - %s)", __FILE__, __LINE__, blacklist_filename, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Could not load blacklist file! (%s - %s)", __FILE__, __LINE__, blacklist_filename, strerror(errno));
                 }
 
 
@@ -143,7 +143,7 @@ void Sagan_Blacklist_Load ( void )
 
                             if ( SaganBlacklist == NULL )
                                 {
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
+                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
                                 }
 
                             Remove_Return(blacklistbuf);
@@ -175,14 +175,14 @@ void Sagan_Blacklist_Load ( void )
                             if ( iprange == NULL )
                                 {
 
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid range in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
+                                    Sagan_Log(ERROR, "[%s, line %d] Invalid range in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
                                     found = 1;
                                 }
 
                             if ( mask == 0 || !Mask2Bit(mask, maskbits))
                                 {
 
-                                    Sagan_Log(S_ERROR, "[%s, line %d] Invalid mask in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
+                                    Sagan_Log(ERROR, "[%s, line %d] Invalid mask in %s at line %d, skipping....", __FILE__, __LINE__, blacklist_filename, line_count);
                                     found = 1;
 
                                 }
@@ -200,7 +200,7 @@ void Sagan_Blacklist_Load ( void )
                                 {
                                     if (!IP2Bit(iprange, ipbits))
                                         {
-                                            Sagan_Log(S_WARN, "[%s, line %d] Got invalid blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
+                                            Sagan_Log(WARN, "[%s, line %d] Got invalid blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
                                             found = 1;
                                         }
                                     else
@@ -211,7 +211,7 @@ void Sagan_Blacklist_Load ( void )
                                                     if ( !memcmp(SaganBlacklist[i].range.ipbits, ipbits, sizeof(ipbits)) &&
                                                             !memcmp(SaganBlacklist[i].range.maskbits, maskbits, sizeof(maskbits)))
                                                         {
-                                                            Sagan_Log(S_WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
+                                                            Sagan_Log(WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
                                                             found = 1;
                                                         }
                                                 }

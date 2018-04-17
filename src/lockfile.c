@@ -72,13 +72,13 @@ void CheckLockFile ( void )
 
             if (( lck = fopen(config->sagan_lockfile, "r" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Lock file '%s' is present but can't be read [%s]", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Lock file '%s' is present but can't be read [%s]", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
                 }
             else
                 {
                     if (!fgets(buf, sizeof(buf), lck))
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile);
+                            Sagan_Log(ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile);
                         }
 
                     fclose(lck);
@@ -86,7 +86,7 @@ void CheckLockFile ( void )
 
                     if ( pid == 0 )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] Lock file read but pid value is zero.  Aborting.....", __FILE__, __LINE__);
+                            Sagan_Log(ERROR, "[%s, line %d] Lock file read but pid value is zero.  Aborting.....", __FILE__, __LINE__);
                         }
 
                     /* Check to see if process is running.  We use kill with 0 signal
@@ -95,15 +95,15 @@ void CheckLockFile ( void )
 
                     if ( kill(pid, 0) != -1 )
                         {
-                            Sagan_Log(S_ERROR, "[%s, line %d] It appears that Sagan is already running (pid: %d).", __FILE__, __LINE__, pid);
+                            Sagan_Log(ERROR, "[%s, line %d] It appears that Sagan is already running (pid: %d).", __FILE__, __LINE__, pid);
                         }
                     else
                         {
 
-                            Sagan_Log(S_NORMAL, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (Removing stale %s file)", __FILE__, __LINE__, pid, config->sagan_lockfile);
+                            Sagan_Log(NORMAL, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (Removing stale %s file)", __FILE__, __LINE__, pid, config->sagan_lockfile);
                             if (unlink(config->sagan_lockfile))
                                 {
-                                    Sagan_Log(S_ERROR, "Unable to delete %s. ", config->sagan_lockfile);
+                                    Sagan_Log(ERROR, "Unable to delete %s. ", config->sagan_lockfile);
                                 }
                         }
                 }
@@ -116,7 +116,7 @@ void CheckLockFile ( void )
 
             if (( lck = fopen(config->sagan_lockfile, "w" )) == NULL )
                 {
-                    Sagan_Log(S_ERROR, "[%s, line %d] Cannot create lock file (%s - %s)", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot create lock file (%s - %s)", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
                 }
             else
                 {
@@ -134,6 +134,6 @@ void Remove_Lock_File ( void )
 
     if ((stat(config->sagan_lockfile, &lckcheck) == 0) && unlink(config->sagan_lockfile) != 0 )
         {
-            Sagan_Log(S_ERROR, "[%s, line %d] Cannot remove lock file (%s - %s)\n", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot remove lock file (%s - %s)\n", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
         }
 }
