@@ -84,16 +84,16 @@ void Load_Classifications( const char *ruleset )
                 {
                     continue;
                 }
-            else
-                {
-                    /* Allocate memory for classifications,  but not comments */
-                    classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
 
-                    if ( classstruct == NULL )
-                        {
-                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for classstruct. Abort!", __FILE__, __LINE__);
-                        }
+            /* Allocate memory for classifications,  but not comments */
+
+            classstruct = (_Class_Struct *) realloc(classstruct, (counters->classcount+1) * sizeof(_Class_Struct));
+
+            if ( classstruct == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for classstruct. Abort!", __FILE__, __LINE__);
                 }
+
 
             strtok_r(classbuf, ":", &saveptr);
             tmptoken = strtok_r(NULL, ":" , &saveptr);

@@ -82,17 +82,14 @@ void Load_Reference( const char *ruleset )
                     continue;
 
                 }
-            else
+
+            /* Allocate memory for references,  not comments */
+
+            refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
+
+            if ( refstruct == NULL )
                 {
-
-                    /* Allocate memory for references,  not comments */
-
-                    refstruct = (_Ref_Struct *) realloc(refstruct, (counters->refcount+1) * sizeof(_Ref_Struct));
-
-                    if ( refstruct == NULL )
-                        {
-                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
-                        }
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
                 }
 
             strtok_r(refbuf, ":", &saveptr);

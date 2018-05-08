@@ -84,7 +84,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
         }
     else
         {
-
             drop = "allowed";
         }
 
@@ -96,7 +95,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
     Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
-    snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "", !Event->json_normalize ? "{}" : json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
+    snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "", Event->host, !Event->json_normalize ? "{}" : json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
 
     if ( debug->debugjson )
         {

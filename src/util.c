@@ -302,6 +302,7 @@ sbool Is_IPv6 (char  *ipaddr)
 }
 
 /* Converts IP address.  We assume that out is at least 16 bytes.  */
+
 sbool IP2Bit(char *ipaddr, unsigned char *out)
 {
 
@@ -309,7 +310,8 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
     struct addrinfo hints = {0};
     struct addrinfo *result = NULL;
 
-    // Use getaddrinfo so we can get ipv4 or 6
+    /* Use getaddrinfo so we can get ipv4 or 6 */
+
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE|AI_NUMERICHOST;
@@ -321,38 +323,39 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
 
     ret = getaddrinfo(ipaddr, NULL, &hints, &result) == 0;
 
-    /*
+
     if (!ret)
         {
             Sagan_Log(WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
         }
     else
         {
-    */
-    switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
-        {
-        case AF_INET:
 
-            ret = true;
-            if (out != NULL)
+            switch (((struct sockaddr_storage *)result->ai_addr)->ss_family)
                 {
-                    memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
+                case AF_INET:
+
+                    ret = true;
+                    if (out != NULL)
+                        {
+                            memcpy(out, &((struct sockaddr_in *)result->ai_addr)->sin_addr, sizeof(((struct sockaddr_in *)0)->sin_addr));
+                        }
+                    break;
+
+                case AF_INET6:
+
+                    ret = true;
+                    if (out != NULL)
+                        {
+                            memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
+                        }
+                    break;
+
+                default:
+                    Sagan_Log(WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
                 }
-            break;
-
-        case AF_INET6:
-
-            ret = true;
-            if (out != NULL)
-                {
-                    memcpy(out, &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr, sizeof(((struct sockaddr_in6 *)0)->sin6_addr));
-                }
-            break;
-
-//                default:
-//                    Sagan_Log(WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
         }
-//        }
+
     if (result != NULL)
         {
             freeaddrinfo(result);

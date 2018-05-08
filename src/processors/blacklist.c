@@ -25,6 +25,8 @@
 * known bad IP/Networks.  This processor uses the CIDR format:
 * 192.168.1.1/32 (single ip) or 192.168.1.0./24.
 *
+* TODO: blacklist does NOT current handle IPv6 addresses.
+*
 */
 
 #ifdef HAVE_CONFIG_H
@@ -84,8 +86,9 @@ void Sagan_Blacklist_Load ( void )
 {
 
     FILE *blacklist;
-    char *tok=NULL;
-    char *tmpmask=NULL;
+    char *tok = NULL;
+    char *tmpmask = NULL;
+    char *display_mask = NULL;
     char tmp[1024] = { 0 };
     int mask = 0;
     char *iprange=NULL;
@@ -162,6 +165,7 @@ void Sagan_Blacklist_Load ( void )
                                     strlcpy(tmp, iprange, sizeof(tmp));
                                     iprange = tmp;
                                     mask = 32;
+                                    tmpmask = "32";
                                 }
                             else
                                 {
@@ -198,10 +202,13 @@ void Sagan_Blacklist_Load ( void )
 
                             if ( found == 0 )
                                 {
+
                                     if (!IP2Bit(iprange, ipbits))
                                         {
+
                                             Sagan_Log(WARN, "[%s, line %d] Got invalid blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
                                             found = 1;
+
                                         }
                                     else
                                         {
