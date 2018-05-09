@@ -8,6 +8,7 @@
 #   2016/07/05 - Champ Clark - Replaced jsonc -> libfastjson
 #   2017/06/25 - Added "--enable-redis".
 #   2017/11/07 - Added test for "saganpeek". 
+#   2018/05/08 - Added FLAGS for make
 
 # Champ Clark III 
 
@@ -30,6 +31,8 @@ NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap 
 
 LOG="output.log" 
 
+MAKE_FLAGS="-j5"
+
 autoreconf -vfi
 
 echo "**** STANDARD BUILD | NO FLAGS ****"
@@ -46,8 +49,8 @@ if [ "$?" != "0" ]
 	exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
 	then
@@ -69,8 +72,8 @@ if [ "$?" != "0" ]
         exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -92,8 +95,8 @@ if [ "$?" != "0" ]
         exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -118,8 +121,8 @@ if [ "$?" != "0" ]
         exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ] 
         then
@@ -145,8 +148,8 @@ if [ "$?" != "0" ]
         exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ]
         then
@@ -172,8 +175,8 @@ if [ "$?" != "0" ]
         exit
         fi
 
-make 2>> $LOG
-cd tools && make && cd .. 2>> $LOG
+make $MAKE_FLAGS 2>> $LOG
+cd tools && make $MAKE_FLAGS && cd .. 2>> $LOG
 
 if [ "$?" != "0" ]
         then
