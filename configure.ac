@@ -22,7 +22,6 @@ fi
 
 echo -n "installation for $host OS... "
 
-
     case "$host" in
         *-*-*freebsd*)
             CFLAGS="${CFLAGS} -D__FreeBSD__"
@@ -210,9 +209,9 @@ if test "x$with_libpcap_libraries" != "xno"; then
 fi
 
 AC_ARG_ENABLE(libdnet,
-  [  --disable-libdnet       Disable libdnet (unified2) support.],
+  [  --enable-libdnet       Disable libdnet (unified2) support.],
   [ LIBDNET="$enableval"],
-  [ LIBDNET="yes" ]
+  [ LIBDNET="no" ]
 )
 
 AC_ARG_WITH(libdnet_includes,
@@ -518,6 +517,25 @@ else
 fi
 
 #### End of PCRE ############################################################
+
+# We don't want to use the Sagan_strstr assembly code if this is a 32 bit
+# system.  We force SYSSTRSR="yes" when it is. 
+
+# 32 bit linux. 
+
+case "${host}" in
+   # Linux | i386 | 32 bit 
+   i386*-*-linux* | i686*-*-linux*)
+   SYSSTRSTR="yes"
+   ;;
+
+   i386*-*-darwin* | i686*-*-darwin*)
+   SYSSTRSTR="yes" 
+   ;;
+
+esac
+
+
 
 if test "$SYSSTRSTR" = "yes"; then
 	AC_MSG_RESULT([using build in strstr()...])

@@ -88,7 +88,6 @@ void Sagan_Blacklist_Load ( void )
     FILE *blacklist;
     char *tok = NULL;
     char *tmpmask = NULL;
-    char *display_mask = NULL;
     char tmp[1024] = { 0 };
     int mask = 0;
     char *iprange=NULL;

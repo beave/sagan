@@ -1051,8 +1051,6 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
             exit(-1);
         }
 
-ErrorExit:
-
     if ( ret == NULL && *fd >= 0 )
         {
             close(*fd);
