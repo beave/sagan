@@ -359,7 +359,7 @@ outputs:
   # https://github.com/beave/meer
 
   - eve-log:
-      enabled: yes
+      enabled: no
       filetype: regular            #regular|syslog|unix_dgram|unix_stream|redis
       interface: logs
       alerts: yes                     # Logs alerts
