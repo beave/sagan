@@ -23,7 +23,7 @@
 void Sagan_Blacklist_Load ( void );
 void Sagan_Blacklist_Init( void );
 sbool Sagan_Blacklist_IPADDR( unsigned char * );
-sbool Sagan_Blacklist_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size);
+sbool Sagan_Blacklist_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *lookup_cache);
 
 typedef struct _Sagan_Blacklist _Sagan_Blacklist;
 struct _Sagan_Blacklist

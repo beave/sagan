@@ -27,7 +27,6 @@
  *
  */
 
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -49,232 +48,766 @@
 #include "parsers/parsers.h"
 
 struct _SaganConfig *config;
+struct _SaganDebug *debug;
 
-sbool Parse_IP( char *syslogmessage, int pos, char *str, size_t size, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
+int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, struct _Sagan_Lookup_Cache_Entry *lookup_cache )
 {
+
+    if ( debug->debugparse_ip )
+        {
+            Sagan_Log(DEBUG, "[%s] Start Function.", __FUNCTION__ );
+        }
 
     struct sockaddr_in sa;
 
-    char toparse[MAX_SYSLOGMSG];
+    int current_position = 0;
 
-    int i;
-    sbool ret = 0;
-    int num_dots = 0;
-    int real_pos = pos;
-    int num_colons = 0;
-    int current_pos = 0;
-    sbool valid = false;
+    char mod_string[MAX_SYSLOGMSG] = { 0 };
+
+    char *ipaddr = NULL;
+    char *ptr1 = NULL;
+    char *ptr2 = NULL;
+    char *ip_1 = NULL;
+    char *ip_2 = NULL;
+
+    char port_test[6] = { 0 };
+    int  port_test_int = 0;
+
+
+    int valid = false ;
     sbool is_host = false;
 
-    char *tok=NULL;
-    char *stmp=NULL;
-    char *etmp=NULL;
-    char *ptmp=NULL;
-    char *pstmp=NULL;
-    char *petmp=NULL;
+    int i=0;
+    int a=0;
 
-    char ctmp = '\0';
+    int num_colons = 0;
+    int num_dots = 0;
+    int num_hashes = 0;
 
-    ptrdiff_t offset = 0;
+    int port = config->sagan_port;
 
-    if (lookup_cache != NULL && pos <= cache_size)
+    /* We do seek_position-1 to use the entire array.  There is no
+       parse_src_ip: 0 */
+
+    if ( lookup_cache[seek_position-1].ip[0] != '\0' )
         {
-            lookup_cache[pos-1].searched = true;
-        }
 
-    if (lookup_cache != NULL && pos > 1 && pos <= cache_size && lookup_cache[pos-2].searched)
-        {
-            offset = lookup_cache[pos-2].offset;
-            strlcpy(toparse, syslogmessage+offset, MAX_SYSLOGMSG);
-            pos = 1;
-        }
-    else
-        {
-            strlcpy(toparse, syslogmessage, MAX_SYSLOGMSG);
-        }
-
-    if (str != NULL)
-        {
-            str[0] = '\0';
-        }
-
-    /* Just use the existing message, if no space use the whole message */
-
-    stmp = strtok_r(toparse, " ", &tok);
-    if (stmp == NULL)
-        {
-            stmp = toparse;
-        }
-
-    /* Can't start after the the last ':' or '.' */
-
-    pstmp = strrpbrk(stmp, ":.");
-
-    while (stmp != NULL)
-        {
-            /* If we have no '.' or ':' can't be an address.
-               The next token will be skipped to at the end */
-
-            if (pstmp == NULL || stmp[0] == '\0' || stmp > pstmp)
+            if ( debug->debugparse_ip )
                 {
-                    /* Move to next token */
+                    Sagan_Log(DEBUG, "[%s] Pulled %s:%d from cache. Position %d", __FUNCTION__, lookup_cache[seek_position-1].ip, lookup_cache[seek_position-1].port, seek_position );
+                }
 
-                    stmp = strtok_r(NULL, " ", &tok);
-                    if(stmp)
-                        {
-                            /* Can't start after the the last ':' or '.' */
+            snprintf(str, size, "%s", lookup_cache[seek_position-1].ip);
+            return(lookup_cache[seek_position-1].port);
+        }
 
-                            pstmp = strrpbrk(stmp, ":.");
-                        }
+    for (i=0; i<strlen(syslog_message); i++)
+        {
+
+            /* Remove any ", (, ), etc. In case the IP is enclosed like this:
+               "192.168.1.1" or (192.168.1.1) */
+
+            if ( syslog_message[i] != '"' && syslog_message[i] != '(' && syslog_message[i] != ')' &&
+                    syslog_message[i] != '[' && syslog_message[i] != ']' && syslog_message[i] != '<' &&
+                    syslog_message[i] != '>' && syslog_message[i] != '{' && syslog_message[i] != '}' &&
+                    syslog_message[i] != ',' && syslog_message[i] != '/' && syslog_message[i] != '@' &&
+                    syslog_message[i] != '=' && syslog_message[i] != '-' && syslog_message[i] != '!' &&
+                    syslog_message[i] != '|' && syslog_message[i] != '_' && syslog_message[i] != '+' &&
+                    syslog_message[i] != '&' && syslog_message[i] != '%' && syslog_message[i] != '$' &&
+                    syslog_message[i] != '~' && syslog_message[i] != '^' && syslog_message[i] != '\'' )
+                {
+
+                    mod_string[i] = syslog_message[i];
+                    mod_string[i+1] = '\0';
+
                 }
             else
                 {
-                    /* Can't start with a '.', skip ahead to first possible starting char */
 
-                    stmp += strcspn(stmp, ":ABCDEFabcdef0123456789");
+                    mod_string[i] = ' ';
+                    mod_string[i+1] = '\0';
 
-                    /* If we ended with a NULL or past what could be valid, then we are done with this token */
+                }
 
-                    if (stmp[0] == '\0' || stmp > pstmp)
+        }
+
+
+    if ( debug->debugparse_ip )
+        {
+            Sagan_Log(DEBUG, "[%s] Modified string: %s", __FUNCTION__, mod_string);
+        }
+
+    ptr1 = strtok_r(mod_string, " ", &ptr2);
+
+    while ( ptr1 != NULL )
+        {
+
+            num_colons = 0;
+            num_dots = 0;
+            num_hashes = 0;
+
+            if ( debug->debugparse_ip )
+                {
+                    Sagan_Log(DEBUG, "[%s] Token: '%s'", __FUNCTION__, ptr1 );
+                }
+
+            /* Get counts of colons, hashes, dots.  */
+
+            for (i=0; i<strlen(ptr1); i++)
+                {
+
+                    switch(ptr1[i])
                         {
-                            continue;
+
+                        case(':'):
+                            num_colons++;
+                            break;
+
+                        case('#'):
+                            num_hashes++;
+                            break;
+
+                        case('.'):
+                            num_dots++;
+                            break;
+
                         }
 
-                    /* Get Max length */
+                }
 
-                    etmp = stmp + strspn(stmp, ":ABCDEFabcdef0123456789.");
+            valid = 0;		/* Reset to not valid */
 
-                    /* Compute the last place we could end at and still have at least 2 ':' or 3 '.' */
+            if ( debug->debugparse_ip )
+                {
+                    Sagan_Log(DEBUG, "[%s] Colons: %d, Dots: %d, Hashes: %d", __FUNCTION__, num_colons, num_dots, num_hashes );
+                }
 
-                    ptmp = stmp;
-                    num_dots = 0;
-                    petmp = NULL;
-                    num_colons = 0;
+            /* Needs to have proper IPv6 or IPv4 encoding. num_dots > 4 is for IP with trailing
+            period. */
 
-                    while(ptmp < etmp && num_colons < 2 && num_dots < 3)
+            if ( ( num_colons < 2 && num_dots < 3 ) || ( num_dots > 4 ) )
+                {
+
+                    if ( debug->debugparse_ip )
                         {
-                            if ((ptmp[0] == ':' && ++num_colons >= 2) || (ptmp[0] == '.' && ++num_dots >= 3))
+                            Sagan_Log(DEBUG, "[%s] '%s' can't be an IPv4 or IPv6", __FUNCTION__, ptr1 );
+                        }
+
+                    ptr1 = strtok_r(NULL, " ", &ptr2);		/* move to next token */
+                    continue;
+                }
+
+            /* Stand alone IPv4 address */
+
+            if ( num_dots == 3 && num_colons == 0 )
+                {
+
+                    valid = inet_pton(AF_INET, ptr1,  &(sa.sin_addr));
+
+                    if ( valid == 1 )
+                        {
+
+                            if ( debug->debugparse_ip )
                                 {
-                                    petmp = ptmp;
-                                }
-                            ptmp++;
-                        }
-
-                    /* If it's not possible to have at least 2 ':' or 3 '.' then move the start of the token to
-                       the end of our span */
-
-                    if (petmp == NULL)
-                        {
-                            stmp=etmp-1;
-                            valid = false;
-                        }
-                    else
-                        {
-                            /* Keep trying the longest string in the span until we match or move past ending in a viable spot */
-
-                            do
-                                {
-                                    ctmp = etmp[0];
-                                    etmp[0] = '\0';
-
-				    /* Kenneth Shelton @netwatcher had this using getaddrinfo.   We kept getting invalid/bad 
-                                       results in production. We reverted back to inet_pton and have much better results.  We
-				       aren't the only ones:
-
-				       'So, as of 2014, we consider getaddrinfo() to be avoided for IPv6 address conversions under any 
-					except the least demanding, single threaded, applications. Within PowerDNS, we have reverted to
-					using inet_pton() whenever we can get away with it – which is almost always, except in the
-					 case of scoped addresses.'
-
-					See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
-
-				    */
-
-				    valid = inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
-
-                                    etmp[0] = ctmp;
-
-                                }
-                            while(!valid && --etmp >= petmp);
-                        }
-
-		    /* Final validation */
-
-		    valid = inet_pton(AF_INET, stmp,  &(sa.sin_addr)) || inet_pton(AF_INET6, stmp,  &(sa.sin_addr));
-
-                    if (valid)
-                        {
-                            ctmp = etmp[0];
-                            etmp[0] = '\0';
-
-                            is_host = false;
-
-                            /* current_pos is 0 based here and real_pos-pos will give us the delta between
-                               what position was requested and where we are starting */
-
-                            if (lookup_cache)
-                                {
-                                    lookup_cache[current_pos+(real_pos-pos)].searched = true;
-                                    if (!strcmp(stmp, "127.0.0.1") ||
-                                            !strcmp(stmp, "::1") ||
-                                            !strcmp(stmp, "::ffff:127.0.0.1"))
-                                        {
-                                            is_host = true;
-                                            strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, config->sagan_host, size);
-                                        }
-                                    else
-                                        {
-                                            strlcpy(lookup_cache[current_pos+(real_pos-pos)].ip, stmp, size);
-                                        }
-                                    lookup_cache[current_pos+(real_pos-pos)].offset = (ptrdiff_t)(etmp - &toparse[0]) + offset;
+                                    Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv4 address '%s' **", __FUNCTION__, ptr1 );
                                 }
 
-                            if (++current_pos == pos)
+                            current_position++;
+
+                            if ( current_position == seek_position )
                                 {
-                                    ret = true;
-                                    if (str != NULL)
+
+                                    if ( debug->debugparse_ip )
                                         {
-                                            strlcpy(str, is_host ? config->sagan_host : stmp, size);
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
                                         }
+
+                                    ipaddr = ptr1;
+
+                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                    /* Look for "192.168.1.1 port 1234" */
+
+                                    if ( ptr1 != NULL && strcasestr(ptr1, "port") )
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                }
+
+                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                            if ( ptr1 != NULL )
+                                                {
+                                                    port = atoi(ptr1);
+
+                                                    if ( port == 0 )
+                                                        {
+                                                            port = config->sagan_port;
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    /* Look for "192.168.1.1 source port: 1234" or
+                                    "192.168.1.1 source port 1234" */
+
+                                    else if ( ptr1 != NULL && ( strcasestr(ptr1, "source") ||
+                                                                strcasestr(ptr1, "destination" ) ) )
+
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s] Identified 'source' or 'destination'", __FUNCTION__ );
+                                                }
+
+                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                            if ( ptr1 != NULL && strcasestr(ptr1, "port" ) )
+                                                {
+
+                                                    if ( debug->debugparse_ip )
+                                                        {
+                                                            Sagan_Log(DEBUG, "[%s] Identified 'port'.", __FUNCTION__ );
+                                                        }
+
+                                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                                    if ( ptr1 != NULL )
+                                                        {
+
+                                                            port = atoi(ptr1);
+
+                                                            if ( port == 0 )
+                                                                {
+                                                                    port = config->sagan_port;
+                                                                }
+
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    break;
+
+                                }
+                        }
+
+                }
+
+            /* Stand alone IPv4 with trailing period */
+
+            if ( num_dots == 4 && ptr1[ strlen(ptr1)-1 ] == '.' )
+                {
+
+
+
+                    /* Erase the period */
+
+                    ptr1[ strlen(ptr1)-1 ] = '\0';
+
+                    valid = inet_pton(AF_INET, ptr1,  &(sa.sin_addr));
+
+                    if ( valid == 1 )
+                        {
+
+                            {
+                                Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, ptr1 );
+                            }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ptr1;
                                     break;
                                 }
 
-                            /* Since this is a longest string valid match, just skip past it */
-
-                            stmp += strlen(stmp);
-
-                            /* We only have to put it back if we are not done */
-
-                            etmp[0] = ctmp;
-
-                        }
-                    else
-                        {
-                            /* Otherwise, start at next char in token and go again */
-
-                            stmp++;
                         }
 
                 }
 
-        }
 
-/*
-    if (result != NULL)
-        {
-            freeaddrinfo(result);
-            result = NULL;
-        }
-*/
+            /* Stand alone IPv6 */
 
-    if (false == ret && lookup_cache != NULL)
-        {
-            for(i=pos-1; i < cache_size; i++)
+            if ( num_colons > 2 )
                 {
-                    lookup_cache[i].searched = true;
+
+                    valid = inet_pton(AF_INET6, ptr1,  &(sa.sin_addr));
+
+                    if ( valid == 1 )
+                        {
+
+                            {
+                                Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, ptr1 );
+                            }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    {
+                                        Sagan_Log(DEBUG, "[%s] Good position", __FUNCTION__ );
+                                    }
+
+                                    ipaddr = ptr1;
+
+                                    /* Look for "fe80::b614:89ff:fe11:5e24 port 1234" */
+
+                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                    if ( ptr1 != NULL && strcasestr(ptr1, "port") )
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                }
+
+
+                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                            if ( ptr1 != NULL )
+                                                {
+                                                    port = atoi(ptr1);
+
+                                                    if ( port == 0 )
+                                                        {
+                                                            port = config->sagan_port;
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    /* Look for "fe80::b614:89ff:fe11:5e24 source port: 1234" or
+                                    "fe80::b614:89ff:fe11:5e24 source port 1234" */
+
+                                    else if ( ptr1 != NULL && ( strcasestr(ptr1, "source") ||
+                                                                strcasestr(ptr1, "destination" ) ) )
+
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'source' or 'destination'", __FUNCTION__ );
+                                                }
+
+
+                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                            if ( ptr1 != NULL && strcasestr(ptr1, "port" ) )
+                                                {
+
+                                                    if ( debug->debugparse_ip )
+                                                        {
+                                                            Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                        }
+
+
+                                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+
+                                                    if ( ptr1 != NULL )
+                                                        {
+
+                                                            port = atoi(ptr1);
+
+                                                            if ( port == 0 )
+                                                                {
+                                                                    port = config->sagan_port;
+                                                                }
+
+                                                        }
+
+                                                }
+
+                                        }
+
+                                    /* IPv6 [fe80::b614:89ff:fe11:5e24]:443 */
+
+                                    else if ( ptr1 != NULL && ptr1[0] == ':' )
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s] Identified possible [IPv6]:PORT", __FUNCTION__ );
+                                                }
+
+                                            for ( i = 1; i < strlen(ptr1); i++ )
+                                                {
+                                                    port_test[i-1] = ptr1[i];
+                                                }
+
+                                            port_test_int = atoi(port_test);
+
+                                            if ( port_test != 0 )
+                                                {
+                                                    port = port_test_int;
+                                                }
+                                            else
+                                                {
+                                                    port = config->sagan_port;
+                                                }
+
+                                        }
+
+                                    break;
+                                }
+                        }
+
                 }
+
+
+            /* Stand alone IPv6 with trailing period */
+
+            if ( num_colons > 2 && ptr1[ strlen(ptr1)-1 ] == '.' )
+                {
+
+                    /* Erase the period */
+
+                    ptr1[ strlen(ptr1)-1 ] = '\0';
+
+                    valid = inet_pton(AF_INET6, ptr1,  &(sa.sin_addr));
+
+                    if ( valid == 1 )
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv6 '%s' with trailing period. **", __FUNCTION__, ptr1 );
+                                }
+
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ptr1;
+                                    break;
+                                }
+
+                        }
+
+                }
+
+
+            /* IPv4 with 192.168.2.1:12345 or inet:192.168.2.1 */
+
+            if ( num_colons == 1 && num_dots == 3)
+                {
+
+                    /* test both sides */
+
+                    ip_1 = strtok_r(ptr1, ":", &ip_2);
+
+                    if ( ip_1 != NULL )
+                        {
+                            valid = inet_pton(AF_INET, ip_1,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv4:PORT address. **", __FUNCTION__ );
+                                }
+
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_1;
+
+                                    /* In many cases, the port is after the : */
+
+                                    port = atoi(ip_2);
+
+                                    if ( port == 0 )
+                                        {
+                                            port = config->sagan_port;
+                                        }
+
+                                    break;
+
+                                }
+
+                        }
+
+                    if ( ip_2 != NULL )
+                        {
+                            valid = inet_pton(AF_INET, ip_2,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE:IPv4 **", __FUNCTION__ );
+                                }
+
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_2;
+                                    break;
+                                }
+                        }
+
+                }
+
+            /* Handle 192.168.2.1#12345 or inet#192.168.2.1 */
+
+            if ( num_hashes == 1 && num_dots == 3)
+                {
+
+                    /* test both sides */
+
+                    ip_1 = strtok_r(ptr1, "#", &ip_2);
+
+                    if ( ip_1 != NULL )
+                        {
+                            valid = inet_pton(AF_INET, ip_1,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv4#PORT **", __FUNCTION__ );
+                                }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_1;
+
+                                    /* In many cases, the port is after the : */
+
+                                    port = atoi(ip_2);
+
+                                    if ( port == 0 )
+                                        {
+                                            port = config->sagan_port;
+                                        }
+
+                                    break;
+
+                                }
+
+                        }
+
+                    if ( ip_2 != NULL )
+                        {
+                            valid = inet_pton(AF_INET, ip_2,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE#PORT **", __FUNCTION__ );
+                                }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_2;
+                                    break;
+                                }
+                        }
+
+                }
+
+
+            /* Handle IPv6 fe80::b614:89ff:fe11:5e24#12345 or inet#fe80::b614:89ff:fe11:5e24 */
+
+            if ( num_hashes == 1 && num_colons > 2 )
+                {
+
+                    /* test both sides */
+
+                    ip_1 = strtok_r(ptr1, "#", &ip_2);
+
+                    if ( ip_1 != NULL )
+                        {
+                            valid = inet_pton(AF_INET6, ip_1,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv6#PORT **", __FUNCTION__ );
+                                }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_1;
+
+                                    /* In many cases, the port is after the : */
+
+                                    port = atoi(ip_2);
+
+                                    if ( port == 0 )
+                                        {
+                                            port = config->sagan_port;
+                                        }
+
+                                    break;
+
+                                }
+
+                        }
+
+                    if ( ip_2 != NULL )
+                        {
+                            valid = inet_pton(AF_INET6, ip_2,  &(sa.sin_addr));
+                        }
+
+                    if ( valid == 1 )
+
+                        {
+
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE#IPv6 **", __FUNCTION__ );
+                                }
+
+                            current_position++;
+
+                            if ( current_position == seek_position )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                        }
+
+                                    ipaddr = ip_2;
+                                    break;
+                                }
+                        }
+
+                }
+
+            ptr1 = strtok_r(NULL, " ", &ptr2);
+
         }
 
-    return ret;
+
+    if ( valid )
+        {
+
+            if ( debug->debugparse_ip )
+                {
+                    Sagan_Log(DEBUG, "[%s] Final: %s:%d", __FUNCTION__, ipaddr, port );
+                }
+
+            if (ipaddr == NULL ||
+                    !strcmp(ipaddr, "127.0.0.1") ||
+                    !strcmp(ipaddr, "::1") ||
+                    !strcmp(ipaddr, "::ffff:127.0.0.1"))
+                {
+
+                    if ( debug->debugparse_ip )
+                        {
+                            Sagan_Log(DEBUG, "[%s] Inserting %s:%d into cache.", __FUNCTION__, config->sagan_host, config->sagan_port );
+                        }
+
+                    strlcpy(lookup_cache[seek_position-1].ip, config->sagan_host, MAXIP);
+                    lookup_cache[seek_position-1].port = config->sagan_port;
+                    snprintf(str, size, "%s", config->sagan_host);
+
+                }
+            else
+                {
+
+                    if ( debug->debugparse_ip )
+                        {
+                            Sagan_Log(DEBUG, "[%s] Inserting %s:%d into cache.", __FUNCTION__, ipaddr, port  );
+                        }
+
+                    strlcpy(lookup_cache[seek_position-1].ip, ipaddr, MAXIP);
+                    lookup_cache[seek_position-1].port = port;
+                    snprintf(str, size, "%s", ipaddr);
+
+                }
+
+        }
+    else
+        {
+
+            snprintf(str, size, "%s", config->sagan_host);
+
+        }
+
+
+    if ( debug->debugparse_ip )
+        {
+            Sagan_Log(DEBUG, "[%s] Function complete.", __FUNCTION__ );
+        }
+
+    return(port);
 }
 

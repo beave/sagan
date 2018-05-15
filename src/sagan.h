@@ -325,6 +325,7 @@ struct _SaganDebug
     sbool debuglimits;
     sbool debugipc;
     sbool debugjson;
+    sbool debugparse_ip;
 
 #ifdef HAVE_LIBMAXMINDDB
     sbool debuggeoip2;
@@ -605,9 +606,16 @@ struct _Sagan_Processor_Info
 typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Entry;
 struct _Sagan_Lookup_Cache_Entry
 {
-    sbool searched;
-    ptrdiff_t offset;
     char ip[MAXIP];
+    int  port;
+};
+
+typedef struct _Sagan_Lookup_Cache_Response _Sagan_Lookup_Cache_Response;
+struct _Sagan_Lookup_Cache_Response
+{
+    char ip[MAXIP];
+    int  port;
+    struct _Sagan_Lookup_Cache_Entry *host_cache;
 };
 
 

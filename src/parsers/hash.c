@@ -55,13 +55,13 @@ void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
        hash more easily.  For example,  Sysmon does SHA1={HASH}.  This makes
        it SHA1 {hash} */
 
-    for (i=0; i<strlen(tmpmsg); i++) 
-	{
-	   if ( tmpmsg[i] == '=' || tmpmsg[i] == ',' || tmpmsg[i] == ':' ) 
-		{
-		tmpmsg[i] = ' '; 
-		} 
-	}
+    for (i=0; i<strlen(tmpmsg); i++)
+        {
+            if ( tmpmsg[i] == '=' || tmpmsg[i] == ',' || tmpmsg[i] == ':' )
+                {
+                    tmpmsg[i] = ' ';
+                }
+        }
 
     ptmp = strtok_r(tmpmsg, " ", &tok);
 

@@ -341,6 +341,12 @@ int main(int argc, char **argv)
                             debugflag = true;
                         }
 
+                    if (Sagan_strstr(optarg, "parse_ip"))
+                        {
+                            debug->debugparse_ip = true;
+                            debugflag = true;
+                        }
+
                     if (Sagan_strstr(optarg, "limits"))
                         {
                             debug->debuglimits = true;
@@ -1170,7 +1176,7 @@ int main(int argc, char **argv)
 
                                             if ( debug->debugmalformed )
                                                 {
-                                                    Sagan_Log(WARN, "Sagan received a malformed 'host': '%s' (replaced with %s)", syslog_host, config->sagan_host);
+                                                    Sagan_Log(DEBUG, "Sagan received a malformed 'host': '%s' (replaced with %s)", syslog_host, config->sagan_host);
                                                 }
                                         }
                                 }
@@ -1189,7 +1195,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'facility'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'facility'");
                                         }
                                 }
 
@@ -1205,7 +1211,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'priority'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'priority'");
                                         }
                                 }
 
@@ -1221,7 +1227,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'level'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'level'");
                                         }
                                 }
 
@@ -1237,7 +1243,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'tag'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'tag'");
                                         }
                                 }
 
@@ -1253,7 +1259,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'date'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'date'");
                                         }
                                 }
 
@@ -1269,7 +1275,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'time'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'time'");
                                         }
                                 }
 
@@ -1286,7 +1292,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'program'");
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'program'");
                                         }
                                 }
                             syslog_msg = psyslogstring != NULL ? strsep(&psyslogstring, "") : NULL; /* In case the message has | in it,  we delimit on "" */
@@ -1302,7 +1308,7 @@ int main(int argc, char **argv)
 
                                     if ( debug->debugmalformed )
                                         {
-                                            Sagan_Log(WARN, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
+                                            Sagan_Log(DEBUG, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
                                         }
 
                                     /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,

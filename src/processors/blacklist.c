@@ -46,8 +46,6 @@
 
 #include "processors/blacklist.h"
 
-#include "parsers/parsers.h"
-
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
@@ -281,35 +279,32 @@ sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
  * blacklist IP's in memory!
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
+sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache)
 {
 
     int i;
     int b;
 
-    unsigned char ip[MAXIPBIT] = { 0 };
+    int port = 0;
 
-    for (i = 0; i < cache_size; i++)
+    char ip[MAXIP] = { 0 };
+    unsigned char ip_bits[MAXIPBIT] = { 0 };
+
+    for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            /* Failed to find next IP,  short circuit the process */
-            if (( lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
+            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
+
+            if ( port == 0 )
                 {
                     return(false);
                 }
 
-            if (!IP2Bit(lookup_cache[i].ip, ip))
-                {
-                    continue;
-                }
-
-            pthread_mutex_lock(&CounterBlacklistGenericMutex);
-            counters->blacklist_lookup_count++;
-            pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+            IP2Bit(ip, ip_bits);
 
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {
-                    if ( is_inrange(ip, (unsigned char *)&SaganBlacklist[b].range, 1) )
+                    if ( is_inrange(ip_bits, (unsigned char *)&SaganBlacklist[b].range, 1) )
 
                         {
 

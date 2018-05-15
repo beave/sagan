@@ -85,8 +85,9 @@ pthread_mutex_t CounterSaganFoundMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Sagan_Engine_Init ( void )
 {
-
+    /* Nothing to do yet */
 }
+
 
 int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule_flag )
 {
@@ -100,6 +101,27 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
         }
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
+
+    char *lookup_status = NULL;
+
+    struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
+    lookup_cache = malloc(sizeof(struct _Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
+
+    if ( lookup_cache == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for lookup_cache. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(lookup_cache, 0, sizeof(_Sagan_Lookup_Cache_Entry));
+
+    struct _Sagan_Lookup_Cache_Response *lookup_cache_response = NULL;
+    lookup_cache_response = malloc(sizeof(struct _Sagan_Lookup_Cache_Response));
+
+    if ( lookup_cache_response == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for lookup_cache_response. Abort!", __FILE__, __LINE__);
+        }
+
 
     int processor_info_engine_src_port = 0;
     int processor_info_engine_dst_port = 0;
@@ -115,7 +137,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int z = 0;
 
     sbool match = false;
-    int sagan_match = 0;				/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
+    int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
 
     int rc = 0;
     int ovector[PCRE_OVECCOUNT];
@@ -132,15 +154,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char *ptmp;
     char *tok2;
 
-    /* We don't tie these to HAVE_LIBMAXMINDDB because we might have other
-     * methods to extract the informaton */
-
     char *pnormalize_selector = NULL;
-
-    int check_pos = 0;
-    struct _Sagan_Lookup_Cache_Entry lookup_cache[MAX_PARSE_IP] = { { 0  } };
-
-    ptrdiff_t ip_parse_cache_used[MAX_PARSE_IP];
 
     char parse_ip_src[MAXIP] = { 0 };
     char parse_ip_dst[MAXIP] = { 0 };
@@ -171,6 +185,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     char *ip_src = NULL;
     char *ip_dst = NULL;
+
     char *md5_hash = NULL;
     char *sha1_hash = NULL;
     char *sha256_hash = NULL;
@@ -203,13 +218,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 #ifdef HAVE_LIBLOGNORM
 
     static __thread struct _SaganNormalizeLiblognorm SaganNormalizeLiblognorm = { { 0 } };
-
     memset((char *)&SaganNormalizeLiblognorm, 0, sizeof(struct _SaganNormalizeLiblognorm));
+
 #endif
-
-
-    // Set all to -1 to facilitate easier checking
-    memset((char *)ip_parse_cache_used, -1, sizeof(ip_parse_cache_used));
 
     /* This needs to be included,  even if liblognorm isn't in use */
 
@@ -223,6 +234,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     for(b=0; b < counters->rulecount; b++)
         {
+
             ip_src_flag = false;
             ip_dst_flag = false;
 
@@ -235,6 +247,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
             ip_src = parse_ip_src;
             ip_dst = parse_ip_dst;
+
             md5_hash = parse_md5_hash;
             sha1_hash = parse_sha1_hash;
             sha256_hash = parse_sha256_hash;
@@ -656,35 +669,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_src_ip: {position} */
 
+
                                     if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == 1 )
                                         {
-                                            check_pos = rulestruct[b].s_find_src_pos - 1;
 
-                                            // Cache the parsing to avoid doing this for every rule
+                                            ip_srcport_u32 = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
+                                                                      rulestruct[b].s_find_src_pos,
+                                                                      parse_ip_src,
+                                                                      sizeof(parse_ip_src),
+                                                                      lookup_cache );
 
-                                            if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
-                                                {
-                                                    ip_src = lookup_cache[check_pos].ip;
-
-                                                    // This case handles if we already found the previous index
-                                                }
-                                            else
-                                                {
-                                                    Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
-                                                             check_pos+1,
-                                                             parse_ip_src,
-                                                             sizeof(parse_ip_src),
-                                                             lookup_cache,
-                                                             MAX_PARSE_IP);
-
-                                                }
-
-                                            /* If Parse_IP is successful,  we set the flag */
-
-                                            if ( ip_src[0] != '\0' )
-                                                {
-                                                    ip_src_flag = true;
-                                                }
+                                            ip_src = parse_ip_src; /* DEBUG NEEDED? */
 
                                         }
 
@@ -692,45 +687,15 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     if ( ip_dst_flag == false && rulestruct[b].s_find_dst_ip == 1 )
                                         {
-                                            check_pos = rulestruct[b].s_find_dst_pos - 1;
 
-                                            // Cache the parsing to avoid doing this for every rule
+                                            ip_dstport_u32 = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
+                                                                      rulestruct[b].s_find_dst_pos,
+                                                                      parse_ip_dst,
+                                                                      sizeof(parse_ip_dst),
+                                                                      lookup_cache );
 
-                                            if (check_pos < MAX_PARSE_IP && lookup_cache[check_pos].searched)
-                                                {
-                                                    ip_dst = lookup_cache[check_pos].ip;
 
-                                                    // This case handles if we already found the previous index
-                                                }
-                                            else
-                                                {
-                                                    Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
-                                                             check_pos+1,
-                                                             parse_ip_dst,
-                                                             sizeof(parse_ip_dst),
-                                                             lookup_cache,
-                                                             MAX_PARSE_IP);
-                                                }
-
-                                            /* If Parse_IP is successful,  we set the flag */
-
-                                            if ( ip_dst[0] != '\0' )
-                                                {
-                                                    ip_dst_flag = true;
-                                                }
-
-                                        }
-
-                                    /* parse_port */
-
-                                    if ( ip_srcport_u32 == 0 && rulestruct[b].s_find_port == 1 )
-                                        {
-                                            ip_srcport_u32 = Parse_Src_Port(SaganProcSyslog_LOCAL->syslog_message);
-                                        }
-
-                                    if ( ip_dstport_u32 == 0 && rulestruct[b].s_find_port == 1 )
-                                        {
-                                            ip_dstport_u32 = Parse_Dst_Port(SaganProcSyslog_LOCAL->syslog_message);
+                                            ip_dst = parse_ip_dst; /* DEBUG: NEEDED? */
 
                                         }
 
@@ -779,16 +744,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                                        use */
+                                    /*
 
-                                    if ( ip_src_flag == false )
-                                        {
-                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
-                                        }
+                                                                        if ( ip_src_flag == false )
+                                                                            {
+                                                                                ip_src = SaganProcSyslog_LOCAL->syslog_host;
+                                                                            }
 
-                                    if ( ip_dst_flag == false )
-                                        {
-                                            ip_dst = SaganProcSyslog_LOCAL->syslog_host;
-                                        }
+                                                                        if ( ip_dst_flag == false )
+                                                                            {
+                                                                                ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+                                                                            }
+                                    */
+
 
                                     /* No source port was normalized, Use the rules default */
 
@@ -976,7 +944,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_all )
                                                 {
-                                                    blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message, lookup_cache, MAX_PARSE_IP);
+                                                    blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message, lookup_cache);
                                                 }
 
                                             if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_both && ip_src_flag && ip_dst_flag )
@@ -1030,7 +998,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 4 )
                                                         {
 
-                                                            bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b, lookup_cache, MAX_PARSE_IP);
+                                                            bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b, lookup_cache);
 
                                                         }
 

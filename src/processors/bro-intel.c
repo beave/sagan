@@ -672,30 +672,32 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
 
     unsigned char ip[MAXIPBIT] = {0};
 
-    for (i = 0; i < cache_size; i++)
+//    for (i = 0; i < cache_size; i++)
+//        {
+
+
+    /* Failed to find next IP,  short circuit the process */
+    /*            if ( (lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
+                    {
+                        return(false);
+                    }
+
+                if (!IP2Bit(lookup_cache[i].ip, ip))
+                    {
+                        continue;
+                    }
+    */
+
+    for ( b = 0; b < counters->brointel_addr_count; b++ )
         {
 
-            /* Failed to find next IP,  short circuit the process */
-            if ( (lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
+            if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip)))
                 {
-                    return(false);
+                    return(true);
                 }
-
-            if (!IP2Bit(lookup_cache[i].ip, ip))
-                {
-                    continue;
-                }
-
-            for ( b = 0; b < counters->brointel_addr_count; b++ )
-                {
-
-                    if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip)))
-                        {
-                            return(true);
-                        }
-                }
-
         }
+
+//       }
 
     return(false);
 }
