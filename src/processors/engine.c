@@ -244,7 +244,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
             parse_sha1_hash[0] = '\0';
             parse_sha256_hash[0] = '\0';
 
-
             ip_src = parse_ip_src;
             ip_dst = parse_ip_dst;
 
@@ -744,18 +743,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                                        use */
-                                    /*
 
-                                                                        if ( ip_src_flag == false )
-                                                                            {
-                                                                                ip_src = SaganProcSyslog_LOCAL->syslog_host;
-                                                                            }
 
-                                                                        if ( ip_dst_flag == false )
-                                                                            {
-                                                                                ip_dst = SaganProcSyslog_LOCAL->syslog_host;
-                                                                            }
-                                    */
+                                    if ( ip_src_flag == false )
+                                        {
+                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
+                                        }
+
+                                    if ( ip_dst_flag == false )
+                                        {
+                                            ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+                                        }
+
 
 
                                     /* No source port was normalized, Use the rules default */
