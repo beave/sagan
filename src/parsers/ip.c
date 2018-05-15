@@ -190,7 +190,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     if ( debug->debugparse_ip )
                         {
-                            Sagan_Log(DEBUG, "[%s] '%s' can't be an IPv4 or IPv6", __FUNCTION__, ptr1 );
+                            Sagan_Log(DEBUG, "[%s] '%s' can't be an IPv4 or IPv6.", __FUNCTION__, ptr1 );
                         }
 
                     ptr1 = strtok_r(NULL, " ", &ptr2);		/* move to next token */

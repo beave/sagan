@@ -678,7 +678,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                       sizeof(parse_ip_src),
                                                                       lookup_cache );
 
-                                            ip_src = parse_ip_src; /* DEBUG NEEDED? */
+                                            ip_src = parse_ip_src;
+                                            ip_src_flag = true;
 
                                         }
 
@@ -694,7 +695,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                                       lookup_cache );
 
 
-                                            ip_dst = parse_ip_dst; /* DEBUG: NEEDED? */
+                                            ip_dst = parse_ip_dst;
+                                            ip_dst_flag = true;
 
                                         }
 
