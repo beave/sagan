@@ -55,7 +55,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     if ( debug->debugparse_ip )
         {
-            Sagan_Log(DEBUG, "[%s] Start Function.", __FUNCTION__ );
+            Sagan_Log(DEBUG, "[%s:%lu] Start Function.", __FUNCTION__, pthread_self() );
         }
 
     struct sockaddr_in sa;
@@ -94,7 +94,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
             if ( debug->debugparse_ip )
                 {
-                    Sagan_Log(DEBUG, "[%s] Pulled %s:%d from cache. Position %d", __FUNCTION__, lookup_cache[seek_position-1].ip, lookup_cache[seek_position-1].port, seek_position );
+                    Sagan_Log(DEBUG, "[%s:%lu] Pulled %s:%d from cache. Position %d", __FUNCTION__, pthread_self(), lookup_cache[seek_position-1].ip, lookup_cache[seek_position-1].port, seek_position );
                 }
 
             snprintf(str, size, "%s", lookup_cache[seek_position-1].ip);
@@ -134,7 +134,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     if ( debug->debugparse_ip )
         {
-            Sagan_Log(DEBUG, "[%s] Modified string: %s", __FUNCTION__, mod_string);
+            Sagan_Log(DEBUG, "[%s:%lu] Modified string: %s", __FUNCTION__, pthread_self(), mod_string);
         }
 
     ptr1 = strtok_r(mod_string, " ", &ptr2);
@@ -148,7 +148,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
             if ( debug->debugparse_ip )
                 {
-                    Sagan_Log(DEBUG, "[%s] Token: '%s'", __FUNCTION__, ptr1 );
+                    Sagan_Log(DEBUG, "[%s:%lu] Token: '%s'", __FUNCTION__, pthread_self(), ptr1 );
                 }
 
             /* Get counts of colons, hashes, dots.  */
@@ -179,7 +179,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
             if ( debug->debugparse_ip )
                 {
-                    Sagan_Log(DEBUG, "[%s] Colons: %d, Dots: %d, Hashes: %d", __FUNCTION__, num_colons, num_dots, num_hashes );
+                    Sagan_Log(DEBUG, "[%s:%lu] Colons: %d, Dots: %d, Hashes: %d", __FUNCTION__, pthread_self(), num_colons, num_dots, num_hashes );
                 }
 
             /* Needs to have proper IPv6 or IPv4 encoding. num_dots > 4 is for IP with trailing
@@ -190,7 +190,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     if ( debug->debugparse_ip )
                         {
-                            Sagan_Log(DEBUG, "[%s] '%s' can't be an IPv4 or IPv6.", __FUNCTION__, ptr1 );
+                            Sagan_Log(DEBUG, "[%s:%lu] '%s' can't be an IPv4 or IPv6.", __FUNCTION__, pthread_self(), ptr1 );
                         }
 
                     ptr1 = strtok_r(NULL, " ", &ptr2);		/* move to next token */
@@ -209,7 +209,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv4 address '%s' **", __FUNCTION__, ptr1 );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
                                 }
 
                             current_position++;
@@ -219,7 +219,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ptr1;
@@ -233,7 +233,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                    Sagan_Log(DEBUG, "[%s:%d] Identified the word 'port'", __FUNCTION__, pthread_self() );
                                                 }
 
                                             ptr1 = strtok_r(NULL, " ", &ptr2);
@@ -261,7 +261,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s] Identified 'source' or 'destination'", __FUNCTION__ );
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified 'source' or 'destination'", __FUNCTION__, pthread_self() );
                                                 }
 
                                             ptr1 = strtok_r(NULL, " ", &ptr2);
@@ -271,7 +271,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                                     if ( debug->debugparse_ip )
                                                         {
-                                                            Sagan_Log(DEBUG, "[%s] Identified 'port'.", __FUNCTION__ );
+                                                            Sagan_Log(DEBUG, "[%s:%lu] Identified 'port'.", __FUNCTION__, pthread_self() );
                                                         }
 
                                                     ptr1 = strtok_r(NULL, " ", &ptr2);
@@ -316,7 +316,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                         {
 
                             {
-                                Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, ptr1 );
+                                Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
                             current_position++;
@@ -326,7 +326,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ptr1;
@@ -349,7 +349,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                         {
 
                             {
-                                Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, ptr1 );
+                                Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
                             current_position++;
@@ -358,7 +358,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                 {
 
                                     {
-                                        Sagan_Log(DEBUG, "[%s] Good position", __FUNCTION__ );
+                                        Sagan_Log(DEBUG, "[%s:%lu] Good position", __FUNCTION__, pthread_self() );
                                     }
 
                                     ipaddr = ptr1;
@@ -372,7 +372,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'port'", __FUNCTION__, pthread_self() );
                                                 }
 
 
@@ -401,7 +401,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s] Identified the word 'source' or 'destination'", __FUNCTION__ );
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'source' or 'destination'", __FUNCTION__, pthread_self() );
                                                 }
 
 
@@ -412,7 +412,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                                     if ( debug->debugparse_ip )
                                                         {
-                                                            Sagan_Log(DEBUG, "[%s] Identified the word 'port'", __FUNCTION__ );
+                                                            Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'port'", __FUNCTION__, pthread_self() );
                                                         }
 
 
@@ -441,7 +441,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s] Identified possible [IPv6]:PORT", __FUNCTION__ );
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified possible [IPv6]:PORT", __FUNCTION__, pthread_self() );
                                                 }
 
                                             for ( i = 1; i < strlen(ptr1); i++ )
@@ -485,7 +485,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified stand alone IPv6 '%s' with trailing period. **", __FUNCTION__, ptr1 );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                                 }
 
 
@@ -496,7 +496,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ptr1;
@@ -527,7 +527,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv4:PORT address. **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv4:PORT address. **", __FUNCTION__, pthread_self() );
                                 }
 
 
@@ -538,7 +538,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ip_1;
@@ -569,7 +569,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE:IPv4 **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE:IPv4 **", __FUNCTION__, pthread_self() );
                                 }
 
 
@@ -580,7 +580,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ip_2;
@@ -609,7 +609,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv4#PORT **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv4#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
                             current_position++;
@@ -619,7 +619,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ip_1;
@@ -650,7 +650,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE#PORT **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
                             current_position++;
@@ -660,7 +660,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ip_2;
@@ -690,7 +690,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified IPv6#PORT **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv6#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
                             current_position++;
@@ -700,7 +700,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self()  );
                                         }
 
                                     ipaddr = ip_1;
@@ -731,7 +731,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s] ** Identified INTERFACE#IPv6 **", __FUNCTION__ );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE#IPv6 **", __FUNCTION__, pthread_self() );
                                 }
 
                             current_position++;
@@ -741,7 +741,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                     if ( debug->debugparse_ip )
                                         {
-                                            Sagan_Log(DEBUG, "[%s] Position is good.", __FUNCTION__ );
+                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
                                     ipaddr = ip_2;
@@ -761,7 +761,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
             if ( debug->debugparse_ip )
                 {
-                    Sagan_Log(DEBUG, "[%s] Final: %s:%d", __FUNCTION__, ipaddr, port );
+                    Sagan_Log(DEBUG, "[%s:%lu] Final: %s:%d", __FUNCTION__, pthread_self(), ipaddr, port );
                 }
 
             if (ipaddr == NULL ||
@@ -772,7 +772,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     if ( debug->debugparse_ip )
                         {
-                            Sagan_Log(DEBUG, "[%s] Inserting %s:%d into cache.", __FUNCTION__, config->sagan_host, config->sagan_port );
+                            Sagan_Log(DEBUG, "[%s:%lu] Inserting %s:%d into cache.", __FUNCTION__, pthread_self(), config->sagan_host, config->sagan_port );
                         }
 
                     strlcpy(lookup_cache[seek_position-1].ip, config->sagan_host, MAXIP);
@@ -785,7 +785,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     if ( debug->debugparse_ip )
                         {
-                            Sagan_Log(DEBUG, "[%s] Inserting %s:%d into cache.", __FUNCTION__, ipaddr, port  );
+                            Sagan_Log(DEBUG, "[%s:%lu] Inserting %s:%d into cache.", __FUNCTION__, pthread_self(), ipaddr, port  );
                         }
 
                     strlcpy(lookup_cache[seek_position-1].ip, ipaddr, MAXIP);
@@ -805,7 +805,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     if ( debug->debugparse_ip )
         {
-            Sagan_Log(DEBUG, "[%s] Function complete.", __FUNCTION__ );
+            Sagan_Log(DEBUG, "[%s:%lu] Function complete.", __FUNCTION__, pthread_self() );
         }
 
     return(port);
