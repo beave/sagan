@@ -43,6 +43,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "parsers/parsers.h"
 
 #include "processors/blacklist.h"
 

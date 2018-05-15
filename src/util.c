@@ -417,26 +417,25 @@ void Between_Quotes(char *instr, char *str, size_t size)
 }
 
 /*****************************
- * CalcPct (Taken from Snort)
+ * CalcPct
  *****************************/
 
 double CalcPct(uint64_t cnt, uint64_t total)
 {
+
+    if ( total == 0 )
+        {
+            return(0);
+        }
+
     double pct = 0.0;
 
-    if (total == 0.0)
-        {
-            pct = (double)cnt;
-        }
-    else
-        {
-            pct = (double)cnt / (double)total;
-        }
-
-    pct *= 100.0;
+    pct = (double)cnt / (( (double)cnt + (double)total ) / 100 );
 
     return pct;
 }
+
+
 
 /********************************************************************
  * DNS lookup of hostnames.  Wired for IPv4 and IPv6.  Code largely

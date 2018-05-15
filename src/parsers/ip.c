@@ -39,6 +39,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <string.h>
+#include <pthread.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -79,7 +80,6 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
  
 
     int i=0;
-    int a=0;
 
     int num_colons = 0;
     int num_dots = 0;
@@ -457,7 +457,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                             port_test_int = atoi(port_test);
 
-                                            if ( port_test != 0 )
+                                            if ( port_test_int != 0 )
                                                 {
                                                     port = port_test_int;
                                                 }

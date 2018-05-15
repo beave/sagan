@@ -669,35 +669,32 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
 
     int i;
     int b;
+    int port;		/* Used to check if Parse_IP() was successful or not */
 
-    unsigned char ip[MAXIPBIT] = {0};
+    char ip[MAXIP] = { 0 };
+    unsigned char ip_bits[MAXIPBIT] = { 0 };
 
-//    for (i = 0; i < cache_size; i++)
-//        {
-
-
-    /* Failed to find next IP,  short circuit the process */
-    /*            if ( (lookup_cache[i].searched && lookup_cache[i].offset == 0 ) || !Parse_IP(syslog_message, i+1, NULL, sizeof(lookup_cache[i].ip), lookup_cache, cache_size))
-                    {
-                        return(false);
-                    }
-
-                if (!IP2Bit(lookup_cache[i].ip, ip))
-                    {
-                        continue;
-                    }
-    */
-
-    for ( b = 0; b < counters->brointel_addr_count; b++ )
+    for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip, sizeof(ip)))
+            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
+
+            if ( port == 0 )
                 {
-                    return(true);
+                    return(false);
+                }
+
+            IP2Bit(ip, ip_bits);
+
+            for ( b = 0; b < counters->brointel_addr_count; b++ )
+                {
+
+                    if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip_bits, sizeof(ip_bits)))
+                        {
+                            return(true);
+                        }
                 }
         }
-
-//       }
 
     return(false);
 }

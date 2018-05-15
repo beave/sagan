@@ -102,8 +102,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
-    char *lookup_status = NULL;
-
     struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
     lookup_cache = malloc(sizeof(struct _Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
