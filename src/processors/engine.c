@@ -114,15 +114,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     memset(lookup_cache, 0, sizeof(_Sagan_Lookup_Cache_Entry));
 
-    struct _Sagan_Lookup_Cache_Response *lookup_cache_response = NULL;
-    lookup_cache_response = malloc(sizeof(struct _Sagan_Lookup_Cache_Response));
-
-    if ( lookup_cache_response == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for lookup_cache_response. Abort!", __FILE__, __LINE__);
-        }
-
-
     int processor_info_engine_src_port = 0;
     int processor_info_engine_dst_port = 0;
     int processor_info_engine_proto = 0;

@@ -608,16 +608,8 @@ struct _Sagan_Lookup_Cache_Entry
 {
     char ip[MAXIP];
     int  port;
+    sbool status;
 };
-
-typedef struct _Sagan_Lookup_Cache_Response _Sagan_Lookup_Cache_Response;
-struct _Sagan_Lookup_Cache_Response
-{
-    char ip[MAXIP];
-    int  port;
-    struct _Sagan_Lookup_Cache_Entry *host_cache;
-};
-
 
 /* Function that require the above arrays */
 
