@@ -169,8 +169,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     struct timeval tp;
     int proto = 0;
 
-    sbool brointel_results = 0;
-    sbool blacklist_results = 0;
+    sbool brointel_results = false;
+    sbool blacklist_results = false;
 
     char *ip_src = NULL;
     char *ip_dst = NULL;
@@ -920,28 +920,28 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( rulestruct[b].blacklist_flag )
                                         {
 
-                                            blacklist_results = 0;
+                                            blacklist_results = false;
 
                                             if ( rulestruct[b].blacklist_ipaddr_src && ip_src_flag )
                                                 {
                                                     blacklist_results = Sagan_Blacklist_IPADDR( ip_src_bits );
                                                 }
 
-                                            if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_dst && ip_dst_flag )
+                                            if ( blacklist_results == false && rulestruct[b].blacklist_ipaddr_dst && ip_dst_flag )
                                                 {
                                                     blacklist_results = Sagan_Blacklist_IPADDR( ip_dst_bits );
                                                 }
 
-                                            if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_all )
+                                            if ( blacklist_results == false && rulestruct[b].blacklist_ipaddr_all )
                                                 {
                                                     blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message, lookup_cache);
                                                 }
 
-                                            if ( blacklist_results == 0 && rulestruct[b].blacklist_ipaddr_both && ip_src_flag && ip_dst_flag )
+                                            if ( blacklist_results == false && rulestruct[b].blacklist_ipaddr_both && ip_src_flag && ip_dst_flag )
                                                 {
                                                     if ( Sagan_Blacklist_IPADDR( ip_src_bits ) || Sagan_Blacklist_IPADDR( ip_dst_bits ) )
                                                         {
-                                                            blacklist_results = 1;
+                                                            blacklist_results = true;
                                                         }
                                                 }
                                         }
@@ -1058,62 +1058,62 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( rulestruct[b].brointel_flag )
                                         {
 
-                                            brointel_results = 0;
+                                            brointel_results = false;
 
                                             if ( rulestruct[b].brointel_ipaddr_src && ip_src_flag )
                                                 {
                                                     brointel_results = Sagan_BroIntel_IPADDR( ip_src_bits );
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_dst && ip_dst_flag )
+                                            if ( brointel_results == false && rulestruct[b].brointel_ipaddr_dst && ip_dst_flag )
                                                 {
                                                     brointel_results = Sagan_BroIntel_IPADDR( ip_dst_bits );
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_all )
+                                            if ( brointel_results == false && rulestruct[b].brointel_ipaddr_all )
                                                 {
                                                     brointel_results = Sagan_BroIntel_IPADDR_All ( SaganProcSyslog_LOCAL->syslog_message, lookup_cache, MAX_PARSE_IP);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_ipaddr_both && ip_src_flag && ip_dst_flag )
+                                            if ( brointel_results == false && rulestruct[b].brointel_ipaddr_both && ip_src_flag && ip_dst_flag )
                                                 {
                                                     if ( Sagan_BroIntel_IPADDR( ip_src_bits ) || Sagan_BroIntel_IPADDR( ip_dst_bits ) )
                                                         {
-                                                            brointel_results = 1;
+                                                            brointel_results = true;
                                                         }
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_domain )
+                                            if ( brointel_results == false && rulestruct[b].brointel_domain )
                                                 {
                                                     brointel_results = Sagan_BroIntel_DOMAIN(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_file_hash )
+                                            if ( brointel_results == false && rulestruct[b].brointel_file_hash )
                                                 {
                                                     brointel_results = Sagan_BroIntel_FILE_HASH(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_url )
+                                            if ( brointel_results == false && rulestruct[b].brointel_url )
                                                 {
                                                     brointel_results = Sagan_BroIntel_URL(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_software )
+                                            if ( brointel_results == false && rulestruct[b].brointel_software )
                                                 {
                                                     brointel_results = Sagan_BroIntel_SOFTWARE(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_user_name )
+                                            if ( brointel_results == false && rulestruct[b].brointel_user_name )
                                                 {
                                                     brointel_results = Sagan_BroIntel_USER_NAME(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_file_name )
+                                            if ( brointel_results == false && rulestruct[b].brointel_file_name )
                                                 {
                                                     brointel_results = Sagan_BroIntel_FILE_NAME(SaganProcSyslog_LOCAL->syslog_message);
                                                 }
 
-                                            if ( brointel_results == 0 && rulestruct[b].brointel_cert_hash )
+                                            if ( brointel_results == false && rulestruct[b].brointel_cert_hash )
                                                 {
                                                     brointel_results = Sagan_BroIntel_CERT_HASH(SaganProcSyslog_LOCAL->syslog_message);
                                                 }

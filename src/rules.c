@@ -183,7 +183,7 @@ void Load_Rules( const char *ruleset )
     int forward=0;
     int reverse=0;
 
-    sbool is_masked = false;
+    int is_masked = 0;
 
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
@@ -435,6 +435,7 @@ void Load_Rules( const char *ruleset )
                         }
 
                     /* First flow */
+
                     if ( netcount == 2 )
                         {
 
@@ -453,16 +454,16 @@ void Load_Rules( const char *ruleset )
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
                                         {
 
-                                            Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help));
+                                            Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if(!Is_IP(tok_help))
+                                            if ( !Is_IP(tok_help) || !Is_IPv6(tok_help) )
                                                 {
-                                                    Sagan_Log(WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
+                                                    Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }
 
                                             f1++;
 
-                                            is_masked = Netaddr_To_Range(tok_help, (unsigned char *)&rulestruct[counters->rulecount].flow_1[flow_1_count].range);
+                                            is_masked = Netaddr_To_Range(tmptoken, (unsigned char *)&rulestruct[counters->rulecount].flow_1[flow_1_count].range);
 
                                             if(strchr(tmptoken, '/'))
                                                 {
@@ -515,7 +516,7 @@ void Load_Rules( const char *ruleset )
                                     strlcpy(tmp4, nettmp, sizeof(tmp4));
                                     for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
                                         {
-                                            Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+                                            Strip_Chars(tmptoken, "not!", tok_help2);
                                             g1++;
                                             if (Is_Numeric(nettmp))
                                                 {
@@ -613,19 +614,22 @@ void Load_Rules( const char *ruleset )
                             else
                                 {
 
+
                                     strlcpy(tmp3, flow_b, sizeof(tmp3));
 
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
                                         {
 
-                                            Strip_Chars(tmptoken, "not!", tok_help, sizeof(tok_help));
+                                            Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if(!Is_IP(tok_help))
+                                            if( !Is_IP(tok_help) || !Is_IPv6(tok_help) )
                                                 {
-                                                    Sagan_Log(WARN,"[%s, line %d] Value is not a valid IP '%s'", __FILE__, __LINE__, tok_help);
+                                                    Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }
+
                                             f2++;
-                                            is_masked = Netaddr_To_Range(tok_help, (unsigned char *)&rulestruct[counters->rulecount].flow_2[flow_2_count].range);
+
+                                            is_masked = Netaddr_To_Range(tmptoken, (unsigned char *)&rulestruct[counters->rulecount].flow_2[flow_2_count].range);
 
                                             if(strchr(tmptoken, '/'))
                                                 {
@@ -672,7 +676,7 @@ void Load_Rules( const char *ruleset )
                                     strlcpy(tmp4, nettmp, sizeof(tmp4));
                                     for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
                                         {
-                                            Strip_Chars(tmptoken, "not!", tok_help2, sizeof(tok_help2));
+                                            Strip_Chars(tmptoken, "not!", tok_help2);
                                             g2++;
                                             if (Is_Numeric(nettmp))
                                                 {

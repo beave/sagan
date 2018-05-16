@@ -1280,8 +1280,10 @@ const char *Bit2IP(unsigned char *ipbits, char *str, size_t size)
 /* Convert an IP or IP/CIDR into 128bit IP and 128bit mask.             */
 /* Return if masked.  Assume that out is at least 32 bytes              */
 /************************************************************************/
-sbool Netaddr_To_Range( char *ipstr, unsigned char *out )
+int Netaddr_To_Range( char *ipstr, unsigned char *out )
 {
+
+    printf("ipstr: %s\n", ipstr);
 
     int mask;
     char *t = NULL;
@@ -1327,25 +1329,22 @@ sbool Starts_With(const char *str, const char *prefix)
 /* Strip characters from a string */
 /**********************************/
 
-void Strip_Chars(const char *string, const char *chars, char *str, size_t size)
+void Strip_Chars(const char *string, const char *chars, char *str)
 {
 
-    int counter = 0;
+    int i = 0;
+    char newstr[128] = { 0 };
 
-    for ( ; *string,counter<size; string++ )
+    for ( i = 0; i<strlen(string); i++)
         {
+
             if (!strchr(chars, *string))
                 {
-                    str[ counter ] = *string;
-                    ++ counter;
+                    str[i] = string[i];
+                    str[i+1] = '\0';
                 }
-        }
-    if (counter >= size)
-        {
-            counter = size - 1;
-        }
 
-    str[counter] = 0;
+        }
 
 }
 

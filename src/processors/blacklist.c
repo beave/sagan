@@ -98,6 +98,7 @@ void Sagan_Blacklist_Load ( void )
     unsigned char maskbits[MAXIPBIT]= { 0 };
 
     int line_count;
+    int item_count;
     int i;
 
     sbool found = 0;
@@ -108,11 +109,10 @@ void Sagan_Blacklist_Load ( void )
 
     blacklist_filename = strtok_r(config->blacklist_files, ",", &ptmp);
 
+    Sagan_Log(NORMAL, "");
+
     while ( blacklist_filename != NULL )
         {
-
-            Sagan_Log(NORMAL, "Blacklist Processor Loading File: %s.", blacklist_filename);
-
 
             if (( blacklist = fopen(blacklist_filename, "r" )) == NULL )
                 {
@@ -121,6 +121,7 @@ void Sagan_Blacklist_Load ( void )
 
 
             line_count = 0;
+            item_count = 0;
 
             while(fgets(blacklistbuf, 1024, blacklist) != NULL)
                 {
@@ -229,6 +230,8 @@ void Sagan_Blacklist_Load ( void )
                                     memcpy(SaganBlacklist[counters->blacklist_count].range.ipbits, ipbits, sizeof(ipbits));
                                     memcpy(SaganBlacklist[counters->blacklist_count].range.maskbits, maskbits, sizeof(maskbits));
 
+                                    item_count++;
+
                                     pthread_mutex_lock(&CounterBlacklistGenericMutex);
                                     counters->blacklist_count++;
                                     pthread_mutex_unlock(&CounterBlacklistGenericMutex);
@@ -238,6 +241,9 @@ void Sagan_Blacklist_Load ( void )
                 }
 
             fclose(blacklist);
+
+            Sagan_Log(NORMAL, "Blacklist Processor Loaded File: %s (File: %d, Total: %d)", blacklist_filename, item_count, counters->blacklist_count++);
+
             blacklist_filename = strtok_r(NULL, ",", &ptmp);
 
         }

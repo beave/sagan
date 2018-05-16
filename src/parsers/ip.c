@@ -77,7 +77,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     sbool valid = false ;
     sbool pass_all = false;
- 
+
 
     int i=0;
 
@@ -177,7 +177,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                 }
 
             valid = false;		/* Reset to not valid */
-	    pass_all = false; 
+            pass_all = false;
 
             if ( debug->debugparse_ip )
                 {
@@ -218,14 +218,13 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( current_position == seek_position )
                                 {
-				
 
                                     if ( debug->debugparse_ip )
                                         {
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
-			
-				    pass_all = true; 
+
+                                    pass_all = true;
                                     ipaddr = ptr1;
 
                                     ptr1 = strtok_r(NULL, " ", &ptr2);
@@ -333,7 +332,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ptr1;
                                     break;
                                 }
@@ -366,7 +365,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                         Sagan_Log(DEBUG, "[%s:%lu] Good position", __FUNCTION__, pthread_self() );
                                     }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ptr1;
 
                                     /* Look for "fe80::b614:89ff:fe11:5e24 port 1234" */
@@ -505,7 +504,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ptr1;
                                     break;
                                 }
@@ -548,7 +547,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ip_1;
 
                                     /* In many cases, the port is after the : */
@@ -591,7 +590,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ip_2;
                                     break;
                                 }
@@ -631,7 +630,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ip_1;
 
                                     /* In many cases, the port is after the : */
@@ -673,7 +672,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ip_2;
                                     break;
                                 }
@@ -714,7 +713,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self()  );
                                         }
 
-				    pass_all = true;
+                                    pass_all = true;
                                     ipaddr = ip_1;
 
                                     /* In many cases, the port is after the : */
@@ -755,8 +754,8 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                         {
                                             Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
                                         }
-	
-				    pass_all = true;
+
+                                    pass_all = true;
                                     ipaddr = ip_2;
                                     break;
                                 }
@@ -790,7 +789,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     strlcpy(lookup_cache[seek_position-1].ip, config->sagan_host, MAXIP);
                     lookup_cache[seek_position-1].port = config->sagan_port;
-		    lookup_cache[seek_position-1].status = true;
+                    lookup_cache[seek_position-1].status = true;
                     snprintf(str, size, "%s", config->sagan_host);
 
                 }
@@ -804,7 +803,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                     strlcpy(lookup_cache[seek_position-1].ip, ipaddr, MAXIP);
                     lookup_cache[seek_position-1].port = port;
-		    lookup_cache[seek_position-1].status = true;
+                    lookup_cache[seek_position-1].status = true;
                     snprintf(str, size, "%s", ipaddr);
 
                 }
