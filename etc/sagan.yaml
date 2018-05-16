@@ -287,6 +287,8 @@ processors:
   # identifies any hosts/networks in a log message from the list, an alert
   # will be generated.  The list can be in a IP (192.168.1.1) or CIDR format
   # (192.168.1.0/24).  Rule identified as -blacklist.rules use this data.  
+  # You can load multiple blacklists by seperating them via comma.  For 
+  # example; filename: "$RULE_PATH/list1.txt, $RULE_PATH/list2.txt". 
 
   - blacklist: 
       enabled: no
