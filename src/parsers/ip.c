@@ -23,7 +23,12 @@
  * Simple method of "finding" the "real" IP address from a syslog message.  This
  * works with OpenSSH and messages of that nature.  An example message might be:
  * "Invalid login from 12.145.241.50".  This will pull the 12.145.241.50.  This
- * is part of the "parse_ip" Sagan rules flag.
+ * is part of the "parse_src_ip/parse_src_dst" Sagan rules flag.
+ *
+ * 2018/05 - Added a new "cache" system so Sagan doesn't have to repeatedly 
+ * parse logs.  Support IPv6 and will attempt to pull the port if avaliable.
+ *
+ * TODO: PROTO? If we have it?
  *
  */
 

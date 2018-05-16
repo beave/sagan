@@ -59,7 +59,7 @@
 #include "processors/perfmon.h"
 #include "rules.h"
 #include "ignore-list.h"
-#include "check-flow.h"
+#include "flow.h"
 
 #include "processors/blacklist.h"
 #include "processors/track-clients.h"

@@ -48,7 +48,7 @@
 #include "rules.h"
 #include "sagan-config.h"
 #include "ipc.h"
-#include "check-flow.h"
+#include "flow.h"
 #include "after.h"
 #include "threshold.h"
 

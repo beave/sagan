@@ -31,7 +31,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        xbit.c \
                                                        xbit-mmap.c \
                                                        xbit-redis.c \
-                                                       check-flow.c\
+                                                       flow.c\
                                                        aetas.c \
                                                        ipc.c \
                                                        util.c \
