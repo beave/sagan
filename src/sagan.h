@@ -611,6 +611,12 @@ struct _Sagan_Lookup_Cache_Entry
     sbool status;
 };
 
+typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Other;
+struct _Sagan_Lookup_Cache_Other
+{
+	    int proto;
+};
+
 /* Function that require the above arrays */
 
 int64_t   FlowGetId( _Sagan_Event *);

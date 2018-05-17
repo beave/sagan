@@ -56,7 +56,7 @@
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, struct _Sagan_Lookup_Cache_Entry *lookup_cache )
+int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cache )
 {
 
     if ( debug->debugparse_ip )
@@ -70,9 +70,16 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     char mod_string[MAX_SYSLOGMSG] = { 0 };
 
+    char tmp_token[64] = { 0 };
+
     char *ipaddr = NULL;
     char *ptr1 = NULL;
     char *ptr2 = NULL;
+
+    char *ptr3 = NULL;
+    char *ptr4 = NULL;
+
+
     char *ip_1 = NULL;
     char *ip_2 = NULL;
 
@@ -94,7 +101,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     /* We do seek_position-1 to use the entire array.  There is no
        parse_src_ip: 0 */
-
+/*
     if ( lookup_cache[seek_position-1].status == true )
         {
 
@@ -106,6 +113,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
             snprintf(str, size, "%s", lookup_cache[seek_position-1].ip);
             return(lookup_cache[seek_position-1].port);
         }
+	*/
 
     for (i=0; i<strlen(syslog_message); i++)
         {
@@ -147,6 +155,11 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
     while ( ptr1 != NULL )
         {
+
+//	    strlcpy(lookup_cache[current_position].ip, config->sagan_host, sizeof(lookup_cache[current_position].ip));
+
+//	    lookup_cache[current_position].port = config->sagan_port;
+//	    lookup_cache[current_position].status = 0;
 
             num_colons = 0;
             num_dots = 0;
@@ -216,27 +229,34 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                             if ( debug->debugparse_ip )
                                 {
-                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' position %d **", __FUNCTION__, pthread_self(), ptr1, current_position );
                                 }
 
-                            current_position++;
+//                            current_position++;
 
-                            if ( current_position == seek_position )
-                                {
+//                            if ( current_position == seek_position )
+//                                {
 
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
+//                                    if ( debug->debugparse_ip )
+//                                        {
+//                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
+//                                        }
 
-                                    pass_all = true;
-                                    ipaddr = ptr1;
+//                                    pass_all = true;
+//
+   			            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+//                                    ipaddr = ptr1;
 
-                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+				    strlcpy(tmp_token, ptr2, sizeof(tmp_token));
+
+				    ptr4 = tmp_token; 
+                                    ptr3 = strtok_r(NULL, " ", &ptr4);
+
+				    printf("tmp_token: |%s|\n", ptr4);
 
                                     /* Look for "192.168.1.1 port 1234" */
 
-                                    if ( ptr1 != NULL && strcasestr(ptr1, "port") )
+                                    if ( ptr3 != NULL && strcasestr(ptr3, "port") )
                                         {
 
                                             if ( debug->debugparse_ip )
@@ -244,16 +264,24 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                                     Sagan_Log(DEBUG, "[%s:%d] Identified the word 'port'", __FUNCTION__, pthread_self() );
                                                 }
 
-                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+                                            ptr3 = strtok_r(NULL, " ", &ptr4);
 
-                                            if ( ptr1 != NULL )
+                                            if ( ptr3 != NULL )
                                                 {
-                                                    port = atoi(ptr1);
+                                                    port = atoi(ptr3);
 
                                                     if ( port == 0 )
                                                         {
-                                                            port = config->sagan_port;
-                                                        }
+							    lookup_cache[current_position].port = config->sagan_port;
+//                                                            port = config->sagan_port;
+//
+                                                        } else {
+
+							    lookup_cache[current_position].port = port;
+							    }
+
+
+						    
 
                                                 }
 
@@ -262,8 +290,8 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                     /* Look for "192.168.1.1 source port: 1234" or
                                     "192.168.1.1 source port 1234" */
 
-                                    else if ( ptr1 != NULL && ( strcasestr(ptr1, "source") ||
-                                                                strcasestr(ptr1, "destination" ) ) )
+                                    else if ( ptr3 != NULL && ( strcasestr(ptr3, "source") ||
+                                                                strcasestr(ptr3, "destination" ) ) )
 
                                         {
 
@@ -272,9 +300,9 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                                     Sagan_Log(DEBUG, "[%s:%lu] Identified 'source' or 'destination'", __FUNCTION__, pthread_self() );
                                                 }
 
-                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+                                            ptr3 = strtok_r(NULL, " ", &ptr4);
 
-                                            if ( ptr1 != NULL && strcasestr(ptr1, "port" ) )
+                                            if ( ptr3 != NULL && strcasestr(ptr3, "port" ) )
                                                 {
 
                                                     if ( debug->debugparse_ip )
@@ -282,17 +310,22 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
                                                             Sagan_Log(DEBUG, "[%s:%lu] Identified 'port'.", __FUNCTION__, pthread_self() );
                                                         }
 
-                                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+                                                    ptr3 = strtok_r(NULL, " ", &ptr2);
 
-                                                    if ( ptr1 != NULL )
+                                                    if ( ptr3 != NULL )
                                                         {
 
-                                                            port = atoi(ptr1);
+                                                            port = atoi(ptr3);
 
                                                             if ( port == 0 )
                                                                 {
-                                                                    port = config->sagan_port;
-                                                                }
+ //                                                                   port = config->sagan_port;
+                                                             lookup_cache[current_position].port = config->sagan_port;
+                                                                } else {
+										
+							     lookup_cache[current_position].port = port;
+								}
+
 
                                                         }
 
@@ -300,9 +333,20 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
                                         }
 
-                                    break;
+//                                   break;
 
-                                }
+//                                }
+//
+			lookup_cache[current_position].status = 1;
+			current_position++;
+
+			/* If we've run to the end, we're done */
+
+			if ( current_position > MAX_PARSE_IP ) 
+				{
+				break;
+				}
+
                         }
 
                 }
@@ -311,8 +355,6 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
             if ( num_dots == 4 && ptr1[ strlen(ptr1)-1 ] == '.' )
                 {
-
-
 
                     /* Erase the period */
 
@@ -772,6 +814,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
 
         }
 
+    /*
 
     if ( pass_all == true )
         {
@@ -820,6 +863,7 @@ int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, s
             snprintf(str, size, "%s", config->sagan_host);
 
         }
+	*/
 
 
     if ( debug->debugparse_ip )

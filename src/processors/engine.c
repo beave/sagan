@@ -657,18 +657,36 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_src_ip: {position} */
 
+				    if ( rulestruct[b].s_find_src_ip == 1 ||
+					 rulestruct[b].s_find_src_ip == 1 ||
+					 rulestruct[b].blacklist_ipaddr_all == 1 ||
+#ifdef WITH_BLUEDOT					 
+					 rulestruct[b].bluedot_ipaddr_type == 4 ||
+#endif
+				         rulestruct[b].brointel_ipaddr_all == 1 )
+					    {
+
+					    proto = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
+							     lookup_cache );
+
+					    }
+
 
                                     if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == 1 )
                                         {
 
-                                            ip_srcport_u32 = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
-                                                                      rulestruct[b].s_find_src_pos,
-                                                                      parse_ip_src,
-                                                                      sizeof(parse_ip_src),
-                                                                      lookup_cache );
+					    if ( lookup_cache[rulestruct[b].s_find_src_pos-1].status == 1 ) 
+					    {
 
-                                            ip_src = parse_ip_src;
+					    ip_src = lookup_cache[rulestruct[b].s_find_src_pos-1].ip;
+					    ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
                                             ip_src_flag = true;
+
+					    } else { 
+
+					    ip_src_flag = false; 
+
+					    }
 
                                         }
 
@@ -677,15 +695,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( ip_dst_flag == false && rulestruct[b].s_find_dst_ip == 1 )
                                         {
 
-                                            ip_dstport_u32 = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
-                                                                      rulestruct[b].s_find_dst_pos,
-                                                                      parse_ip_dst,
-                                                                      sizeof(parse_ip_dst),
-                                                                      lookup_cache );
+					    if ( lookup_cache[rulestruct[b].s_find_dst_pos-1].status == 1 ) {
 
 
-                                            ip_dst = parse_ip_dst;
+					    ip_dst = lookup_cache[rulestruct[b].s_find_dst_pos-1].ip;
+					    ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
                                             ip_dst_flag = true;
+
+					    } else {
+
+					    ip_dst_flag = false; 
+
+					    }
 
                                         }
 

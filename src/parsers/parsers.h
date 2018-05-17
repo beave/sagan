@@ -24,7 +24,7 @@
 
 #include "parsers/strstr-asm/strstr-hook.h"
 
-int Parse_IP( char *syslog_message, int seek_position, char *str, size_t size, struct _Sagan_Lookup_Cache_Entry *lookup_cache );
+int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cache );
 
 int   Parse_Src_Port( char * );
 int   Parse_Dst_Port( char * );

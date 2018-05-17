@@ -300,14 +300,16 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
+//            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
 
-            if ( port == 0 )
+            if ( lookup_cache[i].status == 0 )
                 {
                     return(false);
                 }
 
-            IP2Bit(ip, ip_bits);
+//            IP2Bit(ip, ip_bits);
+	    
+	    IP2Bit(lookup_cache[i].ip, ip_bits);
 
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {
