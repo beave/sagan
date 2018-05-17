@@ -669,7 +669,6 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
 
     int i;
     int b;
-    int port;		/* Used to check if Parse_IP() was successful or not */
 
     char ip[MAXIP] = { 0 };
     unsigned char ip_bits[MAXIPBIT] = { 0 };
@@ -677,14 +676,12 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-//            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
-
-            if ( port == 0 )
+            if ( lookup_cache[i].status == 0 )
                 {
                     return(false);
                 }
 
-            IP2Bit(ip, ip_bits);
+            IP2Bit(lookup_cache[i].ip, ip_bits);
 
             for ( b = 0; b < counters->brointel_addr_count; b++ )
                 {

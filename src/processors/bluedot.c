@@ -1577,14 +1577,14 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
+	    printf("|%d|%s|\n", i, lookup_cache[i].ip);
 
-            if ( port == 0 )
+            if ( lookup_cache[i].status == 0 )
                 {
                     return(false);
                 }
 
-            bluedot_results = Sagan_Bluedot_Lookup(ip, BLUEDOT_LOOKUP_IP, rule_position);
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )
