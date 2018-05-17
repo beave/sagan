@@ -677,7 +677,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
     for (i = 1; i < MAX_PARSE_IP; i++)
         {
 
-            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
+//            port = Parse_IP( syslog_message, i, ip, MAXIP, lookup_cache);
 
             if ( port == 0 )
                 {

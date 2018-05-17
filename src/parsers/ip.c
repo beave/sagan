@@ -25,10 +25,35 @@
  * "Invalid login from 12.145.241.50".  This will pull the 12.145.241.50.  This
  * is part of the "parse_src_ip/parse_src_dst" Sagan rules flag.
  *
- * 2018/05 - Added a new "cache" system so Sagan doesn't have to repeatedly 
- * parse logs.  Support IPv6 and will attempt to pull the port if avaliable.
+ * 2018/05/17 - Added a new "cache" system so Sagan doesn't have to repeatedly
+ * parse logs.  Support IPv6 and will attempt to pull the port and protocol
+ *  if avaliable.
  *
- * TODO: PROTO? If we have it?
+ * What this detects:
+ *
+ * IPv4
+ * -----------------------------------------------------------------------
+ *
+ * 192.168.2.1				# Stand alone IP
+ * 192.168.2.1. 			# Trailing period.
+ * [192.168.2.1]			# Or anything like "192.168.2.1", etc
+ * 192.168.2.1:1234
+ * 192.168.2.1#1234
+ * 192.168.2.1 port 1234
+ * 192.168.2.1 source port 1234
+ * 192.168.2.1 source port: 1234	# Windows style.
+ * 192.168.2.1 destination port 1234
+ * 192.168.2.1 desitnation port: 1234	# Windows style.
+ * inet#192.168.2.1
+ *
+ * IPv6
+ * -----------------------------------------------------------------------
+ *
+ * fe80::b614:89ff:fe11:5e24		# Stand alone IPv6
+ * fe80::b614:89ff:fe11:5e24.		# Trailing period.
+ * fe80::b614:89ff:fe11:5e24#1234
+ * inet#fe80::b614:89ff:fe11:5e24
+ * [fe80::b614:89ff:fe11:5e24]:80	# Traditional style.
  *
  */
 
@@ -86,10 +111,9 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
     char port_test[6] = { 0 };
     int  port_test_int = 0;
 
+    int proto = 0;
 
     sbool valid = false ;
-    sbool pass_all = false;
-
 
     int i=0;
 
@@ -98,22 +122,6 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
     int num_hashes = 0;
 
     int port = config->sagan_port;
-
-    /* We do seek_position-1 to use the entire array.  There is no
-       parse_src_ip: 0 */
-/*
-    if ( lookup_cache[seek_position-1].status == true )
-        {
-
-            if ( debug->debugparse_ip )
-                {
-                    Sagan_Log(DEBUG, "[%s:%lu] Pulled %s:%d from cache. Position %d", __FUNCTION__, pthread_self(), lookup_cache[seek_position-1].ip, lookup_cache[seek_position-1].port, seek_position );
-                }
-
-            snprintf(str, size, "%s", lookup_cache[seek_position-1].ip);
-            return(lookup_cache[seek_position-1].port);
-        }
-	*/
 
     for (i=0; i<strlen(syslog_message); i++)
         {
@@ -156,11 +164,6 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
     while ( ptr1 != NULL )
         {
 
-//	    strlcpy(lookup_cache[current_position].ip, config->sagan_host, sizeof(lookup_cache[current_position].ip));
-
-//	    lookup_cache[current_position].port = config->sagan_port;
-//	    lookup_cache[current_position].status = 0;
-
             num_colons = 0;
             num_dots = 0;
             num_hashes = 0;
@@ -195,12 +198,47 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                 }
 
             valid = false;		/* Reset to not valid */
-            pass_all = false;
 
             if ( debug->debugparse_ip )
                 {
                     Sagan_Log(DEBUG, "[%s:%lu] Colons: %d, Dots: %d, Hashes: %d", __FUNCTION__, pthread_self(), num_colons, num_dots, num_hashes );
                 }
+
+            if ( !strcasecmp(ptr1, "tcp" ) )
+                {
+
+                    if ( debug->debugparse_ip )
+                        {
+                            Sagan_Log(DEBUG, "[%s:%lu] Protocal TCP detected.", __FUNCTION__, pthread_self() );
+                        }
+
+                    proto = 6;
+                }
+
+            else if ( !strcasecmp(ptr1, "udp" ) )
+                {
+
+                    if ( debug->debugparse_ip )
+                        {
+                            Sagan_Log(DEBUG, "[%s:%lu] Protocal UDP detected.", __FUNCTION__, pthread_self() );
+                        }
+
+                    proto = 17;
+
+                }
+
+            else if ( !strcasecmp(ptr1, "icmp" ) )
+                {
+
+                    if ( debug->debugparse_ip )
+                        {
+                            Sagan_Log(DEBUG, "[%s:%lu] Protocal ICMP detected.", __FUNCTION__, pthread_self() );
+                        }
+
+                    proto = 1;
+
+                }
+
 
             /* Needs to have proper IPv6 or IPv4 encoding. num_dots > 4 is for IP with trailing
             period. */
@@ -217,6 +255,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                     continue;
                 }
 
+
             /* Stand alone IPv4 address */
 
             if ( num_dots == 3 && num_colons == 0 )
@@ -232,120 +271,106 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' position %d **", __FUNCTION__, pthread_self(), ptr1, current_position );
                                 }
 
-//                            current_position++;
+                            /* Grab the IP */
 
-//                            if ( current_position == seek_position )
-//                                {
+                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
 
-//                                    if ( debug->debugparse_ip )
-//                                        {
-//                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-//                                        }
+                            /* Preserve the array */
 
-//                                    pass_all = true;
-//
-   			            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
-//                                    ipaddr = ptr1;
+                            strlcpy(tmp_token, ptr2, sizeof(tmp_token));
 
-				    strlcpy(tmp_token, ptr2, sizeof(tmp_token));
+                            ptr4 = tmp_token;
+                            ptr3 = strtok_r(NULL, " ", &ptr4);
 
-				    ptr4 = tmp_token; 
+                            /* Look for "192.168.1.1 port 1234" */
+
+                            if ( ptr3 != NULL && strcasestr(ptr3, "port") )
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s:%d] Identified the word 'port'", __FUNCTION__, pthread_self() );
+                                        }
+
                                     ptr3 = strtok_r(NULL, " ", &ptr4);
 
-				    printf("tmp_token: |%s|\n", ptr4);
+                                    if ( ptr3 != NULL )
+                                        {
+                                            port = atoi(ptr3);
 
-                                    /* Look for "192.168.1.1 port 1234" */
+                                            if ( port == 0 )
+                                                {
+                                                    lookup_cache[current_position].port = config->sagan_port;
+//
+                                                }
+                                            else
+                                                {
 
-                                    if ( ptr3 != NULL && strcasestr(ptr3, "port") )
+                                                    lookup_cache[current_position].port = port;
+
+                                                }
+                                        }
+
+                                }
+
+                            /* Look for "192.168.1.1 source port: 1234" or
+                            "192.168.1.1 source port 1234" */
+
+                            else if ( ptr3 != NULL && ( strcasestr(ptr3, "source") ||
+                                                        strcasestr(ptr3, "destination" ) ) )
+
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s:%lu] Identified 'source' or 'destination'", __FUNCTION__, pthread_self() );
+                                        }
+
+                                    ptr3 = strtok_r(NULL, " ", &ptr4);
+
+                                    if ( ptr3 != NULL && strcasestr(ptr3, "port" ) )
                                         {
 
                                             if ( debug->debugparse_ip )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s:%d] Identified the word 'port'", __FUNCTION__, pthread_self() );
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified 'port'.", __FUNCTION__, pthread_self() );
                                                 }
 
                                             ptr3 = strtok_r(NULL, " ", &ptr4);
 
                                             if ( ptr3 != NULL )
                                                 {
+
                                                     port = atoi(ptr3);
 
                                                     if ( port == 0 )
                                                         {
-							    lookup_cache[current_position].port = config->sagan_port;
-//                                                            port = config->sagan_port;
-//
-                                                        } else {
 
-							    lookup_cache[current_position].port = port;
-							    }
+                                                            lookup_cache[current_position].port = config->sagan_port;
 
+                                                        }
+                                                    else
+                                                        {
 
-						    
+                                                            lookup_cache[current_position].port = port;
+                                                        }
+
 
                                                 }
 
                                         }
 
-                                    /* Look for "192.168.1.1 source port: 1234" or
-                                    "192.168.1.1 source port 1234" */
+                                }
 
-                                    else if ( ptr3 != NULL && ( strcasestr(ptr3, "source") ||
-                                                                strcasestr(ptr3, "destination" ) ) )
+                            lookup_cache[current_position].status = 1;
+                            current_position++;
 
-                                        {
+                            /* If we've run to the end, we're done */
 
-                                            if ( debug->debugparse_ip )
-                                                {
-                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified 'source' or 'destination'", __FUNCTION__, pthread_self() );
-                                                }
-
-                                            ptr3 = strtok_r(NULL, " ", &ptr4);
-
-                                            if ( ptr3 != NULL && strcasestr(ptr3, "port" ) )
-                                                {
-
-                                                    if ( debug->debugparse_ip )
-                                                        {
-                                                            Sagan_Log(DEBUG, "[%s:%lu] Identified 'port'.", __FUNCTION__, pthread_self() );
-                                                        }
-
-                                                    ptr3 = strtok_r(NULL, " ", &ptr2);
-
-                                                    if ( ptr3 != NULL )
-                                                        {
-
-                                                            port = atoi(ptr3);
-
-                                                            if ( port == 0 )
-                                                                {
- //                                                                   port = config->sagan_port;
-                                                             lookup_cache[current_position].port = config->sagan_port;
-                                                                } else {
-										
-							     lookup_cache[current_position].port = port;
-								}
-
-
-                                                        }
-
-                                                }
-
-                                        }
-
-//                                   break;
-
-//                                }
-//
-			lookup_cache[current_position].status = 1;
-			current_position++;
-
-			/* If we've run to the end, we're done */
-
-			if ( current_position > MAX_PARSE_IP ) 
-				{
-				break;
-				}
+                            if ( current_position > MAX_PARSE_IP )
+                                {
+                                    break;
+                                }
 
                         }
 
@@ -369,20 +394,17 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
+                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            lookup_cache[current_position].port = config->sagan_port;
+                            lookup_cache[current_position].status = 1;
+
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ptr1;
                                     break;
                                 }
+
 
                         }
 
@@ -403,23 +425,61 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
-                            current_position++;
+                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
 
-                            if ( current_position == seek_position )
+                            /* Look for "fe80::b614:89ff:fe11:5e24 port 1234" */
+
+                            strlcpy(tmp_token, ptr2, sizeof(tmp_token));
+
+                            ptr4 = tmp_token;
+                            ptr3 = strtok_r(NULL, " ", &ptr4);
+
+                            if ( ptr3 != NULL && strcasestr(ptr3, "port") )
                                 {
 
-                                    {
-                                        Sagan_Log(DEBUG, "[%s:%lu] Good position", __FUNCTION__, pthread_self() );
-                                    }
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'port'", __FUNCTION__, pthread_self() );
+                                        }
 
-                                    pass_all = true;
-                                    ipaddr = ptr1;
 
-                                    /* Look for "fe80::b614:89ff:fe11:5e24 port 1234" */
+                                    ptr3 = strtok_r(NULL, " ", &ptr4);
 
-                                    ptr1 = strtok_r(NULL, " ", &ptr2);
+                                    if ( ptr3 != NULL )
+                                        {
+                                            port = atoi(ptr3);
 
-                                    if ( ptr1 != NULL && strcasestr(ptr1, "port") )
+                                            if ( port == 0 )
+                                                {
+                                                    lookup_cache[current_position].port = port;
+                                                }
+                                            else
+                                                {
+                                                    lookup_cache[current_position].port = config->sagan_port;
+                                                }
+
+
+                                        }
+
+                                }
+
+                            /* Look for "fe80::b614:89ff:fe11:5e24 source port: 1234" or
+                            "fe80::b614:89ff:fe11:5e24 source port 1234" */
+
+                            else if ( ptr3 != NULL && ( strcasestr(ptr3, "source") ||
+                                                        strcasestr(ptr3, "destination" ) ) )
+
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'source' or 'destination'", __FUNCTION__, pthread_self() );
+                                        }
+
+
+                                    ptr3 = strtok_r(NULL, " ", &ptr4);
+
+                                    if ( ptr3 != NULL && strcasestr(ptr3, "port" ) )
                                         {
 
                                             if ( debug->debugparse_ip )
@@ -428,94 +488,64 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                                 }
 
 
-                                            ptr1 = strtok_r(NULL, " ", &ptr2);
+                                            ptr3 = strtok_r(NULL, " ", &ptr4);
 
-                                            if ( ptr1 != NULL )
+                                            if ( ptr3 != NULL )
                                                 {
-                                                    port = atoi(ptr1);
+
+                                                    port = atoi(ptr3);
 
                                                     if ( port == 0 )
                                                         {
-                                                            port = config->sagan_port;
+                                                            lookup_cache[current_position].port = config->sagan_port;
                                                         }
-
-                                                }
-
-                                        }
-
-                                    /* Look for "fe80::b614:89ff:fe11:5e24 source port: 1234" or
-                                    "fe80::b614:89ff:fe11:5e24 source port 1234" */
-
-                                    else if ( ptr1 != NULL && ( strcasestr(ptr1, "source") ||
-                                                                strcasestr(ptr1, "destination" ) ) )
-
-                                        {
-
-                                            if ( debug->debugparse_ip )
-                                                {
-                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'source' or 'destination'", __FUNCTION__, pthread_self() );
-                                                }
-
-
-                                            ptr1 = strtok_r(NULL, " ", &ptr2);
-
-                                            if ( ptr1 != NULL && strcasestr(ptr1, "port" ) )
-                                                {
-
-                                                    if ( debug->debugparse_ip )
+                                                    else
                                                         {
-                                                            Sagan_Log(DEBUG, "[%s:%lu] Identified the word 'port'", __FUNCTION__, pthread_self() );
-                                                        }
-
-
-                                                    ptr1 = strtok_r(NULL, " ", &ptr2);
-
-                                                    if ( ptr1 != NULL )
-                                                        {
-
-                                                            port = atoi(ptr1);
-
-                                                            if ( port == 0 )
-                                                                {
-                                                                    port = config->sagan_port;
-                                                                }
-
+                                                            lookup_cache[current_position].port = port;
                                                         }
 
                                                 }
 
                                         }
 
-                                    /* IPv6 [fe80::b614:89ff:fe11:5e24]:443 */
+                                }
 
-                                    else if ( ptr1 != NULL && ptr1[0] == ':' )
+                            /* IPv6 [fe80::b614:89ff:fe11:5e24]:443 */
+
+                            else if ( ptr3 != NULL && ptr3[0] == ':' )
+                                {
+
+                                    if ( debug->debugparse_ip )
                                         {
-
-                                            if ( debug->debugparse_ip )
-                                                {
-                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified possible [IPv6]:PORT", __FUNCTION__, pthread_self() );
-                                                }
-
-                                            for ( i = 1; i < strlen(ptr1); i++ )
-                                                {
-                                                    port_test[i-1] = ptr1[i];
-                                                }
-
-                                            port_test_int = atoi(port_test);
-
-                                            if ( port_test_int != 0 )
-                                                {
-                                                    port = port_test_int;
-                                                }
-                                            else
-                                                {
-                                                    port = config->sagan_port;
-                                                }
-
+                                            Sagan_Log(DEBUG, "[%s:%lu] Identified possible [IPv6]:PORT", __FUNCTION__, pthread_self() );
                                         }
 
+                                    for ( i = 1; i < strlen(ptr3); i++ )
+                                        {
+                                            port_test[i-1] = ptr3[i];
+                                        }
+
+                                    port_test_int = atoi(port_test);
+
+                                    if ( port_test_int == 0 )
+                                        {
+                                            lookup_cache[current_position].port = config->sagan_port;
+                                        }
+                                    else
+                                        {
+                                            lookup_cache[current_position].port = port_test_int;
+                                        }
+
+                                }
+
+                            lookup_cache[current_position].status = 1;
+                            current_position++;
+
+                            if ( current_position > MAX_PARSE_IP )
+                                {
                                     break;
                                 }
+
                         }
 
                 }
@@ -540,19 +570,14 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                                 }
 
+                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            lookup_cache[current_position].port = config->sagan_port;
+                            lookup_cache[current_position].status = 1;
 
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ptr1;
                                     break;
                                 }
 
@@ -583,31 +608,27 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv4:PORT address. **", __FUNCTION__, pthread_self() );
                                 }
 
+                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
 
+                            /* In many cases, the port is after the : */
+
+                            port = atoi(ip_2);
+
+                            if ( port == 0 )
+                                {
+                                    lookup_cache[current_position].port = config->sagan_port;
+                                }
+                            else
+                                {
+                                    lookup_cache[current_position].port = port;
+                                }
+
+                            lookup_cache[current_position].status = 1;
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ip_1;
-
-                                    /* In many cases, the port is after the : */
-
-                                    port = atoi(ip_2);
-
-                                    if ( port == 0 )
-                                        {
-                                            port = config->sagan_port;
-                                        }
-
                                     break;
-
                                 }
 
                         }
@@ -626,21 +647,17 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE:IPv4 **", __FUNCTION__, pthread_self() );
                                 }
 
+                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            lookup_cache[current_position].port = config->sagan_port;
 
+                            lookup_cache[current_position].status = 1;
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ip_2;
                                     break;
                                 }
+
                         }
 
                 }
@@ -667,30 +684,30 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv4#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
+
+                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+
+                            /* In many cases, the port is after the : */
+
+                            port = atoi(ip_2);
+
+                            if ( port == 0 )
+                                {
+                                    lookup_cache[current_position].port = config->sagan_port;
+                                }
+                            else
+                                {
+                                    lookup_cache[current_position].port = port;
+                                }
+
+                            lookup_cache[current_position].status = 1;
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            /* If we've run to the end, we're done */
+
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ip_1;
-
-                                    /* In many cases, the port is after the : */
-
-                                    port = atoi(ip_2);
-
-                                    if ( port == 0 )
-                                        {
-                                            port = config->sagan_port;
-                                        }
-
                                     break;
-
                                 }
 
                         }
@@ -709,20 +726,20 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
+                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            lookup_cache[current_position].port = config->sagan_port;
+
+                            lookup_cache[current_position].status = 1;
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            /* If we've run to the end, we're done */
+
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ip_2;
                                     break;
                                 }
+
+
                         }
 
                 }
@@ -750,30 +767,32 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv6#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
-                            current_position++;
 
-                            if ( current_position == seek_position )
+                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+
+                            /* In many cases, the port is after the : */
+
+                            port = atoi(ip_2);
+
+                            if ( port == 0 )
+                                {
+                                    lookup_cache[current_position].port = config->sagan_port;
+
+                                }
+                            else
                                 {
 
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self()  );
-                                        }
+                                    lookup_cache[current_position].port = port;
+                                }
 
-                                    pass_all = true;
-                                    ipaddr = ip_1;
+                            lookup_cache[current_position].status = 1;
+                            current_position++;
 
-                                    /* In many cases, the port is after the : */
+                            /* If we've run to the end, we're done */
 
-                                    port = atoi(ip_2);
-
-                                    if ( port == 0 )
-                                        {
-                                            port = config->sagan_port;
-                                        }
-
+                            if ( current_position > MAX_PARSE_IP )
+                                {
                                     break;
-
                                 }
 
                         }
@@ -792,20 +811,21 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE#IPv6 **", __FUNCTION__, pthread_self() );
                                 }
 
+
+                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            lookup_cache[current_position].port = config->sagan_port;
+
+                            lookup_cache[current_position].status = 1;
                             current_position++;
 
-                            if ( current_position == seek_position )
+                            /* If we've run to the end, we're done */
+
+                            if ( current_position > MAX_PARSE_IP )
                                 {
-
-                                    if ( debug->debugparse_ip )
-                                        {
-                                            Sagan_Log(DEBUG, "[%s:%lu] Position is good.", __FUNCTION__, pthread_self() );
-                                        }
-
-                                    pass_all = true;
-                                    ipaddr = ip_2;
                                     break;
                                 }
+
+
                         }
 
                 }
@@ -814,63 +834,6 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
         }
 
-    /*
-
-    if ( pass_all == true )
-        {
-
-            if ( debug->debugparse_ip )
-                {
-                    Sagan_Log(DEBUG, "[%s:%lu] Final: %s:%d", __FUNCTION__, pthread_self(), ipaddr, port );
-                }
-
-            if (ipaddr == NULL ||
-                    !strcmp(ipaddr, "127.0.0.1") ||
-                    !strcmp(ipaddr, "::1") ||
-                    !strcmp(ipaddr, "::ffff:127.0.0.1"))
-                {
-
-                    if ( debug->debugparse_ip )
-                        {
-                            Sagan_Log(DEBUG, "[%s:%lu] Inserting %s:%d into cache.", __FUNCTION__, pthread_self(), config->sagan_host, config->sagan_port );
-                        }
-
-                    strlcpy(lookup_cache[seek_position-1].ip, config->sagan_host, MAXIP);
-                    lookup_cache[seek_position-1].port = config->sagan_port;
-                    lookup_cache[seek_position-1].status = true;
-                    snprintf(str, size, "%s", config->sagan_host);
-
-                }
-            else
-                {
-
-                    if ( debug->debugparse_ip )
-                        {
-                            Sagan_Log(DEBUG, "[%s:%lu] Inserting %s:%d into cache.", __FUNCTION__, pthread_self(), ipaddr, port  );
-                        }
-
-                    strlcpy(lookup_cache[seek_position-1].ip, ipaddr, MAXIP);
-                    lookup_cache[seek_position-1].port = port;
-                    lookup_cache[seek_position-1].status = true;
-                    snprintf(str, size, "%s", ipaddr);
-
-                }
-
-        }
-    else
-        {
-
-            snprintf(str, size, "%s", config->sagan_host);
-
-        }
-	*/
-
-
-    if ( debug->debugparse_ip )
-        {
-            Sagan_Log(DEBUG, "[%s:%lu] Function complete.", __FUNCTION__, pthread_self() );
-        }
-
-    return(port);
+    return(proto);
 }
 

@@ -308,8 +308,8 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
                 }
 
 //            IP2Bit(ip, ip_bits);
-	    
-	    IP2Bit(lookup_cache[i].ip, ip_bits);
+
+            IP2Bit(lookup_cache[i].ip, ip_bits);
 
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {

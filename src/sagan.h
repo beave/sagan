@@ -614,7 +614,7 @@ struct _Sagan_Lookup_Cache_Entry
 typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Other;
 struct _Sagan_Lookup_Cache_Other
 {
-	    int proto;
+    int proto;
 };
 
 /* Function that require the above arrays */

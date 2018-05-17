@@ -657,36 +657,36 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_src_ip: {position} */
 
-				    if ( rulestruct[b].s_find_src_ip == 1 ||
-					 rulestruct[b].s_find_src_ip == 1 ||
-					 rulestruct[b].blacklist_ipaddr_all == 1 ||
-#ifdef WITH_BLUEDOT					 
-					 rulestruct[b].bluedot_ipaddr_type == 4 ||
+                                    if ( rulestruct[b].s_find_src_ip == 1 ||
+                                            rulestruct[b].s_find_src_ip == 1 ||
+                                            rulestruct[b].blacklist_ipaddr_all == 1 ||
+#ifdef WITH_BLUEDOT
+                                            rulestruct[b].bluedot_ipaddr_type == 4 ||
 #endif
-				         rulestruct[b].brointel_ipaddr_all == 1 )
-					    {
+                                            rulestruct[b].brointel_ipaddr_all == 1 )
+                                        {
 
-					    proto = Parse_IP(SaganProcSyslog_LOCAL->syslog_message,
-							     lookup_cache );
+                                            proto = Parse_IP(SaganProcSyslog_LOCAL->syslog_message, lookup_cache );
 
-					    }
-
+                                        }
 
                                     if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == 1 )
                                         {
 
-					    if ( lookup_cache[rulestruct[b].s_find_src_pos-1].status == 1 ) 
-					    {
+                                            if ( lookup_cache[rulestruct[b].s_find_src_pos-1].status == 1 )
+                                                {
 
-					    ip_src = lookup_cache[rulestruct[b].s_find_src_pos-1].ip;
-					    ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
-                                            ip_src_flag = true;
+                                                    ip_src = lookup_cache[rulestruct[b].s_find_src_pos-1].ip;
+                                                    ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
+                                                    ip_src_flag = true;
 
-					    } else { 
+                                                }
+                                            else
+                                                {
 
-					    ip_src_flag = false; 
+                                                    ip_src_flag = false;
 
-					    }
+                                                }
 
                                         }
 
@@ -695,18 +695,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( ip_dst_flag == false && rulestruct[b].s_find_dst_ip == 1 )
                                         {
 
-					    if ( lookup_cache[rulestruct[b].s_find_dst_pos-1].status == 1 ) {
+                                            if ( lookup_cache[rulestruct[b].s_find_dst_pos-1].status == 1 )
+                                                {
 
 
-					    ip_dst = lookup_cache[rulestruct[b].s_find_dst_pos-1].ip;
-					    ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
-                                            ip_dst_flag = true;
+                                                    ip_dst = lookup_cache[rulestruct[b].s_find_dst_pos-1].ip;
+                                                    ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
+                                                    ip_dst_flag = true;
 
-					    } else {
+                                                }
+                                            else
+                                                {
 
-					    ip_dst_flag = false; 
+                                                    ip_dst_flag = false;
 
-					    }
+                                                }
 
                                         }
 
@@ -741,14 +744,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* If the rule calls for proto searching,  we do it now */
 
-                                    proto = 0;
-
                                     if ( rulestruct[b].s_find_proto_program == 1 )
                                         {
                                             proto = Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                                         }
 
-                                    if ( rulestruct[b].s_find_proto == 1 && proto == 0 )
+                                    if ( proto == 0 && rulestruct[b].s_find_proto == 1 && proto == 0 )
                                         {
                                             proto = Parse_Proto(SaganProcSyslog_LOCAL->syslog_message);
                                         }
