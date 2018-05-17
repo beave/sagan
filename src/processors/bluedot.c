@@ -1574,10 +1574,8 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
-    for (i = 1; i < MAX_PARSE_IP; i++)
+    for (i = 0; i < MAX_PARSE_IP; i++)
         {
-
-	    printf("|%d|%s|\n", i, lookup_cache[i].ip);
 
             if ( lookup_cache[i].status == 0 )
                 {

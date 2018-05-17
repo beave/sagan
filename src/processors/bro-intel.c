@@ -673,7 +673,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
     char ip[MAXIP] = { 0 };
     unsigned char ip_bits[MAXIPBIT] = { 0 };
 
-    for (i = 1; i < MAX_PARSE_IP; i++)
+    for (i = 0; i < MAX_PARSE_IP; i++)
         {
 
             if ( lookup_cache[i].status == 0 )
