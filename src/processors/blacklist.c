@@ -286,7 +286,7 @@ sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
  * blacklist IP's in memory!
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache)
+sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
 {
 
     int i;
@@ -297,13 +297,8 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
     char ip[MAXIP] = { 0 };
     unsigned char ip_bits[MAXIPBIT] = { 0 };
 
-    for (i = 0; i < MAX_PARSE_IP; i++)
+    for (i = 0; i < lookup_cache_size; i++)
         {
-
-            if ( lookup_cache[i].status == 0 )
-                {
-                    return(false);
-                }
 
             IP2Bit(lookup_cache[i].ip, ip_bits);
 

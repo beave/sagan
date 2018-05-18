@@ -1576,7 +1576,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-	
+
 //            Sagan_Log(DEBUG, "IN BLUEDOT: %d|%d|%s\n", i, lookup_cache[i].status, lookup_cache[i].ip);
 
             bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position);

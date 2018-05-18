@@ -170,7 +170,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     struct timeval tp;
     unsigned char proto = 0;
-    int lookup_cache_size = 0; 
+    int lookup_cache_size = 0;
 
     sbool brointel_results = false;
     sbool blacklist_results = false;
@@ -669,38 +669,36 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             rulestruct[b].brointel_ipaddr_all == 1 )
                                         {
 
+
                                             lookup_cache_size = Parse_IP(SaganProcSyslog_LOCAL->syslog_message, lookup_cache );
 
-/*
-					    for (i = 0; i < lookup_cache_size; i++)
-						{
+                                            if ( debug->debugparse_ip )
+                                                {
 
-						if ( lookup_cache[i].status == 1) 
-							{
-							Sagan_Log(DEBUG, "Parse_IP: %d|%d|%s\n", i, lookup_cache[i].status, 
-							lookup_cache[i].ip);
-							}
+                                                    Sagan_Log(DEBUG, "--[Lookup Cache Array]----");
 
-						}
-*/
+                                                    for (i = 0; i < lookup_cache_size; i++)
+                                                        {
+
+                                                            Sagan_Log(DEBUG, "Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
+                                                        }
+
+                                                }
 
                                         }
 
-                                    if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == 1 )
+
+                                    if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == true )
                                         {
 
                                             if ( lookup_cache[rulestruct[b].s_find_src_pos-1].status == 1 )
                                                 {
 
+
                                                     ip_src = lookup_cache[rulestruct[b].s_find_src_pos-1].ip;
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
+                                                    proto = lookup_cache[0].proto;
                                                     ip_src_flag = true;
-
-                                                }
-                                            else
-                                                {
-
-                                                    ip_src_flag = false;
 
                                                 }
 
@@ -708,7 +706,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* parse_dst_ip: {postion} */
 
-                                    if ( ip_dst_flag == false && rulestruct[b].s_find_dst_ip == 1 )
+                                    if ( ip_dst_flag == false && rulestruct[b].s_find_dst_ip == true )
                                         {
 
                                             if ( lookup_cache[rulestruct[b].s_find_dst_pos-1].status == 1 )
@@ -717,13 +715,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     ip_dst = lookup_cache[rulestruct[b].s_find_dst_pos-1].ip;
                                                     ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
+                                                    proto = lookup_cache[0].proto;
                                                     ip_dst_flag = true;
-
-                                                }
-                                            else
-                                                {
-
-                                                    ip_dst_flag = false;
 
                                                 }
 
@@ -760,19 +753,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     /* If the rule calls for proto searching,  we do it now */
 
-                                    if ( rulestruct[b].s_find_proto_program == 1 )
+                                    if ( rulestruct[b].s_find_proto_program == true )
                                         {
                                             proto = Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                                         }
 
-                                    if ( proto == 0 && rulestruct[b].s_find_proto == 1 && proto == 0 )
+                                    if ( rulestruct[b].s_find_proto == true && proto == 0 )
                                         {
                                             proto = Parse_Proto(SaganProcSyslog_LOCAL->syslog_message);
                                         }
 
                                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                                        use */
-
 
                                     if ( ip_src_flag == false )
                                         {
@@ -972,7 +964,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( blacklist_results == false && rulestruct[b].blacklist_ipaddr_all )
                                                 {
-                                                    blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message, lookup_cache);
+                                                    blacklist_results = Sagan_Blacklist_IPADDR_All(SaganProcSyslog_LOCAL->syslog_message, lookup_cache, lookup_cache_size);
                                                 }
 
                                             if ( blacklist_results == false && rulestruct[b].blacklist_ipaddr_both && ip_src_flag && ip_dst_flag )
