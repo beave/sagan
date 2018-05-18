@@ -608,6 +608,7 @@ struct _Sagan_Lookup_Cache_Entry
 {
     char ip[MAXIP];
     int  port;
+    unsigned char proto;
     sbool status;
 };
 

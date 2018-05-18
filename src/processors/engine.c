@@ -102,7 +102,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
-    struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
+    static __thread struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
+    //struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
     lookup_cache = malloc(sizeof(struct _Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
     if ( lookup_cache == NULL )
@@ -124,6 +125,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int b = 0;
     int z = 0;
+    int i = 0;
 
     sbool match = false;
     int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
@@ -167,7 +169,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char meta_alter_content[MAX_SYSLOGMSG];
 
     struct timeval tp;
-    int proto = 0;
+    unsigned char proto = 0;
+    int lookup_cache_size = 0; 
 
     sbool brointel_results = false;
     sbool blacklist_results = false;
@@ -666,7 +669,20 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             rulestruct[b].brointel_ipaddr_all == 1 )
                                         {
 
-                                            proto = Parse_IP(SaganProcSyslog_LOCAL->syslog_message, lookup_cache );
+                                            lookup_cache_size = Parse_IP(SaganProcSyslog_LOCAL->syslog_message, lookup_cache );
+
+/*
+					    for (i = 0; i < lookup_cache_size; i++)
+						{
+
+						if ( lookup_cache[i].status == 1) 
+							{
+							Sagan_Log(DEBUG, "Parse_IP: %d|%d|%s\n", i, lookup_cache[i].status, 
+							lookup_cache[i].ip);
+							}
+
+						}
+*/
 
                                         }
 
@@ -1010,7 +1026,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 4 )
                                                         {
 
-                                                            bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b, lookup_cache);
+                                                            bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b, lookup_cache, lookup_cache_size );
 
                                                         }
 
@@ -1385,6 +1401,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
         } /* End for for loop */
 
     free(processor_info_engine);
+    free(lookup_cache);
 
 #ifdef HAVE_LIBLOGNORM
     if ( json_normalize != NULL )

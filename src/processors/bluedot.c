@@ -878,7 +878,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-
             if (!IP2Bit(data, ip))
                 {
                     return(false);
@@ -1563,7 +1562,7 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
  * message and preforms a Bluedot query.
  ***************************************************************************/
 
-int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Sagan_Lookup_Cache_Entry *lookup_cache)
+int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
 {
 
     int i;
@@ -1574,13 +1573,11 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
-    for (i = 0; i < MAX_PARSE_IP; i++)
+    for (i = 0; i < lookup_cache_size; i++)
         {
 
-            if ( lookup_cache[i].status == 0 )
-                {
-                    return(false);
-                }
+	
+//            Sagan_Log(DEBUG, "IN BLUEDOT: %d|%d|%s\n", i, lookup_cache[i].status, lookup_cache[i].ip);
 
             bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
