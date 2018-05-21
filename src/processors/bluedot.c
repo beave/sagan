@@ -227,10 +227,6 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-            if (!IP2Bit(data, ip))
-                {
-                    return(false);
-                }
 
             IP2Bit(data, ip);		/* Convert "data" to bits. */
 

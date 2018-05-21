@@ -326,7 +326,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
 
     if (!ret)
         {
-            Sagan_Log(WARN, "Warning: Got a getaddrinfo() error for \"%s\" but continuing...", ipaddr);
+            Sagan_Log(WARN, "[%lu] Warning: Got a getaddrinfo() error for \"%s\" but continuing...", pthread_self(), ipaddr);
         }
     else
         {
@@ -352,7 +352,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
                     break;
 
                 default:
-                    Sagan_Log(WARN, "Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", ipaddr);
+                    Sagan_Log(WARN, "[%lu] Warning: Got a getaddrinfo() received a non IPv4/IPv6 address for \"%s\" but continuing...", pthread_self(), ipaddr);
                 }
         }
 

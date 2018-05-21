@@ -102,8 +102,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
-    static __thread struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
-    //struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
+    //static __thread struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
+    struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
     lookup_cache = malloc(sizeof(struct _Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
     if ( lookup_cache == NULL )
@@ -675,13 +675,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( debug->debugparse_ip )
                                                 {
 
-                                                    Sagan_Log(DEBUG, "--[Lookup Cache Array]----");
+						    if ( lookup_cache_size > 0 ) {
+
+                                                    Sagan_Log(DEBUG, "[%lld:%d] --[Lookup Cache Array]----", pthread_self(), lookup_cache_size );
+		
 
                                                     for (i = 0; i < lookup_cache_size; i++)
                                                         {
 
-                                                            Sagan_Log(DEBUG, "Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
+                                                            Sagan_Log(DEBUG, "-- ARRAY: Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
                                                         }
+
+						    }
 
                                                 }
 
@@ -695,7 +700,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-                                                    ip_src = lookup_cache[rulestruct[b].s_find_src_pos-1].ip;
+						    strlcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
+						    ip_src = parse_ip_src; 
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_src_flag = true;
@@ -713,7 +719,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-                                                    ip_dst = lookup_cache[rulestruct[b].s_find_dst_pos-1].ip;
+						    strlcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP ); 
+						    ip_dst = parse_ip_dst; 
                                                     ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_dst_flag = true;
