@@ -663,6 +663,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( rulestruct[b].s_find_src_ip == 1 ||
                                             rulestruct[b].s_find_src_ip == 1 ||
                                             rulestruct[b].blacklist_ipaddr_all == 1 ||
+                                            rulestruct[b].s_find_proto == 1 ||
 #ifdef WITH_BLUEDOT
                                             rulestruct[b].bluedot_ipaddr_type == 4 ||
 #endif
@@ -675,18 +676,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( debug->debugparse_ip )
                                                 {
 
-						    if ( lookup_cache_size > 0 ) {
-
-                                                    Sagan_Log(DEBUG, "[%lld:%d] --[Lookup Cache Array]----", pthread_self(), lookup_cache_size );
-		
-
-                                                    for (i = 0; i < lookup_cache_size; i++)
+                                                    if ( lookup_cache_size > 0 )
                                                         {
 
-                                                            Sagan_Log(DEBUG, "-- ARRAY: Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
-                                                        }
+                                                            Sagan_Log(DEBUG, "[%lld:%d] --[Lookup Cache Array]----", pthread_self(), lookup_cache_size );
 
-						    }
+
+                                                            for (i = 0; i < lookup_cache_size; i++)
+                                                                {
+
+                                                                    Sagan_Log(DEBUG, "-- ARRAY: Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
+                                                                }
+
+                                                        }
 
                                                 }
 
@@ -700,8 +702,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-						    strlcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
-						    ip_src = parse_ip_src; 
+                                                    strlcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
+                                                    ip_src = parse_ip_src;
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_src_flag = true;
@@ -719,8 +721,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-						    strlcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP ); 
-						    ip_dst = parse_ip_dst; 
+                                                    strlcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP );
+                                                    ip_dst = parse_ip_dst;
                                                     ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_dst_flag = true;
@@ -765,10 +767,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             proto = Parse_Proto_Program(SaganProcSyslog_LOCAL->syslog_program);
                                         }
 
-                                    if ( rulestruct[b].s_find_proto == true && proto == 0 )
-                                        {
-                                            proto = Parse_Proto(SaganProcSyslog_LOCAL->syslog_message);
-                                        }
 
                                     /* If proto is not searched or has failed,  default to whatever the rule told us to
                                        use */

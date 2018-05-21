@@ -48,6 +48,8 @@ struct _Sagan_Protocol_Map_Program *map_program;
  * protocl might have generated this event
  ****************************************************************************/
 
+/* DEPERCIATED:  Parse_IP now handles all of this
+
 int Parse_Proto( char *msg )
 {
 
@@ -73,6 +75,7 @@ int Parse_Proto( char *msg )
         }
     return(0);
 }
+*/
 
 /****************************************************************************
  * Parse_Proto_Program - Attempts to determine the protocol that generate
