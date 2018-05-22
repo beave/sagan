@@ -82,7 +82,7 @@ void Output( _Sagan_Event *Event )
             Alert_File(Event);
         }
 
-    if ( config->eve_flag )
+    if ( config->eve_flag && rulestruct[Event->found].xbit_noeve == false )
         {
             Alert_JSON(Event);
         }

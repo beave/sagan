@@ -964,25 +964,31 @@ void Load_Rules( const char *ruleset )
                             if ( strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") &&
                                     strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") &&
                                     strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports") &&
-                                    strcmp(tmptoken, "count") )
+                                    strcmp(tmptoken, "count") && strcmp(tmptoken, "noeve" ) )
                                 {
 
 
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset' or 'count' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                    Sagan_Log(WARN, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset', 'noeve'  or 'count' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     continue;
 
                                 }
 
                             if (!strcmp(tmptoken, "noalert"))
                                 {
-                                    rulestruct[counters->rulecount].xbit_noalert=1;
+                                    rulestruct[counters->rulecount].xbit_noalert=true;
                                 }
 
                             if (!strcmp(tmptoken, "nounified2"))
                                 {
-                                    rulestruct[counters->rulecount].xbit_nounified2=1;
+                                    rulestruct[counters->rulecount].xbit_nounified2=true;
                                 }
+
+                            if (!strcmp(tmptoken, "noeve"))
+                                {
+                                    rulestruct[counters->rulecount].xbit_noeve=true;
+                                }
+
 
                             /* SET */
 

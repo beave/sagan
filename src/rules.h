@@ -153,6 +153,7 @@ struct _Rule_Struct
     sbool xbit_flag;              	        /* Does the rule contain a xbit? */
     sbool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
     sbool xbit_nounified2;                      /* Do we want to suppress "unified2" from xbits in unified2 output */
+    sbool xbit_noeve;				/* Do we want to suppress "eve" from xbits */
 
     unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
 						   6 == set_dstport, 7 == set_ports, 8 == count */

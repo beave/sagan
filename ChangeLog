@@ -69,6 +69,8 @@
 
 		* Fixed i386 compile time error (Thanks Pierre Chifflier).
 
+		* New "xbit: noeve" option to prevent EVE output while xbit is being set. 
+
 		* A lot of minor bug fixes.  For full lists,  please see the
 		  Sagan issues page:  
 
