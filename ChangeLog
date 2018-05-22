@@ -76,6 +76,10 @@
 
 		  https://github.com/beave/sagan/commits/master
 
+		* Fix for rules with lots of flows: 
+
+		  https://github.com/beave/sagan/issues/113
+
 2017/07/25 -	Sagan 1.1.8 released.
 
 		* Big stability fixes in this release.  Mostly involving protecting data with in

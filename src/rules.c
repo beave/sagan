@@ -135,9 +135,10 @@ void Load_Rules( const char *ruleset )
 
     uint64_t fwsam_time_tmp;
 
-    char netstr[512];
+    char netstr[RULEBUF];
     char rulestr[RULEBUF];
     char rulebuf[RULEBUF];
+
     char pcrerule[MAX_PCRE_SIZE];
 
     char tmp4[MAX_CHECK_FLOWS * 10];
@@ -150,8 +151,8 @@ void Load_Rules( const char *ruleset )
 
     char final_content[512];
 
-    char flow_a[128];
-    char flow_b[128];
+    char flow_a[1024];
+    char flow_b[1024];
 
     char alert_time_tmp[10];
     char alert_tmp_minute[3];
@@ -212,10 +213,9 @@ void Load_Rules( const char *ruleset )
             flow_2_count=0;
             port_1_count=0;
             port_2_count=0;
+
             memset(netstr, 0, sizeof(netstr));
             memset(rulestr, 0, sizeof(rulestr));
-
-
 
             int f1=0; /* Need for flow_direction, must reset every rule, not every group */
             int f2=0; /* Need for flow_direction, must reset every rule, not every group */
@@ -299,33 +299,37 @@ void Load_Rules( const char *ruleset )
 
             rc=0;
 
-            if (!Sagan_strstr(rulebuf, "any"))
+            if (!Sagan_strstr(rulebuf, "alert any ") && !Sagan_strstr(rulebuf, "drop any "))
                 {
                     rc++;
                 }
 
-            if (!Sagan_strstr(rulebuf, "tcp"))
+            if (!Sagan_strstr(rulebuf, "alert ip ") && !Sagan_strstr(rulebuf, "drop ip "))
                 {
                     rc++;
                 }
 
-
-            if (!Sagan_strstr(rulebuf, "udp"))
+            if (!Sagan_strstr(rulebuf, "alert tcp ") && !Sagan_strstr(rulebuf, "drop tcp "))
                 {
                     rc++;
                 }
 
-            if (!Sagan_strstr(rulebuf, "icmp"))
+            if (!Sagan_strstr(rulebuf, "alert udp ") && !Sagan_strstr(rulebuf, "drop udp "))
                 {
                     rc++;
                 }
 
-            if (!Sagan_strstr(rulebuf, "syslog"))
+            if (!Sagan_strstr(rulebuf, "alert icmp ") && !Sagan_strstr(rulebuf, "drop icmp "))
                 {
                     rc++;
                 }
 
-            if ( rc >= 5 )
+            if (!Sagan_strstr(rulebuf, "alert syslog ") && !Sagan_strstr(rulebuf, "drop syslog "))
+                {
+                    rc++;
+                }
+
+            if ( rc >= 6 )
                 {
                     Sagan_Log(WARN, "[%s, line %d] %s on line %d appears to not have a protocol type (any/tcp/udp/icmp/syslog), skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
                     continue;
@@ -413,22 +417,27 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].ip_proto = 0;
                                 }
 
-                            if (!strcmp(tokennet, "icmp" ))
+                            else if (!strcmp(tokennet, "ip" ))
+                                {
+                                    rulestruct[counters->rulecount].ip_proto = 0;
+                                }
+
+                            else if (!strcmp(tokennet, "icmp" ))
                                 {
                                     rulestruct[counters->rulecount].ip_proto = 1;
                                 }
 
-                            if (!strcmp(tokennet, "tcp"  ))
+                            else if (!strcmp(tokennet, "tcp"  ))
                                 {
                                     rulestruct[counters->rulecount].ip_proto = 6;
                                 }
 
-                            if (!strcmp(tokennet, "udp"  ))
+                            else if (!strcmp(tokennet, "udp"  ))
                                 {
                                     rulestruct[counters->rulecount].ip_proto = 17;
                                 }
 
-                            if (!strcmp(tokennet, "syslog"  ))
+                            else if (!strcmp(tokennet, "syslog"  ))
                                 {
                                     rulestruct[counters->rulecount].ip_proto = config->sagan_proto;
                                 }
@@ -439,7 +448,9 @@ void Load_Rules( const char *ruleset )
                     if ( netcount == 2 )
                         {
 
+
                             Var_To_Value(tokennet, flow_a, sizeof(flow_a));
+
                             Remove_Spaces(flow_a);
 
                             if (!strcmp(flow_a, "any") || !strcmp(flow_a, tokennet))

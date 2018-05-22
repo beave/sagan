@@ -1283,8 +1283,6 @@ const char *Bit2IP(unsigned char *ipbits, char *str, size_t size)
 int Netaddr_To_Range( char *ipstr, unsigned char *out )
 {
 
-    printf("ipstr: %s\n", ipstr);
-
     int mask;
     char *t = NULL;
     char _t = '\0';
