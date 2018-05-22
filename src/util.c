@@ -430,7 +430,7 @@ double CalcPct(uint64_t cnt, uint64_t total)
 
     double pct = 0.0;
 
-    pct = (double)cnt / (( (double)cnt + (double)total ) / 100 );
+    pct = (double)cnt / (( (double)cnt + (double)total ) / 100 ) * 2;
 
     return pct;
 }

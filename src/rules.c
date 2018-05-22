@@ -467,7 +467,7 @@ void Load_Rules( const char *ruleset )
 
                                             Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if ( !Is_IP(tok_help) || !Is_IPv6(tok_help) )
+                                            if ( !Is_IP(tok_help) && !Is_IPv6(tok_help) )
                                                 {
                                                     Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }
@@ -633,7 +633,7 @@ void Load_Rules( const char *ruleset )
 
                                             Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if( !Is_IP(tok_help) || !Is_IPv6(tok_help) )
+                                            if( !Is_IP(tok_help) && !Is_IPv6(tok_help) )
                                                 {
                                                     Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }
