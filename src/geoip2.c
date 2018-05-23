@@ -111,11 +111,11 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
     char tmp[1024];
     unsigned char tmp_ip[MAXIPBIT] = {0};
 
-    if ( is_notroutable(ipaddr) )
+    if ( !is_notroutable(ipaddr) )
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(DEBUG, "IP address %s is RFC1918, skipping GeoIP2 lookup.", ipaddr);
+                    Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP2 lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
             return(GEOIP_NOT_FOUND);
