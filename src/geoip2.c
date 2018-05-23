@@ -105,7 +105,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
     char country[2];
     char tmp[1024];
 
-    if ( !is_notroutable(ip_bits) )
+    if ( is_notroutable(ip_bits) )
         {
             if (debug->debuggeoip2)
                 {
