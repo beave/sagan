@@ -49,9 +49,10 @@
 #include "geoip2.h"
 #include "sagan-config.h"
 
+/*
 #define GEOIP_FOUND_NOT_USER_DEFINED	0	/* GeoIP2 was found for IP,  but wasn't listed in user defined countries */
-#define GEOIP_FOUND_WAS_USER_DEFINED	1	/* GeoIP2 was found AND was in user defined countries */
-#define GEOIP_NOT_FOUND			2	/* GeoIP data was not located */
+//#define GEOIP_FOUND_WAS_USER_DEFINED	1	/* GeoIP2 was found AND was in user defined countries */
+//#define GEOIP_NOT_FOUND			2	/* GeoIP data was not located */
 
 
 struct _SaganConfig *config;
@@ -118,7 +119,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                     Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP2 lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
-            return(GEOIP_NOT_FOUND);
+            return(false);
         }
 
     MMDB_lookup_result_s result = MMDB_lookup_string(&config->geoip2, ipaddr, &gai_error, &mmdb_error);
@@ -133,7 +134,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
             pthread_mutex_unlock(&CountGeoIP2MissMutex);
 
             Sagan_Log(WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
-            return(GEOIP_NOT_FOUND);
+            return(false);
 
         }
 
@@ -148,7 +149,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                 {
                     Sagan_Log(DEBUG, "Country code for %s not found in GeoIP2 DB", ipaddr);
                 }
-            return(GEOIP_NOT_FOUND);
+            return(false);
         }
 
     strlcpy(country, entry_data.utf8_string, 3);
@@ -178,7 +179,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                             Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
                         }
 
-                    return(GEOIP_FOUND_WAS_USER_DEFINED);  /* GeoIP was found / there was a hit */
+                    return(true);  /* GeoIP was found / there was a hit */
                 }
 
             ptmp = strtok_r(NULL, ",", &tok);
@@ -186,7 +187,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     if (debug->debuggeoip2) Sagan_Log(DEBUG, "GeoIP Status: Not found in user defined values.");
 
-    return(GEOIP_FOUND_NOT_USER_DEFINED);
+    return(false);
 }
 
 #endif

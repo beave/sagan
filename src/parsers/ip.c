@@ -97,7 +97,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
     char tmp_token[64] = { 0 };
 
-    char *ipaddr = NULL;
+    //char *ipaddr = NULL;
     char *ptr1 = NULL;
     char *ptr2 = NULL;
 
@@ -110,8 +110,6 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
     char port_test[6] = { 0 };
     int  port_test_int = 0;
-
-    int proto = 0;
 
     sbool valid = false ;
 

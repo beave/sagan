@@ -1331,7 +1331,6 @@ void Strip_Chars(const char *string, const char *chars, char *str)
 {
 
     int i = 0;
-    char newstr[128] = { 0 };
 
     for ( i = 0; i<strlen(string); i++)
         {

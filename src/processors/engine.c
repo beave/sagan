@@ -192,7 +192,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    unsigned char geoip2_return = 0;
+    sbool geoip2_return = false;
     sbool geoip2_isset = false;
 
 #endif
@@ -897,7 +897,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
                                                 }
 
-                                            if ( geoip2_return != 2 )
+                                            if ( geoip2_return == true )
                                                 {
 
                                                     /* If country IS NOT {my value} return 1 */
