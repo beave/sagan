@@ -607,12 +607,23 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 }
                                         }
 
-                                    if ( 1 == liblognorm_status && rulestruct[b].normalize == 1 )
+                                    if ( liblognorm_status == 1  && rulestruct[b].normalize == 1 )
                                         {
                                             if ( SaganNormalizeLiblognorm.ip_src[0] != '0')
                                                 {
                                                     ip_src_flag = true;
                                                     ip_src = SaganNormalizeLiblognorm.ip_src;
+
+						    if ( !strcmp(ip_src, "127.0.0.1") ||
+							 !strcmp(ip_src, "::1" ) ||
+							 !strcmp(ip_src, "::ffff:127.0.0.1" ) ) 
+							 {
+							 ip_src = config->sagan_host; 
+							 ip_src_flag = false; 
+							 } else { 
+						     IP2Bit(ip_src, ip_src_bits);
+							}
+
                                                 }
 
 
@@ -620,6 +631,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
                                                     ip_dst_flag = true;
                                                     ip_dst = SaganNormalizeLiblognorm.ip_dst;
+
+                                                    if ( !strcmp(ip_dst, "127.0.0.1") ||
+                                                         !strcmp(ip_dst, "::1" ) ||
+                                                         !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                         {
+							 ip_dst = config->sagan_host; 
+							 ip_dst_flag = false; 
+							 } else { 
+						    IP2Bit(ip_dst, ip_dst_bits);
+							}
                                                 }
 
                                             if ( SaganNormalizeLiblognorm.src_port != 0 )
@@ -702,8 +723,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-                                                    strlcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
+                                                    memcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
+						    memcpy(ip_src_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
+
                                                     ip_src = parse_ip_src;
+
+                                                    if ( !strcmp(ip_src, "127.0.0.1") ||
+                                                         !strcmp(ip_src, "::1" ) ||
+                                                         !strcmp(ip_src, "::ffff:127.0.0.1" ) )
+                                                         {
+
+						    ip_src = config->sagan_host;
+							ip_src_flag = false;
+
+							}
+
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_src_flag = true;
@@ -721,8 +755,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 {
 
 
-                                                    strlcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP );
+                                                    memcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP );
+						    memcpy(ip_dst_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
+
                                                     ip_dst = parse_ip_dst;
+
+                                                    if ( !strcmp(ip_dst, "127.0.0.1") ||
+                                                         !strcmp(ip_dst, "::1" ) ||
+                                                         !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                         {
+                                                    
+                                                    ip_dst = config->sagan_host;
+                                                        ip_dst_flag = false;
+                                                        
+                                                        }
+                                                    
                                                     ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_dst_flag = true;
@@ -805,24 +852,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             proto = rulestruct[b].default_proto;
                                         }
 
-                                    /* If the "source" is 127.0.0.1 that is not useful.  Replace with config->sagan_host
-                                     * (defined by user in sagan.conf. For now keep ::1 as there needs to be another option for that value  */
-
-                                    if ( !strcmp(ip_src, "127.0.0.1") )
-                                        {
-                                            ip_src = config->sagan_host;
-                                        }
-
-                                    if ( !strcmp(ip_dst, "127.0.0.1") )
-                                        {
-                                            ip_dst = config->sagan_host;
-                                        }
-
-                                    IP2Bit(ip_src, ip_src_bits);
-                                    IP2Bit(ip_dst, ip_dst_bits);
-
                                     strlcpy(s_msg, rulestruct[b].s_msg, sizeof(s_msg));
-
 
                                     /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
                                     the rule has some sort of flow.  It 0,  rule is set any:any/any:any */
@@ -876,13 +906,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     if ( rulestruct[b].geoip2_flag )
                                         {
 
-                                            if ( rulestruct[b].geoip2_src_or_dst == 1 )
+                                            if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, b);
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, b );
                                                 }
-                                            else
+
+                                            else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, b);
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
                                                 }
 
                                             if ( geoip2_return != 2 )
@@ -994,33 +1025,33 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 1 && ip_src_flag )
                                                         {
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, ip_src_bits);
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 2 && ip_dst_flag )
                                                         {
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, ip_dst_bits);
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 3 && ip_src_flag && ip_dst_flag )
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, ip_src_bits );
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
 
                                                             /* If the source isn't found,  then check the dst */
 
                                                             if ( bluedot_ip_flag != 0 )
                                                                 {
-                                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b);
+                                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, ip_dst_bits);
                                                                     bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                                 }
 
                                                         }
 
-                                                    if ( rulestruct[b].bluedot_ipaddr_type == 4 )
+                                                    if ( lookup_cache_size > 0 && rulestruct[b].bluedot_ipaddr_type == 4 )
                                                         {
 
                                                             bluedot_ip_flag = Sagan_Bluedot_IP_Lookup_All(SaganProcSyslog_LOCAL->syslog_message, b, lookup_cache, lookup_cache_size );
@@ -1037,7 +1068,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if ( md5_hash[0] != '\0')
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( md5_hash, BLUEDOT_LOOKUP_HASH, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup( md5_hash, BLUEDOT_LOOKUP_HASH, b, NULL);
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1045,7 +1076,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if ( sha256_hash[0] != '\0' )
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, NULL);
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1053,7 +1084,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     if ( sha256_hash[0] != '\0')
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b);
+                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, NULL);
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1063,7 +1094,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( rulestruct[b].bluedot_url && normalize_http_uri != NULL )
                                                 {
 
-                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b);
+                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b, NULL);
                                                     bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
 
                                                 }
@@ -1071,7 +1102,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             if ( rulestruct[b].bluedot_filename && normalize_filename != NULL )
                                                 {
 
-                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b);
+                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b, NULL);
                                                     bluedot_filename_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_FILENAME);
 
                                                 }

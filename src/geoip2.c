@@ -111,9 +111,8 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
     char tmp[1024];
     unsigned char tmp_ip[MAXIPBIT] = {0};
 
-    printf("GEOIP\n");
-
-    if (!IP2Bit(ipaddr, tmp_ip) || is_notroutable(tmp_ip))
+    //if (!IP2Bit(ipaddr, tmp_ip) || is_notroutable(tmp_ip))
+     if ( is_notroutable(ipaddr) ) 
         {
             if (debug->debuggeoip2)
                 {

@@ -300,11 +300,9 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-            IP2Bit(lookup_cache[i].ip, ip_bits);
-
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {
-                    if ( is_inrange(ip_bits, (unsigned char *)&SaganBlacklist[b].range, 1) )
+                    if ( is_inrange(lookup_cache[i].ip_bits, (unsigned char *)&SaganBlacklist[b].range, 1) )
 
                         {
 

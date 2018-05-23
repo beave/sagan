@@ -213,12 +213,11 @@ void Sagan_Bluedot_Init(void)
  * happens a lot with IP address looks
  ****************************************************************************/
 
-int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
+int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *ip )
 {
 
     uint32_t ip_u32;
     int i=0;
-    unsigned char ip[MAXIPBIT] = {0};
 
     int tmp_bluedot_queue_count=0;
 
@@ -227,8 +226,6 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-
-            IP2Bit(data, ip);		/* Convert "data" to bits. */
 
             struct _Sagan_Bluedot_IP_Queue *TmpSaganBluedotIPQueue;
             TmpSaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
@@ -826,7 +823,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position)
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, unsigned char *ip )
 {
 
     char tmpurl[1024] = { 0 };
@@ -859,8 +856,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     time_t t;
     struct tm *now=NULL;
 
-    unsigned char ip[MAXIPBIT] = {0};
-
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
@@ -873,11 +868,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-
-            if (!IP2Bit(data, ip))
-                {
-                    return(false);
-                }
 
             if ( is_notroutable(ip) )
                 {
@@ -1212,7 +1202,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_error_count++;
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-            Sagan_Bluedot_Clean_Queue(data, type);
+            Sagan_Bluedot_Clean_Queue(data, type, ip);
 
             return(false);
         }
@@ -1288,7 +1278,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_error_count++;						// DEBUG <- Total error count
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-            Sagan_Bluedot_Clean_Queue(data, type);
+            Sagan_Bluedot_Clean_Queue(data, type, ip);
 
             return(false);
         }
@@ -1460,7 +1450,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         }
 
 
-    Sagan_Bluedot_Clean_Queue(data, type);	/* Remove item for "queue" */
+    	Sagan_Bluedot_Clean_Queue(data, type, ip);	/* Remove item for "queue" */
+
     json_object_put(json_in);       		/* Clear json_in as we're done with it */
     return(bluedot_alertid);
 }
@@ -1575,7 +1566,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
 
 //            Sagan_Log(DEBUG, "IN BLUEDOT: %d|%d|%s\n", i, lookup_cache[i].status, lookup_cache[i].ip);
 
-            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position);
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )

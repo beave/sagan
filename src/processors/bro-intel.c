@@ -676,17 +676,16 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
     for (i = 0; i < MAX_PARSE_IP; i++)
         {
 
+
             if ( lookup_cache[i].status == 0 )
                 {
                     return(false);
                 }
 
-            IP2Bit(lookup_cache[i].ip, ip_bits);
-
             for ( b = 0; b < counters->brointel_addr_count; b++ )
                 {
 
-                    if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, ip_bits, sizeof(ip_bits)))
+                    if ( !memcmp(Sagan_BroIntel_Intel_Addr[b].bits_ip, lookup_cache[i].ip_bits, sizeof(Sagan_BroIntel_Intel_Addr[b].bits_ip)))
                         {
                             return(true);
                         }

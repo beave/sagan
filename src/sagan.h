@@ -607,6 +607,7 @@ typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Entry;
 struct _Sagan_Lookup_Cache_Entry
 {
     char ip[MAXIP];
+    unsigned char ip_bits[MAXIPBIT];
     int  port;
     unsigned char proto;
     sbool status;

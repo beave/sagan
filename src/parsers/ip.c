@@ -273,11 +273,12 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
                             /* Grab the IP */
 
-                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                             /* Preserve the array */
 
-                            strlcpy(tmp_token, ptr2, sizeof(tmp_token));
+                            memcpy(tmp_token, ptr2, sizeof(tmp_token));
 
                             ptr4 = tmp_token;
                             ptr3 = strtok_r(NULL, " ", &ptr4);
@@ -394,7 +395,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
-                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
 
@@ -425,11 +427,12 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
                             }
 
-                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                             /* Look for "fe80::b614:89ff:fe11:5e24 port 1234" */
 
-                            strlcpy(tmp_token, ptr2, sizeof(tmp_token));
+                            memcpy(tmp_token, ptr2, sizeof(tmp_token));
 
                             ptr4 = tmp_token;
                             ptr3 = strtok_r(NULL, " ", &ptr4);
@@ -571,7 +574,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                                 }
 
-                            strlcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
 
@@ -609,7 +613,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified IPv4:PORT address. **", __FUNCTION__, pthread_self() );
                                 }
 
-                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+			    IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                             /* In many cases, the port is after the : */
 
@@ -648,7 +653,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE:IPv4 **", __FUNCTION__, pthread_self() );
                                 }
 
-                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
 
@@ -686,7 +692,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
 
-                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+			    IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                             /* In many cases, the port is after the : */
 
@@ -727,7 +734,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                     Sagan_Log(DEBUG, "[%s:%lu] ** Identified INTERFACE#PORT **", __FUNCTION__, pthread_self() );
                                 }
 
-                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
 
@@ -769,7 +777,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
 
-                            strlcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+			    IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                             /* In many cases, the port is after the : */
 
@@ -813,7 +822,8 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
 
-                            strlcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+                            memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
 

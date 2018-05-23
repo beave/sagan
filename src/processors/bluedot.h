@@ -44,7 +44,7 @@
 
 int Sagan_Bluedot_Cat_Compare ( unsigned char, int, unsigned char );
 int Sagan_Bluedot ( _Sagan_Proc_Syslog *, int  );
-unsigned char Sagan_Bluedot_Lookup(char *, unsigned char, int);			/* what to lookup,  lookup type */
+unsigned char Sagan_Bluedot_Lookup(char *, unsigned char, int, unsigned char *ip_bits);			/* what to lookup,  lookup type */
 int Sagan_Bluedot_IP_Lookup_All ( char *, int , _Sagan_Lookup_Cache_Entry *, int );
 
 void Sagan_Bluedot_Clean_Cache ( void );
@@ -53,7 +53,7 @@ void Sagan_Bluedot_Load_Cat(void);
 void Sagan_Verify_Categories( char *, int , const char *, int, unsigned char );
 void Sagan_Bluedot_Check_Cache_Time (void);
 
-int Sagan_Bluedot_Clean_Queue ( char *, unsigned char );
+int Sagan_Bluedot_Clean_Queue ( char *, unsigned char, unsigned char *ip );
 
 
 typedef struct _Sagan_Bluedot_Cat_List _Sagan_Bluedot_Cat_List;
