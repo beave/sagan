@@ -680,8 +680,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port,
                                      * _unless_ liblognorm fails and both are in a rule or liblognorm failed to get src or dst */
 
-                                    /* parse_src_ip: {position} - Parse_IP build a cache table for IPs, ports, etc.  This way, 
-				       we only parse the syslog string one time regardless of the rule options! */
+                                    /* parse_src_ip: {position} - Parse_IP build a cache table for IPs, ports, etc.  This way,
+                                    we only parse the syslog string one time regardless of the rule options! */
 
                                     if ( rulestruct[b].s_find_src_ip == 1 ||
                                             rulestruct[b].s_find_src_ip == 1 ||

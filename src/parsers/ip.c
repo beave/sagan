@@ -423,9 +423,10 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                     if ( valid == 1 )
                         {
 
-                            {
-                                Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
-                            }
+                            if ( debug->debugparse_ip )
+                                {
+                                    Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv6 address '%s' **", __FUNCTION__, pthread_self(), ptr1 );
+                                }
 
                             memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
                             IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
