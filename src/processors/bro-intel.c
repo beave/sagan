@@ -620,7 +620,7 @@ void Sagan_BroIntel_Load_File ( void )
  * Sagan_BroIntel_IPADDR - Search array for blacklisted IP addresses
  *****************************************************************************/
 
-sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
+sbool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
 {
 
     int i = 0;
@@ -632,7 +632,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
 
             if ( debug->debugbrointel )
                 {
-                    Sagan_Log(DEBUG, "[%s, line %d] %u is RFC1918, link local or invalid.", __FILE__, __LINE__, ip);
+                    Sagan_Log(DEBUG, "[%s, line %d] %s is RFC1918, link local or invalid.", __FILE__, __LINE__, ipaddr );
                 }
 
             return(false);

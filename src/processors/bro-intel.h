@@ -98,7 +98,7 @@ struct _Sagan_BroIntel_Intel_Cert_Hash
 void Sagan_BroIntel_Init(void);
 void Sagan_BroIntel_Load_File(void);
 
-sbool  Sagan_BroIntel_IPADDR ( unsigned char * );
+sbool  Sagan_BroIntel_IPADDR ( unsigned char *, char *ipaddr );
 sbool  Sagan_BroIntel_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *, size_t);
 
 sbool  Sagan_BroIntel_DOMAIN ( char * );

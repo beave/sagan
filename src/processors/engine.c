@@ -889,12 +889,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, b );
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, ip_src_bits, b );
                                                 }
 
                                             else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
                                             if ( geoip2_return == true )
@@ -921,7 +921,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                                     /* If country IS {my value} return 1 */
 
-                                                    if ( rulestruct[b].geoip2_type == 2 )             /* is */
+                                                    else if ( rulestruct[b].geoip2_type == 2 )             /* is */
                                                         {
 
                                                             if ( geoip2_return == 1 )
@@ -1109,12 +1109,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( rulestruct[b].brointel_ipaddr_src && ip_src_flag )
                                                 {
-                                                    brointel_results = Sagan_BroIntel_IPADDR( ip_src_bits );
+                                                    brointel_results = Sagan_BroIntel_IPADDR( ip_src_bits, ip_src );
                                                 }
 
                                             if ( brointel_results == false && rulestruct[b].brointel_ipaddr_dst && ip_dst_flag )
                                                 {
-                                                    brointel_results = Sagan_BroIntel_IPADDR( ip_dst_bits );
+                                                    brointel_results = Sagan_BroIntel_IPADDR( ip_dst_bits, ip_dst );
                                                 }
 
                                             if ( brointel_results == false && rulestruct[b].brointel_ipaddr_all )
@@ -1124,7 +1124,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                             if ( brointel_results == false && rulestruct[b].brointel_ipaddr_both && ip_src_flag && ip_dst_flag )
                                                 {
-                                                    if ( Sagan_BroIntel_IPADDR( ip_src_bits ) || Sagan_BroIntel_IPADDR( ip_dst_bits ) )
+                                                    if ( Sagan_BroIntel_IPADDR( ip_src_bits, ip_src ) || Sagan_BroIntel_IPADDR( ip_dst_bits, ip_dst ) )
                                                         {
                                                             brointel_results = true;
                                                         }

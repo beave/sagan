@@ -49,12 +49,6 @@
 #include "geoip2.h"
 #include "sagan-config.h"
 
-/*
-#define GEOIP_FOUND_NOT_USER_DEFINED	0	/* GeoIP2 was found for IP,  but wasn't listed in user defined countries */
-//#define GEOIP_FOUND_WAS_USER_DEFINED	1	/* GeoIP2 was found AND was in user defined countries */
-//#define GEOIP_NOT_FOUND			2	/* GeoIP data was not located */
-
-
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
@@ -97,7 +91,7 @@ void Open_GeoIP2_Database( void )
  * it is in/out of HOME_COUNTRY
  ****************************************************************************/
 
-int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
+int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_position )
 {
 
 
@@ -110,9 +104,8 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     char country[2];
     char tmp[1024];
-    unsigned char tmp_ip[MAXIPBIT] = {0};
 
-    if ( !is_notroutable(ipaddr) )
+    if ( !is_notroutable(ip_bits) )
         {
             if (debug->debuggeoip2)
                 {

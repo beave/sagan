@@ -29,7 +29,7 @@
 
 #ifdef HAVE_LIBMAXMINDDB
 void Open_GeoIP2_Database( void );
-int GeoIP2_Lookup_Country( char *, int );
+int GeoIP2_Lookup_Country( char *, unsigned char *ip_bits, int );
 #endif
 
 
