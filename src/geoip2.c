@@ -112,7 +112,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
     unsigned char tmp_ip[MAXIPBIT] = {0};
 
     //if (!IP2Bit(ipaddr, tmp_ip) || is_notroutable(tmp_ip))
-     if ( is_notroutable(ipaddr) ) 
+    if ( is_notroutable(ipaddr) )
         {
             if (debug->debuggeoip2)
                 {

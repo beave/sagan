@@ -259,7 +259,7 @@ void Sagan_Blacklist_Load ( void )
 sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
 {
 
-    int i;
+    int i = 0;
 
     counters->blacklist_lookup_count++;
 
@@ -292,16 +292,12 @@ sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Ent
     int i;
     int b;
 
-    int port = 0;
-
-    char ip[MAXIP] = { 0 };
-    unsigned char ip_bits[MAXIPBIT] = { 0 };
-
     for (i = 0; i < lookup_cache_size; i++)
         {
 
             for ( b = 0; b < counters->blacklist_count; b++ )
                 {
+
                     if ( is_inrange(lookup_cache[i].ip_bits, (unsigned char *)&SaganBlacklist[b].range, 1) )
 
                         {

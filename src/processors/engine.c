@@ -614,15 +614,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     ip_src_flag = true;
                                                     ip_src = SaganNormalizeLiblognorm.ip_src;
 
-						    if ( !strcmp(ip_src, "127.0.0.1") ||
-							 !strcmp(ip_src, "::1" ) ||
-							 !strcmp(ip_src, "::ffff:127.0.0.1" ) ) 
-							 {
-							 ip_src = config->sagan_host; 
-							 ip_src_flag = false; 
-							 } else { 
-						     IP2Bit(ip_src, ip_src_bits);
-							}
+                                                    if ( !strcmp(ip_src, "127.0.0.1") ||
+                                                            !strcmp(ip_src, "::1" ) ||
+                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) )
+                                                        {
+                                                            ip_src = config->sagan_host;
+                                                            ip_src_flag = false;
+                                                        }
+                                                    else
+                                                        {
+                                                            IP2Bit(ip_src, ip_src_bits);
+                                                        }
 
                                                 }
 
@@ -633,14 +635,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                     ip_dst = SaganNormalizeLiblognorm.ip_dst;
 
                                                     if ( !strcmp(ip_dst, "127.0.0.1") ||
-                                                         !strcmp(ip_dst, "::1" ) ||
-                                                         !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
-                                                         {
-							 ip_dst = config->sagan_host; 
-							 ip_dst_flag = false; 
-							 } else { 
-						    IP2Bit(ip_dst, ip_dst_bits);
-							}
+                                                            !strcmp(ip_dst, "::1" ) ||
+                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                        {
+                                                            ip_dst = config->sagan_host;
+                                                            ip_dst_flag = false;
+                                                        }
+                                                    else
+                                                        {
+                                                            IP2Bit(ip_dst, ip_dst_bits);
+                                                        }
                                                 }
 
                                             if ( SaganNormalizeLiblognorm.src_port != 0 )
@@ -676,10 +680,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                     /* Normalization should always over ride parse_src_ip/parse_dst_ip/parse_port,
                                      * _unless_ liblognorm fails and both are in a rule or liblognorm failed to get src or dst */
 
-                                    /* We don't need to set ip_src, et al to the parse_X version because it is reset at the top
-                                     * and is only changed if normalize is valid */
-
-                                    /* parse_src_ip: {position} */
+                                    /* parse_src_ip: {position} - Parse_IP build a cache table for IPs, ports, etc.  This way, 
+				       we only parse the syslog string one time regardless of the rule options! */
 
                                     if ( rulestruct[b].s_find_src_ip == 1 ||
                                             rulestruct[b].s_find_src_ip == 1 ||
@@ -691,30 +693,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                             rulestruct[b].brointel_ipaddr_all == 1 )
                                         {
 
-
                                             lookup_cache_size = Parse_IP(SaganProcSyslog_LOCAL->syslog_message, lookup_cache );
 
-                                            if ( debug->debugparse_ip )
-                                                {
-
-                                                    if ( lookup_cache_size > 0 )
-                                                        {
-
-                                                            Sagan_Log(DEBUG, "[%lld:%d] --[Lookup Cache Array]----", pthread_self(), lookup_cache_size );
-
-
-                                                            for (i = 0; i < lookup_cache_size; i++)
-                                                                {
-
-                                                                    Sagan_Log(DEBUG, "-- ARRAY: Position: %d, Status: %d, IP: %s", i, lookup_cache[i].status, lookup_cache[i].ip);
-                                                                }
-
-                                                        }
-
-                                                }
-
                                         }
-
 
                                     if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == true )
                                         {
@@ -724,19 +705,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 
                                                     memcpy(parse_ip_src, lookup_cache[rulestruct[b].s_find_src_pos-1].ip, MAXIP );
-						    memcpy(ip_src_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
+                                                    memcpy(ip_src_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
 
                                                     ip_src = parse_ip_src;
 
                                                     if ( !strcmp(ip_src, "127.0.0.1") ||
-                                                         !strcmp(ip_src, "::1" ) ||
-                                                         !strcmp(ip_src, "::ffff:127.0.0.1" ) )
-                                                         {
+                                                            !strcmp(ip_src, "::1" ) ||
+                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) )
+                                                        {
 
-						    ip_src = config->sagan_host;
-							ip_src_flag = false;
+                                                            ip_src = config->sagan_host;
+                                                            ip_src_flag = false;
 
-							}
+                                                        }
 
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
                                                     proto = lookup_cache[0].proto;
@@ -756,20 +737,20 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 
                                                     memcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP );
-						    memcpy(ip_dst_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
+                                                    memcpy(ip_dst_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
 
                                                     ip_dst = parse_ip_dst;
 
                                                     if ( !strcmp(ip_dst, "127.0.0.1") ||
-                                                         !strcmp(ip_dst, "::1" ) ||
-                                                         !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
-                                                         {
-                                                    
-                                                    ip_dst = config->sagan_host;
-                                                        ip_dst_flag = false;
-                                                        
+                                                            !strcmp(ip_dst, "::1" ) ||
+                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                        {
+
+                                                            ip_dst = config->sagan_host;
+                                                            ip_dst_flag = false;
+
                                                         }
-                                                    
+
                                                     ip_dstport_u32 = lookup_cache[rulestruct[b].s_find_dst_pos-1].port;
                                                     proto = lookup_cache[0].proto;
                                                     ip_dst_flag = true;

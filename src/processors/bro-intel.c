@@ -623,7 +623,7 @@ void Sagan_BroIntel_Load_File ( void )
 sbool Sagan_BroIntel_IPADDR ( unsigned char *ip )
 {
 
-    int i;
+    int i = 0;
 
     /* If RFC1918 and friends,  we can short circuit here */
 
@@ -669,9 +669,6 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
 
     int i;
     int b;
-
-    char ip[MAXIP] = { 0 };
-    unsigned char ip_bits[MAXIPBIT] = { 0 };
 
     for (i = 0; i < MAX_PARSE_IP; i++)
         {

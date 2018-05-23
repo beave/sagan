@@ -1377,18 +1377,11 @@ sbool Is_IP (char *str)
                 {
                     ip = strtok_r(str, "/", &tmp);
                     prefix = atoi(strtok_r(NULL, "/", &tmp));
-                    if(prefix < 1 || prefix > 128 ) // || !IP2Bit(ip, NULL))
+                    if(prefix < 1 || prefix > 128 )
                         {
                             return(false);
                         }
                 }
-           /* else
-                {
-                    if ( !IP2Bit(str, NULL) )
-                        {
-                            return(false);
-                        }
-                }*/
 
             return(true);
 

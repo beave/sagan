@@ -1450,7 +1450,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         }
 
 
-    	Sagan_Bluedot_Clean_Queue(data, type, ip);	/* Remove item for "queue" */
+    Sagan_Bluedot_Clean_Queue(data, type, ip);	/* Remove item for "queue" */
 
     json_object_put(json_in);       		/* Clear json_in as we're done with it */
     return(bluedot_alertid);
