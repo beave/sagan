@@ -26,7 +26,9 @@ vars:
     LOCKFILE: "/var/run/sagan/sagan.pid"
     LOG_PATH: "/var/log/sagan"	
 
-  # Information about your network sometimes, but rarely, used by rules. 
+  # HOME_NET and EXTERNAL_NET function similar to Suricata/Snort.  However, 
+  # it's rare you'll want to set them.  In most situations leaving it set
+  # to "any" is best. 
 
   address-groups:
 
@@ -580,6 +582,7 @@ rules-files:
   # Standard rules - Rules that do not require any dependencies.              #
   #############################################################################
 
+  #- $RULE_PATH/as400.rules
   - $RULE_PATH/adtran.rules
   - $RULE_PATH/apache.rules
   - $RULE_PATH/apc-emu.rules
@@ -673,6 +676,7 @@ rules-files:
   - $RULE_PATH/windows-emet.rules
   - $RULE_PATH/windows-misc.rules
   - $RULE_PATH/windows-mssql.rules
+  - $RULE_PATH/windows-security.rules
   - $RULE_PATH/windows-owa.rules
   - $RULE_PATH/windows.rules
   - $RULE_PATH/windows-sysmon.rules

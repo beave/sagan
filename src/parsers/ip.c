@@ -44,6 +44,8 @@
  * 192.168.2.1 source port: 1234	# Windows style.
  * 192.168.2.1 destination port 1234
  * 192.168.2.1 desitnation port: 1234	# Windows style.
+ * 192.168.2.1 client port: 1234        # Windows style
+ * 192.168.2.1 client port 1234
  * inet#192.168.2.1
  *
  * IPv6
@@ -54,6 +56,8 @@
  * fe80::b614:89ff:fe11:5e24#1234
  * inet#fe80::b614:89ff:fe11:5e24
  * [fe80::b614:89ff:fe11:5e24]:80	# Traditional style.
+ * fe80::b614:89ff:fe11:5e24 Client Port: 1234	# Windows
+ * fe80::b614:89ff:fe11:5e24 client port 1234
  *
  */
 
@@ -300,7 +304,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                             if ( port == 0 )
                                                 {
                                                     lookup_cache[current_position].port = config->sagan_port;
-//
+
                                                 }
                                             else
                                                 {
@@ -360,6 +364,53 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                         }
 
                                 }
+
+                            /* Look's for 192.168.1.1 client port 1234 */
+
+                            else if ( ptr3 != NULL && strcasestr(ptr3, "client") ) 
+                                {
+
+                                    if ( debug->debugparse_ip )
+                                        {
+                                            Sagan_Log(DEBUG, "[%s:%lu] Identified 'client'", __FUNCTION__, pthread_self() );
+                                        }
+
+                                    ptr3 = strtok_r(NULL, " ", &ptr4);
+
+                                    if ( ptr3 != NULL && strcasestr(ptr3, "port" ) )
+                                        {
+
+                                            if ( debug->debugparse_ip )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s:%lu] Identified 'port'.", __FUNCTION__, pthread_self() );
+                                                }
+
+                                            ptr3 = strtok_r(NULL, " ", &ptr4);
+
+                                            if ( ptr3 != NULL )
+                                                {
+
+                                                    port = atoi(ptr3);
+
+                                                    if ( port == 0 )
+                                                        {
+
+                                                            lookup_cache[current_position].port = config->sagan_port;
+
+                                                        }
+                                                    else
+                                                        {
+
+                                                            lookup_cache[current_position].port = port;
+                                                        }
+
+
+                                                }
+
+                                        }
+
+                                }
+
 
                             lookup_cache[current_position].status = 1;
                             current_position++;
