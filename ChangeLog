@@ -1,4 +1,4 @@
-2018/XX/XX -	Sagan 1.1.9 released
+2018/05/29 -	Sagan 1.1.9 released
 
 		* Added IPv6 support. Thanks to Kenneth Shelton @ Netwatcher 
 		  (https://netwatcher.com). 
@@ -79,6 +79,10 @@
 		* Fix for rules with lots of flows: 
 
 		  https://github.com/beave/sagan/issues/113
+		
+		* Major re-write of parsers/ip.c.  This is used by "parse_src_ip" and 
+		  "parse_dst_ip".  Now does everything in one pass and "caches" results for
+		  the next rule. 
 
 2017/07/25 -	Sagan 1.1.8 released.
 
