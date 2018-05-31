@@ -804,11 +804,13 @@ void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str
 
     int pipe_flag = 0;
 
-    static char final_content[512] = { 0 };
+    /* Set to RULEBUF.  Some meta_content strings can be rather large! */
+
+    static char final_content[RULEBUF] = { 0 };
     memset(final_content,0,sizeof(final_content));
 
-    char final_content_tmp[512] = { 0 };
-    char tmp2[512];
+    char final_content_tmp[RULEBUF] = { 0 };
+    char tmp2[RULEBUF];
     int i;
     int x;
     char tmp[2];
