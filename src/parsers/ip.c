@@ -101,7 +101,6 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
     char tmp_token[64] = { 0 };
 
-    //char *ipaddr = NULL;
     char *ptr1 = NULL;
     char *ptr2 = NULL;
 
@@ -440,6 +439,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                     if ( valid == 1 )
                         {
 
+			    if ( debug->debugparse_ip )
                             {
                                 Sagan_Log(DEBUG, "[%s:%lu] ** Identified stand alone IPv4 address '%s' with trailing period. **", __FUNCTION__, pthread_self(), ptr1 );
                             }
