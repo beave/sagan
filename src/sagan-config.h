@@ -102,6 +102,9 @@ struct _SaganConfig
     sbool 	 fast_flag;
     char         fast_filename[MAXPATH];
 
+    sbool	 parse_ip_ipv6;
+    sbool	 parse_ip_ipv4_mapped_ipv6;
+
     /* Processors */
 
     int         pp_sagan_track_clients;
@@ -181,7 +184,6 @@ struct _SaganConfig
 #ifdef HAVE_LIBHIREDIS
 
     redisContext *c_reader_redis;
-//    redisContext *c_writer_redis[MAX_THREADS];
 
     sbool 	redis_flag;
     char	redis_server[255];

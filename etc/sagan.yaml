@@ -143,6 +143,12 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
+  # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 
+   
+  parse-ip:
+    ipv6: enabled			# Parse IPv6 Addresses
+    ipv4-mapped-ipv6: disabled		# Map ffff::192.168.1.1 back to 192.168.1.1
+
   # The "selector" adds "multi-tenancy" into Sagan.  Using the "selector" allows Sagan to 
   # track IP source, IP destinations, etc. in order to ensure overlapping logs from different
   # environments are tracked separately. 
@@ -602,7 +608,7 @@ rules-files:
   - $RULE_PATH/cisco-ios.rules
   - $RULE_PATH/cisco-meraki.rules
   - $RULE_PATH/cisco-pixasa.rules
-  - $RULE_PATH/cisco-prime.rules
+  #- $RULE_PATH/cisco-prime.rules
   #- $RULE_PATH/cisco-sdee.rules
   - $RULE_PATH/cisco-wlc.rules
   - $RULE_PATH/citrix.rules
@@ -680,6 +686,7 @@ rules-files:
   - $RULE_PATH/windows-owa.rules
   - $RULE_PATH/windows.rules
   - $RULE_PATH/windows-sysmon.rules
+  - $RULE_PATH/windows-security.rules
   - $RULE_PATH/wordpress.rules
   - $RULE_PATH/xinetd.rules
   - $RULE_PATH/yubikey.rules

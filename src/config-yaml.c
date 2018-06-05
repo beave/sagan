@@ -140,6 +140,11 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_host[0] = '\0';
             config->sagan_port = 514;
 
+            /* Defaults for Parse_IP(); */
+
+            config->parse_ip_ipv6 = true;
+            config->parse_ip_ipv4_mapped_ipv6 = false;
+
             config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
             config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
             config->max_threshold_by_srcport = DEFAULT_IPC_THRESH_BY_SRC_PORT;
@@ -485,6 +490,12 @@ void Load_YAML_Config( char *yaml_file )
                             if (!strcmp(value, "core"))
                                 {
                                     sub_type = YAML_SAGAN_CORE_CORE;
+                                }
+
+                            else if (!strcmp(value, "parse-ip" ))
+                                {
+                                    printf("GOT parse-ip\n");
+                                    sub_type = YAML_SAGAN_CORE_PARSE_IP;
                                 }
 
                             else if (!strcmp(value, "selector" ))
@@ -1082,7 +1093,37 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
                                 }
+
 #endif
+
+
+                            if ( sub_type == YAML_SAGAN_CORE_PARSE_IP )
+                                {
+
+                                    printf("IN YAML_SAGAN_CORE_PARSE_IP\n");
+
+                                    if (!strcmp(last_pass, "ipv6" ))
+                                        {
+
+                                            if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") || !strcasecmp(value, "enabled" ))
+                                                {
+                                                    config->parse_ip_ipv6 = true;
+                                                }
+
+                                        }
+
+                                    else if (!strcmp(last_pass, "ipv4-mapped-ipv6" ))
+                                        {
+
+                                            if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") || !strcasecmp(value, "enabled" ))
+                                                {
+                                                    config->parse_ip_ipv4_mapped_ipv6 = true;
+                                                }
+
+                                        }
+
+                                }
+
                             if ( sub_type == YAML_SAGAN_CORE_SELECTOR )
                                 {
 
