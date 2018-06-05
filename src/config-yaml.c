@@ -494,7 +494,6 @@ void Load_YAML_Config( char *yaml_file )
 
                             else if (!strcmp(value, "parse-ip" ))
                                 {
-                                    printf("GOT parse-ip\n");
                                     sub_type = YAML_SAGAN_CORE_PARSE_IP;
                                 }
 
@@ -1099,8 +1098,6 @@ void Load_YAML_Config( char *yaml_file )
 
                             if ( sub_type == YAML_SAGAN_CORE_PARSE_IP )
                                 {
-
-                                    printf("IN YAML_SAGAN_CORE_PARSE_IP\n");
 
                                     if (!strcmp(last_pass, "ipv6" ))
                                         {
