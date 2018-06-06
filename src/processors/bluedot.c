@@ -70,6 +70,7 @@ struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t CounterBluedotGenericMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganBluedotConfigChange=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -79,11 +80,14 @@ pthread_mutex_t SaganDNSTTLWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
 sbool bluedot_cache_clean_lock=0;
 sbool bluedot_dns_global=0;
+sbool bluedot_config_change=0;
 
 int bluedot_ip_queue=0;
 int bluedot_hash_queue=0;
 int bluedot_url_queue=0;
 int bluedot_filename_queue=0;
+
+#define BLUEDOT_EMERG_CACHE_INCREASE	100
 
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
@@ -566,7 +570,21 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 
     if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
         {
-            Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Considering increasing cache size!", __FILE__, __LINE__);
+            Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
+
+            if ( bluedot_config_change == 0 )
+                {
+
+                    pthread_mutex_lock(&SaganBluedotConfigChange);
+                    bluedot_config_change = 1;
+
+                    config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
+
+                    bluedot_config_change = 0;
+                    pthread_mutex_unlock(&SaganBluedotConfigChange);
+
+                }
+
         }
 
 }
