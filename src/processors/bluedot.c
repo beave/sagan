@@ -570,7 +570,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 
     if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
         {
-            Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
+            Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
 
             if ( bluedot_config_change == 0 )
                 {
@@ -579,6 +579,8 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                     bluedot_config_change = 1;
 
                     config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
+
+		    printf("NOW: %llu\n", config->bluedot_max_cache);
 
                     bluedot_config_change = 0;
                     pthread_mutex_unlock(&SaganBluedotConfigChange);

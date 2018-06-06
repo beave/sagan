@@ -212,7 +212,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * IP Reputation *");
                     Sagan_Log(NORMAL, "");
-                    Sagan_Log(NORMAL, "          IP addresses in cache         : %" PRIu64 " (Cache used: %.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
+                    Sagan_Log(NORMAL, "          IP addresses in cache         : %" PRIu64 " (Size: %" PRIu64 " / Cache used: %.3f%%)", counters->bluedot_ip_cache_count, config->bluedot_max_cache, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_max_cache));
                     Sagan_Log(NORMAL, "          IP hits from cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
                     Sagan_Log(NORMAL, "          IP/Bluedot hits in logs       : %" PRIu64 "", counters->bluedot_ip_positive_hit);
                     Sagan_Log(NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate);
