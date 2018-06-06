@@ -223,7 +223,11 @@ struct _SaganConfig
 #ifdef WITH_BLUEDOT
     sbool        bluedot_flag;
     char         bluedot_device_id[64];
-    char         bluedot_url[256];
+    char	 bluedot_host[128];
+    char	 bluedot_ip[64];
+    int		 bluedot_dns_ttl;
+    uint64_t	 bluedot_dns_last_lookup;
+    char         bluedot_uri[256];
     char         bluedot_auth[64];
     char         bluedot_cat[MAXPATH];
     int          bluedot_timeout;

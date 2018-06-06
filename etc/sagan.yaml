@@ -312,10 +312,13 @@ processors:
   - bluedot: 
       enabled: no
       device-id: "Device_ID"
-      max-cache: 300000
+      max-cache: 500000
       cache-timeout: 120
       categories: "$RULE_PATH/bluedot-categories.conf"
-      url: "http://bluedot.quadrantsec.com/q.php?qipapikey=APIKEY"
+
+      host: "bluedot.qis.io"
+      ttl: 86400
+      uri: "q.php?qipapikey=APIKEYHERE"
 
   # The "bro-intel" processor allows Sagan to use threat intellegence data
   # from the "Bro Intellegence Framework".  Rules identified with the 

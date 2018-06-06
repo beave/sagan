@@ -192,7 +192,7 @@ void Load_YAML_Config( char *yaml_file )
             config->bluedot_timeout = 120;
 
             config->bluedot_cat[0] = '\0';
-            config->bluedot_url[0] = '\0';
+            config->bluedot_uri[0] = '\0';
 
 #endif
 
@@ -1312,6 +1312,13 @@ void Load_YAML_Config( char *yaml_file )
                                             strlcpy(config->bluedot_device_id, tmp, sizeof(config->bluedot_device_id));
                                         }
 
+
+                                    else if (!strcmp(last_pass, "host") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            strlcpy(config->bluedot_host, tmp, sizeof(config->bluedot_host));
+                                        }
+
                                     else if (!strcmp(last_pass, "max-cache") && config->bluedot_flag == true )
                                         {
 
@@ -1342,17 +1349,23 @@ void Load_YAML_Config( char *yaml_file )
 
                                     else if (!strcmp(last_pass, "categories") && config->bluedot_flag == true )
                                         {
-
                                             Var_To_Value(value, tmp, sizeof(tmp));
                                             strlcpy(config->bluedot_cat, tmp, sizeof(config->bluedot_cat));
                                         }
 
-                                    else if (!strcmp(last_pass, "url") && config->bluedot_flag == true )
+                                    else if (!strcmp(last_pass, "uri") && config->bluedot_flag == true )
                                         {
-
                                             Var_To_Value(value, tmp, sizeof(tmp));
-                                            strlcpy(config->bluedot_url, tmp, sizeof(config->bluedot_url));
+                                            strlcpy(config->bluedot_uri, tmp, sizeof(config->bluedot_uri));
                                         }
+
+
+                                    else if (!strcmp(last_pass, "ttl") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_dns_ttl = atoi(tmp);
+                                        }
+
 
                                 } /* if sub_type == YAML_PROCESSORS_BLUEDOT */
 
@@ -2354,9 +2367,9 @@ void Load_YAML_Config( char *yaml_file )
                     Sagan_Log(ERROR, "[%s, line %d] Bluedot \"catagories\" option is missing.", __FILE__, __LINE__);
                 }
 
-            if ( config->bluedot_url[0] == '\0' )
+            if ( config->bluedot_uri[0] == '\0' )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Bluedot \"url\" option is missing.", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] Bluedot \"uri\" option is missing.", __FILE__, __LINE__);
                 }
         }
 

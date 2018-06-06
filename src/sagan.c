@@ -767,8 +767,22 @@ int main(int argc, char **argv)
 
             curl_global_init(CURL_GLOBAL_ALL);
 
+            /* Lookup Bluedot IP so we don't explode DNS :) */
+
+            rc = DNS_Lookup( config->bluedot_host, config->bluedot_ip, sizeof(config->bluedot_ip) );
+
+            /* Record epoch so we can determine TTL */
+
+            config->bluedot_dns_last_lookup = atol(config->sagan_startutime);
+
+            if ( rc != 0 )
+                {
+                    Sagan_Log(ERROR, "Cannot look up IP address for '%s'.  Abort!", config->bluedot_host );
+                }
+
             Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "Bluedot URL: %s", config->bluedot_url);
+            Sagan_Log(NORMAL, "Bluedot IP: %s", config->bluedot_ip);
+            Sagan_Log(NORMAL, "Bluedot URL: http://%s/%s", config->bluedot_ip, config->bluedot_uri);
             Sagan_Log(NORMAL, "Bluedot Device ID: %s", config->bluedot_device_id);
             Sagan_Log(NORMAL, "Bluedot Categories File: %s", config->bluedot_cat);
             Sagan_Log(NORMAL, "Bluedot Max Cache: %d", config->bluedot_max_cache);

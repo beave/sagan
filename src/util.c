@@ -459,15 +459,17 @@ int DNS_Lookup( char *host, char *str, size_t size )
             return(0);
         }
 
-    if ( config->disable_dns_warnings == 0 )
-        {
+    /*
+        if ( config->disable_dns_warnings == 0 )
+            {
 
-            Sagan_Log(WARN, "--------------------------------------------------------------------------");
-            Sagan_Log(WARN, "Sagan DNS lookup need for '%s'.", host);
-            Sagan_Log(WARN, "This can affect performance.  Please see:" );
-            Sagan_Log(WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-            Sagan_Log(WARN, "--------------------------------------------------------------------------");
-        }
+                Sagan_Log(WARN, "--------------------------------------------------------------------------");
+                Sagan_Log(WARN, "Sagan DNS lookup need for '%s'.", host);
+                Sagan_Log(WARN, "This can affect performance.  Please see:" );
+                Sagan_Log(WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
+                Sagan_Log(WARN, "--------------------------------------------------------------------------");
+            }
+    */
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;     /* AF_INET or AF_INET6 to force version */
