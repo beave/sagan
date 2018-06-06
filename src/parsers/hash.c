@@ -39,9 +39,9 @@
 
 struct _SaganConfig *config;
 
-void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
+void Parse_Hash(char *syslog_message, int type, char *str, size_t size)
 {
-    char tmpmsg[MAX_SYSLOGMSG];
+    char mod_string[MAX_SYSLOGMSG];
 
     char *ptmp=NULL;
     char *tok=NULL;
@@ -49,21 +49,39 @@ void Parse_Hash(char *syslogmessage, int type, char *str, size_t size)
 
     int i;
 
-    snprintf(tmpmsg, sizeof(tmpmsg), "%s", syslogmessage);
+    /* Remove anything we dont want */
 
-    /* Hashes are sometimes near :,=.  This strips that so we can extract the
-       hash more easily.  For example,  Sysmon does SHA1={HASH}.  This makes
-       it SHA1 {hash} */
-
-    for (i=0; i<strlen(tmpmsg); i++)
+    for (i=0; i<strlen(syslog_message); i++)
         {
-            if ( tmpmsg[i] == '=' || tmpmsg[i] == ',' || tmpmsg[i] == ':' )
+
+            /* Remove everything.  Just want any hashes */
+
+            if ( syslog_message[i] != '"' && syslog_message[i] != '(' && syslog_message[i] != ')' &&
+                    syslog_message[i] != '[' && syslog_message[i] != ']' && syslog_message[i] != '<' &&
+                    syslog_message[i] != '>' && syslog_message[i] != '{' && syslog_message[i] != '}' &&
+                    syslog_message[i] != ',' && syslog_message[i] != '/' && syslog_message[i] != '@' &&
+                    syslog_message[i] != '=' && syslog_message[i] != '-' && syslog_message[i] != '!' &&
+                    syslog_message[i] != '|' && syslog_message[i] != '_' && syslog_message[i] != '+' &&
+                    syslog_message[i] != '&' && syslog_message[i] != '%' && syslog_message[i] != '$' &&
+                    syslog_message[i] != '~' && syslog_message[i] != '^' && syslog_message[i] != '\'' &&
+                    syslog_message[i] != '.' )
                 {
-                    tmpmsg[i] = ' ';
+
+                    mod_string[i] = syslog_message[i];
+                    mod_string[i+1] = '\0';
+
                 }
+            else
+                {
+
+                    mod_string[i] = ' ';
+                    mod_string[i+1] = '\0';
+
+                }
+
         }
 
-    ptmp = strtok_r(tmpmsg, " ", &tok);
+    ptmp = strtok_r(mod_string, " ", &tok);
 
     while (ptmp != NULL )
         {
