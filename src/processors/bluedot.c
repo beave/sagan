@@ -580,8 +580,6 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 
                     config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
 
-		    printf("NOW: %llu\n", config->bluedot_max_cache);
-
                     bluedot_config_change = 0;
                     pthread_mutex_unlock(&SaganBluedotConfigChange);
 
