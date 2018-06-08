@@ -422,15 +422,27 @@ void Between_Quotes(char *instr, char *str, size_t size)
 
 double CalcPct(uint64_t cnt, uint64_t total)
 {
-
-    if ( total == 0 )
-        {
-            return(0);
-        }
-
     double pct = 0.0;
 
-    pct = (double)cnt / (( (double)cnt + (double)total ) / 100 ) * 2;
+    if ( cnt == 0 && total == 0 )
+        {
+            return (double)0.0;
+        }
+
+    if ( cnt == total )
+        {
+            return (double)100.0;
+        }
+
+    if ( cnt < total )
+        {
+            pct = (double)cnt / (double)total;
+            pct *= 100.0;
+        }
+    else
+        {
+            pct = 100 - ( (double)total / (double)cnt ) ;
+        }
 
     return pct;
 }
@@ -458,18 +470,6 @@ int DNS_Lookup( char *host, char *str, size_t size )
             snprintf(str, size, "%s", config->sagan_host);
             return(0);
         }
-
-    /*
-        if ( config->disable_dns_warnings == 0 )
-            {
-
-                Sagan_Log(WARN, "--------------------------------------------------------------------------");
-                Sagan_Log(WARN, "Sagan DNS lookup need for '%s'.", host);
-                Sagan_Log(WARN, "This can affect performance.  Please see:" );
-                Sagan_Log(WARN, "https://wiki.quadrantsec.com/bin/view/Main/SaganDNS");
-                Sagan_Log(WARN, "--------------------------------------------------------------------------");
-            }
-    */
 
     memset(&hints, 0, sizeof hints);
     hints.ai_family = AF_UNSPEC;     /* AF_INET or AF_INET6 to force version */
