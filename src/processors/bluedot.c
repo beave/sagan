@@ -842,6 +842,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
 unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, unsigned char *ip )
 {
 
+
     char tmpurl[1024] = { 0 };
     char tmpdeviceid[64] = { 0 };
 
@@ -866,7 +867,14 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     signed char bluedot_alertid = 0;		/* -128 to 127 */
     int i;
 
+    unsigned char ip_convert[MAXIPBIT];
+    memset(ip_convert, 0, MAXIPBIT);
+    memcpy(ip_convert, ip, MAXIPBIT);
+
     char tmp[64] = { 0 };
+
+//    char tmp1[64];
+//    char tmp2[64]; 
 
     char  timet[20] = { 0 };
     time_t t;
@@ -940,8 +948,23 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( !memcmp(ip, SaganBluedotIPCache[i].ip, sizeof(ip)))
+
+//		    inet_ntop(AF_INET, SaganBluedotIPCache[i].ip, tmp1, INET_ADDRSTRLEN);
+//		    inet_ntop(AF_INET, ip, tmp2, INET_ADDRSTRLEN);
+
+//                    Sagan_Log(DEBUG, "%u|%d|%s|%s|%s|%d|%d", pthread_self(), i, data, tmp1, tmp2, sizeof(SaganBluedotIPCache[i].ip), sizeof(ip) );
+
+//			if (!strcmp(tmp1, tmp2)) 
+                    if ( !memcmp(ip_convert, SaganBluedotIPCache[i].ip, MAXIPBIT ))
+		      //if ( !strcmp(ip, SaganBluedotIPCache[i].ip))
                         {
+
+//			    Sagan_Log(DEBUG, "GOT MATCH %u|%d|%s|%s|%s", pthread_self(), i, data, tmp1, tmp2);
+
+
+//			    printf("GOT MATCH: |%u|%d|%s|%u|%u", pthread_self(), i, data, SaganBluedotIPCache[i].ip, ip); 
+
+
 
                             if (debug->debugbluedot)
                                 {
@@ -1015,6 +1038,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             /* If not in Bluedot IP queue,  add it */
 
+
             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
             SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
 
@@ -1027,9 +1051,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             bluedot_ip_queue++;
             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
+
             if (debug->debugbluedot)
                 {
-                    Sagan_Log(DEBUG, "[%s, line %d] Going to query IP %s from Bluedot.", __FILE__, __LINE__, data);
+                    Sagan_Log(DEBUG, "%u, [%s, line %d] Going to query IP %s from Bluedot.",pthread_self(), __FILE__, __LINE__, data);
                 }
 
 
@@ -1617,11 +1642,15 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     unsigned char bluedot_results;
     sbool bluedot_flag;
 
+    char tmp[256];
+
     for (i = 0; i < lookup_cache_size; i++)
         {
 
 
-//            Sagan_Log(DEBUG, "IN BLUEDOT: %d|%d|%s\n", i, lookup_cache[i].status, lookup_cache[i].ip);
+	    inet_ntop(AF_INET, lookup_cache[i].ip_bits, tmp, INET_ADDRSTRLEN);
+
+//            Sagan_Log(DEBUG, "IN BLUEDOT: %d|%d|%s|%s\n", i, lookup_cache[i].status, lookup_cache[i].ip, tmp);
 
             bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );

@@ -276,6 +276,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                             /* Grab the IP */
 
                             memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                             /* Preserve the array */
@@ -446,6 +447,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
                             memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
@@ -485,6 +487,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
                             memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                             /* In many cases, the port is after the : */
@@ -525,6 +528,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
                             memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
@@ -564,6 +568,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
 
                             memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                             /* In many cases, the port is after the : */
@@ -606,6 +611,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                 }
 
                             memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                             IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                             lookup_cache[current_position].port = config->sagan_port;
                             lookup_cache[current_position].status = 1;
@@ -645,6 +651,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                         }
 
                                     memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+				    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                     IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                                     /* This converts ::ffff:192.168.1.1 to regular IPv4 (192.168.1.1) */
@@ -665,6 +672,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                                             lookup_cache[current_position].ip[i-6] = '\0';
                                                         }
 
+							memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                                     IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                                                 }
@@ -815,6 +823,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                         }
 
                                     memcpy(lookup_cache[current_position].ip, ptr1, MAXIP);
+				    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                     IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                                     /* This converts ::ffff:192.168.1.1 to regular IPv4 (192.168.1.1) */
@@ -835,6 +844,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
                                                             lookup_cache[current_position].ip[i-6] = '\0';
                                                         }
 
+						    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                                     IP2Bit(ptr1, lookup_cache[current_position].ip_bits);
 
                                                 }
@@ -879,6 +889,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
 
                                     memcpy(lookup_cache[current_position].ip, ip_1, MAXIP);
+				    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                     IP2Bit(ip_1, lookup_cache[current_position].ip_bits);
 
                                     /* In many cases, the port is after the : */
@@ -924,6 +935,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
 
 
                                     memcpy(lookup_cache[current_position].ip, ip_2, MAXIP);
+			    	    memset(lookup_cache[current_position].ip_bits, 0, MAXIPBIT);
                                     IP2Bit(ip_2, lookup_cache[current_position].ip_bits);
                                     lookup_cache[current_position].port = config->sagan_port;
                                     lookup_cache[current_position].status = 1;
