@@ -69,7 +69,6 @@ struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue;
 struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterBluedotGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -120,7 +119,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 {
 
     uint32_t ip_u32;
-    int i=0;
+    int i = 0;
 
     int tmp_bluedot_queue_count=0;
 
@@ -423,9 +422,9 @@ void Sagan_Bluedot_Load_Cat(void)
 
                     strlcpy(SaganBluedotCatList[counters->bluedot_cat_count].cat, bluedot_tok2, sizeof(SaganBluedotCatList[counters->bluedot_cat_count].cat));
 
-                    pthread_mutex_lock(&CounterBluedotGenericMutex);
+                    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
                     counters->bluedot_cat_count++;
-                    pthread_mutex_unlock(&CounterBluedotGenericMutex);
+                    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
                 }
         }
 
@@ -477,7 +476,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 void Sagan_Bluedot_Clean_Cache ( void )
 {
 
-    int i;
+    int i=0;
     int timeout_count=0;
     int deleted_count=0;
 
@@ -551,9 +550,9 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = counters->bluedot_ip_cache_count - (uint64_t)timeout_count;
 
-            pthread_mutex_lock(&CounterBluedotGenericMutex);
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_ip_cache_count = (uint64_t)timeout_count;
-            pthread_mutex_unlock(&CounterBluedotGenericMutex);
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             Sagan_Log(NORMAL, "[%s, line %d] Deleted %d IP addresses from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -598,9 +597,9 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = counters->bluedot_hash_cache_count - (uint64_t)timeout_count;
 
-            pthread_mutex_lock(&CounterBluedotGenericMutex);
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_hash_cache_count = (uint64_t)timeout_count;
-            pthread_mutex_unlock(&CounterBluedotGenericMutex);
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             Sagan_Log(NORMAL, "[%s, line %d] Deleted %d hashes from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -644,9 +643,9 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = counters->bluedot_url_cache_count - (uint64_t)timeout_count;
 
-            pthread_mutex_lock(&CounterBluedotGenericMutex);
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_url_cache_count = (uint64_t)timeout_count;
-            pthread_mutex_unlock(&CounterBluedotGenericMutex);
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             Sagan_Log(NORMAL, "[%s, line %d] Deleted %d URLs from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -690,9 +689,9 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = counters->bluedot_filename_cache_count - (uint64_t)timeout_count;
 
-            pthread_mutex_lock(&CounterBluedotGenericMutex);
+            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             counters->bluedot_filename_cache_count = (uint64_t)timeout_count;
-            pthread_mutex_unlock(&CounterBluedotGenericMutex);
+            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             Sagan_Log(NORMAL, "[%s, line %d] Deleted %d filenames from Bluedot cache.",__FILE__, __LINE__, deleted_count);
 
@@ -747,7 +746,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     char cattmp[64] = { 0 };
     char *saveptr=NULL;
     signed char bluedot_alertid = 0;		/* -128 to 127 */
-    int i;
+    int i=0;
 
     /* IP pointer will either be 8 or 16 bits.  We need to _always_ 16 for
        comparison! */
@@ -1408,7 +1407,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position, unsigned char type )
 {
 
-    int i;
+    int i=0;
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
@@ -1496,8 +1495,8 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
 int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
 {
 
-    int i;
-    int j;
+    int i = 0;
+    int j = 0;
     int port = 0;
 
     char ip[MAXIP] = { 0 };
@@ -1532,7 +1531,7 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
     char *tmptoken;
     char *saveptrrule;
 
-    int i;
+    int i = 0;
 
     sbool found;
 
