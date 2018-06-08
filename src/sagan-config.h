@@ -231,7 +231,7 @@ struct _SaganConfig
     char         bluedot_auth[64];
     char         bluedot_cat[MAXPATH];
     int          bluedot_timeout;
-    uint64_t     bluedot_max_cache;
+//    uint64_t     bluedot_max_cache;
     uint64_t     bluedot_last_time;                    /* For cache cleaning */
 #endif
 

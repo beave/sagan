@@ -25,8 +25,6 @@
 * known bad IP/Networks.  This processor uses the CIDR format:
 * 192.168.1.1/32 (single ip) or 192.168.1.0./24.
 *
-* TODO: blacklist does NOT current handle IPv6 addresses.
-*
 */
 
 #ifdef HAVE_CONFIG_H
@@ -64,15 +62,6 @@ void Sagan_Blacklist_Init ( void )
     pthread_mutex_lock(&CounterBlacklistGenericMutex);
     counters->blacklist_count=0;
     pthread_mutex_unlock(&CounterBlacklistGenericMutex);
-
-    SaganBlacklist = malloc(sizeof(_Sagan_Blacklist));
-
-    if ( SaganBlacklist == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBlacklist. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(SaganBlacklist, 0, sizeof(_Sagan_Blacklist));
 
 }
 
@@ -214,8 +203,8 @@ void Sagan_Blacklist_Load ( void )
                                             for ( i = 0; i < counters->blacklist_count; i++ )
                                                 {
 
-                                                    if ( !memcmp(SaganBlacklist[i].range.ipbits, ipbits, sizeof(ipbits)) &&
-                                                            !memcmp(SaganBlacklist[i].range.maskbits, maskbits, sizeof(maskbits)))
+                                                    if ( !memcmp(SaganBlacklist[i].range.ipbits, ipbits, MAXIPBIT ) &&
+                                                            !memcmp(SaganBlacklist[i].range.maskbits, maskbits, MAXIPBIT ) )
                                                         {
                                                             Sagan_Log(WARN, "[%s, line %d] Got duplicate blacklist address %s/%s in %s on line %d, skipping....", __FILE__, __LINE__, iprange, tmpmask, blacklist_filename, line_count);
                                                             found = 1;

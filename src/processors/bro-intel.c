@@ -75,87 +75,6 @@ pthread_mutex_t CounterBroIntelGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_BroIntel_Init(void)
 {
 
-    /* Init memory for processor / storage of Bro Intel data */
-
-    Sagan_BroIntel_Intel_Addr = malloc(sizeof(_Sagan_BroIntel_Intel_Addr));
-
-    if ( Sagan_BroIntel_Intel_Addr == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Addr. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_Addr, 0, sizeof(_Sagan_BroIntel_Intel_Addr));
-
-    Sagan_BroIntel_Intel_Domain = malloc(sizeof(_Sagan_BroIntel_Intel_Domain));
-
-    if ( Sagan_BroIntel_Intel_Domain == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Domain. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_Domain, 0, sizeof(_Sagan_BroIntel_Intel_Domain));
-
-    Sagan_BroIntel_Intel_File_Hash = malloc(sizeof(_Sagan_BroIntel_Intel_File_Hash));
-
-    if ( Sagan_BroIntel_Intel_File_Hash == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Hash. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_File_Hash, 0, sizeof(_Sagan_BroIntel_Intel_File_Hash));
-
-    Sagan_BroIntel_Intel_URL = malloc(sizeof(_Sagan_BroIntel_Intel_URL));
-
-    if ( Sagan_BroIntel_Intel_URL == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_URL. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_URL, 0, sizeof(_Sagan_BroIntel_Intel_URL));
-
-    Sagan_BroIntel_Intel_Software = malloc(sizeof(_Sagan_BroIntel_Intel_Software));
-
-    if ( Sagan_BroIntel_Intel_Software == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Software. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_Software, 0, sizeof(_Sagan_BroIntel_Intel_Software));
-
-    Sagan_BroIntel_Intel_Email = malloc(sizeof(_Sagan_BroIntel_Intel_Email));
-
-    if ( Sagan_BroIntel_Intel_Email == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Email. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_Email, 0, sizeof(_Sagan_BroIntel_Intel_Email));
-
-    Sagan_BroIntel_Intel_User_Name = malloc(sizeof(_Sagan_BroIntel_Intel_User_Name));
-
-    if ( Sagan_BroIntel_Intel_User_Name == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_User_Name. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_User_Name, 0, sizeof(_Sagan_BroIntel_Intel_User_Name));
-
-    Sagan_BroIntel_Intel_File_Name = malloc(sizeof(_Sagan_BroIntel_Intel_File_Name));
-
-    if ( Sagan_BroIntel_Intel_File_Name == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_File_Name. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(Sagan_BroIntel_Intel_File_Name, 0, sizeof(_Sagan_BroIntel_Intel_File_Name));
-
-    Sagan_BroIntel_Intel_Cert_Hash = malloc(sizeof(_Sagan_BroIntel_Intel_Cert_Hash));
-
-    if ( Sagan_BroIntel_Intel_Cert_Hash == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_BroIntel_Intel_Cert_Hash. Abort!", __FILE__, __LINE__);
-        }
-
 }
 
 /*****************************************************************************
@@ -625,6 +544,10 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
 
     int i = 0;
 
+    unsigned char ip_convert[MAXIPBIT] = { 0 };
+    memset(ip_convert, 0, MAXIPBIT);
+    memcpy(ip_convert, ip, MAXIPBIT);
+
     /* If RFC1918 and friends,  we can short circuit here */
 
     if ( is_notroutable(ip) )
@@ -643,7 +566,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
     for ( i = 0; i < counters->brointel_addr_count; i++)
         {
 
-            if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, ip, sizeof(Sagan_BroIntel_Intel_Addr[i].bits_ip)) )
+            if ( !memcmp(ip_convert, Sagan_BroIntel_Intel_Addr[i].bits_ip, MAXIPBIT) )
                 {
                     if ( debug->debugbrointel )
                         {

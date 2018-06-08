@@ -68,6 +68,7 @@ struct _SaganConfig *config;
  * are reporting or not.
  ****************************************************************************/
 
+
 void Track_Clients ( char *host )
 {
 
@@ -84,14 +85,7 @@ void Track_Clients ( char *host )
     utime_u64 = atol(utime_tmp);
     int expired_time = config->pp_sagan_track_clients * 60;
 
-    /*
-        if ( !IP2Bit(host, hostbits) )
-            {
-                Sagan_Log(WARN, "[%s, line %d] Received invalid IP to track.", __FILE__, __LINE__);
-                return;
-            }
-    */
-
+    IP2Bit(host, hostbits);
 
     /********************************************/
     /** Record update tracking if record exsist */
@@ -102,7 +96,7 @@ void Track_Clients ( char *host )
 
     for (i=0; i<counters_ipc->track_clients_client_count; i++)
         {
-            if ( !memcmp(SaganTrackClients_ipc[i].hostbits, hostbits, sizeof(hostbits)) )
+            if ( !memcmp(SaganTrackClients_ipc[i].hostbits, hostbits, MAXIPBIT ) )
                 {
 
                     SaganTrackClients_ipc[i].utime = utime_u64;
