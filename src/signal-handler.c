@@ -259,6 +259,7 @@ void Sig_Handler( void )
                         }
 
                     Remove_Lock_File();
+		    sleep(1); 			/* Let things settle */
                     exit(0);
                     break;
 
