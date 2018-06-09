@@ -84,8 +84,6 @@ int bluedot_hash_queue=0;
 int bluedot_url_queue=0;
 int bluedot_filename_queue=0;
 
-#define BLUEDOT_EMERG_CACHE_INCREASE	1000
-
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
  * that need to be done only once. - Champ Clark 05/15/2013
@@ -119,7 +117,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 {
 
     uint32_t ip_u32;
-    int i = 0;
+    int i=0;
 
     int tmp_bluedot_queue_count=0;
 
@@ -476,7 +474,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 void Sagan_Bluedot_Clean_Cache ( void )
 {
 
-    int i=0;
+    int i;
     int timeout_count=0;
     int deleted_count=0;
 
@@ -746,7 +744,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     char cattmp[64] = { 0 };
     char *saveptr=NULL;
     signed char bluedot_alertid = 0;		/* -128 to 127 */
-    int i=0;
+    int i = 0;
+//    int k = 0;
 
     /* IP pointer will either be 8 or 16 bits.  We need to _always_ 16 for
        comparison! */
@@ -829,7 +828,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( !memcmp(ip_convert, SaganBluedotIPCache[i].ip, MAXIPBIT ))
+//		    Sagan_Log(DEBUG, "%lu|%d|%d|%d", pthread_self(), k, sizeof(SaganBluedotIPCache[k].ip), sizeof(ip_convert)); 
+
+                    if ( !memcmp(SaganBluedotIPCache[i].ip, ip_convert, MAXIPBIT ))
                         {
 
                             if (debug->debugbluedot)
@@ -903,7 +904,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
             /* If not in Bluedot IP queue,  add it */
-
 
             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
             SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
@@ -1255,7 +1255,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+            //pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+	    pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
             counters->bluedot_ip_total++;
 
@@ -1268,6 +1269,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             /* Store data into cache */
 
+	    memset(SaganBluedotIPCache[counters->bluedot_ip_cache_count].ip, 0, MAXIPBIT);
             memcpy(SaganBluedotIPCache[counters->bluedot_ip_cache_count].ip, ip, MAXIPBIT);
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = epoch_time;                   /* store utime */
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
@@ -1276,7 +1278,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             counters->bluedot_ip_cache_count++;
 
-            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+            //pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+	    pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
             if ( bluedot_alertid != 0 && rulestruct[rule_position].bluedot_mdate_effective_period != 0 )
                 {
@@ -1407,7 +1410,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position, unsigned char type )
 {
 
-    int i=0;
+    int i;
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
@@ -1495,8 +1498,8 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
 int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
 {
 
-    int i = 0;
-    int j = 0;
+    int i;
+    int j;
     int port = 0;
 
     char ip[MAXIP] = { 0 };
@@ -1531,7 +1534,7 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
     char *tmptoken;
     char *saveptrrule;
 
-    int i = 0;
+    int i;
 
     sbool found;
 
