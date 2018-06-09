@@ -85,7 +85,7 @@ int bluedot_hash_queue=0;
 int bluedot_url_queue=0;
 int bluedot_filename_queue=0;
 
-#define BLUEDOT_EMERG_CACHE_INCREASE	1000
+//#define BLUEDOT_EMERG_CACHE_INCREASE	1000
 
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
@@ -105,7 +105,7 @@ void Sagan_Bluedot_Init(void)
     strftime(timet, sizeof(timet), "%s",  now);
 
     /* Bluedot IP Cache */
-
+/*
     SaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
 
     if ( SaganBluedotIPCache == NULL )
@@ -116,7 +116,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
 
     /* Bluedot Hash Cache */
-
+/*
     SaganBluedotHashCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
 
     if ( SaganBluedotHashCache == NULL )
@@ -127,7 +127,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotHashCache, 0, sizeof(_Sagan_Bluedot_Hash_Cache));
 
     /* Bluedot URL Cache */
-
+/*
     SaganBluedotURLCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_URL_Cache));
 
     if ( SaganBluedotURLCache == NULL )
@@ -138,7 +138,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotURLCache, 0, sizeof(_Sagan_Bluedot_URL_Cache));
 
     /* Bluedot Filename Cache */
-
+/*
     SaganBluedotFilenameCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
 
     if ( SaganBluedotFilenameCache == NULL )
@@ -149,7 +149,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotFilenameCache, 0, sizeof(_Sagan_Bluedot_Filename_Cache));
 
     /* Bluedot Catlist */
-
+/*
     SaganBluedotCatList = malloc(sizeof(_Sagan_Bluedot_Cat_List));
 
     if ( SaganBluedotCatList == NULL )
@@ -160,7 +160,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotCatList, 0, sizeof(_Sagan_Bluedot_Cat_List));
 
     /* Bluedot IP Queue */
-
+/*
     SaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
 
     if ( SaganBluedotIPQueue == NULL )
@@ -171,7 +171,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
     /* Bluedot Hash Queue */
-
+/*
     SaganBluedotHashQueue = malloc(sizeof(_Sagan_Bluedot_Hash_Queue));
 
     if ( SaganBluedotHashQueue == NULL )
@@ -183,7 +183,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
 
     /* Bluedot Filename Queue */
-
+/*
     SaganBluedotFilenameQueue = malloc(sizeof(_Sagan_Bluedot_Filename_Queue));
 
     if ( SaganBluedotFilenameQueue == NULL )
@@ -195,7 +195,7 @@ void Sagan_Bluedot_Init(void)
     memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
 
     /* Bluedot URL Queue */
-
+/*
     SaganBluedotURLQueue = malloc(sizeof(_Sagan_Bluedot_URL_Queue));
 
     if ( SaganBluedotURLQueue == NULL )
@@ -204,7 +204,7 @@ void Sagan_Bluedot_Init(void)
         }
 
     config->bluedot_last_time = atol(timet);
-
+*/
 }
 
 
@@ -566,6 +566,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                 }
         }
 
+/*
     if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
         {
             Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
@@ -584,7 +585,7 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                 }
 
         }
-
+*/
 }
 
 /****************************************************************************
