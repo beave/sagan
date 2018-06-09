@@ -203,8 +203,9 @@ void Sagan_Bluedot_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
         }
 
-    config->bluedot_last_time = atol(timet);
 */
+    config->bluedot_last_time = atol(timet);
+
 }
 
 
