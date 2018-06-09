@@ -69,11 +69,14 @@ struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue;
 struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t CounterBluedotGenericMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganBluedotConfigChange=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotURLWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotFilenameWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganDNSTTLWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
 sbool bluedot_cache_clean_lock=0;
 sbool bluedot_dns_global=0;
@@ -84,6 +87,11 @@ int bluedot_hash_queue=0;
 int bluedot_url_queue=0;
 int bluedot_filename_queue=0;
 
+<<<<<<< HEAD
+=======
+#define BLUEDOT_EMERG_CACHE_INCREASE	100
+
+>>>>>>> parent of 80498c9... Hopefully fix for segfault in bluedot when dyamically increasing.
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
  * that need to be done only once. - Champ Clark 05/15/2013
@@ -464,6 +472,29 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                     Sagan_Bluedot_Clean_Cache();
                 }
         }
+<<<<<<< HEAD
+=======
+
+    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
+        {
+            Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
+
+            if ( bluedot_config_change == 0 )
+                {
+
+                    pthread_mutex_lock(&SaganBluedotConfigChange);
+                    bluedot_config_change = 1;
+
+                    config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
+
+                    bluedot_config_change = 0;
+                    pthread_mutex_unlock(&SaganBluedotConfigChange);
+
+                }
+
+        }
+
+>>>>>>> parent of 80498c9... Hopefully fix for segfault in bluedot when dyamically increasing.
 }
 
 /****************************************************************************
@@ -777,7 +808,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
 
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+            pthread_mutex_lock(&SaganDNSTTLWorkMutex);
             bluedot_dns_global = 1;
 
             i = DNS_Lookup( config->bluedot_host, tmp, sizeof(tmp) );
@@ -800,7 +831,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             config->bluedot_dns_last_lookup = epoch_time;
             bluedot_dns_global = 0;
-            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+            pthread_mutex_unlock(&SaganDNSTTLWorkMutex);
 
         }
 
