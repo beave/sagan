@@ -69,6 +69,7 @@ struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue;
 struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t CounterBluedotGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
