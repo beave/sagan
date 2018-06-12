@@ -79,7 +79,7 @@ pthread_mutex_t SaganProcBluedotFilenameWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 sbool bluedot_cache_clean_lock=0;
 sbool bluedot_dns_global=0;
 
-sbool bluedot_ip_update = 0; 
+sbool bluedot_ip_update = 0;
 sbool bluedot_hash_update = 0;
 sbool bluedot_url_update = 0;
 sbool bluedot_filename_update = 0;
@@ -162,7 +162,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
-	    bluedot_ip_update = 1;
+            bluedot_ip_update = 1;
 
             memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
@@ -177,12 +177,12 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
                             Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
                         }
 
-		    memset(SaganBluedotIPQueue[bluedot_ip_queue].ip, 0, MAXIPBIT);
+                    memset(SaganBluedotIPQueue[bluedot_ip_queue].ip, 0, MAXIPBIT);
                     memcpy(SaganBluedotIPQueue[bluedot_ip_queue].ip, TmpSaganBluedotIPQueue[i].ip, MAXIPBIT);
                     bluedot_ip_queue++;
                 }
 
-	    bluedot_ip_update = 0; 
+            bluedot_ip_update = 0;
             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
             free(TmpSaganBluedotIPQueue);
 
@@ -217,7 +217,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
             pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
 
-    	    bluedot_hash_update = 1;
+            bluedot_hash_update = 1;
 
             memset(SaganBluedotHashQueue, 0, sizeof(_Sagan_Bluedot_Hash_Queue));
 
@@ -245,7 +245,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                 }
 
-	    bluedot_hash_update = 0; 
+            bluedot_hash_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
             free(TmpSaganBluedotHashQueue);
@@ -282,7 +282,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
             pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
 
-	    bluedot_url_update = 1;
+            bluedot_url_update = 1;
 
             memset(SaganBluedotURLQueue, 0, sizeof(_Sagan_Bluedot_URL_Queue));
 
@@ -301,7 +301,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
                     bluedot_url_queue++;
                 }
 
-	    bluedot_url_update = 0; 
+            bluedot_url_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
             free(TmpSaganBluedotURLQueue);
@@ -338,7 +338,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
             pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
 
-	    bluedot_filename_update = 1; 
+            bluedot_filename_update = 1;
 
             memset(SaganBluedotFilenameQueue, 0, sizeof(_Sagan_Bluedot_Filename_Queue));
 
@@ -357,7 +357,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
                     bluedot_filename_queue++;
                 }
 
-	    bluedot_filename_update = 0;
+            bluedot_filename_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
             free(TmpSaganBluedotFilenameQueue);
@@ -483,26 +483,26 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                 }
         }
 
-/*
-    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
-        {
-            Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
+    /*
+        if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
+            {
+                Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
 
-            if ( bluedot_config_change == 0 )
-                {
+                if ( bluedot_config_change == 0 )
+                    {
 
-                    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                    bluedot_config_change = 1;
+                        pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+                        bluedot_config_change = 1;
 
-                    config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
+                        config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
 
-                    bluedot_config_change = 0;
-                    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                        bluedot_config_change = 0;
+                        pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-                }
+                    }
 
-        }
-*/
+            }
+    */
 }
 
 /****************************************************************************
@@ -763,7 +763,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     unsigned char ip_convert[MAXIPBIT] = { 0 };
     memset(ip_convert, 0, MAXIPBIT);
     memcpy(ip_convert, ip, MAXIPBIT);
-   
+
     char tmpurl[1024] = { 0 };
     char tmpdeviceid[64] = { 0 };
 
@@ -789,7 +789,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     int i;
 
     char tmp[64] = { 0 };
-    char ip_s[64] = { 0 }; 
+    char ip_s[64] = { 0 };
 
     char  timet[20] = { 0 };
     time_t t;
@@ -861,16 +861,16 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                 }
 
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
-		{
+                {
 
 
-		    /* In high volume env the BluedotIPCache might be being written
-  		       to which can cause a segfault on the memcmp.  We lock,  even 
-		       though we are reading, to keep this from happening */
+                    /* In high volume env the BluedotIPCache might be being written
+                       to which can cause a segfault on the memcmp.  We lock,  even
+                       though we are reading, to keep this from happening */
 
-		    pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+                    pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
-		    bluedot_ip_update = 1; 
+                    bluedot_ip_update = 1;
 
                     if (!memcmp( ip_convert, SaganBluedotIPCache[i].ip, MAXIPBIT ))
                         {
@@ -932,8 +932,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                         }
 
-			bluedot_ip_update =0;
-			pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                    bluedot_ip_update =0;
+                    pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
                 }
 
@@ -999,15 +999,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             counters->bluedot_hash_cache_hit++;
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-			    pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
-			    bluedot_hash_update = 0; 
+                            pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
+                            bluedot_hash_update = 0;
 
                             return(SaganBluedotHashCache[i].alertid);
 
                         }
 
-                        pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
-                        bluedot_hash_update = 0; 
+                    pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
+                    bluedot_hash_update = 0;
 
                 }
 
@@ -1057,8 +1057,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             for (i=0; i<counters->bluedot_url_cache_count; i++)
                 {
 
-                   pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
-                   bluedot_url_update = 1; 
+                    pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
+                    bluedot_url_update = 1;
 
                     if (!strcasecmp(data, SaganBluedotURLCache[i].url))
                         {
@@ -1071,15 +1071,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             counters->bluedot_url_cache_hit++;
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-			    bluedot_url_update = 0; 
-			    pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
+                            bluedot_url_update = 0;
+                            pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
 
                             return(SaganBluedotURLCache[i].alertid);
 
                         }
 
-                        bluedot_url_update = 0; 
-                        pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
+                    bluedot_url_update = 0;
+                    pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
 
                 }
 
@@ -1132,7 +1132,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
 
                     pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
-                    bluedot_filename_update = 1; 
+                    bluedot_filename_update = 1;
 
                     if (!strcasecmp(data, SaganBluedotFilenameCache[i].filename))
                         {
@@ -1147,15 +1147,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
 
-			    bluedot_filename_update = 0; 
-			    pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
+                            bluedot_filename_update = 0;
+                            pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
 
                             return(SaganBluedotFilenameCache[i].alertid);
 
                         }
 
-                        bluedot_filename_update = 0; 
-                        pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
+                    bluedot_filename_update = 0;
+                    pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
 
                 }
 
@@ -1163,7 +1163,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             for (i=0; i < bluedot_filename_queue; i++)
                 {
-                    if ( !strcasecmp(data, SaganBluedotFilenameQueue[i].filename) ) 
+                    if ( !strcasecmp(data, SaganBluedotFilenameQueue[i].filename) )
                         {
                             if (debug->debugbluedot)
                                 {
@@ -1342,7 +1342,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
-	    bluedot_ip_update = 1;
+            bluedot_ip_update = 1;
 
 
             SaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotIPCache, (counters->bluedot_ip_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
@@ -1360,11 +1360,11 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].alertid = bluedot_alertid;
 
-           
-	    counters->bluedot_ip_total++; 
-	    counters->bluedot_ip_cache_count++;
 
-	    bluedot_ip_update = 0; 
+            counters->bluedot_ip_total++;
+            counters->bluedot_ip_cache_count++;
+
+            bluedot_ip_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
@@ -1416,7 +1416,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
 
-	    bluedot_hash_update = 1;
+            bluedot_hash_update = 1;
 
             counters->bluedot_hash_total++;
 
@@ -1432,7 +1432,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotHashCache[counters->bluedot_hash_cache_count].alertid = bluedot_alertid;
             counters->bluedot_hash_cache_count++;
 
-    	    bluedot_hash_update = 0;
+            bluedot_hash_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
 
@@ -1444,7 +1444,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         {
             pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
 
-	    bluedot_url_update = 1;
+            bluedot_url_update = 1;
 
             counters->bluedot_url_total++;
 
@@ -1460,7 +1460,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotURLCache[counters->bluedot_url_cache_count].alertid = bluedot_alertid;
             counters->bluedot_url_cache_count++;
 
-   	    bluedot_url_update = 0;
+            bluedot_url_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
 
@@ -1473,7 +1473,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
 
-	    bluedot_filename_update = 1; 
+            bluedot_filename_update = 1;
 
             counters->bluedot_filename_total++;
 
@@ -1490,7 +1490,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].alertid = bluedot_alertid;
             counters->bluedot_filename_cache_count++;
 
-	    bluedot_filename_update = 0;
+            bluedot_filename_update = 0;
 
             pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
         }

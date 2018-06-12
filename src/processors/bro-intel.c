@@ -158,7 +158,7 @@ void Sagan_BroIntel_Load_File ( void )
                                     for (i=0; i < counters->brointel_addr_count; i++)
                                         {
 
-                                            if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, sizeof(bits_ip)) )
+                                            if ( !memcmp(Sagan_BroIntel_Intel_Addr[i].bits_ip, bits_ip, MAXIPBIT) )
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::ADDR address %s in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -198,7 +198,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                     for (i=0; i < counters-> brointel_domain_count; i++)
                                         {
-                                            if (!strcmp(Sagan_BroIntel_Intel_Domain[i].domain, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_Domain[i].domain, value))
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::DOMAIN '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -238,7 +238,7 @@ void Sagan_BroIntel_Load_File ( void )
                                     for (i=0; i < counters->brointel_file_hash_count; i++)
                                         {
 
-                                            if (!strcmp(Sagan_BroIntel_Intel_File_Hash[i].hash, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_File_Hash[i].hash, value))
                                                 {
 
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::FILE_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
@@ -278,7 +278,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                     for (i=0; i < counters->brointel_url_count; i++)
                                         {
-                                            if (!strcmp(Sagan_BroIntel_Intel_URL[i].url, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_URL[i].url, value))
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::URL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -324,7 +324,7 @@ void Sagan_BroIntel_Load_File ( void )
                                     for (i=0; i < counters->brointel_software_count++; i++)
                                         {
 
-                                            if (!strcmp(Sagan_BroIntel_Intel_Software[i].software, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_Software[i].software, value))
                                                 {
 
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::SOFTWARE '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
@@ -365,7 +365,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                     for (i=0; i < counters->brointel_email_count; i++)
                                         {
-                                            if (!strcmp(Sagan_BroIntel_Intel_Email[i].email, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_Email[i].email, value))
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::EMAIL '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -409,7 +409,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                     for (i=0; i < counters->brointel_user_name_count; i++)
                                         {
-                                            if (!strcmp(Sagan_BroIntel_Intel_User_Name[i].username, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_User_Name[i].username, value))
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::USER_NAME '%s' in %s on line %.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
@@ -451,7 +451,7 @@ void Sagan_BroIntel_Load_File ( void )
                                     for (i=0; i < counters->brointel_file_name_count; i++)
                                         {
 
-                                            if (!strcmp(Sagan_BroIntel_Intel_File_Name[i].file_name, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_File_Name[i].file_name, value))
                                                 {
 
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::FILE_NAME '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
@@ -493,7 +493,7 @@ void Sagan_BroIntel_Load_File ( void )
 
                                     for (i=0; i < counters->brointel_cert_hash_count; i++)
                                         {
-                                            if (!strcmp(Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, value))
+                                            if (!strcasecmp(Sagan_BroIntel_Intel_Cert_Hash[i].cert_hash, value))
                                                 {
                                                     Sagan_Log(WARN, "[%s, line %d] Got duplicate Intel::CERT_HASH '%s' in %s on line %d.", __FILE__, __LINE__, value, brointel_filename, line_count + 1);
 
