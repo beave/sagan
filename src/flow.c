@@ -60,6 +60,8 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
     src = ip_src_bits;
     dst = ip_dst_bits;
 
+    unsigned char ip_convert[MAXIPBIT] = { 0 };
+
     if(rulestruct[b].direction == 0 || rulestruct[b].direction == 1)
         {
             ip_src = src;
@@ -77,22 +79,21 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
 
 
     /*proto*/
+
     int c1=0;
 
     /*flow 1*/
+
     int w=0;
     int a1=0;
     int eq1=0;
     int ne1=0;
     int eq1_val=0;
     int ne1_val=0;
-//    char *tmptoken1;
-//    char *saveptrflow1;
-//    char *tmp1;
-//    char tmp_flow_1[512];
     int f1;
 
     /*port 1*/
+
     int b1=0;
     int u=0;
     int eq3=0;
@@ -103,19 +104,17 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
 
 
     /*flow 2*/
+
     int z=0;
     int a2=0;
     int eq2=0;
     int ne2=0;
     int eq2_val=0;
     int ne2_val=0;
-//    char *tmptoken2;
-//    char *saveptrflow2;
-//    char *tmp2;
-//    char tmp_flow_2[512];
     int f2;
 
     /*port 2*/
+
     int b2=0;
     int v=0;
     int eq4=0;
@@ -124,13 +123,11 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
     int ne4_val=0;
     int g2;
 
-//    uint32_t lo;
-//    uint32_t hi;
-
     int i;
     int failed=0;
 
     /*Begin ip_proto*/
+
     if(rulestruct[b].ip_proto != 0)
         {
             if(ip_proto == rulestruct[b].ip_proto)
@@ -149,9 +146,10 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /*Begin flow_1*/
+
     if(rulestruct[b].flow_1_var != 0)
         {
-            for(i=0; i < rulestruct[b].flow_1_counter + 1; i++)
+            for(i=0; i < rulestruct[b].flow_1_counter; i++)
                 {
                     w++;
                     f1 = rulestruct[b].flow_1_type[w];
@@ -159,32 +157,49 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     if(f1 == 0)
                         {
                             ne1++;
+
                             if(is_inrange(ip_src, (unsigned char *)&rulestruct[b].flow_1[i].range, 1))
                                 {
                                     ne1_val++;
                                 }
                         }
+
                     else if(f1 == 1)
+
                         {
                             eq1++;
                             if(is_inrange(ip_src, (unsigned char *)&rulestruct[b].flow_1[i].range, 1))
                                 {
                                     eq1_val++;
                                 }
+
                         }
+
                     else if(f1 == 2)
                         {
+
                             ne1++;
-                            if(!memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
+
+                            memset(ip_convert, 0, MAXIPBIT);
+                            memcpy(ip_convert, ip_src, MAXIPBIT);
+
+                            if (!memcmp(ip_convert, rulestruct[b].flow_1[i].range.ipbits, MAXIPBIT) )
                                 {
                                     ne1_val++;
                                 }
                         }
+
                     else if(f1 == 3)
                         {
+
                             eq1++;
-                            if(!memcmp(ip_src, rulestruct[b].flow_1[i].range.ipbits, sizeof(rulestruct[b].flow_1[i].range.ipbits)) )
+
+                            memset(ip_convert, 0, MAXIPBIT);
+                            memcpy(ip_convert, ip_src, MAXIPBIT);
+
+                            if (!memcmp(ip_convert, rulestruct[b].flow_1[i].range.ipbits, MAXIPBIT))
                                 {
+
                                     eq1_val++;
                                 }
                         }
@@ -196,6 +211,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if ne1, did anything match (meaning failed) */
+
     if(ne1>0)
         {
             if(ne1_val > 0)
@@ -205,6 +221,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if eq1, did anything not match meaning failed */
+
     if(eq1>0)
         {
             if(eq1_val < 1)
@@ -214,8 +231,10 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if either failed, we did not match, no need to check the second flow... we already failed! */
+
     if(a1 != 1)
         {
+
             if(failed > 0)
                 {
                     return 0;
@@ -223,6 +242,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /*Begin port_1*/
+
     if(rulestruct[b].port_1_var != 0)
         {
             for(i=0; i < rulestruct[b].port_1_counter; i++)
@@ -273,6 +293,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if ne3, did anything match (meaning failed) */
+
     if(ne3>0)
         {
             if(ne3_val > 0)
@@ -282,6 +303,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if eq3, did anything not match meaning failed */
+
     if(eq3>0)
         {
             if(eq3_val < 1)
@@ -291,6 +313,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if either failed, we did not match, no need to check the second flow... we already failed! */
+
     if(b1 != 1)
         {
             if(failed > 0)
@@ -302,9 +325,10 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
 
 
     /*Begin flow_2*/
+
     if(rulestruct[b].flow_2_var != 0)
         {
-            for(i=0; i < rulestruct[b].flow_2_counter + 1; i++)
+            for(i=0; i < rulestruct[b].flow_2_counter; i++)
                 {
                     z++;
                     f2 = rulestruct[b].flow_2_type[z];
@@ -328,7 +352,12 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f2 == 2)
                         {
                             ne2++;
-                            if(!memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
+
+
+                            memset(ip_convert, 0, MAXIPBIT);
+                            memcpy(ip_convert, ip_dst, MAXIPBIT);
+
+                            if (!memcmp(ip_convert, rulestruct[b].flow_2[i].range.ipbits, MAXIPBIT ))
                                 {
                                     ne2_val++;
                                 }
@@ -336,7 +365,11 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
                     else if(f2 == 3)
                         {
                             eq2++;
-                            if(!memcmp(ip_dst, rulestruct[b].flow_2[i].range.ipbits, sizeof(rulestruct[b].flow_2[i].range.ipbits)) )
+
+                            memset(ip_convert, 0, MAXIPBIT);
+                            memcpy(ip_convert, ip_dst, MAXIPBIT);
+
+                            if (!memcmp(ip_convert, rulestruct[b].flow_2[i].range.ipbits, MAXIPBIT ))
                                 {
                                     eq2_val++;
                                 }
@@ -349,6 +382,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if ne2, did anything match (meaning failed) */
+
     if(ne2>0)
         {
             if(ne2_val > 0)
@@ -358,6 +392,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if eq2, did anything not match meaning failed */
+
     if(eq2>0)
         {
             if(eq2_val < 1)
@@ -367,6 +402,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if either failed, we did not match, leave */
+
     if(a2 != 1)
         {
             if(failed > 0)
@@ -376,6 +412,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /*Begin port_2*/
+
     if(rulestruct[b].port_2_var != 0)
         {
             for(i=0; i < rulestruct[b].port_2_counter; i++)
@@ -426,6 +463,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if ne4, did anything match (meaning failed) */
+
     if(ne4>0)
         {
             if(ne4_val > 0)
@@ -435,6 +473,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if eq4, did anything not match meaning failed */
+
     if(eq4>0)
         {
             if(eq4_val < 1)
@@ -444,6 +483,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* if either failed, we did not match, no need to check the second flow... we already failed! */
+
     if(b2 != 1)
         {
             if(failed > 0)
@@ -453,6 +493,7 @@ sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize
         }
 
     /* If we made it to this point we have a match */
+
     return 1;
 
-}/*We are done*/
+} /*We are done*/

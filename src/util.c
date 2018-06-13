@@ -1360,7 +1360,7 @@ sbool Is_IP (char *str)
 {
 
     char *tmp = NULL;
-    char *ip = NULL;
+    //char *ip = NULL;
     int prefix;
     unsigned int ipint = 0;
     unsigned char ipbits[MAXIP] = {0};
@@ -1380,7 +1380,8 @@ sbool Is_IP (char *str)
 
             if ( strchr(str, '/') )
                 {
-                    ip = strtok_r(str, "/", &tmp);
+                    //ip = strtok_r(str, "/", &tmp);
+                    (void)strtok_r(str, "/", &tmp);
                     prefix = atoi(strtok_r(NULL, "/", &tmp));
                     if(prefix < 1 || prefix > 128 )
                         {

@@ -453,7 +453,29 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(flow_a);
 
-                            if (!strcmp(flow_a, "any") || !strcmp(flow_a, tokennet))
+                            /* Quick sanity check for [] (if used) */
+
+                            if ( ( flow_a[0] == '['  &&  flow_a[strlen(flow_a)-1] != ']') ||
+                                    ( ( flow_a[strlen(flow_a)-1] == ']'  &&  flow_a[0] != '[' )) )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Unbalanced flow_a set in '%s' line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                }
+
+                            /* Nuke [] */
+
+                            if ( flow_a[0] == '[' )
+                                {
+                                    for (i=1; i<strlen(flow_a)-1; i++)
+                                        {
+                                            tmp1[i-1] = flow_a[i];
+                                        }
+
+                                    strlcpy(flow_a, tmp1, sizeof(flow_a));
+
+                                }
+
+
+                            if (!strcmp(flow_a, "any")) //  || !strcmp(flow_a, tokennet))
                                 {
                                     rulestruct[counters->rulecount].flow_1_var = 0;	  /* 0 = any */
 
@@ -462,6 +484,7 @@ void Load_Rules( const char *ruleset )
                                 {
 
                                     strlcpy(tmp3, flow_a, sizeof(tmp3));
+
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
                                         {
 
@@ -500,14 +523,16 @@ void Load_Rules( const char *ruleset )
 
                                                     rulestruct[counters->rulecount].flow_1_type[f1] = 3; /* 3 = match ip */
                                                 }
+
                                             flow_1_count++;
-                                            if( flow_1_count > 49 )
+
+                                            if( flow_1_count > MAX_CHECK_FLOWS )
                                                 {
                                                     bad_rule = true;
                                                     Sagan_Log(WARN,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50', skipping rule.", __FILE__, __LINE__);
                                                     continue;
                                                 }
-
+                                            printf("%d\n", flow_1_count);
                                         }
                                     rulestruct[counters->rulecount].flow_1_var = 1;   /* 1 = var */
                                     rulestruct[counters->rulecount].flow_1_counter = flow_1_count;
@@ -515,6 +540,7 @@ void Load_Rules( const char *ruleset )
                         }
 
                     /* Source Port */
+
                     if ( netcount == 3 )
                         {
                             if (!strcmp(nettmp, "any"))
@@ -588,6 +614,7 @@ void Load_Rules( const char *ruleset )
 
 
                     /* Direction */
+
                     if ( netcount == 4 )
                         {
 
@@ -611,13 +638,35 @@ void Load_Rules( const char *ruleset )
                         }
 
                     /* Second flow */
+
                     if ( netcount == 5 )
                         {
 
                             Var_To_Value(tokennet, flow_b, sizeof(flow_b));
+
                             Remove_Spaces(flow_b);
 
-                            if (!strcmp(flow_b, "any") || !strcmp(flow_b, tokennet))
+                            if ( ( flow_b[0] == '['  &&  flow_b[strlen(flow_b)-1] != ']') ||
+                                    ( ( flow_b[strlen(flow_b)-1] == ']'  &&  flow_b[0] != '[' )) )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Unbalanced flow_b set in '%s' line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                }
+
+                            /* Nuke [] */
+
+                            if ( flow_b[0] == '[' )
+                                {
+                                    for (i=1; i<strlen(flow_b)-1; i++)
+                                        {
+                                            tmp1[i-1] = flow_b[i];
+                                        }
+
+                                    strlcpy(flow_b, tmp1, sizeof(flow_b));
+
+                                }
+
+
+                            if (!strcmp(flow_b, "any")) //  || !strcmp(flow_b, tokennet))
                                 {
                                     rulestruct[counters->rulecount].flow_2_var = 0;     /* 0 = any */
 
@@ -661,7 +710,7 @@ void Load_Rules( const char *ruleset )
                                                 {
                                                     rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
                                                 }
-                                            if( flow_2_count > 49 )
+                                            if( flow_2_count > MAX_CHECK_FLOWS )
                                                 {
                                                     bad_rule = true;
                                                     Sagan_Log(WARN,"[%s, line %d] You have exceeded the amount of entries for follow_flow_2 '50', skipping.", __FILE__, __LINE__);
@@ -2187,7 +2236,6 @@ void Load_Rules( const char *ruleset )
 
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
                             Var_To_Value(tok_tmp, tmp1, sizeof(tmp1));
-//                strlcpy(tmp2, tmp1, sizeof(tmp2));				/* DEBUG NOT NEEDED */
 
                             tmptoken = strtok_r(tmp1, ",", &saveptrrule2);
 

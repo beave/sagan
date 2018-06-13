@@ -125,7 +125,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int b = 0;
     int z = 0;
-    int i = 0;
+    //int i = 0;
 
     sbool match = false;
     int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
@@ -563,7 +563,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 #ifdef HAVE_LIBLOGNORM
                                     if ( liblognorm_status == 0 && rulestruct[b].normalize == 1 )
                                         {
-                                            // Set that normalization has been tried work isn't repeated
+                                            /* Set that normalization has been tried work isn't repeated */
+
                                             liblognorm_status = -1;
 
                                             json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
@@ -581,6 +582,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                                                 }
 
                                             /* These are _only_ set here */
+
                                             if ( SaganNormalizeLiblognorm.username[0] != '\0' )
                                                 {
 
@@ -801,8 +803,20 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     if ( ip_src_flag == false )
                                         {
-                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
+
+                                            if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1") ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::ffff:127.0.0.1") )
+                                                {
+                                                    ip_src = config->sagan_host;
+                                                }
+                                            else
+                                                {
+                                                    ip_src = SaganProcSyslog_LOCAL->syslog_host;
+                                                }
+
                                             IP2Bit(ip_src, ip_src_bits);
+
                                         }
 
                                     if ( ip_dst_flag == false )
