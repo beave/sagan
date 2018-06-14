@@ -1,4 +1,40 @@
-2018/05/29 -	Sagan 1.1.9 released
+2018/06/14 -    Sagan 1.2.0 released.
+
+		* "meta_content" size limitation/truncation issue fixed.
+
+		   https://github.com/beave/sagan/commit/6640d7384b19712b32603ecde9cc9472e10a5573
+
+		* Added new "parse-ip" option to the sagan.yaml.  These help
+		  control how "parse_src_ip" and "parse_dst_ip" function.  New
+		  options are "ipv6" (enabled by default) and "ipv4-mapped-ipv6"
+		  (disabled by default).  This converts IPv4 mapping in IPv6
+		  (for example ffff::192.168.2.1 becomes 192.168.2.1).
+
+		* New Bluedot TTL/Host option to prevent overloading DNS servers.
+
+		  https://github.com/beave/sagan/commit/319f63ef5dab9b9fccab85707cf44701363a78dc
+
+		* Better "stripping" of hashes when using the "parse_hash" rule
+		  option.
+
+		  https://github.com/beave/sagan/commit/d3b0578dbd872544b12a7afca7ef617f9a4b739e
+
+		* Fixed issue with "flow.c" when dealing with many flows.  Thanks to 
+		  Michael Riggs!
+
+		  https://github.com/beave/sagan/issues/113
+	  	  https://github.com/beave/sagan/commit/cb5d6e6aaab6a2c2b7dbbc534e6c9fa6cf5197eb
+
+		* A lot of processors/bluedot.c fixes that would result in a segfault
+		  under extreme loads. 
+
+		* Fixed unsigned char[MAXIPBIT] data alignment issues in various places
+		  that might lead to a failure of IP comparisons to fail. 
+
+		* Removed some left behind "debug" code.
+
+
+2018/05/29 -	Sagan 1.1.9 released.
 
 		* Added IPv6 support. Thanks to Kenneth Shelton @ Netwatcher 
 		  (https://netwatcher.com). 
