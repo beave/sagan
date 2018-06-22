@@ -112,9 +112,10 @@ void Sagan_Bluedot_Init(void)
 
     SaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
 
-    if ( SaganBluedotIPCache == NULL ) {
-        Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-    }
+    if ( SaganBluedotIPCache == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+        }
 
     memset(SaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
 
@@ -493,9 +494,10 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                 }
         }
 
-    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache ) {
-        Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Considering increasing cache size!", __FILE__, __LINE__);
-    }
+    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
+        {
+            Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Considering increasing cache size!", __FILE__, __LINE__);
+        }
 
 }
 
@@ -514,21 +516,33 @@ void Sagan_Bluedot_Clean_Cache ( void )
     char  timet[20] = { 0 };
     time_t t;
     struct tm *now=NULL;
+    uint64_t timeint;
 
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
+    timeint = atol(timet);
 
     struct _Sagan_Bluedot_IP_Cache *TmpSaganBluedotIPCache = NULL;
     struct _Sagan_Bluedot_Hash_Cache *TmpSaganBluedotHashCache = NULL;
     struct _Sagan_Bluedot_URL_Cache *TmpSaganBluedotURLCache = NULL;
     struct _Sagan_Bluedot_Filename_Cache *TmpSaganBluedotFilenameCache = NULL;
 
-    if ( bluedot_cache_clean_lock == 0 )  	/* So no two threads try to "clean up" */
+    if ( bluedot_cache_clean_lock == 0 )        /* So no two threads try to "clean up" */
         {
 
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
             bluedot_cache_clean_lock = 1;
+
+            TmpSaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+
+            if ( TmpSaganBluedotIPCache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(TmpSaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
+
 
             if (debug->debugbluedot)
                 {
@@ -536,12 +550,12 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     Sagan_Log(DEBUG, "[%s, line %d] ----------------------------------------------------------------------", __FILE__, __LINE__);
                 }
 
-            config->bluedot_last_time = atol(timet);
+            config->bluedot_last_time = timeint;
 
             for (i=0; i<counters->bluedot_ip_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotIPCache[i].cache_utime > config->bluedot_timeout )
+                    if ( timeint - SaganBluedotIPCache[i].cache_utime > config->bluedot_timeout )
                         {
 
                             if (debug->debugbluedot)
@@ -553,17 +567,10 @@ void Sagan_Bluedot_Clean_Cache ( void )
                     else
                         {
 
-                            TmpSaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(TmpSaganBluedotIPCache, (timeout_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
-
-                            if ( TmpSaganBluedotIPCache == NULL )
-                                {
-                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for TmpSaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-                                }
-
                             memcpy(TmpSaganBluedotIPCache[timeout_count].ip, SaganBluedotIPCache[i].ip, sizeof(SaganBluedotIPCache[i].ip));
                             TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cache_utime;
-                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].mdate_utime;
-                            TmpSaganBluedotIPCache[timeout_count].cache_utime = SaganBluedotIPCache[i].cdate_utime;
+                            TmpSaganBluedotIPCache[timeout_count].mdate_utime = SaganBluedotIPCache[i].mdate_utime;
+                            TmpSaganBluedotIPCache[timeout_count].cdate_utime = SaganBluedotIPCache[i].cdate_utime;
                             TmpSaganBluedotIPCache[timeout_count].alertid = SaganBluedotIPCache[i].alertid;
 
                             timeout_count++;
@@ -594,7 +601,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
             for (i=0; i<counters->bluedot_hash_cache_count; i++)
                 {
 
-                    if ( atol(timet) - SaganBluedotHashCache[i].cache_utime > config->bluedot_timeout )
+                    if ( timeint - SaganBluedotHashCache[i].cache_utime > config->bluedot_timeout )
                         {
                             if (debug->debugbluedot)
                                 {

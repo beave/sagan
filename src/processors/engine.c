@@ -803,25 +803,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                                     if ( ip_src_flag == false )
                                         {
-
-                                            if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
-                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1") ||
-                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::ffff:127.0.0.1") )
-                                                {
-                                                    ip_src = config->sagan_host;
-                                                }
-                                            else
-                                                {
-                                                    ip_src = SaganProcSyslog_LOCAL->syslog_host;
-                                                }
-
+                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                             IP2Bit(ip_src, ip_src_bits);
-
                                         }
 
                                     if ( ip_dst_flag == false )
                                         {
-                                            ip_dst = config->sagan_host;
+                                            ip_dst = SaganProcSyslog_LOCAL->syslog_host;
                                             IP2Bit(ip_dst, ip_dst_bits);
                                         }
 
