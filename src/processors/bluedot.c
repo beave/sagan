@@ -108,6 +108,16 @@ void Sagan_Bluedot_Init(void)
 
     config->bluedot_last_time = atol(timet);
 
+    /* Bluedot IP Cache */
+
+    SaganBluedotIPCache = malloc(config->bluedot_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+
+    if ( SaganBluedotIPCache == NULL ) {
+        Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+    }
+
+    memset(SaganBluedotIPCache, 0, sizeof(_Sagan_Bluedot_IP_Cache));
+
 }
 
 
@@ -483,26 +493,10 @@ void Sagan_Bluedot_Check_Cache_Time (void)
                 }
         }
 
-    /*
-        if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache )
-            {
-                Sagan_Log(WARN, "[%s, line %d] ***** Out of cache space! Increasing from %" PRIu64 " to %" PRIu64 "!", __FILE__, __LINE__, config->bluedot_max_cache, config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE);
+    if ( counters->bluedot_ip_cache_count >= config->bluedot_max_cache ) {
+        Sagan_Log(NORMAL, "[%s, line %d] Out of cache space! Considering increasing cache size!", __FILE__, __LINE__);
+    }
 
-                if ( bluedot_config_change == 0 )
-                    {
-
-                        pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                        bluedot_config_change = 1;
-
-                        config->bluedot_max_cache = config->bluedot_max_cache + BLUEDOT_EMERG_CACHE_INCREASE;
-
-                        bluedot_config_change = 0;
-                        pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
-
-                    }
-
-            }
-    */
 }
 
 /****************************************************************************
@@ -868,9 +862,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                        to which can cause a segfault on the memcmp.  We lock,  even
                        though we are reading, to keep this from happening */
 
-                    pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+                    //pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
-                    bluedot_ip_update = 1;
+                    //bluedot_ip_update = 1;
 
                     if (!memcmp( ip_convert, SaganBluedotIPCache[i].ip, MAXIPBIT ))
                         {
@@ -925,15 +919,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             counters->bluedot_ip_cache_hit++;
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-                            bluedot_ip_update =0;
-                            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                            //bluedot_ip_update =0;
+                            //pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
                             return(bluedot_alertid);
 
                         }
 
-                    bluedot_ip_update =0;
-                    pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                    //bluedot_ip_update =0;
+                    //pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
                 }
 
@@ -1345,12 +1339,12 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             bluedot_ip_update = 1;
 
 
-            SaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotIPCache, (counters->bluedot_ip_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
+            //SaganBluedotIPCache = (_Sagan_Bluedot_IP_Cache *) realloc(SaganBluedotIPCache, (counters->bluedot_ip_cache_count+1) * sizeof(_Sagan_Bluedot_IP_Cache));
 
-            if ( SaganBluedotIPCache == NULL )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-                }
+            //if ( SaganBluedotIPCache == NULL )
+            //    {
+            //        Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+            //    }
 
             /* Store data into cache */
 

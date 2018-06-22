@@ -1319,6 +1319,20 @@ void Load_YAML_Config( char *yaml_file )
                                             strlcpy(config->bluedot_host, tmp, sizeof(config->bluedot_host));
                                         }
 
+
+                    else if (!strcmp(last_pass, "max-cache") && config->bluedot_flag == true ) {
+
+                        Var_To_Value(value, tmp, sizeof(tmp));
+                        config->bluedot_max_cache = strtoull(tmp, NULL, 10);
+
+                        if ( config->bluedot_max_cache == 0 ) {
+
+                            Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                        }
+
+                    }
+
+
                                     else if (!strcmp(last_pass, "cache-timeout") && config->bluedot_flag == true )
                                         {
 
