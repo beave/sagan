@@ -102,7 +102,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     memset(processor_info_engine, 0, sizeof(_Sagan_Processor_Info));
 
-    //static __thread struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
     struct _Sagan_Lookup_Cache_Entry *lookup_cache = NULL;
     lookup_cache = malloc(sizeof(struct _Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
@@ -111,7 +110,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for lookup_cache. Abort!", __FILE__, __LINE__);
         }
 
-    memset(lookup_cache, 0, sizeof(_Sagan_Lookup_Cache_Entry));
+    memset(lookup_cache, 0, sizeof(_Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
     int processor_info_engine_src_port = 0;
     int processor_info_engine_dst_port = 0;
@@ -125,7 +124,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     int b = 0;
     int z = 0;
-    //int i = 0;
 
     sbool match = false;
     int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
