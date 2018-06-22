@@ -193,6 +193,12 @@ void Load_YAML_Config( char *yaml_file )
 
             config->bluedot_cat[0] = '\0';
             config->bluedot_uri[0] = '\0';
+            strlcpy(config->bluedot_host, "bluedot.qis.io", sizeof(config->bluedot_host));
+
+            config->bluedot_ip_max_cache = BLUEDOT_IP_DEFAULT;
+            config->bluedot_hash_max_cache = BLUEDOT_HASH_DEFAULT;
+            config->bluedot_url_max_cache = BLUEDOT_URL_DEFAULT;
+            config->bluedot_filename_max_cache = BLUEDOT_FILENAME_DEFAULT;
 
 #endif
 
@@ -1320,19 +1326,60 @@ void Load_YAML_Config( char *yaml_file )
                                         }
 
 
-                                    else if (!strcmp(last_pass, "max-cache") && config->bluedot_flag == true )
+
+                                    /* DEFAULTS?>!!? */
+
+                                    else if (!strcmp(last_pass, "max-ip-cache") && config->bluedot_flag == true )
                                         {
 
                                             Var_To_Value(value, tmp, sizeof(tmp));
-                                            config->bluedot_max_cache = strtoull(tmp, NULL, 10);
+                                            config->bluedot_ip_max_cache = strtoull(tmp, NULL, 10);
 
-                                            if ( config->bluedot_max_cache == 0 )
+                                            if ( config->bluedot_ip_max_cache == 0 )
                                                 {
 
-                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-ip-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
 
                                         }
+
+                                    else if (!strcmp(last_pass, "max-hash-cache") && config->bluedot_flag == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_hash_max_cache = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_hash_max_cache == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-hash-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+
+                                    else if (!strcmp(last_pass, "max-url-cache") && config->bluedot_flag == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_url_max_cache = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_url_max_cache == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-url-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+
+                                    else if (!strcmp(last_pass, "max-filename-cache") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_filename_max_cache = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_filename_max_cache == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-file-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
+
 
 
                                     else if (!strcmp(last_pass, "cache-timeout") && config->bluedot_flag == true )

@@ -214,3 +214,12 @@ typedef void json_object;
 #define XBIT_STORAGE_REDIS		1
 
 #define	THREAD_NAME_LEN			16
+
+#ifdef WITH_BLUEDOT
+
+#define BLUEDOT_IP_DEFAULT		500000
+#define	BLUEDOT_HASH_DEFAULT		1000
+#define BLUEDOT_URL_DEFAULT		50000
+#define BLUEDOT_FILENAME_DEFAULT	100
+
+#endif
