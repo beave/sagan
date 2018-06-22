@@ -312,9 +312,13 @@ processors:
   - bluedot: 
       enabled: no
       device-id: "Device_ID"
-      max-cache: 500000
       cache-timeout: 120
       categories: "$RULE_PATH/bluedot-categories.conf"
+
+      max-ip-cache: 300000
+      max-hash-cache: 10000
+      max-url-cache: 20000
+      max-filename-cache: 1000
 
       host: "bluedot.qis.io"
       ttl: 86400

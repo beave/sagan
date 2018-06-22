@@ -212,7 +212,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * IP Reputation *");
                     Sagan_Log(NORMAL, "");
-                    Sagan_Log(NORMAL, "          IP addresses in cache         : %" PRIu64 "", counters->bluedot_ip_cache_count);
+                    Sagan_Log(NORMAL, "          IP addresses in cache         : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_count, CalcPct(counters->bluedot_ip_cache_count, config->bluedot_ip_max_cache));
                     Sagan_Log(NORMAL, "          IP hits from cache            : %" PRIu64 " (%.3f%%)", counters->bluedot_ip_cache_hit, CalcPct(counters->bluedot_ip_cache_hit, counters->bluedot_ip_cache_count));
                     Sagan_Log(NORMAL, "          IP/Bluedot hits in logs       : %" PRIu64 "", counters->bluedot_ip_positive_hit);
                     Sagan_Log(NORMAL, "          IP with date > mdate          : %" PRIu64 "", counters->bluedot_mdate);
@@ -224,7 +224,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * File Hash *");
                     Sagan_Log(NORMAL, "");
-                    Sagan_Log(NORMAL, "          Hashes in cache               : %" PRIu64 "", counters->bluedot_hash_cache_count);
+                    Sagan_Log(NORMAL, "          Hashes in cache               : %" PRIu64 "", counters->bluedot_hash_cache_count, CalcPct(counters->bluedot_hash_cache_count, config->bluedot_hash_max_cache));
                     Sagan_Log(NORMAL, "          Hash hits from cache          : %" PRIu64 " (%.3f%%)", counters->bluedot_hash_cache_hit, CalcPct(counters->bluedot_hash_cache_hit, counters->bluedot_hash_cache_count));
                     Sagan_Log(NORMAL, "          Hash/Bluedot hits in logs     : %" PRIu64 "", counters->bluedot_hash_positive_hit);
                     Sagan_Log(NORMAL, "          Hash queries per/second       : %lu", bluedot_hash_total);
@@ -232,7 +232,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * URL Reputation *");
                     Sagan_Log(NORMAL, "");
-                    Sagan_Log(NORMAL, "          URLs in cache                 : %" PRIu64 "", counters->bluedot_url_cache_count);
+                    Sagan_Log(NORMAL, "          URLs in cache                 : %" PRIu64 "", counters->bluedot_url_cache_count, CalcPct(counters->bluedot_url_cache_count, config->bluedot_url_max_cache));
                     Sagan_Log(NORMAL, "          URL hits from cache           : %" PRIu64 " (%.3f%%)", counters->bluedot_url_cache_hit, CalcPct(counters->bluedot_url_cache_hit, counters->bluedot_url_cache_count));
                     Sagan_Log(NORMAL, "          URL/Bluedot hits in logs      : %" PRIu64 "", counters->bluedot_url_positive_hit);
                     Sagan_Log(NORMAL, "          URL queries per/second        : %lu", bluedot_url_total);
@@ -240,7 +240,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * Filename Reputation *");
                     Sagan_Log(NORMAL, "");
-                    Sagan_Log(NORMAL, "          Filenames in cache            : %" PRIu64 "", counters->bluedot_filename_cache_count);
+                    Sagan_Log(NORMAL, "          Filenames in cache            : %" PRIu64 "", counters->bluedot_filename_cache_count, CalcPct(counters->bluedot_filename_cache_count, config->bluedot_filename_max_cache));
                     Sagan_Log(NORMAL, "          Filename hits from cache      : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_hit, CalcPct(counters->bluedot_filename_cache_hit, counters->bluedot_filename_cache_count));
                     Sagan_Log(NORMAL, "          Filename/Bluedot hits in logs : %" PRIu64 "", counters->bluedot_filename_positive_hit);
                     Sagan_Log(NORMAL, "          URL queries per/second        : %lu", bluedot_filename_total);
