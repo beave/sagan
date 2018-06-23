@@ -320,6 +320,8 @@ processors:
       max-url-cache: 20000
       max-filename-cache: 1000
 
+      ip-queue: 1000
+
       host: "bluedot.qis.io"
       ttl: 86400
       uri: "q.php?qipapikey=APIKEYHERE"

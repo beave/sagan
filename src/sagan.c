@@ -788,6 +788,7 @@ int main(int argc, char **argv)
             Sagan_Log(NORMAL, "Bluedot loaded %d categories.", counters->bluedot_cat_count);
             Sagan_Log(NORMAL, "Bluedot Cache Timeout: %d minutes.", config->bluedot_timeout  / 60);
             Sagan_Log(NORMAL, "Bluedot IP Cache Size: %" PRIu64 "", config->bluedot_ip_max_cache);
+	    Sagan_Log(NORMAL, "Bluedot IP Queue Size: %" PRIu64 "", config->bluedot_ip_queue);
             Sagan_Log(NORMAL, "Bluedot Hash Cache Size: %" PRIu64 "", config->bluedot_hash_max_cache);
             Sagan_Log(NORMAL, "Bluedot URL Cache Size: %" PRIu64 "", config->bluedot_url_max_cache);
             Sagan_Log(NORMAL, "Bluedot Filename Cache Size: %" PRIu64 "", config->bluedot_filename_max_cache);

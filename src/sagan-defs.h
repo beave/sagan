@@ -222,4 +222,6 @@ typedef void json_object;
 #define BLUEDOT_URL_DEFAULT		50000
 #define BLUEDOT_FILENAME_DEFAULT	100
 
+#define BLUEDOT_IP_QUEUE_DEFAULT	1000
+
 #endif

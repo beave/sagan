@@ -200,6 +200,8 @@ void Load_YAML_Config( char *yaml_file )
             config->bluedot_url_max_cache = BLUEDOT_URL_DEFAULT;
             config->bluedot_filename_max_cache = BLUEDOT_FILENAME_DEFAULT;
 
+	    config->bluedot_ip_queue = BLUEDOT_IP_QUEUE_DEFAULT; 
+
 #endif
 
 #ifdef WITH_SYSLOG
@@ -1327,8 +1329,6 @@ void Load_YAML_Config( char *yaml_file )
 
 
 
-                                    /* DEFAULTS?>!!? */
-
                                     else if (!strcmp(last_pass, "max-ip-cache") && config->bluedot_flag == true )
                                         {
 
@@ -1377,6 +1377,16 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->bluedot_filename_max_cache == 0 )
                                                 {
                                                     Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-file-cache' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
+
+                                    else if (!strcmp(last_pass, "ip-queue") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_ip_queue = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_ip_queue == 0 )                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'ip-queue' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
                                         }
 

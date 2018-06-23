@@ -25,6 +25,8 @@
  *
  */
 
+// New IP queue
+// Looks like cleanup might still be reallocing?
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -141,7 +143,7 @@ void Sagan_Bluedot_Init(void)
 
     memset(SaganBluedotURLCache, 0, sizeof(_Sagan_Bluedot_URL_Cache));
 
-    /* Bluedot Filename Cache ?*/
+    /* Bluedot Filename Cache */
 
     SaganBluedotFilenameCache = malloc(config->bluedot_filename_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
 
@@ -151,6 +153,17 @@ void Sagan_Bluedot_Init(void)
         }
 
     memset(SaganBluedotFilenameCache, 0, sizeof(_Sagan_Bluedot_Filename_Cache));
+
+    /* Bluedot IP Queue */
+     
+    SaganBluedotIPQueue = malloc(config->bluedot_ip_queue * sizeof(struct _Sagan_Bluedot_IP_Queue));
+    
+    if ( SaganBluedotIPQueue == NULL )
+        {    
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+        }
+    
+    memset(SaganBluedotIPQueue, 0, sizeof(_Sagan_Bluedot_IP_Queue));
 
 }
 
@@ -179,6 +192,32 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
+            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+
+            bluedot_ip_update = 1;
+
+            for (i=0; i<config->bluedot_ip_queue; i++)
+                {
+
+                 if ( !memcmp(ip_convert, SaganBluedotIPQueue[i].ip, MAXIPBIT) )
+                        { 
+
+			pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+			bluedot_ip_update = 1;
+
+			memset(SaganBluedotIPQueue[i].ip, 0, MAXIPBIT); 
+			bluedot_ip_queue--;
+
+			bluedot_ip_update = 0;
+			pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+
+			}
+
+		}
+
+
+
+/*
             struct _Sagan_Bluedot_IP_Queue *TmpSaganBluedotIPQueue;
             TmpSaganBluedotIPQueue = malloc(sizeof(_Sagan_Bluedot_IP_Queue));
 
@@ -229,6 +268,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
             bluedot_ip_update = 0;
             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
             free(TmpSaganBluedotIPQueue);
+*/
 
         }
 
@@ -865,7 +905,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     /* Check IP TTL for Bluedot */
 
-    if ( bluedot_dns_global == 0 && epoch_time - config->bluedot_dns_last_lookup >  config->bluedot_dns_ttl )
+    if ( bluedot_dns_global == 0 && epoch_time - config->bluedot_dns_last_lookup > config->bluedot_dns_ttl )
         {
 
             if ( debug->debugbluedot )
@@ -930,10 +970,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                        to which can cause a segfault on the memcmp.  We lock,  even
                        though we are reading, to keep this from happening */
 
-                    //pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
-
-                    //bluedot_ip_update = 1;
-
                     if (!memcmp( ip_convert, SaganBluedotIPCache[i].ip, MAXIPBIT ))
                         {
 
@@ -987,21 +1023,15 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                             counters->bluedot_ip_cache_hit++;
                             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
-                            //bluedot_ip_update =0;
-                            //pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
-
                             return(bluedot_alertid);
 
                         }
-
-                    //bluedot_ip_update =0;
-                    //pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
                 }
 
             /* Check Bluedot IP Queue,  make sure we aren't looking up something that is already being looked up */
 
-            for (i=0; i < bluedot_ip_queue; i++)
+            for (i=0; i < config->bluedot_ip_queue; i++)
                 {
                     if ( !memcmp(ip_convert, SaganBluedotIPQueue[i].ip, MAXIPBIT ))
                         {
@@ -1016,16 +1046,17 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             /* If not in Bluedot IP queue,  add it */
 
+	    if ( bluedot_ip_queue > config->bluedot_ip_queue ) 
+		{
+		Sagan_Log(NORMAL, "[%s, line %d] Out of IP queue space! Considering increasing cache size!", __FILE__, __LINE__);
+		return(false);
+		}
+
+
             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
 
-            SaganBluedotIPQueue = (_Sagan_Bluedot_IP_Queue *) realloc(SaganBluedotIPQueue, (bluedot_ip_queue+1) * sizeof(_Sagan_Bluedot_IP_Queue));
-
-            if ( SaganBluedotIPQueue == NULL )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
-                }
-
             memcpy(SaganBluedotIPQueue[bluedot_ip_queue].ip, ip_convert, MAXIPBIT);
+
             bluedot_ip_queue++;
 
             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
@@ -1366,7 +1397,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             Sagan_Log(WARN, "Bluedot return a qipcode category.");
 
             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-            counters->bluedot_error_count++;						// DEBUG <- Total error count
+            counters->bluedot_error_count++;
             pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
 
             Sagan_Bluedot_Clean_Queue(data, type, ip);
