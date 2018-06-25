@@ -25,9 +25,6 @@
  *
  */
 
-// New IP queue
-// Looks like cleanup might still be reallocing?
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
