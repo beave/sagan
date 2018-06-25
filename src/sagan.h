@@ -272,7 +272,10 @@ struct _SaganCounters
     uint64_t bluedot_ip_positive_hit;
     uint64_t bluedot_ip_total;
 
-    int bluedot_ip_queue_current; 
+    int bluedot_ip_queue_current;
+    int bluedot_hash_queue_current;
+    int bluedot_url_queue_current;
+    int bluedot_filename_queue_current;
 
     uint64_t bluedot_mdate;					   /* Hits , but where over a modification date */
     uint64_t bluedot_cdate;            	                   /* Hits , but where over a creation date */

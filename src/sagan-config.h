@@ -237,7 +237,10 @@ struct _SaganConfig
     uint64_t 	 bluedot_filename_max_cache;
     uint64_t     bluedot_last_time;                    /* For cache cleaning */
 
-    uint64_t	 bluedot_ip_queue;
+    int		 bluedot_ip_queue;
+    int		 bluedot_hash_queue;
+    int		 bluedot_url_queue;
+    int		 bluedot_filename_queue;
 
 #endif
 

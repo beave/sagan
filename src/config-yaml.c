@@ -200,7 +200,10 @@ void Load_YAML_Config( char *yaml_file )
             config->bluedot_url_max_cache = BLUEDOT_URL_DEFAULT;
             config->bluedot_filename_max_cache = BLUEDOT_FILENAME_DEFAULT;
 
-	    config->bluedot_ip_queue = BLUEDOT_IP_QUEUE_DEFAULT; 
+            config->bluedot_ip_queue = BLUEDOT_IP_QUEUE_DEFAULT;
+            config->bluedot_hash_queue = BLUEDOT_HASH_QUEUE_DEFAULT;
+            config->bluedot_url_queue = BLUEDOT_URL_QUEUE_DEFAULT;
+            config->bluedot_filename_queue = BLUEDOT_FILENAME_QUEUE_DEFAULT;
 
 #endif
 
@@ -1385,11 +1388,45 @@ void Load_YAML_Config( char *yaml_file )
                                             Var_To_Value(value, tmp, sizeof(tmp));
                                             config->bluedot_ip_queue = strtoull(tmp, NULL, 10);
 
-                                            if ( config->bluedot_ip_queue == 0 )                                                {
+                                            if ( config->bluedot_ip_queue == 0 )
+                                                {
                                                     Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'ip-queue' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
                                                 }
                                         }
 
+
+                                    else if (!strcmp(last_pass, "hash-queue") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_hash_queue = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_hash_queue == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'hash-queue' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
+
+                                    else if (!strcmp(last_pass, "url-queue") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_url_queue = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_url_queue == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'url-queue' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
+
+                                    else if (!strcmp(last_pass, "filename-queue") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_filename_queue = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_filename_queue == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'filename-queue' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
 
 
                                     else if (!strcmp(last_pass, "cache-timeout") && config->bluedot_flag == true )
