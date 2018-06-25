@@ -200,12 +200,17 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
                             memset(SaganBluedotIPQueue[i].ip, 0, MAXIPBIT);
-                            counters->bluedot_ip_queue_current--;
                             pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
 
                         }
 
                 }
+
+            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
+            counters->bluedot_ip_queue_current--;
+            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+
+
 
         }
 
@@ -220,12 +225,16 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                             pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
                             memset(SaganBluedotHashQueue[i].hash, 0, SHA256_HASH_SIZE+1);
-                            counters->bluedot_hash_queue_current--;
                             pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
 
                         }
 
                 }
+
+            pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
+            counters->bluedot_hash_queue_current--;
+            pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
+
 
         }
 
@@ -240,10 +249,13 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                             pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
                             memset(SaganBluedotURLQueue[i].url, 0, sizeof(SaganBluedotURLQueue[i].url));
-                            counters->bluedot_url_queue_current--;
                             pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
                         }
                 }
+
+            pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
+            counters->bluedot_url_queue_current--;
+            pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
 
         }
 
@@ -258,11 +270,14 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                             pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
                             memset(SaganBluedotFilenameQueue[i].filename, 0, sizeof(SaganBluedotFilenameQueue[i].filename));
-                            counters->bluedot_filename_queue_current--;
                             pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
                         }
 
                 }
+
+            pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
+            counters->bluedot_filename_queue_current--;
+            pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
 
         }
 
