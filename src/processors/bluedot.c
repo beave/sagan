@@ -182,8 +182,6 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
     int i=0;
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
-    memset(ip_convert, 0, MAXIPBIT);
-    memcpy(ip_convert, ip, MAXIPBIT);
 
     char str[INET_ADDRSTRLEN];
 
@@ -191,6 +189,9 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
+
+            memset(ip_convert, 0, MAXIPBIT);
+            memcpy(ip_convert, ip, MAXIPBIT);
 
             for (i=0; i<config->bluedot_ip_queue; i++)
                 {
@@ -642,8 +643,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 {
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
-    memset(ip_convert, 0, MAXIPBIT);
-    memcpy(ip_convert, ip, MAXIPBIT);
 
     char tmpurl[1024] = { 0 };
     char tmpdeviceid[64] = { 0 };
@@ -729,6 +728,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
+	    
+            memset(ip_convert, 0, MAXIPBIT);
+            memcpy(ip_convert, ip, MAXIPBIT);  
 
             if ( is_notroutable(ip) )
                 {
