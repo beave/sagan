@@ -219,7 +219,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "          IP with date > cdate          : %" PRIu64 "", counters->bluedot_cdate);
                     Sagan_Log(NORMAL, "          IP with date > mdate [cache]  : %" PRIu64 "", counters->bluedot_mdate_cache);
                     Sagan_Log(NORMAL, "          IP with date > cdate [cache]  : %" PRIu64 "", counters->bluedot_cdate_cache);
-                    Sagan_Log(NORMAL, "          IP queries per/second         : %lu", bluedot_ip_total);
+                    Sagan_Log(NORMAL, "          IP queries per/second         : %lu (%" PRIu64 "/%" PRIu64")", bluedot_ip_total, counters->bluedot_ip_queue_current, config->bluedot_ip_queue);
 
                     Sagan_Log(NORMAL, "");
                     Sagan_Log(NORMAL, "          * File Hash *");

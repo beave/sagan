@@ -257,8 +257,8 @@ struct _SaganCounters
 
     int	      rules_loaded_count;
 
-    uint64_t follow_flow_total;			/* This will only be needed if follow_flow is an option */
-    uint64_t follow_flow_drop;	     		        /* Amount of flows that did not match and were dropped */
+    uint64_t follow_flow_total;	 /* This will only be needed if follow_flow is an option */
+    uint64_t follow_flow_drop;   /* Amount of flows that did not match and were dropped */
 
 #ifdef HAVE_LIBMAXMINDDB
     uint64_t geoip2_hit;				/* GeoIP2 hit count */
@@ -271,6 +271,8 @@ struct _SaganCounters
     uint64_t bluedot_ip_cache_hit;                        /* Bluedot hit's from Cache */
     uint64_t bluedot_ip_positive_hit;
     uint64_t bluedot_ip_total;
+
+    int bluedot_ip_queue_current; 
 
     uint64_t bluedot_mdate;					   /* Hits , but where over a modification date */
     uint64_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
