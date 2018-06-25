@@ -387,13 +387,20 @@ void Sagan_Bluedot_Check_Cache_Time (void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    if (atol(timet) > config->bluedot_last_time + config->bluedot_timeout)
+    if ( bluedot_cache_clean_lock == 0 && atol(timet) > ( config->bluedot_last_time + config->bluedot_timeout ) )
         {
-            Sagan_Log(NORMAL, "Bluedot cache timeout reached %d minutes.  Cleaning up.", config->bluedot_timeout / 60);
-            if ( bluedot_cache_clean_lock == 0 )
-                {
+
+		    pthread_mutex_lock(&SaganProcBluedotWorkMutex);
+
+		    bluedot_cache_clean_lock = 1; 
+
+		    Sagan_Log(NORMAL, "Bluedot cache timeout reached %d minutes.  Cleaning up.", config->bluedot_timeout / 60);
                     Sagan_Bluedot_Clean_Cache();
-                }
+
+		    bluedot_cache_clean_lock = 0;
+
+		    pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
         }
 
     if ( counters->bluedot_ip_cache_count >= config->bluedot_ip_max_cache )
@@ -444,12 +451,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
     strftime(timet, sizeof(timet), "%s",  now);
     timeint = atol(timet);
 
-    if ( bluedot_cache_clean_lock == 0 )        /* So no two threads try to "clean up" */
-        {
-
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-            bluedot_cache_clean_lock = 1;
-
             if (debug->debugbluedot)
                 {
                     Sagan_Log(DEBUG, "[%s, line %d] Sagan/Bluedot cache clean time has been reached.", __FILE__, __LINE__);
@@ -459,8 +460,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
             config->bluedot_last_time = timeint;
 
             deleted_count = 0;
-
-            uint64_t new_bluedot_ip_max_cache = 0;	// MOVE
 
             for (i=0; i < config->bluedot_ip_max_cache; i++ )
                 {
@@ -505,8 +504,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = 0;
 
-            uint64_t new_bluedot_hash_max_cache = 0;	// MOVE
-
             for (i=0; i < config->bluedot_hash_max_cache; i++ )
                 {
 
@@ -547,8 +544,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
             /* Clean URL cache */
 
             deleted_count = 0;
-
-            uint64_t new_bluedot_url_max_cache = 0;	// MOVE
 
             for (i=0; i < config->bluedot_url_max_cache; i++ )
                 {
@@ -591,8 +586,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
             deleted_count = 0;
 
-            uint64_t new_bluedot_filename_max_cache = 0;	// MOVE
-
             for (i=0; i < config->bluedot_filename_max_cache; i++ )
                 {
 
@@ -629,12 +622,6 @@ void Sagan_Bluedot_Clean_Cache ( void )
             pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
 
             Sagan_Log(NORMAL, "[%s, line %d] Deleted %d Filenames from Bluedot cache. New Filename cache count is %d.",__FILE__, __LINE__, deleted_count, counters->bluedot_filename_cache_count);
-
-
-            bluedot_cache_clean_lock = 0;
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-
-        }
 
 }
 
