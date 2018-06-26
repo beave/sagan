@@ -129,6 +129,9 @@ void Load_Protocol_Map( const char *map )
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for map_message. Abort!", __FILE__, __LINE__);
                                 }
 
+                            memset(&map_message[counters->mapcount_message], 0, sizeof(struct _Sagan_Protocol_Map_Message));
+
+
                             map_message[counters->mapcount_message].proto = atoi(map2);
                             if (!strcmp(map3, "nocase")) map_message[counters->mapcount_message].nocase = 1;
                             strlcpy(map_message[counters->mapcount_message].search, map4, sizeof(map_message[counters->mapcount_message].search));

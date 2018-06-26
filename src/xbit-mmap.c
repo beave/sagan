@@ -1219,6 +1219,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+
                             strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
@@ -1300,6 +1302,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+
                             strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
@@ -1378,6 +1382,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+
                             strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
@@ -1455,6 +1461,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                 {
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
+
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
 
                             strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));

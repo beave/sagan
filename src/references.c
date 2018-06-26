@@ -92,6 +92,8 @@ void Load_Reference( const char *ruleset )
                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for refstruct. Abort!", __FILE__, __LINE__);
                 }
 
+            memset(&refstruct[counters->refcount], 0, sizeof(struct _Ref_Struct));
+
             strtok_r(refbuf, ":", &saveptr);
             tmptoken = strtok_r(NULL, " " , &saveptr);
 

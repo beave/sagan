@@ -94,10 +94,11 @@
 
 #define OVECCOUNT 30
 
-struct _SaganCounters *counters;
+struct _SaganCounters *counters = NULL;
+struct _SaganConfig *config = NULL;
+struct _SaganDebug *debug = NULL;
+
 struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
 
 #ifdef WITH_BLUEDOT
 #include <curl/curl.h>
@@ -625,10 +626,10 @@ int main(int argc, char **argv)
 #endif
 
     pthread_mutex_lock(&SaganRulesLoadedMutex);
-    Load_YAML_Config(config->sagan_config);
+    (void)Load_YAML_Config(config->sagan_config);
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
-    Sagan_Engine_Init();
+    (void)Sagan_Engine_Init();
 
     SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
 
@@ -1168,6 +1169,8 @@ int main(int argc, char **argv)
                                                             Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for dnscache. Abort!", __FILE__, __LINE__);
 
                                                         }
+
+                                                    memset(&dnscache[counters->dns_cache_count], 0, sizeof(_SaganDNSCache));
 
                                                     strlcpy(dnscache[counters->dns_cache_count].hostname, syslog_host, sizeof(dnscache[counters->dns_cache_count].hostname));
                                                     strlcpy(dnscache[counters->dns_cache_count].src_ip, src_dns_lookup, sizeof(dnscache[counters->dns_cache_count].src_ip));

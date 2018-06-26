@@ -235,9 +235,7 @@ void Load_Rules( const char *ruleset )
 
                     /* Allocate memory for rules, but not comments */
 
-                    // realloc of same size is a noop, cleaner to not worry about skipped rules
                     rulestruct = (_Rule_Struct *) realloc(rulestruct, (counters->rulecount+1) * sizeof(_Rule_Struct));
-
                     if ( rulestruct == NULL )
                         {
                             Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for rulestruct. Abort!", __FILE__, __LINE__);

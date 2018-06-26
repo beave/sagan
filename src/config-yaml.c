@@ -359,11 +359,12 @@ void Load_YAML_Config( char *yaml_file )
                                 {
 
                                     var = (_SaganVar *) realloc(var, (counters->var_count+1) * sizeof(_SaganVar));
-
                                     if ( var == NULL )
                                         {
                                             Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for var. Abort!", __FILE__, __LINE__);
                                         }
+
+                                    memset(&var[counters->var_count], 0, sizeof(struct _SaganVar));
 
                                     snprintf(var[counters->var_count].var_name, sizeof(var[counters->var_count].var_name)-1, "$%s", value);
                                     var[counters->var_count].var_name[sizeof(var[counters->var_count].var_name)-1] = 0;
@@ -2215,7 +2216,7 @@ void Load_YAML_Config( char *yaml_file )
 #endif
 
                             Var_To_Value(value, tmp, sizeof(tmp));
-                            Load_Rules( (char*)tmp );
+                            (void)Load_Rules( (char*)tmp );
 
                             rules_loaded = (_Rules_Loaded *) realloc(rules_loaded, (counters->rules_loaded_count+1) * sizeof(_Rules_Loaded));
 

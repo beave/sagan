@@ -147,7 +147,7 @@ outside_loop:
             if ( ignore_flag == false )
                 {
 
-                    Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
+                    (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
                     /* If this is a dynamic run,  reset back to normal */
 

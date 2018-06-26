@@ -77,17 +77,16 @@ void Load_Gen_Map( const char *genmap )
                 {
                     continue;
                 }
-            else
+
+            /* Allocate memory for references,  not comments */
+            generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
+
+            if ( generator == NULL )
                 {
-                    /* Allocate memory for references,  not comments */
-                    generator = (_Sagan_Processor_Generator *) realloc(generator, (counters->genmapcount+1) * sizeof(_Sagan_Processor_Generator));
-
-                    if ( generator == NULL )
-                        {
-                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
-                        }
-
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for generator. Abort!", __FILE__, __LINE__);
                 }
+
+            memset(&generator[counters->genmapcount], 0, sizeof(_Sagan_Processor_Generator));
 
             gen1 = strtok_r(genbuf, "|", &saveptr);
 

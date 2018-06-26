@@ -94,6 +94,7 @@ void Load_Classifications( const char *ruleset )
                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for classstruct. Abort!", __FILE__, __LINE__);
                 }
 
+            memset(&classstruct[counters->classcount], 0, sizeof(struct _Class_Struct));
 
             strtok_r(classbuf, ":", &saveptr);
             tmptoken = strtok_r(NULL, ":" , &saveptr);
