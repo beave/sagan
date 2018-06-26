@@ -1117,6 +1117,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
+    curl_global_cleanup();
 
     if ( response == NULL )
         {
