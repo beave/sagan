@@ -698,7 +698,6 @@ rules-files:
   - $RULE_PATH/windows-owa.rules
   - $RULE_PATH/windows.rules
   - $RULE_PATH/windows-sysmon.rules
-  - $RULE_PATH/windows-security.rules
   - $RULE_PATH/wordpress.rules
   - $RULE_PATH/xinetd.rules
   - $RULE_PATH/yubikey.rules
