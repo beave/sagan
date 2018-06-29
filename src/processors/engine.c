@@ -217,6 +217,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     sbool liblognorm_status = 0;
     json_object *json_normalize = NULL;
 
+    /* Get time we received the event */
+
+    gettimeofday(&tp, 0);       /* Store event time as soon as we get it */
+
     /* Search for matches */
 
     /* First we search for 'program' and such.   This way,  we don't waste CPU
@@ -552,8 +556,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
                     if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count )
                         {
-
-                            gettimeofday(&tp, 0);	/* Store event time as soon as we get a match */
 
                             if ( match == false )
                                 {
@@ -1408,6 +1410,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
                 } /* If normal or dynamic rule */
 
         } /* End for for loop */
+
+
+    if ( config->eve_flag && config->eve_logs )
+        {
+            Log_JSON(SaganProcSyslog_LOCAL, tp, json_normalize);
+        }
 
     free(processor_info_engine);
     free(lookup_cache);

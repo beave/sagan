@@ -577,16 +577,19 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( !strcasecmp(value, "udp") )
                                                 {
                                                     config->sagan_proto = 17;
+                                                    config->sagan_proto_string = "UDP";
                                                 }
 
                                             else if ( !strcasecmp(value, "tcp") )
                                                 {
                                                     config->sagan_proto = 6;
+                                                    config->sagan_proto_string = "TCP";
                                                 }
 
                                             else if ( !strcasecmp(value, "icmp") )
                                                 {
                                                     config->sagan_proto = 1;
+                                                    config->sagan_proto_string = "ICMP";
                                                 }
 
                                             else if ( strcasecmp(value, "tcp") && strcasecmp(value, "udp") )
@@ -1595,20 +1598,23 @@ void Load_YAML_Config( char *yaml_file )
                                                 {
                                                     config->eve_flag = true;
                                                     strlcpy(config->eve_interface, "logs", sizeof(config->eve_interface)); 	/* Set a "default" value */
+
+                                                    config->eve_type = 0;  /* Only one type at this time! */
+
                                                 }
                                         }
 
-                                    else if ( !strcmp(last_pass, "filetype") && config->eve_flag == true )
-                                        {
+                                    /*
+                                                                        else if ( !strcmp(last_pass, "filetype") && config->eve_flag == true )
+                                                                            {
 
-                                            if (!strcmp(value, "regular"))
-                                                {
-                                                    config->eve_type = 0;
-                                                }
+                                                                                if (!strcmp(value, "regular"))
+                                                                                    {
+                                                                                        config->eve_type = 0;
+                                                                                    }
 
-                                            // if (!strcmp(value, "something")) {
-                                            // }
-                                        }
+                                                                            }
+                                    */
 
 
                                     else if ( !strcmp(last_pass, "interface") && config->eve_flag == true )
@@ -1634,7 +1640,6 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
 
                                         }
-
 
                                     else if ( !strcmp(last_pass, "logs") && config->eve_flag == true )
                                         {

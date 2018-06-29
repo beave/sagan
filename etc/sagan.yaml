@@ -373,19 +373,21 @@ outputs:
 
   # Experimental Code!!!
   #
-  # WORK IN PROGRESS - Output in the Suricata EVE/Alert format.  
-  # ONLY supports "regular" and "alerts" at this time!
+  # WORK IN PROGRESS - Output in the Suricata EVE/Alert format. The 
+  # "alerts" option sends only "alerts".  The "logs" option will send
+  # all logs!
 
   # EVE alerts can be load into software like Elasticsearch and is a good 
-  # replacement for "unified2" with software like "Meer".  Check out:
+  # replacement for "unified2" with software like "Meer".  For more 
+  # information on Meer, Check out:
+  #
   # https://github.com/beave/meer
 
   - eve-log:
       enabled: no
-      filetype: regular            #regular|syslog|unix_dgram|unix_stream|redis
       interface: logs
       alerts: yes                     # Logs alerts
-      logs: no                        # Log everything
+      logs: no                        # Send all logs to EVE. 
       filename: "$LOG_PATH/eve.json"
 
   # The 'alert' output format allows Sagan to write alerts, in detail, in a 

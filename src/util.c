@@ -1436,10 +1436,15 @@ int PageSupportsRWX(void)
  * EVE
  ***************************************************************************/
 
-int64_t FlowGetId( _Sagan_Event *Event)
+//int64_t FlowGetId( _Sagan_Event *Event)
+int64_t FlowGetId( struct timeval tp )
+
 {
-    return (int64_t)(Event->event_time.tv_sec & 0x0000FFFF) << 16 |
-           (int64_t)(Event->event_time.tv_usec & 0x0000FFFF);
+//    return (int64_t)(Event->event_time.tv_sec & 0x0000FFFF) << 16 |
+//           (int64_t)(Event->event_time.tv_usec & 0x0000FFFF);
+
+    return (int64_t)(tp.tv_sec & 0x0000FFFF) << 16 |
+           (int64_t)(tp.tv_usec & 0x0000FFFF);
 }
 
 /***************************************************************************

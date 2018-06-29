@@ -44,7 +44,7 @@ struct _SaganConfig *config;
 void Alert_JSON( _Sagan_Event *Event )
 {
 
-    char alert_data[MAX_SYSLOGMSG+1024];
+    char alert_data[MAX_SYSLOGMSG+1024] = { 0 };
 
     if ( config->eve_alerts == true )
         {
@@ -56,5 +56,17 @@ void Alert_JSON( _Sagan_Event *Event )
         }
 
     fflush(config->eve_stream);
+
+}
+
+void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, json_object *json_normalize )
+{
+
+    char log_data[MAX_SYSLOGMSG+1024] = { 0 };
+
+    Format_JSON_Log_EVE( SaganProcSyslog_LOCAL, tp, log_data, sizeof(log_data), json_normalize );
+    fprintf(config->eve_stream, "%s\n", log_data);
+    fflush(config->eve_stream);
+
 
 }

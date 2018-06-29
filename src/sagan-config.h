@@ -94,6 +94,7 @@ struct _SaganConfig
     sbool        disable_dns_warnings;
     sbool        syslog_src_lookup;
     int          sagan_proto;
+    char 	 *sagan_proto_string;
 
     sbool	 pcre_jit; 				/* For PCRE JIT support testing */
 
