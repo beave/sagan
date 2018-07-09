@@ -81,6 +81,9 @@
 /* Define to 1 if you have the `estr' library (-lestr). */
 #undef HAVE_LIBESTR
 
+/* Define to 1 if you have the `fastjson' library (-lfastjson). */
+#undef HAVE_LIBFASTJSON
+
 /* Define to 1 if you have the `hiredis' library (-lhiredis). */
 #undef HAVE_LIBHIREDIS
 

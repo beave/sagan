@@ -29,6 +29,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -70,3 +72,5 @@ void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, js
 
 
 }
+
+#endif

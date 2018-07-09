@@ -32,6 +32,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -53,11 +55,17 @@ struct _SaganDebug *debug;
 void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 {
 
+    struct json_object *jobj;
+    struct json_object *jobj_alert;
+
     char *proto = NULL;
-    char *drop = NULL;
+    char *action = NULL;
+    uint64_t tmp_sid = 0;
 
     char timebuf[64];
     char classbuf[64];
+
+    char tmp_data[MAX_SYSLOGMSG*2] = { 0 };
 
     if ( Event->ip_proto == 17 )
         {
@@ -81,13 +89,11 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     if ( Event->drop == true )
         {
-
-            drop = "blocked";
-
+            action = "blocked";
         }
     else
         {
-            drop = "allowed";
+            action = "allowed";
         }
 
     CreateIsoTimeString(&Event->event_time, timebuf, sizeof(timebuf));
@@ -98,7 +104,79 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
     Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
-    snprintf(str, size, EVE_ALERT, timebuf, FlowGetId(Event->event_time), config->eve_interface, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, proto, drop, Event->generatorid, Event->sid, Event->rev,Event->f_msg, classbuf, Event->pri, b64_target, "", Event->host, !Event->json_normalize ? "{}" : json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
+    jobj = json_object_new_object();
+    jobj_alert = json_object_new_object();
+
+    json_object *jdate = json_object_new_string(timebuf);
+    json_object_object_add(jobj,"timestamp", jdate);
+
+    json_object *jflow_id = json_object_new_int64( FlowGetId(Event->event_time) );
+    json_object_object_add(jobj,"flow_id", jflow_id);
+
+    json_object *jin_iface = json_object_new_string( config->eve_interface );
+    json_object_object_add(jobj,"in_iface", jin_iface);
+
+    json_object *jevent_type = json_object_new_string( "alert" );
+    json_object_object_add(jobj,"event_type", jevent_type);
+
+    json_object *jsrc_ip = json_object_new_string( Event->ip_src );
+    json_object_object_add(jobj,"src_ip", jsrc_ip);
+
+    json_object *jsrc_port = json_object_new_int( Event->src_port );
+    json_object_object_add(jobj,"src_port", jsrc_port);
+
+    json_object *jdest_ip = json_object_new_string( Event->ip_dst );
+    json_object_object_add(jobj,"dest_ip", jdest_ip);
+
+    json_object *jdest_port = json_object_new_int( Event->dst_port );
+    json_object_object_add(jobj,"dest_port", jdest_port);
+
+    json_object *jproto = json_object_new_string( proto );
+    json_object_object_add(jobj,"proto", jproto);
+
+    json_object *jpayload = json_object_new_string( b64_target );
+    json_object_object_add(jobj,"stream", jpayload);
+
+    json_object *jstream = json_object_new_string( "0" );
+    json_object_object_add(jobj,"stream", jstream);
+
+    json_object *jxff = json_object_new_string( Event->host );
+    json_object_object_add(jobj,"xff", jxff);
+
+    /* Alert data */
+
+    json_object *jaction_alert = json_object_new_string( action );
+    json_object_object_add(jobj_alert,"action", jaction_alert);
+
+    json_object *jgid_alert = json_object_new_int64( Event->generatorid );
+    json_object_object_add(jobj_alert,"gid", jgid_alert);
+
+    tmp_sid = atol(Event->sid);
+
+    json_object *jsignature_alert = json_object_new_int64( tmp_sid );
+    json_object_object_add(jobj_alert,"siganture_id", jsignature_alert);
+
+    json_object *jrev_alert = json_object_new_int64( atol(Event->rev) );
+    json_object_object_add(jobj_alert,"rev", jrev_alert);
+
+    json_object *jsig_name_alert = json_object_new_string( Event->f_msg );
+    json_object_object_add(jobj_alert,"signature", jsig_name_alert);
+
+    json_object *jclass_alert = json_object_new_string( classbuf );
+    json_object_object_add(jobj_alert,"category", jclass_alert);
+
+    json_object *jseverity_alert = json_object_new_int( Event->pri );
+    json_object_object_add(jobj_alert,"severity", jseverity_alert);
+
+    /* liblognorm doesn't support JSON_C_TO_STRING_NOSLASHESCAPE :( */
+
+    snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
+    tmp_data[strlen(tmp_data) - 2] = '\0';
+
+    snprintf(str, size, "%s, \"alert\": %s }", tmp_data, json_object_to_json_string(jobj_alert));
+
+    json_object_put(jobj);
+    json_object_put(jobj_alert);
 
     if ( debug->debugjson )
         {
@@ -162,10 +240,14 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
     json_object *jsyslog_message = json_object_new_string(SaganProcSyslog_LOCAL->syslog_message);
     json_object_object_add(jobj,"message", jsyslog_message);
 
+    /* liblognorm doesn't support JSON_C_TO_STRING_NOSLASHESCAPE :( */
+
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';
 
     snprintf(str, size, "%s, \"normalize\": %s }", tmp_data,  json_object_to_json_string_ext(json_normalize, FJSON_TO_STRING_PLAIN));
+
+    json_object_put(jobj);
 
     if ( debug->debugjson )
         {
@@ -173,3 +255,5 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
         }
 
 }
+
+#endif

@@ -573,6 +573,8 @@ If you're not interested in libesmtp support use the --disable-esmtp flag.))
 if test "$FASTJSON" = "yes"; then
 	AC_MSG_RESULT([------- libfastjson support is enabled -------])
 	PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
+	AC_CHECK_LIB(fastjson, main,,AC_MSG_ERROR(The libfastjson library cannot be found.
+This library can be located at https://github.com/rsyslog/libfastjson. ))
 	fi
 
 if test "$LOGNORM" = "yes"; then
@@ -582,12 +584,17 @@ if test "$LOGNORM" = "yes"; then
        PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
        AC_CHECK_HEADER([liblognorm.h])
        AC_CHECK_HEADER([libestr.h])
+       AC_CHECK_LIB(fastjson, main,,AC_MSG_ERROR(The libfastjson library cannot be found.
+This library is used by liblognorm for log correlation.  Please see:
+https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
+use the --disable-lognorm flag. 
+This library can be located at https://github.com/rsyslog/libfastjson. ))
        AC_CHECK_LIB(estr, main,,AC_MSG_ERROR(The libestr library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
+This library is important for log correlation. Please see:
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. ))
       AC_CHECK_LIB(lognorm, main,,AC_MSG_ERROR(The liblognorm library cannot be found.
-This library is important for the correlation aspects of Sagan! Please see
+This library is important for log correlation. Please see:
 https://wiki.quadrantsec.com/bin/view/Main/LibLogNorm. To disable this feature
 use the --disable-lognorm flag. ))
        fi
