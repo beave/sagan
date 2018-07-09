@@ -901,7 +901,7 @@ int main(int argc, char **argv)
     Sagan_Log(NORMAL, "  (_o_)	Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]");
     Sagan_Log(NORMAL, "  /   \\/)	Copyright (C) 2009-2018 Quadrant Information Security, et al.");
     Sagan_Log(NORMAL, " (|| ||) 	Using PCRE version: %s", pcre_version());
-    Sagan_Log(NORMAL, "  oo-oo     Sagan is processing events.....");
+    Sagan_Log(NORMAL, "  oo-oo");
     Sagan_Log(NORMAL, "");
 
 

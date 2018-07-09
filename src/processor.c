@@ -55,8 +55,10 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 
 int proc_msgslot; 		/* Comes from sagan.c */
-int proc_running;       /* Comes from sagan.c */
+int proc_running;   	        /* Comes from sagan.c */
 unsigned char dynamic_rule_flag; /* Comes from sagan.c */
+
+sbool death=false;
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
@@ -89,7 +91,8 @@ void Processor ( void )
 
     int i;
 
-    for (;;)
+//    for (;;)
+    while(death == false)
         {
 
             pthread_mutex_lock(&SaganProcWorkMutex);
@@ -173,7 +176,11 @@ outside_loop:
             pthread_mutex_unlock(&SaganProcWorkMutex);
         } //  for (;;)
 
-    Sagan_Log(WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
-    free(SaganProcSyslog_LOCAL);		/* Should never make it here */
+    printf("DEATH: %d\n", proc_running);
+    config->max_processor_threads--;
+    pthread_exit(NULL);
+
+//    Sagan_Log(WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
+//    free(SaganProcSyslog_LOCAL);		/* Should never make it here */
 }
 

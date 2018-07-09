@@ -109,6 +109,9 @@ pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
 pthread_mutex_t SaganRulesLoadedMutex;
 
+sbool death;
+int proc_running;
+
 void Sig_Handler( void )
 {
 
@@ -138,14 +141,32 @@ void Sig_Handler( void )
                 case SIGSEGV:
                 case SIGABRT:
 
+
                     Sagan_Log(NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
+
+		    /* This tells "new" threads to stop processing new data */
+
+                    death=true;
+
+		    /* We wait until there are no more running/processing threads
+		       or until the thread space is zero.  We don't want to start
+		       closing files, etc until everything has settled. */
+
+                    while( proc_running != 0 || config->max_processor_threads == 0 )
+                        {
+                            Sagan_Log(WARN, "Waiting on %d working thread(s)....", proc_running);
+                            sleep(1);
+                        }
+
                     Statistics();
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
+
                     if ( sagan_unified2_flag )
                         {
                             Unified2CleanExit();
                         }
+
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
