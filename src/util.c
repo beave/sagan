@@ -64,8 +64,8 @@ struct _SaganCounters *counters;
 struct _SaganVar *var;
 struct _Sagan_Processor_Generator *generator;
 
-sbool daemonize;
-sbool quiet;
+bool daemonize;
+bool quiet;
 
 /*****************************************************************************
  * This force Sagan to chroot.
@@ -250,7 +250,7 @@ void Sagan_Log (int type, const char *format,... )
  * Check if system is big || little endian
  ******************************************/
 
-sbool Check_Endian()
+bool Check_Endian()
 {
     int i = 1;
     char *p = (char *) &i;
@@ -261,7 +261,7 @@ sbool Check_Endian()
 }
 
 
-sbool Mask2Bit(int mask, unsigned char *out)
+bool Mask2Bit(int mask, unsigned char *out)
 {
     int i;
     bool ret = false;
@@ -283,10 +283,10 @@ sbool Mask2Bit(int mask, unsigned char *out)
 
 /* Converts IP address.  We assume that out is at least 16 bytes.  */
 
-sbool IP2Bit(char *ipaddr, unsigned char *out)
+bool IP2Bit(char *ipaddr, unsigned char *out)
 {
 
-    sbool ret = false;
+    bool ret = false;
     struct addrinfo hints = {0};
     struct addrinfo *result = NULL;
 
@@ -348,7 +348,7 @@ sbool IP2Bit(char *ipaddr, unsigned char *out)
  * Check if string contains only numbers
  ****************************************/
 
-sbool Is_Numeric (char *str)
+bool Is_Numeric (char *str)
 {
 
     if(strlen(str) == strspn(str, "0123456789"))
@@ -369,7 +369,7 @@ sbool Is_Numeric (char *str)
 
 void Between_Quotes(char *instr, char *str, size_t size)
 {
-    sbool flag=0;
+    bool flag=0;
     int i;
 
     char tmp1[2];
@@ -509,10 +509,10 @@ void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
 
 }
 
-sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
+bool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
 {
     int i,j,k;
-    sbool inrange = false;
+    bool inrange = false;
     for (i=0; i<count*MAXIPBIT*2; i+=MAXIPBIT*2)
         {
             inrange = true;
@@ -539,7 +539,7 @@ sbool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
 /* Checks to see if an ip address is routable or not                        */
 /****************************************************************************/
 
-sbool is_notroutable ( unsigned char *ip )
+bool is_notroutable ( unsigned char *ip )
 {
 
     // Start of subnet followd by mask
@@ -733,7 +733,7 @@ void Var_To_Value(char *in_str, char *str, size_t size)
  * Validate_HEX - Makes sure a string is valid hex.
  ****************************************************************************/
 
-sbool Validate_HEX (const char *string)
+bool Validate_HEX (const char *string)
 {
 
     const char *curr = string;
@@ -918,7 +918,7 @@ void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
  * They had a much better solution than mine!
  ****************************************************************************/
 
-sbool Wildcard( char *first, char *second )
+bool Wildcard( char *first, char *second )
 {
     if (*first == '\0' && *second == '\0')
         {
@@ -1051,7 +1051,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
  * close a file handle and start a new one.  Think of 'logrotate'.
  ****************************************************************************/
 
-void Open_Log_File( sbool state, int type )
+void Open_Log_File( bool state, int type )
 {
 
     struct passwd *pw = NULL;
@@ -1192,7 +1192,7 @@ void Set_Pipe_Size ( FILE *fd )
  * with IPC/memory mapped files.
  ****************************************************************************/
 
-sbool File_Lock ( int fd )
+bool File_Lock ( int fd )
 {
 
     struct flock fl;
@@ -1216,7 +1216,7 @@ sbool File_Lock ( int fd )
  * Used with IPC/memory mapped files.
  ****************************************************************************/
 
-sbool File_Unlock( int fd )
+bool File_Unlock( int fd )
 {
 
     struct flock fl;
@@ -1302,7 +1302,7 @@ int Netaddr_To_Range( char *ipstr, unsigned char *out )
 } /* netaddr_to_range() */
 
 
-sbool Starts_With(const char *str, const char *prefix)
+bool Starts_With(const char *str, const char *prefix)
 {
     size_t lenpre = strlen(prefix),
            lenstr = strlen(str);
@@ -1333,75 +1333,78 @@ void Strip_Chars(const char *string, const char *chars, char *str)
 
 /***************************************************
  * Is_IP - Checks ipaddr is a valid IPv4 or IPv6
- * address. 
+ * address.
  ***************************************************/
 
-sbool Is_IP (char *ipaddr, int ver )
+bool Is_IP (char *ipaddr, int ver )
 {
 
-    struct sockaddr_in sa;  
-    sbool ret = false;
-    char ip[MAXIP];                                                                                                                                                                                             strlcpy(ip, ipaddr, sizeof(ip)); 
- 
-    /* We don't use getaddrinfo().  Here's why: 
-     * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/ 
+    struct sockaddr_in sa;
+    bool ret = false;
+    char ip[MAXIP];
+    strlcpy(ip, ipaddr, sizeof(ip));
+
+    /* We don't use getaddrinfo().  Here's why:
+     * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
      */
 
-    if ( ver = 4 ) 
-	{
-        ret = inet_pton(AF_INET, ip,  &(sa.sin_addr));
-	} else { 
-	ret = inet_pton(AF_INET6, ip,  &(sa.sin_addr));
-	}
-    
-    return(ret);
-
-
-/*
-    printf("init\n");
-    char *tmp = NULL;
-    //char *ip = NULL;
-    int prefix;
-    unsigned int ipint = 0;
-    unsigned char ipbits[MAXIP] = {0};
-
-    if(strlen(str) == strspn(str, "0123456789./:"))
+    if ( ver = 4 )
         {
-
-            if(strspn(str, "./") == 0)
-                {
-                    ipint = atol(str);
-                    memcpy(ipbits, &ipint, sizeof(ipint));
-                    if ( Bit2IP(ipbits, NULL, 0) == 0 )
-                        {
-                            return(false);
-                        }
-                }
-
-            if ( strchr(str, '/') )
-                {
-                    //ip = strtok_r(str, "/", &tmp);
-                    (void)strtok_r(str, "/", &tmp);
-                    prefix = atoi(strtok_r(NULL, "/", &tmp));
-
-			printf("prefix: |%s|\n", prefix);
-
-                    if(prefix < 1 || prefix > 128 )
-                        {
-                            return(false);
-                        }
-                }
-
-            return(true);
-
+            ret = inet_pton(AF_INET, ip,  &(sa.sin_addr));
         }
     else
         {
-
-            return(false);
+            ret = inet_pton(AF_INET6, ip,  &(sa.sin_addr));
         }
 
-*/
+    return(ret);
+
+
+    /*
+        printf("init\n");
+        char *tmp = NULL;
+        //char *ip = NULL;
+        int prefix;
+        unsigned int ipint = 0;
+        unsigned char ipbits[MAXIP] = {0};
+
+        if(strlen(str) == strspn(str, "0123456789./:"))
+            {
+
+                if(strspn(str, "./") == 0)
+                    {
+                        ipint = atol(str);
+                        memcpy(ipbits, &ipint, sizeof(ipint));
+                        if ( Bit2IP(ipbits, NULL, 0) == 0 )
+                            {
+                                return(false);
+                            }
+                    }
+
+                if ( strchr(str, '/') )
+                    {
+                        //ip = strtok_r(str, "/", &tmp);
+                        (void)strtok_r(str, "/", &tmp);
+                        prefix = atoi(strtok_r(NULL, "/", &tmp));
+
+    			printf("prefix: |%s|\n", prefix);
+
+                        if(prefix < 1 || prefix > 128 )
+                            {
+                                return(false);
+                            }
+                    }
+
+                return(true);
+
+            }
+        else
+            {
+
+                return(false);
+            }
+
+    */
 }
 
 /***************************************************************************
@@ -1456,7 +1459,7 @@ int64_t FlowGetId( struct timeval tp )
  * in a string.  For example, content!"something";
  ***************************************************************************/
 
-sbool Check_Content_Not( char *s )
+bool Check_Content_Not( char *s )
 {
 
     char rule_tmp[RULEBUF] = { 0 };

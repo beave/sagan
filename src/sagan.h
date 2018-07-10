@@ -35,6 +35,7 @@
 #include <pcre.h>
 #include <time.h>
 #include <arpa/inet.h>
+#include <stdbool.h>
 
 #include "sagan-defs.h"
 
@@ -92,15 +93,10 @@ size_t strlcpy(char *, const char *, size_t );
 #define SetThreadName(n) (0)
 #endif
 
-
-typedef char sbool;	/* From rsyslog. 'bool' causes compatiablity problems on OSX.
-			   "(small bool) I intentionally use char, to keep it slim so
-		           that many fit into the CPU cache!".  */
-
-sbool     Is_Numeric (char *);
+bool     Is_Numeric (char *);
 void      To_UpperC(char* const );
 void      To_LowerC(char* const );
-sbool	  Check_Endian( void );
+bool	  Check_Endian( void );
 void      Usage( void );
 void      Chroot( const char * );
 void	  Remove_Return(char *);
@@ -114,26 +110,26 @@ void      Sagan_Log( int, const char *, ... );
 void      Droppriv( void );
 int       DNS_Lookup( char *, char *str, size_t size );
 void      Var_To_Value(char *, char *str, size_t size);
-sbool     IP2Bit (char *, unsigned char * );
-sbool     Mask2Bit (int, unsigned char * );
+bool     IP2Bit (char *, unsigned char * );
+bool     Mask2Bit (int, unsigned char * );
 const char *Bit2IP(unsigned char *, char *str, size_t size);
-sbool     Validate_HEX (const char *);
+bool     Validate_HEX (const char *);
 void      Content_Pipe(char *, int, const char *, char *, size_t size);
-sbool     is_notroutable ( unsigned char * );
-sbool     is_inrange ( unsigned char *, unsigned char *, int );
+bool     is_notroutable ( unsigned char * );
+bool     is_inrange ( unsigned char *, unsigned char *, int );
 void      Replace_Sagan( char *, char *, char *str, size_t size);
 int       Character_Count ( char *, char *);
-sbool     Wildcard( char *, char *);
-void      Open_Log_File( sbool, int );
+bool     Wildcard( char *, char *);
+void      Open_Log_File( bool, int );
 int       Check_Var(const char *);
 int       Netaddr_To_Range( char *, unsigned char * );
 void      Strip_Chars(const char *string, const char *chars, char *str);
-sbool     Is_IP (char *ipaddr, int ver);
-sbool     File_Lock ( int );
-sbool     File_Unlock ( int );
-sbool     Check_Content_Not( char * );
+bool     Is_IP (char *ipaddr, int ver);
+bool     File_Lock ( int );
+bool     File_Unlock ( int );
+bool     Check_Content_Not( char * );
 uint32_t  Djb2_Hash( char * );
-sbool     Starts_With(const char *str, const char *prefix);
+bool     Starts_With(const char *str, const char *prefix);
 char      *strrpbrk(const char *str, const char *accept);
 
 
@@ -317,42 +313,42 @@ typedef struct _SaganDebug _SaganDebug;
 struct _SaganDebug
 {
 
-    sbool debugsyslog;
-    sbool debugload;
-    sbool debugfwsam;
-    sbool debugexternal;
-    sbool debugthreads;
-    sbool debugxbit;
-    sbool debugengine;
-    sbool debugbrointel;
-    sbool debugmalformed;
-    sbool debuglimits;
-    sbool debugipc;
-    sbool debugjson;
-    sbool debugparse_ip;
+    bool debugsyslog;
+    bool debugload;
+    bool debugfwsam;
+    bool debugexternal;
+    bool debugthreads;
+    bool debugxbit;
+    bool debugengine;
+    bool debugbrointel;
+    bool debugmalformed;
+    bool debuglimits;
+    bool debugipc;
+    bool debugjson;
+    bool debugparse_ip;
 
 #ifdef HAVE_LIBMAXMINDDB
-    sbool debuggeoip2;
+    bool debuggeoip2;
 #endif
 
 #ifdef HAVE_LIBLOGNORM
-    sbool debugnormalize;
+    bool debugnormalize;
 #endif
 
 #ifdef HAVE_LIBESMTP
-    sbool debugesmtp;
+    bool debugesmtp;
 #endif
 
 #ifdef HAVE_LIBPCAP
-    sbool debugplog;
+    bool debugplog;
 #endif
 
 #ifdef WITH_BLUEDOT
-    sbool debugbluedot;
+    bool debugbluedot;
 #endif
 
 #ifdef HAVE_LIBHIREDIS
-    sbool debugredis;
+    bool debugredis;
 #endif
 
 };
@@ -399,8 +395,8 @@ struct _Sagan_Event
 
     char *fpri;             /* *priority */
 
-    sbool endian;
-    sbool drop;
+    bool endian;
+    bool drop;
 
     char *f_msg;
 
@@ -614,7 +610,7 @@ struct _Sagan_Lookup_Cache_Entry
     unsigned char ip_bits[MAXIPBIT];
     int  port;
     unsigned char proto;
-    sbool status;
+    bool status;
 };
 
 typedef struct _Sagan_Lookup_Cache_Entry _Sagan_Lookup_Cache_Other;

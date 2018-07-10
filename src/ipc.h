@@ -32,7 +32,7 @@
 #endif
 
 void IPC_Init(void);
-sbool Clean_IPC_Object( int );
-void IPC_Check_Object(char *, sbool, char *);
+bool Clean_IPC_Object( int );
+void IPC_Check_Object(char *, bool, char *);
 
 

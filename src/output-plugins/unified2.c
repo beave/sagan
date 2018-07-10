@@ -56,7 +56,7 @@
 #include "output-plugins/unified2.h"
 
 
-sbool endian;
+bool endian;
 
 uint64_t unified_event_id;
 

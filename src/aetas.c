@@ -61,8 +61,8 @@ int Check_Time(int rule_number)
     struct tm *now_utime;
 
 
-    sbool   next_day = 0;
-    sbool   off_day = 0;
+    bool   next_day = 0;
+    bool   off_day = 0;
 
     char current_time_tmp[5];
     char hour_tmp[3];

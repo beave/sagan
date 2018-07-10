@@ -58,7 +58,7 @@ struct _Sagan_IPC_Xbit *xbit_ipc;
  * rule condition is tested here and returned.
  *****************************************************************************/
 
-sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
+bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
 {
 
     time_t t;
@@ -69,7 +69,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
     int a;
 
     int xbit_total_match = 0;
-    sbool xbit_match = 0;
+    bool xbit_match = 0;
 
     t = time(NULL);
     now=localtime(&t);
@@ -679,7 +679,7 @@ sbool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src
  * distributed attacks.
  *****************************************************************************/
 
-sbool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
+bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
 {
 
     uint32_t a = 0;
@@ -773,8 +773,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
     struct tm *now;
     char  timet[20];
 
-    sbool xbit_match = false;
-    sbool xbit_unset_match = 0;
+    bool xbit_match = false;
+    bool xbit_unset_match = 0;
 
     t = time(NULL);
     now=localtime(&t);

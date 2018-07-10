@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 /* 3 = match ip     */ /************************/ /*****************/
 /********************/ /************************/ /*****************/
 
-sbool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize_src_port, unsigned char *ip_dst_bits, int normalize_dst_port)
+bool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize_src_port, unsigned char *ip_dst_bits, int normalize_dst_port)
 {
 
     unsigned char *src;

@@ -91,8 +91,8 @@ void Sagan_BroIntel_Load_File ( void )
     char *type;
     char *description;
 
-    sbool found_flag;
-    sbool found_flag_array;
+    bool found_flag;
+    bool found_flag_array;
 
     char *tok = NULL; ;
     char *ptmp = NULL;
@@ -557,7 +557,7 @@ void Sagan_BroIntel_Load_File ( void )
  * Sagan_BroIntel_IPADDR - Search array for blacklisted IP addresses
  *****************************************************************************/
 
-sbool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
+bool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
 {
 
     int i = 0;
@@ -605,7 +605,7 @@ sbool Sagan_BroIntel_IPADDR ( unsigned char *ip, char *ipaddr )
  * a syslog_message (reguardless of lognorm/parse ip)!
  *****************************************************************************/
 
-sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
+bool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, size_t cache_size)
 {
 
     int i;
@@ -637,7 +637,7 @@ sbool Sagan_BroIntel_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
  * Sagan_BroIntel_DOMAIN - Search DOMAIN array
  *****************************************************************************/
 
-sbool Sagan_BroIntel_DOMAIN ( char *syslog_message )
+bool Sagan_BroIntel_DOMAIN ( char *syslog_message )
 {
 
     int i;
@@ -665,7 +665,7 @@ sbool Sagan_BroIntel_DOMAIN ( char *syslog_message )
  * Sagan_BroIntel_FILE_HASH - Search FILE_HASH array
  *****************************************************************************/
 
-sbool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
+bool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
 {
 
     int i;
@@ -693,7 +693,7 @@ sbool Sagan_BroIntel_FILE_HASH ( char *syslog_message )
  * Sagan_BroIntel_URL - Search URL array
  *****************************************************************************/
 
-sbool Sagan_BroIntel_URL ( char *syslog_message )
+bool Sagan_BroIntel_URL ( char *syslog_message )
 {
 
     int i;
@@ -720,7 +720,7 @@ sbool Sagan_BroIntel_URL ( char *syslog_message )
  * Sagan_BroIntel_SOFTWARE - Search SOFTWARE array
  ****************************************************************************/
 
-sbool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
+bool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
 {
 
     int i;
@@ -747,7 +747,7 @@ sbool Sagan_BroIntel_SOFTWARE ( char *syslog_message )
  * Sagan_BroIntel_EMAIL - Search EMAIL array
  *****************************************************************************/
 
-sbool Sagan_BroIntel_EMAIL ( char *syslog_message )
+bool Sagan_BroIntel_EMAIL ( char *syslog_message )
 {
 
     int i;
@@ -774,7 +774,7 @@ sbool Sagan_BroIntel_EMAIL ( char *syslog_message )
  * Sagan_BroIntel_USER_NAME - Search USER_NAME array
  ****************************************************************************/
 
-sbool Sagan_BroIntel_USER_NAME ( char *syslog_message )
+bool Sagan_BroIntel_USER_NAME ( char *syslog_message )
 {
 
     int i;
@@ -801,7 +801,7 @@ sbool Sagan_BroIntel_USER_NAME ( char *syslog_message )
  * Sagan_BroIntel_FILE_NAME - Search FILE_NAME array
  ****************************************************************************/
 
-sbool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
+bool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
 {
 
     int i;
@@ -828,7 +828,7 @@ sbool Sagan_BroIntel_FILE_NAME ( char *syslog_message )
  * Sagan_BroIntel_CERT_HASH - Search CERT_HASH array
  ***************************************************************************/
 
-sbool Sagan_BroIntel_CERT_HASH ( char *syslog_message )
+bool Sagan_BroIntel_CERT_HASH ( char *syslog_message )
 {
 
     int i;

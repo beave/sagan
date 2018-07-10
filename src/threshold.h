@@ -18,9 +18,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message );
-sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message );
-sbool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message );
-sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector );
-sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector );
+bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message );
+bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message );
+bool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message );
+bool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector );
+bool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector );
 

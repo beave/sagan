@@ -98,15 +98,15 @@ struct _Sagan_BroIntel_Intel_Cert_Hash
 void Sagan_BroIntel_Init(void);
 void Sagan_BroIntel_Load_File(void);
 
-sbool  Sagan_BroIntel_IPADDR ( unsigned char *, char *ipaddr );
-sbool  Sagan_BroIntel_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *, size_t);
+bool  Sagan_BroIntel_IPADDR ( unsigned char *, char *ipaddr );
+bool  Sagan_BroIntel_IPADDR_All ( char *, _Sagan_Lookup_Cache_Entry *, size_t);
 
-sbool  Sagan_BroIntel_DOMAIN ( char * );
-sbool  Sagan_BroIntel_FILE_HASH ( char * );
-sbool  Sagan_BroIntel_URL ( char * );
-sbool  Sagan_BroIntel_SOFTWARE( char * );
-sbool  Sagan_BroIntel_EMAIL( char * );
-sbool  Sagan_BroIntel_USER_NAME ( char * );
-sbool  Sagan_BroIntel_FILE_NAME ( char * );
-sbool  Sagan_BroIntel_CERT_HASH ( char * );
+bool  Sagan_BroIntel_DOMAIN ( char * );
+bool  Sagan_BroIntel_FILE_HASH ( char * );
+bool  Sagan_BroIntel_URL ( char * );
+bool  Sagan_BroIntel_SOFTWARE( char * );
+bool  Sagan_BroIntel_EMAIL( char * );
+bool  Sagan_BroIntel_USER_NAME ( char * );
+bool  Sagan_BroIntel_FILE_NAME ( char * );
+bool  Sagan_BroIntel_CERT_HASH ( char * );
 

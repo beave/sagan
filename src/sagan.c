@@ -116,7 +116,7 @@ int proc_msgslot = 0;
 int proc_running = 0;
 
 unsigned char dynamic_rule_flag = 0;
-sbool reload_rules = false;
+bool reload_rules = false;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 
@@ -210,8 +210,8 @@ int main(int argc, char **argv)
 
     char src_dns_lookup[20] = { 0 };
 
-    sbool dns_flag = false;
-    sbool fifoerr = false;
+    bool dns_flag = false;
+    bool fifoerr = false;
 
     char *syslog_host=NULL;
     char *syslog_facility=NULL;
@@ -236,7 +236,7 @@ int main(int argc, char **argv)
     time_t t;
     struct tm *run;
 
-    sbool debugflag = false;
+    bool debugflag = false;
 
     /* Allocate memory for global struct _SaganDebug */
 

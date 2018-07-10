@@ -90,7 +90,7 @@ void Sagan_Blacklist_Load ( void )
     int item_count;
     int i;
 
-    sbool found = 0;
+    bool found = 0;
 
     pthread_mutex_lock(&CounterBlacklistGenericMutex);
     counters->blacklist_count=0;
@@ -247,7 +247,7 @@ void Sagan_Blacklist_Load ( void )
  * array.  If found,  returns TRUE.
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
+bool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
 {
 
     int i = 0;
@@ -277,7 +277,7 @@ sbool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
  * blacklist IP's in memory!
  ***************************************************************************/
 
-sbool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
+bool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entry *lookup_cache, int lookup_cache_size )
 {
 
     int i;

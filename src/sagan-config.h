@@ -34,28 +34,28 @@ struct _SaganConfig
 
     /* Non-dependent var's */
 
-    sbool 	 sagan_reload;
-    sbool	 daemonize;
-    sbool	 quiet;
+    bool 	 sagan_reload;
+    bool	 daemonize;
+    bool	 quiet;
 
-    sbool	 liblognorm_load;
+    bool	 liblognorm_load;
 
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
-    sbool    selector_flag;
+    bool    selector_flag;
     char     selector_name[MAXSELECTOR];
 
-    sbool	 alert_flag;
+    bool	 alert_flag;
 
-    sbool	 	eve_flag; 			/* 0 = file */
+    bool	 	eve_flag; 			/* 0 = file */
     unsigned char 	eve_type;
     char		eve_interface[32];
     char 		eve_filename[MAXPATH];
     FILE		*eve_stream;
     int		    eve_fd;
-    sbool		eve_alerts;
-    sbool		eve_logs;
+    bool		eve_alerts;
+    bool		eve_logs;
 
 
     char         sagan_alert_filepath[MAXPATH];
@@ -71,7 +71,7 @@ struct _SaganConfig
     int          sagan_log_fd;
     char         sagan_lockfile[MAXPATH];
     char         sagan_fifo[MAXPATH];
-    sbool        sagan_is_file;                       /* FIFO or FILE */
+    bool        sagan_is_file;                       /* FIFO or FILE */
     char         sagan_log_path[MAXPATH];
     char         sagan_rule_path[MAXPATH];
     char         sagan_host[MAXHOST];
@@ -81,57 +81,57 @@ struct _SaganConfig
     char	 xbit_storage;				/* 0 == mmap, 1 == redis */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
-    sbool        sagan_droplist_flag;
+    bool        sagan_droplist_flag;
 
-    sbool        output_thread_flag;
+    bool        output_thread_flag;
 
     int          max_processor_threads;
 
-    sbool        sagan_external_output_flag;            /* For calling external commands */
+    bool        sagan_external_output_flag;            /* For calling external commands */
     char         sagan_external_command[MAXPATH];
 
     int          sagan_port;
-    sbool        disable_dns_warnings;
-    sbool        syslog_src_lookup;
+    bool        disable_dns_warnings;
+    bool        syslog_src_lookup;
     int          sagan_proto;
     char 	 *sagan_proto_string;
 
-    sbool	 pcre_jit; 				/* For PCRE JIT support testing */
+    bool	 pcre_jit; 				/* For PCRE JIT support testing */
 
-    sbool        endian;
+    bool        endian;
 
-    sbool 	 fast_flag;
+    bool 	 fast_flag;
     char         fast_filename[MAXPATH];
 
-    sbool	 parse_ip_ipv6;
-    sbool	 parse_ip_ipv4_mapped_ipv6;
+    bool	 parse_ip_ipv6;
+    bool	 parse_ip_ipv4_mapped_ipv6;
 
     /* Processors */
 
     int         pp_sagan_track_clients;
-    sbool       sagan_track_clients_flag;
+    bool       sagan_track_clients_flag;
 
-    sbool       blacklist_flag;
+    bool       blacklist_flag;
     char        blacklist_files[2048];
 
-    sbool	perfmonitor_flag;
+    bool	perfmonitor_flag;
     int		perfmonitor_time;
     char	perfmonitor_file_name[MAXPATH];
     FILE	*perfmonitor_file_stream;
     int	    perfmonitor_file_fd;
 
-    sbool        sagan_fwsam_flag;
+    bool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
 
     /* Dynamic rule loading and reporting */
 
-    sbool		dynamic_load_flag;
+    bool		dynamic_load_flag;
     int			dynamic_load_sample_rate;
     unsigned char	dynamic_load_type;
 
     /* Syslog output */
 
-    sbool	sagan_syslog_flag;
+    bool	sagan_syslog_flag;
     int		sagan_syslog_facility;
     int		sagan_syslog_priority;
     int		sagan_syslog_options;
@@ -176,7 +176,7 @@ struct _SaganConfig
     char        plog_interface[50];
     char        plog_logdev[50];
     char        plog_filter[256];
-    sbool       plog_flag;
+    bool       plog_flag;
     int         plog_promiscuous;
 #endif
 
@@ -186,7 +186,7 @@ struct _SaganConfig
 
     redisContext *c_reader_redis;
 
-    sbool 	redis_flag;
+    bool 	redis_flag;
     char	redis_server[255];
     int		redis_port;
     char	redis_password[255];
@@ -198,10 +198,10 @@ struct _SaganConfig
     /* libesmtp/SMTP support */
 
 #ifdef HAVE_LIBESMTP
-    sbool       sagan_sendto_flag;
+    bool       sagan_sendto_flag;
     char        sagan_esmtp_from[255];
     char        sagan_esmtp_server[255];
-    sbool       sagan_esmtp_flag;
+    bool       sagan_esmtp_flag;
     char        sagan_email_subject[64];
 #endif
 
@@ -215,14 +215,14 @@ struct _SaganConfig
     unsigned int unified2_limit;
     unsigned int unified2_current;
     int          unified2_nostamp;
-    sbool        sagan_unified2_flag;
-    sbool	 unified2_force_ipv4;
+    bool        sagan_unified2_flag;
+    bool	 unified2_force_ipv4;
 #endif
 
     /* Bluedot */
 
 #ifdef WITH_BLUEDOT
-    sbool        bluedot_flag;
+    bool        bluedot_flag;
     char         bluedot_device_id[64];
     char	 bluedot_host[128];
     char	 bluedot_ip[64];
@@ -248,7 +248,7 @@ struct _SaganConfig
 
     /* Bro Intel Framework Support */
 
-    sbool	 brointel_flag;
+    bool	 brointel_flag;
     char	 brointel_files[2048];
 
     /* For Maxmind GeoIP2 address lookup */
@@ -257,7 +257,7 @@ struct _SaganConfig
 
     MMDB_s 	geoip2;
     char        geoip2_country_file[MAXPATH];
-    sbool 	have_geoip2;
+    bool 	have_geoip2;
 
 #endif
 

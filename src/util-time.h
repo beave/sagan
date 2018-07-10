@@ -19,7 +19,7 @@
 */
 
 struct tm *Sagan_LocalTime(time_t , struct tm *);
-void CreateTimeString (const struct timeval *, char *, size_t , sbool );
+void CreateTimeString (const struct timeval *, char *, size_t , bool );
 void CreateIsoTimeString (const struct timeval *, char *, size_t );
 void Return_Date( uint32_t, char *str, size_t size );
 void Return_Time( uint32_t, char *str, size_t size );

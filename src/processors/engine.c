@@ -89,7 +89,7 @@ void Sagan_Engine_Init ( void )
 }
 
 
-int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule_flag )
+int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_flag )
 {
 
     struct _Sagan_Processor_Info *processor_info_engine = NULL;
@@ -117,15 +117,15 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int processor_info_engine_proto = 0;
     int processor_info_engine_alertid = 0;
 
-    sbool after_log_flag = false;
-    sbool thresh_log_flag = false;
+    bool after_log_flag = false;
+    bool thresh_log_flag = false;
 
     int threadid = 0;
 
     int b = 0;
     int z = 0;
 
-    sbool match = false;
+    bool match = false;
     int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
 
     int rc = 0;
@@ -134,11 +134,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     int alter_num = 0;
     int meta_alter_num = 0;
 
-    sbool xbit_return = 0;
-    sbool xbit_count_return = 0;
+    bool xbit_return = 0;
+    bool xbit_count_return = 0;
 
-    sbool alert_time_trigger = false;
-    sbool check_flow_return = true;  /* 1 = match, 0 = no match */
+    bool alert_time_trigger = false;
+    bool check_flow_return = true;  /* 1 = match, 0 = no match */
 
     char *ptmp;
     char *tok2;
@@ -151,12 +151,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     char parse_sha1_hash[SHA1_HASH_SIZE+1] = { 0 };
     char parse_sha256_hash[SHA256_HASH_SIZE+1] = { 0 };
 
-    sbool ip_src_flag = false;
+    bool ip_src_flag = false;
 
     uint32_t ip_srcport_u32;
     unsigned char ip_src_bits[MAXIPBIT] = { 0 };
 
-    sbool ip_dst_flag = false;
+    bool ip_dst_flag = false;
 
     uint32_t ip_dstport_u32 = 0;
     unsigned char ip_dst_bits[MAXIPBIT] = { 0 };
@@ -170,8 +170,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
     unsigned char proto = 0;
     int lookup_cache_size = 0;
 
-    sbool brointel_results = false;
-    sbool blacklist_results = false;
+    bool brointel_results = false;
+    bool blacklist_results = false;
 
     char *ip_src = NULL;
     char *ip_dst = NULL;
@@ -190,18 +190,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    sbool geoip2_return = false;
-    sbool geoip2_isset = false;
+    bool geoip2_return = false;
+    bool geoip2_isset = false;
 
 #endif
 
 #ifdef WITH_BLUEDOT
 
     unsigned char bluedot_results = 0;
-    sbool bluedot_ip_flag = 0;
-    sbool bluedot_hash_flag = 0;
-    sbool bluedot_url_flag = 0;
-    sbool bluedot_filename_flag = 0;
+    bool bluedot_ip_flag = 0;
+    bool bluedot_hash_flag = 0;
+    bool bluedot_url_flag = 0;
+    bool bluedot_filename_flag = 0;
 
 #endif
 
@@ -214,7 +214,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, sbool dynamic_rule
 
     /* This needs to be included,  even if liblognorm isn't in use */
 
-    sbool liblognorm_status = 0;
+    bool liblognorm_status = 0;
     json_object *json_normalize = NULL;
 
     /* Get time we received the event */

@@ -76,7 +76,7 @@ struct _Sagan_Redis *SaganRedis;
  and "isnotset"
  *****************************************************************************/
 
-sbool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
     int i;

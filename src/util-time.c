@@ -46,7 +46,7 @@ struct tm *Sagan_LocalTime(time_t timep, struct tm *result)
 /* CreateTimeString - Used in fast.log, etc.  Based off Suricata source.   */
 /***************************************************************************/
 
-void CreateTimeString (const struct timeval *ts, char *str, size_t size, sbool type)
+void CreateTimeString (const struct timeval *ts, char *str, size_t size, bool type)
 {
     time_t time = ts->tv_sec;
     struct tm local_tm;

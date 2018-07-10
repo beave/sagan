@@ -95,8 +95,8 @@ void Load_Rules( const char *ruleset )
 
     struct stat filecheck;
 
-    sbool found = 0;
-    sbool bad_rule = 0;
+    bool found = 0;
+    bool bad_rule = 0;
 
     const char *error;
     int erroffset;
@@ -173,7 +173,7 @@ void Load_Rules( const char *ruleset )
     int port_1_count=0;
     int port_2_count=0;
 
-    sbool pcreflag=0;
+    bool pcreflag=0;
     int pcreoptions=0;
 
     int i=0;

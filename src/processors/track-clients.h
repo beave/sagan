@@ -48,7 +48,7 @@ struct _Sagan_Track_Clients_IPC
     unsigned char  hostbits[MAXIPBIT];
     long     utime;
     int	     expire;
-    sbool    status;
+    bool    status;
 };
 
 void Track_Clients ( char *host );

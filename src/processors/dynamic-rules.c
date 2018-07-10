@@ -50,7 +50,7 @@ struct _Rule_Struct *rulestruct;
 struct _Rules_Loaded *rules_loaded;
 struct _SaganCounters *counters;
 
-sbool reload_rules;
+bool reload_rules;
 
 pthread_mutex_t SaganRulesLoadedMutex;
 pthread_mutex_t CounterDynamicGenericMutex=PTHREAD_MUTEX_INITIALIZER;

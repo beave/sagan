@@ -31,6 +31,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -48,7 +49,7 @@
 
 struct _SaganConfig *config;
 
-sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
 #ifdef HAVE_LIBHIREDIS
@@ -66,7 +67,7 @@ sbool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, in
 }
 
 
-sbool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
+bool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
 {
 
     return(Xbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char, selector ));

@@ -58,7 +58,7 @@ int proc_msgslot; 		/* Comes from sagan.c */
 int proc_running;   	        /* Comes from sagan.c */
 unsigned char dynamic_rule_flag; /* Comes from sagan.c */
 
-sbool death=false;
+bool death=false;
 
 pthread_cond_t SaganProcDoWork;
 pthread_mutex_t SaganProcWorkMutex;
@@ -87,7 +87,7 @@ void Processor ( void )
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-    sbool ignore_flag = false;
+    bool ignore_flag = false;
 
     int i;
 

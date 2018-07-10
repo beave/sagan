@@ -27,5 +27,5 @@
 #define SAGAN_PROCESSOR_TAG NULL
 #define SAGAN_PROCESSOR_GENERATOR_ID 1
 
-int Sagan_Engine ( _Sagan_Proc_Syslog *, sbool );
+int Sagan_Engine ( _Sagan_Proc_Syslog *, bool );
 void Sagan_Engine_Init ( void );

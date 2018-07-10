@@ -73,7 +73,7 @@ int liblognorm_count;
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 #include "output-plugins/unified2.h"
-sbool sagan_unified2_flag;
+bool sagan_unified2_flag;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
@@ -109,7 +109,7 @@ pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
 pthread_mutex_t SaganRulesLoadedMutex;
 
-sbool death;
+bool death;
 int proc_running;
 
 void Sig_Handler( void )
@@ -119,10 +119,10 @@ void Sig_Handler( void )
 
     sigset_t signal_set;
     int sig;
-    sbool orig_perfmon_value = 0;
+    bool orig_perfmon_value = 0;
 
 #ifdef HAVE_LIBPCAP
-    sbool orig_plog_value = 0;
+    bool orig_plog_value = 0;
 #endif
 
     for(;;)
@@ -144,13 +144,13 @@ void Sig_Handler( void )
 
                     Sagan_Log(NORMAL, "\n\n[Received signal %d. Sagan version %s shutting down]-------\n", sig, VERSION);
 
-		    /* This tells "new" threads to stop processing new data */
+                    /* This tells "new" threads to stop processing new data */
 
                     death=true;
 
-		    /* We wait until there are no more running/processing threads
-		       or until the thread space is zero.  We don't want to start
-		       closing files, etc until everything has settled. */
+                    /* We wait until there are no more running/processing threads
+                       or until the thread space is zero.  We don't want to start
+                       closing files, etc until everything has settled. */
 
                     while( proc_running != 0 || config->max_processor_threads == 0 )
                         {

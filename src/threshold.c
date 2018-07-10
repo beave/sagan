@@ -64,14 +64,14 @@ struct _SaganConfig *config;
 /* Threshold by source */
 /***********************/
 
-sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
+bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_log_flag = false;
+    bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
 
@@ -170,14 +170,14 @@ sbool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bit
 /* Threshold by destination */
 /****************************/
 
-sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
+bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_log_flag = false;
+    bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
 
@@ -276,14 +276,14 @@ sbool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bit
 /* Threshold by username */
 /*************************/
 
-sbool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
+bool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_log_flag = false;
+    bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
 
@@ -382,14 +382,14 @@ sbool Thresh_By_Username( int rule_position, char *normalize_username, char *sel
 /* Threshold by destination port */
 /*********************************/
 
-sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector )
+bool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_log_flag = false;
+    bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
 
@@ -481,14 +481,14 @@ sbool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selec
 /* Threshold by source port */
 /****************************/
 
-sbool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector )
+bool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector )
 {
 
     time_t t;
     struct tm *now;
     char  timet[20];
 
-    sbool thresh_log_flag = false;
+    bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
 

@@ -27,7 +27,7 @@
 char        plog_interface[50];
 char        plog_logdev[50];
 char        plog_filter[256];
-sbool       plog_flag;
+bool       plog_flag;
 int         plog_promiscuous;
 
 void Plog_Handler( void );

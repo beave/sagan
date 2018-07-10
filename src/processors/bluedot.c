@@ -75,8 +75,8 @@ pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotURLWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotFilenameWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
-sbool bluedot_cache_clean_lock=0;
-sbool bluedot_dns_global=0;
+bool bluedot_cache_clean_lock=0;
+bool bluedot_dns_global=0;
 
 /****************************************************************************
  * Sagan_Bluedot_Init() - init's some global variables and other items
@@ -1452,7 +1452,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
 
     char ip[MAXIP] = { 0 };
     unsigned char bluedot_results;
-    sbool bluedot_flag;
+    bool bluedot_flag;
 
     for (i = 0; i < lookup_cache_size; i++)
         {
@@ -1479,7 +1479,7 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
 
     int i;
 
-    sbool found;
+    bool found;
 
     tmptoken = strtok_r(categories, "," , &saveptrrule);
 

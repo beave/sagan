@@ -63,10 +63,10 @@ struct _Sagan_IPC_Counters *counters_ipc;
 /* After by source */
 /*******************/
 
-sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
+bool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
 {
 
-    sbool after_log_flag = true;
+    bool after_log_flag = true;
 
     time_t t;
     struct tm *now;
@@ -166,10 +166,10 @@ sbool After_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
 /* After by Destination */
 /************************/
 
-sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
+bool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message )
 {
 
-    sbool after_log_flag = true;
+    bool after_log_flag = true;
 
     time_t t;
     struct tm *now;
@@ -267,10 +267,10 @@ sbool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
 /* After by username */
 /*********************/
 
-sbool After_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
+bool After_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message )
 {
 
-    sbool after_log_flag = true;
+    bool after_log_flag = true;
 
     time_t t;
     struct tm *now;
@@ -378,10 +378,10 @@ sbool After_By_Username( int rule_position, char *normalize_username, char *sele
 /* After by source IP port */
 /***************************/
 
-sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector )
+bool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *selector )
 {
 
-    sbool after_log_flag = true;
+    bool after_log_flag = true;
 
     time_t t;
     struct tm *now;
@@ -480,10 +480,10 @@ sbool After_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 /* After by destination IP port */
 /********************************/
 
-sbool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector )
+bool After_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *selector )
 {
 
-    sbool after_log_flag = true;
+    bool after_log_flag = true;
 
     time_t t;
     struct tm *now;

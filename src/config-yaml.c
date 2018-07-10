@@ -60,7 +60,7 @@
 #ifdef WITH_BLUEDOT
 #include "processors/bluedot.h"
 
-sbool bluedot_load;
+bool bluedot_load;
 
 #endif
 
@@ -90,7 +90,7 @@ struct _Rule_Struct *rulestruct;
 ** You must of LIBYAML installed! **
 #endif
 
-sbool reload_rules;
+bool reload_rules;
 
 pthread_mutex_t SaganRulesLoadedMutex;
 pthread_mutex_t CounterLoadConfigGenericMutex=PTHREAD_MUTEX_INITIALIZER;
@@ -106,7 +106,7 @@ void Load_YAML_Config( char *yaml_file )
     yaml_parser_t parser;
     yaml_event_t  event;
 
-    sbool done = 0;
+    bool done = 0;
 
     int check = 0;
 
@@ -389,7 +389,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                                     FILE *varfile;
 
-                                                    sbool check = 0;
+                                                    bool check = 0;
 
                                                     filename = strtok_r(NULL, ":", &tok);
 

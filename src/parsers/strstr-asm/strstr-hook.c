@@ -87,7 +87,7 @@ char *Sagan_strstr(const char *_x, const char *_y)
  * 1/TRUE  == Convert needle
  */
 
-char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
+char *Sagan_stristr(const char *_x, const char *_y, bool needle_lower )
 {
 
     char *p = NULL;
@@ -120,7 +120,7 @@ char *Sagan_strstr(const char *_x, const char *_y)
     return (strstr(_x, _y));
 }
 
-char *Sagan_stristr(const char *_x, const char *_y, sbool needle_lower )
+char *Sagan_stristr(const char *_x, const char *_y, bool needle_lower )
 {
     return (strcasestr(_x, _y));
 }

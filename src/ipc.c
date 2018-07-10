@@ -95,7 +95,7 @@ struct _SaganDebug *debug;
  * any stale IPC entries.
  *****************************************************************************/
 
-sbool Clean_IPC_Object( int type )
+bool Clean_IPC_Object( int type )
 {
 
     /* After by src */
@@ -1086,7 +1086,7 @@ sbool Clean_IPC_Object( int type )
  * this case
  *****************************************************************************/
 
-void IPC_Check_Object(char *tmp_object_check, sbool new_counters, char *object_name)
+void IPC_Check_Object(char *tmp_object_check, bool new_counters, char *object_name)
 {
 
     struct stat object_check;
@@ -1112,8 +1112,8 @@ void IPC_Init(void)
     /* If we have a "new" counters shared memory object,  but other "old" data,  we need to remove
      * the "old" data!  The counters need to stay in sync with the other data objects! */
 
-    sbool new_counters = 0;
-    sbool new_object = 0;
+    bool new_counters = 0;
+    bool new_object = 0;
     int i;
 
     char tmp_object_check[255];

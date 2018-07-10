@@ -43,5 +43,5 @@ int __strstr_sse42();
 #endif
 
 char *Sagan_strstr(const char *, const char *);
-char *Sagan_stristr(const char *, const char *, sbool);
+char *Sagan_stristr(const char *, const char *, bool);
 

@@ -114,7 +114,7 @@ int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cac
     char port_test[6] = { 0 };
     int  port_test_int = 0;
 
-    sbool valid = false ;
+    bool valid = false ;
 
     int i=0;
     int b=0;

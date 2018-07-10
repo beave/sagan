@@ -61,7 +61,7 @@ struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 
-sbool nonthread_alert_lock = false;
+bool nonthread_alert_lock = false;
 
 pthread_mutex_t SaganOutputNonThreadMutex=PTHREAD_MUTEX_INITIALIZER;
 
