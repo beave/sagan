@@ -102,17 +102,17 @@ void Output( _Sagan_Event *Event )
 
             if ( Event->host[0] != '\0' )
                 {
-                    Unified2WriteExtraData( Event, Is_IPv6(Event->host) ?  EVENT_INFO_XFF_IPV6 : EVENT_INFO_XFF_IPV4 );
+                    Unified2WriteExtraData( Event, Is_IP(Event->host, IPv6) ?  EVENT_INFO_XFF_IPV6 : EVENT_INFO_XFF_IPV4 );
                 }
 
             /* Write IPv6 data to "extra" data */
 
-            if ( Is_IPv6(Event->ip_src ) )
+            if ( Is_IP(Event->ip_src, IPv6 ) )
                 {
                     Unified2WriteExtraData( Event, EVENT_INFO_IPV6_SRC );
                 }
 
-            if ( Is_IPv6(Event->ip_dst ) )
+            if ( Is_IP(Event->ip_dst, IPv6 ) )
                 {
                     Unified2WriteExtraData( Event, EVENT_INFO_IPV6_DST );
                 }

@@ -120,7 +120,10 @@ typedef void json_object;
 #define DEFAULT_SYSLOG_FACILITY	LOG_AUTH
 #define DEFAULT_SYSLOG_PRIORITY LOG_ALERT
 
-#define PARSEIP_RETURN_STRING	0
+//#define PARSEIP_RETURN_STRING	0
+
+#define IPv4	4
+#define IPv6	6
 
 #define DEFAULT_SMTP_SUBJECT 	"[Sagan]"
 

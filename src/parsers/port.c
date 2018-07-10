@@ -160,7 +160,7 @@ int Parse_Src_Port (char *msg)
                     token = strtok_r(NULL, " ", &saveptr2);
                     if ( token == NULL ) break;
 
-                    result = Is_IP(token);
+                    result = Is_IP(token, IPv4);
 
                     /* Found IP,  get the port */
                     if ( result != 0 )

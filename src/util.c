@@ -281,26 +281,6 @@ sbool Mask2Bit(int mask, unsigned char *out)
 
 }
 
-
-sbool Is_IPv6 (char  *ipaddr)
-{
-
-    struct sockaddr_in sa;
-    sbool ret = false;
-    char ip[MAXIP];
-
-    strlcpy(ip, ipaddr, sizeof(ip));
-
-    /* We don't use getaddrinfo().  Here's why:
-     * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
-     */
-
-    ret = inet_pton(AF_INET6, ip,  &(sa.sin_addr));
-
-    return(ret);
-
-}
-
 /* Converts IP address.  We assume that out is at least 16 bytes.  */
 
 sbool IP2Bit(char *ipaddr, unsigned char *out)
@@ -1352,13 +1332,33 @@ void Strip_Chars(const char *string, const char *chars, char *str)
 }
 
 /***************************************************
- * Check if str is valid IP from decimal or dotted
- * quad ( 167772160, 1.1.1.1, 192.168.192.168/28 )
+ * Is_IP - Checks ipaddr is a valid IPv4 or IPv6
+ * address. 
  ***************************************************/
 
-sbool Is_IP (char *str)
+sbool Is_IP (char *ipaddr, int ver )
 {
 
+    struct sockaddr_in sa;  
+    sbool ret = false;
+    char ip[MAXIP];                                                                                                                                                                                             strlcpy(ip, ipaddr, sizeof(ip)); 
+ 
+    /* We don't use getaddrinfo().  Here's why: 
+     * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/ 
+     */
+
+    if ( ver = 4 ) 
+	{
+        ret = inet_pton(AF_INET, ip,  &(sa.sin_addr));
+	} else { 
+	ret = inet_pton(AF_INET6, ip,  &(sa.sin_addr));
+	}
+    
+    return(ret);
+
+
+/*
+    printf("init\n");
     char *tmp = NULL;
     //char *ip = NULL;
     int prefix;
@@ -1383,6 +1383,9 @@ sbool Is_IP (char *str)
                     //ip = strtok_r(str, "/", &tmp);
                     (void)strtok_r(str, "/", &tmp);
                     prefix = atoi(strtok_r(NULL, "/", &tmp));
+
+			printf("prefix: |%s|\n", prefix);
+
                     if(prefix < 1 || prefix > 128 )
                         {
                             return(false);
@@ -1398,6 +1401,7 @@ sbool Is_IP (char *str)
             return(false);
         }
 
+*/
 }
 
 /***************************************************************************

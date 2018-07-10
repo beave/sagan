@@ -132,7 +132,7 @@ void Unified2( _Sagan_Event *Event )
     unsigned char ip_dst[MAXIPBIT] = {0};
     Serial_Unified2_Header *hdr = (Serial_Unified2_Header *)&write_pkt_buffer[0];
     uint8_t *alertdata = (uint8_t*)hdr + sizeof(Serial_Unified2_Header);
-    int type = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? UNIFIED2_IDS_EVENT_IPV6 : UNIFIED2_IDS_EVENT;
+    int type = Is_IP(Event->ip_src, IPv6) || Is_IP(Event->ip_dst, IPv6) ? UNIFIED2_IDS_EVENT_IPV6 : UNIFIED2_IDS_EVENT;
 
     memset(write_pkt_buffer, 0, sizeof(write_pkt_buffer));
 
@@ -169,7 +169,7 @@ void Unified2( _Sagan_Event *Event )
     /* Already in network byte order. *NOTE* For now, if one side isn't IPv6 but the other is, just convert to IPv4-mapped
        address. This is probably not the best solution */
 
-    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_src))
+    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IP(Event->ip_src, IPv6))
         {
             memset(alertdata +
                    UNIFIED_OFF(alertdata, type, ip_source) +
@@ -192,7 +192,7 @@ void Unified2( _Sagan_Event *Event )
 
     /* Already in network byte order. */
 
-    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IPv6(Event->ip_dst))
+    if (type == UNIFIED2_IDS_EVENT_IPV6 && !Is_IP(Event->ip_dst, IPv6))
         {
             memset(alertdata +
                    UNIFIED_OFF(alertdata, type, ip_destination) +
@@ -250,7 +250,7 @@ void Unified2LogPacketAlert( _Sagan_Event *Event )
 
     if ( !config->unified2_force_ipv4 )
         {
-            version = Is_IPv6(Event->ip_src) || Is_IPv6(Event->ip_dst) ? 6 : 4;
+            version = Is_IP(Event->ip_src, IPv6) || Is_IP(Event->ip_dst, IPv6) ? 6 : 4;
         }
     else
         {

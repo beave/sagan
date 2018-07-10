@@ -1126,7 +1126,7 @@ int main(int argc, char **argv)
                             if (config->syslog_src_lookup )
                                 {
 
-                                    if ( !Is_IP(syslog_host) )   	/* Is inbound a valid IP? */
+                                    if ( !Is_IP(syslog_host, IPv4) || !Is_IP(syslog_host, IPv6) )   	/* Is inbound a valid IP? */
                                         {
                                             dns_flag = false;
 
@@ -1187,7 +1187,7 @@ int main(int argc, char **argv)
                                     /* We check to see if values from our FIFO are valid.  If we aren't doing DNS related
                                     * stuff (above),  we start basic check with the syslog_host */
 
-                                    if (syslog_host == NULL || !Is_IP(syslog_host) )
+                                    if (syslog_host == NULL || !Is_IP(syslog_host, IPv4) || Is_IP(syslog_host, IPv6) )
                                         {
                                             syslog_host = config->sagan_host;
 
