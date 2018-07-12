@@ -152,7 +152,7 @@ void Sig_Handler( void )
                        or until the thread space is zero.  We don't want to start
                        closing files, etc until everything has settled. */
 
-                    while( proc_running > 0 || config->max_processor_threads > 0 )
+                    while( proc_running > 0 ) // || config->max_processor_threads > 0 )
                         {
                             Sagan_Log(WARN, "Waiting on %d working thread(s)....", proc_running);
                             sleep(1);
