@@ -60,7 +60,6 @@ typedef void json_object;
 
 #define MAX_SAGAN_MSG		256		/* Max "msg" option size */
 
-
 #define MAX_PCRE_SIZE		1024		/* Max pcre length in a rule */
 
 #define MAX_FIFO_SIZE		1048576		/* Max pipe/FIFO size in bytes/pages */
@@ -84,7 +83,7 @@ typedef void json_object;
 #define MAX_CHECK_FLOWS		100		/* Max amount of IP addresses to be checked in a flow */
 
 #define MAX_REFERENCE		10		/* Max references within a rule */
-#define MAX_PARSE_IP		10		/* Max IP to collect form log line via parse.c */
+#define MAX_PARSE_IP		30		/* Max IP to collect form log line via parse.c */
 
 /* TODO: These need to be labeled better! These directly affect
    functions like is_notroutable(). Think before you alter */
@@ -119,8 +118,6 @@ typedef void json_object;
 
 #define DEFAULT_SYSLOG_FACILITY	LOG_AUTH
 #define DEFAULT_SYSLOG_PRIORITY LOG_ALERT
-
-//#define PARSEIP_RETURN_STRING	0
 
 #define IPv4	4
 #define IPv6	6
