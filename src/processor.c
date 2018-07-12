@@ -176,7 +176,7 @@ outside_loop:
             pthread_mutex_unlock(&SaganProcWorkMutex);
         } //  for (;;)
 
-    printf("DEATH: %d\n", proc_running);
+//    printf("DEATH: %d\n", proc_running);
     config->max_processor_threads--;
     pthread_exit(NULL);
 
