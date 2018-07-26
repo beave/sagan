@@ -617,7 +617,8 @@ rules-files:
   - $RULE_PATH/bonding.rules
   - $RULE_PATH/bro-ids.rules
   - $RULE_PATH/cacti-thold.rules
-  - $RULE_PATH/cisco-acs.rules
+  #- $RULE_PATH/cisco-acs.rules
+  - $RULE_PATH/cisco-ise.rules
   - $RULE_PATH/cisco-cucm.rules
   - $RULE_PATH/cisco-ios.rules
   - $RULE_PATH/cisco-meraki.rules
