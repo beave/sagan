@@ -15,3 +15,7 @@ RPM		- Example RPM spec and system files to build Sagan RPM package
 
 rsyslog		- Configuration to send rsyslog data to Sagan. Place this
 		  file in /etc/rsyslog.d
+
+nxfifo		- Program that allows NXlog (http://nxlog.co) to read named
+		  pipes/FIFO's properly.
+
