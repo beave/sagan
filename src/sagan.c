@@ -70,6 +70,12 @@
 #include "ipc.h"
 #include "parsers/parsers.h"
 
+#include "input-pipe.h"
+
+#ifdef HAVE_LIBFASTJSON
+#include "input-json.h"
+#endif
+
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
 #endif
@@ -94,9 +100,18 @@
 
 #define OVECCOUNT 30
 
+/* Init */
+
 struct _SaganCounters *counters = NULL;
 struct _SaganConfig *config = NULL;
 struct _SaganDebug *debug = NULL;
+struct _SaganDNSCache *dnscache = NULL;
+
+#ifdef HAVE_LIBFASTJSON
+struct _Syslog_JSON_Map *Syslog_JSON_Map = NULL;
+#endif
+
+/* Already Init'ed */
 
 struct _Rule_Struct *rulestruct;
 
@@ -119,9 +134,7 @@ unsigned char dynamic_rule_flag = 0;
 bool reload_rules = false;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
-
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t SaganMalformedCounter=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
@@ -208,20 +221,8 @@ int main(int argc, char **argv)
     pthread_attr_init(&ct_report_thread_attr);
     pthread_attr_setdetachstate(&ct_report_thread_attr,  PTHREAD_CREATE_DETACHED);
 
-    char src_dns_lookup[20] = { 0 };
-
     bool dns_flag = false;
     bool fifoerr = false;
-
-    char *syslog_host=NULL;
-    char *syslog_facility=NULL;
-    char *syslog_priority=NULL;
-    char *syslog_level=NULL;
-    char *syslog_tag=NULL;
-    char *syslog_date=NULL;
-    char *syslog_time=NULL;
-    char *syslog_program=NULL;
-    char *syslog_msg=NULL;
 
     char *psyslogstring = NULL;
     char syslogstring[MAX_SYSLOGMSG];
@@ -249,7 +250,7 @@ int main(int argc, char **argv)
 
     memset(debug, 0, sizeof(_SaganDebug));
 
-    /* Allocate memroy for global struct _SaganConfig */
+    /* Allocate memory for global struct _SaganConfig */
 
     config = malloc(sizeof(_SaganConfig));
 
@@ -260,15 +261,7 @@ int main(int argc, char **argv)
 
     memset(config, 0, sizeof(_SaganConfig));
 
-    struct _SaganDNSCache *dnscache;
-    dnscache = malloc(sizeof(_SaganDNSCache));
-
-    if ( dnscache == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for dnscache. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(dnscache, 0, sizeof(_SaganDNSCache));
+    /* Allocate memory for global struct _SaganCounters */
 
     counters = malloc(sizeof(_SaganCounters));
 
@@ -278,6 +271,44 @@ int main(int argc, char **argv)
         }
 
     memset(counters, 0, sizeof(_SaganCounters));
+
+    /* Allocate memory for global struct _SaganDNSCache */
+
+    dnscache = malloc(sizeof(_SaganDNSCache));
+
+    if ( dnscache == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for dnscache. Abort!", __FILE__, __LINE__);
+        }
+
+#ifdef HAVE_LIBFASTJSON
+
+    /* Allocate memory for global Syslog_JSON_Map */
+
+    Syslog_JSON_Map = malloc(sizeof(_Syslog_JSON_Map)); 
+
+    if ( Syslog_JSON_Map == NULL )
+        {   
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Syslog_JSON_Map. Abort!", __FILE__, __LINE__);
+        }
+
+#endif
+
+    memset(dnscache, 0, sizeof(_SaganDNSCache));
+
+    /* Allocate memory for local struct _SyslogInput */
+
+    struct _SyslogInput *SyslogInput = NULL;
+
+    SyslogInput = malloc(sizeof(_SyslogInput));
+
+    if ( SyslogInput == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SyslogInput, 0, sizeof(_SyslogInput));
+
 
     t = time(NULL);
     run=localtime(&t);
@@ -310,8 +341,8 @@ int main(int argc, char **argv)
             config->quiet = true;
         }
 
-
     /* Get command line arg's */
+
     while ((c = getopt_long(argc, argv, short_options, long_options, &option_index)) != -1)
         {
 
@@ -668,6 +699,9 @@ int main(int argc, char **argv)
         }
 
 #endif
+
+
+    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON"); 
 
     Sagan_Log(NORMAL, "");
     Sagan_Log(NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
@@ -1113,254 +1147,32 @@ int main(int argc, char **argv)
 
                             if ( config->dynamic_load_flag == true )
                                 {
-
                                     dynamic_line_count++;
                                 }
 
-                            syslog_host = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-
-                            /* If we're using DNS (and we shouldn't be!),  we start DNS checks and lookups
-                             * here.  We cache both good and bad lookups to not over load our DNS server(s).
-                             * The only way DNS cache can be cleared is to restart Sagan */
-
-                            if (config->syslog_src_lookup )
-                                {
-
-                                    if ( !Is_IP(syslog_host, IPv4) || !Is_IP(syslog_host, IPv6) )   	/* Is inbound a valid IP? */
-                                        {
-                                            dns_flag = false;
-
-                                            for(i=0; i <= counters->dns_cache_count ; i++)  			/* Check cache first */
-                                                {
-                                                    if (!strcmp( dnscache[i].hostname, syslog_host))
-                                                        {
-                                                            syslog_host = dnscache[i].src_ip;
-                                                            dns_flag = true;
-                                                        }
-                                                }
-
-                                            /* If entry was not found in cache,  look it up */
-
-                                            if ( dns_flag == false )
-                                                {
-
-                                                    /* Do a DNS lookup */
-
-                                                    rc = DNS_Lookup(syslog_host, src_dns_lookup, sizeof(src_dns_lookup));
-
-                                                    /* Invalid lookups get the config->sagan_host value */
-
-                                                    if ( rc == -1 )
-                                                        {
-
-                                                            strlcpy(src_dns_lookup, config->sagan_host, sizeof(src_dns_lookup));
-                                                            counters->dns_miss_count++;
-
-                                                        }
-
-
-                                                    /* Add entry to DNS Cache */
-
-                                                    dnscache = (_SaganDNSCache *) realloc(dnscache, (counters->dns_cache_count+1) * sizeof(_SaganDNSCache));
-
-                                                    if ( dnscache == NULL )
-                                                        {
-
-                                                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for dnscache. Abort!", __FILE__, __LINE__);
-
-                                                        }
-
-                                                    memset(&dnscache[counters->dns_cache_count], 0, sizeof(_SaganDNSCache));
-
-                                                    strlcpy(dnscache[counters->dns_cache_count].hostname, syslog_host, sizeof(dnscache[counters->dns_cache_count].hostname));
-                                                    strlcpy(dnscache[counters->dns_cache_count].src_ip, src_dns_lookup, sizeof(dnscache[counters->dns_cache_count].src_ip));
-                                                    counters->dns_cache_count++;
-                                                    syslog_host = src_dns_lookup;
-
-                                                }
-                                        }
-
-                                }
-                            else
-                                {
-
-                                    /* We check to see if values from our FIFO are valid.  If we aren't doing DNS related
-                                    * stuff (above),  we start basic check with the syslog_host */
-
-                                    if (syslog_host == NULL || !Is_IP(syslog_host, IPv4) || !Is_IP(syslog_host, IPv6) )
-                                        {
-                                            syslog_host = config->sagan_host;
-
-                                            pthread_mutex_lock(&SaganMalformedCounter);
-                                            counters->malformed_host++;
-                                            pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                            if ( debug->debugmalformed )
-                                                {
-                                                    Sagan_Log(DEBUG, "Sagan received a malformed 'host': '%s' (replaced with %s)", syslog_host, config->sagan_host);
-                                                }
-                                        }
-                                }
-
-                            /* We now check the rest of the values */
-
-                            syslog_facility = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_facility == NULL )
-                                {
-
-                                    syslog_facility = "SAGAN: FACILITY ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_facility++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'facility'");
-                                        }
-                                }
-
-                            syslog_priority = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_priority == NULL )
-                                {
-
-                                    syslog_priority = "SAGAN: PRIORITY ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_priority++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'priority'");
-                                        }
-                                }
-
-                            syslog_level = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_level == NULL )
-                                {
-
-                                    syslog_level = "SAGAN: LEVEL ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_level++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'level'");
-                                        }
-                                }
-
-                            syslog_tag = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_tag == NULL )
-                                {
-
-                                    syslog_tag = "SAGAN: TAG ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_tag++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'tag'");
-                                        }
-                                }
-
-                            syslog_date = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_date == NULL )
-                                {
-
-                                    syslog_date = "SAGAN: DATE ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_date++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'date'");
-                                        }
-                                }
-
-                            syslog_time = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_time == NULL )
-                                {
-
-                                    syslog_time = "SAGAN: TIME ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_time++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'time'");
-                                        }
-                                }
-
-
-                            syslog_program = psyslogstring != NULL ? strsep(&psyslogstring, "|") : NULL;
-                            if ( syslog_program == NULL )
-                                {
-
-                                    syslog_program = "SAGAN: PROGRAM ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_program++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'program'");
-                                        }
-                                }
-                            syslog_msg = psyslogstring != NULL ? strsep(&psyslogstring, "") : NULL; /* In case the message has | in it,  we delimit on "" */
-
-                            if ( syslog_msg == NULL )
-                                {
-
-                                    syslog_msg = "SAGAN: MESSAGE ERROR";
-
-                                    pthread_mutex_lock(&SaganMalformedCounter);
-                                    counters->malformed_message++;
-                                    pthread_mutex_unlock(&SaganMalformedCounter);
-
-                                    if ( debug->debugmalformed )
-                                        {
-                                            Sagan_Log(DEBUG, "Sagan received a malformed 'message' [Syslog Host: %s]", syslog_host);
-                                        }
-
-                                    /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,
-                                     * it's more likely to lose all  - Champ Clark III 11/17/2011 */
-
-                                    counters->sagan_log_drop++;
-
-                                }
-
-                            /* Strip any \n or \r from the syslog_msg */
-
-                            if ( strcspn ( syslog_msg, "\n" ) < strlen(syslog_msg) )
-                                {
-                                    syslog_msg[strcspn ( syslog_msg, "\n" )] = '\0';
-                                }
-
+                            /* Split up pipe delimited format */
+
+			    if ( config->input_type == INPUT_PIPE ) 
+				{
+                                SyslogInput = SyslogInput_Pipe( psyslogstring );
+				} else { 
+				SyslogInput = SyslogInput_JSON( psyslogstring );
+				}
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
                                     pthread_mutex_lock(&SaganProcWorkMutex);
 
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
+                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, SyslogInput->syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
 
                                     if ( config->dynamic_load_flag == true && ( dynamic_line_count >= config->dynamic_load_sample_rate ) )
                                         {
@@ -1406,11 +1218,13 @@ int main(int argc, char **argv)
                                 {
 
                                     Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
-                                    Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, syslog_host, syslog_program, syslog_facility, syslog_priority, syslog_level, syslog_tag);
-                                    Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__, syslog_msg);
+                                    Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
+                                    Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_msg);
 
                                 }
 
+
+                            memset(SyslogInput, 0, sizeof(_SyslogInput));
 
                         } /* while(fgets) */
 

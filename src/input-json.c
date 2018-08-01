@@ -18,15 +18,34 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-json.h
- *
- * Functions that handle JSON output
- *
- */
+/* Read data from fifo in a JSON format */
 
-#include <inttypes.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"             /* From autoconf */
+#endif
 
-void Format_JSON_Alert_EVE( _Sagan_Event *, char *, size_t);
-void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, char *, size_t, json_object *json_normalize );
+#ifdef HAVE_LIBFASTJSON
+
+#include <stdio.h>
+#include <string.h>
+
+#include "sagan.h"
+#include "sagan-defs.h"
+#include "sagan-config.h"
+#include "version.h"
+#include "input-pipe.h"
+
+struct _SaganCounters *counters;
+struct _SaganDebug *debug;
+struct _SaganConfig *config;
+struct _SaganDNSCache *dnscache;
 
 
+struct _SyslogInput *SyslogInput_JSON( char *syslog_string )
+{
+
+
+
+}
+
+#endif

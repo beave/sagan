@@ -137,8 +137,14 @@ void Load_YAML_Config( char *yaml_file )
             strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
             strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
 
+#ifdef HAVE_LIBFASTJSON
+	    strlcpy(config->json_input_map_file, DEFAULT_JSON_INPUT_MAP, sizeof(config->json_input_map_file));
+	    strlcpy(config->json_input_software, "NONE SET", sizeof(config->json_input_software));
+#endif
+
             config->sagan_host[0] = '\0';
             config->sagan_port = 514;
+	    config->input_type = INPUT_PIPE;
 
             /* Defaults for Parse_IP(); */
 
@@ -570,6 +576,54 @@ void Load_YAML_Config( char *yaml_file )
                                                     Sagan_Log(ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
                                                 }
                                         }
+
+#ifndef HAVE_LIBFASTJSON
+
+                                    else if (!strcmp(last_pass, "input-type"))
+                                        {   
+                                            if (!strcasecmp(value, "json" ) )
+                                                {
+                                                 Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with hiredis (Redis) support!", __FILE__, __LINE__);
+                                                }
+                                        }
+
+
+#endif
+
+				    else if (!strcmp(last_pass, "input-type")) 
+					{
+					    if (!strcasecmp(value, "pipe" ) )
+						{
+						config->input_type = INPUT_PIPE; 
+						}
+
+					    else if (!strcasecmp(value, "json" ) ) 
+						{
+						config->input_type = INPUT_JSON; 
+						}
+
+					    else if (strcasecmp(value, "json" ) && strcasecmp(value, "pipe" ) )
+						{
+					            Sagan_Log(ERROR, "[%s, line %d] sagan:core 'input-type' is invalid. Abort!", __FILE__, __LINE__);
+                                                }
+					}
+
+
+#ifdef HAVE_LIBFASTJSON
+
+
+				    else if (!strcmp(last_pass, "json-map" ) && config->input_type == INPUT_JSON ) 
+					{
+					strlcpy(config->json_input_map_file, value, sizeof(config->json_input_map_file)); 
+					}
+
+                                    else if (!strcmp(last_pass, "json-software" ) && config->input_type == INPUT_JSON )
+                                        {
+                                        strlcpy(config->json_input_software, value, sizeof(config->json_input_software));
+                                        }
+
+
+#endif
 
                                     else if (!strcmp(last_pass, "default-proto"))
                                         {
@@ -2474,6 +2528,17 @@ void Load_YAML_Config( char *yaml_file )
                     Sagan_Log(ERROR, "[%s, line %d] Bluedot \"uri\" option is missing.", __FILE__, __LINE__);
                 }
         }
+
+#endif
+
+#ifdef HAVE_LIBFASTJSON
+
+    if ( config->input_type == INPUT_JSON ) 
+	{
+
+	Load_Input_JSON_Map( config->json_input_map_file );
+
+	}
 
 #endif
 

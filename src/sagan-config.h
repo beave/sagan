@@ -38,6 +38,15 @@ struct _SaganConfig
     bool	 daemonize;
     bool	 quiet;
 
+    unsigned char	input_type;
+
+#ifdef HAVE_LIBFASTJSON
+
+    char	 json_input_map_file[MAXPATH];
+    char	 json_input_software[64];
+
+#endif
+
     bool	 liblognorm_load;
 
     const char	 *sagan_runas;

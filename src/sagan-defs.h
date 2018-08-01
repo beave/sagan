@@ -48,6 +48,26 @@ typedef void json_object;
 #define RULEBUF			5128
 #define CONFBUF			4096
 
+#define	MAX_SYSLOG_HOST		50
+#define MAX_SYSLOG_FACILITY	50
+#define MAX_SYSLOG_PRIORITY	50
+#define MAX_SYSLOG_LEVEL	50
+#define MAX_SYSLOG_TAG		50
+#define MAX_SYSLOG_DATE		50
+#define MAX_SYSLOG_TIME		50
+#define MAX_SYSLOG_PROGRAM	50
+#define MAX_SYSLOGMSG		10240
+
+#define JSON_MAP_HOST         32 
+#define JSON_MAP_FACILITY     32 
+#define JSON_MAP_PRIORITY     32 
+#define JSON_MAP_LEVEL        32 
+#define JSON_MAP_TAG          32 
+#define JSON_MAP_DATE         32 
+#define JSON_MAP_TIME         32
+#define JSON_MAP_PROGRAM      32
+#define JSON_MAP_MESSAGE      32 
+
 #define MAXPATH 		255		/* Max path for files/directories */
 #define MAXHOST         	255		/* Max host length */
 #define MAXPROGRAM		32		/* Max syslog 'program' length */
@@ -65,7 +85,6 @@ typedef void json_object;
 #define MAX_FIFO_SIZE		1048576		/* Max pipe/FIFO size in bytes/pages */
 
 #define MAX_THREADS     	4096            /* Max system threads */
-#define MAX_SYSLOGMSG   	10240		/* Max length of a syslog message */
 
 #define MAX_VAR_NAME_SIZE  	64		/* Max "var" name size */
 #define MAX_VAR_VALUE_SIZE 	4096		/* Max "var" value size */
@@ -226,5 +245,9 @@ typedef void json_object;
 #define BLUEDOT_HASH_QUEUE_DEFAULT	100
 #define BLUEDOT_URL_QUEUE_DEFAULT	1000
 #define BLUEDOT_FILENAME_QUEUE_DEFAULT	1000
+
+#define DEFAULT_JSON_INPUT_MAP		"/usr/local/etc/sagan-rules/json-input.map"
+#define INPUT_PIPE			1
+#define INPUT_JSON			2
 
 #endif

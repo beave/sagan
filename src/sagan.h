@@ -153,6 +153,19 @@ int       PageSupportsRWX(void);
 #endif /* HAVE_SYS_MMAN_H */
 #endif
 
+typedef struct _SyslogInput _SyslogInput;
+struct _SyslogInput
+{
+    char *syslog_host;
+    char *syslog_facility;
+    char *syslog_priority;
+    char *syslog_level;
+    char *syslog_tag;
+    char *syslog_date;
+    char *syslog_time;
+    char *syslog_program;
+    char *syslog_msg;
+};
 
 typedef struct _SaganDNSCache _SaganDNSCache;
 struct _SaganDNSCache
@@ -366,17 +379,33 @@ struct _Sagan_Redis
 typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
 struct _Sagan_Proc_Syslog
 {
-    char syslog_host[50];
-    char syslog_facility[50];
-    char syslog_priority[50];
-    char syslog_level[50];
-    char syslog_tag[50];
-    char syslog_date[50];
-    char syslog_time[50];
-    char syslog_program[50];
+    char syslog_host[MAX_SYSLOG_HOST];
+    char syslog_facility[MAX_SYSLOG_FACILITY];
+    char syslog_priority[MAX_SYSLOG_PRIORITY];
+    char syslog_level[MAX_SYSLOG_LEVEL];
+    char syslog_tag[MAX_SYSLOG_TAG];
+    char syslog_date[MAX_SYSLOG_DATE];
+    char syslog_time[MAX_SYSLOG_TIME];
+    char syslog_program[MAX_SYSLOG_PROGRAM];
     char syslog_message[MAX_SYSLOGMSG];
 
 };
+
+typedef struct _Syslog_JSON_Map _Syslog_JSON_Map;
+struct _Syslog_JSON_Map
+{
+    char syslog_map_host[JSON_MAP_HOST];
+    char syslog_map_facility[JSON_MAP_FACILITY];
+    char syslog_map_priority[JSON_MAP_PRIORITY];
+    char syslog_map_level[JSON_MAP_LEVEL];
+    char syslog_map_tags[JSON_MAP_TAG];
+    char syslog_map_date[JSON_MAP_DATE];
+    char syslog_map_time[JSON_MAP_TIME];
+    char syslog_map_program[JSON_MAP_PROGRAM];
+    char syslog_map_message[JSON_MAP_MESSAGE];
+
+};
+
 
 typedef struct _Sagan_Event _Sagan_Event;
 struct _Sagan_Event

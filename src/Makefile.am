@@ -38,6 +38,9 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 						       after.c \
 						       threshold.c \
                                                        util-time.c \
+						       input-pipe.c \
+						       input-json.c \
+						       input-json-map.c \
                                                        util-strlcpy.c \
                                                        util-strlcat.c \
                                                        util-base64.c \
