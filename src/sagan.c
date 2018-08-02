@@ -285,10 +285,10 @@ int main(int argc, char **argv)
 
     /* Allocate memory for global Syslog_JSON_Map */
 
-    Syslog_JSON_Map = malloc(sizeof(_Syslog_JSON_Map)); 
+    Syslog_JSON_Map = malloc(sizeof(_Syslog_JSON_Map));
 
     if ( Syslog_JSON_Map == NULL )
-        {   
+        {
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Syslog_JSON_Map. Abort!", __FILE__, __LINE__);
         }
 
@@ -701,7 +701,7 @@ int main(int argc, char **argv)
 #endif
 
 
-    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON"); 
+    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
 
     Sagan_Log(NORMAL, "");
     Sagan_Log(NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
@@ -1152,12 +1152,14 @@ int main(int argc, char **argv)
 
                             /* Split up pipe delimited format */
 
-			    if ( config->input_type == INPUT_PIPE ) 
-				{
-                                SyslogInput = SyslogInput_Pipe( psyslogstring );
-				} else { 
-				SyslogInput = SyslogInput_JSON( psyslogstring );
-				}
+                            if ( config->input_type == INPUT_PIPE )
+                                {
+                                    SyslogInput = SyslogInput_Pipe( psyslogstring );
+                                }
+                            else
+                                {
+                                    SyslogInput = SyslogInput_JSON( psyslogstring );
+                                }
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {

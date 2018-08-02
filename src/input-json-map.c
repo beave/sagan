@@ -69,114 +69,131 @@ void Load_Input_JSON_Map ( const char *json_map )
     while(fgets(json_map_buf, 10240, json_map_file) != NULL)
         {
 
-	/* Skip comments and blank lines */
+            /* Skip comments and blank lines */
 
             if (json_map_buf[0] == '#' || json_map_buf[0] == 10 || json_map_buf[0] == ';' || json_map_buf[0] == 32)
                 {
                     continue;
                 }
 
-        json_obj = json_tokener_parse(json_map_buf);
+            json_obj = json_tokener_parse(json_map_buf);
 
-	if ( json_object_object_get_ex(json_obj, "software", &tmp))
-		{
+            if ( json_object_object_get_ex(json_obj, "software", &tmp))
+                {
 
-		Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
+                    Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
 
-		if ( !strcmp(json_object_get_string(tmp), config->json_input_software ) ) 
-			{
+                    if ( !strcmp(json_object_get_string(tmp), config->json_input_software ) )
+                        {
 
-			if ( json_object_object_get_ex(json_obj, "syslog-source-ip", &tmp)) 
-				{
-				strlcpy(Syslog_JSON_Map->syslog_map_host,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_host));
-				}
-
-                        if ( json_object_object_get_ex(json_obj, "facility", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "syslog-source-ip", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_facility,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_facility));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_host,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_host));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "level", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "facility", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_level,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_level));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_facility,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_facility));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "priority", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "level", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_priority,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_priority));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_level,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_level));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "tags", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "priority", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_tags,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_tags));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_priority,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_priority));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "time", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "tags", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_time,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_time));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_tags,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_tags));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "date", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "time", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_date,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_date));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_time,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_time));
                                 }
 
-                        if ( json_object_object_get_ex(json_obj, "program", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "date", &tmp))
                                 {
-                                strlcpy(Syslog_JSON_Map->syslog_map_program,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_program));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_date,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_date));
                                 }
 
-			/* Sanity check */
-
-			if ( Syslog_JSON_Map->syslog_map_host[0] == '\0' ) 
-				{
-				Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'syslog-source-ip'. Abort!",  config->json_input_software );
-				} 
-
-			else if ( Syslog_JSON_Map->syslog_map_facility[0] == '\0' ) 
-				{
-				Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'facility'. Abort!",  config->json_input_software );
-				}
-
-                        else if ( Syslog_JSON_Map->syslog_map_level[0] == '\0' )
+                            if ( json_object_object_get_ex(json_obj, "program", &tmp))
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'level'. Abort!",  config->json_input_software );
+                                    strlcpy(Syslog_JSON_Map->syslog_map_program,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_program));
                                 }
 
-                        else if ( Syslog_JSON_Map->syslog_map_priority[0] == '\0' )
+                            if ( json_object_object_get_ex(json_obj, "message", &tmp))
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'priority'. Abort!",  config->json_input_software );
+                                    strlcpy(Syslog_JSON_Map->syslog_map_message,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_message));
                                 }
 
-                        else if ( Syslog_JSON_Map->syslog_map_tags[0] == '\0' )
+
+                            /* Sanity check */
+
+                            if ( Syslog_JSON_Map->syslog_map_host[0] == '\0' )
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'tags'. Abort!",  config->json_input_software );
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'syslog-source-ip'. Abort!",  config->json_input_software );
                                 }
 
-                        else if ( Syslog_JSON_Map->syslog_map_time[0] == '\0' )
+                            else if ( Syslog_JSON_Map->syslog_map_facility[0] == '\0' )
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'time'. Abort!",  config->json_input_software );
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'facility'. Abort!",  config->json_input_software );
                                 }
 
-                        else if ( Syslog_JSON_Map->syslog_map_date[0] == '\0' )
+                            else if ( Syslog_JSON_Map->syslog_map_level[0] == '\0' )
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'date'. Abort!",  config->json_input_software );
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'level'. Abort!",  config->json_input_software );
                                 }
 
-                        else if ( Syslog_JSON_Map->syslog_map_program[0] == '\0' )
+                            else if ( Syslog_JSON_Map->syslog_map_priority[0] == '\0' )
                                 {
-                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'program'. Abort!",  config->json_input_software );
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'priority'. Abort!",  config->json_input_software );
                                 }
 
-				return; 
+                            /*
+                                                        else if ( Syslog_JSON_Map->syslog_map_tags[0] == '\0' )
+                                                            {
+                                                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'tags'. Abort!",  config->json_input_software );
+                                                            }
+                            */
 
-			}
-		
-		}
+                            else if ( Syslog_JSON_Map->syslog_map_time[0] == '\0' )
+                                {
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'time'. Abort!",  config->json_input_software );
+                                }
 
-	}
+                            else if ( Syslog_JSON_Map->syslog_map_date[0] == '\0' )
+                                {
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'date'. Abort!",  config->json_input_software );
+                                }
 
-Sagan_Log(ERROR, "No JSON mappings found for '%s'.  Abort!", config->json_input_software);
+                            else if ( Syslog_JSON_Map->syslog_map_program[0] == '\0' )
+                                {
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'program'. Abort!",  config->json_input_software );
+                                }
+
+                            else if ( Syslog_JSON_Map->syslog_map_message[0] == '\0' )
+                                {
+                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'message'. Abort!",  config->json_input_software );
+                                }
+
+                            json_object_put(json_obj);
+
+                            return;
+
+                        }
+
+                }
+
+        }
+
+    json_object_put(json_obj);
+
+    Sagan_Log(ERROR, "No JSON mappings found for '%s'.  Abort!", config->json_input_software);
 
 }
 

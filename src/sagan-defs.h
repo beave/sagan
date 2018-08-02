@@ -58,15 +58,15 @@ typedef void json_object;
 #define MAX_SYSLOG_PROGRAM	50
 #define MAX_SYSLOGMSG		10240
 
-#define JSON_MAP_HOST         32 
-#define JSON_MAP_FACILITY     32 
-#define JSON_MAP_PRIORITY     32 
-#define JSON_MAP_LEVEL        32 
-#define JSON_MAP_TAG          32 
-#define JSON_MAP_DATE         32 
+#define JSON_MAP_HOST         32
+#define JSON_MAP_FACILITY     32
+#define JSON_MAP_PRIORITY     32
+#define JSON_MAP_LEVEL        32
+#define JSON_MAP_TAG          32
+#define JSON_MAP_DATE         32
 #define JSON_MAP_TIME         32
 #define JSON_MAP_PROGRAM      32
-#define JSON_MAP_MESSAGE      32 
+#define JSON_MAP_MESSAGE      32
 
 #define MAXPATH 		255		/* Max path for files/directories */
 #define MAXHOST         	255		/* Max host length */
