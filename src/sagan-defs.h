@@ -68,6 +68,11 @@ typedef void json_object;
 #define JSON_MAP_PROGRAM      32
 #define JSON_MAP_MESSAGE      32
 
+
+#define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
+#define INPUT_PIPE                      1
+#define INPUT_JSON                      2
+
 #define MAXPATH 		255		/* Max path for files/directories */
 #define MAXHOST         	255		/* Max host length */
 #define MAXPROGRAM		32		/* Max syslog 'program' length */
@@ -245,9 +250,5 @@ typedef void json_object;
 #define BLUEDOT_HASH_QUEUE_DEFAULT	100
 #define BLUEDOT_URL_QUEUE_DEFAULT	1000
 #define BLUEDOT_FILENAME_QUEUE_DEFAULT	1000
-
-#define DEFAULT_JSON_INPUT_MAP		"/usr/local/etc/sagan-rules/json-input.map"
-#define INPUT_PIPE			1
-#define INPUT_JSON			2
 
 #endif

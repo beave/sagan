@@ -193,9 +193,8 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
 {
 
     struct json_object *jobj;
-    char timebuf[64];
-    char tmp[32];
-    char *proto = NULL;
+    char timebuf[64] = { 0 };
+    char tmp[32] = { 0 };
 
     char tmp_data[MAX_SYSLOGMSG+1024] = { 0 };
 

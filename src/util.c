@@ -1348,7 +1348,7 @@ bool Is_IP (char *ipaddr, int ver )
      * See https://blog.powerdns.com/2014/05/21/a-surprising-discovery-on-converting-ipv6-addresses-we-no-longer-prefer-getaddrinfo/
      */
 
-    if ( ver = 4 )
+    if ( (ver = 4 ) )
         {
             ret = inet_pton(AF_INET, ip,  &(sa.sin_addr));
         }

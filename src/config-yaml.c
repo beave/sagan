@@ -41,6 +41,7 @@
 #include "rules.h"
 #include "sagan-config.h"
 #include "classifications.h"
+#include "input-json-map.h"
 #include "gen-msg.h"
 #include "protocol-map.h"
 #include "references.h"

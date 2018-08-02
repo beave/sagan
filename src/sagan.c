@@ -221,7 +221,6 @@ int main(int argc, char **argv)
     pthread_attr_init(&ct_report_thread_attr);
     pthread_attr_setdetachstate(&ct_report_thread_attr,  PTHREAD_CREATE_DETACHED);
 
-    bool dns_flag = false;
     bool fifoerr = false;
 
     char *psyslogstring = NULL;
@@ -701,7 +700,7 @@ int main(int argc, char **argv)
 #endif
 
 
-    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
+//    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
 
     Sagan_Log(NORMAL, "");
     Sagan_Log(NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
