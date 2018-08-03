@@ -143,6 +143,29 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
+    # Controls how data is read from the FIFO.  "pipe" is the traditional way
+    # Sagan reads in events and is default.  "json" is more flexable and 
+    # will become the default in the future.  If "pipe" is set, "json-map"
+    # and "json-software" have no function.
+
+    input-type: pipe                                    # pipe or json
+    json-map: /usr/local/etc/sagan-rules/json-input.map # mapping file
+    json-software: syslog-ng                            # by "software" type. 
+
+    # "parse-json-message" allows Sagan to detect and decode JSON within a 
+    # syslog "message" field.  If a decoder (map) is found,  then Sagan will
+    # extract the JSON values within the messages.  The "parse-json-program"
+    # tells Sagan to start looking for JSON within the "program" field.  Some
+    # broken systems (i.e. - Splunk) start JSON within the "program" field and
+    # into the "message" field.  This option tells Sagan to "append" the 
+    # strings together (program+message) and then decode.  The
+    # "json-message-map" tells Sagan how to decode JSON values when they are 
+    # encountered.
+
+    parse-json-message: disable
+    parse-json-program: disable
+    json-message-map: /usr/local/etc/sagan-rule/json-message.map
+
   # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 
    
   parse-ip:
@@ -158,8 +181,9 @@ sagan-core:
     name: "selector name"        # Log entry must be normalized and this value must 
                                  # be present in the normalized result
 
-  # Redis configuration.  Redis can be used to act as a global storage engine for data
-  # like xbits.
+  # Redis configuration.  Redis can be used to act as a global storage engine for
+  # data xbits.  This allows Sagan to "share" xbit data across a network 
+  # infrastructure. This is experimental! 
 
   redis-server:
 
@@ -168,7 +192,6 @@ sagan-core:
     port: 6379
     #password: "mypassword"  # Comment out to disable authentication.
     writer_threads: 10
-
 
   # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
   # and afters.  This allows Sagan to "remember" threshold, xbits and after
