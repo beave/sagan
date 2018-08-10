@@ -899,48 +899,44 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
-                                            if ( geoip2_return == true )
+                                            /* If country IS NOT {my value} return 1 */
+
+                                            if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
                                                 {
 
-                                                    /* If country IS NOT {my value} return 1 */
-
-                                                    if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
+                                                    if ( geoip2_return == true )
                                                         {
-
-                                                            if ( geoip2_return == 1 )
-                                                                {
-                                                                    geoip2_isset = false;
-                                                                }
-                                                            else
-                                                                {
-                                                                    geoip2_isset = true;
-
-                                                                    pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    counters->geoip2_hit++;
-                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
-                                                                }
+                                                            geoip2_isset = false;
                                                         }
+                                                    else
+                                                        {
+                                                            geoip2_isset = true;
 
-                                                    /* If country IS {my value} return 1 */
+                                                            pthread_mutex_lock(&CountersGeoIPHit);
+                                                            counters->geoip2_hit++;
+                                                            pthread_mutex_unlock(&CountersGeoIPHit);
+                                                        }
+                                                }
 
-                                                    else if ( rulestruct[b].geoip2_type == 2 )             /* is */
+                                            /* If country IS {my value} return 1 */
+
+                                            else if ( rulestruct[b].geoip2_type == 2 )             /* is */
+                                                {
+
+                                                    if ( geoip2_return == true )
                                                         {
 
-                                                            if ( geoip2_return == 1 )
-                                                                {
+                                                            geoip2_isset = true;
 
-                                                                    geoip2_isset = true;
+                                                            pthread_mutex_lock(&CountersGeoIPHit);
+                                                            counters->geoip2_hit++;
+                                                            pthread_mutex_unlock(&CountersGeoIPHit);
 
-                                                                    pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    counters->geoip2_hit++;
-                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
+                                                        }
+                                                    else
+                                                        {
 
-                                                                }
-                                                            else
-                                                                {
-
-                                                                    geoip2_isset = false;
-                                                                }
+                                                            geoip2_isset = false;
                                                         }
                                                 }
                                         }
@@ -1194,6 +1190,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                 {
 
 #ifdef HAVE_LIBMAXMINDDB
+
                                                                     if ( rulestruct[b].geoip2_flag == false || geoip2_isset == true )
                                                                         {
 #endif
