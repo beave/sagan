@@ -899,7 +899,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
-					    if ( geoip2_return != GEOIP_SKIP ) 
+					    if ( geoip2_return != GEOIP_HIT ) 
 					    {
 
                                             /* If country IS NOT {my value} return 1 */
