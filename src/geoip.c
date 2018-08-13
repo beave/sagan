@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* geoip2.c
+/* geoip.c
  *
  * Functions that handle GeoIP2 lookup's via the Maxmind database.   For more
  * information, please see:
@@ -46,7 +46,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "rules.h"
-#include "geoip2.h"
+#include "geoip.h"
 #include "sagan-config.h"
 
 struct _SaganConfig *config;
@@ -112,7 +112,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
                     Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP2 lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
-            return(false);
+            return(GEOIP_SKIP);
         }
 
     MMDB_lookup_result_s result = MMDB_lookup_string(&config->geoip2, ipaddr, &gai_error, &mmdb_error);
@@ -127,7 +127,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
             pthread_mutex_unlock(&CountGeoIP2MissMutex);
 
             Sagan_Log(WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
-            return(false);
+            return(GEOIP_SKIP);
 
         }
 
@@ -142,7 +142,8 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
                 {
                     Sagan_Log(DEBUG, "Country code for %s not found in GeoIP2 DB", ipaddr);
                 }
-            return(false);
+
+            return(GEOIP_SKIP);
         }
 
     strlcpy(country, entry_data.utf8_string, 3);
@@ -172,7 +173,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
                             Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
                         }
 
-                    return(true);  /* GeoIP was found / there was a hit */
+                    return(GEOIP_HIT);  /* GeoIP was found / there was a hit */
                 }
 
             ptmp = strtok_r(NULL, ",", &tok);
@@ -180,7 +181,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
 
     if (debug->debuggeoip2) Sagan_Log(DEBUG, "GeoIP Status: Not found in user defined values.");
 
-    return(false);
+    return(GEOIP_MISS);
 }
 
 #endif

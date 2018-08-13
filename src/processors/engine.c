@@ -68,7 +68,7 @@
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-#include "geoip2.h"
+#include "geoip.h"
 #endif
 
 struct _SaganCounters *counters;
@@ -190,7 +190,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    bool geoip2_return = false;
+    unsigned char geoip2_return = GEOIP_MISS;
     bool geoip2_isset = false;
 
 #endif
@@ -899,6 +899,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
+					    if ( geoip2_return != GEOIP_SKIP ) 
+					    {
+
                                             /* If country IS NOT {my value} return 1 */
 
                                             if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
@@ -940,6 +943,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                         }
                                                 }
                                         }
+				     }
 
 #endif
 

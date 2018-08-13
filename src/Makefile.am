@@ -25,7 +25,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        send-alert.c \
                                                        credits.c \
                                                        protocol-map.c \
-                                                       geoip2.c \
+                                                       geoip.c \
                                                        meta-content.c \
                                                        redis.c \
                                                        xbit.c \

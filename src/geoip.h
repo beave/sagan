@@ -28,6 +28,11 @@
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
+
+#define GEOIP_MISS	0
+#define GEOIP_HIT	1
+#define GEOIP_SKIP	2
+
 void Open_GeoIP2_Database( void );
 int GeoIP2_Lookup_Country( char *, unsigned char *ip_bits, int );
 #endif

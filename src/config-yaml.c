@@ -77,7 +77,7 @@ int liblognorm_count;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-#include "geoip2.h"
+#include "geoip.h"
 #endif
 
 struct _SaganConfig *config;
