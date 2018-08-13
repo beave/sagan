@@ -899,7 +899,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
-					    if ( geoip2_return != GEOIP_HIT ) 
+					    if ( geoip2_return != GEOIP_SKIP ) 
 					    {
 
                                             /* If country IS NOT {my value} return 1 */
@@ -907,7 +907,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
                                                 {
 
-                                                    if ( geoip2_return == true )
+                                                    if ( geoip2_return == GEOIP_HIT )
                                                         {
                                                             geoip2_isset = false;
                                                         }
@@ -926,7 +926,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             else if ( rulestruct[b].geoip2_type == 2 )             /* is */
                                                 {
 
-                                                    if ( geoip2_return == true )
+                                                    if ( geoip2_return == GEOIP_MISS )
                                                         {
 
                                                             geoip2_isset = true;
