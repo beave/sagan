@@ -926,9 +926,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             else if ( rulestruct[b].geoip2_type == 2 )             /* is */
                                                 {
 
-                                                    if ( geoip2_return == GEOIP_MISS )
+                                                    if ( geoip2_return == GEOIP_HIT )
                                                         {
-
                                                             geoip2_isset = true;
 
                                                             pthread_mutex_lock(&CountersGeoIPHit);

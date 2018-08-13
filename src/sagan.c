@@ -1153,11 +1153,11 @@ int main(int argc, char **argv)
 
                             if ( config->input_type == INPUT_PIPE )
                                 {
-				    SyslogInput_Pipe( psyslogstring, SyslogInput );
+                                    SyslogInput_Pipe( psyslogstring, SyslogInput );
                                 }
                             else
                                 {
-				    SyslogInput_JSON( psyslogstring, SyslogInput );
+                                    SyslogInput_JSON( psyslogstring, SyslogInput );
                                 }
 
                             if ( proc_msgslot < config->max_processor_threads )
