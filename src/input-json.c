@@ -41,10 +41,8 @@ struct _SaganConfig *config;
 struct _Syslog_JSON_Map *Syslog_JSON_Map;
 
 
-struct _SyslogInput *SyslogInput_JSON( char *syslog_string )
+void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 {
-
-    struct _SyslogInput *SyslogInput = NULL;
 
     struct json_object *json_obj = NULL;
     struct json_object *tmp = NULL;
@@ -59,14 +57,8 @@ struct _SyslogInput *SyslogInput_JSON( char *syslog_string )
     char syslog_program[MAX_SYSLOG_PROGRAM] = { 0 };
     char syslog_message[MAX_SYSLOGMSG] = { 0 };
 
-    SyslogInput = malloc(sizeof(_SyslogInput));
-
-    if ( SyslogInput == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
-        }
-
     memset(SyslogInput, 0, sizeof(_SyslogInput));
+
 
     SyslogInput->syslog_host = "UNDEFINED";
     SyslogInput->syslog_facility = "UNDEFINED";
@@ -137,7 +129,7 @@ struct _SyslogInput *SyslogInput_JSON( char *syslog_string )
 
     json_object_put(json_obj);
 
-    return(SyslogInput);
+//    return(SyslogInput);
 
 }
 

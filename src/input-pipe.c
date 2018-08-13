@@ -38,13 +38,10 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganDNSCache *dnscache;
 
+void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
-struct _SyslogInput *SyslogInput_Pipe( char *syslog_string )
 {
 
-    /* Allocate memory for syslog input */
-
-    struct _SyslogInput *SyslogInput = NULL;
     bool dns_flag;
 
     char src_dns_lookup[20] = { 0 };
@@ -52,16 +49,7 @@ struct _SyslogInput *SyslogInput_Pipe( char *syslog_string )
     int i;
     int rc;
 
-    SyslogInput = malloc(sizeof(_SyslogInput));
-
-    if ( SyslogInput == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
-        }
-
     memset(SyslogInput, 0, sizeof(_SyslogInput));
-
-
 
     SyslogInput->syslog_host = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
 
@@ -285,6 +273,5 @@ struct _SyslogInput *SyslogInput_Pipe( char *syslog_string )
 
 
 
-    return(SyslogInput);
 }
 

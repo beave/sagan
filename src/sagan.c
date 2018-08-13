@@ -1153,11 +1153,11 @@ int main(int argc, char **argv)
 
                             if ( config->input_type == INPUT_PIPE )
                                 {
-                                    SyslogInput = SyslogInput_Pipe( psyslogstring );
+				    SyslogInput_Pipe( psyslogstring, SyslogInput );
                                 }
                             else
                                 {
-                                    SyslogInput = SyslogInput_JSON( psyslogstring );
+				    SyslogInput_JSON( psyslogstring, SyslogInput );
                                 }
 
                             if ( proc_msgslot < config->max_processor_threads )
@@ -1225,7 +1225,7 @@ int main(int argc, char **argv)
                                 }
 
 
-                            memset(SyslogInput, 0, sizeof(_SyslogInput));
+//                            memset(SyslogInput, 0, sizeof(_SyslogInput));
 
                         } /* while(fgets) */
 
