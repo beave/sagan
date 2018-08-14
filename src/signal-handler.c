@@ -79,6 +79,12 @@ bool sagan_unified2_flag;
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
 #include "geoip.h"
+struct _Sagan_GeoIP_Skip *GeoIP_Skip;
+#endif
+
+#ifdef WITH_BLUEDOT
+#include "processors/bluedot.h"
+struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 #endif
 
 struct _SaganCounters *counters;
@@ -405,6 +411,19 @@ void Sig_Handler( void )
                     config->sagan_fwsam_flag = 0;
 #endif
 
+#ifdef HAVE_LIBMAXMINDDB
+
+                    /* GeoIP skip */
+                    counters->geoip_skip_count = 0;
+                    memset(GeoIP_Skip, 0, sizeof(_Sagan_GeoIP_Skip));
+#endif
+
+
+#ifdef WITH_BLUEDOT
+                    counters->bluedot_skip_count = 0;
+                    memset(Bluedot_Skip, 0, sizeof(_Sagan_Bluedot_Skip));
+#endif
+
                     /* Non-output / Processors */
 
                     if ( config->sagan_droplist_flag )
@@ -488,6 +507,9 @@ void Sig_Handler( void )
                     Sagan_Log(NORMAL, "Reloading GeoIP2 data.");
                     Open_GeoIP2_Database();
 #endif
+
+
+
 
                     pthread_cond_signal(&SaganReloadCond);
                     pthread_mutex_unlock(&SaganReloadMutex);

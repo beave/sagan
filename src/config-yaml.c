@@ -62,6 +62,7 @@
 #include "processors/bluedot.h"
 
 bool bluedot_load;
+struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 #endif
 
@@ -78,6 +79,9 @@ int liblognorm_count;
 
 #ifdef HAVE_LIBMAXMINDDB
 #include "geoip.h"
+
+struct _Sagan_GeoIP_Skip *GeoIP_Skip;
+
 #endif
 
 struct _SaganConfig *config;
@@ -86,7 +90,6 @@ struct _SaganVar *var;
 struct _SaganCounters *counters;
 struct _Rules_Loaded *rules_loaded;
 struct _Rule_Struct *rulestruct;
-struct _GeoIP_Skip *GeoIP_Skip;
 
 #ifndef HAVE_LIBYAML
 ** You must of LIBYAML installed! **
@@ -125,15 +128,31 @@ void Load_YAML_Config( char *yaml_file )
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    unsigned char ipbits[MAXIPBIT] = { 0 };
-    unsigned char maskbits[MAXIPBIT]= { 0 };
-
-    char *iprange = NULL;
-    char *tmpmask = NULL;
-    int  mask = 0;
     char *geo_tok = NULL;
 
+    unsigned char geoip_ipbits[MAXIPBIT] = { 0 };
+    unsigned char geoip_maskbits[MAXIPBIT]= { 0 };
+
+    char *geoip_iprange = NULL;
+    char *geoip_tmpmask = NULL;
+    int  geoip_mask = 0;
+
 #endif
+
+
+#if WITH_BLUEDOT
+
+    char *bluedot_tok = NULL;
+
+    unsigned char bluedot_ipbits[MAXIPBIT] = { 0 };
+    unsigned char bluedot_maskbits[MAXIPBIT]= { 0 };
+
+    char *bluedot_iprange = NULL;
+    char *bluedot_tmpmask = NULL;
+    int  bluedot_mask = 0;
+
+#endif
+
 
     int a;
 
@@ -1058,44 +1077,44 @@ void Load_YAML_Config( char *yaml_file )
                                             while( ptr != NULL )
                                                 {
 
-                                                    iprange = strtok_r(ptr, "/", &geo_tok);
+                                                    geoip_iprange = strtok_r(ptr, "/", &geo_tok);
 
-                                                    if ( iprange == NULL )
+                                                    if ( geoip_iprange == NULL )
                                                         {
-                                                            Sagan_Log(ERROR, "[%s, line %d] IP range for 'skip_networks' is invalid. Abort.", __FILE__, __LINE__);
+                                                            Sagan_Log(ERROR, "[%s, line %d] IP range for GeoIP 'skip_networks' is invalid. Abort.", __FILE__, __LINE__);
                                                         }
 
-                                                    if (!IP2Bit(iprange, ipbits))
+                                                    if (!IP2Bit(geoip_iprange, geoip_ipbits))
                                                         {
-                                                            Sagan_Log(ERROR, "[%s, line %d] Got invalid 'skip_address' %s/%s for GeoIP lookups. Abort", __FILE__, __LINE__, iprange, tmpmask);
+                                                            Sagan_Log(ERROR, "[%s, line %d] Invalid address for GeoIP 'skip_address'. Abort", __FILE__, __LINE__ );
                                                         }
 
-                                                    tmpmask = strtok_r(NULL, "/", &geo_tok);
+                                                    geoip_tmpmask = strtok_r(NULL, "/", &geo_tok);
 
-                                                    if ( tmpmask == NULL )
+                                                    if ( geoip_tmpmask == NULL )
                                                         {
-                                                            mask = 32;
+                                                            geoip_mask = 32;
                                                         }
 
-                                                    GeoIP_Skip = (_GeoIP_Skip *) realloc(GeoIP_Skip, (counters->geoip_skip_count+1) * sizeof(_GeoIP_Skip));
+                                                    GeoIP_Skip = (_Sagan_GeoIP_Skip *) realloc(GeoIP_Skip, (counters->geoip_skip_count+1) * sizeof(_Sagan_GeoIP_Skip));
 
                                                     if ( GeoIP_Skip == NULL )
                                                         {
                                                             Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for GeoIP_Skip Abort!", __FILE__, __LINE__);
                                                         }
 
-                                                    memset(&GeoIP_Skip[counters->geoip_skip_count], 0, sizeof(_GeoIP_Skip));
+                                                    memset(&GeoIP_Skip[counters->geoip_skip_count], 0, sizeof(_Sagan_GeoIP_Skip));
 
-                                                    mask = atoi(tmpmask);
+                                                    geoip_mask = atoi(geoip_tmpmask);
 
-                                                    if ( mask == 0 || !Mask2Bit(mask, maskbits))
+                                                    if ( geoip_mask == 0 || !Mask2Bit(geoip_mask, geoip_maskbits))
                                                         {
-                                                            Sagan_Log(ERROR, "[%s, line %d] Mask for 'skip_networks' in an invalid value. Abort", __FILE__, __LINE__);
+                                                            Sagan_Log(ERROR, "[%s, line %d] Invalid mask for GeoIP 'skip_networks'. Abort", __FILE__, __LINE__);
                                                         }
 
 
-                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.ipbits, ipbits, sizeof(ipbits));
-                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.maskbits, maskbits, sizeof(maskbits));
+                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.ipbits, geoip_ipbits, sizeof(geoip_ipbits));
+                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.maskbits, geoip_maskbits, sizeof(geoip_maskbits));
 
                                                     pthread_mutex_lock(&CounterLoadConfigGenericMutex);
                                                     counters->geoip_skip_count++;
@@ -1457,8 +1476,6 @@ void Load_YAML_Config( char *yaml_file )
                                             strlcpy(config->bluedot_host, tmp, sizeof(config->bluedot_host));
                                         }
 
-
-
                                     else if (!strcmp(last_pass, "max-ip-cache") && config->bluedot_flag == true )
                                         {
 
@@ -1589,6 +1606,64 @@ void Load_YAML_Config( char *yaml_file )
                                             config->bluedot_dns_ttl = atoi(tmp);
                                         }
 
+                                    if (!strcmp(last_pass, "skip_networks") && config->bluedot_flag == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            Remove_Spaces(tmp);
+
+                                            ptr = strtok_r(tmp, ",", &tok);
+
+                                            while( ptr != NULL )
+                                                {
+
+                                                    bluedot_iprange = strtok_r(ptr, "/", &bluedot_tok);
+
+                                                    if ( bluedot_iprange == NULL )
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] processor: 'bluedot' - 'skip_networks' is invalid. Abort.", __FILE__, __LINE__);
+                                                        }
+
+                                                    if (!IP2Bit(bluedot_iprange, bluedot_ipbits))
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] processor: 'bluedot' - 'skip_address' is invalid. Abort", __FILE__, __LINE__);
+                                                        }
+
+                                                    bluedot_tmpmask = strtok_r(NULL, "/", &bluedot_tok);
+
+                                                    if ( bluedot_tmpmask == NULL )
+                                                        {
+                                                            bluedot_mask = 32;
+                                                        }
+
+                                                    Bluedot_Skip = (_Sagan_Bluedot_Skip *) realloc(Bluedot_Skip, (counters->bluedot_skip_count+1) * sizeof(_Sagan_Bluedot_Skip));
+
+                                                    if ( Bluedot_Skip == NULL )
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] processor: 'bluedot' - Failed to reallocate memory for Bluedot_Skip Abort!", __FILE__, __LINE__);
+                                                        }
+
+                                                    memset(&Bluedot_Skip[counters->bluedot_skip_count], 0, sizeof(_Sagan_Bluedot_Skip));
+
+                                                    bluedot_mask = atoi(bluedot_tmpmask);
+
+                                                    if ( bluedot_mask == 0 || !Mask2Bit(bluedot_mask, bluedot_maskbits))
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] processor: 'bluedot' - Invalid mask for 'skip_networks'. Abort", __FILE__, __LINE__);
+                                                        }
+
+                                                    memcpy(Bluedot_Skip[counters->bluedot_skip_count].range.ipbits, bluedot_ipbits, sizeof(bluedot_ipbits));
+                                                    memcpy(Bluedot_Skip[counters->bluedot_skip_count].range.maskbits, bluedot_maskbits, sizeof(bluedot_maskbits));
+
+                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+                                                    counters->bluedot_skip_count++;
+                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
+                                                    ptr = strtok_r(NULL, ",", &tok);
+
+                                                }
+
+                                        }
 
                                 } /* if sub_type == YAML_PROCESSORS_BLUEDOT */
 

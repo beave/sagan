@@ -53,7 +53,7 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
-struct _GeoIP_Skip *GeoIP_Skip;
+struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 
 
 pthread_mutex_t CountGeoIP2MissMutex=PTHREAD_MUTEX_INITIALIZER;

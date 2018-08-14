@@ -53,6 +53,7 @@
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
+struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 struct _Sagan_Bluedot_IP_Cache *SaganBluedotIPCache = NULL;
 struct _Sagan_Bluedot_Hash_Cache *SaganBluedotHashCache = NULL;
@@ -765,6 +766,23 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                     return(false);
                 }
+
+            for ( i = 0; i < counters->bluedot_skip_count; i++ )
+                {
+
+                    if ( is_inrange(ip, (unsigned char *)&Bluedot_Skip[i].range, 1) )
+                        {
+
+                            if ( debug->debugbluedot )
+                                {
+                                    Sagan_Log(DEBUG, "[%s, line %d] IP address %s is in Bluedot 'skip_networks'. Skipping lookup.", __FILE__, __LINE__, data);
+                                }
+
+                            return(false);
+                        }
+
+                }
+
 
             for (i=0; i<config->bluedot_ip_max_cache; i++)
                 {

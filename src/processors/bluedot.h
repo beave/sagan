@@ -124,5 +124,19 @@ struct _Sagan_Bluedot_Filename_Queue
 };
 
 
+typedef struct _Sagan_Bluedot_Skip _Sagan_Bluedot_Skip;
+struct _Sagan_Bluedot_Skip
+{
+
+    struct
+    {
+        unsigned char ipbits[MAXIPBIT];
+        unsigned char maskbits[MAXIPBIT];
+    } range;
+
+};
+
+
+
 #endif
 

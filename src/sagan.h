@@ -281,6 +281,8 @@ struct _SaganCounters
     uint64_t bluedot_ip_positive_hit;
     uint64_t bluedot_ip_total;
 
+    int      bluedot_skip_count;
+
     int bluedot_ip_queue_current;
     int bluedot_hash_queue_current;
     int bluedot_url_queue_current;
