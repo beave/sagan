@@ -164,7 +164,7 @@ sagan-core:
 
     parse-json-message: disable
     parse-json-program: disable
-    json-message-map: /usr/local/etc/sagan-rule/json-message.map
+    json-message-map: /usr/local/etc/sagan-rules/json-message.map
 
   # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 
    
