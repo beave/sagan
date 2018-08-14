@@ -889,6 +889,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( rulestruct[b].geoip2_flag )
                                         {
 
+					    /* Set geoip2_return to GEOIP_SKIP in case ip_src_flag
+					       or ip_dst_flag is false! This way it will short 
+					       circuit past the rest of the GeoIP logic. */
+
+                                            geoip2_return = GEOIP_SKIP;
+                                            geoip2_isset = false;
+
                                             if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_src, ip_src_bits, b );
@@ -899,50 +906,50 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
                                                 }
 
-					    if ( geoip2_return != GEOIP_SKIP ) 
-					    {
-
-                                            /* If country IS NOT {my value} return 1 */
-
-                                            if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
+                                            if ( geoip2_return != GEOIP_SKIP )
                                                 {
 
-                                                    if ( geoip2_return == GEOIP_HIT )
+                                                    /* If country IS NOT {my value} return 1 */
+
+                                                    if ( rulestruct[b].geoip2_type == 1 )    		/* isnot */
                                                         {
-                                                            geoip2_isset = false;
+
+                                                            if ( geoip2_return == GEOIP_HIT )
+                                                                {
+                                                                    geoip2_isset = false;
+                                                                }
+                                                            else
+                                                                {
+                                                                    geoip2_isset = true;
+
+                                                                    pthread_mutex_lock(&CountersGeoIPHit);
+                                                                    counters->geoip2_hit++;
+                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
+                                                                }
                                                         }
-                                                    else
-                                                        {
-                                                            geoip2_isset = true;
 
-                                                            pthread_mutex_lock(&CountersGeoIPHit);
-                                                            counters->geoip2_hit++;
-                                                            pthread_mutex_unlock(&CountersGeoIPHit);
-                                                        }
-                                                }
+                                                    /* If country IS {my value} return 1 */
 
-                                            /* If country IS {my value} return 1 */
-
-                                            else if ( rulestruct[b].geoip2_type == 2 )             /* is */
-                                                {
-
-                                                    if ( geoip2_return == GEOIP_HIT )
-                                                        {
-                                                            geoip2_isset = true;
-
-                                                            pthread_mutex_lock(&CountersGeoIPHit);
-                                                            counters->geoip2_hit++;
-                                                            pthread_mutex_unlock(&CountersGeoIPHit);
-
-                                                        }
-                                                    else
+                                                    else if ( rulestruct[b].geoip2_type == 2 )             /* is */
                                                         {
 
-                                                            geoip2_isset = false;
+                                                            if ( geoip2_return == GEOIP_HIT )
+                                                                {
+                                                                    geoip2_isset = true;
+
+                                                                    pthread_mutex_lock(&CountersGeoIPHit);
+                                                                    counters->geoip2_hit++;
+                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
+
+                                                                }
+                                                            else
+                                                                {
+
+                                                                    geoip2_isset = false;
+                                                                }
                                                         }
                                                 }
                                         }
-				     }
 
 #endif
 
@@ -1396,10 +1403,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 } /* End of match */
 
                         } /* End of pcre match */
-
-#ifdef HAVE_LIBMAXMINDDB
-                    geoip2_isset = false;
-#endif
 
                     match = false;  		      /* Reset match! */
                     sagan_match=0;	      /* Reset pcre/meta_content/content match! */
