@@ -53,6 +53,8 @@ struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganCounters *counters;
+struct _GeoIP_Skip *GeoIP_Skip;
+
 
 pthread_mutex_t CountGeoIP2MissMutex=PTHREAD_MUTEX_INITIALIZER;
 
@@ -94,7 +96,6 @@ void Open_GeoIP2_Database( void )
 int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_position )
 {
 
-
     int gai_error;
     int mmdb_error;
     int res;
@@ -105,14 +106,32 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
     char country[2];
     char tmp[1024];
 
+    int i = 0;
+
     if ( is_notroutable(ip_bits) )
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP2 lookup.", __FILE__, __LINE__, ipaddr);
+                    Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
             return(GEOIP_SKIP);
+        }
+
+    for ( i = 0; i < counters->geoip_skip_count; i++ )
+        {
+
+            if ( is_inrange(ip_bits, (unsigned char *)&GeoIP_Skip[i].range, 1) )
+                {
+
+                    if (debug->debuggeoip2)
+                        {
+                            Sagan_Log(DEBUG, "[%s, line %d] IP address %s is in GeoIP 'skip_networks'. Skipping lookup.", __FILE__, __LINE__, ipaddr);
+                        }
+
+                    return(GEOIP_SKIP);
+                }
+
         }
 
     MMDB_lookup_result_s result = MMDB_lookup_string(&config->geoip2, ipaddr, &gai_error, &mmdb_error);
@@ -140,7 +159,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
 
             if ( debug->debuggeoip2 )
                 {
-                    Sagan_Log(DEBUG, "Country code for %s not found in GeoIP2 DB", ipaddr);
+                    Sagan_Log(DEBUG, "Country code for %s not found in GeoIP DB", ipaddr);
                 }
 
             return(GEOIP_SKIP);
@@ -163,7 +182,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(DEBUG, "GeoIP2 rule string parsing %s|%s", ptmp, country);
+                    Sagan_Log(DEBUG, "GeoIP rule string parsing %s|%s", ptmp, country);
                 }
 
             if (!strcmp(ptmp, country))

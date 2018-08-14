@@ -35,6 +35,18 @@
 
 void Open_GeoIP2_Database( void );
 int GeoIP2_Lookup_Country( char *, unsigned char *ip_bits, int );
-#endif
 
+typedef struct _GeoIP_Skip _GeoIP_Skip;
+struct _GeoIP_Skip
+{
+
+    struct
+    {
+        unsigned char ipbits[MAXIPBIT];
+        unsigned char maskbits[MAXIPBIT];
+    } range;
+
+};
+
+#endif
 

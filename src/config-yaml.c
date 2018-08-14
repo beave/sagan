@@ -86,6 +86,7 @@ struct _SaganVar *var;
 struct _SaganCounters *counters;
 struct _Rules_Loaded *rules_loaded;
 struct _Rule_Struct *rulestruct;
+struct _GeoIP_Skip *GeoIP_Skip;
 
 #ifndef HAVE_LIBYAML
 ** You must of LIBYAML installed! **
@@ -116,10 +117,23 @@ void Load_YAML_Config( char *yaml_file )
     unsigned char toggle = 0;
 
     char *tok = NULL;
+    char *ptr = NULL;
 
     char tmp[CONFBUF] = { 0 };
 
     char last_pass[128] = { 0 };
+
+#ifdef HAVE_LIBMAXMINDDB
+
+    unsigned char ipbits[MAXIPBIT] = { 0 };
+    unsigned char maskbits[MAXIPBIT]= { 0 };
+
+    char *iprange = NULL;
+    char *tmpmask = NULL;
+    int  mask = 0;
+    char *geo_tok = NULL;
+
+#endif
 
     int a;
 
@@ -1025,18 +1039,72 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
-                                    if (!strcmp(last_pass, "country_database"))
+                                    if (!strcmp(last_pass, "country_database") && config->have_geoip2 == true)
                                         {
 
-                                            if ( config->have_geoip2 == true )
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            strlcpy(config->geoip2_country_file, tmp, sizeof(config->geoip2_country_file));
+
+                                        }
+
+                                    if (!strcmp(last_pass, "skip_networks") && config->have_geoip2 == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            Remove_Spaces(tmp);
+
+                                            ptr = strtok_r(tmp, ",", &tok);
+
+                                            while( ptr != NULL )
                                                 {
 
-                                                    Var_To_Value(value, tmp, sizeof(tmp));
-                                                    strlcpy(config->geoip2_country_file, tmp, sizeof(config->geoip2_country_file));
+                                                    iprange = strtok_r(ptr, "/", &geo_tok);
 
-                                                    config->have_geoip2 = true;
+                                                    if ( iprange == NULL )
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] IP range for 'skip_networks' is invalid. Abort.", __FILE__, __LINE__);
+                                                        }
+
+                                                    if (!IP2Bit(iprange, ipbits))
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] Got invalid 'skip_address' %s/%s for GeoIP lookups. Abort", __FILE__, __LINE__, iprange, tmpmask);
+                                                        }
+
+                                                    tmpmask = strtok_r(NULL, "/", &geo_tok);
+
+                                                    if ( tmpmask == NULL )
+                                                        {
+                                                            mask = 32;
+                                                        }
+
+                                                    GeoIP_Skip = (_GeoIP_Skip *) realloc(GeoIP_Skip, (counters->geoip_skip_count+1) * sizeof(_GeoIP_Skip));
+
+                                                    if ( GeoIP_Skip == NULL )
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for GeoIP_Skip Abort!", __FILE__, __LINE__);
+                                                        }
+
+                                                    memset(&GeoIP_Skip[counters->geoip_skip_count], 0, sizeof(_GeoIP_Skip));
+
+                                                    mask = atoi(tmpmask);
+
+                                                    if ( mask == 0 || !Mask2Bit(mask, maskbits))
+                                                        {
+                                                            Sagan_Log(ERROR, "[%s, line %d] Mask for 'skip_networks' in an invalid value. Abort", __FILE__, __LINE__);
+                                                        }
+
+
+                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.ipbits, ipbits, sizeof(ipbits));
+                                                    memcpy(GeoIP_Skip[counters->geoip_skip_count].range.maskbits, maskbits, sizeof(maskbits));
+
+                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+                                                    counters->geoip_skip_count++;
+                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
+                                                    ptr = strtok_r(NULL, ",", &tok);
 
                                                 }
+
                                         }
 
                                 } /* if sub_type == YAML_SAGAN_CORE_GEOIP */

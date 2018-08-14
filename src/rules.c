@@ -732,6 +732,7 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].port_2_var = 1;	  /* 1 = var */
                                     strlcpy(tmp4, nettmp, sizeof(tmp4));
+
                                     for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
                                         {
                                             Strip_Chars(tmptoken, "not!", tok_help2);

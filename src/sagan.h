@@ -272,6 +272,7 @@ struct _SaganCounters
     uint64_t geoip2_hit;				/* GeoIP2 hit count */
     uint64_t geoip2_lookup;				/* Total lookups */
     uint64_t geoip2_miss;				/* Misses (country not found) */
+    int	     geoip_skip_count;
 #endif
 
 #ifdef WITH_BLUEDOT

@@ -889,9 +889,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( rulestruct[b].geoip2_flag )
                                         {
 
-					    /* Set geoip2_return to GEOIP_SKIP in case ip_src_flag
-					       or ip_dst_flag is false! This way it will short 
-					       circuit past the rest of the GeoIP logic. */
+                                            /* Set geoip2_return to GEOIP_SKIP in case ip_src_flag
+                                               or ip_dst_flag is false! This way it will short
+                                               circuit past the rest of the GeoIP logic. */
 
                                             geoip2_return = GEOIP_SKIP;
                                             geoip2_isset = false;

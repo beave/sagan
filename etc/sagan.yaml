@@ -251,6 +251,7 @@ sagan-core:
    
     enabled: no
     country_database: "/usr/local/share/GeoIP2/GeoLite2-Country.mmdb"
+    skip_networks: "8.8.8.8/32, 8.8.4.4/32"
 
   # Liblognorm is a fast sample-base log normalization library.  Sagan uses
   # this library to rapidly extract useful data (IP address, hashes, etc) from
@@ -351,6 +352,9 @@ processors:
       host: "bluedot.qis.io"
       ttl: 86400
       uri: "q.php?qipapikey=APIKEYHERE"
+
+      skip_networks: "8.8.8.8/32, 8.8.4.4/32"
+
 
   # The "bro-intel" processor allows Sagan to use threat intellegence data
   # from the "Bro Intellegence Framework".  Rules identified with the 
