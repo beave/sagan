@@ -1475,20 +1475,12 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-            if ( strcmp(lookup_cache[i].ip, "127.0.0.1") &&
-                    strcmp(lookup_cache[i].ip, "::1" ) &&
-                    strcmp(lookup_cache[i].ip, "::ffff:127.0.0.1" ) &&
-                    strcmp(lookup_cache[i].ip, "0.0.0.0" ) )
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits);
+            bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
+
+            if ( bluedot_flag == 1 )
                 {
-
-                    bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits);
-                    bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
-
-                    if ( bluedot_flag == 1 )
-                        {
-                            return(true);
-                        }
-
+                    return(true);
                 }
 
         }
