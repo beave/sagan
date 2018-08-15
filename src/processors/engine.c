@@ -618,7 +618,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                     if ( !strcmp(ip_src, "127.0.0.1") ||
                                                             !strcmp(ip_src, "::1" ) ||
-                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) )
+                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) ||
+                                                            !strcmp(ip_src, "0.0.0.0" ) )
                                                         {
                                                             ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_src_flag = false;
@@ -638,7 +639,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                     if ( !strcmp(ip_dst, "127.0.0.1") ||
                                                             !strcmp(ip_dst, "::1" ) ||
-                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) ||
+                                                            !strcmp(ip_dst, "0.0.0.0" ) )
+
                                                         {
                                                             ip_dst = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_dst_flag = false;
@@ -713,7 +716,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                     if ( !strcmp(ip_src, "127.0.0.1") ||
                                                             !strcmp(ip_src, "::1" ) ||
-                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) )
+                                                            !strcmp(ip_src, "::ffff:127.0.0.1" ) ||
+                                                            !strcmp(ip_src, "0.0.0.0" ) )
                                                         {
 
                                                             ip_src = SaganProcSyslog_LOCAL->syslog_host;
@@ -745,7 +749,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                     if ( !strcmp(ip_dst, "127.0.0.1") ||
                                                             !strcmp(ip_dst, "::1" ) ||
-                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) )
+                                                            !strcmp(ip_dst, "::ffff:127.0.0.1" ) ||
+                                                            !strcmp(ip_dst, "0.0.0.0" ) )
                                                         {
 
                                                             ip_dst = SaganProcSyslog_LOCAL->syslog_host;
