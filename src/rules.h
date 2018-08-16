@@ -76,8 +76,9 @@ struct meta_content_conversion
 typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
-    unsigned s_size_rule;
     char s_msg[MAX_SAGAN_MSG];
+
+    int ruleset_id;
 
     pcre *re_pcre[MAX_PCRE];
     pcre_extra *pcre_extra[MAX_PCRE];
@@ -285,5 +286,13 @@ struct _Rule_Struct
 #endif
 
 };
+
+typedef struct _Sagan_Ruleset_Track _Sagan_Ruleset_Track;
+struct _Sagan_Ruleset_Track
+{
+    char ruleset[MAXPATH];
+    bool trigger;
+};
+
 
 void Load_Rules ( const char * );

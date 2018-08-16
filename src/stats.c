@@ -38,11 +38,12 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "stats.h"
+#include "rules.h"
 #include "sagan-config.h"
 
 struct _SaganCounters *counters;
 struct _Sagan_IPC_Counters *counters_ipc;
-
+struct _Sagan_Ruleset_Track *Ruleset_Track;
 struct _SaganConfig *config;
 
 void Statistics( void )
@@ -54,6 +55,8 @@ void Statistics( void )
     struct tm *now;
     int seconds = 0;
     unsigned long total=0;
+    int i;
+    bool flag;
 
     int uptime_days;
     int uptime_abovedays;
@@ -254,6 +257,57 @@ void Statistics( void )
 
                 }
 #endif
+
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "          -[ Rule statistics ]-");
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "          * Fired rules *");
+            Sagan_Log(NORMAL, "");
+
+            flag = false;
+
+            for ( i = 0; i < counters->ruleset_track_count; i++ )
+                {
+
+                    if ( Ruleset_Track[i].trigger == true )
+                        {
+                            Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
+                            flag = true;
+                        }
+
+                }
+
+            if ( flag == false )
+                {
+                    Sagan_Log(NORMAL, "          [No rules fired]");
+                }
+
+            flag = false;
+
+            Sagan_Log(NORMAL, "");
+            Sagan_Log(NORMAL, "          * Non-Fired rules * ");
+            Sagan_Log(NORMAL, "");
+
+
+            for ( i = 0; i < counters->ruleset_track_count; i++ )
+                {
+                    if ( Ruleset_Track[i].trigger == false )
+                        {
+                            Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
+                            flag = true;
+                        }
+                }
+
+            if ( flag == false )
+                {
+                    Sagan_Log(NORMAL, "          [All rules fired]");
+                }
+
+
+
+
+
+
 
 
             Sagan_Log(NORMAL, "-------------------------------------------------------------------------------");

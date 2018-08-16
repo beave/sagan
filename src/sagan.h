@@ -228,6 +228,8 @@ struct _SaganCounters
 
     uint64_t worker_thread_exhaustion;
 
+    int	     ruleset_track_count;
+
     uint64_t blacklist_hit_count;
     uint64_t blacklist_lookup_count;
 

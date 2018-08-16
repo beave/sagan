@@ -89,6 +89,7 @@ int liblognorm_count;
 
 struct _Rule_Struct *rulestruct = NULL;
 struct _Class_Struct *classstruct = NULL;
+struct _Sagan_Ruleset_Track *Ruleset_Track = NULL;
 
 void Load_Rules( const char *ruleset )
 {
@@ -186,6 +187,8 @@ void Load_Rules( const char *ruleset )
 
     int is_masked = 0;
 
+    int ruleset_track_id = 0;
+
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
     strlcpy(ruleset_fullname, ruleset, sizeof(ruleset_fullname));
@@ -194,6 +197,23 @@ void Load_Rules( const char *ruleset )
         {
             Sagan_Log(ERROR, "[%s, line %d] Cannot open rule file (%s - %s)", __FILE__, __LINE__, ruleset_fullname, strerror(errno));
         }
+
+
+
+    Ruleset_Track = (_Sagan_Ruleset_Track *) realloc(Ruleset_Track, (counters->ruleset_track_count+1) * sizeof(_Sagan_Ruleset_Track));
+
+    if ( Ruleset_Track == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for _Sagan_Ruleset_Track. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(&Ruleset_Track[counters->ruleset_track_count], 0, sizeof(struct _Sagan_Ruleset_Track));
+    memcpy(Ruleset_Track[counters->ruleset_track_count].ruleset, ruleset_fullname, sizeof(Ruleset_Track[counters->ruleset_track_count].ruleset));
+    //printf("Added: %s as id %d\n", Ruleset_Track[counters->ruleset_track_count].ruleset, counters->ruleset_track_count);
+
+    ruleset_track_id = counters->ruleset_track_count;
+
+    counters->ruleset_track_count++;
 
     Sagan_Log(NORMAL, "Loading %s rule file.", ruleset_fullname);
 
@@ -375,6 +395,10 @@ void Load_Rules( const char *ruleset )
 
             netstring = netstr;
             rulestring = rulestr;
+
+            /* Assigned ruleset "id" to track when rules "fire" */
+
+            rulestruct[counters->rulecount].ruleset_id = ruleset_track_id;
 
 
             /****************************************************************************/

@@ -73,6 +73,7 @@
 
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
+struct _Sagan_Ruleset_Track *Ruleset_Track;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
@@ -1351,6 +1352,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
                                                                                                                                         {
 
+                                                                                                                                            Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
                                                                                                                                             if ( rulestruct[b].type == NORMAL_RULE )
                                                                                                                                                 {
 
