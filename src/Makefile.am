@@ -22,6 +22,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        gen-msg.c \
                                                        liblognormalize.c \
                                                        ignore-list.c \
+                                                       tracking-syslog.c \
                                                        send-alert.c \
                                                        credits.c \
                                                        protocol-map.c \

@@ -258,56 +258,55 @@ void Statistics( void )
                 }
 #endif
 
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "          -[ Rule statistics ]-");
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "          * Fired rules *");
-            Sagan_Log(NORMAL, "");
 
-            flag = false;
-
-            for ( i = 0; i < counters->ruleset_track_count; i++ )
+            if ( config->rule_tracking_console == true )
                 {
 
-                    if ( Ruleset_Track[i].trigger == true )
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          -[ Rule statistics ]-");
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * Fired rules *");
+                    Sagan_Log(NORMAL, "");
+
+                    flag = false;
+
+                    for ( i = 0; i < counters->ruleset_track_count; i++ )
                         {
-                            Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
-                            flag = true;
+
+                            if ( Ruleset_Track[i].trigger == true )
+                                {
+                                    Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
+                                    flag = true;
+                                }
+
                         }
 
-                }
-
-            if ( flag == false )
-                {
-                    Sagan_Log(NORMAL, "          [No rules fired]");
-                }
-
-            flag = false;
-
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "          * Non-Fired rules * ");
-            Sagan_Log(NORMAL, "");
-
-
-            for ( i = 0; i < counters->ruleset_track_count; i++ )
-                {
-                    if ( Ruleset_Track[i].trigger == false )
+                    if ( flag == false )
                         {
-                            Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
-                            flag = true;
+                            Sagan_Log(NORMAL, "          [No rules fired]");
+                        }
+
+                    flag = false;
+
+                    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "          * Non-Fired rules * ");
+                    Sagan_Log(NORMAL, "");
+
+
+                    for ( i = 0; i < counters->ruleset_track_count; i++ )
+                        {
+                            if ( Ruleset_Track[i].trigger == false )
+                                {
+                                    Sagan_Log(NORMAL, "          %s",  Ruleset_Track[i].ruleset );
+                                    flag = true;
+                                }
+                        }
+
+                    if ( flag == false )
+                        {
+                            Sagan_Log(NORMAL, "          [All rules fired]");
                         }
                 }
-
-            if ( flag == false )
-                {
-                    Sagan_Log(NORMAL, "          [All rules fired]");
-                }
-
-
-
-
-
-
 
 
             Sagan_Log(NORMAL, "-------------------------------------------------------------------------------");

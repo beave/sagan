@@ -52,8 +52,8 @@ struct _SaganConfig
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
-    bool    selector_flag;
-    char     selector_name[MAXSELECTOR];
+    bool         selector_flag;
+    char         selector_name[MAXSELECTOR];
 
     bool	 alert_flag;
 
@@ -66,21 +66,20 @@ struct _SaganConfig
     bool		eve_alerts;
     bool		eve_logs;
 
-
     char         sagan_alert_filepath[MAXPATH];
 
     char	 sagan_sensor_name[64];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
     int          sagan_alert_fd;
-    FILE	     *sagan_fast_stream;
+    FILE	 *sagan_fast_stream;
     int	         sagan_fast_fd;
     char         sagan_log_filepath[MAXPATH];
     FILE         *sagan_log_stream;
     int          sagan_log_fd;
     char         sagan_lockfile[MAXPATH];
     char         sagan_fifo[MAXPATH];
-    bool        sagan_is_file;                       /* FIFO or FILE */
+    bool         sagan_is_file;                       /* FIFO or FILE */
     char         sagan_log_path[MAXPATH];
     char         sagan_rule_path[MAXPATH];
     char         sagan_host[MAXHOST];
@@ -90,30 +89,39 @@ struct _SaganConfig
     char	 xbit_storage;				/* 0 == mmap, 1 == redis */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
-    bool        sagan_droplist_flag;
+    bool         sagan_droplist_flag;
 
-    bool        output_thread_flag;
+    bool         output_thread_flag;
 
     int          max_processor_threads;
 
-    bool        sagan_external_output_flag;            /* For calling external commands */
+    bool         sagan_external_output_flag;            /* For calling external commands */
     char         sagan_external_command[MAXPATH];
 
     int          sagan_port;
-    bool        disable_dns_warnings;
-    bool        syslog_src_lookup;
+    bool         disable_dns_warnings;
+    bool         syslog_src_lookup;
     int          sagan_proto;
     char 	 *sagan_proto_string;
 
     bool	 pcre_jit; 				/* For PCRE JIT support testing */
 
-    bool        endian;
+    bool         endian;
 
     bool 	 fast_flag;
     char         fast_filename[MAXPATH];
 
     bool	 parse_ip_ipv6;
     bool	 parse_ip_ipv4_mapped_ipv6;
+
+#ifdef WITH_SYSLOG
+
+    bool	 rule_tracking_flag;
+    bool	 rule_tracking_console;
+    bool         rule_tracking_syslog;
+    int		 rule_tracking_time;
+
+#endif
 
     /* Processors */
 

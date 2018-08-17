@@ -302,6 +302,16 @@ processors:
   - track-clients:
       enabled: no
       timeout: 1440		# In minutes
+
+  # This reports on rule sets that have and have not "fired".  This can be 
+  # useful in tuning Sagan. 
+
+  - rule-tracking:
+      enabled: yes
+      console: disabled
+      syslog: enabled
+      time: 1440		# In minutes 
+
  
   # The "perfmonitor" processor write statistical information every specified
   # number of seconds ("time") to a CSV file.  This data can be useful for 

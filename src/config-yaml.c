@@ -116,7 +116,7 @@ void Load_YAML_Config( char *yaml_file )
     int check = 0;
 
     unsigned char type = 0;
-    unsigned char sub_type = 0;
+    int sub_type = 0;
     unsigned char toggle = 0;
 
     char *tok = NULL;
@@ -172,9 +172,21 @@ void Load_YAML_Config( char *yaml_file )
             strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
 
 #ifdef HAVE_LIBFASTJSON
+
             strlcpy(config->json_input_map_file, DEFAULT_JSON_INPUT_MAP, sizeof(config->json_input_map_file));
             strlcpy(config->json_input_software, "NONE SET", sizeof(config->json_input_software));
+
 #endif
+
+#ifdef WITH_SYSLOG
+
+            config->rule_tracking_flag = true;
+            config->rule_tracking_console = false;
+            config->rule_tracking_syslog = true;
+            config->rule_tracking_time = 1440;
+
+#endif
+
 
             config->sagan_host[0] = '\0';
             config->sagan_port = 514;
@@ -1342,6 +1354,13 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_PROCESSORS_DYNAMIC_LOAD;
                                 }
 
+#ifdef WITH_SYSLOG
+                            else if (!strcmp(value, "rule-tracking"))
+                                {
+                                    sub_type = YAML_SAGAN_CORE_RULESET_TRACKING;
+                                }
+#endif
+
                             if ( sub_type == YAML_PROCESSORS_TRACK_CLIENTS )
                                 {
 
@@ -1669,7 +1688,6 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
-
                             else if ( sub_type == YAML_PROCESSORS_BROINTEL )
                                 {
 
@@ -1698,7 +1716,7 @@ void Load_YAML_Config( char *yaml_file )
                                     if (!strcmp(last_pass, "enabled"))
                                         {
 
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") || !strcasecmp(value, "enabled") )
                                                 {
                                                     config->dynamic_load_flag = true;
                                                 }
@@ -1741,7 +1759,79 @@ void Load_YAML_Config( char *yaml_file )
 
                                 } /* if sub_type == YAML_PROCESSORS_DYNAMIC_LOAD */
 
+#ifndef WITH_SYSLOG
+
+                            else if ( sub_type == YAML_SAGAN_CORE_RULESET_TRACKING )
+                                {
+
+                                    if (!strcmp(last_pass, "enabled"))
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
+                                                {
+
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'syslog' output is enabled, but Sagan is not compiled with syslog support. Abort!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+                                }
+
+#endif
+
+
+#ifdef WITH_SYSLOG
+
+                            else if ( sub_type == YAML_SAGAN_CORE_RULESET_TRACKING )
+                                {
+
+
+                                    if (!strcmp(last_pass, "enabled"))
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
+                                                {
+                                                    config->rule_tracking_flag = true;
+                                                }
+                                        }
+
+                                    if (!strcmp(last_pass, "console"))
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") || !strcasecmp(value, "enabled") )
+                                                {
+                                                    config->rule_tracking_console = true;
+                                                }
+                                        }
+
+                                    if (!strcmp(last_pass, "syslog"))
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") || !strcasecmp(value, "enabled") )
+                                                {
+                                                    config->rule_tracking_syslog = true;
+                                                }
+                                        }
+
+                                    if (!strcmp(last_pass, "time"))
+                                        {
+
+                                            config->rule_tracking_time = atoi(value);
+
+                                            if ( config->rule_tracking_time == 0 )
+                                                {
+
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : rule_tracking''' - 'time' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+
+                                                }
+
+                                            config->rule_tracking_time = config->rule_tracking_time * 60;
+                                        }
+
+                                } /* if sub_type == YAML_SAGAN_CORE_RULESET_TRACKING */
+
                         } /* else if ( type == YAML_TYPE_PROCESSORS */
+#endif
+
 
                     else if ( type == YAML_TYPE_OUTPUT )
                         {

@@ -1304,6 +1304,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                 } /* if */
 
+                                                                                                                            if ( config->rule_tracking_flag == true )
+                                                                                                                                {
+                                                                                                                                    Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
+                                                                                                                                }
+
+
                                                                                                                             pthread_mutex_lock(&CounterSaganFoundMutex);
                                                                                                                             counters->saganfound++;
                                                                                                                             pthread_mutex_unlock(&CounterSaganFoundMutex);
@@ -1352,7 +1358,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
                                                                                                                                         {
 
-                                                                                                                                            Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
                                                                                                                                             if ( rulestruct[b].type == NORMAL_RULE )
                                                                                                                                                 {
 

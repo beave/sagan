@@ -60,6 +60,7 @@ void Key_Handler( void )
             int key;
 
             key=getchar();
+
             if ( key != 0 )
                 {
                     Statistics();

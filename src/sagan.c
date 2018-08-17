@@ -68,6 +68,7 @@
 #include "usage.h"
 #include "stats.h"
 #include "ipc.h"
+#include "tracking-syslog.h"
 #include "parsers/parsers.h"
 
 #include "input-pipe.h"
@@ -220,6 +221,14 @@ int main(int argc, char **argv)
     pthread_attr_t ct_report_thread_attr;
     pthread_attr_init(&ct_report_thread_attr);
     pthread_attr_setdetachstate(&ct_report_thread_attr,  PTHREAD_CREATE_DETACHED);
+
+    /* Rule tracking for syslog output */;
+
+    pthread_t tracking_thread;
+    pthread_attr_t tracking_thread_attr;
+    pthread_attr_init(&tracking_thread_attr);
+    pthread_attr_setdetachstate(&tracking_thread_attr,  PTHREAD_CREATE_DETACHED);
+
 
     bool fifoerr = false;
 
@@ -1006,6 +1015,24 @@ int main(int argc, char **argv)
 
         }
 
+#endif
+
+#ifdef WITH_SYSLOG
+
+    if ( config->rule_tracking_flag == true )
+        {
+
+            rc = pthread_create( &tracking_thread, NULL, (void *)RuleTracking_Syslog, NULL );
+
+            if ( rc != 0 )
+                {
+
+                    Remove_Lock_File();
+                    Sagan_Log(ERROR, "[%s, line %d] Error creating RuleTracking_Syslog() thread. [error: %d]", __FILE__, __LINE__, rc);
+
+                }
+
+        }
 #endif
 
     Sagan_Log(NORMAL, "Spawning %d Processor Threads.", config->max_processor_threads);
