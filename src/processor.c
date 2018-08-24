@@ -91,7 +91,6 @@ void Processor ( void )
 
     int i;
 
-//    for (;;)
     while(death == false)
         {
 
@@ -106,7 +105,7 @@ void Processor ( void )
 
             proc_running++;
             proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
-					 * original value */
+                                 * original value */
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
             strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
@@ -168,19 +167,18 @@ outside_loop:
                             Track_Clients( SaganProcSyslog_LOCAL->syslog_host );
                         }
 
-                } // End if if (ignore_Flag)
-
+                } /* End if if (ignore_Flag) */
 
             pthread_mutex_lock(&SaganProcWorkMutex);
             proc_running--;
             pthread_mutex_unlock(&SaganProcWorkMutex);
-        } //  for (;;)
 
-//    printf("DEATH: %d\n", proc_running);
+        } /*  for (;;) */
+
+    /* Exit thread on shutdown. */
+
     config->max_processor_threads--;
     pthread_exit(NULL);
 
-//    Sagan_Log(WARN, "[%s, line %d] Holy cow! You should never see this message!", __FILE__, __LINE__);
-//    free(SaganProcSyslog_LOCAL);		/* Should never make it here */
 }
 
