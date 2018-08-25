@@ -177,7 +177,10 @@ outside_loop:
 
     /* Exit thread on shutdown. */
 
+    pthread_mutex_lock(&SaganProcWorkMutex);
     config->max_processor_threads--;
+    pthread_mutex_unlock(&SaganProcWorkMutex);
+
     pthread_exit(NULL);
 
 }
