@@ -129,8 +129,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     json_object_put(json_obj);
 
-//    return(SyslogInput);
-
 }
 
 #endif

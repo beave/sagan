@@ -704,6 +704,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( ip_src_flag == false && rulestruct[b].s_find_src_ip == true )
                                         {
 
+
                                             if ( lookup_cache[rulestruct[b].s_find_src_pos-1].status == 1 )
                                                 {
 
@@ -730,6 +731,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                 }
 
                                         }
+
 
                                     /* parse_dst_ip: {postion} */
 
@@ -800,18 +802,49 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         }
 
 
-                                    /* If proto is not searched or has failed,  default to whatever the rule told us to
-                                       use */
+                                    /* If proto is not searched or has failed,  default to whatever the rule told us to use */
 
                                     if ( ip_src_flag == false )
                                         {
-                                            ip_src = SaganProcSyslog_LOCAL->syslog_host;
+
+					    /* We don't want 127.0.0.1,  so if the source is that, we change it to config->sagan_host */
+
+                                            if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1" ) ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::ffff:127.0.0.1" ) )
+
+                                                {
+                                                    ip_src = config->sagan_host;
+                                                }
+                                            else
+                                                {
+
+                                                    ip_src = SaganProcSyslog_LOCAL->syslog_host;
+                                                }
+
                                             IP2Bit(ip_src, ip_src_bits);
+
                                         }
 
                                     if ( ip_dst_flag == false )
                                         {
-                                            ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+
+                                            /* We don't want 127.0.0.1,  so if the source is that, we 
+change it to config->sagan_host */
+
+                                            if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1" ) ||
+                                                    !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::ffff:127.0.0.1" ) )
+                                                {
+                                                    ip_dst = config->sagan_host;
+                                                }
+                                            else
+                                                {
+
+                                                    ip_dst = SaganProcSyslog_LOCAL->syslog_host;
+
+                                                }
+
                                             IP2Bit(ip_dst, ip_dst_bits);
                                         }
 

@@ -45,6 +45,10 @@ struct _SaganConfig
     char	 json_input_map_file[MAXPATH];
     char	 json_input_software[64];
 
+    bool  	 parse_json_message;
+    bool	 parse_json_program;
+    char	 json_message_map_file[MAXPATH];
+
 #endif
 
     bool	 liblognorm_load;

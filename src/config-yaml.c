@@ -176,7 +176,11 @@ void Load_YAML_Config( char *yaml_file )
             strlcpy(config->json_input_map_file, DEFAULT_JSON_INPUT_MAP, sizeof(config->json_input_map_file));
             strlcpy(config->json_input_software, "NONE SET", sizeof(config->json_input_software));
 
+            config->parse_json_message = true;
+            config->parse_json_program = true;
+
 #endif
+
 
 #ifdef WITH_SYSLOG
 
@@ -623,6 +627,64 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
+
+#ifndef HAVE_LIBFASTJSON
+
+                                    else if (!strcmp(last_pass, "parse-json-message"))
+                                        {
+                                            if (!strcasecmp(value, "enabled" && !strcasecmp(value, "true" ) )
+                                            {
+
+                                                Sagan_Log(ERROR, "[%s, line %d] sagan:core 'parse-json-message' isn't supported.  No JSON support. Abort!", __FILE__, __LINE__);
+                                                }
+
+
+                                        }
+
+#endif
+
+                                    else if (!strcmp(last_pass, "parse-json-message"))
+                                        {
+
+                                            if (!strcasecmp(value, "enabled") || !strcasecmp(value, "true" ) || !strcasecmp(value, "yes") )
+                                                {
+                                                    config->parse_json_message = true;
+                                                }
+                                        }
+
+
+#ifndef HAVE_LIBFASTJSON
+
+                                    else if (!strcmp(last_pass, "parse-json-program"))
+                                        {
+                                            if (!strcasecmp(value, "enabled" && !strcasecmp(value, "true" ) )
+                                            {
+
+                                                Sagan_Log(ERROR, "[%s, line %d] sagan:core 'parse-json-program' isn't supported.  No JSON support. Abort!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+
+#endif
+
+                                    else if (!strcmp(last_pass, "parse-json-program"))
+                                        {
+
+                                            if (!strcasecmp(value, "enabled") || !strcasecmp(value, "true" ) || !strcasecmp(value, "yes") )
+                                                {
+                                                    config->parse_json_program = true;
+                                                }
+                                        }
+
+#ifdef HAVE_LIBFASTJSON
+
+                                    else if (!strcmp(last_pass, "json-message-map" ) && ( config->parse_json_message == true || config->parse_json_program == true  ) )
+                                        {
+                                            strlcpy(config->json_message_map_file, value, sizeof(config->json_message_map_file));
+                                        }
+
+#endif
+
 #ifndef HAVE_LIBFASTJSON
 
                                     else if (!strcmp(last_pass, "input-type"))
@@ -632,7 +694,6 @@ void Load_YAML_Config( char *yaml_file )
                                                     Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with hiredis (Redis) support!", __FILE__, __LINE__);
                                                 }
                                         }
-
 
 #endif
 

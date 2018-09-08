@@ -699,6 +699,15 @@ int main(int argc, char **argv)
     Sagan_Log(NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->xbit_total_counter);
     Sagan_Log(NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
 
+#ifdef HAVE_LIBFASTJSON
+
+    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
+    Sagan_Log(NORMAL, "Parse JSON in message: %s", config->parse_json_message == true ? "Enabled":"Disabled");
+    Sagan_Log(NORMAL, "Parse JSON in program: %s", config->parse_json_message == true ? "Enabled":"Disabled");
+
+#endif
+
+
 #ifdef PCRE_HAVE_JIT
 
     if ( config->pcre_jit )
@@ -707,9 +716,6 @@ int main(int argc, char **argv)
         }
 
 #endif
-
-
-//    Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
 
     Sagan_Log(NORMAL, "");
     Sagan_Log(NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
