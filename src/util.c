@@ -1367,52 +1367,55 @@ bool Is_IP (char *ipaddr, int ver )
 
     return(ret);
 
+}
 
-    /*
-        printf("init\n");
-        char *tmp = NULL;
-        //char *ip = NULL;
-        int prefix;
-        unsigned int ipint = 0;
-        unsigned char ipbits[MAXIP] = {0};
+/***************************************************
+ * Check if str is valid IP from decimal or dotted
+ * quad ( 167772160, 1.1.1.1, 192.168.192.168/28 )
+ ***************************************************/
 
-        if(strlen(str) == strspn(str, "0123456789./:"))
-            {
+bool Is_IP_Range (char *str)
+{
 
-                if(strspn(str, "./") == 0)
-                    {
-                        ipint = atol(str);
-                        memcpy(ipbits, &ipint, sizeof(ipint));
-                        if ( Bit2IP(ipbits, NULL, 0) == 0 )
-                            {
-                                return(false);
-                            }
-                    }
+    char *tmp = NULL;
+    //char *ip = NULL;
+    int prefix;
+    unsigned int ipint = 0;
+    unsigned char ipbits[MAXIP] = {0};
 
-                if ( strchr(str, '/') )
-                    {
-                        //ip = strtok_r(str, "/", &tmp);
-                        (void)strtok_r(str, "/", &tmp);
-                        prefix = atoi(strtok_r(NULL, "/", &tmp));
+    if(strlen(str) == strspn(str, "0123456789./:"))
+        {
 
-    			printf("prefix: |%s|\n", prefix);
+            if(strspn(str, "./") == 0)
+                {
+                    ipint = atol(str);
+                    memcpy(ipbits, &ipint, sizeof(ipint));
+                    if ( Bit2IP(ipbits, NULL, 0) == 0 )
+                        {
+                            return(false);
+                        }
+                }
 
-                        if(prefix < 1 || prefix > 128 )
-                            {
-                                return(false);
-                            }
-                    }
+            if ( strchr(str, '/') )
+                {
+                    //ip = strtok_r(str, "/", &tmp);
+                    (void)strtok_r(str, "/", &tmp);
+                    prefix = atoi(strtok_r(NULL, "/", &tmp));
+                    if(prefix < 1 || prefix > 128 )
+                        {
+                            return(false);
+                        }
+                }
 
-                return(true);
+            return(true);
 
-            }
-        else
-            {
+        }
+    else
+        {
 
-                return(false);
-            }
+            return(false);
+        }
 
-    */
 }
 
 /***************************************************************************

@@ -807,7 +807,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( ip_src_flag == false )
                                         {
 
-					    /* We don't want 127.0.0.1,  so if the source is that, we change it to config->sagan_host */
+                                            /* We don't want 127.0.0.1,  so if the source is that, we change it to config->sagan_host */
 
                                             if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
                                                     !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1" ) ||
@@ -829,8 +829,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( ip_dst_flag == false )
                                         {
 
-                                            /* We don't want 127.0.0.1,  so if the source is that, we 
-change it to config->sagan_host */
+                                            /* We don't want 127.0.0.1,  so if the source is that, we
+                                            change it to config->sagan_host */
 
                                             if (!strcmp(SaganProcSyslog_LOCAL->syslog_host, "127.0.0.1") ||
                                                     !strcmp(SaganProcSyslog_LOCAL->syslog_host, "::1" ) ||

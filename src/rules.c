@@ -147,6 +147,7 @@ void Load_Rules( const char *ruleset )
     char tmp2[RULEBUF];
     char tmp[2];
     char tmp1[CONFBUF];
+    char tmp5[CONFBUF];
 
     char rule_tmp[RULEBUF];
 
@@ -512,7 +513,7 @@ void Load_Rules( const char *ruleset )
 
                                             Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if ( !Is_IP(tok_help, IPv4) && !Is_IP(tok_help, IPv6) )
+                                            if ( !Is_IP_Range(tok_help) )
                                                 {
                                                     Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }
@@ -676,16 +677,22 @@ void Load_Rules( const char *ruleset )
 
                             /* Nuke [] */
 
+                            printf("flow_b: |%s|\n", flow_b);
+
                             if ( flow_b[0] == '[' )
                                 {
                                     for (i=1; i<strlen(flow_b)-1; i++)
                                         {
-                                            tmp1[i-1] = flow_b[i];
+                                            tmp5[i-1] = flow_b[i];
+                                            tmp5[i] = '\0';
                                         }
 
-                                    strlcpy(flow_b, tmp1, sizeof(flow_b));
+                                    //strlcpy(flow_b, tmp1, sizeof(flow_b));
 
                                 }
+
+                            printf("tmp5: |%s|\n", tmp5);
+                            strlcpy(flow_b, tmp5, sizeof(flow_b));
 
 
                             if (!strcmp(flow_b, "any")) //  || !strcmp(flow_b, tokennet))
@@ -696,7 +703,6 @@ void Load_Rules( const char *ruleset )
                             else
                                 {
 
-
                                     strlcpy(tmp3, flow_b, sizeof(tmp3));
 
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
@@ -704,7 +710,7 @@ void Load_Rules( const char *ruleset )
 
                                             Strip_Chars(tmptoken, "not!", tok_help);
 
-                                            if( !Is_IP(tok_help, IPv4) && !Is_IP(tok_help, IPv6) )
+                                            if ( !Is_IP_Range(tok_help) )
                                                 {
                                                     Sagan_Log(WARN,"[%s, line %d] Value is not a valid IPv4/IPv6 '%s'", __FILE__, __LINE__, tok_help);
                                                 }

@@ -75,6 +75,7 @@
 
 #ifdef HAVE_LIBFASTJSON
 #include "input-json.h"
+#include "message-json-map.h"
 #endif
 
 #ifdef HAVE_SYS_PRCTL_H
@@ -110,6 +111,7 @@ struct _SaganDNSCache *dnscache = NULL;
 
 #ifdef HAVE_LIBFASTJSON
 struct _Syslog_JSON_Map *Syslog_JSON_Map = NULL;
+struct _JSON_Message_Map *JSON_Message_Map = NULL;
 #endif
 
 /* Already Init'ed */
@@ -300,7 +302,18 @@ int main(int argc, char **argv)
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Syslog_JSON_Map. Abort!", __FILE__, __LINE__);
         }
 
+    /* Allocate memory for global Syslog_Message_JSON_Map */
+
+    JSON_Message_Map = malloc(sizeof(_JSON_Message_Map));
+
+    if ( JSON_Message_Map == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for JSON_Message_Map. Abort!", __FILE__, __LINE__);
+        }
+
 #endif
+
+
 
     memset(dnscache, 0, sizeof(_SaganDNSCache));
 

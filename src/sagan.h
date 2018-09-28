@@ -325,6 +325,11 @@ struct _SaganCounters
     uint64_t redis_writer_threads_drop;
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+    int json_message_map;
+#endif
+
+
 };
 
 typedef struct _SaganDebug _SaganDebug;
@@ -396,6 +401,8 @@ struct _Sagan_Proc_Syslog
 
 };
 
+#ifdef HAVE_LIBFASTJSON
+
 typedef struct _Syslog_JSON_Map _Syslog_JSON_Map;
 struct _Syslog_JSON_Map
 {
@@ -411,6 +418,7 @@ struct _Syslog_JSON_Map
 
 };
 
+#endif
 
 typedef struct _Sagan_Event _Sagan_Event;
 struct _Sagan_Event
@@ -459,7 +467,12 @@ struct _Sagan_Event
     unsigned long generatorid;
     unsigned long alertid;
 
+#ifdef HAVE_LIBLOGNORM
+
     json_object *json_normalize;
+
+#endif
+
 };
 
 

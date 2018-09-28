@@ -2835,6 +2835,14 @@ void Load_YAML_Config( char *yaml_file )
 
         }
 
+    if ( config->parse_json_message == true || config->parse_json_program == true )
+        {
+
+            Load_Message_JSON_Map( config->json_message_map_file );
+
+        }
+
+
 #endif
 
     reload_rules = false;

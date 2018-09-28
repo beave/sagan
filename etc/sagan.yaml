@@ -149,7 +149,7 @@ sagan-core:
     # and "json-software" have no function.
 
     input-type: pipe                                    # pipe or json
-    json-map: /usr/local/etc/sagan-rules/json-input.map # mapping file
+    json-map: /usr/local/etc/sagan-rules/json-input.map # mapping file if input-type: json
     json-software: syslog-ng                            # by "software" type. 
 
     # "parse-json-message" allows Sagan to detect and decode JSON within a 
@@ -161,6 +161,8 @@ sagan-core:
     # strings together (program+message) and then decode.  The
     # "json-message-map" tells Sagan how to decode JSON values when they are 
     # encountered.
+
+    # THIS IS NOT COMPLETE.  DO NOT USE.
 
     parse-json-message: disable
     parse-json-program: disable
