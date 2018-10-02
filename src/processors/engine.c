@@ -264,6 +264,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
+
                             while ( ptmp != NULL )
                                 {
                                     if ( Wildcard(ptmp, SaganProcSyslog_LOCAL->syslog_program) == 1 )
@@ -280,6 +281,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
+
                             while ( ptmp != NULL )
                                 {
                                     if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_facility))
@@ -296,6 +298,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
+
                             while ( ptmp != NULL )
                                 {
                                     if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_priority))
@@ -312,6 +315,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
+
                             while ( ptmp != NULL )
                                 {
                                     if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_level))
@@ -328,6 +332,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
+
                             while ( ptmp != NULL )
                                 {
                                     if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_tag))
@@ -894,6 +899,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             pthread_mutex_unlock(&CountersFlowFlowTotal);
 
                                         }
+
+
+				    /****************************************************************************
+                                     * Xbit "upause".  This lets xbits settle in "tight" timing situations.
+                                     ****************************************************************************/
+
+                                    if ( rulestruct[b].xbit_upause_time != 0 )
+                                        {
+                                            usleep( rulestruct[b].xbit_upause_time );
+                                        }
+
 
                                     /****************************************************************************
                                      * Xbit - ISSET || ISNOTSET

@@ -147,6 +147,7 @@ struct _Rule_Struct
     unsigned char meta_content_converted_count;
 
     int xbit_count;				/* Number of xbits in memory */
+    int xbit_upause_time;			/* Delay to let xbits settle */
     unsigned char xbit_condition_count;		/* Number of isset/isnot within a rule */
     unsigned char xbit_set_count;		/* Number of set/unset within a rule */
     unsigned char xbit_count_count;		/* Number of count within a rule */

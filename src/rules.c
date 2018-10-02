@@ -484,20 +484,6 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(WARN, "[%s, line %d] Unbalanced flow_a set in '%s' line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
                                 }
 
-                            /* Nuke [] */
-
-                            if ( flow_a[0] == '[' )
-                                {
-                                    for (i=1; i<strlen(flow_a)-1; i++)
-                                        {
-                                            tmp1[i-1] = flow_a[i];
-                                        }
-
-                                    strlcpy(flow_a, tmp1, sizeof(flow_a));
-
-                                }
-
-
                             if (!strcmp(flow_a, "any")) //  || !strcmp(flow_a, tokennet))
                                 {
                                     rulestruct[counters->rulecount].flow_1_var = 0;	  /* 0 = any */
@@ -507,6 +493,18 @@ void Load_Rules( const char *ruleset )
                                 {
 
                                     strlcpy(tmp3, flow_a, sizeof(tmp3));
+
+                                    /* Nuke [] */
+
+                                    if ( flow_a[0] == '[' && flow_a[ strlen(flow_a) - 1 ] == ']' )
+                                        {
+                                            for ( i = 1; i < strlen(flow_a)-1; i++ )
+                                                {
+                                                    tmp3[i-1] = flow_a[i];
+                                                    tmp3[i] = '\0';
+                                                }
+                                        }
+
 
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
                                         {
@@ -675,26 +673,6 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(WARN, "[%s, line %d] Unbalanced flow_b set in '%s' line %d", __FILE__, __LINE__, ruleset_fullname, linecount);
                                 }
 
-                            /* Nuke [] */
-
-                            printf("flow_b: |%s|\n", flow_b);
-
-                            if ( flow_b[0] == '[' )
-                                {
-                                    for (i=1; i<strlen(flow_b)-1; i++)
-                                        {
-                                            tmp5[i-1] = flow_b[i];
-                                            tmp5[i] = '\0';
-                                        }
-
-                                    //strlcpy(flow_b, tmp1, sizeof(flow_b));
-
-                                }
-
-                            printf("tmp5: |%s|\n", tmp5);
-                            strlcpy(flow_b, tmp5, sizeof(flow_b));
-
-
                             if (!strcmp(flow_b, "any")) //  || !strcmp(flow_b, tokennet))
                                 {
                                     rulestruct[counters->rulecount].flow_2_var = 0;     /* 0 = any */
@@ -704,6 +682,18 @@ void Load_Rules( const char *ruleset )
                                 {
 
                                     strlcpy(tmp3, flow_b, sizeof(tmp3));
+
+                                    /* Nuke [] */
+
+                                    if ( flow_b[0] == '[' && flow_b[ strlen(flow_b) - 1 ] == ']' )
+                                        {
+                                            for ( i = 1; i < strlen(flow_b)-1; i++ )
+                                                {
+                                                    tmp3[i-1] = flow_b[i];
+                                                    tmp3[i] = '\0';
+                                                }
+                                        }
+
 
                                     for(tmptoken = strtok_r(tmp3, ",", &saveptrflow); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrflow))
                                         {
@@ -880,6 +870,20 @@ void Load_Rules( const char *ruleset )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].s_find_proto_program = true;
+                        }
+
+                    if (!strcmp(rulesplit, "xbit_upause"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"xbit_upause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            rulestruct[counters->rulecount].xbit_upause_time = atoi(arg);
                         }
 
                     if (!strcmp(rulesplit, "default_proto"))
