@@ -176,8 +176,8 @@ void Load_YAML_Config( char *yaml_file )
             strlcpy(config->json_input_map_file, DEFAULT_JSON_INPUT_MAP, sizeof(config->json_input_map_file));
             strlcpy(config->json_input_software, "NONE SET", sizeof(config->json_input_software));
 
-            config->parse_json_message = true;
-            config->parse_json_program = true;
+            config->parse_json_message = false;
+            config->parse_json_program = false;
 
 #endif
 
