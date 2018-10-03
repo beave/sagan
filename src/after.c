@@ -186,7 +186,7 @@ bool After_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits,
     for (i = 0; i < counters_ipc->after_count_by_dst; i++ )
         {
 
-            if ( !memcmp(afterbydst_ipc[i].ipdst, ip_dst, sizeof(afterbydst_ipc[i].ipdst)) &&
+            if ( !memcmp(afterbydst_ipc[i].ipdst, ip_dst_bits, sizeof(afterbydst_ipc[i].ipdst)) &&
                     !strcmp(afterbydst_ipc[i].sid, rulestruct[rule_position].s_sid ) &&
                     ( selector == NULL || !strcmp(selector, afterbydst_ipc[i].selector)) )
                 {
@@ -290,10 +290,9 @@ bool After_By_Username( int rule_position, char *normalize_username, char *selec
         {
             /* Short circuit if no selector match */
 
-            if (
-                ( selector == NULL && afterbyusername_ipc[i].selector[0] != '\0') ||
-                ( selector != NULL && 0 != strcmp(selector, afterbyusername_ipc[i].selector))
-            )
+
+            if ( ( selector == NULL && afterbyusername_ipc[i].selector[0] != '\0') ||
+                ( selector != NULL && strcmp(selector, afterbyusername_ipc[i].selector) != 0 ))
                 {
 
                     continue;
@@ -315,8 +314,10 @@ bool After_By_Username( int rule_position, char *normalize_username, char *selec
                     strlcpy(afterbyusername_ipc[i].syslog_message, syslog_message, sizeof(afterbyusername_ipc[i].syslog_message));
                     strlcpy(afterbyusername_ipc[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(afterbyusername_ipc[i].signature_msg));
 
+		     /* Reset counter if it's expired */
+
                     if ( after_oldtime > rulestruct[rule_position].after_seconds ||
-                            afterbysrc_ipc[i].count == 0 )
+                            afterbyusername_ipc[i].count == 0 )
                         {
 
                             afterbyusername_ipc[i].count=1;
