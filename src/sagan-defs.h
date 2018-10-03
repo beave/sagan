@@ -180,7 +180,7 @@ typedef void json_object;
 
 /* Locations of IPC/Share memory "files" */
 
-#define IPC_DIRECTORY			"/var/sagan/ipc"
+#define IPC_DIRECTORY			"/dev/shm"
 
 #define COUNTERS_IPC_FILE 		"sagan-counters.shared"
 #define XBIT_IPC_FILE 	     	        "sagan-xbits.shared"
