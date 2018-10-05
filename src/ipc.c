@@ -65,6 +65,7 @@ pthread_mutex_t After_By_Dst_Mutex;
 pthread_mutex_t After_By_Src_Port_Mutex;
 pthread_mutex_t After_By_Dst_Port_Mutex;
 pthread_mutex_t After_By_Username_Mutex;
+pthread_mutex_t After2_Mutex;
 
 pthread_mutex_t Thresh_By_Src_Mutex;
 pthread_mutex_t Thresh_By_Dst_Mutex;
@@ -85,6 +86,7 @@ struct after_by_dst_ipc *afterbydst_ipc;
 struct after_by_srcport_ipc *afterbysrcport_ipc;
 struct after_by_dstport_ipc *afterbydstport_ipc;
 struct after_by_username_ipc *afterbyusername_ipc;
+struct _After2_IPC *After2_IPC;
 
 struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 
@@ -97,6 +99,93 @@ struct _SaganDebug *debug;
 
 bool Clean_IPC_Object( int type )
 {
+
+    if ( type == AFTER2 && config->max_after2 < counters_ipc->after2_count )
+        {
+
+            time_t t;
+            struct tm *now;
+
+            int i;
+            int utime = 0;
+            int new_count = 0;
+            int old_count = 0;
+
+            char timet[20];
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+            if ( debug->debugipc )
+                {
+                    Sagan_Log(DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
+                }
+
+            File_Lock(config->shm_after2); /* HERE */
+            pthread_mutex_lock(&After2_Mutex);
+
+            struct _After2_IPC *Temp_After2_IPC;
+            Temp_After2_IPC = malloc(sizeof(struct _After2_IPC) * config->max_after2);
+            memset(Temp_After2_IPC, 0, sizeof(sizeof(struct _After2_IPC) * config->max_after2));
+
+            old_count = counters_ipc->after2_count;
+
+            for (i = 0; i < counters_ipc->after2_count; i++)
+                {
+
+                    if ( (utime - After2_IPC[i].utime) < After2_IPC[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(DEBUG, "[%s, %d line] After2_IPC : Keeping %lu.", __FILE__, __LINE__, After2_IPC[i].hash);
+                                }
+
+                            Temp_After2_IPC[new_count].hash = After2_IPC[i].hash;
+                            Temp_After2_IPC[new_count].count = afterbysrc_ipc[i].count;
+                            Temp_After2_IPC[new_count].utime = afterbysrc_ipc[i].utime;
+                            Temp_After2_IPC[new_count].expire = afterbysrc_ipc[i].expire;
+                            strlcpy(Temp_After2_IPC[new_count].sid, After2_IPC[i].sid, sizeof(Temp_After2_IPC[new_count].sid));
+                            new_count++;
+
+                        }
+                }
+
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            After2_IPC[i].hash = Temp_After2_IPC[i].hash;
+                            After2_IPC[i].count = Temp_After2_IPC[i].count;
+                            After2_IPC[i].utime = Temp_After2_IPC[i].utime;
+                            After2_IPC[i].expire = Temp_After2_IPC[i].expire;
+                            strlcpy(After2_IPC[i].sid, Temp_After2_IPC[i].sid, sizeof(After2_IPC[i].sid));
+                        }
+
+                    counters_ipc->after2_count = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean After2_IPC.  Nothing to remove!", __FILE__, __LINE__);
+                    free(Temp_After2_IPC);
+                    pthread_mutex_unlock(&After2_Mutex);
+                    File_Unlock(config->shm_after2);
+                    return(1);
+
+                }
+
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for After2_IPC", __FILE__, __LINE__, new_count, old_count);
+            free(Temp_After2_IPC);
+
+            pthread_mutex_unlock(&After2_Mutex);
+            File_Unlock(config->shm_after2);
+            return(0);
+        }
 
     /* After by src */
 
@@ -1519,6 +1608,71 @@ void IPC_Init(void)
                 }
 
         }
+
+    /* After2 */
+
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, AFTER2_IPC_FILE);
+
+
+    IPC_Check_Object(tmp_object_check, new_counters, "after2");
+
+
+    if ((config->shm_after2 = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+        {
+            Sagan_Log(NORMAL, "+ After2 shared object (new).");
+            new_object=1;
+        }
+
+    else if ((config->shm_after2 = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after2 (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+        }
+
+
+    if ( ftruncate(config->shm_after2, sizeof(_After2_IPC) * config->max_after_by_src ) != 0 )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+
+
+    if (( After2_IPC = mmap(0, sizeof(_After2_IPC) * config->max_after2, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after2, 0)) == MAP_FAILED )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for _After2_IPC object! [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+    if ( new_object == 0 )
+        {
+            Sagan_Log(NORMAL, "- After2 shared object reloaded (%d sources loaded / max: %d).", counters_ipc->after2_count, config->max_after2);
+        }
+
+
+    new_object = 0;
+
+    /* DEBUG - THIS ISNT DONE */
+    /*
+        if ( debug->debugipc && counters_ipc->after_count_by_src >= 1 )
+            {
+
+                Sagan_Log(DEBUG, "");
+                Sagan_Log(DEBUG, "*** After by source ***");
+                Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
+                Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+
+                for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
+                    {
+                        Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
+
+                        u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+
+                        Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
+                    }
+
+                Sagan_Log(DEBUG, "");
+            }
+
+    */
 
     /* After by source */
 

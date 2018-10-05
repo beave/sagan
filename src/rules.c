@@ -130,6 +130,10 @@ void Load_Rules( const char *ruleset )
     char *ptmp=NULL;
     char *tok = NULL;
 
+    char *after_value1;
+    char *after_value2;
+    char *after_value3;
+
     char tmp_help[CONFBUF];
     char tok_help[64];
     char tok_help2[64];
@@ -2455,6 +2459,87 @@ void Load_Rules( const char *ruleset )
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                                 }
                         }
+
+                    /* "after2" */
+
+                    if (!strcmp(rulesplit, "after2" ))
+                        {
+
+                            rulestruct[counters->rulecount].after2 = true;
+
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
+
+                            while( tmptoken != NULL )
+                                {
+
+                                    if (Sagan_strstr(tmptoken, "track"))
+                                        {
+
+                                            strtok_r(tmptoken, " ", &after_value1);
+
+                                            if ( after_value1 == NULL )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d]  %s on line %d appears to be incorrect.  \"after\" options appear incomplete, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                                }
+
+                                            Remove_Return(after_value1);
+
+                                            after_value2 = strtok_r(after_value1, "&", &after_value3);
+
+                                            while ( after_value2 != NULL )
+                                                {
+
+                                                    if (!strcmp(after_value2, "by_src"))
+                                                        {
+                                                            rulestruct[counters->rulecount].after2_method_src = true;
+                                                        }
+
+                                                    if (!strcmp(after_value2, "by_dst"))
+                                                        {
+                                                            rulestruct[counters->rulecount].after2_method_dst = true;
+                                                        }
+
+                                                    if (!strcmp(after_value2, "by_username") || !strcmp(after_value2, "by_string1"))
+                                                        {
+                                                            rulestruct[counters->rulecount].after2_method_username = true;
+                                                        }
+
+                                                    /*
+                                                                                                if (Sagan_strstr(tmptoken, "by_srcport"))
+                                                                                                    {
+                                                                                                        rulestruct[counters->rulecount].after_method = AFTER_BY_SRCPORT;
+                                                                                                    }
+
+                                                                                                if (Sagan_strstr(tmptoken, "by_dstport"))
+                                                                                                    {
+                                                                                                        rulestruct[counters->rulecount].after_method = AFTER_BY_DSTPORT;
+                                                                                                    }
+                                                    */
+
+                                                    after_value2 = strtok_r(NULL, "&", &after_value3);
+                                                }
+                                        }
+
+                                    if (Sagan_strstr(tmptoken, "count"))
+                                        {
+                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                                            rulestruct[counters->rulecount].after2_count = atoi(tmptok_tmp);
+                                        }
+
+                                    if (Sagan_strstr(tmptoken, "seconds"))
+                                        {
+                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                                            rulestruct[counters->rulecount].after2_seconds = atoi(tmptok_tmp);
+                                        }
+
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                                }
+                        }
+
 
 
                     /* "after"; similar to thresholding,  but the opposite direction */

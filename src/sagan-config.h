@@ -170,6 +170,7 @@ struct _SaganConfig
     int 	shm_after_by_srcport;
     int		shm_after_by_dstport;
     int		shm_after_by_username;
+    int	 	shm_after2;
 
     int		shm_track_clients;
 
@@ -190,6 +191,7 @@ struct _SaganConfig
     int         max_after_by_srcport;
     int		max_after_by_dstport;
     int		max_after_by_username;
+    int		max_after2;
 
     int		max_track_clients;
 

@@ -1508,7 +1508,7 @@ bool Check_Content_Not( char *s )
  * Djd2_Hash - creates a hash based off a string.  This code is from Dan
  * Bernstein.  See http://www.cse.yorku.ca/~oz/hash.html.
  ***************************************************************************/
-/*
+
 uint32_t Djb2_Hash(char *str)
 {
 
@@ -1520,7 +1520,7 @@ uint32_t Djb2_Hash(char *str)
 
     return(hash);
 }
-*/
+
 
 char *strrpbrk(const char *str, const char *accept)
 {

@@ -198,8 +198,19 @@ struct _Rule_Struct
     int threshold_seconds;
 
     unsigned char after_method;                 /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
+
     int after_count;
     int after_seconds;
+
+
+    bool after2;
+
+    bool after2_method_src;
+    bool after2_method_dst;
+    bool after2_method_username;
+
+    int after2_count;
+    int after2_seconds;
 
     unsigned char fwsam_src_or_dst;             /* 1 == src,  2 == dst */
     unsigned long fwsam_seconds;

@@ -155,6 +155,8 @@ int main(int argc, char **argv)
     struct after_by_dst_ipc *afterbydst_ipc;
     struct after_by_username_ipc *afterbyusername_ipc;
 
+    struct _After2_IPC *After2_IPC; 
+
     signed char c;
 
     /* For convert to IP string */
@@ -513,6 +515,101 @@ int main(int argc, char **argv)
 
                         }
 
+                }
+
+
+            /*** Get "After by destination" data ***/
+
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER2_IPC_FILE);
+
+
+            if ( object_check(tmp_object_check) == false )
+                {
+                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+                    Usage();
+                    exit(1);
+                }
+
+            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                {
+                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            if (( After2_IPC = mmap(0, sizeof(_After2_IPC) + (sizeof(_After2_IPC) * counters_ipc->after2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                {
+                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            close(shm);
+
+            if ( counters_ipc->after2_count >= 1 )
+                {
+
+                    for ( i = 0; i < counters_ipc->after2_count; i++)
+                        {
+
+                            printf("Type: After2 [%d].\n", i);
+
+                            u32_Time_To_Human(After2_IPC[i].utime, time_buf, sizeof(time_buf));
+
+                            printf("Selector: ");
+
+                            if ( After2_IPC[i].selector[0] == 0 )
+                                {
+                                    printf("[None]\n");
+                                }
+                            else
+                                {
+                                    printf("%s\n", After2_IPC[i].selector);
+                                }
+
+
+                            printf("Hash: %lu\n", After2_IPC[i].hash);
+
+			    printf("Tracking by:");
+
+			    if ( After2_IPC[i].after2_method_src == true ) 
+				{
+				printf(" by_src"); 
+				}
+
+			        if ( After2_IPC[i].after2_method_dst == true )
+                                {
+                                printf(" by_dst");
+                                }
+
+                                if ( After2_IPC[i].after2_method_username == true )
+                                {
+                                printf(" by_username");
+                                }
+
+				printf("\n");
+
+			    if ( After2_IPC[i].after2_method_src == true )
+			    {
+			    printf("IP SRC: %s\n", After2_IPC[i].ip_src); 
+			    }
+
+			    if ( After2_IPC[i].after2_method_dst == true )
+			    {
+		            printf("IP DST: %s\n", After2_IPC[i].ip_dst);
+		            }
+
+			    if ( After2_IPC[i].after2_method_username == true )
+			    {
+			    printf("String: %s\n",  After2_IPC[i].string1);
+			    }
+
+
+                            printf("Signature: \"%s\" (%s)\n", After2_IPC[i].signature_msg, After2_IPC[i].sid);
+                            printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
+                            printf("Date added/modified: %s\n", time_buf);
+                            printf("Counter: %d\n", After2_IPC[i].count);
+                            printf("Expire Time: %d\n\n", After2_IPC[i].expire);
+
+                        }
                 }
 
 

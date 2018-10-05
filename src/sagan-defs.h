@@ -194,6 +194,7 @@ typedef void json_object;
 #define AFTER_BY_SRCPORT_IPC_FILE 	"sagan-after-by-source-port.shared"
 #define AFTER_BY_DSTPORT_IPC_FILE 	"sagan-after-by-destination-port.shared"
 #define AFTER_BY_USERNAME_IPC_FILE 	"sagan-after-by-username.shared"
+#define AFTER2_IPC_FILE			"sagan-after2.shared"
 #define CLIENT_TRACK_IPC_FILE 		"sagan-track-clients.shared"
 
 /* Default IPC/mmap sizes */
@@ -204,6 +205,7 @@ typedef void json_object;
 #define DEFAULT_IPC_AFTER_BY_SRC_PORT   1000000
 #define DEFAULT_IPC_AFTER_BY_DST_PORT	1000000
 #define DEFAULT_IPC_AFTER_BY_USERNAME	10000
+#define DEFAULT_IPC_AFTER2_IPC		1000000
 #define DEFAULT_IPC_THRESH_BY_SRC	1000000
 #define DEFAULT_IPC_THRESH_BY_DST	1000000
 #define DEFAULT_IPC_THRESH_BY_SRC_PORT	1000000
@@ -212,6 +214,7 @@ typedef void json_object;
 #define DEFAULT_IPC_XBITS		10000
 
 
+#define	AFTER2				0
 #define AFTER_BY_SRC			1
 #define AFTER_BY_DST			2
 #define AFTER_BY_DSTPORT		3

@@ -190,6 +190,7 @@ struct _Sagan_IPC_Counters
     int  after_count_by_srcport;
     int	 after_count_by_dstport;
     int	 after_count_by_username;
+    int  after2_count;
 
     int	 track_client_count;
     int  track_clients_client_count;
@@ -556,6 +557,32 @@ typedef struct after_by_src_ipc after_by_src_ipc;
 struct after_by_src_ipc
 {
     unsigned char ipsrc[MAXIPBIT];
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
+    char sid[20];
+    int expire;
+    char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
+};
+
+
+typedef struct _After2_IPC _After2_IPC;
+struct _After2_IPC
+{
+
+    uint32_t hash;
+
+    bool after2_method_src;
+    bool after2_method_dst;
+    bool after2_method_username;
+
+    char ip_src[MAXIP];
+    char ip_dst[MAXIP];
+    int  src_port;
+    int  dst_port;
+    char string1[MAX_USERNAME_SIZE];
     uint64_t count;
     uint64_t total_count;
     uint64_t utime;
