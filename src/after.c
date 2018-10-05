@@ -81,6 +81,8 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
     char src_tmp[MAXIP] = { 0 };
     char dst_tmp[MAXIP] = { 0 };
     char username_tmp[MAX_USERNAME_SIZE] = { 0 };
+    uint32_t dst_port_tmp = 0;
+    uint32_t src_port_tmp = 0;
 
     char hash_string[128] = { 0 };
     char debug_string[64] = { 0 };
@@ -106,7 +108,19 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             strlcpy(username_tmp, username, sizeof(username_tmp));
         }
 
-    snprintf(hash_string, sizeof(hash_string), "%s|%d|%s|%d|%s", src_tmp, src_port, dst_tmp, dst_port, username_tmp);
+    if ( rulestruct[rule_position].after2_method_srcport == true )
+	{
+	src_port_tmp = src_port;
+	}
+
+    if ( rulestruct[rule_position].after2_method_dstport == true )
+        {
+        dst_port_tmp = dst_port;
+        }
+
+
+    snprintf(hash_string, sizeof(hash_string), "%s|%d|%s|%d|%s", src_tmp, src_port_tmp, dst_tmp, dst_port_tmp, username_tmp);
+    printf("%s\n", hash_string);
 
     hash = Djb2_Hash( hash_string );
 
