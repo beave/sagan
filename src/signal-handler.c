@@ -246,27 +246,6 @@ void Sig_Handler( void )
                             Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
-                    File_Unlock(config->shm_after_by_src);
-
-                    if ( close(config->shm_after_by_src) != 0 )
-                        {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
-                        }
-
-                    File_Unlock(config->shm_after_by_dst);
-
-                    if ( close(config->shm_after_by_dst) != 0 )
-                        {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
-                        }
-
-                    File_Unlock(config->shm_after_by_username);
-
-                    if ( close(config->shm_after_by_username) != 0 )
-                        {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC after_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
-                        }
-
                     if ( config->sagan_track_clients_flag )
                         {
 

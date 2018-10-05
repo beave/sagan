@@ -215,11 +215,6 @@ typedef void json_object;
 
 
 #define	AFTER2				0
-#define AFTER_BY_SRC			1
-#define AFTER_BY_DST			2
-#define AFTER_BY_DSTPORT		3
-#define AFTER_BY_USERNAME		4
-#define AFTER_BY_SRCPORT                5
 
 #define THRESH_BY_SRC			6
 #define THRESH_BY_DST			7

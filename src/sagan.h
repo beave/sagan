@@ -551,23 +551,6 @@ struct thresh_by_username_ipc
     char signature_msg[MAX_SAGAN_MSG];
 };
 
-/* After structure by source */
-
-typedef struct after_by_src_ipc after_by_src_ipc;
-struct after_by_src_ipc
-{
-    unsigned char ipsrc[MAXIPBIT];
-    uint64_t count;
-    uint64_t total_count;
-    uint64_t utime;
-    char sid[20];
-    int expire;
-    char selector[MAXSELECTOR];
-    char syslog_message[MAX_SYSLOGMSG];
-    char signature_msg[MAX_SAGAN_MSG];
-};
-
-
 typedef struct _After2_IPC _After2_IPC;
 struct _After2_IPC
 {
@@ -577,73 +560,16 @@ struct _After2_IPC
     bool after2_method_src;
     bool after2_method_dst;
     bool after2_method_username;
+    bool after2_method_srcport;
+    bool after2_method_dstport;
 
     char ip_src[MAXIP];
     char ip_dst[MAXIP];
+
     int  src_port;
     int  dst_port;
-    char string1[MAX_USERNAME_SIZE];
-    uint64_t count;
-    uint64_t total_count;
-    uint64_t utime;
-    char sid[20];
-    int expire;
-    char selector[MAXSELECTOR];
-    char syslog_message[MAX_SYSLOGMSG];
-    char signature_msg[MAX_SAGAN_MSG];
-};
+    char username[MAX_USERNAME_SIZE];
 
-/* After structure by destination */
-
-typedef struct after_by_dst_ipc after_by_dst_ipc;
-struct after_by_dst_ipc
-{
-    unsigned char ipdst[MAXIPBIT];
-    int  count;
-    uint64_t total_count;
-    uint64_t utime;
-    char sid[20];
-    int expire;
-    char selector[MAXSELECTOR];
-    char syslog_message[MAX_SYSLOGMSG];
-    char signature_msg[MAX_SAGAN_MSG];
-
-};
-
-/* After structure by source port */
-
-typedef struct after_by_srcport_ipc after_by_srcport_ipc;
-struct after_by_srcport_ipc
-{
-    uint32_t ipsrcport;
-    uint64_t count;
-    uint64_t total_count;
-    uint64_t utime;
-    char sid[20];
-    int expire;
-    char selector[MAXSELECTOR];
-};
-
-/* After structure by destination port */
-
-typedef struct after_by_dstport_ipc after_by_dstport_ipc;
-struct after_by_dstport_ipc
-{
-    uint32_t ipdstport;
-    uint64_t count;
-    uint64_t total_count;
-    uint64_t utime;
-    char sid[20];
-    int expire;
-    char selector[MAXSELECTOR];
-};
-
-/* After structure by username */
-
-typedef struct after_by_username_ipc after_by_username_ipc;
-struct after_by_username_ipc
-{
-    char username[128];
     uint64_t count;
     uint64_t total_count;
     uint64_t utime;
@@ -695,7 +621,6 @@ struct _Sagan_Lookup_Cache_Other
 
 /* Function that require the above arrays */
 
-//int64_t   FlowGetId( _Sagan_Event *);
 int64_t	  FlowGetId(struct timeval tp);
 void 	  Escape_Chars( char *str_in, char *str, size_t size);
 

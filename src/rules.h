@@ -208,6 +208,8 @@ struct _Rule_Struct
     bool after2_method_src;
     bool after2_method_dst;
     bool after2_method_username;
+    bool after2_method_srcport;
+    bool after2_method_dstport;
 
     int after2_count;
     int after2_seconds;

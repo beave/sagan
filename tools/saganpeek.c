@@ -151,10 +151,6 @@ int main(int argc, char **argv)
     struct thresh_by_dst_ipc *threshbydst_ipc;
     struct thresh_by_username_ipc *threshbyusername_ipc;
 
-    struct after_by_src_ipc *afterbysrc_ipc;
-    struct after_by_dst_ipc *afterbydst_ipc;
-    struct after_by_username_ipc *afterbyusername_ipc;
-
     struct _After2_IPC *After2_IPC; 
 
     signed char c;
@@ -458,6 +454,7 @@ int main(int argc, char **argv)
 
     /*** Get "after by source" data ***/
 
+/*
     if ( type == ALL_TYPES || type == AFTER_TYPE )
         {
 
@@ -518,7 +515,7 @@ int main(int argc, char **argv)
                 }
 
 
-            /*** Get "After by destination" data ***/
+            /*** Get "After" data ***/
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER2_IPC_FILE);
 
@@ -550,7 +547,7 @@ int main(int argc, char **argv)
                     for ( i = 0; i < counters_ipc->after2_count; i++)
                         {
 
-                            printf("Type: After2 [%d].\n", i);
+                            printf("Type: After [%d].\n", i);
 
                             u32_Time_To_Human(After2_IPC[i].utime, time_buf, sizeof(time_buf));
 
@@ -599,7 +596,7 @@ int main(int argc, char **argv)
 
 			    if ( After2_IPC[i].after2_method_username == true )
 			    {
-			    printf("String: %s\n",  After2_IPC[i].string1);
+			    printf("Username: %s\n",  After2_IPC[i].username);
 			    }
 
 
@@ -611,126 +608,6 @@ int main(int argc, char **argv)
 
                         }
                 }
-
-
-            /*** Get "After by destination" data ***/
-
-            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_DST_IPC_FILE);
-
-            if ( object_check(tmp_object_check) == false )
-                {
-                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-                    Usage();
-                    exit(1);
-                }
-
-            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-                {
-                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
-
-            if (( afterbydst_ipc = mmap(0, sizeof(after_by_dst_ipc) + (sizeof(after_by_dst_ipc) * counters_ipc->after_count_by_dst ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-                {
-                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
-
-            close(shm);
-
-            if ( counters_ipc->after_count_by_dst >= 1 )
-                {
-
-                    for ( i = 0; i < counters_ipc->after_count_by_dst; i++)
-                        {
-
-                            Bit2IP(afterbydst_ipc[i].ipdst, ip_dst, sizeof(ip_dst));
-
-                            printf("Type: After by destination [%d].\n", i);
-
-                            u32_Time_To_Human(afterbydst_ipc[i].utime, time_buf, sizeof(time_buf));
-
-                            printf("Selector: ");
-
-                            if ( afterbydst_ipc[i].selector[0] == 0 )
-                                {
-                                    printf("[None]\n");
-                                }
-                            else
-                                {
-                                    printf("%s\n", afterbydst_ipc[i].selector);
-                                }
-
-                            printf("Source IP: %s\n", ip_dst);
-                            printf("Signature: \"%s\" (%s)\n", afterbydst_ipc[i].signature_msg, afterbydst_ipc[i].sid);
-                            printf("Syslog Message: \"%s\"\n", afterbydst_ipc[i].syslog_message);
-                            printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %d\n", afterbydst_ipc[i].count);
-                            printf("Expire Time: %d\n\n", afterbydst_ipc[i].expire);
-
-                        }
-                }
-
-            /*** Get "after by username" data ***/
-
-            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_USERNAME_IPC_FILE);
-
-            if ( object_check(tmp_object_check) == false )
-                {
-                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-                    Usage();
-                    exit(1);
-                }
-
-            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-                {
-                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
-
-            if (( afterbyusername_ipc = mmap(0, sizeof(after_by_username_ipc) + (sizeof(after_by_username_ipc) * counters_ipc->after_count_by_username ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-                {
-                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
-
-            close(shm);
-
-
-            if ( counters_ipc->after_count_by_username >= 1 )
-                {
-
-                    for ( i = 0; i < counters_ipc->after_count_by_username; i++)
-                        {
-
-
-                            printf("Type: After by username [%d].\n", i);
-
-                            u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
-
-                            printf("Selector: ");
-
-                            if ( afterbyusername_ipc[i].selector[0] == 0 )
-                                {
-                                    printf("[None]\n");
-                                }
-                            else
-                                {
-                                    printf("%s\n", afterbyusername_ipc[i].selector);
-                                }
-
-                            printf("Username: %s\n", afterbyusername_ipc[i].username);
-                            printf("Signature: \"%s\" (%s)\n", afterbyusername_ipc[i].signature_msg, afterbyusername_ipc[i].sid);
-                            printf("Syslog Message: \"%s\"\n", afterbyusername_ipc[i].syslog_message);
-                            printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %" PRIu64 "\n", afterbyusername_ipc[i].count);
-                            printf("Expire Time: %d\n\n", afterbyusername_ipc[i].expire);
-
-
-                        }
-                }
-
-        }
 
     /*** Get "xbit" data ***/
 

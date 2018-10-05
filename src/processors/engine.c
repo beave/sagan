@@ -1279,54 +1279,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
-                                                                                                                            /* After2 */
+                                                                                                                            /* After */
 
                                                                                                                             after_log_flag = false;
 
                                                                                                                             if ( rulestruct[b].after2 == true )
                                                                                                                                 {
 
-                                                                                                                                    after_log_flag = After2 (b, ip_src, ip_dst, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
+                                                                                                                                    after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                 }
 
-
-                                                                                                                            /* After */
-                                                                                                                            /*
-                                                                                                                                                                                                                                                        after_log_flag = false;
-
-                                                                                                                                                                                                                                                        if ( rulestruct[b].after_method != 0 )
-                                                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                                                switch(rulestruct[b].after_method)
-                                                                                                                                                                                                                                                                    {
-
-                                                                                                                                                                                                                                                                    case(AFTER_BY_SRC):
-                                                                                                                                                                                                                                                                        after_log_flag = After_By_Src(b, ip_src, ip_src_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(AFTER_BY_DST):
-                                                                                                                                                                                                                                                                        after_log_flag = After_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(AFTER_BY_SRCPORT):
-                                                                                                                                                                                                                                                                        after_log_flag = After_By_SrcPort(b, ip_srcport_u32, pnormalize_selector);
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(AFTER_BY_DSTPORT):
-                                                                                                                                                                                                                                                                        after_log_flag = After_By_DstPort(b, ip_dstport_u32, pnormalize_selector);
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(AFTER_BY_USERNAME):
-
-                                                                                                                                                                                                                                                                        if ( normalize_username != NULL )
-                                                                                                                                                                                                                                                                            {
-
-                                                                                                                                                                                                                                                                                after_log_flag = After_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                            }
-
-
-                                                                                                                                                                                                                                                                    } /*switch */
-
-//                                                                                                                                } /* rulestruct[b].after_method != 0 */
 
                                                                                                                             thresh_log_flag = false;
 
