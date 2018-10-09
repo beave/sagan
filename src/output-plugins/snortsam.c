@@ -110,7 +110,7 @@ void FWSam( _Sagan_Event *Event )
     int retval=0;
 
     blockduration=rulestruct[Event->found].fwsam_seconds;
-    blocksid=atol(Event->sid);
+    blocksid=Event->sid;
 
     if ( rulestruct[Event->found].fwsam_src_or_dst == 1 )
         {

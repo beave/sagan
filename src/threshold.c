@@ -96,7 +96,7 @@ bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
                     continue;
                 }
 
-            if ( !memcmp(threshbysrc_ipc[i].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[i].ipsrc)) && !strcmp(threshbysrc_ipc[i].sid, rulestruct[rule_position].s_sid ))
+            if ( !memcmp(threshbysrc_ipc[i].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[i].ipsrc)) && threshbysrc_ipc[i].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh_by_src);
@@ -123,7 +123,7 @@ bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(NORMAL, "Threshold SID %s by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 " by source IP address. [%s]", threshbysrc_ipc[i].sid, ip_src);
                                 }
 
                             counters->threshold_total++;
@@ -146,7 +146,7 @@ bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits
             pthread_mutex_lock(&Thresh_By_Src_Mutex);
 
             memcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc, ip_src_bits, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].ipsrc));
-            strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid, rulestruct[rule_position].s_sid, sizeof(threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid));
+            threshbysrc_ipc[counters_ipc->thresh_count_by_src].sid =  rulestruct[rule_position].s_sid;
 
             selector == NULL ? threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector[0] = '\0' : strlcpy(threshbysrc_ipc[counters_ipc->thresh_count_by_src].selector, selector, MAXSELECTOR);
 
@@ -202,7 +202,7 @@ bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
                     continue;
                 }
 
-            if ( !memcmp(threshbydst_ipc[i].ipdst, ip_dst_bits, sizeof(threshbydst_ipc[i].ipdst)) && !strcmp(threshbydst_ipc[i].sid, rulestruct[rule_position].s_sid ))
+            if ( !memcmp(threshbydst_ipc[i].ipdst, ip_dst_bits, sizeof(threshbydst_ipc[i].ipdst)) && threshbydst_ipc[i].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh_by_dst);
@@ -232,7 +232,7 @@ bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(NORMAL, "Threshold SID %s by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 " by destination IP address. [%s]", threshbydst_ipc[i].sid, ip_dst);
                                 }
 
                             counters->threshold_total++;
@@ -254,7 +254,7 @@ bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits
             pthread_mutex_lock(&Thresh_By_Dst_Mutex);
 
             memcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst, ip_dst_bits, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].ipdst));
-            strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid, rulestruct[rule_position].s_sid, sizeof(threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid));
+            threshbydst_ipc[counters_ipc->thresh_count_by_dst].sid = rulestruct[rule_position].s_sid;
             selector == NULL ? threshbydst_ipc[counters_ipc->thresh_count_by_dst].selector[0] = '\0' : strlcpy(threshbydst_ipc[counters_ipc->thresh_count_by_dst].selector, selector, MAXSELECTOR);
             threshbydst_ipc[counters_ipc->thresh_count_by_dst].count = 1;
             threshbydst_ipc[counters_ipc->thresh_count_by_dst].utime = atol(timet);
@@ -308,7 +308,7 @@ bool Thresh_By_Username( int rule_position, char *normalize_username, char *sele
                     continue;
                 }
 
-            if ( !strcmp(threshbyusername_ipc[rule_position].username, normalize_username) && !strcmp(threshbyusername_ipc[rule_position].sid, rulestruct[rule_position].s_sid ))
+            if ( !strcmp(threshbyusername_ipc[rule_position].username, normalize_username) && threshbyusername_ipc[rule_position].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh_by_username);
@@ -336,7 +336,7 @@ bool Thresh_By_Username( int rule_position, char *normalize_username, char *sele
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(NORMAL, "Threshold SID %s by_username / by_string. [%s]", threshbyusername_ipc[rule_position].sid, normalize_username);
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 " by_username / by_string. [%s]", threshbyusername_ipc[rule_position].sid, normalize_username);
                                 }
 
                             counters->threshold_total++;
@@ -359,7 +359,7 @@ bool Thresh_By_Username( int rule_position, char *normalize_username, char *sele
             pthread_mutex_lock(&Thresh_By_Username_Mutex);
 
             strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username, normalize_username, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].username));
-            strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid, rulestruct[rule_position].s_sid, sizeof(threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid));
+            threshbyusername_ipc[counters_ipc->thresh_count_by_username].sid = rulestruct[rule_position].s_sid;
             selector == NULL ? threshbyusername_ipc[counters_ipc->thresh_count_by_username].selector[0] = '\0' : strlcpy(threshbyusername_ipc[counters_ipc->thresh_count_by_username].selector, selector, MAXSELECTOR);
             threshbyusername_ipc[counters_ipc->thresh_count_by_username].count = 1;
             threshbyusername_ipc[counters_ipc->thresh_count_by_username].utime = atol(timet);
@@ -414,7 +414,7 @@ bool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
                     continue;
                 }
 
-            if ( threshbydstport_ipc[rule_position].ipdstport == ip_dstport_u32 && !strcmp(threshbydstport_ipc[rule_position].sid, rulestruct[rule_position].s_sid ))
+            if ( threshbydstport_ipc[rule_position].ipdstport == ip_dstport_u32 && threshbydstport_ipc[rule_position].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh_by_dstport);
@@ -438,7 +438,7 @@ bool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(NORMAL, "Threshold SID %s by destination IP port. [%s]", threshbydstport_ipc[rule_position].sid, ip_dstport_u32);
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 " by destination IP port. [%s]", threshbydstport_ipc[rule_position].sid, ip_dstport_u32);
                                 }
 
                             counters->threshold_total++;
@@ -462,7 +462,7 @@ bool Thresh_By_DstPort( int rule_position, uint32_t ip_dstport_u32, char *select
 
 
             threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].ipdstport = ip_dstport_u32;
-            strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid, rulestruct[rule_position].s_sid, sizeof(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid));
+            threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].sid = rulestruct[rule_position].s_sid;
             selector == NULL ? threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].selector[0] = '\0' : strlcpy(threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].selector, selector, MAXSELECTOR);
             threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].count = 1;
             threshbydstport_ipc[counters_ipc->thresh_count_by_dstport].utime = atol(timet);
@@ -513,7 +513,7 @@ bool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
                     continue;
                 }
 
-            if ( threshbysrcport_ipc[rule_position].ipsrcport == ip_srcport_u32 && !strcmp(threshbysrcport_ipc[rule_position].sid, rulestruct[rule_position].s_sid ))
+            if ( threshbysrcport_ipc[rule_position].ipsrcport == ip_srcport_u32 && threshbysrcport_ipc[rule_position].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh_by_srcport);
@@ -537,7 +537,7 @@ bool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 
                             if ( debug->debuglimits )
                                 {
-                                    Sagan_Log(NORMAL, "Threshold SID %s by source IP port. [%s]", threshbysrcport_ipc[rule_position].sid, ip_srcport_u32);
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 " by source IP port. [%s]", threshbysrcport_ipc[rule_position].sid, ip_srcport_u32);
                                 }
 
                             counters->threshold_total++;
@@ -561,7 +561,7 @@ bool Thresh_By_SrcPort( int rule_position, uint32_t ip_srcport_u32, char *select
 
 
             threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].ipsrcport = ip_srcport_u32;
-            strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid, rulestruct[rule_position].s_sid, sizeof(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid));
+            threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].sid = rulestruct[rule_position].s_sid;
             selector == NULL ? threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].selector[0] = '\0' : strlcpy(threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].selector, selector, MAXSELECTOR);
             threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].count = 1;
             threshbysrcport_ipc[counters_ipc->thresh_count_by_srcport].utime = atol(timet);

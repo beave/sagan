@@ -86,7 +86,7 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
 
 
     snprintf(data, sizeof(data), "\n\
-ID:%lu:%s\n\
+ID:%lu:%" PRIu64 "\n\
 Message:%s\n\
 Classification:%s\n\
 Drop:%s\n\

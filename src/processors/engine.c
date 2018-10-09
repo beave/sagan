@@ -1374,7 +1374,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     processor_info_engine_dst_port                 =       ip_dstport_u32;
                                                                                                                                     processor_info_engine_src_port                 =       ip_srcport_u32;
                                                                                                                                     processor_info_engine_proto                    =       proto;
-                                                                                                                                    processor_info_engine_alertid                  =       atoi(rulestruct[b].s_sid);
+                                                                                                                                    processor_info_engine_alertid                  =       rulestruct[b].s_sid;
 
                                                                                                                                     if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
                                                                                                                                         {

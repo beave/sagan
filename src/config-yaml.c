@@ -2758,7 +2758,7 @@ void Load_YAML_Config( char *yaml_file )
             for ( check = a+1; check < counters->rulecount; check++)
                 {
 
-                    if (!strcmp (rulestruct[check].s_sid, rulestruct[a].s_sid ))
+                    if ( rulestruct[check].s_sid == rulestruct[a].s_sid )
                         {
                             Sagan_Log(ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
                         }

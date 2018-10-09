@@ -124,7 +124,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                        "",
                        "",
                        config->sagan_proto,
-                       atoi(rulestruct[rule_position].s_sid),
+                       rulestruct[rule_position].s_sid,
                        config->sagan_port,
                        config->sagan_port,
                        rule_position, tp );
@@ -172,7 +172,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                        "",
                        "",
                        config->sagan_proto,
-                       atoi(rulestruct[rule_position].s_sid),
+                       rulestruct[rule_position].s_sid,
                        config->sagan_port,
                        config->sagan_port,
                        rule_position, tp );

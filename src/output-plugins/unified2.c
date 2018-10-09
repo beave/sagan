@@ -145,7 +145,7 @@ void Unified2( _Sagan_Event *Event )
     UNIFIED_SET(alertdata, type, event_second, htonl(Event->event_time.tv_sec)); 		// Event epoch
     UNIFIED_SET(alertdata, type, event_microsecond, htonl( Event->event_time.tv_usec));		// Event microseconds
 
-    UNIFIED_SET(alertdata, type, signature_id, htonl(atoi(Event->sid)));
+    UNIFIED_SET(alertdata, type, signature_id, htonl(Event->sid));
     UNIFIED_SET(alertdata, type, signature_revision, htonl(atoi(Event->rev)));			// Rule Revision
 
     /* Search for the classification type. */

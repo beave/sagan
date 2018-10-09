@@ -50,7 +50,7 @@ void Fast_File( _Sagan_Event *Event )
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 0);
 
-    fprintf(config->sagan_fast_stream, "%s [**] [%lu:%s] %s [**] [Classification: %s] [Priority: %d] ", timebuf,
+    fprintf(config->sagan_fast_stream, "%s [**] [%lu:%" PRIu64 "] %s [**] [Classification: %s] [Priority: %d] ", timebuf,
             Event->generatorid, Event->sid, Event->f_msg, Event->class, Event->pri);
 
     if ( Event->ip_proto == 1 )

@@ -1781,7 +1781,7 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Remove_Spaces(arg);
-                            strlcpy(rulestruct[counters->rulecount].s_sid, arg, sizeof(rulestruct[counters->rulecount].s_sid));
+                            rulestruct[counters->rulecount].s_sid = atol(arg);
                         }
 
                     if (!strcmp(rulesplit, "tag" ))
@@ -2251,7 +2251,7 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].fwsam_src_or_dst=2;
                                 }
 
-                            /* Error checking?!!? */
+                            /* DEBUG: Error checking?!!? */
 
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);

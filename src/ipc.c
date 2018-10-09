@@ -147,7 +147,7 @@ bool Clean_IPC_Object( int type )
                             Temp_After2_IPC[new_count].count = After2_IPC[i].count;
                             Temp_After2_IPC[new_count].utime = After2_IPC[i].utime;
                             Temp_After2_IPC[new_count].expire = After2_IPC[i].expire;
-                            strlcpy(Temp_After2_IPC[new_count].sid, After2_IPC[i].sid, sizeof(Temp_After2_IPC[new_count].sid));
+                            Temp_After2_IPC[new_count].sid = After2_IPC[i].sid;
                             new_count++;
 
                         }
@@ -162,7 +162,7 @@ bool Clean_IPC_Object( int type )
                             After2_IPC[i].count = Temp_After2_IPC[i].count;
                             After2_IPC[i].utime = Temp_After2_IPC[i].utime;
                             After2_IPC[i].expire = Temp_After2_IPC[i].expire;
-                            strlcpy(After2_IPC[i].sid, Temp_After2_IPC[i].sid, sizeof(After2_IPC[i].sid));
+                            After2_IPC[i].sid =  Temp_After2_IPC[i].sid;
                         }
 
                     counters_ipc->after2_count = new_count;
@@ -238,7 +238,7 @@ bool Clean_IPC_Object( int type )
                             temp_threshbysrc_ipc[new_count].count = threshbysrc_ipc[i].count;
                             temp_threshbysrc_ipc[new_count].utime = threshbysrc_ipc[i].utime;
                             temp_threshbysrc_ipc[new_count].expire = threshbysrc_ipc[i].expire;
-                            strlcpy(temp_threshbysrc_ipc[new_count].sid, threshbysrc_ipc[i].sid, sizeof(temp_threshbysrc_ipc[new_count].sid));
+                            temp_threshbysrc_ipc[new_count].sid = threshbysrc_ipc[i].sid;
                             new_count++;
                         }
                 }
@@ -251,7 +251,7 @@ bool Clean_IPC_Object( int type )
                             threshbysrc_ipc[i].count = temp_threshbysrc_ipc[i].count;
                             threshbysrc_ipc[i].utime = temp_threshbysrc_ipc[i].utime;
                             threshbysrc_ipc[i].expire = temp_threshbysrc_ipc[i].expire;
-                            strlcpy(threshbysrc_ipc[i].sid, temp_threshbysrc_ipc[i].sid, sizeof(threshbysrc_ipc[i].sid));
+                            threshbysrc_ipc[i].sid = temp_threshbysrc_ipc[i].sid;
                         }
 
                     counters_ipc->thresh_count_by_src = new_count;
@@ -328,7 +328,7 @@ bool Clean_IPC_Object( int type )
                             temp_threshbydst_ipc[new_count].count = threshbydst_ipc[i].count;
                             temp_threshbydst_ipc[new_count].utime = threshbydst_ipc[i].utime;
                             temp_threshbydst_ipc[new_count].expire = threshbydst_ipc[i].expire;
-                            strlcpy(temp_threshbydst_ipc[new_count].sid, threshbydst_ipc[i].sid, sizeof(temp_threshbydst_ipc[new_count].sid));
+                            temp_threshbydst_ipc[new_count].sid = threshbydst_ipc[i].sid;
                             new_count++;
                         }
                 }
@@ -341,7 +341,7 @@ bool Clean_IPC_Object( int type )
                             threshbydst_ipc[i].count = temp_threshbydst_ipc[i].count;
                             threshbydst_ipc[i].utime = temp_threshbydst_ipc[i].utime;
                             threshbydst_ipc[i].expire = temp_threshbydst_ipc[i].expire;
-                            strlcpy(threshbydst_ipc[i].sid, temp_threshbydst_ipc[i].sid, sizeof(threshbydst_ipc[i].sid));
+                            threshbydst_ipc[i].sid = temp_threshbydst_ipc[i].sid;
                         }
 
                     counters_ipc->thresh_count_by_dst = new_count;
@@ -414,7 +414,7 @@ bool Clean_IPC_Object( int type )
                             temp_threshbysrcport_ipc[new_count].count = threshbysrcport_ipc[i].count;
                             temp_threshbysrcport_ipc[new_count].utime = threshbysrcport_ipc[i].utime;
                             temp_threshbysrcport_ipc[new_count].expire = threshbysrcport_ipc[i].expire;
-                            strlcpy(temp_threshbysrcport_ipc[new_count].sid, threshbysrcport_ipc[i].sid, sizeof(temp_threshbysrcport_ipc[new_count].sid));
+                            temp_threshbysrcport_ipc[new_count].sid = threshbysrcport_ipc[i].sid;
                             new_count++;
                         }
                 }
@@ -427,7 +427,7 @@ bool Clean_IPC_Object( int type )
                             threshbysrcport_ipc[i].count = temp_threshbysrcport_ipc[i].count;
                             threshbysrcport_ipc[i].utime = temp_threshbysrcport_ipc[i].utime;
                             threshbysrcport_ipc[i].expire = temp_threshbysrcport_ipc[i].expire;
-                            strlcpy(threshbysrcport_ipc[i].sid, temp_threshbysrcport_ipc[i].sid, sizeof(threshbysrcport_ipc[i].sid));
+                            threshbysrcport_ipc[i].sid = temp_threshbysrcport_ipc[i].sid;
                         }
 
                     counters_ipc->thresh_count_by_srcport = new_count;
@@ -500,7 +500,7 @@ bool Clean_IPC_Object( int type )
                             temp_threshbydstport_ipc[new_count].count = threshbydstport_ipc[i].count;
                             temp_threshbydstport_ipc[new_count].utime = threshbydstport_ipc[i].utime;
                             temp_threshbydstport_ipc[new_count].expire = threshbydstport_ipc[i].expire;
-                            strlcpy(temp_threshbydstport_ipc[new_count].sid, threshbydstport_ipc[i].sid, sizeof(temp_threshbydstport_ipc[new_count].sid));
+                            temp_threshbydstport_ipc[new_count].sid = threshbydstport_ipc[i].sid;
                             new_count++;
                         }
                 }
@@ -513,7 +513,7 @@ bool Clean_IPC_Object( int type )
                             threshbydstport_ipc[i].count = temp_threshbydstport_ipc[i].count;
                             threshbydstport_ipc[i].utime = temp_threshbydstport_ipc[i].utime;
                             threshbydstport_ipc[i].expire = temp_threshbydstport_ipc[i].expire;
-                            strlcpy(threshbydstport_ipc[i].sid, temp_threshbydstport_ipc[i].sid, sizeof(threshbydstport_ipc[i].sid));
+                            threshbydstport_ipc[i].sid = temp_threshbydstport_ipc[i].sid;
                         }
 
                     counters_ipc->thresh_count_by_dstport = new_count;
@@ -585,7 +585,7 @@ bool Clean_IPC_Object( int type )
                             temp_threshbyusername_ipc[new_count].count = threshbyusername_ipc[i].count;
                             temp_threshbyusername_ipc[new_count].utime = threshbyusername_ipc[i].utime;
                             temp_threshbyusername_ipc[new_count].expire = threshbyusername_ipc[i].expire;
-                            strlcpy(temp_threshbyusername_ipc[new_count].sid, threshbyusername_ipc[i].sid, sizeof(temp_threshbyusername_ipc[new_count].sid));
+                            temp_threshbyusername_ipc[new_count].sid = threshbyusername_ipc[i].sid;
                             strlcpy(temp_threshbyusername_ipc[new_count].username, threshbyusername_ipc[i].username, sizeof(temp_threshbyusername_ipc[new_count].username));
 
                             new_count++;
@@ -599,7 +599,7 @@ bool Clean_IPC_Object( int type )
                             threshbyusername_ipc[i].count = temp_threshbyusername_ipc[i].count;
                             threshbyusername_ipc[i].utime = temp_threshbyusername_ipc[i].utime;
                             threshbyusername_ipc[i].expire = temp_threshbyusername_ipc[i].expire;
-                            strlcpy(threshbyusername_ipc[i].sid, temp_threshbyusername_ipc[i].sid, sizeof(threshbyusername_ipc[i].sid));
+                            threshbyusername_ipc[i].sid = temp_threshbyusername_ipc[i].sid;
                             strlcpy(threshbyusername_ipc[i].username, temp_threshbyusername_ipc[i].username, sizeof(threshbyusername_ipc[i].username));
                         }
 

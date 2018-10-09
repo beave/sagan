@@ -456,7 +456,7 @@ struct _Sagan_Event
     char *program;
     char *message;
 
-    char *sid;
+    uint64_t sid;
     char *rev;
     char *class;
     int pri;
@@ -485,7 +485,7 @@ struct thresh_by_src_ipc
     unsigned char ipsrc[MAXIPBIT];
     int  count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];
@@ -501,7 +501,7 @@ struct thresh_by_dst_ipc
     unsigned char ipdst[MAXIPBIT];
     int  count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];
@@ -517,7 +517,7 @@ struct thresh_by_srcport_ipc
     uint32_t ipsrcport;
     int  count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
 };
@@ -530,7 +530,7 @@ struct thresh_by_dstport_ipc
     uint32_t ipdstport;
     int  count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
 };
@@ -544,7 +544,7 @@ struct thresh_by_username_ipc
     char username[128];
     int  count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];
@@ -573,7 +573,7 @@ struct _After2_IPC
     uint64_t count;
     uint64_t total_count;
     uint64_t utime;
-    char sid[20];
+    uint64_t sid;
     int expire;
     char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];

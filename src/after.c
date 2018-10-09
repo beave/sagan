@@ -109,26 +109,23 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
         }
 
     if ( rulestruct[rule_position].after2_method_srcport == true )
-	{
-	src_port_tmp = src_port;
-	}
+        {
+            src_port_tmp = src_port;
+        }
 
     if ( rulestruct[rule_position].after2_method_dstport == true )
         {
-        dst_port_tmp = dst_port;
+            dst_port_tmp = dst_port;
         }
 
-
     snprintf(hash_string, sizeof(hash_string), "%s|%d|%s|%d|%s", src_tmp, src_port_tmp, dst_tmp, dst_port_tmp, username_tmp);
-    printf("%s\n", hash_string);
 
     hash = Djb2_Hash( hash_string );
 
     for (i = 0; i < counters_ipc->after2_count; i++ )
         {
 
-            if ( hash == After2_IPC[i].hash &&
-                    !strcmp(After2_IPC[i].sid, rulestruct[rule_position].s_sid) &&
+            if ( hash == After2_IPC[i].hash && After2_IPC[i].sid == rulestruct[rule_position].s_sid &&
                     ( selector == NULL || !strcmp(selector, After2_IPC[i].selector)) )
                 {
 
@@ -179,7 +176,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                                             strlcat(debug_string, "by_username ", sizeof(debug_string));
                                         }
 
-                                    Sagan_Log(NORMAL, "After SID %s. Tracking by %s[Hash: %lu]", After2_IPC[i].sid, debug_string, hash);
+                                    Sagan_Log(NORMAL, "After SID %" PRIu64 ". Tracking by %s[Hash: %lu]", After2_IPC[i].sid, debug_string, hash);
 
                                 }
 
@@ -210,6 +207,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             After2_IPC[counters_ipc->after2_count].count = 1;
             After2_IPC[counters_ipc->after2_count].utime = atol(timet);
             After2_IPC[counters_ipc->after2_count].expire = rulestruct[rule_position].after2_seconds;
+            After2_IPC[counters_ipc->after2_count].sid = rulestruct[rule_position].s_sid;
 
             After2_IPC[counters_ipc->after2_count].after2_method_src = rulestruct[rule_position].after2_method_src;
             After2_IPC[counters_ipc->after2_count].after2_method_dst = rulestruct[rule_position].after2_method_dst;
@@ -219,7 +217,6 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             strlcpy(After2_IPC[counters_ipc->after2_count].ip_dst, dst_tmp, sizeof(After2_IPC[counters_ipc->after2_count].ip_dst));
             strlcpy(After2_IPC[counters_ipc->after2_count].username, username_tmp, sizeof(After2_IPC[counters_ipc->after2_count].username));
 
-            strlcpy(After2_IPC[counters_ipc->after2_count].sid, rulestruct[rule_position].s_sid, sizeof(After2_IPC[counters_ipc->after2_count].sid));
             strlcpy(After2_IPC[counters_ipc->after2_count].syslog_message, syslog_message, sizeof(After2_IPC[counters_ipc->after2_count].syslog_message));
             strlcpy(After2_IPC[counters_ipc->after2_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(After2_IPC[counters_ipc->after2_count].signature_msg));
 
