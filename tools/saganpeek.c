@@ -589,10 +589,20 @@ int main(int argc, char **argv)
 			    printf("IP SRC: %s\n", After2_IPC[i].ip_src); 
 			    }
 
+                            if ( After2_IPC[i].after2_method_srcport == true )
+                            {
+                            printf("SRC Port: %d\n", After2_IPC[i].src_port);
+                            }
+
 			    if ( After2_IPC[i].after2_method_dst == true )
 			    {
 		            printf("IP DST: %s\n", After2_IPC[i].ip_dst);
 		            }
+
+                            if ( After2_IPC[i].after2_method_dstport == true )
+                            {
+                            printf("DST Port: %s\n", After2_IPC[i].dst_port); 
+                            } 
 
 			    if ( After2_IPC[i].after2_method_username == true )
 			    {
