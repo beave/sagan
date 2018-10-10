@@ -51,7 +51,7 @@ struct _Sagan_IPC_Xbit
     uint64_t xbit_date;
     uint64_t xbit_expire;
     int expire;
-    char selector[MAXSELECTOR]; // No need to clean this, as we always set it when tracking
+    char selector[MAXSELECTOR];  /* No need to clean this, as we always set it when tracking */
     char syslog_message[MAX_SYSLOGMSG];
     uint64_t sid;
     char signature_msg[MAX_SAGAN_MSG];

@@ -140,30 +140,29 @@ void Load_Rules( const char *ruleset )
 
     uint64_t fwsam_time_tmp;
 
-    char netstr[RULEBUF];
-    char rulestr[RULEBUF];
-    char rulebuf[RULEBUF];
+    char netstr[RULEBUF] = { 0 };
+    char rulestr[RULEBUF] = { 0 };
+    char rulebuf[RULEBUF] = { 0 };
 
-    char pcrerule[MAX_PCRE_SIZE];
+    char pcrerule[MAX_PCRE_SIZE] = { 0 };
 
-    char tmp4[MAX_CHECK_FLOWS * 10];
-    char tmp3[MAX_CHECK_FLOWS * 21];
-    char tmp2[RULEBUF];
-    char tmp[2];
-    char tmp1[CONFBUF];
-    char tmp5[CONFBUF];
+    char tmp4[MAX_CHECK_FLOWS * 10] = { 0 };
+    char tmp3[MAX_CHECK_FLOWS * 21] = { 0 };
+    char tmp2[RULEBUF] = { 0 };
+    char tmp[2] = { 0 };
+    char tmp1[CONFBUF] = { 0 };
 
-    char rule_tmp[RULEBUF];
+    char rule_tmp[RULEBUF] = { 0 };
 
-    char final_content[512];
+    char final_content[512] = { 0 };
 
-    char flow_a[1024];
-    char flow_b[1024];
+    char flow_a[1024] = { 0 };
+    char flow_b[1024] = { 0 };
 
-    char alert_time_tmp[10];
-    char alert_tmp_minute[3];
-    char alert_tmp_hour[3];
-    char alert_time_all[5];
+    char alert_time_tmp[10] = { 0 };
+    char alert_tmp_minute[3] = { 0 };
+    char alert_tmp_hour[3] = { 0 };
+    char alert_time_all[5] = { 0 } ;
 
     int linecount=0;
     int netcount=0;

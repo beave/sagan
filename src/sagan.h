@@ -131,8 +131,7 @@ bool     Check_Content_Not( char * );
 uint32_t  Djb2_Hash( char * );
 bool     Starts_With(const char *str, const char *prefix);
 char      *strrpbrk(const char *str, const char *accept);
-
-
+bool Is_IP_Range (char *str);
 
 #if defined(F_GETPIPE_SZ) && defined(F_SETPIPE_SZ)
 void      Set_Pipe_Size( FILE * );
@@ -488,7 +487,8 @@ struct _Threshold2_IPC
     char username[MAX_USERNAME_SIZE];
 
     uint64_t count;
-    uint64_t total_count;
+    uint64_t target_count;
+
     uint64_t utime;
     uint64_t sid;
     int expire;
@@ -518,7 +518,8 @@ struct _After2_IPC
     char username[MAX_USERNAME_SIZE];
 
     uint64_t count;
-    uint64_t total_count;
+    uint64_t target_count;
+
     uint64_t utime;
     uint64_t sid;
     int expire;

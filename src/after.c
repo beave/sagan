@@ -118,7 +118,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                     pthread_mutex_lock(&After2_Mutex);
 
                     After2_IPC[i].count++;
-                    After2_IPC[i].total_count++;
+//                    After2_IPC[i].total_count++;
 
                     after_oldtime = atol(timet) - After2_IPC[i].utime;
 
@@ -171,7 +171,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                                             strlcat(debug_string, "by_dstport ", sizeof(debug_string));
                                         }
 
-                                    Sagan_Log(NORMAL, "After SID %" PRIu64 ". Tracking by %s[Hash: %lu]", After2_IPC[i].sid, debug_string, hash);
+                                    Sagan_Log(NORMAL, "After SID %" PRIu64 ". Tracking by %s[%d: Hash: %lu]", After2_IPC[i].sid, debug_string, i, hash);
 
                                 }
 
@@ -203,6 +203,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             After2_IPC[counters_ipc->after2_count].utime = atol(timet);
             After2_IPC[counters_ipc->after2_count].expire = rulestruct[rule_position].after2_seconds;
             After2_IPC[counters_ipc->after2_count].sid = rulestruct[rule_position].s_sid;
+            After2_IPC[counters_ipc->after2_count].target_count =rulestruct[rule_position].after2_count;
 
             After2_IPC[counters_ipc->after2_count].after2_method_src = rulestruct[rule_position].after2_method_src;
             After2_IPC[counters_ipc->after2_count].after2_method_dst = rulestruct[rule_position].after2_method_dst;

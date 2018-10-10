@@ -385,15 +385,8 @@ void IPC_Init(void)
 
     bool new_counters = 0;
     bool new_object = 0;
-    int i;
 
     char tmp_object_check[255] = { 0 };
-    char time_buf[80] = { 0 };
-
-    char ip_src[MAXIP] = { 0 };
-    char ip_dst[MAXIP] = { 0 };;
-
-    /* For convert 32 bit IP to octet */
 
     Sagan_Log(NORMAL, "Initializing shared memory objects.");
     Sagan_Log(NORMAL, "---------------------------------------------------------------------------");
@@ -482,7 +475,7 @@ void IPC_Init(void)
 
     if ((config->shm_thresh2 = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(NORMAL, "+ Threshold2 shared object (new).");
+            Sagan_Log(NORMAL, "+ Threshold shared object (new).");
             new_object=1;
         }
 
@@ -548,31 +541,6 @@ void IPC_Init(void)
 
 
     new_object = 0;
-
-    /* DEBUG - THIS ISNT DONE */
-    /*
-        if ( debug->debugipc && counters_ipc->after_count_by_src >= 1 )
-            {
-
-                Sagan_Log(DEBUG, "");
-                Sagan_Log(DEBUG, "*** After by source ***");
-                Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                Sagan_Log(DEBUG, "%-45s| %-45s| %-11s| %-21s| %-11s| %s", "Selector", "SRC IP", "Counter","Date added/modified", "SID", "Expire" );
-                Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-
-                for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
-                    {
-                        Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
-
-                        u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
-
-                        Sagan_Log(DEBUG, "%-45s| %-45s| %-11d| %-21s| %-11s| %d", afterbysrc_ipc[i].selector, ip_src, afterbysrc_ipc[i].count, time_buf, afterbysrc_ipc[i].sid, afterbysrc_ipc[i].expire);
-                    }
-
-                Sagan_Log(DEBUG, "");
-            }
-
-    */
 
     /* Client tracking */
 

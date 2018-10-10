@@ -37,6 +37,7 @@
 #include <stdbool.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -1235,8 +1236,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( check_flow_return == true )
                                         {
 
-                                            /* DEBUG: Had rulestruct[b].xbit_flag */
-
                                             if ( rulestruct[b].xbit_flag == false ||
                                                     ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count == 0 ) ||
                                                     ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count && xbit_return ) ||
@@ -1285,18 +1284,15 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                             if ( rulestruct[b].after2 == true )
                                                                                                                                 {
-
                                                                                                                                     after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                 }
 
-
-                                                                                                                            /* THRESHOLD2 */
+                                                                                                                            /* Threshold */
 
                                                                                                                             thresh_log_flag = false;
 
                                                                                                                             if ( rulestruct[b].threshold2_type != 0 && after_log_flag == false )
                                                                                                                                 {
-
                                                                                                                                     thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                 }
 
@@ -1310,9 +1306,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                             pthread_mutex_lock(&CounterSaganFoundMutex);
                                                                                                                             counters->saganfound++;
                                                                                                                             pthread_mutex_unlock(&CounterSaganFoundMutex);
-
                                                                                                                             /* Check for thesholding & "after" */
-
                                                                                                                             if ( thresh_log_flag == false && after_log_flag == false )
                                                                                                                                 {
 

@@ -57,6 +57,9 @@
 #include <yaml.h>
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+#include "message-json-map.h"
+#endif
 
 #ifdef WITH_BLUEDOT
 #include "processors/bluedot.h"
@@ -120,7 +123,7 @@ void Load_YAML_Config( char *yaml_file )
     unsigned char toggle = 0;
 
     char *tok = NULL;
-    char *ptr = NULL;
+    //char *ptr = NULL;
 
     char tmp[CONFBUF] = { 0 };
 
@@ -129,6 +132,7 @@ void Load_YAML_Config( char *yaml_file )
 #ifdef HAVE_LIBMAXMINDDB
 
     char *geo_tok = NULL;
+    char *maxmind_ptr = NULL;
 
     unsigned char geoip_ipbits[MAXIPBIT] = { 0 };
     unsigned char geoip_maskbits[MAXIPBIT]= { 0 };
@@ -143,6 +147,7 @@ void Load_YAML_Config( char *yaml_file )
 #if WITH_BLUEDOT
 
     char *bluedot_tok = NULL;
+    char *bluedot_ptr = NULL;
 
     unsigned char bluedot_ipbits[MAXIPBIT] = { 0 };
     unsigned char bluedot_maskbits[MAXIPBIT]= { 0 };
@@ -1089,12 +1094,12 @@ void Load_YAML_Config( char *yaml_file )
                                             Var_To_Value(value, tmp, sizeof(tmp));
                                             Remove_Spaces(tmp);
 
-                                            ptr = strtok_r(tmp, ",", &tok);
+                                            maxmind_ptr = strtok_r(tmp, ",", &tok);
 
-                                            while( ptr != NULL )
+                                            while( maxmind_ptr != NULL )
                                                 {
 
-                                                    geoip_iprange = strtok_r(ptr, "/", &geo_tok);
+                                                    geoip_iprange = strtok_r(maxmind_ptr, "/", &geo_tok);
 
                                                     if ( geoip_iprange == NULL )
                                                         {
@@ -1137,7 +1142,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     counters->geoip_skip_count++;
                                                     pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
 
-                                                    ptr = strtok_r(NULL, ",", &tok);
+                                                    maxmind_ptr = strtok_r(NULL, ",", &tok);
 
                                                 }
 
@@ -1636,12 +1641,12 @@ void Load_YAML_Config( char *yaml_file )
                                             Var_To_Value(value, tmp, sizeof(tmp));
                                             Remove_Spaces(tmp);
 
-                                            ptr = strtok_r(tmp, ",", &tok);
+                                            bluedot_ptr = strtok_r(tmp, ",", &tok);
 
-                                            while( ptr != NULL )
+                                            while ( bluedot_ptr != NULL )
                                                 {
 
-                                                    bluedot_iprange = strtok_r(ptr, "/", &bluedot_tok);
+                                                    bluedot_iprange = strtok_r(bluedot_ptr, "/", &bluedot_tok);
 
                                                     if ( bluedot_iprange == NULL )
                                                         {
@@ -1683,7 +1688,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     counters->bluedot_skip_count++;
                                                     pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
 
-                                                    ptr = strtok_r(NULL, ",", &tok);
+                                                    bluedot_ptr = strtok_r(NULL, ",", &tok);
 
                                                 }
 

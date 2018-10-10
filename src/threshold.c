@@ -167,8 +167,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
                                             strlcat(debug_string, "by_dstport ", sizeof(debug_string));
                                         }
 
-                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 ". Tracking by %s[Hash: %lu]", Threshold2_IPC[i].sid, debug_string, hash);
-
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 ". Tracking by %s[%d: Hash: %lu]", Threshold2_IPC[i].sid, debug_string, i, hash);
 
                                 }
 
@@ -200,7 +199,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
             Threshold2_IPC[counters_ipc->thresh2_count].utime = atol(timet);
             Threshold2_IPC[counters_ipc->thresh2_count].expire = rulestruct[rule_position].threshold2_seconds;
             Threshold2_IPC[counters_ipc->thresh2_count].sid = rulestruct[rule_position].s_sid;
-
+            Threshold2_IPC[counters_ipc->thresh2_count].target_count =rulestruct[rule_position].threshold2_count;
             Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_src = rulestruct[rule_position].threshold2_method_src;
             Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_dst = rulestruct[rule_position].threshold2_method_dst;
             Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_username = rulestruct[rule_position].threshold2_method_username;

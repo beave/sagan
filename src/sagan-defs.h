@@ -175,7 +175,7 @@ typedef void json_object;
 
 #define MAX_FILENAME_SIZE	256
 #define MAX_URL_SIZE		8192
-#define MAX_USERNAME_SIZE	512
+#define MAX_USERNAME_SIZE	64
 #define MAX_HOSTNAME_SIZE	255
 
 /* Locations of IPC/Share memory "files" */
@@ -191,15 +191,14 @@ typedef void json_object;
 #define THRESH_BY_USERNAME_IPC_FILE 	"sagan-thresh-by-username.shared"
 
 #define AFTER2_IPC_FILE			"sagan-after2.shared"
-#define THRESHOLD2_IPC_FILE             "sagan-after2.shared"
-
+#define THRESHOLD2_IPC_FILE             "sagan-threshold2.shared"
 #define CLIENT_TRACK_IPC_FILE 		"sagan-track-clients.shared"
 
 /* Default IPC/mmap sizes */
 
-#define DEFAULT_IPC_CLIENT_TRACK_IPC	10000
-#define DEFAULT_IPC_AFTER2_IPC		1000000
-#define DEFAULT_IPC_THRESHOLD2_IPC      1000000
+#define DEFAULT_IPC_CLIENT_TRACK_IPC	1000
+#define DEFAULT_IPC_AFTER2_IPC		10000
+#define DEFAULT_IPC_THRESHOLD2_IPC      10000
 #define DEFAULT_IPC_XBITS		10000
 
 #define	AFTER2				0
