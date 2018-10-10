@@ -18,6 +18,8 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst,  uint32_t dst_port, char *username, char *selector, char *syslog_message );
+
 bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message );
 bool Thresh_By_Dst ( int rule_position, char *ip_dst, unsigned char *ip_dst_bits, char *selector, char *syslog_message );
 bool Thresh_By_Username( int rule_position, char *normalize_username, char *selector, char *syslog_message );

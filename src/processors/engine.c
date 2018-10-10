@@ -1290,6 +1290,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                 }
 
 
+                                                                                                                            /* THRESHOLD2 */
+
+                                                                                                                            thresh_log_flag = false;
+
+                                                                                                                            if ( rulestruct[b].threshold2_type != 0 && after_log_flag == false )
+                                                                                                                                {
+
+                                                                                                                                    thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
+                                                                                                                                }
+
+
                                                                                                                             thresh_log_flag = false;
 
                                                                                                                             if ( rulestruct[b].threshold_type != 0 &&

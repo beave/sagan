@@ -207,12 +207,8 @@ void Load_YAML_Config( char *yaml_file )
             config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
             config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
 
-//            config->max_after_by_src = DEFAULT_IPC_AFTER_BY_SRC;
-//            config->max_after_by_dst = DEFAULT_IPC_AFTER_BY_DST;
-//            config->max_after_by_srcport = DEFAULT_IPC_AFTER_BY_SRC_PORT;
-//            config->max_after_by_dstport = DEFAULT_IPC_AFTER_BY_DST_PORT;
-//            config->max_after_by_username = DEFAULT_IPC_AFTER_BY_USERNAME;
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
+            config->max_threshold2 = DEFAULT_IPC_THRESHOLD2_IPC;
 
             config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
             config->pp_sagan_track_clients = TRACK_TIME;
@@ -938,45 +934,19 @@ void Load_YAML_Config( char *yaml_file )
                                                     Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
-                                    /*
-                                                                        else if (!strcmp(last_pass, "after-by-src"))
-                                                                            {
 
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_after_by_src = atoi(tmp);
+                                    else if (!strcmp(last_pass, "threshold"))
+                                        {
 
-                                                                                if ( config->max_after_by_src == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->max_threshold2 = atoi(tmp);
 
-                                    /*
-                                                                        else if (!strcmp(last_pass, "after-by-dst"))
-                                                                            {
+                                            if ( config->max_threshold2 == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                }
+                                        }
 
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_after_by_dst = atoi(tmp);
-
-                                                                                if ( config->max_after_by_dst == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
-
-                                    /*
-                                                                        else if (!strcmp(last_pass, "after-by-username"))
-                                                                            {
-
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_after_by_username = atoi(tmp);
-
-                                                                                if ( config->max_after_by_username == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
-                                    */
 
                                     else if (!strcmp(last_pass, "after"))
                                         {
@@ -986,7 +956,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if ( config->max_after2 == 0 )
                                                 {
-                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after2' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'after' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 

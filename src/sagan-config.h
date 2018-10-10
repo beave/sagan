@@ -165,6 +165,7 @@ struct _SaganConfig
     int		shm_thresh_by_srcport;
     int		shm_thresh_by_username;
 
+    int		shm_thresh2;
     int	 	shm_after2;
 
     int		shm_track_clients;
@@ -181,6 +182,7 @@ struct _SaganConfig
     int		max_threshold_by_dstport;
     int		max_threshold_by_username;
 
+    int		max_threshold2;
     int		max_after2;
 
     int		max_track_clients;

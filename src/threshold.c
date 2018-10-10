@@ -47,11 +47,15 @@ pthread_mutex_t Thresh_By_Src_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t Thresh_By_Dst_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t Thresh_By_Username_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
+pthread_mutex_t Thresh2_Mutex=PTHREAD_MUTEX_INITIALIZER;
+
 struct thresh_by_src_ipc *threshbysrc_ipc;
 struct thresh_by_dst_ipc *threshbydst_ipc;
 struct thresh_by_srcport_ipc *threshbysrcport_ipc;
 struct thresh_by_dstport_ipc *threshbydstport_ipc;
 struct thresh_by_username_ipc *threshbyusername_ipc;
+
+struct _Threshold2_IPC *Threshold2_IPC;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
@@ -63,6 +67,183 @@ struct _SaganConfig *config;
 /***********************/
 /* Threshold by source */
 /***********************/
+
+bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst,  uint32_t dst_port, char *username, char *selector, char *syslog_message )
+{
+
+    time_t t;
+    struct tm *now;
+    char  timet[20];
+
+    bool thresh_log_flag = false;
+
+    uint64_t thresh_oldtime;
+
+    int i;
+
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
+
+    char src_tmp[MAXIP] = { 0 };
+    char dst_tmp[MAXIP] = { 0 };
+    char username_tmp[MAX_USERNAME_SIZE] = { 0 };
+    uint32_t dst_port_tmp = 0;
+    uint32_t src_port_tmp = 0;
+
+    char hash_string[128] = { 0 };
+    char debug_string[64] = { 0 };
+
+    uint32_t hash;
+
+    username_tmp[0] = '\0';
+
+    if ( rulestruct[rule_position].threshold2_method_src == true )
+        {
+            strlcpy(src_tmp, ip_src, sizeof(src_tmp));
+        }
+
+    if ( rulestruct[rule_position].threshold2_method_dst == true )
+        {
+            strlcpy(dst_tmp, ip_dst, sizeof(dst_tmp));
+        }
+
+    if ( rulestruct[rule_position].threshold2_method_username == true && username != NULL )
+        {
+            strlcpy(username_tmp, username, sizeof(username_tmp));
+        }
+
+    if ( rulestruct[rule_position].threshold2_method_srcport == true )
+        {
+            src_port_tmp = src_port;
+        }
+
+    if ( rulestruct[rule_position].threshold2_method_dstport == true )
+        {
+            dst_port_tmp = dst_port;
+        }
+
+    snprintf(hash_string, sizeof(hash_string), "%s|%d|%s|%d|%s", src_tmp, src_port_tmp, dst_tmp, dst_port_tmp, username_tmp);
+
+    hash = Djb2_Hash( hash_string );
+
+//    printf("|%s|\n", hash_string); DEBUG REMOVE
+
+    for (i = 0; i < counters_ipc->thresh2_count; i++ )
+        {
+
+            if ( hash == Threshold2_IPC[i].hash && Threshold2_IPC[i].sid == rulestruct[rule_position].s_sid &&
+                    ( selector == NULL || !strcmp(selector, Threshold2_IPC[i].selector)) )
+                {
+
+                    File_Lock(config->shm_thresh2);
+                    pthread_mutex_lock(&Thresh2_Mutex);
+
+                    Threshold2_IPC[i].count++;
+                    thresh_oldtime = atol(timet) - Threshold2_IPC[i].utime;
+
+                    Threshold2_IPC[i].utime = atol(timet);
+
+                    strlcpy(Threshold2_IPC[i].syslog_message, syslog_message, sizeof(Threshold2_IPC[i].syslog_message));
+                    strlcpy(Threshold2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(Threshold2_IPC[i].signature_msg));
+
+                    if ( thresh_oldtime > rulestruct[rule_position].threshold2_seconds )
+                        {
+                            Threshold2_IPC[i].count=1;
+                            Threshold2_IPC[i].utime = atol(timet);
+                            thresh_log_flag = false;
+                        }
+
+                    if ( rulestruct[rule_position].threshold2_count < Threshold2_IPC[i].count )
+                        {
+                            thresh_log_flag = true;
+
+                            if ( debug->debuglimits )
+                                {
+
+                                    if ( Threshold2_IPC[i].threshold2_method_src == true )
+                                        {
+                                            strlcat(debug_string, "by_src ", sizeof(debug_string));
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dst == true )
+                                        {
+                                            strlcat(debug_string, "by_dst ", sizeof(debug_string));
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_username == true )
+                                        {
+                                            strlcat(debug_string, "by_username ", sizeof(debug_string));
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_srcport == true )
+                                        {
+                                            strlcat(debug_string, "by_srcport ", sizeof(debug_string));
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dstport == true )
+                                        {
+                                            strlcat(debug_string, "by_dstport ", sizeof(debug_string));
+                                        }
+
+                                    Sagan_Log(NORMAL, "Threshold SID %" PRIu64 ". Tracking by %s[Hash: %lu]", Threshold2_IPC[i].sid, debug_string, hash);
+
+
+                                }
+
+                            counters->threshold_total++;
+                        }
+
+                    pthread_mutex_unlock(&Thresh2_Mutex);
+                    File_Unlock(config->shm_thresh2);
+
+                    return(thresh_log_flag);
+
+                }
+
+        }
+
+    /* If not found,  add it to the array */
+
+    if ( Clean_IPC_Object(THRESHOLD2) == 0 )
+        {
+
+            File_Lock(config->shm_thresh2);
+            pthread_mutex_lock(&Thresh2_Mutex);
+
+            Threshold2_IPC[counters_ipc->thresh2_count].hash = hash;
+
+            selector == NULL ? Threshold2_IPC[counters_ipc->thresh2_count].selector[0] = '\0' : strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].selector, selector, MAXSELECTOR);
+
+            Threshold2_IPC[counters_ipc->thresh2_count].count = 1;
+            Threshold2_IPC[counters_ipc->thresh2_count].utime = atol(timet);
+            Threshold2_IPC[counters_ipc->thresh2_count].expire = rulestruct[rule_position].threshold2_seconds;
+            Threshold2_IPC[counters_ipc->thresh2_count].sid = rulestruct[rule_position].s_sid;
+
+            Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_src = rulestruct[rule_position].threshold2_method_src;
+            Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_dst = rulestruct[rule_position].threshold2_method_dst;
+            Threshold2_IPC[counters_ipc->thresh2_count].threshold2_method_username = rulestruct[rule_position].threshold2_method_username;
+
+            strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].ip_src, src_tmp, sizeof(Threshold2_IPC[counters_ipc->thresh2_count].ip_src));
+            Threshold2_IPC[counters_ipc->thresh2_count].src_port = src_port_tmp;
+
+            strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].ip_dst, dst_tmp, sizeof(Threshold2_IPC[counters_ipc->thresh2_count].ip_dst));
+            Threshold2_IPC[counters_ipc->thresh2_count].dst_port = dst_port_tmp;
+
+            strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].username, username_tmp, sizeof(Threshold2_IPC[counters_ipc->thresh2_count].username));
+
+            strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].syslog_message, syslog_message, sizeof(Threshold2_IPC[counters_ipc->thresh2_count].syslog_message));
+            strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(Threshold2_IPC[counters_ipc->thresh2_count].signature_msg));
+
+            counters_ipc->thresh2_count++;
+
+            pthread_mutex_unlock(&Thresh2_Mutex);
+            File_Unlock(config->shm_thresh2);
+        }
+
+    return(false);
+
+}
 
 bool Thresh_By_Src ( int rule_position, char *ip_src, unsigned char *ip_src_bits, char *selector, char *syslog_message )
 {

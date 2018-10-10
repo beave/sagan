@@ -60,11 +60,6 @@ struct _SaganConfig *config;
 
 pthread_mutex_t CounterMutex;
 
-pthread_mutex_t After_By_Src_Mutex;
-pthread_mutex_t After_By_Dst_Mutex;
-pthread_mutex_t After_By_Src_Port_Mutex;
-pthread_mutex_t After_By_Dst_Port_Mutex;
-pthread_mutex_t After_By_Username_Mutex;
 pthread_mutex_t After2_Mutex;
 
 pthread_mutex_t Thresh_By_Src_Mutex;
@@ -72,6 +67,8 @@ pthread_mutex_t Thresh_By_Dst_Mutex;
 pthread_mutex_t Thresh_By_Src_Port_Mutex;
 pthread_mutex_t Thresh_By_Dst_Port_Mutex;
 pthread_mutex_t Thresh_By_Username_Mutex;
+
+pthread_mutex_t Thresh2_Mutex;
 
 pthread_mutex_t Xbit_Mutex;
 
@@ -81,12 +78,9 @@ struct thresh_by_dstport_ipc *threshbydstport_ipc;
 struct thresh_by_srcport_ipc *threshbysrcport_ipc;
 struct thresh_by_username_ipc *threshbyusername_ipc;
 
-struct after_by_src_ipc *afterbysrc_ipc;
-struct after_by_dst_ipc *afterbydst_ipc;
-struct after_by_srcport_ipc *afterbysrcport_ipc;
-struct after_by_dstport_ipc *afterbydstport_ipc;
-struct after_by_username_ipc *afterbyusername_ipc;
 struct _After2_IPC *After2_IPC;
+struct _Threshold2_IPC *Threshold2_IPC;
+
 
 struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 
@@ -123,7 +117,7 @@ bool Clean_IPC_Object( int type )
                     Sagan_Log(DEBUG, "[%s, %d line] Cleaning IPC data. Type: %d", __FILE__, __LINE__, type);
                 }
 
-            File_Lock(config->shm_after2); /* HERE */
+            File_Lock(config->shm_after2);
             pthread_mutex_lock(&After2_Mutex);
 
             struct _After2_IPC *Temp_After2_IPC;
@@ -186,6 +180,95 @@ bool Clean_IPC_Object( int type )
             File_Unlock(config->shm_after2);
             return(0);
         }
+
+    /* Threshold2 */
+
+    else if ( type == THRESHOLD2 && config->max_threshold2 < counters_ipc->thresh2_count )
+        {
+
+            time_t t;
+            struct tm *now;
+
+            int i;
+            int utime = 0;
+            int new_count = 0;
+            int old_count = 0;
+
+            char timet[20];
+
+            t = time(NULL);
+            now=localtime(&t);
+            strftime(timet, sizeof(timet), "%s",  now);
+            utime = atol(timet);
+
+            new_count = 0;
+            old_count = 0;
+
+            File_Lock(config->shm_thresh2);
+            pthread_mutex_lock(&Thresh2_Mutex);
+
+            struct _Threshold2_IPC *Temp_Threshold2_IPC;
+            Temp_Threshold2_IPC = malloc(sizeof(struct _Threshold2_IPC) * config->max_threshold2);
+
+            memset(Temp_Threshold2_IPC, 0, sizeof(sizeof(struct _Threshold2_IPC) * config->max_threshold2));
+
+            old_count = counters_ipc->thresh2_count;
+
+            for (i = 0; i < counters_ipc->thresh2_count; i++)
+                {
+                    if ( (utime - Threshold2_IPC[i].utime) < Threshold2_IPC[i].expire )
+                        {
+
+                            if ( debug->debugipc )
+                                {
+                                    Sagan_Log(DEBUG, "[%s, %d line] Threshold2_IPC : Keeping %lu.", __FILE__, __LINE__, Threshold2_IPC[i].hash);
+                                }
+
+                            Temp_Threshold2_IPC[new_count].hash = Threshold2_IPC[i].hash;
+                            Temp_Threshold2_IPC[new_count].count = Threshold2_IPC[i].count;
+                            Temp_Threshold2_IPC[new_count].utime = Threshold2_IPC[i].utime;
+                            Temp_Threshold2_IPC[new_count].expire = Threshold2_IPC[i].expire;
+                            Temp_Threshold2_IPC[new_count].sid = Threshold2_IPC[i].sid;
+
+                            new_count++;
+
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+                    for ( i = 0; i < new_count; i++ )
+                        {
+                            Threshold2_IPC[i].hash = Temp_Threshold2_IPC[i].hash;
+                            Threshold2_IPC[i].count = Temp_Threshold2_IPC[i].count;
+                            Threshold2_IPC[i].utime = Temp_Threshold2_IPC[i].utime;
+                            Threshold2_IPC[i].expire = Temp_Threshold2_IPC[i].expire;
+                            Threshold2_IPC[i].sid =  Temp_Threshold2_IPC[i].sid;
+                        }
+
+                    counters_ipc->thresh2_count = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean Threshold2_IPC.  Nothing to remove!", __FILE__, __LINE__);
+                    free(Temp_Threshold2_IPC);
+                    pthread_mutex_unlock(&Thresh2_Mutex);
+                    File_Unlock(config->shm_thresh2);
+                    return(1);
+                }
+
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for Threshold2_IPC", __FILE__, __LINE__, new_count, old_count);
+            free(Temp_Threshold2_IPC);
+
+            pthread_mutex_unlock(&Thresh2_Mutex);
+            File_Unlock(config->shm_thresh2);
+            return(0);
+
+        }
+
+
 
     /* Threshbysrc_IPC */
 
@@ -1165,6 +1248,41 @@ void IPC_Init(void)
 
         }
 
+    /* Threshold2 */
+
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, THRESHOLD2_IPC_FILE);
+
+    IPC_Check_Object(tmp_object_check, new_counters, "thresh2");
+
+    if ((config->shm_thresh2 = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+        {
+            Sagan_Log(NORMAL, "+ Threshold2 shared object (new).");
+            new_object=1;
+        }
+
+
+    else if ((config->shm_thresh2 = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh2 (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+        }
+
+    if ( ftruncate(config->shm_thresh2, sizeof(_Threshold2_IPC) * config->max_threshold2 ) != 0 )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate thresh2. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+    if (( Threshold2_IPC = mmap(0, sizeof(_Threshold2_IPC) * config->max_threshold2, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_thresh2, 0)) == MAP_FAILED )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for _Threshold2_IPC object! [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+    if ( new_object == 0 )
+        {
+            Sagan_Log(NORMAL, "- Threshold shared object reloaded (%d sources loaded / max: %d).", counters_ipc->thresh2_count, config->max_threshold2);
+        }
+
+    new_object = 0;
+
     /* After2 */
 
     snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, AFTER2_IPC_FILE);
@@ -1175,7 +1293,7 @@ void IPC_Init(void)
 
     if ((config->shm_after2 = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-            Sagan_Log(NORMAL, "+ After2 shared object (new).");
+            Sagan_Log(NORMAL, "+ After shared object (new).");
             new_object=1;
         }
 
@@ -1187,7 +1305,7 @@ void IPC_Init(void)
 
     if ( ftruncate(config->shm_after2, sizeof(_After2_IPC) * config->max_after2 ) != 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after_by_src. [%s]", __FILE__, __LINE__, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after2. [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
 
@@ -1199,7 +1317,7 @@ void IPC_Init(void)
 
     if ( new_object == 0 )
         {
-            Sagan_Log(NORMAL, "- After2 shared object reloaded (%d sources loaded / max: %d).", counters_ipc->after2_count, config->max_after2);
+            Sagan_Log(NORMAL, "- After shared object reloaded (%d sources loaded / max: %d).", counters_ipc->after2_count, config->max_after2);
         }
 
 

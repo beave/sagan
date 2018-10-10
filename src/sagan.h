@@ -185,11 +185,8 @@ struct _Sagan_IPC_Counters
     int	 thresh_count_by_dstport;
     int  thresh_count_by_srcport;
     int	 thresh_count_by_username;
-    int	 after_count_by_src;
-    int	 after_count_by_dst;
-    int  after_count_by_srcport;
-    int	 after_count_by_dstport;
-    int	 after_count_by_username;
+
+    int  thresh2_count;
     int  after2_count;
 
     int	 track_client_count;
@@ -550,6 +547,36 @@ struct thresh_by_username_ipc
     char syslog_message[MAX_SYSLOGMSG];
     char signature_msg[MAX_SAGAN_MSG];
 };
+
+typedef struct _Threshold2_IPC _Threshold2_IPC;
+struct _Threshold2_IPC
+{
+
+    uint32_t hash;
+
+    bool threshold2_method_src;
+    bool threshold2_method_dst;
+    bool threshold2_method_username;
+    bool threshold2_method_srcport;
+    bool threshold2_method_dstport;
+
+    char ip_src[MAXIP];
+    char ip_dst[MAXIP];
+
+    int  src_port;
+    int  dst_port;
+    char username[MAX_USERNAME_SIZE];
+
+    uint64_t count;
+    uint64_t total_count;
+    uint64_t utime;
+    uint64_t sid;
+    int expire;
+    char selector[MAXSELECTOR];
+    char syslog_message[MAX_SYSLOGMSG];
+    char signature_msg[MAX_SAGAN_MSG];
+};
+
 
 typedef struct _After2_IPC _After2_IPC;
 struct _After2_IPC

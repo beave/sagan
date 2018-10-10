@@ -189,23 +189,21 @@ typedef void json_object;
 #define THRESH_BY_DSTPORT_IPC_FILE 	"sagan-thresh-by-destination-port.shared"
 #define THRESH_BY_SRCPORT_IPC_FILE 	"sagan-thresh-by-source-port.shared"
 #define THRESH_BY_USERNAME_IPC_FILE 	"sagan-thresh-by-username.shared"
-#define AFTER_BY_SRC_IPC_FILE 		"sagan-after-by-source.shared"
-#define AFTER_BY_DST_IPC_FILE 		"sagan-after-by-destination.shared"
-#define AFTER_BY_SRCPORT_IPC_FILE 	"sagan-after-by-source-port.shared"
-#define AFTER_BY_DSTPORT_IPC_FILE 	"sagan-after-by-destination-port.shared"
-#define AFTER_BY_USERNAME_IPC_FILE 	"sagan-after-by-username.shared"
+
 #define AFTER2_IPC_FILE			"sagan-after2.shared"
+#define THRESHOLD2_IPC_FILE             "sagan-after2.shared"
+
 #define CLIENT_TRACK_IPC_FILE 		"sagan-track-clients.shared"
 
 /* Default IPC/mmap sizes */
 
 #define DEFAULT_IPC_CLIENT_TRACK_IPC	10000
-#define DEFAULT_IPC_AFTER_BY_SRC	1000000
-#define DEFAULT_IPC_AFTER_BY_DST	1000000
-#define DEFAULT_IPC_AFTER_BY_SRC_PORT   1000000
-#define DEFAULT_IPC_AFTER_BY_DST_PORT	1000000
-#define DEFAULT_IPC_AFTER_BY_USERNAME	10000
+
+
 #define DEFAULT_IPC_AFTER2_IPC		1000000
+#define DEFAULT_IPC_THRESHOLD2_IPC      1000000
+
+
 #define DEFAULT_IPC_THRESH_BY_SRC	1000000
 #define DEFAULT_IPC_THRESH_BY_DST	1000000
 #define DEFAULT_IPC_THRESH_BY_SRC_PORT	1000000
@@ -215,6 +213,7 @@ typedef void json_object;
 
 
 #define	AFTER2				0
+#define THRESHOLD2			1
 
 #define THRESH_BY_SRC			6
 #define THRESH_BY_DST			7

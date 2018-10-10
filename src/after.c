@@ -40,19 +40,7 @@
 #include "after.h"
 #include "ipc.h"
 
-pthread_mutex_t After_By_Src_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t After_By_Dst_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t After_By_Src_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t After_By_Dst_Port_Mutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t After_By_Username_Mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t After2_Mutex=PTHREAD_MUTEX_INITIALIZER;
-
-
-struct after_by_src_ipc *afterbysrc_ipc;
-struct after_by_dst_ipc *afterbydst_ipc;
-struct after_by_srcport_ipc *afterbysrcport_ipc;
-struct after_by_dstport_ipc *afterbydstport_ipc;
-struct after_by_username_ipc *afterbyusername_ipc;
 
 struct _After2_IPC *After2_IPC;
 
@@ -182,9 +170,9 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                                         }
 
                                     if ( After2_IPC[i].after2_method_dstport == true )
-                                        {   
+                                        {
                                             strlcat(debug_string, "by_dstport ", sizeof(debug_string));
-                                        } 
+                                        }
 
                                     Sagan_Log(NORMAL, "After SID %" PRIu64 ". Tracking by %s[Hash: %lu]", After2_IPC[i].sid, debug_string, hash);
 
@@ -224,10 +212,10 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             After2_IPC[counters_ipc->after2_count].after2_method_username = rulestruct[rule_position].after2_method_username;
 
             strlcpy(After2_IPC[counters_ipc->after2_count].ip_src, src_tmp, sizeof(After2_IPC[counters_ipc->after2_count].ip_src));
-	    After2_IPC[counters_ipc->after2_count].src_port = src_port_tmp; 
+            After2_IPC[counters_ipc->after2_count].src_port = src_port_tmp;
 
             strlcpy(After2_IPC[counters_ipc->after2_count].ip_dst, dst_tmp, sizeof(After2_IPC[counters_ipc->after2_count].ip_dst));
-	    After2_IPC[counters_ipc->after2_count].dst_port = dst_port_tmp; 
+            After2_IPC[counters_ipc->after2_count].dst_port = dst_port_tmp;
 
             strlcpy(After2_IPC[counters_ipc->after2_count].username, username_tmp, sizeof(After2_IPC[counters_ipc->after2_count].username));
 

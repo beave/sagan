@@ -2388,6 +2388,80 @@ void Load_Rules( const char *ruleset )
                         }
 
 
+                    /* DEBUG: THRESHOLD2 */
+
+                    if (!strcmp(rulesplit, "threshold2" ))
+                        {
+
+                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
+
+                            while( tmptoken != NULL )
+                                {
+
+                                    if (Sagan_strstr(tmptoken, "type"))
+                                        {
+
+                                            if (Sagan_strstr(tmptoken, "limit"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_type = 1;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "threshold"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_type = 2;
+                                                }
+                                        }
+
+                                    if (Sagan_strstr(tmptoken, "track"))
+                                        {
+
+                                            if (Sagan_strstr(tmptoken, "by_src"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_method_src = true;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_dst"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_method_dst = true;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_username") || Sagan_strstr(tmptoken, "by_string"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_method_username = true;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_srcport"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_method_srcport = true;
+                                                }
+
+                                            if (Sagan_strstr(tmptoken, "by_dstport"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_method_dstport = true;
+                                                }
+                                        }
+
+                                    if (Sagan_strstr(tmptoken, "count"))
+                                        {
+                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                                            rulestruct[counters->rulecount].threshold2_count = atoi(tmptok_tmp);
+                                        }
+
+                                    if (Sagan_strstr(tmptoken, "seconds"))
+                                        {
+                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                                            rulestruct[counters->rulecount].threshold2_seconds = atoi(tmptok_tmp);
+                                        }
+
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                                }
+                        }
+
+
+
                     /* Thresholding */
 
                     if (!strcmp(rulesplit, "threshold" ))
@@ -2459,7 +2533,6 @@ void Load_Rules( const char *ruleset )
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
                                 }
                         }
-
 
                     /* /* "after"; similar to thresholding,  but the opposite direction */
 

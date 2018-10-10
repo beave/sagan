@@ -152,6 +152,7 @@ int main(int argc, char **argv)
     struct thresh_by_username_ipc *threshbyusername_ipc;
 
     struct _After2_IPC *After2_IPC; 
+    struct _Threshold2_IPC *Threshold2_IPC;
 
     signed char c;
 
@@ -452,13 +453,9 @@ int main(int argc, char **argv)
 
         }
 
-    /*** Get "after by source" data ***/
+            /*** Get "Threshold" data ***/
 
-/*
-    if ( type == ALL_TYPES || type == AFTER_TYPE )
-        {
-
-            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER_BY_SRC_IPC_FILE);
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESHOLD2_IPC_FILE);
 
             if ( object_check(tmp_object_check) == false )
                 {
@@ -473,7 +470,7 @@ int main(int argc, char **argv)
                     exit(1);
                 }
 
-            if (( afterbysrc_ipc = mmap(0, sizeof(after_by_src_ipc) + (sizeof(after_by_src_ipc) * counters_ipc->after_count_by_src ),  PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+            if (( Threshold2_IPC = mmap(0, sizeof(_Threshold2_IPC) + (sizeof(_Threshold2_IPC) * counters_ipc->thresh2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
                 {
                     fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
                     exit(1);
@@ -481,37 +478,82 @@ int main(int argc, char **argv)
 
             close(shm);
 
-            if ( counters_ipc->after_count_by_src >= 1 )
+            if ( counters_ipc->thresh2_count >= 1 )
                 {
 
-                    for ( i = 0; i < counters_ipc->after_count_by_src; i++ )
+                    for ( i = 0; i < counters_ipc->thresh2_count; i++)
                         {
-                            Bit2IP(afterbysrc_ipc[i].ipsrc, ip_src, sizeof(ip_src));
 
-                            printf("Type: After by source [%d].\n", i);
+                            printf("Type: Threshold [%d].\n", i);
 
-                            u32_Time_To_Human(afterbysrc_ipc[i].utime, time_buf, sizeof(time_buf));
+                            u32_Time_To_Human(Threshold2_IPC[i].utime, time_buf, sizeof(time_buf));
 
                             printf("Selector: ");
 
-                            if ( afterbysrc_ipc[i].selector[0] == 0 )
+                            if ( Threshold2_IPC[i].selector[0] == 0 )
                                 {
                                     printf("[None]\n");
                                 }
                             else
                                 {
-                                    printf("%s\n", afterbysrc_ipc[i].selector);
+                                    printf("%s\n", Threshold2_IPC[i].selector);
                                 }
 
-                            printf("Source IP: %s\n", ip_src);
-                            printf("Signature: \"%s\" (%s)\n", afterbysrc_ipc[i].signature_msg, afterbysrc_ipc[i].sid);
-                            printf("Syslog Message: \"%s\"\n", afterbysrc_ipc[i].syslog_message);
+
+                            printf("Hash: %lu\n", Threshold2_IPC[i].hash);
+
+			    printf("Tracking by:");
+
+			    if ( Threshold2_IPC[i].threshold2_method_src == true ) 
+				{
+				printf(" by_src"); 
+				}
+
+			        if ( Threshold2_IPC[i].threshold2_method_dst == true )
+                                {
+                                printf(" by_dst");
+                                }
+
+                                if ( Threshold2_IPC[i].threshold2_method_username == true )
+                                {
+                                printf(" by_username");
+                                }
+
+				printf("\n");
+
+			    if ( Threshold2_IPC[i].threshold2_method_src == true )
+			    {
+			    printf("IP SRC: %s\n", Threshold2_IPC[i].ip_src); 
+			    }
+
+                            if ( Threshold2_IPC[i].threshold2_method_srcport == true )
+                            {
+                            printf("SRC Port: %d\n", Threshold2_IPC[i].src_port);
+                            }
+
+			    if ( Threshold2_IPC[i].threshold2_method_dst == true )
+			    {
+		            printf("IP DST: %s\n", Threshold2_IPC[i].ip_dst);
+		            }
+
+                            if ( Threshold2_IPC[i].threshold2_method_dstport == true )
+                            {
+                            printf("DST Port: %s\n", Threshold2_IPC[i].dst_port); 
+                            } 
+
+			    if ( Threshold2_IPC[i].threshold2_method_username == true )
+			    {
+			    printf("Username: %s\n",  Threshold2_IPC[i].username);
+			    }
+
+
+                            printf("Signature: \"%s\" (%" PRIu64 ")\n", Threshold2_IPC[i].signature_msg, Threshold2_IPC[i].sid);
+                            printf("Syslog Message: \"%s\"\n", Threshold2_IPC[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %" PRIu64 "\n", afterbysrc_ipc[i].count);
-                            printf("Expire Time: %d\n\n", afterbysrc_ipc[i].expire);
+                            printf("Counter: %d\n", Threshold2_IPC[i].count);
+                            printf("Expire Time: %d\n\n", Threshold2_IPC[i].expire);
 
                         }
-
                 }
 
 

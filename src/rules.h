@@ -198,11 +198,16 @@ struct _Rule_Struct
     int threshold_count;
     int threshold_seconds;
 
-    unsigned char after_method;                 /* 1 ==  src,  2 == dst, 3 == username, 4 == dstport */
+    unsigned char threshold2_type;               /* 1 = limit,  2 = threshold */
+    unsigned char threshold2_method;             /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
+    int threshold2_count;
+    int threshold2_seconds;
 
-    int after_count;
-    int after_seconds;
-
+    bool threshold2_method_src;
+    bool threshold2_method_dst;
+    bool threshold2_method_username;
+    bool threshold2_method_srcport;
+    bool threshold2_method_dstport;
 
     bool after2;
 
