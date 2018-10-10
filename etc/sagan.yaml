@@ -213,9 +213,6 @@ sagan-core:
 
     ipc-directory: /var/sagan/ipc
     xbit: $MMAP_DEFAULT
-    threshold-by-src: $MMAP_DEFAULT
-    threshold-by-dst: $MMAP_DEFAULT
-    threshold-by-username: $MMAP_DEFAULT
     after: $MMAP_DEFAULT
     threshold: $MMAP_DEFAULT
     track-clients: $MMAP_DEFAULT

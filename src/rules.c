@@ -2463,78 +2463,80 @@ void Load_Rules( const char *ruleset )
 
 
                     /* Thresholding */
+                    /*
+                                        if (!strcmp(rulesplit, "threshold" ))
+                                            {
 
-                    if (!strcmp(rulesplit, "threshold" ))
-                        {
+                                                tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
+                                                tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
 
-                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
-                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
+                                                while( tmptoken != NULL )
+                                                    {
 
-                            while( tmptoken != NULL )
-                                {
+                                                        if (Sagan_strstr(tmptoken, "type"))
+                                                            {
 
-                                    if (Sagan_strstr(tmptoken, "type"))
-                                        {
+                                                                if (Sagan_strstr(tmptoken, "limit"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_type = 1;
+                                                                    }
 
-                                            if (Sagan_strstr(tmptoken, "limit"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_type = 1;
-                                                }
+                                                                if (Sagan_strstr(tmptoken, "threshold"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_type = 2;
+                                                                    }
+                                                            }
 
-                                            if (Sagan_strstr(tmptoken, "threshold"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_type = 2;
-                                                }
-                                        }
+                                                        if (Sagan_strstr(tmptoken, "track"))
+                                                            {
 
-                                    if (Sagan_strstr(tmptoken, "track"))
-                                        {
+                                                                if (Sagan_strstr(tmptoken, "by_src"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_method = THRESH_BY_SRC;
+                                                                    }
 
-                                            if (Sagan_strstr(tmptoken, "by_src"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_method = THRESH_BY_SRC;
-                                                }
+                                                                if (Sagan_strstr(tmptoken, "by_dst"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_method = THRESH_BY_DST;
+                                                                    }
 
-                                            if (Sagan_strstr(tmptoken, "by_dst"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_method = THRESH_BY_DST;
-                                                }
+                                                                if (Sagan_strstr(tmptoken, "by_username") || Sagan_strstr(tmptoken, "by_string"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_method = THRESH_BY_USERNAME;
+                                                                    }
 
-                                            if (Sagan_strstr(tmptoken, "by_username") || Sagan_strstr(tmptoken, "by_string"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_method = THRESH_BY_USERNAME;
-                                                }
+                                                                if (Sagan_strstr(tmptoken, "by_srcport"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_method = THRESH_BY_SRCPORT;
+                                                                    }
 
-                                            if (Sagan_strstr(tmptoken, "by_srcport"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_method = THRESH_BY_SRCPORT;
-                                                }
+                                                                if (Sagan_strstr(tmptoken, "by_dstport"))
+                                                                    {
+                                                                        rulestruct[counters->rulecount].threshold_method = THRESH_BY_DSTPORT;
+                                                                    }
+                                                            }
 
-                                            if (Sagan_strstr(tmptoken, "by_dstport"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold_method = THRESH_BY_DSTPORT;
-                                                }
-                                        }
+                                                        if (Sagan_strstr(tmptoken, "count"))
+                                                            {
+                                                                tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                                                tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
+                                                                rulestruct[counters->rulecount].threshold_count = atoi(tmptok_tmp);
+                                                            }
 
-                                    if (Sagan_strstr(tmptoken, "count"))
-                                        {
-                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
-                                            rulestruct[counters->rulecount].threshold_count = atoi(tmptok_tmp);
-                                        }
+                                                        if (Sagan_strstr(tmptoken, "seconds"))
+                                                            {
+                                                                tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
+                                                                tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
+                                                                rulestruct[counters->rulecount].threshold_seconds = atoi(tmptok_tmp);
+                                                            }
 
-                                    if (Sagan_strstr(tmptoken, "seconds"))
-                                        {
-                                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-                                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
-                                            rulestruct[counters->rulecount].threshold_seconds = atoi(tmptok_tmp);
-                                        }
+                                                        tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+                                                    }
+                                            }
 
-                                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
-                                }
-                        }
+                    */
 
-                    /* /* "after"; similar to thresholding,  but the opposite direction */
+                    /* "after"; similar to thresholding,  but the opposite direction */
 
                     if (!strcmp(rulesplit, "after" ))
                         {
