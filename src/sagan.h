@@ -180,11 +180,11 @@ struct _Sagan_IPC_Counters
 {
 
     int  xbit_count;
-    int	 thresh_count_by_src;
-    int	 thresh_count_by_dst;
-    int	 thresh_count_by_dstport;
-    int  thresh_count_by_srcport;
-    int	 thresh_count_by_username;
+//    int	 thresh_count_by_src;
+//    int	 thresh_count_by_dst;
+//    int	 thresh_count_by_dstport;
+//    int  thresh_count_by_srcport;
+//    int	 thresh_count_by_username;
 
     int  thresh2_count;
     int  after2_count;
@@ -475,7 +475,7 @@ struct _Sagan_Event
 
 
 /* Thresholding structure by source */
-
+/*
 typedef struct thresh_by_src_ipc thresh_by_src_ipc;
 struct thresh_by_src_ipc
 {
@@ -491,7 +491,7 @@ struct thresh_by_src_ipc
 
 
 /* Thresholding structure by destination */
-
+/*
 typedef struct thresh_by_dst_ipc thresh_by_dst_ipc;
 struct thresh_by_dst_ipc
 {
@@ -507,7 +507,7 @@ struct thresh_by_dst_ipc
 
 
 /* Thresholding structure by source port */
-
+/*
 typedef struct thresh_by_srcport_ipc thresh_by_srcport_ipc;
 struct thresh_by_srcport_ipc
 {
@@ -520,7 +520,7 @@ struct thresh_by_srcport_ipc
 };
 
 /* Thresholding structure by destination port */
-
+/*
 typedef struct thresh_by_dstport_ipc thresh_by_dstport_ipc;
 struct thresh_by_dstport_ipc
 {
@@ -534,7 +534,7 @@ struct thresh_by_dstport_ipc
 
 
 /* Thesholding structure by username */
-
+/*
 typedef struct thresh_by_username_ipc thresh_by_username_ipc;
 struct thresh_by_username_ipc
 {
@@ -547,6 +547,7 @@ struct thresh_by_username_ipc
     char syslog_message[MAX_SYSLOGMSG];
     char signature_msg[MAX_SAGAN_MSG];
 };
+*/
 
 typedef struct _Threshold2_IPC _Threshold2_IPC;
 struct _Threshold2_IPC

@@ -147,9 +147,9 @@ int main(int argc, char **argv)
     struct _Sagan_IPC_Xbit *xbit_ipc;
     struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 
-    struct thresh_by_src_ipc *threshbysrc_ipc;
-    struct thresh_by_dst_ipc *threshbydst_ipc;
-    struct thresh_by_username_ipc *threshbyusername_ipc;
+//    struct thresh_by_src_ipc *threshbysrc_ipc;
+//    struct thresh_by_dst_ipc *threshbydst_ipc;
+//    struct thresh_by_username_ipc *threshbyusername_ipc;
 
     struct _After2_IPC *After2_IPC; 
     struct _Threshold2_IPC *Threshold2_IPC;
@@ -271,6 +271,7 @@ int main(int argc, char **argv)
 
     /*** Get "threshold by source" data ****/
 
+/*
     if ( type == ALL_TYPES || type == THRESHOLD_TYPE )
         {
 
@@ -333,7 +334,7 @@ int main(int argc, char **argv)
                 }
 
             /*** Get "threshold by destination" data ***/
-
+/*
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_DST_IPC_FILE);
 
             if ( object_check(tmp_object_check) == false )
@@ -394,7 +395,7 @@ int main(int argc, char **argv)
 
 
             /*** Get "threshold by username" data ***/
-
+/*
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESH_BY_USERNAME_IPC_FILE);
 
             if ( object_check(tmp_object_check) == false )
@@ -519,6 +520,16 @@ int main(int argc, char **argv)
                                 printf(" by_username");
                                 }
 
+                                if ( Threshold2_IPC[i].threshold2_method_srcport == true )
+                                {
+                                printf(" by_srcport");
+                                }
+
+                                if ( Threshold2_IPC[i].threshold2_method_dstport == true )
+                                {
+                                printf(" by_dstport");
+                                }
+
 				printf("\n");
 
 			    if ( Threshold2_IPC[i].threshold2_method_src == true )
@@ -620,6 +631,16 @@ int main(int argc, char **argv)
                                 }
 
                                 if ( After2_IPC[i].after2_method_username == true )
+                                {
+                                printf(" by_username");
+                                }
+
+                                if ( After2_IPC[i].after2_method_srcport == true )
+                                {
+                                printf(" by_username");
+                                }
+
+                                if ( After2_IPC[i].after2_method_dstport == true )
                                 {
                                 printf(" by_username");
                                 }
