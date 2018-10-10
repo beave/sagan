@@ -201,16 +201,10 @@ void Load_YAML_Config( char *yaml_file )
             config->parse_ip_ipv6 = true;
             config->parse_ip_ipv4_mapped_ipv6 = false;
 
-//            config->max_threshold_by_src = DEFAULT_IPC_THRESH_BY_SRC;
-//            config->max_threshold_by_dst = DEFAULT_IPC_THRESH_BY_DST;
-//            config->max_threshold_by_srcport = DEFAULT_IPC_THRESH_BY_SRC_PORT;
-//            config->max_threshold_by_dstport = DEFAULT_IPC_THRESH_BY_DST_PORT;
-//            config->max_threshold_by_username = DEFAULT_IPC_THRESH_BY_USERNAME;
-
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
             config->max_threshold2 = DEFAULT_IPC_THRESHOLD2_IPC;
-
             config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
+
             config->pp_sagan_track_clients = TRACK_TIME;
 
             config->sagan_proto = 17;           /* Default to UDP */
@@ -899,44 +893,6 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
-                                    /*
-                                                                        else if (!strcmp(last_pass, "threshold-by-src"))
-                                                                            {
-
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_threshold_by_src = atoi(tmp);
-
-                                                                                if ( config->max_threshold_by_src == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-src' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
-
-                                                                        else if (!strcmp(last_pass, "threshold-by-dst"))
-                                                                            {
-
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_threshold_by_dst = atoi(tmp);
-
-                                                                                if ( config->max_threshold_by_dst == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-dst' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
-
-                                                                        else if (!strcmp(last_pass, "threshold-by-username"))
-                                                                            {
-
-                                                                                Var_To_Value(value, tmp, sizeof(tmp));
-                                                                                config->max_threshold_by_username = atoi(tmp);
-
-                                                                                if ( config->max_threshold_by_username == 0 )
-                                                                                    {
-                                                                                        Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold-by-username' is set to zero.  Abort!", __FILE__, __LINE__);
-                                                                                    }
-                                                                            }
-                                    				    */
-
                                     else if (!strcmp(last_pass, "threshold"))
                                         {
 
@@ -948,7 +904,6 @@ void Load_YAML_Config( char *yaml_file )
                                                     Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'threshold' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
-
 
                                     else if (!strcmp(last_pass, "after"))
                                         {
@@ -1941,19 +1896,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                                 }
                                         }
-
-                                    /*
-                                                                        else if ( !strcmp(last_pass, "filetype") && config->eve_flag == true )
-                                                                            {
-
-                                                                                if (!strcmp(value, "regular"))
-                                                                                    {
-                                                                                        config->eve_type = 0;
-                                                                                    }
-
-                                                                            }
-                                    */
-
 
                                     else if ( !strcmp(last_pass, "interface") && config->eve_flag == true )
                                         {

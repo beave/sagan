@@ -198,31 +198,13 @@ typedef void json_object;
 /* Default IPC/mmap sizes */
 
 #define DEFAULT_IPC_CLIENT_TRACK_IPC	10000
-
-
 #define DEFAULT_IPC_AFTER2_IPC		1000000
 #define DEFAULT_IPC_THRESHOLD2_IPC      1000000
-
-
-//#define DEFAULT_IPC_THRESH_BY_SRC	1000000
-//#define DEFAULT_IPC_THRESH_BY_DST	1000000
-//#define DEFAULT_IPC_THRESH_BY_SRC_PORT	1000000
-//#define DEFAULT_IPC_THRESH_BY_DST_PORT  1000000
-//#define DEFAULT_IPC_THRESH_BY_USERNAME	10000
-
 #define DEFAULT_IPC_XBITS		10000
-
 
 #define	AFTER2				0
 #define THRESHOLD2			1
-
-//#define THRESH_BY_SRC			6
-//#define THRESH_BY_DST			7
-//#define THRESH_BY_DSTPORT		8
-//#define THRESH_BY_USERNAME		9
-//#define THRESH_BY_SRCPORT               10
-
-#define XBIT				11
+#define XBIT				2
 
 #define PARSE_HASH_MD5			1
 #define	PARSE_HASH_SHA1			2

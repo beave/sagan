@@ -175,16 +175,8 @@ struct _SaganConfig
     char	ipc_directory[MAXPATH];
 
     int		max_xbits;
-
-//    int		max_threshold_by_src;
-//    int		max_threshold_by_dst;
-//    int	        max_threshold_by_srcport;
-//    int		max_threshold_by_dstport;
-//    int		max_threshold_by_username;
-
     int		max_threshold2;
     int		max_after2;
-
     int		max_track_clients;
 
 #ifdef HAVE_LIBPCAP

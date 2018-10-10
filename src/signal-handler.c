@@ -225,28 +225,20 @@ void Sig_Handler( void )
                             Sagan_Log(WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
-                    /*
-                                        File_Unlock(config->shm_thresh_by_src);
+                    File_Unlock(config->shm_thresh2);
 
-                                        if ( close(config->shm_thresh_by_src) != 0 )
-                                            {
-                                                Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_src! [%s]", __FILE__, __LINE__, strerror(errno));
-                                            }
+                    if ( close(config->shm_thresh2) != 0 )
+                        {
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _Threshold2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
 
-                                        File_Unlock(config->shm_thresh_by_dst);
+                    File_Unlock(config->shm_after2);
 
-                                        if ( close(config->shm_thresh_by_dst) != 0 )
-                                            {
-                                                Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_dst! [%s]", __FILE__, __LINE__, strerror(errno));
-                                            }
+                    if ( close(config->shm_after2) != 0 )
+                        {
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _After2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                        }
 
-                                        File_Unlock(config->shm_thresh_by_username);
-
-                                        if ( close(config->shm_thresh_by_username) != 0 )
-                                            {
-                                                Sagan_Log(WARN, "[%s, line %d] Cannot close IPC thresh_by_username! [%s]", __FILE__, __LINE__, strerror(errno));
-                                            }
-                    */
                     if ( config->sagan_track_clients_flag )
                         {
 

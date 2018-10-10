@@ -20,9 +20,6 @@
 
 /* after.c - Logic for "after" in Sagan rule */
 
-/* TODO:  Need to test IPC limits for threshold/after/client tracking */
-
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif

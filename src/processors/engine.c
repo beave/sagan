@@ -1301,43 +1301,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                 }
 
 
-                                                                                                                            /*
-                                                                                                                                                                                                                                                        thresh_log_flag = false;
-
-                                                                                                                                                                                                                                                        if ( rulestruct[b].threshold_type != 0 &&
-                                                                                                                                                                                                                                                                after_log_flag == false )
-                                                                                                                                                                                                                                                            {
-
-                                                                                                                                                                                                                                                                switch( rulestruct[b].threshold_method )
-                                                                                                                                                                                                                                                                    {
-
-                                                                                                                                                                                                                                                                    case(THRESH_BY_SRC):
-                                                                                                                                                                                                                                                                        thresh_log_flag = Thresh_By_Src(b, ip_src, ip_src_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(THRESH_BY_DST):
-                                                                                                                                                                                                                                                                        thresh_log_flag = Thresh_By_Dst(b, ip_dst, ip_dst_bits, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(THRESH_BY_USERNAME):
-                                                                                                                                                                                                                                                                        if ( normalize_username != NULL )
-                                                                                                                                                                                                                                                                            {
-                                                                                                                                                                                                                                                                                thresh_log_flag = Thresh_By_Username(b, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                                                                                                                                                            }
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    case(THRESH_BY_SRCPORT):
-                                                                                                                                                                                                                                                                        thresh_log_flag = Thresh_By_SrcPort(b, ip_srcport_u32, pnormalize_selector);
-
-                                                                                                                                                                                                                                                                    case(THRESH_BY_DSTPORT):
-                                                                                                                                                                                                                                                                        thresh_log_flag = Thresh_By_DstPort(b, ip_dstport_u32, pnormalize_selector);
-                                                                                                                                                                                                                                                                        break;
-
-                                                                                                                                                                                                                                                                    } /* switch */
-
-
-//                                                                                                                                } /* if */
-
                                                                                                                             if ( config->rule_tracking_flag == true )
                                                                                                                                 {
                                                                                                                                     Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
