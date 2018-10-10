@@ -1695,7 +1695,8 @@ void Load_Rules( const char *ruleset )
                                 }
 
                             Remove_Spaces(arg);
-                            strlcpy(rulestruct[counters->rulecount].s_rev, arg, sizeof(rulestruct[counters->rulecount].s_rev));
+
+                            rulestruct[counters->rulecount].s_rev = atoi(arg);
                         }
 
                     if (!strcmp(rulesplit, "classtype" ))

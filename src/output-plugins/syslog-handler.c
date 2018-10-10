@@ -56,7 +56,7 @@ void Alert_Syslog( _Sagan_Event *Event )
 
     /* Template to mimic Snort syslog output */
 
-    char *syslog_template = "[%lu:%" PRIu64 ":%s] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d - %s";
+    char *syslog_template = "[%lu:%" PRIu64 ":%d] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d - %s";
 
     if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
         {

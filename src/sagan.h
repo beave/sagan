@@ -448,7 +448,7 @@ struct _Sagan_Event
     char *message;
 
     uint64_t sid;
-    char *rev;
+    uint32_t rev;
     char *class;
     int pri;
     int ip_proto;
@@ -542,11 +542,11 @@ struct _Sagan_Processor_Info
     char *processor_name;
     char *processor_facility;
     char *processor_priority;		/* Syslog priority */
-    int   processor_pri;		/* Sagan priority */
+    int32_t  processor_pri;		/* Sagan priority */
     char *processor_class;
     char *processor_tag;
-    char *processor_rev;
-    int   processor_generator_id;
+    int32_t processor_rev;
+    int32_t   processor_generator_id;
 };
 
 /* IP Lookup cache */

@@ -154,7 +154,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jsignature_alert = json_object_new_int64( Event->sid );
     json_object_object_add(jobj_alert,"signature_id", jsignature_alert);
 
-    json_object *jrev_alert = json_object_new_int64( atol(Event->rev) );
+    json_object *jrev_alert = json_object_new_int64( Event->rev );
     json_object_object_add(jobj_alert,"rev", jrev_alert);
 
     json_object *jsig_name_alert = json_object_new_string( Event->f_msg );

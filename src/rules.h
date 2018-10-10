@@ -86,10 +86,9 @@ struct _Rule_Struct
     char s_content[MAX_CONTENT][256];
     char s_reference[MAX_REFERENCE][256];
     char s_classtype[32];
-    //char s_sid[32];
     uint64_t s_sid;
-    char s_rev[5];
-    int  s_pri;
+    uint32_t s_rev;
+    int8_t s_pri;
     char s_program[256];
     char s_facility[50];
     char s_syspri[25];
