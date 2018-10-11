@@ -150,12 +150,17 @@ int main(int argc, char **argv)
     struct tm *now;
     char  timet[20];
 
+    uint64_t current_time;
+
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
+    current_time = atoi(timet);
+
     uint64_t thresh_oldtime;
     uint64_t after_oldtime;
+    uint64_t xbit_oldtime;
 
     /* For convert to IP string */
 
@@ -308,7 +313,7 @@ int main(int argc, char **argv)
             for ( i = 0; i < counters_ipc->thresh2_count; i++)
                 {
 
-                    thresh_oldtime = atol(timet) - Threshold2_IPC[i].utime;
+                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
 
                     /* Show only active threshold unless told otherwise */
 
@@ -436,7 +441,7 @@ int main(int argc, char **argv)
             for ( i = 0; i < counters_ipc->after2_count; i++)
                 {
 
-                    after_oldtime = atol(timet) - After2_IPC[i].utime;
+                    after_oldtime = current_time - After2_IPC[i].utime;
 
                     /* Show only active after unless told otherwise */
 
@@ -564,26 +569,33 @@ int main(int argc, char **argv)
                     for (i= 0; i < counters_ipc->xbit_count; i++ )
                         {
 
-                            u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
-
-                            printf("Type: xbit [%d].\n", i);
-                            printf("Selector: ");
-
-                            if ( xbit_ipc[i].selector[0] == 0 )
+                            if ( xbit_ipc[i].xbit_state == 1 || all_flag == true )
                                 {
-                                    printf("[None]\n");
-                                }
-                            else
-                                {
-                                    printf("%s\n", xbit_ipc[i].selector);
-                                }
 
-                            printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
-                            printf("State: %s\n", xbit_ipc[i].xbit_state == 1 ? "ACTIVE" : "INACTIVE");
-                            printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
-                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
-                            printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
-                            printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+                                    u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
+                                    xbit_oldtime = xbit_ipc[i].xbit_expire - current_time;
+
+                                    printf("Type: xbit [%d].\n", i);
+                                    printf("Selector: ");
+
+                                    if ( xbit_ipc[i].selector[0] == 0 )
+                                        {
+                                            printf("[None]\n");
+                                        }
+                                    else
+                                        {
+                                            printf("%s\n", xbit_ipc[i].selector);
+                                        }
+
+                                    printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
+                                    printf("State: %s\n", xbit_ipc[i].xbit_state == 1 ? "ACTIVE" : "INACTIVE");
+                                    printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
+                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
+                                    printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
+                                    printf("Time until expire: %d seconds.\n", xbit_oldtime);
+                                    printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+
+                                }
 
                         }
                 }
