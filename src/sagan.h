@@ -449,6 +449,7 @@ struct _Sagan_Event
 
     uint64_t sid;
     uint32_t rev;
+
     char *class;
     int pri;
     int ip_proto;
@@ -522,6 +523,8 @@ struct _After2_IPC
 
     uint64_t utime;
     uint64_t sid;
+    uint32_t rev;
+
     int expire;
     char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];

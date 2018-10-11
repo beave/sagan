@@ -61,6 +61,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
     bool thresh_log_flag = false;
 
     uint64_t thresh_oldtime;
+    uint64_t current_time;
 
     int i;
 
@@ -78,6 +79,8 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
     char debug_string[64] = { 0 };
 
     uint32_t hash;
+
+    current_time = atoi(timet);
 
     username_tmp[0] = '\0';
 
@@ -121,9 +124,9 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
                     pthread_mutex_lock(&Thresh2_Mutex);
 
                     Threshold2_IPC[i].count++;
-                    thresh_oldtime = atol(timet) - Threshold2_IPC[i].utime;
+                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
 
-                    Threshold2_IPC[i].utime = atol(timet);
+                    Threshold2_IPC[i].utime = current_time;
 
                     strlcpy(Threshold2_IPC[i].syslog_message, syslog_message, sizeof(Threshold2_IPC[i].syslog_message));
                     strlcpy(Threshold2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(Threshold2_IPC[i].signature_msg));
@@ -131,7 +134,9 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
                     if ( thresh_oldtime > rulestruct[rule_position].threshold2_seconds )
                         {
                             Threshold2_IPC[i].count=1;
-                            Threshold2_IPC[i].utime = atol(timet);
+
+                            Threshold2_IPC[i].utime = current_time;  /* Reset the time */
+
                             thresh_log_flag = false;
                         }
 
@@ -196,7 +201,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
             selector == NULL ? Threshold2_IPC[counters_ipc->thresh2_count].selector[0] = '\0' : strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].selector, selector, MAXSELECTOR);
 
             Threshold2_IPC[counters_ipc->thresh2_count].count = 1;
-            Threshold2_IPC[counters_ipc->thresh2_count].utime = atol(timet);
+            Threshold2_IPC[counters_ipc->thresh2_count].utime = current_time;
             Threshold2_IPC[counters_ipc->thresh2_count].expire = rulestruct[rule_position].threshold2_seconds;
             Threshold2_IPC[counters_ipc->thresh2_count].sid = rulestruct[rule_position].s_sid;
             Threshold2_IPC[counters_ipc->thresh2_count].target_count =rulestruct[rule_position].threshold2_count;

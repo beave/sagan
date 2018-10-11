@@ -517,7 +517,7 @@ int main(int argc, char **argv)
                                 }
 
 
-                            printf("Signature: \"%s\" (%" PRIu64 ")\n", After2_IPC[i].signature_msg, After2_IPC[i].sid);
+                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 " Revision: %d)\n", After2_IPC[i].signature_msg, After2_IPC[i].sid, After2_IPC[i].rev);
                             printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
                             printf("Counter: %d\n", After2_IPC[i].count);

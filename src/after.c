@@ -58,6 +58,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
     int i;
 
     uint64_t after_oldtime;
+    uint64_t current_time;
 
     t = time(NULL);
     now=localtime(&t);
@@ -76,6 +77,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
 
     bool after_log_flag = true;
 
+    current_time = atol(timet);
     username_tmp[0] = '\0';
 
     if ( rulestruct[rule_position].after2_method_src == true )
@@ -111,16 +113,17 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
         {
 
             if ( hash == After2_IPC[i].hash && After2_IPC[i].sid == rulestruct[rule_position].s_sid &&
-                    ( selector == NULL || !strcmp(selector, After2_IPC[i].selector)) )
+                    After2_IPC[i].rev == rulestruct[rule_position].s_rev && ( selector == NULL || !strcmp(selector, After2_IPC[i].selector)) )
                 {
 
                     File_Lock(config->shm_after2);
                     pthread_mutex_lock(&After2_Mutex);
 
                     After2_IPC[i].count++;
-//                    After2_IPC[i].total_count++;
 
-                    after_oldtime = atol(timet) - After2_IPC[i].utime;
+                    After2_IPC[i].utime = current_time;	/* Reset the time */
+
+                    after_oldtime = current_time - After2_IPC[i].utime;
 
                     strlcpy(After2_IPC[i].syslog_message, syslog_message, sizeof(After2_IPC[i].syslog_message));
                     strlcpy(After2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(After2_IPC[i].signature_msg));
@@ -132,7 +135,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                         {
 
                             After2_IPC[i].count=1;
-                            After2_IPC[i].utime = atol(timet);
+                            After2_IPC[i].utime = current_time;
 
                             after_log_flag = true;
                         }
@@ -200,9 +203,10 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
             selector == NULL ? After2_IPC[counters_ipc->after2_count].selector[0] = '\0' : strlcpy(After2_IPC[counters_ipc->after2_count].selector, selector, MAXSELECTOR);
 
             After2_IPC[counters_ipc->after2_count].count = 1;
-            After2_IPC[counters_ipc->after2_count].utime = atol(timet);
+            After2_IPC[counters_ipc->after2_count].utime = current_time;
             After2_IPC[counters_ipc->after2_count].expire = rulestruct[rule_position].after2_seconds;
             After2_IPC[counters_ipc->after2_count].sid = rulestruct[rule_position].s_sid;
+            After2_IPC[counters_ipc->after2_count].rev = rulestruct[rule_position].s_rev;
             After2_IPC[counters_ipc->after2_count].target_count =rulestruct[rule_position].after2_count;
 
             After2_IPC[counters_ipc->after2_count].after2_method_src = rulestruct[rule_position].after2_method_src;
