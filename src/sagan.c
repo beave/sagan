@@ -1261,6 +1261,7 @@ int main(int argc, char **argv)
                                     Sagan_Log(DEBUG, "[%s, line %d] Current \"proc_msgslot\": %d", __FILE__, __LINE__, proc_msgslot);
                                 }
 
+
                             if (debug->debugsyslog)
                                 {
 
@@ -1271,7 +1272,6 @@ int main(int argc, char **argv)
                                 }
 
 
-//                            memset(SyslogInput, 0, sizeof(_SyslogInput));
 
                         } /* while(fgets) */
 

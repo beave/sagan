@@ -24,32 +24,22 @@ typedef struct _JSON_Message_Map _JSON_Message_Map;
 struct _JSON_Message_Map
 {
 
-    char software[32];
-    //char eventtime[32];
-    char hostname[256];
-    //char keywords[32];
-    //char eventtype[32];
-    //int  severityvalue;
-    //char severity[16];
-    int  eventid;
     char program[MAX_SYSLOG_PROGRAM];
-    //char guid[32];
-    //int  version;
-    //int  taskvalue;
-    //int  opcodevalue;
-    //uint64_t recordnumber;
-    //uint64_t executionprocessid;
-    //uint64_t exectionthreadid;
-    //char channel[32];
-    //char domain[32];
-    char username[64];
-    //char accountname[64];
     char message[MAX_SYSLOGMSG];
-    //char opcode[64];
-    //char userdata[512];
-    //char eventreceviedtime[32];
+
+};
+
+typedef struct _JSON_Message_Map_Found _JSON_Message_Map_Found;
+struct _JSON_Message_Map_Found
+{
+
+    char program[MAX_SYSLOG_PROGRAM];
+    char message[MAX_SYSLOGMSG];
 
 };
 
 
+
 void Load_Message_JSON_Map ( const char *json_map );
+void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
+

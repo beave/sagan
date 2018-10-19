@@ -33,7 +33,7 @@ libfastjson is required for Sagan to function!
 
 #include <stdio.h>
 #include <string.h>
-
+#include <json.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -45,6 +45,7 @@ struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
 struct _JSON_Message_Map *JSON_Message_Map;
+struct _JSON_Message_Tmp *JSON_Message_Tmp;
 
 void Load_Message_JSON_Map ( const char *json_map )
 {
@@ -90,51 +91,183 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             /* Set all values to NULL or 0 */
 
-            strlcpy(JSON_Message_Map[counters->json_message_map].software, "NONE", 5);
+            //strlcpy(JSON_Message_Map[counters->json_message_map].software, "NONE", 5);
 
-            JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
+            //JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
             JSON_Message_Map[counters->json_message_map].program[0] = '\0';
             JSON_Message_Map[counters->json_message_map].message[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].eventid = -1;
+            //JSON_Message_Map[counters->json_message_map].eventid = -1;
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
+            /*
+                        if ( json_object_object_get_ex(json_obj, "software", &tmp))
+                            {
+                                strlcpy(JSON_Message_Map[counters->json_message_map].software,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].software));
+                            }
 
-            if ( json_object_object_get_ex(json_obj, "software", &tmp))
-                {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].software,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].software));
-                }
-
-            if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
-                {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].hostname));
-                }
+                        if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
+                            {
+                                strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].hostname));
+                            }
+            */
 
             if ( json_object_object_get_ex(json_obj, "program", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
                 }
 
-            if ( json_object_object_get_ex(json_obj, "username", &tmp))
-                {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].username,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].username));
-                }
+            /*
+                        if ( json_object_object_get_ex(json_obj, "username", &tmp))
+                            {
+                                strlcpy(JSON_Message_Map[counters->json_message_map].username,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].username));
+                            }
+            */
 
             if ( json_object_object_get_ex(json_obj, "message", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].message,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].message));
                 }
 
-            if ( json_object_object_get_ex(json_obj, "eventid", &tmp))
-                {
-                    JSON_Message_Map[counters->json_message_map].eventid = atol(json_object_get_string(tmp));
-                }
+            /*
+                        if ( json_object_object_get_ex(json_obj, "eventid", &tmp))
+                            {
+                                JSON_Message_Map[counters->json_message_map].eventid = atol(json_object_get_string(tmp));
+                            }
+            */
 
             counters->json_message_map++;
 
         }
 
     json_object_put(json_obj);
+
+}
+
+void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
+{
+
+    struct _JSON_Message_Map_Found *JSON_Message_Map_Found = NULL;
+    JSON_Message_Map_Found = malloc(sizeof(struct _JSON_Message_Map_Found) * JSON_MAX_NEST);
+
+    if ( JSON_Message_Map_Found == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for JSON_Message_Map_Found. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(JSON_Message_Map_Found, 0, sizeof(_JSON_Message_Map_Found) * JSON_MAX_NEST);
+
+
+    /* NEED TO SANITY CHECK JSON_MESSAGE_MAP AT LOAD! */
+
+    uint16_t i=0;
+    uint16_t a=0;
+
+    uint32_t score=0;
+    uint32_t prev_score=0;
+    uint32_t pos=0;
+
+    /* We start at 1 because the SaganProcSyslog_LOCAL->message is considered the
+       first JSON string */
+
+    uint16_t json_str_count=1;
+
+    const char *key = NULL;
+    const char *val_str = NULL;
+
+    bool has_message;
+    bool found = false;
+
+    struct json_object *json_obj = NULL;
+    struct json_object *tmp = NULL;
+
+    struct json_object_iterator it;
+    struct json_object_iterator itEnd;
+
+    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { 0 };
+
+    strlcpy(json_str[0], SaganProcSyslog_LOCAL->syslog_message, sizeof(json_str[0]));
+
+    json_obj = json_tokener_parse(SaganProcSyslog_LOCAL->syslog_message);
+
+    it = json_object_iter_begin(json_obj);
+    itEnd = json_object_iter_end(json_obj);
+
+    while (!json_object_iter_equal(&it, &itEnd))
+        {
+
+            struct json_object *const val = json_object_iter_peek_value(&it);
+            val_str = json_object_get_string(val);
+
+            if ( val_str[0] == '{' || val_str[1] == '{' )
+                {
+
+                    /* If object looks like JSON, add it to array to be parsed later */
+
+                    if ( json_str_count < JSON_MAX_NEST )
+                        {
+                            strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
+                            json_str_count++;
+                        }
+                    else
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Detected JSON past max nest of %d! Skipping extra JSON.", __FILE__, __LINE__, JSON_MAX_NEST);
+                        }
+                }
+
+            json_object_iter_next(&it);
+        }
+
+    for ( a = 0; a < json_str_count; a++ )
+        {
+
+            json_obj = json_tokener_parse(json_str[a]);
+
+            for (i = 0; i < counters->json_message_map; i++ )
+                {
+
+                    has_message = false;
+                    score=0;
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].message, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].message));
+                            has_message = true;
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].program, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].program, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].program));
+                            score++;
+                        }
+
+
+                    if ( score > prev_score && has_message == true )
+                        {
+                            pos = i;
+                            prev_score = score;
+                            found = true;
+                        }
+
+
+                }
+        }
+
+    //printf(" Would use: %d . score is %d\n", pos, found);
+
+    /* We have to have a "message!" */
+
+    if ( found == true )
+        {
+
+            //printf("|%s|%s|\n", JSON_Message_Map_Found[pos].program, JSON_Message_Map_Found[pos].message);
+            strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+            strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+
+
+        }
 
 }
 

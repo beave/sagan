@@ -72,6 +72,10 @@
 #include "geoip.h"
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+#include "message-json-map.h"
+#endif
+
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _Sagan_Ruleset_Track *Ruleset_Track;
@@ -223,10 +227,24 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     gettimeofday(&tp, 0);       /* Store event time as soon as we get it */
 
+#ifdef HAVE_LIBFASTJSON
+
+    if ( config->parse_json_message == true && ( SaganProcSyslog_LOCAL->syslog_message[1] == '{' || SaganProcSyslog_LOCAL->syslog_message[2] == '{'  ) )
+        {
+
+            Parse_JSON_Message( SaganProcSyslog_LOCAL );
+            //printf("ENGINE |%s|%s|\n", SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message);
+
+        }
+
+#endif
+
+
     /* Search for matches */
 
     /* First we search for 'program' and such.   This way,  we don't waste CPU
      * time with pcre/content.  */
+
 
     for(b=0; b < counters->rulecount; b++)
         {

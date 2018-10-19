@@ -68,6 +68,9 @@ typedef void json_object;
 #define JSON_MAP_PROGRAM      32
 #define JSON_MAP_MESSAGE      32
 
+#define JSON_MAX_NEST	      10
+#define JSON_MAX_SIZE	      10240
+
 
 #define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
 #define INPUT_PIPE                      1
