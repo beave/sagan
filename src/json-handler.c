@@ -60,7 +60,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     char *proto = NULL;
     char *action = NULL;
-    uint64_t tmp_sid = 0;
 
     char timebuf[64];
     char classbuf[64];

@@ -154,7 +154,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     uint16_t json_str_count=1;
 
-    const char *key = NULL;
     const char *val_str = NULL;
 
     bool has_message;
@@ -166,7 +165,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     struct json_object_iterator it;
     struct json_object_iterator itEnd;
 
-    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { 0 };
+    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
     strlcpy(json_str[0], SaganProcSyslog_LOCAL->syslog_message, sizeof(json_str[0]));
 

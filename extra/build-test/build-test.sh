@@ -20,14 +20,15 @@
 #  --disable-libdnet       Disable libdnet (unified2) support.
 #  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.  
 #  --enable-esmtp          Enable libesmtp support.  
-#  --enable-geoip2         Enable Maxmind GeoIP2 support.  
+#  --enable-geoip          Enable Maxmind GeoIP support.  
 #  --enable-system-strstr  Enable system strstr.  
 #  --enable-redis	   Enable redis support.
+#  --disable-libfastjson   Endbale libfastjson
 
 
-STANDARD="--disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet"
-ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip2 --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson --enable-redis"
-NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip2 --disable-system-strstr --disable-system-strstr --disable-libfastjson --disable-redis"
+STANDARD="--disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson"
+ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson --enable-redis --enable-libfastjson"
+NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --disable-system-strstr --disable-libfastjson --disable-redis --disable-libfastjson"
 
 LOG="output.log" 
 

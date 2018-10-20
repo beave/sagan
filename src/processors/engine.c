@@ -76,6 +76,8 @@
 #include "message-json-map.h"
 #endif
 
+#include "output-plugins/eve.h"
+
 struct _SaganCounters *counters;
 struct _Rule_Struct *rulestruct;
 struct _Sagan_Ruleset_Track *Ruleset_Track;
@@ -1471,10 +1473,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
         } /* End for for loop */
 
 
+#ifdef HAVE_LIBFASTJSON
+
     if ( config->eve_flag && config->eve_logs )
         {
             Log_JSON(SaganProcSyslog_LOCAL, tp, json_normalize);
         }
+
+#endif
 
     free(processor_info_engine);
     free(lookup_cache);

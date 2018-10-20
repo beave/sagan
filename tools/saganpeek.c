@@ -165,7 +165,6 @@ int main(int argc, char **argv)
     /* For convert to IP string */
 
     char ip_src[MAXIP] = { 0 };
-    char ip_dst[MAXIP] = { 0 };
 
     char time_buf[80] = { 0 };
 
@@ -338,7 +337,7 @@ int main(int argc, char **argv)
                                 }
 
 
-                            printf("Tracking hash: %lu\n", Threshold2_IPC[i].hash);
+                            printf("Tracking hash: %u\n", Threshold2_IPC[i].hash);
 
                             printf("Tracking by:");
 
@@ -386,7 +385,7 @@ int main(int argc, char **argv)
 
                             if ( Threshold2_IPC[i].threshold2_method_dstport == true )
                                 {
-                                    printf("DST Port: %s\n", Threshold2_IPC[i].dst_port);
+                                    printf("DST Port: %d\n", Threshold2_IPC[i].dst_port);
                                 }
 
                             if ( Threshold2_IPC[i].threshold2_method_username == true )
@@ -399,8 +398,8 @@ int main(int argc, char **argv)
                             printf("Syslog Message: \"%s\"\n", Threshold2_IPC[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
                             printf("Target Count: %" PRIu64 "\n", Threshold2_IPC[i].target_count);
-                            printf("Counter: %d\n", Threshold2_IPC[i].count);
-                            printf("Time until expire: %d seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
+                            printf("Counter: %" PRIu64 "\n", Threshold2_IPC[i].count);
+                            printf("Time until expire: %" PRIu64 " seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
                             printf("Expire Time: %d seconds.\n\n", Threshold2_IPC[i].expire);
 
                         }
@@ -465,7 +464,7 @@ int main(int argc, char **argv)
                                     printf("%s\n", After2_IPC[i].selector);
                                 }
 
-                            printf("Tracking hash: %lu\n", After2_IPC[i].hash);
+                            printf("Tracking hash: %u\n", After2_IPC[i].hash);
 
                             printf("Tracking by:");
 
@@ -513,7 +512,7 @@ int main(int argc, char **argv)
 
                             if ( After2_IPC[i].after2_method_dstport == true )
                                 {
-                                    printf("DST Port: %s\n", After2_IPC[i].dst_port);
+                                    printf("DST Port: %d\n", After2_IPC[i].dst_port);
                                 }
 
                             if ( After2_IPC[i].after2_method_username == true )
@@ -525,8 +524,8 @@ int main(int argc, char **argv)
                             printf("Signature: \"%s\" (Signature ID: %" PRIu64 " Revision: %d)\n", After2_IPC[i].signature_msg, After2_IPC[i].sid, After2_IPC[i].rev);
                             printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
                             printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %d\n", After2_IPC[i].count);
-                            printf("Time until expire: %d seconds.\n", After2_IPC[i].expire - after_oldtime);
+                            printf("Counter: %" PRIu64 "\n", After2_IPC[i].count);
+                            printf("Time until expire: %" PRIu64 " seconds.\n", After2_IPC[i].expire - after_oldtime);
                             printf("Expire Time: %d seconds.\n\n", After2_IPC[i].expire);
 
                         }
@@ -592,7 +591,7 @@ int main(int argc, char **argv)
                                     printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
                                     printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
                                     printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
-                                    printf("Time until expire: %d seconds.\n", xbit_oldtime);
+                                    printf("Time until expire: %" PRIu64 " seconds.\n", xbit_oldtime);
                                     printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
                                 }
