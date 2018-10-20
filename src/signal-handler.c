@@ -476,7 +476,7 @@ void Sig_Handler( void )
                         }
 
 #ifdef HAVE_LIBMAXMINDDB
-                    Sagan_Log(NORMAL, "Reloading GeoIP2 data.");
+                    Sagan_Log(NORMAL, "Reloading GeoIP data.");
                     Open_GeoIP2_Database();
 #endif
 

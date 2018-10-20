@@ -83,7 +83,7 @@ void Open_GeoIP2_Database( void )
 
     if ( status != 0 )
         {
-            Sagan_Log(ERROR, "Error loading Maxmind GeoIP2 data (%s).  Are you trying to load an older, non-GeoIP2 database?", config->geoip2_country_file);
+            Sagan_Log(ERROR, "Error loading Maxmind GeoIP data (%s).  Are you trying to load an older, non-GeoIP database?", config->geoip2_country_file);
         }
 
 }

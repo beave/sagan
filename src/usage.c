@@ -102,7 +102,7 @@ void Usage(void)
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-    fprintf(stderr, "* Maxmind GeoIP2 support is included.\n");
+    fprintf(stderr, "* Maxmind GeoIP support is included.\n");
 #endif
 
 #ifdef WITH_SNORTSAM

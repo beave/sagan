@@ -1057,7 +1057,7 @@ void Load_YAML_Config( char *yaml_file )
                                             if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
 
-                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with Maxmind's \"GeoIP2\" support!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] Sagan was not compiled with Maxmind's \"GeoIP\" support!", __FILE__, __LINE__);
 
                                                 }
                                         }
@@ -2723,10 +2723,10 @@ void Load_YAML_Config( char *yaml_file )
             if ( Check_Var("$HOME_COUNTRY") == false )
                 {
 
-                    Sagan_Log(ERROR, "[%s, line %d] GeoIP2 is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
+                    Sagan_Log(ERROR, "[%s, line %d] GeoIP is enabled, but the $HOME_COUNTRY variable is not set. . Abort!", __FILE__, __LINE__);
                 }
 
-            Sagan_Log(NORMAL, "Loading GeoIP2 database. [%s]", config->geoip2_country_file);
+            Sagan_Log(NORMAL, "Loading GeoIP database. [%s]", config->geoip2_country_file);
             Open_GeoIP2_Database();
 
         }

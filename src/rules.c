@@ -1503,7 +1503,7 @@ void Load_Rules( const char *ruleset )
                             if (!config->have_geoip2)
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Rule %s at line %d has GeoIP2 option,  but Sagan configuration lacks GeoIP2 - skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    Sagan_Log(WARN, "[%s, line %d] Rule %s at line %d has GeoIP option,  but Sagan configuration lacks GeoIP - skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount);
                                     continue;
                                 }
 
@@ -1587,7 +1587,7 @@ void Load_Rules( const char *ruleset )
 #ifndef HAVE_LIBMAXMINDDB
                     if (!strcmp(rulesplit, "country_code"))
                         {
-                            Sagan_Log(WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP2 support!", linecount, ruleset_fullname);
+                            Sagan_Log(WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset_fullname);
                             Sagan_Log(WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip2\" or disable this rule!");
                         }
 #endif
