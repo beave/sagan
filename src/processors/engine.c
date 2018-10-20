@@ -229,16 +229,55 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #ifdef HAVE_LIBFASTJSON
 
-    if ( config->parse_json_message == true && ( SaganProcSyslog_LOCAL->syslog_message[1] == '{' || SaganProcSyslog_LOCAL->syslog_message[2] == '{'  ) )
+    /* If "parse-json-program" is enabled, we'll look for signs in the program
+       field for JSON.  If we find it,  we'll append the program and message
+       field */
+
+    if ( config->parse_json_program == true &&
+            ( SaganProcSyslog_LOCAL->syslog_program[0] == '{' ||
+              SaganProcSyslog_LOCAL->syslog_program[1] == '{' ) )
         {
 
+            char tmp_json[MAX_SYSLOGMSG] = { 0 };
+
+            if ( debug->debugjson )
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] Found possible JSON within program \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program );
+                }
+
+            /* Merge program+message */
+
+            snprintf(tmp_json, sizeof(tmp_json), "%s%s", SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
+
+            /* Zero out program (might get set by JSON) */
+
+            SaganProcSyslog_LOCAL->syslog_program[0] = '\0';
+            strlcpy(SaganProcSyslog_LOCAL->syslog_message, tmp_json, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+            /* Parse JSON */
+
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
-            //printf("ENGINE |%s|%s|\n", SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message);
 
         }
 
-#endif
 
+    /* If "parse-json-message" is enabled, we'll look for signs in the message for
+           JSON */
+
+    if ( config->parse_json_message == true &&
+            ( SaganProcSyslog_LOCAL->syslog_message[1] == '{' ||
+              SaganProcSyslog_LOCAL->syslog_message[2] == '{'  ) )
+        {
+
+            if ( debug->debugjson )
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] Found possible JSON within message \"%s\".", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                }
+
+            Parse_JSON_Message( SaganProcSyslog_LOCAL );
+        }
+
+#endif
 
     /* Search for matches */
 
@@ -1246,7 +1285,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         }
 
                                     /****************************************************************************/
-                                    /* Populate the SaganEvent array with the information needed.  This info    */
+                                    /* Populate the Sagan Event array with the information needed.  This info    */
                                     /* will be passed to the threads.  No need to populate it _if_ we're in a   */
                                     /* threshold state.                                                         */
                                     /****************************************************************************/

@@ -143,9 +143,9 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
-    # Controls how data is read from the FIFO.  "pipe" is the traditional way
-    # Sagan reads in events and is default.  "json" is more flexable and 
-    # will become the default in the future.  If "pipe" is set, "json-map"
+    # Controls how data is read from the FIFO. The "pipe" setting is the traditional 
+    # way Sagan reads in events and is default. "json" is more flexable and 
+    # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
     input-type: pipe                                    # pipe or json
@@ -153,16 +153,13 @@ sagan-core:
     json-software: syslog-ng                            # by "software" type. 
 
     # "parse-json-message" allows Sagan to detect and decode JSON within a 
-    # syslog "message" field.  If a decoder (map) is found,  then Sagan will
+    # syslog "message" field.  If a decoder/mapping is found,  then Sagan will
     # extract the JSON values within the messages.  The "parse-json-program"
     # tells Sagan to start looking for JSON within the "program" field.  Some
-    # broken systems (i.e. - Splunk) start JSON within the "program" field and
+    # systems (i.e. - Splunk) start JSON within the "program" field and
     # into the "message" field.  This option tells Sagan to "append" the 
-    # strings together (program+message) and then decode.  The
-    # "json-message-map" tells Sagan how to decode JSON values when they are 
-    # encountered.
-
-    # THIS IS NOT COMPLETE.  DO NOT USE.
+    # strings together (program+message) and then decode.  The "json-message-map"
+    # tells Sagan how to decode JSON values when they are encountered.
 
     parse-json-message: disable
     parse-json-program: disable

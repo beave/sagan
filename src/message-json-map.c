@@ -43,9 +43,14 @@ libfastjson is required for Sagan to function!
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
+struct _SaganDebug *debug;
 
 struct _JSON_Message_Map *JSON_Message_Map;
 struct _JSON_Message_Tmp *JSON_Message_Tmp;
+
+/*************************
+ * Load JSON mapping file
+ *************************/
 
 void Load_Message_JSON_Map ( const char *json_map )
 {
@@ -91,50 +96,26 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             /* Set all values to NULL or 0 */
 
-            //strlcpy(JSON_Message_Map[counters->json_message_map].software, "NONE", 5);
-
-            //JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
             JSON_Message_Map[counters->json_message_map].program[0] = '\0';
             JSON_Message_Map[counters->json_message_map].message[0] = '\0';
-            //JSON_Message_Map[counters->json_message_map].eventid = -1;
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
-            /*
-                        if ( json_object_object_get_ex(json_obj, "software", &tmp))
-                            {
-                                strlcpy(JSON_Message_Map[counters->json_message_map].software,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].software));
-                            }
-
-                        if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
-                            {
-                                strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].hostname));
-                            }
-            */
+            if ( json_obj == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] JSON message map is incorrect at: \"%s\"", __FILE__, __LINE__, json_message_map_buf);
+                    return;
+                }
 
             if ( json_object_object_get_ex(json_obj, "program", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
                 }
 
-            /*
-                        if ( json_object_object_get_ex(json_obj, "username", &tmp))
-                            {
-                                strlcpy(JSON_Message_Map[counters->json_message_map].username,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].username));
-                            }
-            */
-
             if ( json_object_object_get_ex(json_obj, "message", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].message,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].message));
                 }
-
-            /*
-                        if ( json_object_object_get_ex(json_obj, "eventid", &tmp))
-                            {
-                                JSON_Message_Map[counters->json_message_map].eventid = atol(json_object_get_string(tmp));
-                            }
-            */
 
             counters->json_message_map++;
 
@@ -143,6 +124,10 @@ void Load_Message_JSON_Map ( const char *json_map )
     json_object_put(json_obj);
 
 }
+
+/************************************************************************
+ * Parse_JSON_Message - Parses mesage (or program+message) for JSON data
+ ************************************************************************/
 
 void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
@@ -156,9 +141,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
         }
 
     memset(JSON_Message_Map_Found, 0, sizeof(_JSON_Message_Map_Found) * JSON_MAX_NEST);
-
-
-    /* NEED TO SANITY CHECK JSON_MESSAGE_MAP AT LOAD! */
 
     uint16_t i=0;
     uint16_t a=0;
@@ -190,8 +172,18 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     json_obj = json_tokener_parse(SaganProcSyslog_LOCAL->syslog_message);
 
+    /* If JSON parsing fails, it wasn't JSON after all */
+
+    if ( json_obj == NULL )
+        {
+            Sagan_Log(WARN, "[%s, line %d] Detected JSON but function was incorrect. The log line was: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+            return;
+        }
+
     it = json_object_iter_begin(json_obj);
     itEnd = json_object_iter_end(json_obj);
+
+    /* Go through all key/values. We do this find nested json */
 
     while (!json_object_iter_equal(&it, &itEnd))
         {
@@ -218,16 +210,34 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             json_object_iter_next(&it);
         }
 
-    for ( a = 0; a < json_str_count; a++ )
+    if ( debug->debugjson )
         {
 
-            json_obj = json_tokener_parse(json_str[a]);
+            for ( a=0; a < json_str_count; a++ )
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] %d. JSON found: \"%s\"",  __FILE__, __LINE__, a, json_str[a]);
 
-            for (i = 0; i < counters->json_message_map; i++ )
+                }
+        }
+
+
+    /* Search message maps and see which one's match our syslog message best */
+
+    for (i = 0; i < counters->json_message_map; i++ )
+        {
+            score = 0;
+
+            for ( a = 0; a < json_str_count; a++ )
                 {
 
-                    has_message = false;
-                    score=0;
+                    json_obj = json_tokener_parse(json_str[a]);
+
+                    if ( json_obj == NULL )
+                        {
+                            Sagan_Log(WARN, "[%s, line %d] Detected JSON Nest but function was incorrect. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
+                            return;
+                        }
+
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message, &tmp))
                         {
@@ -242,32 +252,59 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
-
-                    if ( score > prev_score && has_message == true )
-                        {
-                            pos = i;
-                            prev_score = score;
-                            found = true;
-                        }
-
-
                 }
+
+            if ( score > prev_score && has_message == true )
+                {
+
+                    pos = i;
+                    prev_score = score;
+                    found = true;
+                }
+
         }
 
-    //printf(" Would use: %d . score is %d\n", pos, found);
+    if ( debug->debugjson )
+        {
+
+            if ( found == true )
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] Best message mapping match is at postion %d (score of %d)", __FILE__, __LINE__, found, pos, prev_score );
+                }
+            else
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] No JSON mappings found", __FILE__, __LINE__);
+                }
+
+        }
 
     /* We have to have a "message!" */
 
     if ( found == true )
         {
 
-            //printf("|%s|%s|\n", JSON_Message_Map_Found[pos].program, JSON_Message_Map_Found[pos].message);
+            /* Keep a copy of the original message before altering */
+
+            // strlcpy(SaganProcSyslog_LOCAL->syslog_message_json, SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message_json));
+
+            /* Put JSON values into place */
+
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
 
+            if ( debug->debugjson )
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] New data extracted from JSON:", __FILE__, __LINE__);
+                    Sagan_Log(DEBUG, "[%s, line %d] -------------------------------------------------------", __FILE__, __LINE__);
+                    Sagan_Log(DEBUG, "[%s, line %d] Message: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message );
+                    Sagan_Log(DEBUG, "[%s, line %d] Program: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program );
+                }
+
 
         }
+
+    json_object_put(json_obj);
 
 }
 

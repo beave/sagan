@@ -468,7 +468,7 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBMAXMINDDB
 
-                    if (Sagan_strstr(optarg, "geoip2"))
+                    if (Sagan_strstr(optarg, "geoip"))
                         {
                             debug->debuggeoip2 = true;
                             debugflag = true;

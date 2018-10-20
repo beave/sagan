@@ -390,6 +390,7 @@ struct _Sagan_Proc_Syslog
     char syslog_time[MAX_SYSLOG_TIME];
     char syslog_program[MAX_SYSLOG_PROGRAM];
     char syslog_message[MAX_SYSLOGMSG];
+    //char syslog_message_json[MAX_SYSLOGMSG];
 
 };
 

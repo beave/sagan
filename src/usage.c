@@ -39,7 +39,7 @@ void Usage(void)
     fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
     fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
     fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
-    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external,threads,\n\t\t\tipc, limits, malformed, xbit, brointel, json, parse_ip");
+    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,ipc, limits, malformed, xbit, brointel, parse_ip");
 
 #ifdef HAVE_LIBESMTP
     fprintf(stderr, ", smtp");
@@ -58,11 +58,15 @@ void Usage(void)
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
-    fprintf(stderr, ", geoip2");
+    fprintf(stderr, ", geoip");
 #endif
 
 #ifdef HAVE_LIBHIREDIS
     fprintf(stderr, ", redis");
+#endif
+
+#if defined(HAVE_LIBFASTJSON) || defined(HAVE_LIBLOGNORM)
+    fprintf(stderr, ", json");
 #endif
 
     fprintf(stderr, ".\n");
@@ -93,6 +97,10 @@ void Usage(void)
     fprintf(stderr, "* libdnet (for unified2) support is included.\n");
 #endif
 
+#if defined(HAVE_LIBFASTJSON) || defined(HAVE_LIBLOGNORM)
+    fprintf(stderr, "* libfastjson support is included.\n");
+#endif
+
 #ifdef HAVE_LIBMAXMINDDB
     fprintf(stderr, "* Maxmind GeoIP2 support is included.\n");
 #endif
@@ -105,12 +113,12 @@ void Usage(void)
     fprintf(stderr, "* Syslog output is included.\n");
 #endif
 
-#ifdef WITH_SYSSTRSTR
-    fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n");
+#ifdef WITH_BLUEDOT
+    fprintf(stderr, "* Quadrant Information Security \"Bluedot\" is included.\n");
 #endif
 
-#ifdef WITH_BLUEDOT
-    fprintf(stderr, "* Using Quadrant's Bluedot.\n");
+#ifdef WITH_SYSSTRSTR
+    fprintf(stderr, "* Using Sagan's built in 'strstr' function.\n");
 #endif
 
 #ifdef PCRE_HAVE_JIT
