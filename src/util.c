@@ -542,17 +542,10 @@ bool is_inrange ( unsigned char *ip, unsigned char *tests, int count)
 bool is_notroutable ( unsigned char *ip )
 {
 
-    // Start of subnet followd by mask
+    /* Start of subnet followd by mask */
+
     static unsigned char tests[][32] =
     {
-
-        // IPv4 - 0.0.0.0
-        {
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-        },
 
         // IPv6 Multicast - ff00::/8
         {
@@ -690,6 +683,7 @@ bool is_notroutable ( unsigned char *ip )
         }
 
     };
+
     return is_inrange(ip, (unsigned char *)tests, sizeof(tests)/(sizeof(char[32])));
 }
 
