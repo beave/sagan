@@ -1,3 +1,137 @@
+2018/11/XX -	Sagan 1.2.1 released.
+
+		* Sagan can now read JSON via the FIFO.  Traditionally,  Sagan has used 
+		  a pipe delimited format.  This means that you can have your syslog daemon
+		  (rsyslog, syslog-ng, nxlog, etc) send Sagan data in a JSON through the FIFO.
+		  There is a new input JSON mapping file (json-input.map) to assist with 
+		  JSON mapping of input.
+
+		  https://github.com/beave/sagan/commit/cfe8d434c326038367f6c99301f0e3f2bd1f934f
+		  https://github.com/beave/sagan/commit/7e65c05ae61355a290c81869e4cccf9e3d911e1b
+
+		* New JSON "message" & "program" parsing and auto detection.  When enabled, 
+		  this allows Sagan to read in JSON data from the syslog "message" field.  In some
+		  cases (Third party "splunk" forwarding) the JSON will start within the syslog
+		  "program" field.  This option allows Sagan to automatically detect the JSON 
+		  and find the best mapping for the data.  There is a new mapping file 
+		  "json-message.map".  After JSON is decoded,  Sagan "scores" the mappings. 
+		  The best score "wins".
+		
+		  https://github.com/beave/sagan/commit/17876f1c2635af18ff2360f2a405d0fe0946783d
+		  https://github.com/beave/sagan/commit/10507916f4721e4efa11916d10ae030b68ddc494
+
+		* Due to many changes,  "saganpeek.c" had to be altered to support new 
+		  "threshold" and "after" options.
+
+		  https://github.com/beave/sagan/commit/81ecf5e99768d75eb9a798b41d68e41b3dc96a27
+		  https://github.com/beave/sagan/commit/c2b401cb9d15ebb6dcec09d47717335fde9817ca
+
+		* New --enable-libfastjson configure option
+
+		  https://github.com/beave/sagan/commit/a261e84b5a8247069a2acbdf6161263b248a125e
+
+		* "rev" and "sid" are now proper uint32_t and uint64_t
+
+		   https://github.com/beave/sagan/commit/830dd53e05474f0a2c534f1efdb9827154adebe5
+		   https://github.com/beave/sagan/commit/aead360a7a25139a8dd23980a687bc37e345447d
+
+		* Complete re-write of "after" and "threshold".  The new system is more 
+		  flexible and easier to maintain.  This allows the rule writer to specify
+		  multiple conditions for a "threshold" or "after". 
+
+		  https://github.com/beave/sagan/commit/58cb296df6b017a0d85c55625da4327891555dc8
+		  https://github.com/beave/sagan/commit/7dc8c2784f8ad915e8d7738661746ba5dbc1950f
+		  https://github.com/beave/sagan/commit/7afd601a8f6f8dfd36dfc4799c09d7db85b4340a
+		  https://github.com/beave/sagan/commit/7afd601a8f6f8dfd36dfc4799c09d7db85b4340a
+		  https://github.com/beave/sagan/commit/8e6ca162b9e77893cbb4e852bdd6dfcbc90cb95f
+		  https://github.com/beave/sagan/commit/c3697e24d344f9ac91b41dda3e8b5f75abe8618b
+		  https://github.com/beave/sagan/commit/cec9e0950ef73273aafbd5e229d56e5e10512845
+		  https://github.com/beave/sagan/commit/ea2dd731331f7dd8b0b1ccc17c0b311241b97b4a
+
+		* Added experimental "xbit_upause" rule option.  This causes a rule to "pause"
+		  for X microseconds before performing an xbit operation.
+
+		  https://github.com/beave/sagan/commit/152d688dff0e6772574e3cdd201424b40ec15f9a
+
+		* New "rule-tracking" yaml options.  This allows tracking of rules that have
+		  never fired verses rules that have fired.  This can be useful in rule 
+		  tuning.
+
+		  https://github.com/beave/sagan/commit/1ac1dc091ef55d66ae024c5c047ed264cf25574d
+		  https://github.com/beave/sagan/commit/49d371de716227b22054e2a7014c79b1eb7ae00c
+
+		* Added "skip_networks" yaml option to GeoIP and Bluedot.  This option tells
+		  Sagan to "skip" lookups for defined network. 
+
+		  https://github.com/beave/sagan/commit/cd38188f4f5537dc57d21ef507eaedd9cad30cc6
+		  https://github.com/beave/sagan/commit/b7522b2de9eb81e62b92c8f63bfba8dc356bfc2e
+
+		* Various GeoIP fixes.  Change ./configure options from --enable-geoip2
+		  to --enable-geoip
+
+		  https://github.com/beave/sagan/commit/f08daca514e816e209bca7808431ceabdf58431b
+		  https://github.com/beave/sagan/commit/8f1cf3aafe26802ae42a1bd4ea93b8883949e042
+		  https://github.com/beave/sagan/commit/03d28dd612e45ae236790cf1ec95965285f16c68
+		  https://github.com/beave/sagan/commit/a4d892a1ada24f995caa11ca9660445cd97eba2f
+		  https://github.com/beave/sagan/commit/4d8b918cbec6ec9d603eda62ccd49d6a89966859
+
+		* When using NXLog as a syslog receiver,  NXLog doesn't handle named pipes/
+		  FIFOs.  We creates a "help" program so that NXLog can write to FIFOs more
+		  efficiently.
+
+		  https://github.com/beave/sagan/commit/79703feaf043f2f4f40e179a7850535b52b196be
+
+		* Is_IP() and Is_IP6() is now one function.
+
+		  https://github.com/beave/sagan/commit/2ba2b2749345bebe0dd3d6b6e903ef763e2ac134
+
+		* Better thread safety upon exit.  On systems with high loads,  Sagan would
+		  sometimes segfault upon exit.  This corrects that issue.
+	
+		  https://github.com/beave/sagan/commit/854a3296bf46fd189cdc8860f008d3f30130f315
+		  https://github.com/beave/sagan/commit/6575a1e3f9bd16f9dcb43c77dcaab839e1e35b41
+
+		* Re-write of how Sagan produces JSON.  Sagan can now store _all_ logs in a 
+		  JSON output format.  This makes it easy to get all logs into back-ends like 
+		  Elasticsearch, etc.
+
+		  https://github.com/beave/sagan/commit/6c8de84c805be280547e433b4c15f2ca6aeba217
+		  https://github.com/beave/sagan/commit/de85f5e30a91237cae681d1811445e50a5a7bfd4
+
+		* Removed duplicate rule set load in default sagan.yaml of "windows-security.yaml".
+		  Also correct in the default sagan.yaml that cisco-acs.rules is now 
+		  cisco-ise.rules.  Thanks msnriggs!
+
+		  https://github.com/beave/sagan/commit/52386ed383623a16f47ccba6143402c7e8e15b61
+
+		* In certain situations,  Sagan would segfault when an non-IP address was being 
+		  looked up in Bluedot.
+
+		  https://github.com/beave/sagan/commit/fd172823868700450abe038a7b0e84583e47ee30
+
+		* Some minor memory fixes and cleanups identified by Valgrind.
+
+		  https://github.com/beave/sagan/commit/2ae04fad81bef49640d8aa94854e55a5c9d60871
+		  https://github.com/beave/sagan/commit/79549b69dc5c3589d386cd8e6fe1edb494e6fc46
+		  https://github.com/beave/sagan/commit/5ac62b15fae3dddd5a775674b81da59afce44252
+		  https://github.com/beave/sagan/commit/32241f73c81cab15db92b632aaa7f5c7447fcde1
+			
+		* Fixes for Bluedot. Added max-ip-cache, max-hash-cache, max-url-cache, and
+		  max-filename-cache to Bluedot processor.  Added new DNS "ttl" option to 
+		  Bluedot processor to limit the number of times Sagan will lookup the 
+		  Bluedot host.  Added some new statistics to Bluedot output.  Added a new
+		  Bluedot IP queue for dealing with many lookups at a time.
+		  
+		  https://github.com/beave/sagan/commit/308236f494c4c8d2e285957f4c8fc7392d58149f
+		  https://github.com/beave/sagan/commit/3a8d6bfb709fd49cf75e28d68bf966ec8d8e1505
+		  https://github.com/beave/sagan/commit/6304d01330848daba8be0f566c2389d84c1a84af
+		  https://github.com/beave/sagan/commit/30fe45ce5e3ee571240a97e30ede636edbb9438b
+		  https://github.com/beave/sagan/commit/a2e5b0a9163fa7dd75e67072153cab1bc99fc09c
+		  https://github.com/beave/sagan/commit/adf9c5f89878ebee7c79fcc4a4f861d80db86769
+		  https://github.com/beave/sagan/commit/1d17d43833b0e49d7f52570d7ece6a4ae3fb6d7d
+		  https://github.com/beave/sagan/commit/32e083cb346abf68f8b840311d9bafd381088230
+		  
+
 2018/06/14 -    Sagan 1.2.0 released.
 
 		* "meta_content" size limitation/truncation issue fixed.
