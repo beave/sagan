@@ -133,7 +133,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jproto = json_object_new_string( proto );
     json_object_object_add(jobj,"proto", jproto);
 
-    json_object *jpayload = json_object_new_string( b64_target );
+    json_object *jpayload = json_object_new_string( (const char *)b64_target );
     json_object_object_add(jobj,"payload", jpayload);
 
     json_object *jstream = json_object_new_string( "0" );
