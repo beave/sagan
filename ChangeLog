@@ -20,6 +20,10 @@
 		  https://github.com/beave/sagan/commit/17876f1c2635af18ff2360f2a405d0fe0946783d
 		  https://github.com/beave/sagan/commit/10507916f4721e4efa11916d10ae030b68ddc494
 
+		* Fixed flow issue where destination wouldn't be honored in certain situations.
+
+		
+
 		* Due to many changes,  "saganpeek.c" had to be altered to support new 
 		  "threshold" and "after" options.
 

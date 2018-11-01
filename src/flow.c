@@ -324,35 +324,40 @@ bool Check_Flow( int b, int ip_proto, unsigned char *ip_src_bits, int normalize_
 
 
 
-    /*Begin flow_2*/
+    /* Begin flow_2 */
 
     if(rulestruct[b].flow_2_var != 0)
         {
+
             for(i=0; i < rulestruct[b].flow_2_counter; i++)
                 {
                     z++;
                     f2 = rulestruct[b].flow_2_type[z];
 
+
                     if(f2 == 0)
                         {
                             ne2++;
+
                             if(is_inrange(ip_dst, (unsigned char *)&rulestruct[b].flow_2[i].range, 1))
                                 {
                                     ne2_val++;
                                 }
                         }
+
                     else if(f2 == 1)
                         {
                             eq2++;
+
                             if(is_inrange(ip_dst, (unsigned char *)&rulestruct[b].flow_2[i].range, 1))
                                 {
                                     eq2_val++;
                                 }
                         }
+
                     else if(f2 == 2)
                         {
                             ne2++;
-
 
                             memset(ip_convert, 0, MAXIPBIT);
                             memcpy(ip_convert, ip_dst, MAXIPBIT);

@@ -731,6 +731,9 @@ void Load_Rules( const char *ruleset )
                                                 {
                                                     rulestruct[counters->rulecount].flow_2_type[f2] = 3; /* 3 = match ip */
                                                 }
+
+                                            flow_2_count++;
+
                                             if( flow_2_count > MAX_CHECK_FLOWS )
                                                 {
                                                     bad_rule = true;
@@ -738,6 +741,7 @@ void Load_Rules( const char *ruleset )
                                                     continue;
                                                 }
                                         }
+
                                     rulestruct[counters->rulecount].flow_2_var = 1;   /* 1 = var */
                                     rulestruct[counters->rulecount].flow_2_counter = flow_2_count;
                                 }

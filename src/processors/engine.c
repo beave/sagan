@@ -689,10 +689,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                             ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_src_flag = false;
                                                         }
+
                                                     else
                                                         {
                                                             IP2Bit(ip_src, ip_src_bits);
                                                         }
+
 
                                                 }
 
@@ -710,10 +712,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                             ip_dst = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_dst_flag = false;
                                                         }
+
                                                     else
                                                         {
                                                             IP2Bit(ip_dst, ip_dst_bits);
                                                         }
+
+
                                                 }
 
                                             if ( SaganNormalizeLiblognorm.src_port != 0 )
@@ -786,7 +791,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                             ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_src_flag = false;
-
                                                         }
 
                                                     ip_srcport_u32 = lookup_cache[rulestruct[b].s_find_src_pos-1].port;
@@ -808,7 +812,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
                                                     memcpy(parse_ip_dst, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip, MAXIP );
-                                                    memcpy(ip_dst_bits, lookup_cache[rulestruct[b].s_find_src_pos-1].ip_bits, MAXIPBIT);
+                                                    memcpy(ip_dst_bits, lookup_cache[rulestruct[b].s_find_dst_pos-1].ip_bits, MAXIPBIT);
 
                                                     ip_dst = parse_ip_dst;
 
@@ -926,7 +930,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         {
                                             ip_dstport_u32=rulestruct[b].default_dst_port;
                                         }
-
 
                                     /* No protocol was normalized.  Use the rules default */
 
