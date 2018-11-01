@@ -22,7 +22,7 @@
 
 		* Fixed flow issue where destination wouldn't be honored in certain situations.
 
-		
+		  https://github.com/beave/sagan/commit/70117eaacd6ee084a1df81d46c89144f87ac26dd
 
 		* Due to many changes,  "saganpeek.c" had to be altered to support new 
 		  "threshold" and "after" options.
