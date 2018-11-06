@@ -1,8 +1,8 @@
-2018/11/XX -	Sagan 1.2.1 released.
+2018/11/07 -	Sagan 1.2.1 released.
 
 		* Sagan can now read JSON via the FIFO.  Traditionally,  Sagan has used 
 		  a pipe delimited format.  This means that you can have your syslog daemon
-		  (rsyslog, syslog-ng, nxlog, etc) send Sagan data in a JSON through the FIFO.
+		  (rsyslog, syslog-ng, nxlog, etc) send Sagan data in JSON through the FIFO.
 		  There is a new input JSON mapping file (json-input.map) to assist with 
 		  JSON mapping of input.
 
@@ -11,7 +11,7 @@
 
 		* New JSON "message" & "program" parsing and auto detection.  When enabled, 
 		  this allows Sagan to read in JSON data from the syslog "message" field.  In some
-		  cases (Third party "splunk" forwarding) the JSON will start within the syslog
+		  cases (third party "splunk" forwarding) the JSON will start within the syslog
 		  "program" field.  This option allows Sagan to automatically detect the JSON 
 		  and find the best mapping for the data.  There is a new mapping file 
 		  "json-message.map".  After JSON is decoded,  Sagan "scores" the mappings. 
@@ -23,6 +23,10 @@
 		* Fixed flow issue where destination wouldn't be honored in certain situations.
 
 		  https://github.com/beave/sagan/commit/70117eaacd6ee084a1df81d46c89144f87ac26dd
+
+		* Fix issue with "after" that cause false positives. 
+
+		  https://github.com/beave/sagan/commit/f6553fecbb15dc70e4d5181724db42bc7ca530ba
 
 		* Due to many changes,  "saganpeek.c" had to be altered to support new 
 		  "threshold" and "after" options.
@@ -80,7 +84,7 @@
 		  https://github.com/beave/sagan/commit/4d8b918cbec6ec9d603eda62ccd49d6a89966859
 
 		* When using NXLog as a syslog receiver,  NXLog doesn't handle named pipes/
-		  FIFOs.  We creates a "help" program so that NXLog can write to FIFOs more
+		  FIFOs.  We created a "help" program so that NXLog can write to FIFOs more
 		  efficiently.
 
 		  https://github.com/beave/sagan/commit/79703feaf043f2f4f40e179a7850535b52b196be
