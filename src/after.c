@@ -116,22 +116,22 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                     After2_IPC[i].rev == rulestruct[rule_position].s_rev && ( selector == NULL || !strcmp(selector, After2_IPC[i].selector)) )
                 {
 
+
                     File_Lock(config->shm_after2);
                     pthread_mutex_lock(&After2_Mutex);
 
                     After2_IPC[i].count++;
 
-                    After2_IPC[i].utime = current_time;	/* Reset the time */
-
                     after_oldtime = current_time - After2_IPC[i].utime;
+
+                    After2_IPC[i].utime = current_time; /* Reset the time */
 
                     strlcpy(After2_IPC[i].syslog_message, syslog_message, sizeof(After2_IPC[i].syslog_message));
                     strlcpy(After2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(After2_IPC[i].signature_msg));
 
                     /* Reset counter if it's expired */
 
-                    if ( after_oldtime > rulestruct[rule_position].after2_seconds ||
-                            After2_IPC[i].count == 0 )
+                    if ( after_oldtime > rulestruct[rule_position].after2_seconds || After2_IPC[i].count == 0 )
                         {
 
                             After2_IPC[i].count=1;

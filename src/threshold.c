@@ -124,8 +124,8 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
                     pthread_mutex_lock(&Thresh2_Mutex);
 
                     Threshold2_IPC[i].count++;
-                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
 
+                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
                     Threshold2_IPC[i].utime = current_time;
 
                     strlcpy(Threshold2_IPC[i].syslog_message, syslog_message, sizeof(Threshold2_IPC[i].syslog_message));
