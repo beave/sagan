@@ -2221,7 +2221,7 @@ void Load_Rules( const char *ruleset )
                                 {
                                     bad_rule = true;
                                     Remove_Lock_File();
-                                    Sagan_Log(WARN, "[%s, line %d] PCRE failure at %d: %s, skipping rule", __FILE__, __LINE__, erroffset, error);
+                                    Sagan_Log(WARN, "[%s, line %d] PCRE failure in %s at %d [%d: %s], skipping rule", __FILE__, __LINE__, ruleset_fullname, linecount, erroffset, error);
                                     continue;
                                 }
 
