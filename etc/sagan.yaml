@@ -80,7 +80,7 @@ vars:
     SAGAN_HOURS: "0700-1800"
     SAGAN_DAYS: "12345"
 
-  # Variable for the max number of entires Sagan will retain via IPC. 
+  # Variable for the max number of entries Sagan will retain via IPC. 
 
   mmap-groups:
 
@@ -136,7 +136,7 @@ sagan-core:
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
     # Controls how data is read from the FIFO. The "pipe" setting is the traditional 
-    # way Sagan reads in events and is default. "json" is more flexable and 
+    # way Sagan reads in events and is default. "json" is more flexible and 
     # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
@@ -189,14 +189,14 @@ sagan-core:
   # data between system restarts (including system reboots!). 
   
   # This also allows Sagan to share information with other Sagan processes.
-  # For exampe, if one Sagan instance is monitoring "Linux" logs & another is
+  # For example, if one Sagan instance is monitoring "Linux" logs & another is
   # monitoring "Windows" logs, Sagan can communicate between the two Sagan 
   # processes using these memory mapped files. A "xbit" that is "set" by the
-  # "Linux" process accessable and "known" to the Windows instance.
+  # "Linux" process accessible and "known" to the Windows instance.
 
   # The storage is pre-allocated when the memory mapped files are created
   # The values can be increased/decreased by altering the $MMAP_DEFAULT
-  # variable. 10,000 entires is the system default.
+  # variable. 10,000 entries is the system default.
 
   mmap-ipc: 
 
@@ -316,7 +316,7 @@ processors:
   # identifies any hosts/networks in a log message from the list, an alert
   # will be generated.  The list can be in a IP (192.168.1.1) or CIDR format
   # (192.168.1.0/24).  Rule identified as -blacklist.rules use this data.  
-  # You can load multiple blacklists by seperating them via comma.  For 
+  # You can load multiple blacklists by separating them via comma.  For 
   # example; filename: "$RULE_PATH/list1.txt, $RULE_PATH/list2.txt". 
 
   - blacklist: 
@@ -325,10 +325,10 @@ processors:
  
   # The "bluedot" processor extracts information from logs (URLs, file hashes,
   # IP address) and queries the Quadrant Information Security "Bluedot" threat
-  # intellegence database.  This database is 'closed' at this time.  For more 
-  # information,  please conact Quadrant Information Security @ 1-800-538-9357
+  # intelligence database.  This database is 'closed' at this time.  For more 
+  # information,  please contact Quadrant Information Security @ 1-800-538-9357
   # (+1-904-296-9100) or e-mail info@quadrantsec.com for more information.  
-  # Rules idenfified with the -bluedot.rules extention use this data.
+  # Rules identified with the -bluedot.rules extension use this data.
  
   - bluedot: 
       enabled: no
@@ -354,7 +354,7 @@ processors:
 
 
   # The "zeek-intel" (formally "bro-intel") processor allows Sagan to use 
-  # threat intellegence data from the "Zeek (Bro) Intellegence Framework".  
+  # threat intelligence data from the "Zeek (Bro) Intelligence Framework".  
   # Rules identified with the # -brointel.rules use this data.  For more information 
   # about this processor,  see: 
   #
@@ -363,7 +363,7 @@ processors:
   # http://blog.bro.org/2014/01/intelligence-data-and-bro_4980.html
   # https://www.bro.org/sphinx-git/frameworks/intel.html
   #
-  # A good aggregate source of Bro Intellegence data is at: 
+  # A good aggregate source of Bro Intelligence data is at: 
   #
   # https://intel.criticalstack.com/
 
@@ -371,7 +371,7 @@ processors:
       enabled: no
       filename: "/opt/critical-stack/frameworks/intel/master-public.bro.dat"
 
-  # The 'dynamic_load' prcessor uses rule with the "dynamic_load" rule option
+  # The 'dynamic_load' processor uses rule with the "dynamic_load" rule option
   # enabled. These rules tells Sagan to load additional rules when new log
   # traffic is detected.  For example,  if Sagan does not have 'proftpd.rules'
   # enabled but detects 'proftp' log traffic,  a dynamic rule can automatically
@@ -459,7 +459,7 @@ outputs:
   #
   # In order for Sagan to send a blocking request to the SnortSam agent,
   # that agent has to be listed, including the port it listens on, and the
-  # encryption key it is using.  The server option is formated like this: 
+  # encryption key it is using.  The server option is formatted like this: 
   #
   # server: {Snortsam Station}:{port}/{password}
   #

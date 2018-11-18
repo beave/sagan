@@ -1,8 +1,8 @@
 Syslog Configuration
 ====================
 
-Sagan typically receives its data from a third party daemon.  This is typcially something like 
-``rsyslog``, ``syslog-ng`` or ``nxlog``.  The first setep is to get one of those systems setup. 
+Sagan typically receives its data from a third party daemon.  This is typically something like 
+``rsyslog``, ``syslog-ng`` or ``nxlog``.  The first step is to get one of those systems setup. 
 
 
 rsyslog
@@ -30,7 +30,7 @@ Sagan Configuration
 The primary Sagan configuration file is ``sagan.yaml``.  Its default location is the ``/usr/local/etc``
 directory.  
 
-Comments within the ``sagan.yaml`` file start with a '#'.  Standalone comments (on lines of there own)
+Comments within the ``sagan.yaml`` file start with a '#'.  Stand alone comments (on lines of there own)
 and comments after statements are valid.
 
 The ``sagan.yaml`` is broken up in several parts.  Those parts are ``vars``, ``sagan-core``, ``processors``,
@@ -51,7 +51,7 @@ If at a later date you wish to add or remove values from that variable,  all sig
 new variables values. 
 
 Variables can also be used within the ``sagan.yaml`` file.  For example,  when you set the ``RULE_PATH``
-variable, if can be used within sigantures but also within the ``sagan.yaml``.  By doing this,  it allows
+variable, if can be used within signatures but also within the ``sagan.yaml``.  By doing this,  it allows
 you one location to make changes across multiple configurations options or signatures.
 
 
@@ -88,7 +88,7 @@ address-groups
 
 The ``address-groups`` is an area to define your network.  This is where you define values like
 ``$HOME_NETWORK`` and ``$EXTERNAL_NETWORK``.  In the majority of cases,  you'll likely want to 
-leave these ``any`` and ``any``.  You can create your own seperate network groups here.  For example, 
+leave these ``any`` and ``any``.  You can create your own separate network groups here.  For example, 
 you could create a new variable ``INTERNAL_NETWORK``.   Addresses in this group are in the standard
 CIDR network notation.  For example::
 
@@ -188,7 +188,7 @@ for ``mmap()`` files.  These variables are used later in the ``sagan-core`` sect
 Example ``mmap-groups`` subsection::
 
 
-     # Variable for the max number of entires Sagan will retain via IPC. 
+     # Variable for the max number of entries Sagan will retain via IPC. 
 
      mmap-groups:
 
@@ -231,7 +231,7 @@ sagan-core
 ==========
 
 The ``sagan-core`` section defines internal Sagan core functionality.  In this section,  you can 
-setup Sagan to recieve data in different formats,  how different data parsers work,  tuning and 
+setup Sagan to receive data in different formats,  how different data parsers work,  tuning and 
 other items.   
 
 The ``sagan-core`` is broken into subsections.  They are ``core``, ``parse_ip``, ``selector``, 
@@ -257,8 +257,8 @@ The ``xbit-storage`` tells Sagan "how" to store xbit information.  In most cases
 default (mmap).  
 
 The ``input-type`` tells what format Sagan will receive data via the named PIPE (FIFO).  Traditionally, 
-Sagan uses a "pipe" delimited format.   Sagan is increasaing moving to a JSON format and the JSON
-format will become the default.   See the ``Syslog Configation`` portion of this document for more
+Sagan uses a "pipe" delimited format.   Sagan is increasing moving to a JSON format and the JSON
+format will become the default.   See the ``Syslog Configuration`` portion of this document for more
 information. 
 
 
@@ -281,7 +281,7 @@ Example ``core`` subsection::
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
     # Controls how data is read from the FIFO. The "pipe" setting is the traditional 
-    # way Sagan reads in events and is default. "json" is more flexable and 
+    # way Sagan reads in events and is default. "json" is more flexible and 
     # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
@@ -322,7 +322,7 @@ Example ``parse_ip`` subsection::
 selector
 --------
 
-The ``selector`` can be used in "multi-tenant" enviornments.  This can be useful if you have multiple
+The ``selector`` can be used in "multi-tenant" environments.  This can be useful if you have multiple
 organizational logs going into one named pipe (FIFO) and you wish to apply rule logic on a per 
 sensor/organization level.
 
@@ -379,11 +379,11 @@ Example ``mmap-ipc`` subsection::
      # For exampe, if one Sagan instance is monitoring "Linux" logs & another is
      # monitoring "Windows" logs, Sagan can communicate between the two Sagan 
      # processes using these memory mapped files. A "xbit" that is "set" by the
-     # "Linux" process accessable and "known" to the Windows instance.
+     # "Linux" process accessible and "known" to the Windows instance.
 
      # The storage is pre-allocated when the memory mapped files are created
      # The values can be increased/decreased by altering the $MMAP_DEFAULT
-     # variable. 10,000 entires is the system default.
+     # variable. 10,000 entries is the system default.
 
      mmap-ipc:
 
@@ -397,7 +397,7 @@ Example ``mmap-ipc`` subsection::
 ignore_list
 -----------
 
-The ``ignore_list`` subsection is a simple short circuit list of keywords.  If Sagan incounters any 
+The ``ignore_list`` subsection is a simple short circuit list of keywords.  If Sagan encounters any 
 keywords in this list,  it is immediately dropped and not passed through the rest of the 
 Sagan engine.  In high throughput environments,  this can save CPU time. 
 
@@ -458,7 +458,7 @@ normalization rulebase files from (see ``normalize_rulebase``).  The ``normalize
 file that lets Sagan extract useful information from logs.
 
 
-More information about ``liblognorm`` can be found in the `Prereguisites` section of the Sagan User Guide
+More information about ``liblognorm`` can be found in the `Prerequisites` section of the Sagan User Guide
 and the the `LibLogNorm <https://FIXME`>_ web site.
 
 Example ``liblognorm`` subsection::
@@ -485,11 +485,11 @@ plog
 ----
 
 The ``plog`` functionality use to "sniff" syslog messages "off the wire".   If you already have 
-a centeralized syslog server you are sending data,  the data is not encrypted and is UDP,  this option
+a centralized syslog server you are sending data,  the data is not encrypted and is UDP,  this option
 can be used to "sniff" logs while they are in transit to your centralized logging system.  In order 
 to "sniff" the logs,  you will need a "span" port or "tap".  This option can be useful when testing 
-Sagan's functionality.  This should not be used in production enviornments since the robustness of 
-"sniffing" varys.
+Sagan's functionality.  This should not be used in production environments since the robustness of 
+"sniffing" varies.
 
 
 Example ``plog`` subsection::

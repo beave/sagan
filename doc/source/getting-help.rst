@@ -17,7 +17,7 @@ is good for general configuration,  install and usage questions.
 If you need to report a compile or programming issue,  please use our Github.com issues page.  That is 
 located at:
 
-https://github.com/beave/sagan/issues <https://github.com/beave/meer/issues>`_
+https://github.com/beave/sagan/issues <https://github.com/beave/sagan/issues>`_
 
 Sagan users and IRC lurkers are welcome.  Go to:
 
