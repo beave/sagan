@@ -576,7 +576,7 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_SAGAN_CORE_MMAP_IPC;
                                 }
 
-                            else if (!strcmp(value, "ignore_list" ))
+                            else if (!strcmp(value, "ignore_list" ) || !strcmp(value, "ignore-list" ) )
                                 {
                                     sub_type = YAML_SAGAN_CORE_IGNORE_LIST;
                                 }
@@ -949,7 +949,7 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
-                                    if (!strcmp(last_pass, "ignore_file"))
+                                    if (!strcmp(last_pass, "ignore_file") || !strcmp(last_pass, "ignore-file") )
                                         {
 
                                             if (config->sagan_droplist_flag == true)
@@ -1354,12 +1354,12 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_PROCESSORS_BLUEDOT;
                                 }
 
-                            else if (!strcmp(value, "bro-intel"))
+                            else if (!strcmp(value, "bro-intel") || !strcmp(value, "zeek-intel") )
                                 {
                                     sub_type = YAML_PROCESSORS_BROINTEL;
                                 }
 
-                            else if (!strcmp(value, "dynamic_load"))
+                            else if (!strcmp(value, "dynamic_load") || !strcmp(value, "dynamic-load"))
                                 {
                                     sub_type = YAML_PROCESSORS_DYNAMIC_LOAD;
                                 }

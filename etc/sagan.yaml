@@ -213,10 +213,10 @@ sagan-core:
   # that match will be "short circuit" in pre-processing before rules & 
   # processors are applied. 
 
-  ignore_list: 
+  ignore-list: 
 
     enabled: no
-    ignore_file: "$RULE_PATH/sagan-ignore-list.txt"
+    ignore-file: "$RULE_PATH/sagan-ignore-list.txt"
 
   # Maxmind GeoIP2 support allows Sagan to categorize events by their country
   # code. For example; a rule can be created to track "authentication 
@@ -353,10 +353,10 @@ processors:
       skip_networks: "8.8.8.8/32, 8.8.4.4/32"
 
 
-  # The "bro-intel" processor allows Sagan to use threat intellegence data
-  # from the "Bro Intellegence Framework".  Rules identified with the 
-  # -brointel.rules use this data.  For more inforamation about this
-  # processor,  see: 
+  # The "zeek-intel" (formally "bro-intel") processor allows Sagan to use 
+  # threat intellegence data from the "Zeek (Bro) Intellegence Framework".  
+  # Rules identified with the # -brointel.rules use this data.  For more information 
+  # about this processor,  see: 
   #
   # https://quadrantsec.com/about/blog/using_sagan_with_bro_intelligence_feeds/
   # https://wiki.quadrantsec.com/bin/view/Main/SaganRuleReference#bro_intel_src_ipaddr_dst_ipaddr 
@@ -367,7 +367,7 @@ processors:
   #
   # https://intel.criticalstack.com/
 
-  - bro-intel: 
+  - zeek-intel: 
       enabled: no
       filename: "/opt/critical-stack/frameworks/intel/master-public.bro.dat"
 
@@ -382,7 +382,7 @@ processors:
   #  are loaded), "log_only" (only writes detection to the sagan.log file) and
   # "alert" (create's an alert about new logs being detected). 
 
-  - dynamic_load: 
+  - dynamic-load: 
       enabled: no
       sample-rate: 100		# How often to 'test for new samples. 
       type: dynamic_load	# What to do on detection of new logs.

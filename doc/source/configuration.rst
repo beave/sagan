@@ -532,7 +532,7 @@ blacklist
 bluedot
 -------
 
-bro-intel (now zeek)
+zeek-intel (formally "bro-inte")
 --------------------
 
 dynamic_load
