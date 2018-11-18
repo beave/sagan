@@ -1,5 +1,5 @@
-Rule Options
-============
+Rule Keywords
+=============
 
 
 after
@@ -89,7 +89,7 @@ bro-intel
 .. option:: bro-intel: {src_ipaddr},{dst_ipaddr},{both_ipaddr},{all_ipaddr},{file_hash},{url},{software},{email},{user_name},{file_name},{cert_hash};
 
 
-This options allows Sagan to look malicious IP addresses, file hashes, URLs, software, email, user names, file hashes and certificate hash from Bro Intellegence feeds.
+This keyword allows Sagan to look malicious IP addresses, file hashes, URLs, software, email, user names, file hashes and certificate hash from Bro Intellegence feeds.
 
 In order for the processors to be used, it must be enabled in your sagan.yaml file.
 
@@ -99,7 +99,7 @@ The following is a simple example within a Sagan rule:
 
 This informs Sagan to look up the parsed source address from the Bro Intel::ADDR data. The parsed source address is extracted via liblognorm or parse_src_ip.
 
-Multiple options can be used. For example:
+Multiple keywords can be used. For example:
 
 **bro-intel: both_ipaddr, domain, url;**
 
@@ -327,7 +327,7 @@ Example of xbit use can be found in the rules https://wiki.quadrantsec.com/twiki
 
 **xbits: noalert;**
 
-This informs Sagan to preform a xbit operation, such as set or unset, but do not generate an alert. This is useful when used in conjunction with the set and unset xbit options.
+This informs Sagan to preform a xbit operation, such as set or unset, but do not generate an alert. This is useful when used in conjunction with the set and unset xbit keywords.
 
 fwsam
 -----
@@ -355,7 +355,7 @@ meta_content
 
 .. option:: meta_content: "string %sagan% string",$VAR;
 
-This option allows you to create a content like rule option that functions with variable content. For example, let's say you want to trigger on the strings "Usernname: bob", "Username: frank" and "Username: mary". Without meta_content, this example would reguire three seperate rules with content options. The meta_content allow you make one rule option with multiple variables. For example:
+This option allows you to create a content like rule option that functions with variable content. For example, let's say you want to trigger on the strings "Usernname: bob", "Username: frank" and "Username: mary". Without meta_content, this example would reguire three seperate rules with content keywords. The meta_content allow you make one rule option with multiple variables. For example:
 
 **meta_content: "Username|3a| %sagan%", $USERS;**
 

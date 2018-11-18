@@ -912,6 +912,7 @@ int main(int argc, char **argv)
 
 #endif
 
+    /*
     if ( config->sagan_external_output_flag )
         {
 
@@ -919,6 +920,8 @@ int main(int argc, char **argv)
             Sagan_Log(NORMAL, "External program to be called: %s", config->sagan_external_command);
 
         }
+
+	*/
 
     /* Unified2 ****************************************************************/
 

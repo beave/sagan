@@ -159,7 +159,7 @@ Liblognorm JSON:%s\n\
             execl(execute_script, execute_script, NULL, (char *)NULL);
 
             Remove_Lock_File();
-            Sagan_Log(WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, config->sagan_external_command);
+            Sagan_Log(WARN, "[%s, line %d] Cannot execute %s", __FILE__, __LINE__, execute_script);
         }
 
     close(in[0]);
@@ -180,7 +180,7 @@ Liblognorm JSON:%s\n\
 
     if ( debug->debugexternal == 1 )
         {
-            Sagan_Log(DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, config->sagan_external_command);
+            Sagan_Log(DEBUG, "[%s, line %d] Executed %s", __FILE__, __LINE__, execute_script);
         }
 
 }

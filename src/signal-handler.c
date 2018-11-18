@@ -368,7 +368,7 @@ void Sig_Handler( void )
 
                     /* Output formats */
 
-                    config->sagan_external_output_flag = 0;
+//                    config->sagan_external_output_flag = 0;
 
 #ifdef WITH_SYSLOG
                     config->sagan_syslog_flag = 0;

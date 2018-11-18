@@ -8,9 +8,13 @@ Sagan User Guide
    what-is-sagan
    install.rst
    command-line-options
+   configuration
 
    rule-syntax
-   rule-options
+   rule-keywords
 
+
+
+   blogs/index
    getting-help
 

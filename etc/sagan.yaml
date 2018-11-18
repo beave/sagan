@@ -80,14 +80,6 @@ vars:
     SAGAN_HOURS: "0700-1800"
     SAGAN_DAYS: "12345"
 
-  # The "bluedot-groups" is used by the Sagan "Bluedot" processor.  See the
-  # "bluedot" processor later in this configuration file fore more 
-  # information.
-
-  bluedot-groups: 
-
-    BLUEDOT: "Malicious"
-
   # Variable for the max number of entires Sagan will retain via IPC. 
 
   mmap-groups:
@@ -181,8 +173,8 @@ sagan-core:
                                  # be present in the normalized result
 
   # Redis configuration.  Redis can be used to act as a global storage engine for
-  # data xbits.  This allows Sagan to "share" xbit data across a network 
-  # infrastructure. This is experimental! 
+  # xbits.  This allows Sagan to "share" xbit data across a network # infrastructure.
+  # This is experimental! 
 
   redis-server:
 
@@ -449,15 +441,6 @@ outputs:
       filename: "$LOG_PATH/unified2.alert"
       limit: 128				# Max size in MB
 
-  # The 'external' output calls an external program when a event is triggered
-  # by a rule and/or processor.  Sagan calls execl() system call & executes 
-  # the program supplied by "command".  Data is supplied to the "command" via
-  # STDIN. 
-
-  - external: 
-      enabled: no
-      command: "/home/sagan/myprogram"
- 
   # The 'smtp' output allows Sagan to e-mail alerts that trigger.  The rules 
   # you want e-mail need to contain the 'email' rule option and Sagan must
   # be compiled with libesmtp support.  

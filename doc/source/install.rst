@@ -105,6 +105,8 @@ While not a required dependency,  it is recommended that you install liblognorm.
 used by Sagan to extract useful data from incoming log data.  ``liblognorm`` is part of the ``rsyslog``
 daemon.  Note:  Installing ``liblognorm`` will automatically install ``libfastjson``. 
 
+More information about ``liblognorm`` can be found at the `LibLogNorm <https://FIXME`>_ web site. 
+
 To install ``liblognorm`` on Debian/Ubuntu:
 
 .. option:: apt-get install liblognorm-dev liblognorm2

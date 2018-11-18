@@ -1866,10 +1866,12 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_OUTPUT_UNIFIED2;
                                 }
 
+			    /*
                             else if (!strcmp(value, "external"))
                                 {
                                     sub_type = YAML_OUTPUT_EXTERNAL;
                                 }
+			    */
 
                             else if (!strcmp(value, "smtp"))
                                 {
@@ -2047,29 +2049,6 @@ void Load_YAML_Config( char *yaml_file )
                                 } /* if sub_type == YAML_OUTPUT_UNIFIED2  */
 
 #endif
-
-                            else if ( sub_type == YAML_OUTPUT_EXTERNAL )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-                                                    config->sagan_external_output_flag = true;
-                                                }
-                                        }
-
-                                    else if (!strcmp(last_pass, "command") && config->sagan_external_output_flag == true)
-                                        {
-
-                                            Var_To_Value(value, tmp, sizeof(tmp));
-                                            strlcpy(config->sagan_external_command, tmp, sizeof(config->sagan_external_command));
-
-                                        }
-
-                                } /* else if sub_type == YAML_OUTPUT_EXTERNAL ) */
-
 
 #ifndef HAVE_LIBESMTP
 
