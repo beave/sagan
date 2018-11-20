@@ -198,9 +198,11 @@ sagan-core:
   # The values can be increased/decreased by altering the $MMAP_DEFAULT
   # variable. 10,000 entries is the system default.
 
+  # The default ipc-directory is /dev/shm (ram drive) for performance reasons.
+
   mmap-ipc: 
 
-    ipc-directory: /var/sagan/ipc
+    ipc-directory: /dev/shm
     xbit: $MMAP_DEFAULT
     after: $MMAP_DEFAULT
     threshold: $MMAP_DEFAULT
@@ -268,7 +270,7 @@ sagan-core:
 
     enabled: no
     interface: eth0
-    bpf-filter: "port 514"
+    bpf: "port 514"
     log-device: /dev/log
     promiscuous: yes
 

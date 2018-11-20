@@ -1245,7 +1245,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                                 }
 
-                                            else if (!strcmp(last_pass, "bpf-filter"))
+                                            else if (!strcmp(last_pass, "bpf") || !strcmp(last_pass, "bpf-filter") )
                                                 {
 
                                                     Var_To_Value(value, tmp, sizeof(tmp));

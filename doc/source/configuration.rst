@@ -308,7 +308,9 @@ parse_ip
 --------
 
 The ``parse_ip`` subsection controls what the Sagan rule keywords ``parse_src_ip`` and ``parse_dst_ip``
-function from within rules. 
+function from within rules.  The ``ipv4-mapped-ipv6`` determines how Sagan will work with 
+IPv4 addresses mapped as IPv6. 	If ``ipv4-mapped-ipv6`` is enabled,  Sagan will re-write 
+IPv6 mapped addresses (for example ffff::192.168.1.1) to normal IPv4 notation (192.168.1.1). 
 
 Example ``parse_ip`` subsection::
 
@@ -324,7 +326,7 @@ selector
 
 The ``selector`` can be used in "multi-tenant" environments.  This can be useful if you have multiple
 organizational logs going into one named pipe (FIFO) and you wish to apply rule logic on a per 
-sensor/organization level.
+sensor/organization level.  The ``name`` is the keywords that identifies the ``selector``. 
 
 Example ``selector`` subsection::
 
@@ -344,7 +346,9 @@ redis-server (experimental)
 
 The ``redis-server`` is a beta feature that allows Sagan to store ``xbits`` in a Redis database
 rather than a ``mmap()`` file.  This can be useful in sharing ``xbits`` across multiple platforms
-within a network. 
+within a network.  The ``server`` is the network address of your Redis server.  The ``port`` is 
+the network port address of the Redis server.  The ``password`` is the Redis servers password.
+The ``writer_threads`` is how many Redis write threads Sagan should spawn to deal with Redis write operations. 
 
 Example ``redis-server`` subsection::
 
@@ -366,7 +370,12 @@ mmap-ipc
 --------
 
 The ``mmacp-ipc`` subsection tells Sagan how much data to store in ``mmap()`` files and where
-to store it. 
+to store it.  The ``ipc-directory`` is where Sagan should store ``mmap()`` file.  This set to
+``/dev/shm`` by default.  On Linux systems ``/dev/shm`` is a ram drive.  Ic you want to store
+``mmap()`` files in a more permanent location,  change the ``ipc-directory``.   Keep in mind, 
+this may effect ``mmap()`` performance.  The ``xbit``, ``after``, ``threshold`` and ``track-clients``
+are the max items that can be stored in ``mmap()``.  This typically defaults to 10,000 via the
+``$MMAP_DEFAULT`` variable.
 
 Example ``mmap-ipc`` subsection::
 
@@ -385,9 +394,11 @@ Example ``mmap-ipc`` subsection::
      # The values can be increased/decreased by altering the $MMAP_DEFAULT
      # variable. 10,000 entries is the system default.
 
+     # The default ipc-directory is /dev/shm (ram drive) for performance reasons.
+
      mmap-ipc:
 
-       ipc-directory: /var/sagan/ipc
+       ipc-directory: /dev/shm
        xbit: $MMAP_DEFAULT
        after: $MMAP_DEFAULT
        threshold: $MMAP_DEFAULT
@@ -399,7 +410,8 @@ ignore_list
 
 The ``ignore_list`` subsection is a simple short circuit list of keywords.  If Sagan encounters any 
 keywords in this list,  it is immediately dropped and not passed through the rest of the 
-Sagan engine.  In high throughput environments,  this can save CPU time. 
+Sagan engine.  In high throughput environments,  this can save CPU time.   The ``ignore_file`` is 
+the location and file to load as an "ignore" list.
 
 Example ``ignore_list`` subsection::
 
@@ -421,7 +433,9 @@ geoip
 
 The ``geoip`` subsection where you can configure `Maxminds <https://github.com/maxmind/libmaxminddb/releases>`_ 
 GeoIP settings.  This includes enabling GeoIP lookups, where to find the Maxmind data files and
-what networks to "skip" GeoIP lookups. 
+what networks to "skip" GeoIP lookups.   The ``country_database`` is the Maxmind database to load.
+The ``skip_networks`` option tells Sagan what networks not to lookup. 
+
 
 Example ``geoip`` subsection::
 
@@ -489,7 +503,10 @@ a centralized syslog server you are sending data,  the data is not encrypted and
 can be used to "sniff" logs while they are in transit to your centralized logging system.  In order 
 to "sniff" the logs,  you will need a "span" port or "tap".  This option can be useful when testing 
 Sagan's functionality.  This should not be used in production environments since the robustness of 
-"sniffing" varies.
+"sniffing" varies.  The ``interface`` option is the network device you want to "sniff" traffic on.
+the ``bpf`` (Berkely Packet Filter) is the filter to use to extract logs from the network.   The
+``log-device`` is where Sagan will inject logs after the are "sniffed" off the network.  The 
+``promiscuous`` option puts the network interface Sagan is using in "promiscious mode" or not.
 
 
 Example ``plog`` subsection::
@@ -520,24 +537,188 @@ Sagan ``processors`` are methods of detections outside of the Sagan rule engine.
 track-clients
 -------------
 
+The ``track-clients`` processor is used to detect when syslog client has stopped or restarted sending
+logs to Sagan.  This can be useful for detecting systems thats logging has been disabled.  In the 
+event a syslog client stops sending logs,  Sagan generates an alert for notification purposes.  When
+the syslog client comes back online,  Sagan will generate another alert for notification purposes.  The
+``time`` is how long a syslog client has not sent a log message to be considered "down".
+
+Example ``track-clients`` subsection::
+
+     # The "tracking clients" processor keeps track of the systems (IP addresses), 
+     # reporting to Sagan.  If Sagan stops receiving logs from a client for a 
+     # specified amount of time ("timeout"), an alert/notification is created.  
+     # With the # system comes back online,  another alert/notification is 
+     # created. 
+
+     - track-clients:
+         enabled: no
+         timeout: 1440             # In minutes
+
+
 rule-tracking
 -------------
+
+The ``rule-tracking`` processor is used to detect unused rule sets.  This can be useful for detecting
+when rules are loaded which do not need to be.  Rules that are loaded that are not used waste CPU
+cycles.  This assists with rule tuning.  The ``console`` option allows for rule tracking statistics
+to the console when Sagan is being run in the foreground.  The ``syslog`` option tells Sagan to send
+rule tracking statistics to syslog.  The ``time`` option tells Sagan how often to record rule tracking
+statistics (in minutes).
+
+Example ``rule-tracking`` subsection::
+
+     # This reports on rule sets that have and have not "fired".  This can be 
+     # useful in tuning Sagan. 
+
+     - rule-tracking:
+         enabled: yes
+         console: disabled
+         syslog: enabled
+         time: 1440                # In minutes 
 
 perfmonitor
 -----------
 
+The ``perfmonitor`` processor records Sagan statistics to a CSV file.  This can provide useful data
+about detection and the performance of Sagan.  The ``time`` option sets how often Sagan should
+record ``permonitor`` data.
+
+
+Example ``perfmonitor`` subsection::
+
+     # The "perfmonitor" processor write statistical information every specified
+     # number of seconds ("time") to a CSV file.  This data can be useful for 
+     # tracking the performance of Sagan.  This data can also be used with 
+     # RRDTool to generate graphs.  
+
+     - perfmonitor:
+         enabled: no
+         time: 600
+         filename: "$LOG_PATH/stats/sagan.stats"
+
 blacklist
 ---------
+
+The ``blacklist`` processor reads in a file at load time (or reload) that contains IP addresses 
+you which to alert on.  Detection is controlled by the ``*-blacklist.rules`` rule sets.  The idea
+is to load IP addresses of interest into this list and Sagna can monitor for them.  The list is a 
+file containing IP and network addresses in a CIDR format (ie - 192.168.1.0/24, 10.0.0.0/8). 
+
+Example ``perfmonitor`` subsection::
+
+     # The "blacklist" process reads in a list of hosts/networks that are
+     # considered "bad".  For example, you might pull down a list like SANS
+     # DShield (http://feeds.dshield.org/block.txt) for Sagan to use.  If Sagan
+     # identifies any hosts/networks in a log message from the list, an alert
+     # will be generated.  The list can be in a IP (192.168.1.1) or CIDR format
+     # (192.168.1.0/24).  Rule identified as -blacklist.rules use this data.  
+     # You can load multiple blacklists by separating them via comma.  For 
+     # example; filename: "$RULE_PATH/list1.txt, $RULE_PATH/list2.txt". 
+
+     - blacklist:
+         enabled: no
+         filename: "$RULE_PATH/blacklist.txt"
 
 bluedot
 -------
 
-zeek-intel (formally "bro-inte")
---------------------
+The ``bluedot`` processor looks up data in the Quadrant Information Security "Bluedot"
+Threat Intelligence database.  This is done over a ``http`` session.   Access to this
+database is not public at this time.  
 
-dynamic_load
+Example ``bluedot`` subsection::
+
+     # The "bluedot" processor extracts information from logs (URLs, file hashes,
+     # IP address) and queries the Quadrant Information Security "Bluedot" threat
+     # intelligence database.  This database is 'closed' at this time.  For more 
+     # information,  please contact Quadrant Information Security @ 1-800-538-9357
+     # (+1-904-296-9100) or e-mail info@quadrantsec.com for more information.  
+     # Rules identified with the -bluedot.rules extension use this data.
+
+     - bluedot:
+         enabled: no
+         device-id: "Device_ID"
+         cache-timeout: 120
+         categories: "$RULE_PATH/bluedot-categories.conf"
+
+         max-ip-cache: 300000
+         max-hash-cache: 10000
+         max-url-cache: 20000
+         max-filename-cache: 1000
+
+         ip-queue: 1000
+         hash-queue: 100
+         url-queue: 1000
+         filename-queue: 1000
+
+         host: "bluedot.qis.io"
+         ttl: 86400
+         uri: "q.php?qipapikey=APIKEYHERE"
+
+         skip_networks: "8.8.8.8/32, 8.8.4.4/32"
+
+
+zeek-intel (formally "bro-intel")
+---------------------------------
+
+The ``zeek-intel`` (formally known as ``bro-intel``) allows Sagan to load files from the "Zeek (Bro) 
+intelligence framwork".  This allows Sagan to lookup IP address, hashes and other data from Zeek
+Intelligence data.
+
+Example ``zeek-intel`` subsection::
+
+     # The "zeek-intel" (formally "bro-intel") processor allows Sagan to use 
+     # threat intelligence data from the "Zeek (Bro) Intelligence Framework".  
+     # Rules identified with the # -brointel.rules use this data.  For more information 
+     # about this processor,  see: 
+     #
+     # https://quadrantsec.com/about/blog/using_sagan_with_bro_intelligence_feeds/
+     # https://wiki.quadrantsec.com/bin/view/Main/SaganRuleReference#bro_intel_src_ipaddr_dst_ipaddr 
+     # http://blog.bro.org/2014/01/intelligence-data-and-bro_4980.html
+     # https://www.bro.org/sphinx-git/frameworks/intel.html
+     #
+     # A good aggregate source of Bro Intelligence data is at: 
+     #
+     # https://intel.criticalstack.com/
+
+     - zeek-intel:
+         enabled: no
+         filename: "/opt/critical-stack/frameworks/intel/master-public.bro.dat"
+
+dynamic-load
 ------------
 
+The ``dynamic-load`` processor will detects new logs entering the Sagan engine and can either 
+automatically load rules or send an alert about new logs being detected.  The idea here is to have
+Sagan assist with the detection of network and hardware changes.  This rule is tied to the 
+``dynamic.rules`` rule set.  The ``dynamic.rules`` rule set has signatures used to detect 
+new log data entering the Sagan engine.   The ``sample-date`` controls how often to look for 
+new logs entering the Sagan engine.  The higher the ``sample-rate`` the less CPU is used but the
+longer it will take to detect new data.  The lower the ``sample-rate`` the faster Sagan can detect
+new data but at a higher cost to the CPU.  The ``type`` can be ``dynamic_load`` or ``log_only``. 
+If set to ``dynamic_load``,  when new data is detected,  Sagan will automatically load the associated
+rule from the ``dynamic.rules``.  If set to ``log_only``,  Sagan will not load any data and only
+generate an alert that new data was detected.
+
+
+Example ``dynamic-load`` subsection::
+
+     # The 'dynamic_load' processor uses rule with the "dynamic_load" rule option
+     # enabled. These rules tells Sagan to load additional rules when new log
+     # traffic is detected.  For example,  if Sagan does not have 'proftpd.rules'
+     # enabled but detects 'proftp' log traffic,  a dynamic rule can automatically
+     # load the 'proftpd.rules' for you.  Dynamic detection rules are named
+     # 'dynamic.rules' in the Sagan rule set.  The "sample-rate" limits amount of
+     # CPU to dedicated to detection new logs. The "type" informs the process 
+     # "what" to do.  Valid types are "dynamic_load" (load & alert when new rules
+     #  are loaded), "log_only" (only writes detection to the sagan.log file) and
+     # "alert" (create's an alert about new logs being detected). 
+
+     - dynamic-load:
+         enabled: no
+         sample-rate: 100          # How often to 'test for new samples. 
+         type: dynamic_load        # What to do on detection of new logs.
 
 
 outputs
