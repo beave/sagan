@@ -32,10 +32,10 @@
 
 /* Extensions on URL passed depending on what type of query we want to do */
 
-#define BLUEDOT_IP_LOOKUP_URL "&qip="
-#define BLUEDOT_HASH_LOOKUP_URL "&qhash="
-#define BLUEDOT_FILENAME_LOOKUP_URL "&qfilename="
-#define BLUEDOT_URL_LOOKUP_URL "&qurl="
+#define BLUEDOT_IP_LOOKUP_URL "&ip="
+#define BLUEDOT_HASH_LOOKUP_URL "&hash="
+#define BLUEDOT_FILENAME_LOOKUP_URL "&filename="
+#define BLUEDOT_URL_LOOKUP_URL "&url="
 
 #define BLUEDOT_LOOKUP_IP 1
 #define BLUEDOT_LOOKUP_HASH 2

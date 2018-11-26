@@ -200,14 +200,9 @@ void Sagan_Bluedot_Init(void)
 int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *ip )
 {
 
-    uint32_t ip_u32;
     int i=0;
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
-
-    char str[INET_ADDRSTRLEN];
-
-    int tmp_bluedot_queue_count=0;
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
@@ -687,13 +682,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     uint64_t cdate_utime_u32;
     uint64_t mdate_utime_u32;
 
-    char cattmp[64] = { 0 };
-    char *saveptr=NULL;
     signed char bluedot_alertid = 0;		/* -128 to 127 */
     int i;
 
     char tmp[64] = { 0 };
-    char ip_s[64] = { 0 };
 
     char  timet[20] = { 0 };
     time_t t;
@@ -792,7 +784,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             if (debug->debugbluedot)
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] Pulled %s from Bluedot cache with category of \"%d\". [cdate: %d / mdate: %d]", __FILE__, __LINE__, data, SaganBluedotIPCache[i].alertid, SaganBluedotIPCache[i].cdate_utime, SaganBluedotIPCache[i].mdate_utime);
+                                    Sagan_Log(DEBUG, "[%s, line %d] Pulled %s from Bluedot cache with category of \"%d\". [cdate_epoch: %d / mdate_epoch: %d]", __FILE__, __LINE__, data, SaganBluedotIPCache[i].alertid, SaganBluedotIPCache[i].cdate_utime, SaganBluedotIPCache[i].mdate_utime);
                                 }
 
                             bluedot_alertid = SaganBluedotIPCache[i].alertid;
@@ -805,7 +797,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                                             if ( debug->debugbluedot )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] From Bluedot Cache - qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] From Bluedot Cache - mdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                                 }
 
                                             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
@@ -824,7 +816,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                                             if ( debug->debugbluedot )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] ctime_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                                 }
 
                                             pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
@@ -1154,64 +1146,43 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-            json_object_object_get_ex(json_in, "qipcode", &string_obj);
-            cat = json_object_get_string(string_obj);
 
-            json_object_object_get_ex(json_in, "qcdate", &string_obj);
+            json_object_object_get_ex(json_in, "ctime_epoch", &string_obj);
             cdate_utime = json_object_get_string(string_obj);
 
             if ( cdate_utime != NULL )
                 {
 
-                    snprintf(tmp, sizeof(tmp), "%s", cdate_utime);
-                    strtok_r(tmp, "\"", &saveptr);
-                    cdate_utime_u32 = atol(strtok_r(NULL, "\"", &saveptr));
+                    cdate_utime_u32 = atol(cdate_utime);
 
                 }
             else
                 {
 
-                    Sagan_Log(WARN, "Bluedot return a bad qcdate.");
+                    Sagan_Log(WARN, "Bluedot return a bad ctime_epoch.");
 
                 }
 
-            json_object_object_get_ex(json_in, "qmdate", &string_obj);
+            json_object_object_get_ex(json_in, "mtime_epoch", &string_obj);
             mdate_utime = json_object_get_string(string_obj);
 
             if ( mdate_utime != NULL )
                 {
 
-                    snprintf(tmp, sizeof(tmp), "%s", mdate_utime);
-                    strtok_r(tmp, "\"", &saveptr);
-                    mdate_utime_u32 = atol(strtok_r(NULL, "\"", &saveptr));
+                    mdate_utime_u32 = atol(mdate_utime);
 
                 }
             else
                 {
 
-                    Sagan_Log(WARN, "Bluedot return a bad qmdate.");
+                    Sagan_Log(WARN, "Bluedot return a bad mdate_epoch.");
 
                 }
 
         }
 
-    else if ( type == BLUEDOT_LOOKUP_HASH )
-        {
-            json_object_object_get_ex(json_in, "qhashcode", &string_obj);
-            cat = json_object_get_string(string_obj);
-        }
-
-    else if ( type == BLUEDOT_LOOKUP_URL )
-        {
-            json_object_object_get_ex(json_in, "qurlcode", &string_obj);
-            cat = json_object_get_string(string_obj);
-        }
-
-    else if ( type == BLUEDOT_LOOKUP_FILENAME )
-        {
-            json_object_object_get_ex(json_in, "qfilenamecode", &string_obj);
-            cat = json_object_get_string(string_obj);
-        }
+        json_object_object_get_ex(json_in, "code", &string_obj);
+        cat = json_object_get_string(string_obj);
 
     if ( cat == NULL )
         {
@@ -1228,14 +1199,11 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     /* strtok_r() doesn't like const char *cat */
 
-    snprintf(cattmp, sizeof(cattmp), "%s", cat);
-    strtok_r(cattmp, "\"", &saveptr);
-
-    bluedot_alertid  = atoi(strtok_r(NULL, "\"", &saveptr));
+    bluedot_alertid  = atoi(cat);
 
     if ( debug->debugbluedot)
         {
-            Sagan_Log(DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s. [cdate: %d / mdate: %d]", __FILE__, __LINE__, bluedot_alertid, data, cdate_utime_u32, mdate_utime_u32);
+            Sagan_Log(DEBUG, "[%s, line %d] Bluedot return category \"%d\" for %s. [cdate_epoch: %d / mdate_epoch: %d]", __FILE__, __LINE__, bluedot_alertid, data, cdate_utime_u32, mdate_utime_u32);
         }
 
     if ( bluedot_alertid == -1 )
@@ -1279,7 +1247,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             if ( debug->debugbluedot )
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] qmdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
+                                    Sagan_Log(DEBUG, "[%s, line %d] mdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                 }
 
                             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
@@ -1298,7 +1266,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             if ( debug->debugbluedot )
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] qcdate for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
+                                    Sagan_Log(DEBUG, "[%s, line %d] cdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                 }
 
                             pthread_mutex_lock(&SaganProcBluedotWorkMutex);
@@ -1465,10 +1433,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
 {
 
     int i;
-    int j;
-    int port = 0;
 
-    char ip[MAXIP] = { 0 };
     unsigned char bluedot_results;
     bool bluedot_flag;
 
