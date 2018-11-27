@@ -13,6 +13,28 @@ rsyslog
 syslog-ng
 ---------
 
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration file.  For more
+complex configurations,  please consult the ``syslog-ng`` documentation.
+
+Example ``syslog-ng`` configuration:: 
+
+   # Sources of log data. 
+
+   source s_src { system(); internal(); }; 	# Internal 
+   source syslog_in { udp(port(514)); };	# UDP port 514
+
+   # A "destination" for send log data to.  In our case, a named pipe (FIFO)
+
+   destination sagan_fifo {
+         pipe("/var/sagan/sagan.fifo"
+         template("$(format-json --scope selected_macros --scope nv_pairs)\n"));
+         };
+
+   # This line ties the sources and destinations together.
+
+   log { source(s_src); destination(sagan_fifo); };
+   log { source{syslog_in}; destination(sagan_fifo); };
+
 
 
 nxlog
@@ -478,7 +500,7 @@ and the the `LibLogNorm <https://FIXME`>_ web site.
 Example ``liblognorm`` subsection::
 
 
-     # Liblognorm is a fast sample-base log normalization library.  Sagan uses
+     # Liblognorm is a fast samplt-base log normalization library.  Sagan uses
      # this library to rapidly extract useful data (IP address, hashes, etc) from
      # log messages.  While this library is not required it is recommended that 
      # Sagan be built with liblognorm enabled.  For more information, see: 
@@ -724,34 +746,390 @@ Example ``dynamic-load`` subsection::
 outputs
 =======
 
+Sagan supports writing data in various formats.  Some formats maybe more suitable for humans
+to read,  which other might be better for outputing to databases like Elasticsearch and MySQL.
+
+
 eve-log
 -------
+
+Sagan can write to `Suricata's <https://suricata-ids.io>`_ "Extensible Event Format", better
+known as "EVE".  This is a JSON format in which events (alerts, etc) are written to.  This data
+can then be used to transport data into Elasticsearch (using software like Logstash) or `Meer <https://meer.readthedocs.org>`_ (for MySQL/MariaDB/PostgreSQL) output.  If you are looking to get alert
+data into any database back end,  you'll likely want to enable this output plugin.
+
+Example ``eve-log`` subsection::
+
+   outputs:
+
+     # EVE alerts can be load into software like Elasticsearch and is a good 
+     # replacement for "unified2" with software like "Meer".  For more 
+     # information on Meer, Check out:
+     #
+     # https://github.com/beave/meer
+
+     - eve-log:
+         enabled: no
+         interface: logs
+         alerts: yes                     # Logs alerts
+         logs: no                        # Send all logs to EVE. 
+         filename: "$LOG_PATH/eve.json"
 
 alert
 -----
 
+The ``alert`` format is a simple,  multiline human readable format.  The output is similar
+to that of traditional ``Snort`` "alert" log.
+
+Example ``alert`` subsection::
+
+     # The 'alert' output format allows Sagan to write alerts, in detail, in a 
+     # traditional Snort style "alert log" ASCII format. 
+
+     - alert:
+         enabled: yes
+         filename: "$LOG_PATH/alert.log"
+
 fast
 ----
+
+The ``fast`` format is a simple, single line human readable format.  The output is similar
+to the traditional ``Snort`` "fast" log.
+
+Example ``fast`` subsection::
+
+     # The 'fast' output format allows Sagan to write alerts in a format similar
+     # to Snort's 'fast' output format. 
+
+     - fast:
+         enabled: no
+         filename: "$LOG_PATH/fast.log"
 
 unified2
 --------
 
-external
---------
+The ``unified2`` output is a binary blob format used to write event and alert data.  It is 
+compatible with the ``Snort`` "unified2" format.  This formats has traditionally been used to 
+transport alert data from Sagan into a MySQL/MariaDB/PostgreSQL/etc database.   This means that 
+it is compatible with software like `Barnyard2 <https://github.com/firnsy/barnyard2>`_ , ``u2spew`` and ``u2boat``.  The ``unified2``. 
 
+``unified2`` is deperciated.  Consider using the ``eve-log`` instead.
+
+Example ``unified2`` subsection::
+
+     # The 'unified2' output allows Sagan to write in Snort's unified2 format. 
+     # This allows events/alerts generates by Sagan to be read and queued for
+     # external programs like Barnyard2 (http://www.securixlive.com/barnyard2/).
+     # Barnyard2 can then record events to various formats (Sguil, PostgreSQL, 
+     # MySQL, MS-SQL, Oracle, etc).  Sagan must be compiled with libdnet support
+     # to use this function. 
+
+     - unified2:
+         enabled: no
+         force-ipv4: no
+         filename: "$LOG_PATH/unified2.alert"
+         limit: 128                                # Max size in MB
 
 smtp
 ----
 
+The ``smtp`` output allows Sagan to send alerts via e-mail.
+
+Example ``smtp`` subsection::
+
+  # The 'smtp' output allows Sagan to e-mail alerts that trigger.  The rules 
+  # you want e-mail need to contain the 'email' rule option and Sagan must
+  # be compiled with libesmtp support.  
+
+  - smtp:
+      enabled: no
+      from: sagan-alert@example.com
+      server: 192.168.0.1:25
+      subject: "** Sagan Alert **"
+
 snortsam
 --------
+
+The ``snortsam`` output format allows Sagan to communicate with the `Snortsam <http://www.snortsam.net/>`_ firewall blocking agent.  This allows Sagan to create firewall ACLs and block traffic based off 
+rule sets.  
+
+Example ``snortsam`` subsection::
+
+     # The 'snortsam' output allows Sagan to send block information Snortsam 
+     # agents.  If a rule the fwsam: option in it,  the offending IP address can 
+     # be firewall/blocked. For example,  if a rule is triggered with the 'fwsam'
+     # option,  Sagan can instruct a firewall (iptables/ebtable/pf/iwpf/Cisco/etc)
+     # to firewall off the source or destination. 
+     #
+     # In order for Sagan to send a blocking request to the SnortSam agent,
+     # that agent has to be listed, including the port it listens on, and the
+     # encryption key it is using.  The server option is formatted like this: 
+     #
+     # server: {Snortsam Station}:{port}/{password}
+     #
+     #   {SnortSam Station}: IP address or host name of the host where SnortSam is
+     #                       running.
+     #   {port}:             The port the remote SnortSam agent listens on.
+     #   {password}:         The password, or key, used for encryption of the
+     #                       communication to the remote agent.
+     #
+     # At the very least, the IP address or host name of the host running SnortSam
+     # needs to be specified. If the port is omitted, it defaults to TCP port 898.
+     # If the password is omitted, it defaults to a preset password.
+     #
+     # More than one host can be specified, but has to be done on the same line.
+     # Just separate them with one or more spaces.
+
+     - snortsam:
+         enabled: no
+         server: 127.0.0.1/mykey
 
 syslog
 ------
 
+The ``syslog`` output plugin writes alerts to the systems syslog that Sagan is running on.  
+This can be useful for forwarding Sagan alert data to other SIEMs. 
 
+Example ``syslog`` subsection::
+
+     # The 'syslog' output allows Sagan to send alerts to syslog. The syslog 
+     # output format used is exactly the same of Snorts.  This means that your 
+     # SIEMs Snort log parsers should work with Sagan.
+
+     - syslog:
+         enabled: no
+         facility: LOG_AUTH
+         priority: LOG_ALERT
+         extra: LOG_PID
 
 rule-files
 ==========
+
+The ``rule-files`` section tells Sagan what "rules" to load.  This can a list of files or rules
+can be broken out into seperate ``include``. 
+
+Example ``rule-files`` subsection::
+
+   rules-files:
+
+     #############################################################################
+     # Dynamic rules - Only use if you have the 'dynamic_load' processor enabled #
+     #############################################################################
+
+     #- $RULE_PATH/dynamic.rules
+
+     #############################################################################
+     # GeoIP rules - Only use if you have $HOME_COUNTRY and 'geoip' core enabled #
+     #############################################################################
+
+     #- $RULE_PATH/cisco-geoip.rules
+     #- $RULE_PATH/citrix-geoip.rules
+     #- $RULE_PATH/courier-geoip.rules
+     #- $RULE_PATH/f5-big-ip-geoip.rules
+     #- $RULE_PATH/fatpipe-geoip.rules
+     #- $RULE_PATH/fortinet-geoip.rules
+     #- $RULE_PATH/imapd-geoip.rules
+     #- $RULE_PATH/juniper-geoip.rules
+     #- $RULE_PATH/openssh-geoip.rules
+     #- $RULE_PATH/proftpd-geoip.rules
+     #- $RULE_PATH/riverbed-geoip.rules
+     #- $RULE_PATH/snort-geoip.rules
+     #- $RULE_PATH/ssh-tectia-server-geoip.rules
+     #- $RULE_PATH/vmware-geoip.rules
+     #- $RULE_PATH/vsftpd-geoip.rules
+     #- $RULE_PATH/windows-geoip.rules
+     #- $RULE_PATH/windows-owa-geoip.rules
+     #- $RULE_PATH/zimbra-geoip.rules
+
+     #############################################################################
+     # Aetas rules - Only use if $SAGAN_HOUR/$SAGAN_DAY is defined!              #
+     #############################################################################
+
+     #- $RULE_PATH/cisco-aetas.rules
+     #- $RULE_PATH/fatpipe-aetas.rules
+     #- $RULE_PATH/fortinet-aetas.rules
+     #- $RULE_PATH/juniper-aetas.rules
+     #- $RULE_PATH/openssh-aetas.rules
+     #- $RULE_PATH/proftpd-aetas.rules
+     #- $RULE_PATH/riverbed-aetas.rules
+     #- $RULE_PATH/ssh-tectia-server-aetas.rules
+     #- $RULE_PATH/windows-aetas.rules
+
+     #############################################################################
+     # Malware rules - Rules useful for detecting malware.                       #
+     #############################################################################
+
+     #- $RULE_PATH/cisco-malware.rules
+     #- $RULE_PATH/fortinet-malware.rules
+     #- $RULE_PATH/nfcapd-malware.rules
+     #- $RULE_PATH/proxy-malware.rules
+     #- $RULE_PATH/windows-malware.rules
+
+     #############################################################################
+     # Bro Intel rules - Make sure the 'bro-intel processor is enabled!          #
+     #############################################################################
+
+     #- $RULE_PATH/cisco-brointel.rules
+     #- $RULE_PATH/citrix-brointel.rules
+     #- $RULE_PATH/windows-brointel.rules
+     #- $RULE_PATH/windows-owa-brointel.rules
+     #- $RULE_PATH/bro-intel.rules
+
+     #############################################################################
+     # Bluedot rules - Make sure the 'bluedot' processor is enabled!             #
+     #############################################################################
+
+     #- $RULE_PATH/bluedot.rules
+     #- $RULE_PATH/bro-bluedot.rules
+     #- $RULE_PATH/cisco-bluedot.rules
+     #- $RULE_PATH/citrix-bluedot.rules
+     #- $RULE_PATH/courier-bluedot.rules
+     #- $RULE_PATH/f5-big-ip-bluedot.rules
+     #- $RULE_PATH/fatpipe-bluedot.rules
+     #- $RULE_PATH/fortinet-bluedot.rules
+     #- $RULE_PATH/imapd-bluedot.rules
+     #- $RULE_PATH/juniper-bluedot.rules
+     #- $RULE_PATH/openssh-bluedot.rules
+     #- $RULE_PATH/proftpd-bluedot.rules
+     #- $RULE_PATH/riverbed-bluedot.rules
+     #- $RULE_PATH/snort-bluedot.rules
+     #- $RULE_PATH/ssh-tectia-server-bluedot.rules
+     #- $RULE_PATH/vmware-bluedot.rules
+     #- $RULE_PATH/vsftpd-bluedot.rules
+     #- $RULE_PATH/windows-bluedot.rules
+     #- $RULE_PATH/windows-owa-bluedot.rules
+
+     #############################################################################
+     # Correlated rules - Rules that use xbits to detect malicious behavor       #
+     #############################################################################
+
+     - $RULE_PATH/cisco-correlated.rules
+     - $RULE_PATH/citrix-correlated.rules
+     - $RULE_PATH/courier-correlated.rules
+     - $RULE_PATH/fatpipe-correlated.rules
+     - $RULE_PATH/fortinet-correlated.rules
+     - $RULE_PATH/imapd-correlated.rules
+     - $RULE_PATH/openssh-correlated.rules
+     - $RULE_PATH/ssh-tectia-server-correlated.rules
+     - $RULE_PATH/vmware-correlated.rules
+     - $RULE_PATH/vsftpd-correlated.rules
+     - $RULE_PATH/windows-correlated.rules
+     - $RULE_PATH/windows-owa-correlated.rules
+
+     #############################################################################
+     # Standard rules - Rules that do not require any dependencies.              #
+     #############################################################################
+
+     #- $RULE_PATH/as400.rules
+     - $RULE_PATH/adtran.rules
+     - $RULE_PATH/apache.rules
+     - $RULE_PATH/apc-emu.rules
+     - $RULE_PATH/arp.rules
+     #- $RULE_PATH/artillery.rules
+     - $RULE_PATH/asterisk.rules
+     - $RULE_PATH/attack.rules
+     - $RULE_PATH/barracuda.rules
+     - $RULE_PATH/bash.rules
+     - $RULE_PATH/bind.rules
+     - $RULE_PATH/carbonblack.rules
+     - $RULE_PATH/bonding.rules
+     - $RULE_PATH/bro-ids.rules
+     - $RULE_PATH/cacti-thold.rules
+     #- $RULE_PATH/cisco-acs.rules
+     - $RULE_PATH/cisco-ise.rules
+     - $RULE_PATH/cisco-cucm.rules
+     - $RULE_PATH/cisco-ios.rules
+     - $RULE_PATH/cisco-meraki.rules
+     - $RULE_PATH/cisco-pixasa.rules
+     #- $RULE_PATH/cisco-prime.rules
+     - $RULE_PATH/cisco-wlc.rules
+     - $RULE_PATH/citrix.rules
+     - $RULE_PATH/courier.rules
+     - $RULE_PATH/cylance.rules
+     #- $RULE_PATH/deleted.rules
+     #- $RULE_PATH/digitalpersona.rules
+     - $RULE_PATH/dovecot.rules
+     - $RULE_PATH/f5-big-ip.rules
+     - $RULE_PATH/fatpipe.rules
+     - $RULE_PATH/fipaypin.rules
+     - $RULE_PATH/fortinet.rules
+     - $RULE_PATH/ftpd.rules
+     - $RULE_PATH/grsec.rules
+     - $RULE_PATH/honeyd.rules
+     #- $RULE_PATH/hordeimp.rules
+     #- $RULE_PATH/hostapd.rules
+     - $RULE_PATH/huawei.rules
+     - $RULE_PATH/imapd.rules
+     - $RULE_PATH/ipop3d.rules
+     - $RULE_PATH/juniper.rules
+     #- $RULE_PATH/kismet.rules
+     - $RULE_PATH/knockd.rules
+     - $RULE_PATH/linux-kernel.rules
+     - $RULE_PATH/milter.rules
+     - $RULE_PATH/mongodb.rules
+     - $RULE_PATH/mysql.rules
+     - $RULE_PATH/nexpose.rules
+     - $RULE_PATH/nfcapd.rules
+     - $RULE_PATH/nginx.rules
+     - $RULE_PATH/ntp.rules
+     - $RULE_PATH/openssh.rules
+     - $RULE_PATH/openvpn.rules
+     - $RULE_PATH/oracle.rules
+     - $RULE_PATH/palo-alto.rules
+     - $RULE_PATH/php.rules
+     - $RULE_PATH/postfix.rules
+     - $RULE_PATH/postgresql.rules
+     - $RULE_PATH/pptp.rules
+     - $RULE_PATH/procurve.rules
+     - $RULE_PATH/proftpd.rules
+     - $RULE_PATH/pure-ftpd.rules
+     - $RULE_PATH/racoon.rules
+     - $RULE_PATH/riverbed.rules
+     - $RULE_PATH/roundcube.rules
+     - $RULE_PATH/rsync.rules
+     - $RULE_PATH/samba.rules
+     - $RULE_PATH/sendmail.rules
+     - $RULE_PATH/snort.rules
+     - $RULE_PATH/solaris.rules
+     - $RULE_PATH/sonicwall.rules
+     - $RULE_PATH/squid.rules
+     - $RULE_PATH/ssh-tectia-server.rules
+     - $RULE_PATH/su.rules
+     - $RULE_PATH/symantec-ems.rules
+     - $RULE_PATH/syslog.rules
+     - $RULE_PATH/tcp.rules
+     - $RULE_PATH/telnet.rules
+     - $RULE_PATH/trendmicro.rules
+     - $RULE_PATH/tripwire.rules
+     - $RULE_PATH/vmpop3d.rules
+     - $RULE_PATH/vmware.rules
+     - $RULE_PATH/vpopmail.rules
+     - $RULE_PATH/vsftpd.rules
+     - $RULE_PATH/web-attack.rules
+     #- $RULE_PATH/weblabrinth.rules
+     - $RULE_PATH/windows-applocker.rules
+     - $RULE_PATH/windows-auth.rules
+     - $RULE_PATH/windows-emet.rules
+     - $RULE_PATH/windows-misc.rules
+     - $RULE_PATH/windows-mssql.rules
+     - $RULE_PATH/windows-security.rules
+     - $RULE_PATH/windows-owa.rules
+     - $RULE_PATH/windows.rules
+     - $RULE_PATH/windows-sysmon.rules
+     - $RULE_PATH/wordpress.rules
+     - $RULE_PATH/xinetd.rules
+     - $RULE_PATH/yubikey.rules
+     - $RULE_PATH/zeus.rules
+     - $RULE_PATH/zimbra.rules
+
+   #
+   # Include other configs
+   #
+
+   # Includes.  Files included here will be handled as if they were
+   # inlined in this configuration file.
+
+   #include: "/usr/local/etc/include1.yaml"
+   #include: "$RULE_PATH/include2.yaml"
 
 

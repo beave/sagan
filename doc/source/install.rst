@@ -16,7 +16,7 @@ The first example installs Sagan with the basics (all prereqisities and ``liblog
 
 Quick start with the bare basics::
 
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev liblognorm2
+   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev
    wget https://quadrantsec.com/download/sagan-current.tar.gz
    cd sagan-1.2.1
    ./configure
@@ -31,7 +31,7 @@ This example Quick start installs Sagan with more features including the require
 
 A more complete quick start::
 
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev liblognorm2 libesmtp-dev libmaxminddb0 libmaxminddb-dev geoip-database-contrib geoipupdate libhiredis-dev libpcap-dev
+   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev geoip-database-contrib geoipupdate libhiredis-dev libpcap-dev
    wget https://quadrantsec.com/download/sagan-current.tar.gz
    cd sagan-1.2.1
    ./configure --enable-geoip --enable-esmtp --enable--libpcap
