@@ -13,6 +13,7 @@ Sagan User Guide
    rule-syntax
    rule-keywords
 
+   liblognorm
 
 
    blogs/index

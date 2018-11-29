@@ -10,7 +10,7 @@ For people familiar with compiling their own software, the Source method is
 recommended.
 
 Quick start from source
-=======================
+-----------------------
 
 The first example installs Sagan with the basics (all prereqisities and ``liblognorm``).
 
