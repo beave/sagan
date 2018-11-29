@@ -9,44 +9,6 @@ available.
 For people familiar with compiling their own software, the Source method is
 recommended.
 
-Quick start from source
------------------------
-
-The first example installs Sagan with the basics (all prereqisities and ``liblognorm``).
-
-Quick start with the bare basics::
-
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev
-   wget https://quadrantsec.com/download/sagan-current.tar.gz
-   cd sagan-1.2.1
-   ./configure
-   make
-   sudo make install
-
-
-This example Quick start installs Sagan with more features including the required prerequisitises, 
-``libognorm`` (log normalization), ``libesmtp`` (e-mail support), ``libmaxminddb`` (GeoIP), 
-``hiredis`` (Redis), ``libpcap`` (sniffing logs). 
-
-
-A more complete quick start::
-
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev geoip-database-contrib geoipupdate libhiredis-dev libpcap-dev
-   wget https://quadrantsec.com/download/sagan-current.tar.gz
-   cd sagan-1.2.1
-   ./configure --enable-geoip --enable-esmtp --enable--libpcap
-   make
-   sudo make install
-   
-
-Prerequisites
--------------
-
-Before compiling and installing Sagan,  your system will need some supporting libraries 
-installed.  The primary prerequisites are ``libpcre``, ``libyaml`` and ``libpthreads`` (note: most systems
-have ``libpthread`` installed by default).  While there are no other required dependencies other than 
-these,  you should over the others for expanded functionality.  For example,  ``liblognorm`` **is not required but highly recommended**.
-
 libpcre (Regular Expressions)
 -----------------------------
 
@@ -262,6 +224,49 @@ Basic steps::
 
 By default,  Sagan builds with the ``--enable-lognorm`` (See ``liblognorm`` above) option enabled.  Any 
 other options need to be manually enabled or disabled.
+
+Quick start from source
+-----------------------
+
+The first example installs Sagan with the basics (all prereqisities and ``liblognorm``).
+
+Quick start with the bare basics::
+
+   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev
+   wget https://quadrantsec.com/download/sagan-current.tar.gz
+   cd sagan-1.2.1
+   ./configure
+   make
+   sudo make install
+
+
+This example Quick start installs Sagan with more features including the required prerequisitises, 
+``libognorm`` (log normalization), ``libesmtp`` (e-mail support), ``libmaxminddb`` (GeoIP), 
+``hiredis`` (Redis), ``libpcap`` (sniffing logs). 
+
+A more complete quick start
+---------------------------
+
+This example installs Sagan with the most common and useful prereqisities.
+
+A more complete quick start::
+
+   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev geoip-database-contrib geoipupdate libhiredis-dev libpcap-dev
+   wget https://quadrantsec.com/download/sagan-current.tar.gz
+   cd sagan-1.2.1
+   ./configure --enable-geoip --enable-esmtp --enable--libpcap
+   make
+   sudo make install
+   
+
+Prerequisites
+-------------
+
+Before compiling and installing Sagan,  your system will need some supporting libraries 
+installed.  The primary prerequisites are ``libpcre``, ``libyaml`` and ``libpthreads`` (note: most systems
+have ``libpthread`` installed by default).  While there are no other required dependencies other than 
+these,  you should over the others for expanded functionality.  For example,  ``liblognorm`` **is not required but highly recommended**.
+
 
 
 Common configure options
