@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 
     bool fifoerr = false;
 
-    char *psyslogstring = NULL;
+    //char *psyslogstring = NULL;
     char syslogstring[MAX_SYSLOGMSG];
 
     signed char c;
@@ -1185,9 +1185,9 @@ int main(int argc, char **argv)
                 {
 
 
-                    while(fgets(syslogstring, sizeof(syslogstring), fd) != NULL)
+                    while(fgets(syslogstring, MAX_SYSLOGMSG, fd) != NULL)
                         {
-                            psyslogstring = syslogstring;
+                            //psyslogstring = syslogstring;
 
                             /* If the FIFO was in a error state,  let user know the FIFO writer has resumed */
 
@@ -1286,10 +1286,12 @@ int main(int argc, char **argv)
                                     counters->sagan_log_drop++;
                                 }
 
+/*
                             if (debug->debugthreads)
                                 {
                                     Sagan_Log(DEBUG, "[%s, line %d] Current \"proc_msgslot\": %d", __FILE__, __LINE__, proc_msgslot);
                                 }
+*/
 
 
                             /*
