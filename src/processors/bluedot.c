@@ -1181,8 +1181,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
         }
 
-        json_object_object_get_ex(json_in, "code", &string_obj);
-        cat = json_object_get_string(string_obj);
+    json_object_object_get_ex(json_in, "code", &string_obj);
+    cat = json_object_get_string(string_obj);
 
     if ( cat == NULL )
         {

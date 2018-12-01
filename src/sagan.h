@@ -390,9 +390,17 @@ struct _Sagan_Proc_Syslog
     char syslog_time[MAX_SYSLOG_TIME];
     char syslog_program[MAX_SYSLOG_PROGRAM];
     char syslog_message[MAX_SYSLOGMSG];
-    //char syslog_message_json[MAX_SYSLOGMSG];
+
+    char syslog[MAX_SYSLOGMSG];
 
 };
+
+typedef struct _Sagan_Pass_Syslog _Sagan_Pass_Syslog;
+struct _Sagan_Pass_Syslog
+{
+    char syslog[MAX_SYSLOGMSG];
+};
+
 
 #ifdef HAVE_LIBFASTJSON
 

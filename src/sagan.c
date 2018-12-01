@@ -109,6 +109,7 @@ struct _SaganConfig *config = NULL;
 struct _SaganDebug *debug = NULL;
 struct _SaganDNSCache *dnscache = NULL;
 
+
 #ifdef HAVE_LIBFASTJSON
 struct _Syslog_JSON_Map *Syslog_JSON_Map = NULL;
 struct _JSON_Message_Map *JSON_Message_Map = NULL;
@@ -128,7 +129,8 @@ struct _Rule_Struct *rulestruct;
 #include "redis.h"
 #endif
 
-struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
+//struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
+struct _Sagan_Pass_Syslog *SaganPassSyslog = NULL;
 
 int proc_msgslot = 0;
 int proc_running = 0;
@@ -291,6 +293,7 @@ int main(int argc, char **argv)
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for dnscache. Abort!", __FILE__, __LINE__);
         }
 
+
 #ifdef HAVE_LIBFASTJSON
 
     /* Allocate memory for global Syslog_JSON_Map */
@@ -314,21 +317,22 @@ int main(int argc, char **argv)
 #endif
 
 
-
     memset(dnscache, 0, sizeof(_SaganDNSCache));
 
     /* Allocate memory for local struct _SyslogInput */
 
-    struct _SyslogInput *SyslogInput = NULL;
+    /*
+        struct _SyslogInput *SyslogInput = NULL;
 
-    SyslogInput = malloc(sizeof(_SyslogInput));
+        SyslogInput = malloc(sizeof(_SyslogInput));
 
-    if ( SyslogInput == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
-        }
+        if ( SyslogInput == NULL )
+            {
+                Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
+            }
 
-    memset(SyslogInput, 0, sizeof(_SyslogInput));
+        memset(SyslogInput, 0, sizeof(_SyslogInput));
+    */
 
 
     t = time(NULL);
@@ -683,14 +687,25 @@ int main(int argc, char **argv)
 
     (void)Sagan_Engine_Init();
 
-    SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
+    /*
+        SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
 
-    if ( SaganProcSyslog == NULL )
+        if ( SaganProcSyslog == NULL )
+            {
+                Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog. Abort!", __FILE__, __LINE__);
+            }
+
+        memset(SaganProcSyslog, 0, sizeof(struct _Sagan_Proc_Syslog));
+    */
+
+    SaganPassSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Pass_Syslog));
+
+    if ( SaganPassSyslog == NULL )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog. Abort!", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganPassSyslog. Abort!", __FILE__, __LINE__);
         }
 
-    memset(SaganProcSyslog, 0, sizeof(struct _Sagan_Proc_Syslog));
+    memset(SaganPassSyslog, 0, sizeof(struct _Sagan_Pass_Syslog));
 
     pthread_t processor_id[config->max_processor_threads];
     pthread_attr_t thread_processor_attr;
@@ -921,7 +936,7 @@ int main(int argc, char **argv)
 
         }
 
-	*/
+    */
 
     /* Unified2 ****************************************************************/
 
@@ -1200,29 +1215,41 @@ int main(int argc, char **argv)
 
                             /* Split up pipe delimited format */
 
-                            if ( config->input_type == INPUT_PIPE )
-                                {
-                                    SyslogInput_Pipe( psyslogstring, SyslogInput );
-                                }
-                            else
-                                {
-                                    SyslogInput_JSON( psyslogstring, SyslogInput );
-                                }
+
+                            /*
+                                                        if ( config->input_type == INPUT_PIPE )
+                                                            {
+                                                                SyslogInput_Pipe( psyslogstring, SyslogInput );
+                                                            }
+                                                        else
+                                                            {
+                                                                SyslogInput_JSON( psyslogstring, SyslogInput );
+                                                            }
+                            */
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
                                     pthread_mutex_lock(&SaganProcWorkMutex);
 
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
-                                    strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, SyslogInput->syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
+//				    printf("Before: %s\n", syslogstring);
+
+                                    memcpy(SaganPassSyslog[proc_msgslot].syslog, syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog));
+
+
+                                    /*
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
+                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, SyslogInput->syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
+
+                                    */
+
 
                                     if ( config->dynamic_load_flag == true && ( dynamic_line_count >= config->dynamic_load_sample_rate ) )
                                         {
@@ -1265,14 +1292,16 @@ int main(int argc, char **argv)
                                 }
 
 
-                            if (debug->debugsyslog)
-                                {
+                            /*
+                                                        if (debug->debugsyslog)
+                                                            {
 
-                                    Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
-                                    Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
-                                    Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_msg);
+                                                                Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
+                                                                Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
+                                                                Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_msg);
 
-                                }
+                                                            }
+                            */
 
 
 

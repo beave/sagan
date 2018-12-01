@@ -51,8 +51,10 @@
 struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
+struct _Sagan_Pass_Syslog *SaganPassSyslog;
 struct _SaganConfig *config;
 struct _Rule_Struct *rulestruct;
+struct _SaganDebug *debug;
 
 int proc_msgslot; 		/* Comes from sagan.c */
 int proc_running;   	        /* Comes from sagan.c */
@@ -71,7 +73,6 @@ pthread_mutex_t SaganDynamicFlag;
 pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 
-
 void Processor ( void )
 {
 
@@ -86,6 +87,25 @@ void Processor ( void )
         }
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
+
+    /*
+        struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
+        SaganPassSyslog_LOCAL = malloc(sizeof(struct _Sagan_Pass_Syslog));
+        memset(Sagan_Pass_Syslog, 0, sizeof(struct _Sagan_Pass_Syslog));
+    */
+
+
+    struct _SyslogInput *SyslogInput = NULL;
+
+    SyslogInput = malloc(sizeof(_SyslogInput));
+
+    if ( SyslogInput == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SyslogInput, 0, sizeof(_SyslogInput));
+
 
     bool ignore_flag = false;
 
@@ -107,15 +127,49 @@ void Processor ( void )
             proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
                                  * original value */
 
-            strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-            strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+            if ( config->input_type == INPUT_PIPE )
+                {
+                    SyslogInput_Pipe( SaganPassSyslog[proc_msgslot].syslog, SyslogInput );
+                }
+            else
+                {
+                    SyslogInput_JSON( SaganPassSyslog[proc_msgslot].syslog, SyslogInput );
+                }
+
+
+            if (debug->debugsyslog)
+                {
+                    Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
+                    Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
+                    Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_msg);
+                }
+
+
+
+
+            memcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+            memcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+            memcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+            memcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+            memcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+            memcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+            memcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+            memcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+            memcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+
+            /*
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog[proc_msgslot].syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog[proc_msgslot].syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog[proc_msgslot].syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog[proc_msgslot].syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog[proc_msgslot].syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog[proc_msgslot].syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog[proc_msgslot].syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog[proc_msgslot].syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                        strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog[proc_msgslot].syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+            	    */
 
             pthread_mutex_unlock(&SaganProcWorkMutex);
 

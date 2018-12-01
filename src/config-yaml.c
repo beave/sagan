@@ -1866,12 +1866,12 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_OUTPUT_UNIFIED2;
                                 }
 
-			    /*
-                            else if (!strcmp(value, "external"))
-                                {
-                                    sub_type = YAML_OUTPUT_EXTERNAL;
-                                }
-			    */
+                            /*
+                                        else if (!strcmp(value, "external"))
+                                            {
+                                                sub_type = YAML_OUTPUT_EXTERNAL;
+                                            }
+                            */
 
                             else if (!strcmp(value, "smtp"))
                                 {
