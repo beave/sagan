@@ -483,21 +483,7 @@ outputs:
       server: 127.0.0.1/mykey
 
   # The 'syslog' output allows Sagan to send alerts to syslog. The syslog 
-  # output format used is exactly the same of Snorts.  Torrelated rules - Rules that use xbits to detect malicious behavor       #
-  #############################################################################
-
-  - $RULE_PATH/cisco-correlated.rules
-  - $RULE_PATH/citrix-correlated.rules
-  - $RULE_PATH/courier-correlated.rules
-  - $RULE_PATH/fatpipe-correlated.rules
-  - $RULE_PATH/fortinet-correlated.rules
-  - $RULE_PATH/imapd-correlated.rules
-  - $RULE_PATH/openssh-correlated.rules
-  - $RULE_PATH/ssh-tectia-server-correlated.rules
-  - $RULE_PATH/vmware-correlated.rules
-  - $RULE_PATH/vsftpd-correlated.rules
-  - $RULE_PATH/windows-correlated.rules
-  - $RULE_PATH/windows-owa-correlated.rules
+  # output format used is exactly the same of Snorts.  This means that your 
   # SIEMs Snort log parsers should work with Sagan.
 
   - syslog: 
@@ -548,7 +534,7 @@ rules-files:
   # Aetas rules - Only use if $SAGAN_HOUR/$SAGAN_DAY is defined!              #
   #############################################################################
 
-  #- $RULE_PATH/cisco-aetas.rules
+  #- $RULE_PATH/cisco-aetas.res
   #- $RULE_PATH/fatpipe-aetas.rules
   #- $RULE_PATH/fortinet-aetas.rules
   #- $RULE_PATH/juniper-aetas.rules
@@ -689,6 +675,8 @@ rules-files:
   - $RULE_PATH/openssh.rules
   - $RULE_PATH/openvpn.rules
   - $RULE_PATH/oracle.rules
+  #- $RULE_PATH/ossec-mi.rules
+  #- $RULE_PATH/ossec.rules
   - $RULE_PATH/palo-alto.rules
   - $RULE_PATH/php.rules
   - $RULE_PATH/postfix.rules
@@ -745,4 +733,3 @@ rules-files:
 
 #include: "/usr/local/etc/include1.yaml"
 #include: "$RULE_PATH/include2.yaml"
-
