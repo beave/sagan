@@ -280,20 +280,10 @@ void Sig_Handler( void )
                     /* Reset counters */
                     /******************/
 
-/*
-                    counters->refcount=0;
-                    counters->classcount=0;
-                    counters->rulecount=0;
-                    counters->ruletotal=0;
-                    counters->genmapcount=0;
-                    counters->rules_loaded_count=0;
-                    counters->var_count=0;
-*/
-
-		    __atomic_store_n (&counters->refcount, 0, __ATOMIC_SEQ_CST);
-		    __atomic_store_n (&counters->classcount, 0, __ATOMIC_SEQ_CST);
-		    __atomic_store_n (&counters->rulecount, 0, __ATOMIC_SEQ_CST);
-		    __atomic_store_n (&counters->ruletotal, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->refcount, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->classcount, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->rulecount, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->ruletotal, 0, __ATOMIC_SEQ_CST);
                     __atomic_store_n (&counters->genmapcount, 0, __ATOMIC_SEQ_CST);
                     __atomic_store_n (&counters->rules_loaded_count, 0, __ATOMIC_SEQ_CST);
                     __atomic_store_n (&counters->var_count, 0, __ATOMIC_SEQ_CST);
@@ -356,16 +346,18 @@ void Sig_Handler( void )
                             free(Sagan_BroIntel_Intel_File_Name);
                             free(Sagan_BroIntel_Intel_Cert_Hash);
 
-                            counters->brointel_addr_count = 0;
-                            counters->brointel_domain_count = 0;
-                            counters->brointel_file_hash_count = 0;
-                            counters->brointel_url_count = 0;
-                            counters->brointel_software_count = 0;
-                            counters->brointel_email_count = 0;
-                            counters->brointel_user_name_count = 0;
-                            counters->brointel_file_name_count = 0;
-                            counters->brointel_cert_hash_count = 0;
-                            counters->brointel_dups = 0;
+                            __atomic_store_n (&counters->brointel_addr_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_domain_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_file_hash_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_url_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_software_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_email_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_user_name_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_file_name_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_cert_hash_count, 0, __ATOMIC_SEQ_CST);
+                            __atomic_store_n (&counters->brointel_dups, 0, __ATOMIC_SEQ_CST);
+
+
                         }
 
                     config->brointel_flag = 0;
@@ -378,8 +370,6 @@ void Sig_Handler( void )
                         }
 
                     /* Output formats */
-
-//                    config->sagan_external_output_flag = 0;
 
 #ifdef WITH_SYSLOG
                     config->sagan_syslog_flag = 0;
@@ -397,13 +387,13 @@ void Sig_Handler( void )
 #ifdef HAVE_LIBMAXMINDDB
 
                     /* GeoIP skip */
-                    counters->geoip_skip_count = 0;
+                    __atomic_store_n (&counters->geoip_skip_count, 0, __ATOMIC_SEQ_CST);
                     memset(GeoIP_Skip, 0, sizeof(_Sagan_GeoIP_Skip));
 #endif
 
 
 #ifdef WITH_BLUEDOT
-                    counters->bluedot_skip_count = 0;
+                    __atomic_store_n (&counters->bluedot_skip_count, 0, __ATOMIC_SEQ_CST);
                     memset(Bluedot_Skip, 0, sizeof(_Sagan_Bluedot_Skip));
 #endif
 
@@ -461,7 +451,7 @@ void Sig_Handler( void )
 
                     if ( config->blacklist_flag )
                         {
-                            counters->blacklist_count=0;
+                            __atomic_store_n (&counters->blacklist_count, 0, __ATOMIC_SEQ_CST);
                             Sagan_Blacklist_Init();
                             Sagan_Blacklist_Load();
                         }
@@ -490,8 +480,6 @@ void Sig_Handler( void )
                     Sagan_Log(NORMAL, "Reloading GeoIP data.");
                     Open_GeoIP2_Database();
 #endif
-
-
 
 
                     pthread_cond_signal(&SaganReloadCond);

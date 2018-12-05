@@ -73,13 +73,10 @@
 
 #include "input-pipe.h"
 
-
 #ifdef HAVE_LIBFASTJSON
 #include "input-json.h"
 #include "message-json-map.h"
 #endif
-
-
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -132,19 +129,15 @@ struct _Rule_Struct *rulestruct;
 #include "redis.h"
 #endif
 
-//struct _Sagan_Proc_Syslog *SaganProcSyslog = NULL;
 struct _Sagan_Pass_Syslog *SaganPassSyslog = NULL;
 
 int proc_msgslot = 0;
 int proc_running = 0;
 
-//unsigned char dynamic_rule_flag = 0;
-bool reload_rules = false;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
 /* ########################################################################
  * Start of main() thread
@@ -239,22 +232,20 @@ int main(int argc, char **argv)
 
     bool fifoerr = false;
 
-    //char *psyslogstring = NULL;
-    char syslogstring[MAX_SYSLOGMSG];
+    char syslogstring[MAX_SYSLOGMSG] = { 0 };
 
     signed char c;
     int rc=0;
 
     int i;
 
-//    int dynamic_line_count = 0;
-
     time_t t;
     struct tm *run;
 
     bool debugflag = false;
 
-    int count = 0; 
+    int batch_count = 0;
+
 
     /* Allocate memory for global struct _SaganDebug */
 
@@ -298,6 +289,8 @@ int main(int argc, char **argv)
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for dnscache. Abort!", __FILE__, __LINE__);
         }
 
+    memset(dnscache, 0, sizeof(_SaganDNSCache));
+
 
 #ifdef HAVE_LIBFASTJSON
 
@@ -320,25 +313,6 @@ int main(int argc, char **argv)
         }
 
 #endif
-
-
-    memset(dnscache, 0, sizeof(_SaganDNSCache));
-
-    /* Allocate memory for local struct _SyslogInput */
-
-    /*
-        struct _SyslogInput *SyslogInput = NULL;
-
-        SyslogInput = malloc(sizeof(_SyslogInput));
-
-        if ( SyslogInput == NULL )
-            {
-                Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
-            }
-
-        memset(SyslogInput, 0, sizeof(_SyslogInput));
-    */
-
 
     t = time(NULL);
     run=localtime(&t);
@@ -692,17 +666,6 @@ int main(int argc, char **argv)
 
     (void)Sagan_Engine_Init();
 
-    /*
-        SaganProcSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Proc_Syslog));
-
-        if ( SaganProcSyslog == NULL )
-            {
-                Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganProcSyslog. Abort!", __FILE__, __LINE__);
-            }
-
-        memset(SaganProcSyslog, 0, sizeof(struct _Sagan_Proc_Syslog));
-    */
-
     SaganPassSyslog = malloc(config->max_processor_threads * sizeof(_Sagan_Pass_Syslog));
 
     if ( SaganPassSyslog == NULL )
@@ -933,17 +896,6 @@ int main(int argc, char **argv)
         }
 
 #endif
-
-    /*
-    if ( config->sagan_external_output_flag )
-        {
-
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "External program to be called: %s", config->sagan_external_command);
-
-        }
-
-    */
 
     /* Unified2 ****************************************************************/
 
@@ -1210,90 +1162,44 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-                            //counters->sagantotal++;
-			    //__sync_fetch_and_add(&counters->sagantotal, 1);
-			    __atomic_add_fetch(&counters->sagantotal, 1, __ATOMIC_SEQ_CST);
+                            __atomic_add_fetch(&counters->sagantotal, 1, __ATOMIC_SEQ_CST);
 
-                            /* If Dynamic rules are loaded,  keep track of line count */
+                            /* Copy log line to batch/queue if we haven't reached our batch limit */
 
-			    /*
-                            if ( config->dynamic_load_flag == true )
+                            if ( batch_count < config->max_batch+1 )
                                 {
-                                    dynamic_line_count++;
+                                    strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+                                    batch_count++;
                                 }
-			    */
-
-
-			    if ( count < config->max_batch+1 ) 
-				{
-//				printf("STRING: %d:  %s!\n", count, syslogstring);
-				strlcpy(SaganPassSyslog[proc_msgslot].syslog[count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[count]));
-//				printf("COPY: %d: %s\n", count, SaganPassSyslog[proc_msgslot].syslog[count]);
-				count++;
-				} 
-
-
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
-//				    count = 0; 
-
-				    if ( count > config->max_batch ) {
-
-                                    pthread_mutex_lock(&SaganProcWorkMutex);
-
-//                                    memcpy(SaganPassSyslog[proc_msgslot].syslog, syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog));
-
-				    /**
-                                    if ( config->dynamic_load_flag == true && ( dynamic_line_count >= config->dynamic_load_sample_rate ) )
+                                    if ( batch_count > config->max_batch )
                                         {
 
-                                            pthread_mutex_lock(&SaganDynamicFlag);
-                                            dynamic_rule_flag = DYNAMIC_RULE;
-                                            pthread_mutex_unlock(&SaganDynamicFlag);
+                                            pthread_mutex_lock(&SaganProcWorkMutex);
 
-                                            dynamic_line_count = 0;
+                                            proc_msgslot++;
+                                            batch_count=0;		/* Reset batch/queue */
+
+
+                                            /* Send work to thread */
+
+                                            pthread_cond_signal(&SaganProcDoWork);
+                                            pthread_mutex_unlock(&SaganProcWorkMutex);
                                         }
-				    */
-
-
-                                    /* Thread holds here if rule load is in progress */
-
-				    /*
-                                    if ( config->dynamic_load_flag == true )
-                                        {
-
-                                            pthread_mutex_lock(&SaganRulesLoadedMutex);
-                                            reload_rules = true;
-                                            pthread_mutex_unlock(&SaganRulesLoadedMutex);
-
-                                        }
-				    */
-
-				    //printf("proc_msgslot: %d and %d\n", proc_msgslot, count);
-                                    proc_msgslot++;
-
-				    count=0;
-				 
-//				    printf("SEND!\n");
-                                    pthread_cond_signal(&SaganProcDoWork);
-                                    pthread_mutex_unlock(&SaganProcWorkMutex);
-				    }
 
                                 }
                             else
                                 {
 
                                     counters->worker_thread_exhaustion++;
-                                //    counters->sagan_log_drop++;
                                 }
 
                         } /* while(fgets) */
 
                     /* fgets() has returned a error,  likely due to the FIFO writer leaving */
-
-                    /* RMEOVE LOCK */
 
                     if ( fifoerr == false )
                         {

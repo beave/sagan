@@ -46,7 +46,7 @@
 
 struct _Rule_Struct *rulestruct;
 
-int Meta_Content_Search(char *syslog_msg, int rule_position , int meta_content_count)
+int Meta_Content_Search(char *syslog_msg, int rule_position, int meta_content_count)
 {
 
     int z = meta_content_count;

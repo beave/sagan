@@ -50,7 +50,6 @@ struct _SaganConfig *config;
 struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
-pthread_mutex_t    CounterBlacklistGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Sagan_Blacklist_Init - Init any global memory structures we might need
@@ -59,9 +58,7 @@ pthread_mutex_t    CounterBlacklistGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 void Sagan_Blacklist_Init ( void )
 {
 
-    pthread_mutex_lock(&CounterBlacklistGenericMutex);
-    counters->blacklist_count=0;
-    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+    __atomic_store_n(&counters->blacklist_count, 0, __ATOMIC_SEQ_CST);
 
 }
 
@@ -92,9 +89,7 @@ void Sagan_Blacklist_Load ( void )
 
     bool found = 0;
 
-    pthread_mutex_lock(&CounterBlacklistGenericMutex);
-    counters->blacklist_count=0;
-    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+    __atomic_store_n(&counters->blacklist_count, 0, __ATOMIC_SEQ_CST);
 
     blacklist_filename = strtok_r(config->blacklist_files, ",", &ptmp);
 
@@ -223,9 +218,8 @@ void Sagan_Blacklist_Load ( void )
 
                                     item_count++;
 
-                                    pthread_mutex_lock(&CounterBlacklistGenericMutex);
-                                    counters->blacklist_count++;
-                                    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+                                    __atomic_add_fetch(&counters->blacklist_count, 1, __ATOMIC_SEQ_CST);
+
 
                                 }
                         }
@@ -260,9 +254,7 @@ bool Sagan_Blacklist_IPADDR ( unsigned char *ipaddr )
             if ( is_inrange(ipaddr, (unsigned char *)&SaganBlacklist[i].range, 1) )
                 {
 
-                    pthread_mutex_lock(&CounterBlacklistGenericMutex);
-                    counters->blacklist_hit_count++;
-                    pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+                    __atomic_add_fetch(&counters->blacklist_hit_count, 1, __ATOMIC_SEQ_CST);
 
                     return(true);
                 }
@@ -292,9 +284,7 @@ bool Sagan_Blacklist_IPADDR_All ( char *syslog_message, _Sagan_Lookup_Cache_Entr
                     if ( is_inrange(lookup_cache[i].ip_bits, (unsigned char *)&SaganBlacklist[b].range, 1) )
                         {
 
-                            pthread_mutex_lock(&CounterBlacklistGenericMutex);
-                            counters->blacklist_hit_count++;
-                            pthread_mutex_unlock(&CounterBlacklistGenericMutex);
+                            __atomic_add_fetch(&counters->blacklist_hit_count, 1, __ATOMIC_SEQ_CST);
 
                             return(true);
                         }

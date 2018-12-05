@@ -224,11 +224,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                 }
 
-            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
-            counters->bluedot_ip_queue_current--;
-            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
-
-
+            __atomic_sub_fetch(&counters->bluedot_ip_queue_current, 1, __ATOMIC_SEQ_CST);
 
         }
 
@@ -249,10 +245,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                 }
 
-            pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
-            counters->bluedot_hash_queue_current--;
-            pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
-
+            __atomic_sub_fetch(&counters->bluedot_hash_queue_current, 1, __ATOMIC_SEQ_CST);
 
         }
 
@@ -271,9 +264,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
                         }
                 }
 
-            pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
-            counters->bluedot_url_queue_current--;
-            pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
+            __atomic_sub_fetch(&counters->bluedot_url_queue_current, 1, __ATOMIC_SEQ_CST);
 
         }
 
@@ -293,9 +284,8 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
                 }
 
-            pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
-            counters->bluedot_filename_queue_current--;
-            pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
+            __atomic_sub_fetch(&counters->bluedot_filename_queue_current, 1, __ATOMIC_SEQ_CST);
+
 
         }
 
@@ -372,9 +362,10 @@ void Sagan_Bluedot_Load_Cat(void)
 
                     strlcpy(SaganBluedotCatList[counters->bluedot_cat_count].cat, bluedot_tok2, sizeof(SaganBluedotCatList[counters->bluedot_cat_count].cat));
 
-                    pthread_mutex_lock(&CounterBluedotGenericMutex);
-                    counters->bluedot_cat_count++;
-                    pthread_mutex_unlock(&CounterBluedotGenericMutex);
+                    __atomic_add_fetch(&counters->bluedot_cat_count, 1, __ATOMIC_SEQ_CST);
+
+
+
                 }
         }
 
@@ -800,9 +791,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                     Sagan_Log(DEBUG, "[%s, line %d] From Bluedot Cache - mdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                                 }
 
-                                            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
-                                            counters->bluedot_mdate_cache++;
-                                            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                                            __atomic_add_fetch(&counters->bluedot_mdate_cache, 1, __ATOMIC_SEQ_CST);
 
                                             bluedot_alertid = 0;
                                         }
@@ -819,18 +808,13 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                                     Sagan_Log(DEBUG, "[%s, line %d] ctime_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                                 }
 
-                                            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
-                                            counters->bluedot_cdate_cache++;
-                                            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                                            __atomic_add_fetch(&counters->bluedot_cdate_cache, 1, __ATOMIC_SEQ_CST);
 
                                             bluedot_alertid = 0;
                                         }
                                 }
 
-
-                            pthread_mutex_lock(&SaganProcBluedotIPWorkMutex);
-                            counters->bluedot_ip_cache_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotIPWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_ip_cache_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(bluedot_alertid);
 
@@ -900,9 +884,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(DEBUG, "[%s, line %d] Pulled file hash '%s' from Bluedot hash cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotHashCache[i].alertid);
                                 }
 
-                            pthread_mutex_lock(&SaganProcBluedotHashWorkMutex);
-                            counters->bluedot_hash_cache_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotHashWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_hash_cache_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(SaganBluedotHashCache[i].alertid);
 
@@ -970,9 +952,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(DEBUG, "[%s, line %d] Pulled file URL '%s' from Bluedot URL cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotURLCache[i].alertid);
                                 }
 
-                            pthread_mutex_lock(&SaganProcBluedotURLWorkMutex);
-                            counters->bluedot_url_cache_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotURLWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_url_cache_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(SaganBluedotURLCache[i].alertid);
 
@@ -1045,9 +1025,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(DEBUG, "[%s, line %d] Pulled file filename '%s' from Bluedot filename cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotFilenameCache[i].alertid);
                                 }
 
-                            pthread_mutex_lock(&SaganProcBluedotFilenameWorkMutex);
-                            counters->bluedot_filename_cache_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_filename_cache_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(SaganBluedotFilenameCache[i].alertid);
 
@@ -1121,7 +1099,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             headers = curl_slist_append (headers, BLUEDOT_PROCESSOR_USER_AGENT);
             headers = curl_slist_append (headers, tmpdeviceid);
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */
-            curl_easy_setopt(curl, CURLOPT_HTTPHEADER , headers );
+            curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers );
             res = curl_easy_perform(curl);
         }
 
@@ -1133,9 +1111,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         {
             Sagan_Log(WARN, "[%s, line %d] Bluedot returned a empty \"response\".", __FILE__, __LINE__);
 
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-            counters->bluedot_error_count++;
-            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+            __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
             Sagan_Bluedot_Clean_Queue(data, type, ip);
 
@@ -1188,9 +1164,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         {
             Sagan_Log(WARN, "Bluedot return a qipcode category.");
 
-            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-            counters->bluedot_error_count++;
-            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+            __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
             Sagan_Bluedot_Clean_Queue(data, type, ip);
 
@@ -1250,9 +1224,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(DEBUG, "[%s, line %d] mdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_mdate_effective_period);
                                 }
 
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_mdate++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_mdate, 1, __ATOMIC_SEQ_CST);
 
                             bluedot_alertid = 0;
                         }
@@ -1269,9 +1241,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                                     Sagan_Log(DEBUG, "[%s, line %d] cdate_epoch for %s is over %d seconds.  Not alerting.", __FILE__, __LINE__, data, rulestruct[rule_position].bluedot_cdate_effective_period);
                                 }
 
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_cdate++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_cdate, 1, __ATOMIC_SEQ_CST);
+
 
                             bluedot_alertid = 0;
                         }
@@ -1357,9 +1328,7 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
                     if ( bluedot_results == rulestruct[rule_position].bluedot_ip_cats[i] )
                         {
 
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_ip_positive_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_ip_positive_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(true);
                         }
@@ -1376,9 +1345,7 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
 
                     if ( bluedot_results == rulestruct[rule_position].bluedot_hash_cats[i] )
                         {
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_hash_positive_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_hash_positive_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(true);
                         }
@@ -1393,9 +1360,8 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
 
                     if ( bluedot_results == rulestruct[rule_position].bluedot_url_cats[i] )
                         {
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_url_positive_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+
+                            __atomic_add_fetch(&counters->bluedot_url_positive_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(true);
                         }
@@ -1410,9 +1376,7 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
 
                     if ( bluedot_results == rulestruct[rule_position].bluedot_filename_cats[i] )
                         {
-                            pthread_mutex_lock(&SaganProcBluedotWorkMutex);
-                            counters->bluedot_filename_positive_hit++;
-                            pthread_mutex_unlock(&SaganProcBluedotWorkMutex);
+                            __atomic_add_fetch(&counters->bluedot_filename_positive_hit, 1, __ATOMIC_SEQ_CST);
 
                             return(true);
 
@@ -1464,7 +1428,7 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
 
     bool found;
 
-    tmptoken = strtok_r(categories, "," , &saveptrrule);
+    tmptoken = strtok_r(categories, ",", &saveptrrule);
 
     while ( tmptoken != NULL )
         {
@@ -1533,7 +1497,7 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
                     Sagan_Log(ERROR, "[%s, line %d] Unknown Bluedot category '%s' found in %s at line %d. Abort!", __FILE__, __LINE__, tmp2, ruleset, linecount);
                 }
 
-            tmptoken = strtok_r(NULL, "," , &saveptrrule);
+            tmptoken = strtok_r(NULL, ",", &saveptrrule);
 
         }
 

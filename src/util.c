@@ -1002,7 +1002,7 @@ FILE *OpenStream( char *path, int *fd, unsigned long pw_uid, unsigned long pw_gi
 
             if (*fd < 0)
                 {
-                    fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__ , _path, strerror(errno));
+                    fprintf(stderr, "[E] [%s, line %d] Could not init unix socket. Failed to open socket at %s - %s!\n", __FILE__, __LINE__, _path, strerror(errno));
                     exit(-1);
                 }
 

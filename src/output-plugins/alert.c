@@ -45,7 +45,7 @@ struct _Rule_Struct *rulestruct;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-pthread_mutex_t CounterAlertTotalMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CounterAlertTotalMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Alert_File( _Sagan_Event *Event )
 {
@@ -55,9 +55,7 @@ void Alert_File( _Sagan_Event *Event )
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
 
-    pthread_mutex_lock(&CounterAlertTotalMutex);
-    counters->alert_total++;
-    pthread_mutex_unlock(&CounterAlertTotalMutex);
+    __atomic_add_fetch(&counters->alert_total, 1, __ATOMIC_SEQ_CST);
 
     fprintf(config->sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
     fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );

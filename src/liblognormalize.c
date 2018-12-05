@@ -48,8 +48,6 @@ struct _SaganDebug *debug;
 
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
 
-//pthread_mutex_t Lognorm_Mutex = PTHREAD_MUTEX_INITIALIZER;
-
 /************************************************************************
  * liblognorm GLOBALS
  ************************************************************************/

@@ -95,9 +95,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, rulestruct[rule_position].dynamic_ruleset, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
 
-    pthread_mutex_lock(&CounterDynamicGenericMutex);
-    counters->rules_loaded_count++;
-    pthread_mutex_unlock(&CounterDynamicGenericMutex);
+    __atomic_add_fetch(&counters->rules_loaded_count, 1, __ATOMIC_SEQ_CST);
 
     /* Done here,  release so others can process */
 

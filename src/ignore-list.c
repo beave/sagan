@@ -41,8 +41,6 @@ struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
 
-//pthread_mutex_t CountDropListMutex=PTHREAD_MUTEX_INITIALIZER;
-
 /****************************************************************************
  * "ignore" list.
  ****************************************************************************/
@@ -78,6 +76,7 @@ void Load_Ignore_List ( void )
                         {
 
                             /* Allocate memory for references,  not comments */
+
                             SaganIgnorelist = (_Sagan_Ignorelist *) realloc(SaganIgnorelist, (counters->droplist_count+1) * sizeof(_Sagan_Ignorelist));
 
                             if ( SaganIgnorelist == NULL )
@@ -89,11 +88,7 @@ void Load_Ignore_List ( void )
 
                             strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, droplistbuf, sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
 
-//                            pthread_mutex_lock(&CountDropListMutex);
-//                            counters->droplist_count++;
-//                            pthread_mutex_unlock(&CountDropListMutex);
-
-			      __atomic_add_fetch(&counters->droplist_count, 1, __ATOMIC_SEQ_CST);
+                            __atomic_add_fetch(&counters->droplist_count, 1, __ATOMIC_SEQ_CST);
 
 
                         }

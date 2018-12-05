@@ -53,9 +53,6 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 
-pthread_mutex_t CounterESMTPCountFailed=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterESMTPCountSuccess=PTHREAD_MUTEX_INITIALIZER;
-
 int ESMTP_Thread ( _Sagan_Event *Event )
 {
 
@@ -125,57 +122,44 @@ int ESMTP_Thread ( _Sagan_Event *Event )
     if((session = smtp_create_session ()) == NULL)
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot create smtp session.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
     if((message = smtp_add_message (session)) == NULL)
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot add message to smtp session.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
+
             goto failure;
         }
     if(!smtp_set_server (session, config->sagan_esmtp_server))
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot set smtp server.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
     if((r = FixLF(config, tmpb, tmpa)) <= 0)
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot FixLF.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
     if(!smtp_set_message_str (message, tmpb))
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot set message string.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
     if(!smtp_set_reverse_path (message, config->sagan_esmtp_from))
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot reverse path.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
     if((recipient = smtp_add_recipient (message, rulestruct[Event->found].email)) == NULL)
         {
             Sagan_Log(WARN, "[%s, line %d] Cannot add recipient.",  __FILE__, __LINE__);
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
             goto failure;
         }
 
@@ -189,9 +173,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
              */
 
             Sagan_Log(WARN, "[%s, line %d] SMTP Error: %s", __FILE__, __LINE__, smtp_strerror (smtp_errno (), errtmp, sizeof(errtmp)));
-            pthread_mutex_lock(&CounterESMTPCountFailed);
-            counters->esmtp_count_failed++;
-            pthread_mutex_unlock(&CounterESMTPCountFailed);
+            __atomic_add_fetch(&counters->esmtp_count_failed, 1, __ATOMIC_SEQ_CST);
 
         }
     else
@@ -200,10 +182,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
             /* SMTP sent successful */
 
             status = smtp_message_transfer_status (message);
-
-            pthread_mutex_lock(&CounterESMTPCountSuccess);
-            counters->esmtp_count_success++;
-            pthread_mutex_unlock(&CounterESMTPCountSuccess);
+            __atomic_add_fetch(&counters->esmtp_count_success, 1, __ATOMIC_SEQ_CST);
 
             if ( debug->debugesmtp ) Sagan_Log(DEBUG, "SMTP %d %s", status->code, (status->text != NULL) ? status->text : "\n");
 

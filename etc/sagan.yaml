@@ -135,6 +135,15 @@ sagan-core:
     protocol-map: "$RULE_PATH/protocol.map"
     xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
+    # Sagan sends logs in "batches" to be processed for performance reasons. 
+    # In most environments, the default of 10 - 100 is fine.  When you start
+    # processing more than 50K EPS,  then you might want to consider setting
+    # this higher.  For more information,  see: 
+    #
+    # https://sagan.readthedocs.io/en/latest/high-performance.html
+
+    batch-size: 10
+
     # Controls how data is read from the FIFO. The "pipe" setting is the traditional 
     # way Sagan reads in events and is default. "json" is more flexible and 
     # will become the default in the future. If "pipe" is set, "json-map"

@@ -171,7 +171,7 @@ void Statistics( void )
 
             if (config->sagan_track_clients_flag)
                 {
-                    Sagan_Log(NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]" , counters_ipc->track_clients_client_count, counters_ipc->track_clients_down, config->pp_sagan_track_clients);
+                    Sagan_Log(NORMAL, "           Tracking/Down            : %" PRIu64 " / %"PRIu64 " [%d minutes]", counters_ipc->track_clients_client_count, counters_ipc->track_clients_down, config->pp_sagan_track_clients);
                 }
 
 
@@ -186,7 +186,7 @@ void Statistics( void )
 #ifdef HAVE_LIBESMTP
             if ( config->sagan_esmtp_flag )
                 {
-                    Sagan_Log(NORMAL, "           Email Success/Failed     : %" PRIu64 " / %" PRIu64 "" , counters->esmtp_count_success, counters->esmtp_count_failed);
+                    Sagan_Log(NORMAL, "           Email Success/Failed     : %" PRIu64 " / %" PRIu64 "", counters->esmtp_count_success, counters->esmtp_count_failed);
                 }
 #endif
 

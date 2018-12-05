@@ -42,7 +42,13 @@
 #include "sagan-defs.h"
 #include "ignore-list.h"
 #include "sagan-config.h"
+#include "input-pipe.h"
 #include "parsers/parsers.h"
+
+#ifdef HAVE_LIBFASTJSON
+#include "input-json.h"
+#include "message-json-map.h"
+#endif
 
 #include "processors/engine.h"
 #include "processors/track-clients.h"
@@ -60,7 +66,7 @@ struct _SaganDebug *debug;
 int proc_msgslot; 		/* Comes from sagan.c */
 int proc_running;   	        /* Comes from sagan.c */
 
-bool dynamic_rule_flag = NORMAL_RULE; 
+bool dynamic_rule_flag = NORMAL_RULE;
 uint32_t dynamic_line_count = 0;
 
 
@@ -73,9 +79,6 @@ pthread_cond_t SaganReloadCond;
 pthread_mutex_t SaganReloadMutex;
 
 pthread_mutex_t SaganDynamicFlag;
-
-//pthread_mutex_t SaganIgnoreCounter=PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t SaganClientTracker=PTHREAD_MUTEX_INITIALIZER;
 
 void Processor ( void )
 {
@@ -92,22 +95,15 @@ void Processor ( void )
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
-    struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL; 
+    struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
     SaganPassSyslog_LOCAL = malloc(sizeof(struct _Sagan_Pass_Syslog));
 
     if ( SaganPassSyslog_LOCAL == NULL )
-        {   
+        {
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganPassSyslog_LOCAL. Abort!", __FILE__, __LINE__);
         }
 
     memset(SaganPassSyslog_LOCAL, 0, sizeof(struct _Sagan_Pass_Syslog));
-
-    /*
-        struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
-        SaganPassSyslog_LOCAL = malloc(sizeof(struct _Sagan_Pass_Syslog));
-        memset(Sagan_Pass_Syslog, 0, sizeof(struct _Sagan_Pass_Syslog));
-    */
-
 
     struct _SyslogInput *SyslogInput = NULL;
 
@@ -137,147 +133,129 @@ void Processor ( void )
                     pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
                 }
 
-//            __sync_fetch_and_add(&proc_running, 1);
-
             proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
                                  * original value */
 
 
-	    /* Copu inbound array from global to local */
+            /* Copy inbound array from global to local */
 
-	    for (i=0; i < config->max_batch; i++)
-		{
-		memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
-		}
-
-	     pthread_mutex_unlock(&SaganProcWorkMutex);
-	     __atomic_add_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
-
-	    /* Process local syslog buffer */
-
-	      for (i=0; i < config->max_batch; i++)
-		{
-
-            if ( config->input_type == INPUT_PIPE )
+            for (i=0; i < config->max_batch; i++)
                 {
-                    SyslogInput_Pipe( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
-                }
-            else
-                {
-                    SyslogInput_JSON( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
+                    memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
                 }
 
-	    
+            pthread_mutex_unlock(&SaganProcWorkMutex);
 
-            if (debug->debugsyslog)
-                {
-                    Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
-                    Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
-                    Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
-                }
+            __atomic_add_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
 
+            /* Process local syslog buffer */
 
-	    /* SyslogInput and SaganProcSyslog_LOCAL are so similar,  one can probably be swapped out */
-
-	    memcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-            memcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-            memcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-            memcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-            memcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-            memcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-            memcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-            memcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-            memcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-
-            /* Check for general "drop" items.  We do this first so we can save CPU later */
-
-            if ( config->sagan_droplist_flag )
+            for (i=0; i < config->max_batch; i++)
                 {
 
-                    ignore_flag = false;
+                    if ( config->input_type == INPUT_PIPE )
+                        {
+                            SyslogInput_Pipe( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
+                        }
+                    else
+                        {
+                            SyslogInput_JSON( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
+                        }
 
-                    for (i = 0; i < counters->droplist_count; i++)
+
+                    if (debug->debugsyslog)
+                        {
+                            Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
+                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
+                            Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
+                        }
+
+
+
+                    /* Copy data from processors */
+
+                    memcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                    memcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+                    /* Check for general "drop" items.  We do this first so we can save CPU later */
+
+                    if ( config->sagan_droplist_flag )
                         {
 
-                            if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
+                            ignore_flag = false;
+
+                            for (i = 0; i < counters->droplist_count; i++)
                                 {
 
-//                                    pthread_mutex_lock(&SaganIgnoreCounter);
-//                                    atomic_inc(counters->ignore_count);
-//				    __sync_fetch_and_add(&counters->ignore_count, 1);
-//                                    pthread_mutex_unlock(&SaganIgnoreCounter);
+                                    if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
+                                        {
 
-				      __atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
+                                            __atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
 
-                                    ignore_flag = true;
-                                    goto outside_loop;	/* Stop processing from ignore list */
+                                            ignore_flag = true;
+                                            goto outside_loop;	/* Stop processing from ignore list */
+                                        }
                                 }
                         }
-                }
 
 outside_loop:
 
-            /* If we're in a ignore state,  then we can bypass the processors */
+                    /* If we're in a ignore state,  then we can bypass the processors */
 
 
-            if ( ignore_flag == false )
-                {
-
-		    /* Dynamic goes here */
-
-	  	    if ( config->dynamic_load_flag == true )
-		    {
-		
-		    __atomic_add_fetch(&dynamic_line_count, 1, __ATOMIC_SEQ_CST);
-
-		    if ( dynamic_line_count >= config->dynamic_load_sample_rate )
-			{
-			 __atomic_store_n (&dynamic_rule_flag, DYNAMIC_RULE, __ATOMIC_SEQ_CST);
-			 __atomic_store_n (&dynamic_line_count, 0 , __ATOMIC_SEQ_CST);
-
-			}
-		    }
-
-
-                    (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
-
-                    /* If this is a dynamic run,  reset back to normal */
-
-                    if ( dynamic_rule_flag == DYNAMIC_RULE )
+                    if ( ignore_flag == false )
                         {
 
-			__atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
+                            /* Dynamic goes here */
 
-			}
+                            if ( config->dynamic_load_flag == true )
+                                {
 
-//                            pthread_mutex_lock(&SaganDynamicFlag);
-//                            dynamic_rule_flag = 0;
-//                            pthread_mutex_unlock(&SaganDynamicFlag);
-//			      __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&dynamic_line_count, 1, __ATOMIC_SEQ_CST);
 
-//                        }
+                                    if ( dynamic_line_count >= config->dynamic_load_sample_rate )
+                                        {
+                                            __atomic_store_n (&dynamic_rule_flag, DYNAMIC_RULE, __ATOMIC_SEQ_CST);
+                                            __atomic_store_n (&dynamic_line_count, 0, __ATOMIC_SEQ_CST);
 
-                    if ( config->sagan_track_clients_flag )
-                        {
-                            Track_Clients( SyslogInput->syslog_host );
-                        }
+                                        }
+                                }
 
-                } /* End if if (ignore_Flag) */
 
-	    }
+                            (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
-//            pthread_mutex_lock(&SaganProcWorkMutex);
-          //__sync_fetch_and_sub(&proc_running, 1);
-	      __atomic_sub_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
-//            pthread_mutex_unlock(&SaganProcWorkMutex);
+                            /* If this is a dynamic run,  reset back to normal */
+
+                            if ( dynamic_rule_flag == DYNAMIC_RULE )
+                                {
+
+                                    __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
+
+                                }
+
+                            if ( config->sagan_track_clients_flag )
+                                {
+                                    Track_Clients( SyslogInput->syslog_host );
+                                }
+
+                        } /* End if if (ignore_Flag) */
+
+                }
+
+            __atomic_sub_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
 
         } /*  for (;;) */
 
     /* Exit thread on shutdown. */
 
-//    pthread_mutex_lock(&SaganProcWorkMutex);
-    __sync_fetch_and_sub(&config->max_processor_threads, 1);
-//    pthread_mutex_unlock(&SaganProcWorkMutex);
+    __atomic_sub_fetch(&config->max_processor_threads, 1, __ATOMIC_SEQ_CST);
 
     pthread_exit(NULL);
 

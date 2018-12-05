@@ -86,16 +86,10 @@ struct _SaganConfig *config;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
-//pthread_mutex_t CounterFollowFlowDrop=PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t CountersFlowFlowTotal=PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t CountersGeoIPHit=PTHREAD_MUTEX_INITIALIZER;
-//pthread_mutex_t CounterSaganFoundMutex=PTHREAD_MUTEX_INITIALIZER;
-
 void Sagan_Engine_Init ( void )
 {
     /* Nothing to do yet */
 }
-
 
 int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_flag )
 {
@@ -319,13 +313,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     match = false;
 
-       //             if ( strcmp(rulestruct[b].s_program, "" ))
-		      if ( rulestruct[b].s_program[0] != '\0' )
+                    if ( rulestruct[b].s_program[0] != '\0' )
                         {
 
-			    printf("NO PROGRAM\n");
-                            //strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
-			    memcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -340,8 +331,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-//                    if ( strcmp(rulestruct[b].s_facility, "" ))
-		      if ( rulestruct[b].s_facility[0] != '\0' )
+                    if ( rulestruct[b].s_facility[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -358,7 +348,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-		      if ( rulestruct[b].s_level[0] != '\0' )
+                    if ( rulestruct[b].s_level[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -375,7 +365,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-		      if ( rulestruct[b].s_tag[0] != '\0' )
+                    if ( rulestruct[b].s_tag[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -392,7 +382,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-		      if ( rulestruct[b].s_syspri[0] != '\0' )
+                    if ( rulestruct[b].s_syspri[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -956,18 +946,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             if(check_flow_return == false)
                                                 {
 
-                                                    //pthread_mutex_lock(&CounterFollowFlowDrop);
-                                                    //counters->follow_flow_drop++;
-						    //__sync_fetch_and_add(&counters->follow_flow_drop, 1);
-		  				    __atomic_add_fetch(&counters->follow_flow_drop, 1, __ATOMIC_SEQ_CST);
-                                                    //pthread_mutex_unlock(&CounterFollowFlowDrop);
+                                                    __atomic_add_fetch(&counters->follow_flow_drop, 1, __ATOMIC_SEQ_CST);
 
                                                 }
 
-//                                            pthread_mutex_lock(&CountersFlowFlowTotal);
-                                              //__sync_fetch_and_add(&counters->follow_flow_total, 1);
-					      __atomic_add_fetch(&counters->follow_flow_total, 1, __ATOMIC_SEQ_CST);
-//                                            pthread_mutex_unlock(&CountersFlowFlowTotal);
+                                            __atomic_add_fetch(&counters->follow_flow_total, 1, __ATOMIC_SEQ_CST);
 
                                         }
 
@@ -1044,9 +1027,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                 {
                                                                     geoip2_isset = true;
 
-                                                                    //pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    __sync_fetch_and_add(&counters->geoip2_hit, 1);
-                                                                    //pthread_mutex_unlock(&CountersGeoIPHit);
+                                                                    __atomic_add_fetch(&counters->geoip2_hit, 1, __ATOMIC_SEQ_CST);
+
                                                                 }
                                                         }
 
@@ -1059,10 +1041,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                 {
                                                                     geoip2_isset = true;
 
-                                                                    //pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    //__sync_fetch_and_add(&counters->geoip2_hit, 1);
-								    __atomic_add_fetch(&counters->geoip2_hit, 1, __ATOMIC_SEQ_CST);
-                                                                    //pthread_mutex_unlock(&CountersGeoIPHit);
+                                                                    __atomic_add_fetch(&counters->geoip2_hit, 1, __ATOMIC_SEQ_CST);
 
                                                                 }
                                                             else
@@ -1374,11 +1353,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                 }
 
 
-                                                                                                                            //pthread_mutex_lock(&CounterSaganFoundMutex);
-//                 __sync_fetch_and_add(&counters->saganfound, 1);
-		  __atomic_add_fetch(&counters->saganfound, 1, __ATOMIC_SEQ_CST);
-                                                                                                                            //pthread_mutex_unlock(&CounterSaganFoundMutex);
+                                                                                                                            __atomic_add_fetch(&counters->saganfound, 1, __ATOMIC_SEQ_CST);
+
                                                                                                                             /* Check for thesholding & "after" */
+
                                                                                                                             if ( thresh_log_flag == false && after_log_flag == false )
                                                                                                                                 {
 

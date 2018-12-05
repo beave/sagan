@@ -751,7 +751,7 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
 
     if ( debug->debugxbit)
         {
-            Sagan_Log(DEBUG, "[%s, line %d] Xbit count threshold NOT reached for xbit." , __FILE__, __LINE__);
+            Sagan_Log(DEBUG, "[%s, line %d] Xbit count threshold NOT reached for xbit.", __FILE__, __LINE__);
         }
 
     return(false);

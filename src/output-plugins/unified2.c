@@ -71,7 +71,7 @@ static int inBounds(const uint8_t *, const uint8_t *, const uint8_t *);
 static void Unified2RotateFile( void );
 
 static uint8_t write_pkt_buffer[sizeof(Serial_Unified2_Header) +
-                                sizeof(Serial_Unified2IDSEvent_legacy) + IP_MAXPACKET];
+                                                               sizeof(Serial_Unified2IDSEvent_legacy) + IP_MAXPACKET];
 
 #define write_pkt_end (write_pkt_buffer + sizeof(write_pkt_buffer))
 

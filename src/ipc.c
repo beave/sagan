@@ -580,29 +580,6 @@ void IPC_Init(void)
                 }
 
             new_object = 0;
-            /*
-                if ( debug->debugipc && counters_ipc->track_client_count >= 1 )
-                    {
-                        Sagan_Log(DEBUG, "");
-                        Sagan_Log(DEBUG, "*** After by username ***");
-                        Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        Sagan_Log(DEBUG, "%-16s| %-11s| %-21s| %-11s| %s", "Username", "Counter","Date added/modified", "SID", "Expire" );
-                        Sagan_Log(DEBUG, "----------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-
-                        for ( i = 0; i < counters_ipc->after_count_by_username; i++)
-                            {
-
-            	    u32_Time_To_Human(afterbyusername_ipc[i].utime, time_buf, sizeof(time_buf));
-
-                                Sagan_Log(DEBUG, "%-16s| %-11d| %-21s| %-11s| %d", afterbyusername_ipc[i].username, afterbyusername_ipc[i].count, time_buf, afterbyusername_ipc[i].sid, afterbyusername_ipc[i].expire);
-                            }
-
-                        Sagan_Log(DEBUG, "");
-                    }
-
-            */
-
-
 
         }
 

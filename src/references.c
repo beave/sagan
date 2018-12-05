@@ -62,7 +62,7 @@ void Load_Reference( const char *ruleset )
 
     counters->refcount = 0;
 
-    Sagan_Log(NORMAL, "Loading references.conf file. [%s]" , ruleset);
+    Sagan_Log(NORMAL, "Loading references.conf file. [%s]", ruleset);
 
     if (( reffile = fopen(ruleset, "r" )) == NULL )
         {
@@ -95,7 +95,7 @@ void Load_Reference( const char *ruleset )
             memset(&refstruct[counters->refcount], 0, sizeof(struct _Ref_Struct));
 
             strtok_r(refbuf, ":", &saveptr);
-            tmptoken = strtok_r(NULL, " " , &saveptr);
+            tmptoken = strtok_r(NULL, " ", &saveptr);
 
             laststring = strtok_r(tmptoken, ",", &saveptr);
 

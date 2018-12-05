@@ -21,6 +21,6 @@
 int  Xbit_Type ( char *, int, const char *);
 bool Xbit_Condition ( int, char *, char *, int, int, char * );
 bool Xbit_Count ( int, char *, char *, char * );
-void Xbit_Set(int, char *, char *, int ,int, char *, _Sagan_Proc_Syslog * );
+void Xbit_Set(int, char *, char *, int,int, char *, _Sagan_Proc_Syslog * );
 
 

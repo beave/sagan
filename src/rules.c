@@ -1789,7 +1789,7 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-		    rulestruct[counters->rulecount].s_tag[0] = '\0';
+                    rulestruct[counters->rulecount].s_tag[0] = '\0';
 
                     if (!strcmp(rulesplit, "syslog_tag" ))
                         {
@@ -1807,7 +1807,7 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-		   rulestruct[counters->rulecount].s_facility[0] = '\0'; 
+                    rulestruct[counters->rulecount].s_facility[0] = '\0';
 
                     if (!strcmp(rulesplit, "syslog_facility" ))
                         {
@@ -1824,7 +1824,7 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].s_facility, arg, sizeof(rulestruct[counters->rulecount].s_facility));
                         }
 
-		    rulestruct[counters->rulecount].s_level[0] = '\0';
+                    rulestruct[counters->rulecount].s_level[0] = '\0';
 
                     if (!strcmp(rulesplit, "syslog_level" ))
                         {
@@ -1841,7 +1841,7 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].s_level, arg, sizeof(rulestruct[counters->rulecount].s_level));
                         }
 
-		    rulestruct[counters->rulecount].s_syspri[0] = '\0';
+                    rulestruct[counters->rulecount].s_syspri[0] = '\0';
 
                     if (!strcmp(rulesplit, "syslog_priority" ))
                         {
@@ -2589,7 +2589,7 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(tok_tmp);
 
-                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule3);
 
                             while( tmptoken != NULL )
                                 {
@@ -2644,7 +2644,7 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(tok_tmp);
 
-                            tmptoken = strtok_r(tok_tmp, "," , &saveptrrule3);
+                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule3);
 
                             while( tmptoken != NULL )
                                 {
