@@ -71,6 +71,7 @@ struct _Sagan_Bluedot_IP_Cache
     uint64_t mdate_utime;
     uint64_t cdate_utime;
     uint64_t cache_utime;
+    char bluedot_json[BLUEDOT_JSON_SIZE];
     int	alertid;
 };
 
@@ -79,6 +80,7 @@ struct _Sagan_Bluedot_Hash_Cache
 {
     char hash[SHA256_HASH_SIZE+1];
     uint64_t cache_utime;
+    char bluedot_json[BLUEDOT_JSON_SIZE];
     int alertid;
 };
 
@@ -87,6 +89,7 @@ struct _Sagan_Bluedot_URL_Cache
 {
     char url[8192];
     uint64_t cache_utime;
+    char bluedot_json[BLUEDOT_JSON_SIZE];
     int alertid;
 };
 
@@ -96,6 +99,7 @@ struct _Sagan_Bluedot_Filename_Cache
 {
     char filename[256];
     uint64_t cache_utime;
+    char bluedot_json[BLUEDOT_JSON_SIZE];
     int alertid;
 };
 

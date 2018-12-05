@@ -817,6 +817,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             __atomic_add_fetch(&counters->bluedot_ip_cache_hit, 1, __ATOMIC_SEQ_CST);
 
+                            snprintf(bluedot_str, bluedot_size, "%s",  SaganBluedotIPCache[i].bluedot_json);
                             return(bluedot_alertid);
 
                         }
@@ -887,6 +888,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             __atomic_add_fetch(&counters->bluedot_hash_cache_hit, 1, __ATOMIC_SEQ_CST);
 
+                            snprintf(bluedot_str, bluedot_size, "%s", SaganBluedotHashCache[i].bluedot_json);
                             return(SaganBluedotHashCache[i].alertid);
 
                         }
@@ -955,6 +957,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             __atomic_add_fetch(&counters->bluedot_url_cache_hit, 1, __ATOMIC_SEQ_CST);
 
+                            snprintf(bluedot_str, bluedot_size, "%s", SaganBluedotURLCache[i].bluedot_json);
                             return(SaganBluedotURLCache[i].alertid);
 
                         }
@@ -1006,8 +1009,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
                         }
                 }
 
-
-
             snprintf(tmpurl, sizeof(tmpurl), "http://%s/%s%s%s", config->bluedot_ip, config->bluedot_uri, BLUEDOT_URL_LOOKUP_URL, data);
 
         }
@@ -1028,6 +1029,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
                             __atomic_add_fetch(&counters->bluedot_filename_cache_hit, 1, __ATOMIC_SEQ_CST);
 
+                            snprintf(bluedot_str, bluedot_size, "%s",  SaganBluedotFilenameCache[i].bluedot_json);
                             return(SaganBluedotFilenameCache[i].alertid);
 
                         }
@@ -1119,7 +1121,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             return(false);
         }
 
+    Remove_Return(response);
     json_in = json_tokener_parse(response);
+
     strlcpy(bluedot_json, response, sizeof(bluedot_json));              /* Returned for alerts */
 
     if ( type == BLUEDOT_LOOKUP_IP )
@@ -1205,6 +1209,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             /* Store data into cache */
 
             memcpy(SaganBluedotIPCache[counters->bluedot_ip_cache_count].ip, ip_convert, MAXIPBIT);
+            strlcpy(SaganBluedotIPCache[counters->bluedot_ip_cache_count].bluedot_json, bluedot_json, sizeof(SaganBluedotIPCache[counters->bluedot_ip_cache_count].bluedot_json));
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].cache_utime = epoch_time;                   /* store utime */
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].cdate_utime = cdate_utime_u32;
             SaganBluedotIPCache[counters->bluedot_ip_cache_count].mdate_utime = mdate_utime_u32;
@@ -1262,6 +1267,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_hash_total++;
 
             strlcpy(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash, data, sizeof(SaganBluedotHashCache[counters->bluedot_hash_cache_count].hash));
+            strlcpy(SaganBluedotHashCache[counters->bluedot_hash_cache_count].bluedot_json, bluedot_json, sizeof(SaganBluedotHashCache[counters->bluedot_hash_cache_count].bluedot_json));
             SaganBluedotHashCache[counters->bluedot_hash_cache_count].cache_utime = epoch_time;
             SaganBluedotHashCache[counters->bluedot_hash_cache_count].alertid = bluedot_alertid;
             counters->bluedot_hash_cache_count++;
@@ -1279,6 +1285,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_url_total++;
 
             strlcpy(SaganBluedotURLCache[counters->bluedot_url_cache_count].url, data, sizeof(SaganBluedotURLCache[counters->bluedot_url_cache_count].url));
+            strlcpy(SaganBluedotURLCache[counters->bluedot_url_cache_count].bluedot_json, bluedot_json, sizeof(SaganBluedotURLCache[counters->bluedot_url_cache_count].bluedot_json));
             SaganBluedotURLCache[counters->bluedot_url_cache_count].cache_utime = epoch_time;
             SaganBluedotURLCache[counters->bluedot_url_cache_count].alertid = bluedot_alertid;
             counters->bluedot_url_cache_count++;
@@ -1297,6 +1304,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             counters->bluedot_filename_total++;
 
             strlcpy(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename, data, sizeof(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].filename));
+            strlcpy(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].bluedot_json, bluedot_json, sizeof(SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].bluedot_json));
             SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].cache_utime = epoch_time;
             SaganBluedotFilenameCache[counters->bluedot_filename_cache_count].alertid = bluedot_alertid;
             counters->bluedot_filename_cache_count++;

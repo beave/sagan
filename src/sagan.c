@@ -1169,14 +1169,13 @@ int main(int argc, char **argv)
                                 {
 
                                     strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
-				    printf("Batch: |%s|\n", SaganPassSyslog[proc_msgslot].syslog[batch_count]);
                                     batch_count++;
                                 }
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
-                                    if ( batch_count > config->max_batch )
+                                    if ( batch_count > config->max_batch || config->max_batch == 1 )
                                         {
 
                                             pthread_mutex_lock(&SaganProcWorkMutex);

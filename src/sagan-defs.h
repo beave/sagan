@@ -77,7 +77,7 @@ typedef void json_object;
 #define INPUT_JSON                      2
 
 /* In very high preformance (over 100k EPS),  you may want to considering raising
-   the MAX_SYSLOG_BATCH and setting it in the sagan.yaml.  This allows Sagan 
+   the MAX_SYSLOG_BATCH and setting it in the sagan.yaml.  This allows Sagan
    to "batch" logs together to avoid expensive mutex_lock/mutex_unlock calls. */
 
 #define MAX_SYSLOG_BATCH	100
@@ -239,5 +239,7 @@ typedef void json_object;
 #define BLUEDOT_HASH_QUEUE_DEFAULT	100
 #define BLUEDOT_URL_QUEUE_DEFAULT	1000
 #define BLUEDOT_FILENAME_QUEUE_DEFAULT	1000
+
+#define BLUEDOT_JSON_SIZE		2048
 
 #endif

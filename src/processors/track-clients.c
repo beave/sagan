@@ -285,7 +285,7 @@ void Track_Clients_Thread ( void )
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp);
+                                               0, tp, NULL);
                                 } /* End last seen check time */
 
                         }
@@ -352,7 +352,7 @@ void Track_Clients_Thread ( void )
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp);
+                                               0, tp, NULL);
 
                                 }  /* End of existing utime check */
 

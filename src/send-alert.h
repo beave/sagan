@@ -24,5 +24,5 @@
 
 #include "sagan-defs.h"
 
-void Send_Alert ( _Sagan_Proc_Syslog *, json_object *, _Sagan_Processor_Info *, char *, char *, char *, char *, int, int, int, int, int, struct timeval tp );
+void Send_Alert ( _Sagan_Proc_Syslog *, json_object *, _Sagan_Processor_Info *, char *, char *, char *, char *, int, int, int, int, int, struct timeval tp, char *bluedot_json );
 

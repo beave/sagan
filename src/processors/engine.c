@@ -153,7 +153,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char parse_sha1_hash[SHA1_HASH_SIZE+1] = { 0 };
     char parse_sha256_hash[SHA256_HASH_SIZE+1] = { 0 };
 
-    char bluedot_json[1024] = { 0 };
+    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
 
     bool ip_src_flag = false;
 
@@ -1415,7 +1415,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                                                processor_info_engine_alertid,
                                                                                                                                                                processor_info_engine_src_port,
                                                                                                                                                                processor_info_engine_dst_port,
-                                                                                                                                                               b, tp );
+                                                                                                                                                               b, tp, bluedot_json );
 
                                                                                                                                                 }
                                                                                                                                             else

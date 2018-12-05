@@ -142,7 +142,6 @@ void Processor ( void )
             for (i=0; i < config->max_batch; i++)
                 {
                     memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
-		    printf("COPING: %s\n", SaganPassSyslog_LOCAL->syslog[i]);
                 }
 
             pthread_mutex_unlock(&SaganProcWorkMutex);
@@ -153,8 +152,6 @@ void Processor ( void )
 
             for (i=0; i < config->max_batch; i++)
                 {
-
-		   printf("Using: %s\n", SaganPassSyslog_LOCAL->syslog[i]);
 
                     if ( config->input_type == INPUT_PIPE )
                         {
@@ -172,7 +169,6 @@ void Processor ( void )
                             Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
                             Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
                         }
-
 
 
                     /* Copy data from processors */
