@@ -58,7 +58,7 @@ struct _Sagan_IPC_Xbit *xbit_ipc;
 
 struct _SaganConfig *config;
 
-pthread_mutex_t CounterMutex;
+//pthread_mutex_t CounterMutex;
 pthread_mutex_t After2_Mutex;
 pthread_mutex_t Thresh2_Mutex;
 pthread_mutex_t Xbit_Mutex;

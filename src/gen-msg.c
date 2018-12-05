@@ -42,7 +42,7 @@ struct _Sagan_Processor_Generator *generator;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-pthread_mutex_t CounterGenMapMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CounterGenMapMutex=PTHREAD_MUTEX_INITIALIZER;
 
 
 void Load_Gen_Map( const char *genmap )
@@ -59,9 +59,11 @@ void Load_Gen_Map( const char *genmap )
 
     Sagan_Log(NORMAL, "Loading gen-msg.map file. [%s]", genmap);
 
-    pthread_mutex_lock(&CounterGenMapMutex);
-    counters->genmapcount=0;
-    pthread_mutex_unlock(&CounterGenMapMutex);
+//    pthread_mutex_lock(&CounterGenMapMutex);
+//    counters->genmapcount=0;
+//    pthread_mutex_unlock(&CounterGenMapMutex);
+
+    __atomic_store_n (&counters->genmapcount, 0, __ATOMIC_SEQ_CST);
 
     if (( genmapfile = fopen(genmap, "r" )) == NULL )
         {
@@ -119,9 +121,12 @@ void Load_Gen_Map( const char *genmap )
             generator[counters->genmapcount].alertid=atoi(gen2);
             strlcpy(generator[counters->genmapcount].generator_msg, gen3, sizeof(generator[counters->genmapcount].generator_msg));
 
-            pthread_mutex_lock(&CounterGenMapMutex);
-            counters->genmapcount++;
-            pthread_mutex_unlock(&CounterGenMapMutex);
+//            pthread_mutex_lock(&CounterGenMapMutex);
+//            counters->genmapcount++;
+//            pthread_mutex_unlock(&CounterGenMapMutex);
+
+	      __atomic_add_fetch(&counters->genmapcount, 1, __ATOMIC_SEQ_CST);
+
         }
 
     fclose(genmapfile);

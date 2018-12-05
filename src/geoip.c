@@ -56,7 +56,7 @@ struct _SaganCounters *counters;
 struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 
 
-pthread_mutex_t CountGeoIP2MissMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CountGeoIP2MissMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Open_GeoIP2_Database( void )
 {
@@ -141,9 +141,11 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
 
     if (res != MMDB_SUCCESS)
         {
-            pthread_mutex_lock(&CountGeoIP2MissMutex);
-            counters->geoip2_miss++;
-            pthread_mutex_unlock(&CountGeoIP2MissMutex);
+
+	      __atomic_add_fetch(&counters->geoip2_miss, 1, __ATOMIC_SEQ_CST);
+//            pthread_mutex_lock(&CountGeoIP2MissMutex);
+//            counters->geoip2_miss++;
+//            pthread_mutex_unlock(&CountGeoIP2MissMutex);
 
             Sagan_Log(WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
             return(GEOIP_SKIP);
@@ -153,9 +155,10 @@ int GeoIP2_Lookup_Country( char *ipaddr, unsigned char *ip_bits, int rule_positi
     if (!entry_data.has_data || entry_data.type != MMDB_DATA_TYPE_UTF8_STRING)
         {
 
-            pthread_mutex_lock(&CountGeoIP2MissMutex);
-            counters->geoip2_miss++;
-            pthread_mutex_unlock(&CountGeoIP2MissMutex);
+//            pthread_mutex_lock(&CountGeoIP2MissMutex);
+//            counters->geoip2_miss++;
+//            pthread_mutex_unlock(&CountGeoIP2MissMutex);
+	      __atomic_add_fetch(&counters->geoip2_miss, 1, __ATOMIC_SEQ_CST);
 
             if ( debug->debuggeoip2 )
                 {

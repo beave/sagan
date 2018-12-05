@@ -100,8 +100,8 @@ struct _Rule_Struct *rulestruct;
 
 bool reload_rules;
 
-pthread_mutex_t SaganRulesLoadedMutex;
-pthread_mutex_t CounterLoadConfigGenericMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t SaganRulesLoadedMutex;
+//pthread_mutex_t CounterLoadConfigGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 
 #ifdef HAVE_LIBYAML
@@ -209,6 +209,8 @@ void Load_YAML_Config( char *yaml_file )
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
             config->max_threshold2 = DEFAULT_IPC_THRESHOLD2_IPC;
             config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
+
+	    config->max_batch = MAX_SYSLOG_BATCH;
 
             config->pp_sagan_track_clients = TRACK_TIME;
 
@@ -512,9 +514,11 @@ void Load_YAML_Config( char *yaml_file )
                                                             Sagan_Log(DEBUG, "[%s, line %d] Variable: \"%s == %s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
                                                         }
 
-                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
-                                                    counters->var_count++;
-                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+//                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+//                                                    counters->var_count++;
+//                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
+						      __atomic_add_fetch(&counters->var_count, 1, __ATOMIC_SEQ_CST);
 
                                                     toggle = 1;
 
@@ -847,6 +851,25 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
+				    else if (!strcmp(last_pass, "batch-size")) 
+					{
+					    Var_To_Value(value, tmp, sizeof(tmp));
+
+                                        config->max_batch = atoi(tmp);
+
+                                            if ( config->max_batch  == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'max_batch' is zero/invalid. Abort!", __FILE__, __LINE__);
+                                                }
+
+					    if ( config->max_batch > MAX_SYSLOG_BATCH )
+					       {
+						    Sagan_Log(ERROR, "[%s, line %d] sagan:core 'max_batch' is greater than %d (the max default). Abort!", __FILE__, __LINE__, MAX_SYSLOG_BATCH);
+					       }
+ 
+
+					}
+
                                     else if (!strcmp(last_pass, "xbit-storage"))
                                         {
 
@@ -1138,9 +1161,11 @@ void Load_YAML_Config( char *yaml_file )
                                                     memcpy(GeoIP_Skip[counters->geoip_skip_count].range.ipbits, geoip_ipbits, sizeof(geoip_ipbits));
                                                     memcpy(GeoIP_Skip[counters->geoip_skip_count].range.maskbits, geoip_maskbits, sizeof(geoip_maskbits));
 
-                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
-                                                    counters->geoip_skip_count++;
-                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+//                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+//                                                    counters->geoip_skip_count++;
+//                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex)
+
+					            __atomic_add_fetch(&ounters->geoip_skip_count, 1, __ATOMIC_SEQ_CST);
 
                                                     maxmind_ptr = strtok_r(NULL, ",", &tok);
 
@@ -1684,9 +1709,11 @@ void Load_YAML_Config( char *yaml_file )
                                                     memcpy(Bluedot_Skip[counters->bluedot_skip_count].range.ipbits, bluedot_ipbits, sizeof(bluedot_ipbits));
                                                     memcpy(Bluedot_Skip[counters->bluedot_skip_count].range.maskbits, bluedot_maskbits, sizeof(bluedot_maskbits));
 
-                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
-                                                    counters->bluedot_skip_count++;
-                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+//                                                    pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+//                                                    counters->bluedot_skip_count++;
+//                                                    pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
+						    __atomic_add_fetch(&counters->bluedot_skip_count, 1, __ATOMIC_SEQ_CST);
 
                                                     bluedot_ptr = strtok_r(NULL, ",", &tok);
 
@@ -2497,9 +2524,11 @@ void Load_YAML_Config( char *yaml_file )
                             Var_To_Value(value, tmp, sizeof(tmp));
                             strlcpy(rules_loaded[counters->rules_loaded_count].ruleset, tmp, sizeof(rules_loaded[counters->rules_loaded_count].ruleset));
 
-                            pthread_mutex_lock(&CounterLoadConfigGenericMutex);
-                            counters->rules_loaded_count++;
-                            pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+//                            pthread_mutex_lock(&CounterLoadConfigGenericMutex);
+//                            counters->rules_loaded_count++;
+//                            pthread_mutex_unlock(&CounterLoadConfigGenericMutex);
+
+			      __atomic_add_fetch(&counters->rules_loaded_count, 1, __ATOMIC_SEQ_CST);
 
                         }
 

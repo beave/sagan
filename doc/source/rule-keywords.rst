@@ -281,12 +281,12 @@ port, facility, syslog priority, liblognorm JSON and the syslog message.
 
 **external: /usr/local/bin/myprogram.py**
 
-facility
---------
+syslog_facility
+---------------
 
-.. option:: facility: {sylog facility}
+.. option:: syslog_facility: {sylog facility}
 
-Searches only messages from a specified facility.
+Searches only messages from a specified facility.  This can be multiple facilities when seperated with an '|' (or) symbol.
 
 **facility: daemon;**
 
@@ -341,12 +341,12 @@ This informs Sagan that if the rule is successfully trigged, the source or desti
 
 This would firewall the offending source for 1 day. For more information about Snortsam, see: http://www.snortsam.net
 
-level
------
+syslog_level
+------------
 
-.. option:: level: {syslog level};
+.. option:: syslog_level: {syslog level};
 
-Seaches only message from a specified syslog level.
+Seaches only message from a specified syslog level.  This can be multiple levels when seperated by a '|' (or) symbol.
 
 **level: notice;**
 
@@ -620,12 +620,12 @@ sid
 
 Sagan signatures start at 5000000. To view the "last used" signature, see https://github.com/beave/sagan-rules/blob/master/.last_used_sid
 
-tag
----
+syslog_tag
+----------
 
-.. option:: tag: {syslog tag};
+.. option:: syslog_tag: {syslog tag};
 
-Informs Sagan to only search syslog message with the specified tag.
+Informs Sagan to only search syslog message with the specified tag.  This can be multiple tags when seperated with an '|' (or) symbol.
 
 **tag: 2d;**
 

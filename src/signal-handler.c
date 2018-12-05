@@ -280,6 +280,7 @@ void Sig_Handler( void )
                     /* Reset counters */
                     /******************/
 
+/*
                     counters->refcount=0;
                     counters->classcount=0;
                     counters->rulecount=0;
@@ -287,6 +288,16 @@ void Sig_Handler( void )
                     counters->genmapcount=0;
                     counters->rules_loaded_count=0;
                     counters->var_count=0;
+*/
+
+		    __atomic_store_n (&counters->refcount, 0, __ATOMIC_SEQ_CST);
+		    __atomic_store_n (&counters->classcount, 0, __ATOMIC_SEQ_CST);
+		    __atomic_store_n (&counters->rulecount, 0, __ATOMIC_SEQ_CST);
+		    __atomic_store_n (&counters->ruletotal, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->genmapcount, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->rules_loaded_count, 0, __ATOMIC_SEQ_CST);
+                    __atomic_store_n (&counters->var_count, 0, __ATOMIC_SEQ_CST);
+
 
                     memset(rules_loaded, 0, sizeof(_Rules_Loaded));
                     memset(rulestruct, 0, sizeof(_Rule_Struct));

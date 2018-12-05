@@ -163,7 +163,7 @@ struct _SyslogInput
     char *syslog_date;
     char *syslog_time;
     char *syslog_program;
-    char *syslog_msg;
+    char *syslog_message;
 };
 
 typedef struct _SaganDNSCache _SaganDNSCache;
@@ -398,7 +398,7 @@ struct _Sagan_Proc_Syslog
 typedef struct _Sagan_Pass_Syslog _Sagan_Pass_Syslog;
 struct _Sagan_Pass_Syslog
 {
-    char syslog[MAX_SYSLOGMSG];
+    char syslog[MAX_SYSLOG_BATCH][MAX_SYSLOGMSG];
 };
 
 

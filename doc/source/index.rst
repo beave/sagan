@@ -15,7 +15,7 @@ Sagan User Guide
 
    liblognorm
 
-
+   high-performance
    blogs/index
    getting-help
 

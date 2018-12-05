@@ -39,7 +39,6 @@ struct _SaganConfig *config;
 struct _SaganDNSCache *dnscache;
 
 void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
-
 {
 
     bool dns_flag;
@@ -243,12 +242,12 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
                 }
         }
 
-    SyslogInput->syslog_msg = syslog_string != NULL ? strsep(&syslog_string, "") : NULL; /* In case the message has | in it,  we delimit on "" */
+    SyslogInput->syslog_message = syslog_string != NULL ? strsep(&syslog_string, "") : NULL; /* In case the message has | in it,  we delimit on "" */
 
-    if (  SyslogInput->syslog_msg == NULL )
+    if (  SyslogInput->syslog_message == NULL )
         {
 
-            SyslogInput->syslog_msg = "SAGAN: MESSAGE ERROR";
+            SyslogInput->syslog_message = "SAGAN: MESSAGE ERROR";
 
             counters->malformed_message++;
 
@@ -264,11 +263,11 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
         }
 
-    /* Strip any \n or \r from the syslog_msg */
+    /* Strip any \n or \r from the syslog_message */
 
-    if ( strcspn (  SyslogInput->syslog_msg, "\n" ) < strlen( SyslogInput->syslog_msg) )
+    if ( strcspn ( SyslogInput->syslog_message, "\n" ) < strlen( SyslogInput->syslog_message ) )
         {
-            SyslogInput->syslog_msg[strcspn (  SyslogInput->syslog_msg, "\n" )] = '\0';
+            SyslogInput->syslog_message[strcspn (  SyslogInput->syslog_message, "\n" )] = '\0';
         }
 
 

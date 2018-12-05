@@ -73,10 +73,13 @@
 
 #include "input-pipe.h"
 
+
 #ifdef HAVE_LIBFASTJSON
 #include "input-json.h"
 #include "message-json-map.h"
 #endif
+
+
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -135,13 +138,13 @@ struct _Sagan_Pass_Syslog *SaganPassSyslog = NULL;
 int proc_msgslot = 0;
 int proc_running = 0;
 
-unsigned char dynamic_rule_flag = 0;
+//unsigned char dynamic_rule_flag = 0;
 bool reload_rules = false;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t SaganDynamicFlag=PTHREAD_MUTEX_INITIALIZER;
 
 /* ########################################################################
  * Start of main() thread
@@ -244,12 +247,14 @@ int main(int argc, char **argv)
 
     int i;
 
-    int dynamic_line_count = 0;
+//    int dynamic_line_count = 0;
 
     time_t t;
     struct tm *run;
 
     bool debugflag = false;
+
+    int count = 0; 
 
     /* Allocate memory for global struct _SaganDebug */
 
@@ -698,7 +703,7 @@ int main(int argc, char **argv)
         memset(SaganProcSyslog, 0, sizeof(struct _Sagan_Proc_Syslog));
     */
 
-    SaganPassSyslog = malloc(config->max_processor_threads * sizeof(struct _Sagan_Pass_Syslog));
+    SaganPassSyslog = malloc(config->max_processor_threads * sizeof(_Sagan_Pass_Syslog));
 
     if ( SaganPassSyslog == NULL )
         {
@@ -734,6 +739,8 @@ int main(int argc, char **argv)
     Sagan_Log(NORMAL, "Parse JSON in program: %s", config->parse_json_message == true ? "Enabled":"Disabled");
 
 #endif
+
+    Sagan_Log(NORMAL, "Syslog batch: %d", config->max_batch);
 
 
 #ifdef PCRE_HAVE_JIT
@@ -1187,7 +1194,6 @@ int main(int argc, char **argv)
 
                     while(fgets(syslogstring, MAX_SYSLOGMSG, fd) != NULL)
                         {
-                            //psyslogstring = syslogstring;
 
                             /* If the FIFO was in a error state,  let user know the FIFO writer has resumed */
 
@@ -1204,53 +1210,42 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-                            counters->sagantotal++;
+                            //counters->sagantotal++;
+			    //__sync_fetch_and_add(&counters->sagantotal, 1);
+			    __atomic_add_fetch(&counters->sagantotal, 1, __ATOMIC_SEQ_CST);
 
                             /* If Dynamic rules are loaded,  keep track of line count */
 
+			    /*
                             if ( config->dynamic_load_flag == true )
                                 {
                                     dynamic_line_count++;
                                 }
+			    */
 
-                            /* Split up pipe delimited format */
+
+			    if ( count < config->max_batch+1 ) 
+				{
+//				printf("STRING: %d:  %s!\n", count, syslogstring);
+				strlcpy(SaganPassSyslog[proc_msgslot].syslog[count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[count]));
+//				printf("COPY: %d: %s\n", count, SaganPassSyslog[proc_msgslot].syslog[count]);
+				count++;
+				} 
 
 
-                            /*
-                                                        if ( config->input_type == INPUT_PIPE )
-                                                            {
-                                                                SyslogInput_Pipe( psyslogstring, SyslogInput );
-                                                            }
-                                                        else
-                                                            {
-                                                                SyslogInput_JSON( psyslogstring, SyslogInput );
-                                                            }
-                            */
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
+//				    count = 0; 
+
+				    if ( count > config->max_batch ) {
+
                                     pthread_mutex_lock(&SaganProcWorkMutex);
 
-//				    printf("Before: %s\n", syslogstring);
+//                                    memcpy(SaganPassSyslog[proc_msgslot].syslog, syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog));
 
-                                    memcpy(SaganPassSyslog[proc_msgslot].syslog, syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog));
-
-
-                                    /*
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog[proc_msgslot].syslog_host));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog[proc_msgslot].syslog_facility));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog[proc_msgslot].syslog_priority));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog[proc_msgslot].syslog_level));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog[proc_msgslot].syslog_tag));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog[proc_msgslot].syslog_date));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog[proc_msgslot].syslog_time));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog[proc_msgslot].syslog_program));
-                                                                        strlcpy(SaganProcSyslog[proc_msgslot].syslog_message, SyslogInput->syslog_msg, sizeof(SaganProcSyslog[proc_msgslot].syslog_message));
-
-                                    */
-
-
+				    /**
                                     if ( config->dynamic_load_flag == true && ( dynamic_line_count >= config->dynamic_load_sample_rate ) )
                                         {
 
@@ -1260,10 +1255,12 @@ int main(int argc, char **argv)
 
                                             dynamic_line_count = 0;
                                         }
+				    */
 
 
                                     /* Thread holds here if rule load is in progress */
 
+				    /*
                                     if ( config->dynamic_load_flag == true )
                                         {
 
@@ -1272,40 +1269,25 @@ int main(int argc, char **argv)
                                             pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
                                         }
+				    */
 
+				    //printf("proc_msgslot: %d and %d\n", proc_msgslot, count);
                                     proc_msgslot++;
 
+				    count=0;
+				 
+//				    printf("SEND!\n");
                                     pthread_cond_signal(&SaganProcDoWork);
                                     pthread_mutex_unlock(&SaganProcWorkMutex);
+				    }
 
                                 }
                             else
                                 {
 
                                     counters->worker_thread_exhaustion++;
-                                    counters->sagan_log_drop++;
+                                //    counters->sagan_log_drop++;
                                 }
-
-/*
-                            if (debug->debugthreads)
-                                {
-                                    Sagan_Log(DEBUG, "[%s, line %d] Current \"proc_msgslot\": %d", __FILE__, __LINE__, proc_msgslot);
-                                }
-*/
-
-
-                            /*
-                                                        if (debug->debugsyslog)
-                                                            {
-
-                                                                Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
-                                                                Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
-                                                                Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_msg);
-
-                                                            }
-                            */
-
-
 
                         } /* while(fgets) */
 

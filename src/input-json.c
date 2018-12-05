@@ -68,7 +68,7 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
     SyslogInput->syslog_date = "UNDEFINED";
     SyslogInput->syslog_time = "UNDEFINED";
     SyslogInput->syslog_program = "UNDEFINED";
-    SyslogInput->syslog_msg = "UNDEFINED";
+    SyslogInput->syslog_message = "UNDEFINED";
 
     json_obj = json_tokener_parse(syslog_string);
 
@@ -123,7 +123,7 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
         {
             strlcpy(syslog_message,  json_object_get_string(tmp), sizeof(syslog_message));
-            SyslogInput->syslog_msg = syslog_message;
+            SyslogInput->syslog_message = syslog_message;
         }
 
 

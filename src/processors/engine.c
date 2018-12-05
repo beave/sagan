@@ -86,10 +86,10 @@ struct _SaganConfig *config;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
-pthread_mutex_t CounterFollowFlowDrop=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CountersFlowFlowTotal=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CountersGeoIPHit=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t CounterSaganFoundMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CounterFollowFlowDrop=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CountersFlowFlowTotal=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CountersGeoIPHit=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t CounterSaganFoundMutex=PTHREAD_MUTEX_INITIALIZER;
 
 void Sagan_Engine_Init ( void )
 {
@@ -319,9 +319,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     match = false;
 
-                    if ( strcmp(rulestruct[b].s_program, "" ))
+       //             if ( strcmp(rulestruct[b].s_program, "" ))
+		      if ( rulestruct[b].s_program[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
+
+			    printf("NO PROGRAM\n");
+                            //strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
+			    memcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -336,7 +340,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( strcmp(rulestruct[b].s_facility, "" ))
+//                    if ( strcmp(rulestruct[b].s_facility, "" ))
+		      if ( rulestruct[b].s_facility[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -353,24 +358,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( strcmp(rulestruct[b].s_syspri, "" ))
-                        {
-                            strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
-                            ptmp = strtok_r(tmpbuf, "|", &tok2);
-                            match = true;
-
-                            while ( ptmp != NULL )
-                                {
-                                    if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_priority))
-                                        {
-                                            match = false;
-                                        }
-
-                                    ptmp = strtok_r(NULL, "|", &tok2);
-                                }
-                        }
-
-                    if ( strcmp(rulestruct[b].s_level, "" ))
+		      if ( rulestruct[b].s_level[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -387,7 +375,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( strcmp(rulestruct[b].s_tag, "" ))
+		      if ( rulestruct[b].s_tag[0] != '\0' )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -396,6 +384,23 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             while ( ptmp != NULL )
                                 {
                                     if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_tag))
+                                        {
+                                            match = false;
+                                        }
+
+                                    ptmp = strtok_r(NULL, "|", &tok2);
+                                }
+                        }
+
+		      if ( rulestruct[b].s_syspri[0] != '\0' )
+                        {
+                            strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
+                            ptmp = strtok_r(tmpbuf, "|", &tok2);
+                            match = true;
+
+                            while ( ptmp != NULL )
+                                {
+                                    if (!strcmp(ptmp, SaganProcSyslog_LOCAL->syslog_priority))
                                         {
                                             match = false;
                                         }
@@ -951,15 +956,18 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             if(check_flow_return == false)
                                                 {
 
-                                                    pthread_mutex_lock(&CounterFollowFlowDrop);
-                                                    counters->follow_flow_drop++;
-                                                    pthread_mutex_unlock(&CounterFollowFlowDrop);
+                                                    //pthread_mutex_lock(&CounterFollowFlowDrop);
+                                                    //counters->follow_flow_drop++;
+						    //__sync_fetch_and_add(&counters->follow_flow_drop, 1);
+		  				    __atomic_add_fetch(&counters->follow_flow_drop, 1, __ATOMIC_SEQ_CST);
+                                                    //pthread_mutex_unlock(&CounterFollowFlowDrop);
 
                                                 }
 
-                                            pthread_mutex_lock(&CountersFlowFlowTotal);
-                                            counters->follow_flow_total++;
-                                            pthread_mutex_unlock(&CountersFlowFlowTotal);
+//                                            pthread_mutex_lock(&CountersFlowFlowTotal);
+                                              //__sync_fetch_and_add(&counters->follow_flow_total, 1);
+					      __atomic_add_fetch(&counters->follow_flow_total, 1, __ATOMIC_SEQ_CST);
+//                                            pthread_mutex_unlock(&CountersFlowFlowTotal);
 
                                         }
 
@@ -1036,9 +1044,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                 {
                                                                     geoip2_isset = true;
 
-                                                                    pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    counters->geoip2_hit++;
-                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
+                                                                    //pthread_mutex_lock(&CountersGeoIPHit);
+                                                                    __sync_fetch_and_add(&counters->geoip2_hit, 1);
+                                                                    //pthread_mutex_unlock(&CountersGeoIPHit);
                                                                 }
                                                         }
 
@@ -1051,9 +1059,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                 {
                                                                     geoip2_isset = true;
 
-                                                                    pthread_mutex_lock(&CountersGeoIPHit);
-                                                                    counters->geoip2_hit++;
-                                                                    pthread_mutex_unlock(&CountersGeoIPHit);
+                                                                    //pthread_mutex_lock(&CountersGeoIPHit);
+                                                                    //__sync_fetch_and_add(&counters->geoip2_hit, 1);
+								    __atomic_add_fetch(&counters->geoip2_hit, 1, __ATOMIC_SEQ_CST);
+                                                                    //pthread_mutex_unlock(&CountersGeoIPHit);
 
                                                                 }
                                                             else
@@ -1365,9 +1374,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                 }
 
 
-                                                                                                                            pthread_mutex_lock(&CounterSaganFoundMutex);
-                                                                                                                            counters->saganfound++;
-                                                                                                                            pthread_mutex_unlock(&CounterSaganFoundMutex);
+                                                                                                                            //pthread_mutex_lock(&CounterSaganFoundMutex);
+//                 __sync_fetch_and_add(&counters->saganfound, 1);
+		  __atomic_add_fetch(&counters->saganfound, 1, __ATOMIC_SEQ_CST);
+                                                                                                                            //pthread_mutex_unlock(&CounterSaganFoundMutex);
                                                                                                                             /* Check for thesholding & "after" */
                                                                                                                             if ( thresh_log_flag == false && after_log_flag == false )
                                                                                                                                 {

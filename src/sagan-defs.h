@@ -76,6 +76,12 @@ typedef void json_object;
 #define INPUT_PIPE                      1
 #define INPUT_JSON                      2
 
+/* In very high preformance (over 100k EPS),  you may want to considering raising
+   this and setting it in the sagan.yaml.  This allows Sagan to "batch" logs together
+   to avoid expensive mutex_lock/mutex_unlock calls. */
+
+#define MAX_SYSLOG_BATCH		100
+
 #define MAXPATH 		255		/* Max path for files/directories */
 #define MAXHOST         	255		/* Max host length */
 #define MAXPROGRAM		32		/* Max syslog 'program' length */

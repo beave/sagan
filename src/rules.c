@@ -556,8 +556,8 @@ void Load_Rules( const char *ruleset )
                                                     Sagan_Log(WARN,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50', skipping rule.", __FILE__, __LINE__);
                                                     continue;
                                                 }
-                                            printf("%d\n", flow_1_count);
                                         }
+
                                     rulestruct[counters->rulecount].flow_1_var = 1;   /* 1 = var */
                                     rulestruct[counters->rulecount].flow_1_counter = flow_1_count;
                                 }
@@ -1788,7 +1788,10 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_sid = atol(arg);
                         }
 
-                    if (!strcmp(rulesplit, "tag" ))
+
+		    rulestruct[counters->rulecount].s_tag[0] = '\0';
+
+                    if (!strcmp(rulesplit, "syslog_tag" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
@@ -1803,7 +1806,10 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].s_tag, arg, sizeof(rulestruct[counters->rulecount].s_tag));
                         }
 
-                    if (!strcmp(rulesplit, "facility" ))
+
+		   rulestruct[counters->rulecount].s_facility[0] = '\0'; 
+
+                    if (!strcmp(rulesplit, "syslog_facility" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
@@ -1818,7 +1824,9 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].s_facility, arg, sizeof(rulestruct[counters->rulecount].s_facility));
                         }
 
-                    if (!strcmp(rulesplit, "level" ))
+		    rulestruct[counters->rulecount].s_level[0] = '\0';
+
+                    if (!strcmp(rulesplit, "syslog_level" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
@@ -1831,6 +1839,23 @@ void Load_Rules( const char *ruleset )
 
                             Remove_Spaces(arg);
                             strlcpy(rulestruct[counters->rulecount].s_level, arg, sizeof(rulestruct[counters->rulecount].s_level));
+                        }
+
+		    rulestruct[counters->rulecount].s_syspri[0] = '\0';
+
+                    if (!strcmp(rulesplit, "syslog_priority" ))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if (arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"syslog_priority\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            Remove_Spaces(arg);
+                            strlcpy(rulestruct[counters->rulecount].s_syspri, arg, sizeof(rulestruct[counters->rulecount].s_syspri));
                         }
 
 

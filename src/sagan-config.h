@@ -98,8 +98,7 @@ struct _SaganConfig
     bool         output_thread_flag;
 
     int          max_processor_threads;
-
-    //char         sagan_external_command[MAXPATH];
+    int		 max_batch;
 
     int          sagan_port;
     bool         disable_dns_warnings;
