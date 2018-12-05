@@ -246,7 +246,6 @@ int main(int argc, char **argv)
 
     int batch_count = 0;
 
-
     /* Allocate memory for global struct _SaganDebug */
 
     debug = malloc(sizeof(_SaganDebug));
@@ -1168,7 +1167,9 @@ int main(int argc, char **argv)
 
                             if ( batch_count < config->max_batch+1 )
                                 {
+
                                     strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+				    printf("Batch: |%s|\n", SaganPassSyslog[proc_msgslot].syslog[batch_count]);
                                     batch_count++;
                                 }
 

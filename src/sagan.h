@@ -455,6 +455,8 @@ struct _Sagan_Event
     char *tag;
     char *program;
     char *message;
+  
+    char *bluedot_json;
 
     uint64_t sid;
     uint32_t rev;

@@ -649,13 +649,14 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, unsigned char *ip )
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, unsigned char *ip,  char *bluedot_str, size_t bluedot_size )
 {
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
 
     char tmpurl[1024] = { 0 };
     char tmpdeviceid[64] = { 0 };
+    char bluedot_json[1024] = { 0 };
 
     CURL *curl;
     CURLcode res;
@@ -1119,6 +1120,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         }
 
     json_in = json_tokener_parse(response);
+    strlcpy(bluedot_json, response, sizeof(bluedot_json));              /* Returned for alerts */
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
@@ -1306,6 +1308,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     Sagan_Bluedot_Clean_Queue(data, type, ip);	/* Remove item for "queue" */
 
     json_object_put(json_in);       		/* Clear json_in as we're done with it */
+
+    snprintf(bluedot_str, bluedot_size, "%s", bluedot_json);
+
     return(bluedot_alertid);
 }
 
@@ -1404,7 +1409,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits);
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits, NULL, 0);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )

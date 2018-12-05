@@ -142,6 +142,7 @@ void Processor ( void )
             for (i=0; i < config->max_batch; i++)
                 {
                     memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
+		    printf("COPING: %s\n", SaganPassSyslog_LOCAL->syslog[i]);
                 }
 
             pthread_mutex_unlock(&SaganProcWorkMutex);
@@ -152,6 +153,8 @@ void Processor ( void )
 
             for (i=0; i < config->max_batch; i++)
                 {
+
+		   printf("Using: %s\n", SaganPassSyslog_LOCAL->syslog[i]);
 
                     if ( config->input_type == INPUT_PIPE )
                         {

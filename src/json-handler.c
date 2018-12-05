@@ -170,7 +170,30 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';
 
-    snprintf(str, size, "%s, \"alert\": %s }", tmp_data, json_object_to_json_string(jobj_alert));
+    snprintf(str, size, "%s, \"alert\": %s", tmp_data, json_object_to_json_string(jobj_alert));
+
+/*
+    if ( Event->bluedot_json[0] != '\0' ) 
+        {
+	snprintf(tmp_data, sizeof(tmp_data), ", bluedot\": %s", Event->bluedot_json);
+	strlcat(str, tmp_data, size);
+	}
+*/
+
+    // NOTE: Log normalize to json?
+
+/*
+    if ( Event->bluedot_json[0] == '\0' ) 
+	{
+    	snprintf(str, size, "%s, \"alert\": %s", tmp_data, json_object_to_json_string(jobj_alert));
+	} else { 
+        snprintf(str, size, "%s, \"alert\": %s, \"bluedot\": %s", tmp_data, json_object_to_json_string(jobj_alert), Event->bluedot_json);
+	}
+*/
+
+
+    strlcat(str, " }", size);
+
 
     json_object_put(jobj);
     json_object_put(jobj_alert);

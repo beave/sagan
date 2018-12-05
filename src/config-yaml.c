@@ -1152,7 +1152,7 @@ void Load_YAML_Config( char *yaml_file )
                                                     memcpy(GeoIP_Skip[counters->geoip_skip_count].range.ipbits, geoip_ipbits, sizeof(geoip_ipbits));
                                                     memcpy(GeoIP_Skip[counters->geoip_skip_count].range.maskbits, geoip_maskbits, sizeof(geoip_maskbits));
 
-                                                    __atomic_add_fetch(&ounters->geoip_skip_count, 1, __ATOMIC_SEQ_CST);
+                                                    __atomic_add_fetch(&counters->geoip_skip_count, 1, __ATOMIC_SEQ_CST);
 
                                                     maxmind_ptr = strtok_r(NULL, ",", &tok);
 
