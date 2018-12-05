@@ -153,8 +153,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char parse_sha1_hash[SHA1_HASH_SIZE+1] = { 0 };
     char parse_sha256_hash[SHA256_HASH_SIZE+1] = { 0 };
 
-    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
-
     bool ip_src_flag = false;
 
     uint32_t ip_srcport_u32;
@@ -201,6 +199,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #ifdef WITH_BLUEDOT
 
+    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
     unsigned char bluedot_results = 0;
     bool bluedot_ip_flag = 0;
     bool bluedot_hash_flag = 0;
