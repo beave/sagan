@@ -154,9 +154,9 @@ sagan-core:
     # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
-    input-type: pipe                                    # pipe or json
-    json-map: /usr/local/etc/sagan-rules/json-input.map # mapping file if input-type: json
-    json-software: syslog-ng                            # by "software" type. 
+    input-type: pipe                       # pipe or json
+    json-map: "$RULE_PATH/json-input.map"  # mapping file if input-type: json
+    json-software: syslog-ng               # by "software" type. 
 
     # "parse-json-message" allows Sagan to detect and decode JSON within a 
     # syslog "message" field.  If a decoder/mapping is found,  then Sagan will
@@ -169,7 +169,7 @@ sagan-core:
 
     parse-json-message: disable
     parse-json-program: disable
-    json-message-map: /usr/local/etc/sagan-rules/json-message.map
+    json-message-map: "$RULE_PATH/json-message.map"
 
   # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 
    

@@ -321,9 +321,9 @@ Example ``core`` subsection::
     # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
-    input-type: pipe                                    # pipe or json
-    json-map: /usr/local/etc/sagan-rules/json-input.map # mapping file if input-type: json
-    json-software: syslog-ng                            # by "software" type. 
+    input-type: pipe                          # pipe or json
+    json-map: "$RULE_PATH/json-input.map"     # mapping file if input-type: json
+    json-software: syslog-ng                  # by "software" type. 
 
     # "parse-json-message" allows Sagan to detect and decode JSON within a 
     # syslog "message" field.  If a decoder/mapping is found,  then Sagan will
@@ -336,10 +336,188 @@ Example ``core`` subsection::
 
     parse-json-message: disable
     parse-json-program: disable
-    json-message-map: /usr/local/etc/sagan-rules/json-message.map
+    json-message-map: "$RULE_PATH/json-message.map"
+
+
+sensor-name
+~~~~~~~~~~~~
+
+The ``sensor-name`` is a unique human readable name of the Sagan instances.  This is used
+to identify data sources.  For example,  Sagan can write ``xbits`` to a shared database.  The
+``sensor-name`` can help identify which Sagan instance wrote which ``xbit``.
+
+default-host
+~~~~~~~~~~~~
+
+The ``default-host`` is the TCP/IP address of the Sagan system.  This is used in cases where
+Sagan is unable to normalize data.  Set this to your local IP addess.
+
+default-port
+~~~~~~~~~~~~
+
+The ``default-port`` is used when Sagan cannot normalize the destination port from a log message.
+When that happens,  this value use used.
+
+default-proto
+~~~~~~~~~~~~~
+
+The ``default-proto`` is the default protocol Sagan uses when the protocol cannot be normalized 
+from a log message.  Valid types are ``udp``, ``tcp` and ``icmp``.
+
+dns-warnings
+~~~~~~~~~~~~
+
+If Sagan receives a hostname rather than a IP address from a syslog server,  Sagan has the ability
+to do an "A record" lookup.  If Sagan is unable to do a DNS lookup,  it will emit a DNS warning
+message.  The ``dns-warnings`` options disables those warnings.  The ``source-lookup`` option must
+be enabled for this to have any effect.  By default, this option is disabled.
+
+source-lookup
+~~~~~~~~~~~~~
+
+If enabled,  the ``source-lookup`` option will force Sagan to do a DNS A record lookup when it 
+encounters a hostname rather than an IP address.  Sagan performs some internal DNS caching but 
+there is a performance penalty when this option is enabled.  Also see ``dns-warnings``.  This
+option is disabled by default.
+
+fifo-size
+~~~~~~~~~
+
+The ``fifo-size`` lets Sagan adjust the size of the named pipe (FIFO).  The named pipe is how Sagan gets
+logs from syslog daemons like ``rsyslog``, ``syslog-ng`` and ``nxlog``.  By default,  most systems
+set the named pipe size at 63356 bytes.  For performance reasons,  we set the named pipe to the
+largest size possible.  That size is 1048576 bytes, which is what Sagan defaults to.  Valid values
+are 65536, 131072, 262144, 524288 and 1048576.
+
+max-threads
+~~~~~~~~~~~
+
+The ``max-threads`` allows you to adjust how many worker threads Sagan spawns.  Threads are 
+what do the bulk of the log and data analysis work.  Threads are used for CPU intensive analysis
+along with high latency operations.  The busier the system is,  the more threads you will need. 
+Threads are also depended on the type of ``processors`` are enabled.  Some ``processors``, like
+threat intellegence lookups require more time to complete.  These require idle threads to do those
+lookups.  The proper number of threads is largely dependent on several factors.  Start at 100 and
+monitor the systems performance.  While running Sagan in the foreground,  monitor the 
+``Thread Exhaustion`` statistics.  This will let you know if Sagan is running out of threads.  If
+this number goes up,  increase the number of threads avaliable to Sagan.  The default ``max-threads`` is set to 100.  
+
+classification
+~~~~~~~~~~~~~~
+
+This points Sagan to where the ``classications.config``.  The ``classifications.config`` is a file
+the maps classification types (ie - "attempted recon") to a priority level (ie - "1").  This 
+data is used in rules via the ``classtype`` keyword.  
+
+https://github.com/beave/sagan-rules/blob/master/classification.config
+
+gen-msg-map
+~~~~~~~~~~~
+
+The ``gen-msg-map`` is use to point ``processors`` to there "generator id".  The Sagan engine
+uses an ID of "1".  This file is used to assign other ``processors`` other IDs. 
+
+https://github.com/beave/sagan-rules/blob/master/gen-msg.map
+
+reference
+~~~~~~~~~
+
+The ``reference`` option points Sagan to where the ``reference.config`` file is located on the 
+file system.  This file is used with the ``reference`` rule keyword.  
+
+https://github.com/beave/sagan-rules/blob/master/reference.config
+
+protocol-map
+~~~~~~~~~~~~
+
+The ``protocol-map`` is a simple method that Sagan can use to assign a TCP/IP protocol to a 
+log message.  The ``protocol-map`` contains either keywords to search for within a log "message"
+or within a "program" fields.  For example,  if Sagan see's the program "sshd" is in use,  it 
+will assign a TCP/IP protocol of TCP because the protocol SSH uses SSH.  Another example might
+be a router log that contains the term "TCP" or "icmp" in it.  Sagan will "see" this and assign
+the protocol within the log message internally.  The ``protocol-map`` is used by the ``parse_proto``
+rule keyword.
+
+https://github.com/beave/sagan-rules/blob/master/protocol.map
+
+xbit-storage
+~~~~~~~~~~~~
+
+The ``xbit-storage`` tells Sagan how to store ``xbit`` data.  The default is ``mmap`` (memory 
+mapped files).  Sagan can also store xbit data in a `Redis <https://redis.io>`_ database.  To use
+the Redis value,  Sagan will need to be compiled with ``hiredis`` support.
+**Redis is currently consider experimental**
 
 batch-size
 ~~~~~~~~~~
+
+The ``batch-size`` option lets you set how much data can be passed from Sagan's master/main thread
+to "worker" threads (set by ``max-threads``).  This option can be very important in performance
+tuning in high data processing enviornments.  The number specified in this option represents 
+how many "log lines" will be passed.  By default,  it is set to 1.  This means every time that
+Sagan gets a log line,  it will pass it to a worker threads.  This isn't very efficient and there
+is a performance penalty incurred.  If you are in an environment where you expect to process more
+than 10 events per/second (10 EPS),  consider bumping this up to 10 or even the max of 100.  If you
+are processing 50k EPS or more,  see the "High Performance Considerations" of this document. 
+
+input-type
+~~~~~~~~~~
+
+The ``input-type`` tells Sagan how to decode data it receives from the named pipe.  There are 
+two option; ``pipe`` or ``json``.  The ``pipe`` format is a legacy Sagan format.  Data is 
+received in the named pipe in a CSV format seperated by the '|' symbol.  The newer ``json``
+option tells Sagan to decode the data from the named pipe in a JSON format.  When using the
+``json``, you will also need to set the ``json-map`` and ``json-software``. If you are using
+the ``pipe`` value,  no other options are needed.  To use the ``json`` option, 
+Sagan will need to be compiled with the ``libfastjson`` or ``liblognorm``.
+
+json-map
+~~~~~~~~
+
+The ``json-map`` works in conjuction with the ``input-type`` of ``json``.  The ``json-nap``
+tells Sagan where to load a mapping table of different software types (ie - ``rsyslog``, 
+``syslog-ng``, etc) and there associated JSON decode mappings.  These data in this file is
+used with the ``json-software`` option to tell Sagan how do decode incoming JSON data from the
+named pipe.  To use the ``json-map`` option, Sagan will need to be compiled with the 
+``libfastjson`` or ``liblognorm``.
+
+https://github.com/beave/sagan-rules/blob/master/json-input.map
+
+json-sofware
+~~~~~~~~~~~~
+
+The ``json-software`` tells Sagan which "map" to use from the ``json-map`` file that has been
+loaded.  This mapping tells Sagan how to decode JSON data from the named pipe.
+ To use the ``json-software`` option,   Sagan will need to be compiled with the ``libfastjson`` or ``liblognorm``.
+
+parse-json-message:
+~~~~~~~~~~~~~~~~~~~
+
+The ``parse-json-message`` allows Sagan to automatically detect and decode JSON data within a "message"
+field of a log line.  The option is used in conjuction with ``parse-message-map`` and requires that
+Sagan be compiled with ``libfastjson`` or ``liblognorm`` support.
+
+parse-json-program:
+~~~~~~~~~~~~~~~~~~~
+
+The ``parse-json-program`` allows Sagan to detect JSON that starts within the "program" section of a
+log messages.  In certain situations,  some systems start JSON within the "program" fields rather
+than within the "message" field.  When this happens,  Sagan detects it an joins the "program" and 
+"message" fields together (as one data source).  Once that is done,  the data can be decoded.  This
+option is used in conjunction with ``parse-message-map`` and requires that Sagan be compiled with 
+``libfastjson`` or ``liblognorm`` support.
+
+json-message-map:
+~~~~~~~~~~~~~~~~~
+
+The ``json-message-map`` logs a mapping table for use with ``parse-json-message`` and
+``parse-json-program``.  When Sagan detects JSON via ``parse-json-message`` and/or via 
+``parse-json-program``,  it will attempt to apply mappings from this file.   The "best mapping"
+wins.  That is,  the mapping with the most fields identified will "win" and Sagan will use that
+mapping with the log message.   This can be useful for directly processing Suricata EVE logs and
+Splunk forwarded logs.
+
+https://github.com/beave/sagan-rules/blob/master/json-input.map
 
 
 parse_ip
