@@ -240,6 +240,8 @@ typedef void json_object;
 #define BLUEDOT_URL_QUEUE_DEFAULT	1000
 #define BLUEDOT_FILENAME_QUEUE_DEFAULT	1000
 
-#define BLUEDOT_JSON_SIZE		2048
-
 #endif
+
+/* Outside WITH_BLUEDOT because used in arg passing */
+
+#define BLUEDOT_JSON_SIZE               2048
