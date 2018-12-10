@@ -52,46 +52,41 @@ void Load_Ignore_List ( void )
 
     char droplistbuf[1024] = { 0 };
 
+    if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
+            config->sagan_droplist_flag=0;
+        }
 
-    if ( config->sagan_droplist_flag )
+    while(fgets(droplistbuf, 1024, droplist) != NULL)
         {
 
-            if (( droplist = fopen(config->sagan_droplistfile, "r" )) == NULL )
+            /* Skip comments and blank linkes */
+
+            if (droplistbuf[0] == '#' || droplistbuf[0] == 10 || droplistbuf[0] == ';' || droplistbuf[0] == 32)
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] No drop list/ignore list to load (%s)", __FILE__, __LINE__, config->sagan_droplistfile);
-                    config->sagan_droplist_flag=0;
+                    continue;
+
                 }
-
-            while(fgets(droplistbuf, 1024, droplist) != NULL)
+            else
                 {
 
-                    /* Skip comments and blank linkes */
+                    /* Allocate memory for references,  not comments */
 
-                    if (droplistbuf[0] == '#' || droplistbuf[0] == 10 || droplistbuf[0] == ';' || droplistbuf[0] == 32)
+                    SaganIgnorelist = (_Sagan_Ignorelist *) realloc(SaganIgnorelist, (counters->droplist_count+1) * sizeof(_Sagan_Ignorelist));
+
+                    if ( SaganIgnorelist == NULL )
                         {
-                            continue;
-
+                            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
                         }
-                    else
-                        {
 
-                            /* Allocate memory for references,  not comments */
+                    Remove_Return(droplistbuf);
 
-                            SaganIgnorelist = (_Sagan_Ignorelist *) realloc(SaganIgnorelist, (counters->droplist_count+1) * sizeof(_Sagan_Ignorelist));
+                    strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, droplistbuf, sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
 
-                            if ( SaganIgnorelist == NULL )
-                                {
-                                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for SaganIgnorelist. Abort!", __FILE__, __LINE__);
-                                }
-
-                            Remove_Return(droplistbuf);
-
-                            strlcpy(SaganIgnorelist[counters->droplist_count].ignore_string, droplistbuf, sizeof(SaganIgnorelist[counters->droplist_count].ignore_string));
-
-                            __atomic_add_fetch(&counters->droplist_count, 1, __ATOMIC_SEQ_CST);
+                    __atomic_add_fetch(&counters->droplist_count, 1, __ATOMIC_SEQ_CST);
 
 
-                        }
                 }
         }
 }

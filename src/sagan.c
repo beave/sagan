@@ -118,6 +118,7 @@ struct _JSON_Message_Map *JSON_Message_Map = NULL;
 /* Already Init'ed */
 
 struct _Rule_Struct *rulestruct;
+struct _Sagan_Ignorelist *SaganIgnorelist;
 
 #ifdef WITH_BLUEDOT
 #include <curl/curl.h>
@@ -231,6 +232,7 @@ int main(int argc, char **argv)
 
 
     bool fifoerr = false;
+    bool ignore_flag = false;
 
     char syslogstring[MAX_SYSLOGMSG] = { 0 };
 
@@ -1165,24 +1167,61 @@ int main(int argc, char **argv)
 
                             /* Copy log line to batch/queue if we haven't reached our batch limit */
 
-                            if ( batch_count < config->max_batch+1 )
+                            if ( batch_count <= config->max_batch )
                                 {
 
-                                    strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
-                                    batch_count++;
+                                    if (debug->debugsyslog)
+                                        {
+                                            Sagan_Log(DEBUG, "[%s, line %d] [batch %d] Raw log: %s",  __FILE__, __LINE__, batch_count, syslogstring);
+                                        }
+
+                                    /* Check for "drop" to save CPU from "ignore list" */
+
+                                    if ( config->sagan_droplist_flag )
+                                        {
+
+                                            ignore_flag = false;
+
+                                            for (i = 0; i < counters->droplist_count; i++)
+                                                {
+
+                                                    if (Sagan_strstr(syslogstring, SaganIgnorelist[i].ignore_string))
+                                                        {
+                                                            __atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
+                                                            ignore_flag = true;
+                                                            break;
+
+                                                        }
+                                                }
+
+
+                                        }
+
+                                    /* Add to batch */
+
+                                    if ( ignore_flag == false )
+                                        {
+                                            memcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+                                            batch_count++;
+                                        }
+
                                 }
+
+                            /* Do we have enough threads? */
+
 
                             if ( proc_msgslot < config->max_processor_threads )
                                 {
 
-                                    if ( batch_count > config->max_batch || config->max_batch == 1 )
+                                    /* Has our batch count been reached */
+
+                                    if ( batch_count >= config->max_batch || config->max_batch == 1 )
                                         {
 
                                             pthread_mutex_lock(&SaganProcWorkMutex);
 
                                             proc_msgslot++;
                                             batch_count=0;		/* Reset batch/queue */
-
 
                                             /* Send work to thread */
 

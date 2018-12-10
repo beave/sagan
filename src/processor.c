@@ -55,7 +55,6 @@
 #include "processors/blacklist.h"
 #include "processors/dynamic-rules.h"
 
-struct _Sagan_Ignorelist *SaganIgnorelist;
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _Sagan_Pass_Syslog *SaganPassSyslog;
@@ -117,7 +116,7 @@ void Processor ( void )
     memset(SyslogInput, 0, sizeof(_SyslogInput));
 
 
-    bool ignore_flag = false;
+//    bool ignore_flag = false;
 
     int i;
 
@@ -141,6 +140,7 @@ void Processor ( void )
 
             for (i=0; i < config->max_batch; i++)
                 {
+                    printf("batch %d: %s\n", i,  SaganPassSyslog[proc_msgslot].syslog[i]);
                     memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
                 }
 
@@ -163,12 +163,14 @@ void Processor ( void )
                         }
 
 
-                    if (debug->debugsyslog)
-                        {
-                            Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
-                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
-                            Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
-                        }
+                    /*
+                                        if (debug->debugsyslog)
+                                            {
+                                                Sagan_Log(DEBUG, "[%s, line %d] **[RAW Syslog]*********************************", __FILE__, __LINE__);
+                                                Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
+                                                Sagan_Log(DEBUG, "[%s, line %d] Raw message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
+                                            }
+                    */
 
 
                     /* Copy data from processors */
@@ -183,68 +185,37 @@ void Processor ( void )
                     memcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
                     memcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
-                    /* Check for general "drop" items.  We do this first so we can save CPU later */
+                    /* Dynamic goes here */
 
-                    if ( config->sagan_droplist_flag )
+                    if ( config->dynamic_load_flag == true )
                         {
 
-                            ignore_flag = false;
+                            __atomic_add_fetch(&dynamic_line_count, 1, __ATOMIC_SEQ_CST);
 
-                            for (i = 0; i < counters->droplist_count; i++)
+                            if ( dynamic_line_count >= config->dynamic_load_sample_rate )
                                 {
+                                    __atomic_store_n (&dynamic_rule_flag, DYNAMIC_RULE, __ATOMIC_SEQ_CST);
+                                    __atomic_store_n (&dynamic_line_count, 0, __ATOMIC_SEQ_CST);
 
-                                    if (Sagan_strstr(SaganProcSyslog_LOCAL->syslog_message, SaganIgnorelist[i].ignore_string))
-                                        {
-
-                                            __atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
-
-                                            ignore_flag = true;
-                                            goto outside_loop;	/* Stop processing from ignore list */
-                                        }
                                 }
                         }
 
-outside_loop:
 
-                    /* If we're in a ignore state,  then we can bypass the processors */
+                    (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
+                    /* If this is a dynamic run,  reset back to normal */
 
-                    if ( ignore_flag == false )
+                    if ( dynamic_rule_flag == DYNAMIC_RULE )
                         {
 
-                            /* Dynamic goes here */
+                            __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
 
-                            if ( config->dynamic_load_flag == true )
-                                {
+                        }
 
-                                    __atomic_add_fetch(&dynamic_line_count, 1, __ATOMIC_SEQ_CST);
-
-                                    if ( dynamic_line_count >= config->dynamic_load_sample_rate )
-                                        {
-                                            __atomic_store_n (&dynamic_rule_flag, DYNAMIC_RULE, __ATOMIC_SEQ_CST);
-                                            __atomic_store_n (&dynamic_line_count, 0, __ATOMIC_SEQ_CST);
-
-                                        }
-                                }
-
-
-                            (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
-
-                            /* If this is a dynamic run,  reset back to normal */
-
-                            if ( dynamic_rule_flag == DYNAMIC_RULE )
-                                {
-
-                                    __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
-
-                                }
-
-                            if ( config->sagan_track_clients_flag )
-                                {
-                                    Track_Clients( SyslogInput->syslog_host );
-                                }
-
-                        } /* End if if (ignore_Flag) */
+                    if ( config->sagan_track_clients_flag )
+                        {
+                            Track_Clients( SyslogInput->syslog_host );
+                        }
 
                 }
 
