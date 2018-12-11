@@ -305,8 +305,8 @@ Example ``core`` subsection::
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy
     # environments you may want to set this to 100.  This should allow Sagan
-    # to comfortably process up to 50k events per/second (EPS).  If you are 
-    # looking at rates higher than 50k EPS,  please read:
+    # to comfortably process up to 5k events per/second (EPS).  If you are 
+    # looking at rates higher than 5k EPS,  please read:
     #
     # https://sagan.readthedocs.io/en/latest/high-performance.html
     #
