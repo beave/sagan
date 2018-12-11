@@ -1172,7 +1172,7 @@ int main(int argc, char **argv)
 
                                     if (debug->debugsyslog)
                                         {
-                                            Sagan_Log(DEBUG, "[%s, line %d] [batch %d] Raw log: %s",  __FILE__, __LINE__, batch_count, syslogstring);
+                                            Sagan_Log(DEBUG, "[%s, line %d] [batch position %d] Raw log: %s",  __FILE__, __LINE__, batch_count, syslogstring);
                                         }
 
                                     /* Check for "drop" to save CPU from "ignore list" */
