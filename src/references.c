@@ -155,7 +155,11 @@ void Reference_Lookup( int rulemem, int type, char *str, size_t size )
     char refinfo[512];
     char refinfo2[512];
 
-    for (i=0; i < rulestruct[rulemem].ref_count + 1 ; i++ )
+    printf("rulemem: %d\n", rulemem);
+    printf("rulestruct[rulemem].ref_count: %d\n", rulestruct[rulemem].ref_count);
+    fflush(stdout);
+
+    for (i=0; i <= rulestruct[rulemem].ref_count; i++ )
         {
 
             strlcpy(refinfo, rulestruct[rulemem].s_reference[i], sizeof(refinfo));

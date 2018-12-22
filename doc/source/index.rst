@@ -16,6 +16,7 @@ Sagan User Guide
    liblognorm
 
    high-performance
+   contributing-coding-style
    blogs/index
    getting-help
 
