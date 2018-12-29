@@ -75,7 +75,7 @@ void Sagan_Perfmonitor_Handler( void )
     now=localtime(&t);
     strftime(curtime_utime, sizeof(curtime_utime), "%s",  now);
 
-    uint64_t last_sagantotal = 0;
+    uint64_t last_events_received = 0;
     uint64_t last_saganfound = 0;
     uint64_t last_alert_total = 0;
     uint64_t last_after_total = 0;
@@ -132,8 +132,8 @@ void Sagan_Perfmonitor_Handler( void )
 
                     fprintf(config->perfmonitor_file_stream, "%s,", curtime_utime),
 
-                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->sagantotal - last_sagantotal);
-                    last_sagantotal = counters->sagantotal;
+                            fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->events_received - last_events_received);
+                    last_events_received = counters->events_received;
 
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->saganfound - last_saganfound);
                     last_saganfound = counters->saganfound;
@@ -153,7 +153,7 @@ void Sagan_Perfmonitor_Handler( void )
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->ignore_count - last_ignore_count);
                     last_ignore_count = counters->ignore_count;
 
-                    total = counters->sagantotal / seconds;
+                    total = counters->events_received / seconds;
                     fprintf(config->perfmonitor_file_stream, "%lu,", total);
 
 #ifdef HAVE_LIBMAXMINDDB

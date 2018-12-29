@@ -2659,7 +2659,7 @@ void Load_YAML_Config( char *yaml_file )
 
                     if ( rulestruct[check].s_sid == rulestruct[a].s_sid )
                         {
-                            Sagan_Log(ERROR, "[%s, line %d] Detected duplicate signature id [sid] number %s.  Please correct this.", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
+                            Sagan_Log(ERROR, "[%s, line %d] Detected duplicate signature id number %" PRIu64 ".", __FILE__, __LINE__, rulestruct[check].s_sid, rulestruct[a].s_sid);
                         }
                 }
         }

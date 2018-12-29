@@ -1163,7 +1163,7 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-                            __atomic_add_fetch(&counters->sagantotal, 1, __ATOMIC_SEQ_CST);
+                            __atomic_add_fetch(&counters->events_received, 1, __ATOMIC_SEQ_CST);
 
                             /* Copy log line to batch/queue if we haven't reached our batch limit */
 
@@ -1220,6 +1220,8 @@ int main(int argc, char **argv)
 
                                             pthread_mutex_lock(&SaganProcWorkMutex);
 
+                                            counters->events_processed = counters->events_processed + config->max_batch;
+
                                             proc_msgslot++;
                                             batch_count=0;		/* Reset batch/queue */
 
@@ -1233,7 +1235,10 @@ int main(int argc, char **argv)
                             else
                                 {
 
-                                    counters->worker_thread_exhaustion++;
+                                    /* If there's no thread, we lose the entire batch */
+
+                                    counters->worker_thread_exhaustion = counters->worker_thread_exhaustion + config->max_batch; ;
+                                    batch_count = 0;
                                 }
 
                         } /* while(fgets) */

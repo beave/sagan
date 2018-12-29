@@ -33,13 +33,13 @@ To
    #define MAX_SYSLOG_BATCH        1000
 
 
-Then rebuild Sagan and set your ``batch-size`` to 1000.  While you will save CPU,  you will 
+Then rebuild Sagan and set your ``batch-size`` to 1000.  While you will save CPU,  Sagan will 
 use more memory.  If you sent the `MAX_SYSLOG_BATCH` to 1000 and only set the ``batch-size`` to 
 100,  Sagan will still allocate memory for 1000 log lines.  In fact,  it will do the per-thread!
 Think of it this way:
 
 ::
-   Threads * ( MAX_MAX_SYSLOG_BATCH * 10240 bytes ) = Total memory usage.
+   ( MAX_MAX_SYSLOG_BATCH * 10240 bytes ) * Threads = Total memory usage.
 
 The default allocation per log line is 10240 bytes. 
 
@@ -54,6 +54,41 @@ If you are writing rules,  make sure you use simple rule keywords first (``conte
 ``program``, etc) before moving to more complex rule options like ``pcre``.  The more simple rule
 keywords can be used to "short circuit" a rule before it has to more complex operations.
 
+Software like ``Snort`` attempt to arrange the rule set in memory to be more efficient.  For example, 
+when ``Snort`` detects multiple ``content`` modifiers,  it shifts the shortest lenght ``content`` to
+the front (first searched).   Regardless of the ``content`` rule keywords placement within a rule. 
 
+Because logs are inherently different that packets,  ``Sagan`` does not do this!  If you have multiple
+``content`` keywords,  ``Sagan`` will use them in the order they are placed in the rule.  You will
+want to use the least matched keywords as the first ``content``.  For example: 
+
+:::
+
+   # This will use more CPU because "login" is common.
+
+   content: "login"; content: "mary"; 
+
+   # This will use less CPU because "mary" is likely less common. 
+
+   content: "mary"; content: "login"; 
+
+The same login applied to ``pcre`` and ``meta_content``. 
+
+
+Rule order of execution
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Sagan attempts to use the least CPU intensive rule options first.  This means that if a ``Sagan`` rule
+has multiple ``content`` keywords and multiple ``pcre`` keywords,  the ``content`` rule keywords are 
+processed first.  If the ``content`` keywords do not match,  then there is no need to process the ``pcre``
+keywords.   The order of execution within a rule is as follows:
+
+The ``program`` fields is the very first thing to be evaluates. 
+
+The ``content`` is the next Sagan takes into consideration.
+
+The ``meta_content`` is next. 
+
+Finally the ``pcre`` option,  which is consider the heaviest,  it the last. 
 
 

@@ -3040,15 +3040,16 @@ void Load_Rules( const char *ruleset )
             if ( debug->debugload )
                 {
 
-                    Sagan_Log(DEBUG, "---[Rule %s]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
+                    Sagan_Log(DEBUG, "---[Rule %" PRIu64 "]------------------------------------------------------", rulestruct[counters->rulecount].s_sid);
 
 
-                    Sagan_Log(DEBUG, "= sid: %s", rulestruct[counters->rulecount].s_sid);
-                    Sagan_Log(DEBUG, "= rev: %s", rulestruct[counters->rulecount].s_rev);
-                    Sagan_Log(DEBUG, "= msg: %s", rulestruct[counters->rulecount].s_msg);
-                    Sagan_Log(DEBUG, "= pri: %d", rulestruct[counters->rulecount].s_pri);
-                    Sagan_Log(DEBUG, "= classtype: %s", rulestruct[counters->rulecount].s_classtype);
-                    Sagan_Log(DEBUG, "= drop: %d", rulestruct[counters->rulecount].drop);
+                    Sagan_Log(DEBUG, "= Position: %d", counters->rulecount);
+                    Sagan_Log(DEBUG, "= SID: %" PRIu64 "", rulestruct[counters->rulecount].s_sid);
+                    Sagan_Log(DEBUG, "= Rev: %d", rulestruct[counters->rulecount].s_rev);
+                    Sagan_Log(DEBUG, "= Msg: %s", rulestruct[counters->rulecount].s_msg);
+                    Sagan_Log(DEBUG, "= Pri: %d", rulestruct[counters->rulecount].s_pri);
+                    Sagan_Log(DEBUG, "= Classtype: %s", rulestruct[counters->rulecount].s_classtype);
+                    Sagan_Log(DEBUG, "= Drop: %d", rulestruct[counters->rulecount].drop);
                     Sagan_Log(DEBUG, "= default_dst_port: %d", rulestruct[counters->rulecount].default_dst_port);
 
                     if ( rulestruct[counters->rulecount].s_find_src_ip != 0 )

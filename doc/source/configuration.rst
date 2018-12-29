@@ -8,10 +8,8 @@ Sagan typically receives its data from a third party daemon.  This is typically 
 rsyslog
 -------
 
-
-
-syslog-ng
----------
+syslog-ng (pipe)
+---------~~~~~~~
 
 Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration file.  For more
 complex configurations,  please consult the ``syslog-ng`` documentation.

@@ -195,7 +195,8 @@ struct _SaganCounters
 
     uint64_t threshold_total;
     uint64_t after_total;
-    uint64_t sagantotal;
+    uint64_t events_received;
+    uint64_t events_processed;
     uint64_t saganfound;
     uint64_t sagan_output_drop;
     uint64_t sagan_processor_drop;
@@ -407,6 +408,8 @@ struct _Sagan_Pass_Syslog
 typedef struct _Syslog_JSON_Map _Syslog_JSON_Map;
 struct _Syslog_JSON_Map
 {
+
+    bool is_nested;
     char syslog_map_host[JSON_MAP_HOST];
     char syslog_map_facility[JSON_MAP_FACILITY];
     char syslog_map_priority[JSON_MAP_PRIORITY];
