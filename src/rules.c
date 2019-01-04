@@ -213,11 +213,10 @@ void Load_Rules( const char *ruleset )
 
     memset(&Ruleset_Track[counters->ruleset_track_count], 0, sizeof(struct _Sagan_Ruleset_Track));
     memcpy(Ruleset_Track[counters->ruleset_track_count].ruleset, ruleset_fullname, sizeof(Ruleset_Track[counters->ruleset_track_count].ruleset));
-    //printf("Added: %s as id %d\n", Ruleset_Track[counters->ruleset_track_count].ruleset, counters->ruleset_track_count);
 
     ruleset_track_id = counters->ruleset_track_count;
 
-    counters->ruleset_track_count++;
+    __atomic_add_fetch(&counters->ruleset_track_count, 1, __ATOMIC_SEQ_CST);
 
     Sagan_Log(NORMAL, "Loading %s rule file.", ruleset_fullname);
 
@@ -1122,7 +1121,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    counters->xbit_total_counter++;
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1275,7 +1274,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    counters->xbit_total_counter++;
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1311,7 +1310,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    counters->xbit_total_counter++;
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1347,7 +1346,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    counters->xbit_total_counter++;
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1457,7 +1456,7 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].xbit_count_flag = true;
 
                                     xbit_count++;
-                                    counters->xbit_total_counter++;
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
                                     rulestruct[counters->rulecount].xbit_count_count++;
                                 }
 
@@ -1493,7 +1492,7 @@ void Load_Rules( const char *ruleset )
 
                             strlcpy(rulestruct[counters->rulecount].dynamic_ruleset, tmp1, sizeof(rulestruct[counters->rulecount].dynamic_ruleset));
                             rulestruct[counters->rulecount].type = DYNAMIC_RULE;
-                            counters->dynamic_rule_count++;
+                            __atomic_add_fetch(&counters->dynamic_rule_count, 1, __ATOMIC_SEQ_CST);
 
                         }
 
@@ -3073,7 +3072,7 @@ void Load_Rules( const char *ruleset )
                         }
                 }
 
-            counters->rulecount++;
+            __atomic_add_fetch(&counters->rulecount, 1,  __ATOMIC_SEQ_CST);
 
         } /* end of while loop */
 

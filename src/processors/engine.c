@@ -921,7 +921,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         }
 
 
-					printf("HERE: %d |  %s\n", SaganProcSyslog_LOCAL->json_src_flag, SaganProcSyslog_LOCAL->src_ip);
+//					printf("HERE: %d |  %s\n", SaganProcSyslog_LOCAL->json_src_flag, SaganProcSyslog_LOCAL->src_ip);
 
                                     /* No source port was normalized, Use the rules default */
 
@@ -1402,10 +1402,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
                                                                                                                                     processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
                                                                                                                                     processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
-                                                                                                                                    processor_info_engine_dst_port                 =       ip_dstport_u32;
-                                                                                                                                    processor_info_engine_src_port                 =       ip_srcport_u32;
-                                                                                                                                    processor_info_engine_proto                    =       proto;
-                                                                                                                                    processor_info_engine_alertid                  =       rulestruct[b].s_sid;
+//                                                                                                                                    processor_info_engine_dst_port                 =       ip_dstport_u32;
+//                                                                                                                                    processor_info_engine_src_port                 =       ip_srcport_u32;
+//                                                                                                                                    processor_info_engine_proto                    =       proto;
+//                                                                                                                                    processor_info_engine_alertid                  =       rulestruct[b].s_sid;
 
                                                                                                                                     if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
                                                                                                                                         {
@@ -1420,10 +1420,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                                                ip_dst,
                                                                                                                                                                normalize_http_uri,
                                                                                                                                                                normalize_http_hostname,
-                                                                                                                                                               processor_info_engine_proto,
-                                                                                                                                                               processor_info_engine_alertid,
-                                                                                                                                                               processor_info_engine_src_port,
-                                                                                                                                                               processor_info_engine_dst_port,
+                                                                                                                                                               proto,
+                                                                                                                                                               rulestruct[b].s_sid,
+                                                                                                                                                               ip_srcport_u32,
+                                                                                                                                                               ip_dstport_u32,
                                                                                                                                                                b, tp, bluedot_json );
 
                                                                                                                                                 }
