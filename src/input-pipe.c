@@ -129,6 +129,7 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
                     if ( debug->debugmalformed )
                         {
                             Sagan_Log(DEBUG, "Sagan received a malformed 'host': '%s' (replaced with %s)", SyslogInput->syslog_host, config->sagan_host);
+			    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                         }
                 }
         }
@@ -147,7 +148,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'facility'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'facility' from %s.", SyslogInput->syslog_host);
+	  	    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -162,7 +164,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'priority'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'priority' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -177,7 +180,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'level'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'level' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -192,7 +196,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'tag'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'tag' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -207,7 +212,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'date'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'date' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -222,7 +228,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'time'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'time' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
 
@@ -238,7 +245,9 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'program'");
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'program' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
+
                 }
         }
 
@@ -253,7 +262,8 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'message' [Syslog Host: %s]", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'message' from %s.", SyslogInput->syslog_host);
+		    Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
 
             /* If the message is lost,  all is lost.  Typically,  you don't lose part of the message,
