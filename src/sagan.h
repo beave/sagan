@@ -394,6 +394,10 @@ struct _Sagan_Proc_Syslog
 
     char syslog[MAX_SYSLOGMSG];
 
+    bool json_src_flag; 
+
+    char src_ip[MAXIP];
+
 };
 
 typedef struct _Sagan_Pass_Syslog _Sagan_Pass_Syslog;

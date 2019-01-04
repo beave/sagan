@@ -251,7 +251,7 @@ This example installs Sagan with the most common and useful prereqisities.
 
 A more complete quick start::
 
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev geoip-database-contrib geoipupdate libhiredis-dev libpcap-dev
+   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
    wget https://quadrantsec.com/download/sagan-current.tar.gz
    cd sagan-1.2.1
    ./configure --enable-geoip --enable-esmtp --enable--libpcap

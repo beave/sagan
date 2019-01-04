@@ -257,6 +257,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             /* Parse JSON */
 
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
+	    strlcpy(parse_ip_src,SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src));
 
         }
 
@@ -275,6 +276,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
+	    strlcpy(parse_ip_src, SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src)); 
         }
 
 #endif
@@ -685,12 +687,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                             !strcmp(ip_src, "::1" ) ||
                                                             !strcmp(ip_src, "::ffff:127.0.0.1" ) )
                                                         {
+
                                                             ip_src = SaganProcSyslog_LOCAL->syslog_host;
                                                             ip_src_flag = false;
                                                         }
 
                                                     else
                                                         {
+
                                                             IP2Bit(ip_src, ip_src_bits);
                                                         }
 
@@ -915,6 +919,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             IP2Bit(ip_dst, ip_dst_bits);
                                         }
+
+
+					printf("HERE: %d |  %s\n", SaganProcSyslog_LOCAL->json_src_flag, SaganProcSyslog_LOCAL->src_ip);
 
                                     /* No source port was normalized, Use the rules default */
 

@@ -27,6 +27,9 @@ struct _JSON_Message_Map
     char program[MAX_SYSLOG_PROGRAM];
     char message[MAX_SYSLOGMSG];
 
+    char src_ip[MAXIP];
+//    bool json_src_flag;
+
 };
 
 typedef struct _JSON_Message_Map_Found _JSON_Message_Map_Found;
@@ -35,6 +38,10 @@ struct _JSON_Message_Map_Found
 
     char program[MAX_SYSLOG_PROGRAM];
     char message[MAX_SYSLOGMSG];
+
+    char src_ip[MAXIP];
+//    bool json_src_flag;
+   
 
 };
 

@@ -59,7 +59,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     memset(SyslogInput, 0, sizeof(_SyslogInput));
 
-
     SyslogInput->syslog_host = "UNDEFINED";
     SyslogInput->syslog_facility = "UNDEFINED";
     SyslogInput->syslog_priority = "UNDEFINED";
@@ -71,10 +70,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
     SyslogInput->syslog_message = "UNDEFINED";
 
     json_obj = json_tokener_parse(syslog_string);
-
-    /* DEBUG: Add new "is_nested": option to map.  If it is NOTE nested,  we can do the
-     * below.  Otherwise,  we need to do what is similar in message-json.c to extract
-     * from multi-nested json */
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
         {

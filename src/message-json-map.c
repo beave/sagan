@@ -98,6 +98,7 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             JSON_Message_Map[counters->json_message_map].program[0] = '\0';
             JSON_Message_Map[counters->json_message_map].message[0] = '\0';
+	    JSON_Message_Map[counters->json_message_map].src_ip[0] = '\0'; 
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
@@ -116,6 +117,13 @@ void Load_Message_JSON_Map ( const char *json_map )
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].message,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].message));
                 }
+
+            if ( json_object_object_get_ex(json_obj, "src_ip", &tmp))
+                {
+
+                    strlcpy(JSON_Message_Map[counters->json_message_map].src_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_ip));
+                }
+
 
             counters->json_message_map++;
 
@@ -251,6 +259,16 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].src_ip, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].src_ip, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].src_ip));
+
+//			    JSON_Message_Map_Found[i].json_src_flag = true; 
+
+                            score++;
+                        }
+
+
                 }
 
             if ( score > prev_score && has_message == true )
@@ -279,6 +297,8 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     /* We have to have a "message!" */
 
+    SaganProcSyslog_LOCAL->json_src_flag = false;
+
     if ( found == true )
         {
 
@@ -290,7 +310,23 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
+	    if ( JSON_Message_Map_Found[pos].src_ip != '\0' ) 
+		{
+		SaganProcSyslog_LOCAL->json_src_flag = true; 
+            strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
+		}
+
+
+	    /* Don't override syslog program if no program is present */
+
+	    if ( JSON_Message_Map_Found[pos].program[0] != '\0' ) {
+
             strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+
+	    }
+
+
+
 
             if ( debug->debugjson )
                 {
@@ -298,6 +334,9 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     Sagan_Log(DEBUG, "[%s, line %d] -------------------------------------------------------", __FILE__, __LINE__);
                     Sagan_Log(DEBUG, "[%s, line %d] Message: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message );
                     Sagan_Log(DEBUG, "[%s, line %d] Program: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program );
+                    Sagan_Log(DEBUG, "[%s, line %d] src_ip : \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_ip );
+
+
                 }
 
 

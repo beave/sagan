@@ -700,7 +700,7 @@ int main(int argc, char **argv)
 
     Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
     Sagan_Log(NORMAL, "Parse JSON in message: %s", config->parse_json_message == true ? "Enabled":"Disabled");
-    Sagan_Log(NORMAL, "Parse JSON in program: %s", config->parse_json_message == true ? "Enabled":"Disabled");
+    Sagan_Log(NORMAL, "Parse JSON in program: %s", config->parse_json_program == true ? "Enabled":"Disabled");
 
 #endif
 
