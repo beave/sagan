@@ -59,7 +59,7 @@ struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _Sagan_Pass_Syslog *SaganPassSyslog;
 struct _SaganConfig *config;
-struct _Rule_Struct *rulestruct;
+//struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 
 int proc_msgslot; 		/* Comes from sagan.c */

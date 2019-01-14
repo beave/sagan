@@ -56,11 +56,6 @@ void Alert_File( _Sagan_Event *Event )
 
     __atomic_add_fetch(&counters->alert_total, 1, __ATOMIC_SEQ_CST);
 
-    Sagan_Log(NORMAL, "Current Position: %d, value: \"%s\"", Event->found, rulestruct[Event->found].s_msg);
-    Sagan_Log(NORMAL, "Pointer: \"%s\"",  Event->f_msg);
-    Sagan_Log(NORMAL, "Zero position: \"%s\"", rulestruct[0].s_msg); 
-    Sagan_Log(NORMAL, "+1 position: \"%s\"", rulestruct[1].s_msg);
-
     fprintf(config->sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
     fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );
     fprintf(config->sagan_alert_stream, "[Alert Time: %s]\n", timebuf);

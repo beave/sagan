@@ -87,10 +87,12 @@
 #endif
 
 #include "processors/engine.h"
+#include "rules.h"
 #include "processors/blacklist.h"
 #include "processors/track-clients.h"
 #include "processors/perfmon.h"
 #include "processors/bro-intel.h"
+
 
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"
@@ -1201,7 +1203,10 @@ int main(int argc, char **argv)
 
                                     if ( ignore_flag == false )
                                         {
-                                            memcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+                                            //memcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+                                            strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
+
+
                                             batch_count++;
                                         }
 
@@ -1215,7 +1220,7 @@ int main(int argc, char **argv)
 
                                     /* Has our batch count been reached */
 
-                                    if ( batch_count >= config->max_batch || config->max_batch == 1 )
+                                    if ( batch_count >= config->max_batch ) // || config->max_batch == 1 )
                                         {
 
 					    batch_count=0;              /* Reset batch/queue */

@@ -114,11 +114,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     memset(lookup_cache, 0, sizeof(_Sagan_Lookup_Cache_Entry) * MAX_PARSE_IP);
 
-    int processor_info_engine_src_port = 0;
-    int processor_info_engine_dst_port = 0;
-    int processor_info_engine_proto = 0;
-    int processor_info_engine_alertid = 0;
-
     bool after_log_flag = false;
     bool thresh_log_flag = false;
 
@@ -339,7 +334,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_facility[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -356,7 +351,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_level[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -373,7 +368,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_tag[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -390,7 +385,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_syspri[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -1402,10 +1397,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
                                                                                                                                     processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
                                                                                                                                     processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
-//                                                                                                                                    processor_info_engine_dst_port                 =       ip_dstport_u32;
-//                                                                                                                                    processor_info_engine_src_port                 =       ip_srcport_u32;
-//                                                                                                                                    processor_info_engine_proto                    =       proto;
-//                                                                                                                                    processor_info_engine_alertid                  =       rulestruct[b].s_sid;
 
                                                                                                                                     if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
                                                                                                                                         {
@@ -1425,6 +1416,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                                                ip_srcport_u32,
                                                                                                                                                                ip_dstport_u32,
                                                                                                                                                                b, tp, bluedot_json );
+
 
                                                                                                                                                 }
                                                                                                                                             else
