@@ -171,6 +171,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool blacklist_results = false;
 
     char *ip_src = NULL;
+    //char ip_src[MAXIP] = { 0 };
     char *ip_dst = NULL;
 
     char *md5_hash = NULL;
@@ -252,10 +253,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             /* Parse JSON */
 
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
-            strlcpy(parse_ip_src,SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src));
 
         }
-
 
     /* If "parse-json-message" is enabled, we'll look for signs in the message for
            JSON */
@@ -315,12 +314,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             if ( SaganProcSyslog_LOCAL->json_src_flag == true )
                 {
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
+	            IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
             if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
                 {
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
+		    IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
                 }
 

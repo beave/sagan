@@ -198,7 +198,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
     strlcpy(json_str[0], SaganProcSyslog_LOCAL->syslog_message, sizeof(json_str[0]));
-
     json_obj = json_tokener_parse(SaganProcSyslog_LOCAL->syslog_message);
 
     /* If JSON parsing fails, it wasn't JSON after all */
