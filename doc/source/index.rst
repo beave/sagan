@@ -18,5 +18,6 @@ Sagan User Guide
    high-performance
    contributing-coding-style
    blogs/index
+   articles
    getting-help
 

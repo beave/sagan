@@ -1,5 +1,5 @@
-Sagan Blogs and Articles
-========================
+Sagan Blogs
+===========
 
 .. toctree::
    :numbered:
