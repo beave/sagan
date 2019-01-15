@@ -671,7 +671,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                     else if (!strcmp(last_pass, "json-message-map" ) && ( config->parse_json_message == true || config->parse_json_program == true  ) )
                                         {
-					    Var_To_Value(value, tmp, sizeof(tmp));
+                                            Var_To_Value(value, tmp, sizeof(tmp));
                                             strlcpy(config->json_message_map_file, tmp, sizeof(config->json_message_map_file));
                                         }
 
@@ -713,7 +713,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                     else if (!strcmp(last_pass, "json-map" ) && config->input_type == INPUT_JSON )
                                         {
-					    Var_To_Value(value, tmp, sizeof(tmp));
+                                            Var_To_Value(value, tmp, sizeof(tmp));
                                             strlcpy(config->json_input_map_file, tmp, sizeof(config->json_input_map_file));
                                         }
 

@@ -415,7 +415,7 @@ This will cause Sagan to look for the word "GET" or "POST" within the first 4 by
 
 This function is identical to Snort's "distance" rule option. For more information see: http://blog.joelesler.net/2010/03/offset-depth-distance-and-within.html
 
-meta_office
+meta_offset
 -----------
 
 .. option:: meta_offset: {offset value};

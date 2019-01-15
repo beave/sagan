@@ -28,7 +28,12 @@ struct _JSON_Message_Map
     char message[MAX_SYSLOGMSG];
 
     char src_ip[MAXIP];
-//    bool json_src_flag;
+    char dst_ip[MAXIP];
+
+    char src_port[32];
+    char dst_port[32];
+
+    char proto[32];
 
 };
 
@@ -40,8 +45,12 @@ struct _JSON_Message_Map_Found
     char message[MAX_SYSLOGMSG];
 
     char src_ip[MAXIP];
-//    bool json_src_flag;
-   
+    char dst_ip[MAXIP];
+
+    char src_port[MAXIP];
+    char dst_port[MAXIP];
+
+    char proto[5];
 
 };
 

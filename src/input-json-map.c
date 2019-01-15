@@ -86,25 +86,25 @@ void Load_Input_JSON_Map ( const char *json_map )
                     if ( !strcmp(json_object_get_string(tmp), config->json_input_software ) )
                         {
 
-			    /* Is the target nested or not?  Default to "no" */
+                            /* Is the target nested or not?  Default to "no" */
 
                             Syslog_JSON_Map->is_nested = false;
-                            
-                             if ( json_object_object_get_ex(json_obj, "nested", &tmp))
-                            {
 
-                            strlcpy(is_nested_tmp, json_object_get_string(tmp), sizeof(is_nested_tmp));
-
-                            	    if ( !strcmp(is_nested_tmp, "yes") || !strcmp(is_nested_tmp, "true") ||
-                            	!strcpy(is_nested_tmp, "enabled") )
+                            if ( json_object_object_get_ex(json_obj, "nested", &tmp))
                                 {
 
-				Syslog_JSON_Map->is_nested = true;
+                                    strlcpy(is_nested_tmp, json_object_get_string(tmp), sizeof(is_nested_tmp));
+
+                                    if ( !strcmp(is_nested_tmp, "yes") || !strcmp(is_nested_tmp, "true") ||
+                                            !strcpy(is_nested_tmp, "enabled") )
+                                        {
+
+                                            Syslog_JSON_Map->is_nested = true;
+
+                                        }
 
                                 }
 
-			   }
-                           
 
                             if ( json_object_object_get_ex(json_obj, "syslog-source-ip", &tmp))
                                 {

@@ -158,10 +158,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     uint32_t ip_dstport_u32 = 0;
     unsigned char ip_dst_bits[MAXIPBIT] = { 0 };
 
-    char tmpbuf[128];
-    char s_msg[1024];
-    char alter_content[MAX_SYSLOGMSG];
-    char meta_alter_content[MAX_SYSLOGMSG];
+    char tmpbuf[128] = { 0 };
+    char s_msg[1024] = { 0 };
+    char alter_content[MAX_SYSLOGMSG] = { 0 };
+    char meta_alter_content[MAX_SYSLOGMSG] = { 0 };
 
     struct timeval tp;
     unsigned char proto = 0;
@@ -252,7 +252,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             /* Parse JSON */
 
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
-	    strlcpy(parse_ip_src,SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src));
+            strlcpy(parse_ip_src,SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src));
 
         }
 
@@ -271,7 +271,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
             Parse_JSON_Message( SaganProcSyslog_LOCAL );
-	    strlcpy(parse_ip_src, SaganProcSyslog_LOCAL->src_ip, sizeof(parse_ip_src)); 
+
         }
 
 #endif
@@ -306,6 +306,41 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
             memset(ip_src_bits, 0, sizeof(ip_src_bits));
             memset(ip_dst_bits, 0, sizeof(ip_dst_bits));
+
+#ifdef HAVE_LIBFASTJSON
+
+            /* If we've already located the source/destination IP address in JSON,  we can
+               set it here.  "normalize" and "parse_*_ip can still over rider */
+
+            if ( SaganProcSyslog_LOCAL->json_src_flag == true )
+                {
+                    ip_src = SaganProcSyslog_LOCAL->src_ip;
+                    ip_src_flag = true;
+                }
+
+            if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
+                {
+                    ip_dst = SaganProcSyslog_LOCAL->dst_ip;
+                    ip_dst_flag = true;
+                }
+
+            if ( SaganProcSyslog_LOCAL->src_port != 0 )
+                {
+                    ip_srcport_u32 = SaganProcSyslog_LOCAL->src_port;
+                }
+
+            if ( SaganProcSyslog_LOCAL->dst_port != 0 )
+                {
+                    ip_dstport_u32 = SaganProcSyslog_LOCAL->dst_port;
+                }
+
+            if ( SaganProcSyslog_LOCAL->proto != 0 )
+                {
+                    proto = SaganProcSyslog_LOCAL->proto;
+                }
+
+#endif
+
 
             /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
 
@@ -1333,7 +1368,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
 #endif
-
                                                                                                                             /* After */
 
                                                                                                                             after_log_flag = false;

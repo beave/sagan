@@ -394,9 +394,20 @@ struct _Sagan_Proc_Syslog
 
     char syslog[MAX_SYSLOGMSG];
 
-    bool json_src_flag; 
+#ifdef HAVE_LIBFASTJSON
+
+    bool json_src_flag;
+    bool json_dst_flag;
 
     char src_ip[MAXIP];
+    char dst_ip[MAXIP];
+
+    uint32_t src_port;
+    uint32_t dst_port;
+    unsigned char proto;
+
+
+#endif
 
 };
 

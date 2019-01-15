@@ -1223,7 +1223,7 @@ int main(int argc, char **argv)
                                     if ( batch_count >= config->max_batch ) // || config->max_batch == 1 )
                                         {
 
-					    batch_count=0;              /* Reset batch/queue */
+                                            batch_count=0;              /* Reset batch/queue */
 
                                             pthread_mutex_lock(&SaganProcWorkMutex);
 

@@ -98,7 +98,11 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             JSON_Message_Map[counters->json_message_map].program[0] = '\0';
             JSON_Message_Map[counters->json_message_map].message[0] = '\0';
-	    JSON_Message_Map[counters->json_message_map].src_ip[0] = '\0'; 
+            JSON_Message_Map[counters->json_message_map].src_ip[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].dst_ip[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].src_port[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].dst_port[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].proto[0] = '\0';
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
@@ -120,10 +124,28 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             if ( json_object_object_get_ex(json_obj, "src_ip", &tmp))
                 {
-
                     strlcpy(JSON_Message_Map[counters->json_message_map].src_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_ip));
                 }
 
+            if ( json_object_object_get_ex(json_obj, "dst_ip", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "src_port", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].src_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_port));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "dst_port", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "proto", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].proto,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].proto));
+                }
 
             counters->json_message_map++;
 
@@ -262,9 +284,30 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].src_ip, &tmp))
                         {
                             strlcpy(JSON_Message_Map_Found[i].src_ip, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].src_ip));
+                            score++;
+                        }
 
-//			    JSON_Message_Map_Found[i].json_src_flag = true; 
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].dst_ip, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].dst_ip, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].dst_ip));
+                            score++;
+                        }
 
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].src_port, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].src_port, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].src_port));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].dst_port, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].dst_port, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].dst_port));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].proto, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].proto, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].proto));
                             score++;
                         }
 
@@ -302,30 +345,63 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     if ( found == true )
         {
 
-            /* Keep a copy of the original message before altering */
-
-            // strlcpy(SaganProcSyslog_LOCAL->syslog_message_json, SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message_json));
 
             /* Put JSON values into place */
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
-	    if ( JSON_Message_Map_Found[pos].src_ip != '\0' ) 
-		{
-		SaganProcSyslog_LOCAL->json_src_flag = true; 
-            strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
-		}
+            if ( JSON_Message_Map_Found[pos].src_ip != '\0' )
+                {
+                    SaganProcSyslog_LOCAL->json_src_flag = true;
+                    strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
+                }
+
+            if ( JSON_Message_Map_Found[pos].dst_ip != '\0' )
+                {
+                    SaganProcSyslog_LOCAL->json_dst_flag = true;
+                    strlcpy(SaganProcSyslog_LOCAL->dst_ip, JSON_Message_Map_Found[pos].dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));
+                }
+
+            if ( JSON_Message_Map_Found[pos].src_port[0] != '\0' )
+                {
+                    SaganProcSyslog_LOCAL->src_port = atoi(JSON_Message_Map_Found[pos].src_port);
+                }
+
+            if ( JSON_Message_Map_Found[pos].dst_port[0] != '\0' )
+                {
+                    SaganProcSyslog_LOCAL->dst_port = atoi(JSON_Message_Map_Found[pos].dst_port);
+                }
 
 
-	    /* Don't override syslog program if no program is present */
+            if ( JSON_Message_Map_Found[pos].proto[0] != '\0' )
+                {
 
-	    if ( JSON_Message_Map_Found[pos].program[0] != '\0' ) {
+                    if ( !strcasecmp( JSON_Message_Map_Found[pos].proto, "tcp" ) || !strcasecmp( JSON_Message_Map_Found[pos].proto, "TCP" ) )
+                        {
+                            SaganProcSyslog_LOCAL->proto = 6;
+                        }
 
-            strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                    else if ( !strcasecmp( JSON_Message_Map_Found[pos].proto, "udp" ) || !strcasecmp( JSON_Message_Map_Found[pos].proto, "UDP" ) )
+                        {
+                            SaganProcSyslog_LOCAL->proto = 17;
+                        }
 
-	    }
+                    else if ( !strcasecmp( JSON_Message_Map_Found[pos].proto, "icmp" ) || !strcasecmp( JSON_Message_Map_Found[pos].proto, "ICMP" ) )
+                        {
+                            SaganProcSyslog_LOCAL->proto = 1;
+                        }
+
+                }
 
 
+            /* Don't override syslog program if no program is present */
+
+            if ( JSON_Message_Map_Found[pos].program[0] != '\0' )
+                {
+
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+
+                }
 
 
             if ( debug->debugjson )
@@ -335,7 +411,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     Sagan_Log(DEBUG, "[%s, line %d] Message: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message );
                     Sagan_Log(DEBUG, "[%s, line %d] Program: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program );
                     Sagan_Log(DEBUG, "[%s, line %d] src_ip : \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_ip );
-
+                    Sagan_Log(DEBUG, "[%s, line %d] dst_ip : \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->dst_ip );
+                    Sagan_Log(DEBUG, "[%s, line %d] src_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_port );
+                    Sagan_Log(DEBUG, "[%s, line %d] dst_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->dst_port );
+                    Sagan_Log(DEBUG, "[%s, line %d] proto : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->proto );
 
                 }
 
