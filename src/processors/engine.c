@@ -229,16 +229,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
        field for JSON.  If we find it,  we'll append the program and message
        field */
 
-
-    if ( config->parse_json_program == true || config->parse_json_message == true )
-        {
-            SaganProcSyslog_LOCAL->json_src_flag = false;
-            SaganProcSyslog_LOCAL->json_dst_flag = false;
-            SaganProcSyslog_LOCAL->src_port = 0;
-            SaganProcSyslog_LOCAL->dst_port = 0;
-            SaganProcSyslog_LOCAL->proto = 0;
-        }
-
     if ( config->parse_json_program == true &&
             ( SaganProcSyslog_LOCAL->syslog_program[0] == '{' ||
               SaganProcSyslog_LOCAL->syslog_program[1] == '{' ) )
@@ -324,14 +314,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             if ( SaganProcSyslog_LOCAL->json_src_flag == true )
                 {
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
-                    IP2Bit(ip_src, ip_src_bits);
+	            IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
             if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
                 {
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
-                    IP2Bit(ip_dst, ip_dst_bits);
+		    IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
                 }
 
@@ -363,7 +353,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( rulestruct[b].s_program[0] != '\0' )
                         {
 
-                            strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -380,7 +370,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_facility[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -397,7 +387,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_level[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -414,7 +404,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_tag[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
@@ -431,7 +421,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     if ( rulestruct[b].s_syspri[0] != '\0' )
                         {
-                            strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
+                            memcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
