@@ -128,7 +128,7 @@ void Load_Input_JSON_Map ( const char *json_map )
 
                             if ( json_object_object_get_ex(json_obj, "tags", &tmp))
                                 {
-                                    strlcpy(Syslog_JSON_Map->syslog_map_tags,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_tags));
+                                    strlcpy(Syslog_JSON_Map->syslog_map_tag,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_tag));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, "time", &tmp))

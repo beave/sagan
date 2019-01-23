@@ -431,7 +431,7 @@ struct _Syslog_JSON_Map
     char syslog_map_facility[JSON_MAP_FACILITY];
     char syslog_map_priority[JSON_MAP_PRIORITY];
     char syslog_map_level[JSON_MAP_LEVEL];
-    char syslog_map_tags[JSON_MAP_TAG];
+    char syslog_map_tag[JSON_MAP_TAG];
     char syslog_map_date[JSON_MAP_DATE];
     char syslog_map_time[JSON_MAP_TIME];
     char syslog_map_program[JSON_MAP_PROGRAM];
