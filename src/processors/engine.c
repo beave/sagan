@@ -230,14 +230,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
        field */
 
 
-    if ( config->parse_json_program == true || config->parse_json_message == true ) 
-    {
-    SaganProcSyslog_LOCAL->json_src_flag = false;
-    SaganProcSyslog_LOCAL->json_dst_flag = false;
-    SaganProcSyslog_LOCAL->src_port = 0;
-    SaganProcSyslog_LOCAL->dst_port = 0;
-    SaganProcSyslog_LOCAL->proto = 0;
-    }
+    if ( config->parse_json_program == true || config->parse_json_message == true )
+        {
+            SaganProcSyslog_LOCAL->json_src_flag = false;
+            SaganProcSyslog_LOCAL->json_dst_flag = false;
+            SaganProcSyslog_LOCAL->src_port = 0;
+            SaganProcSyslog_LOCAL->dst_port = 0;
+            SaganProcSyslog_LOCAL->proto = 0;
+        }
 
     if ( config->parse_json_program == true &&
             ( SaganProcSyslog_LOCAL->syslog_program[0] == '{' ||
@@ -324,14 +324,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             if ( SaganProcSyslog_LOCAL->json_src_flag == true )
                 {
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
-	            IP2Bit(ip_src, ip_src_bits);
+                    IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
             if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
                 {
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
-		    IP2Bit(ip_dst, ip_dst_bits);
+                    IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
                 }
 

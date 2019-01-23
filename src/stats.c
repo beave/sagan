@@ -120,14 +120,14 @@ void Statistics( void )
                                 Sagan_Log(NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->events_received) );
                             }*/
 
-#ifdef HAVE_LIBFASTJSON                                                                                   
-                                                                                                                      if ( config->parse_json_program == true || config->parse_json_message == true )               
-            {                                                                                             
-            Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->json_count, CalcPct( counters->json_count, counters->events_received) );
-            
-            }
-            
-#endif  
+#ifdef HAVE_LIBFASTJSON
+            if ( config->parse_json_program == true || config->parse_json_message == true )
+                {
+                    Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->json_count, CalcPct( counters->json_count, counters->events_received) );
+
+                }
+
+#endif
 
 #ifdef HAVE_LIBMAXMINDDB
             Sagan_Log(NORMAL, "           GeoIP Hits:                : %" PRIu64 " (%.3f%%)", counters->geoip2_hit, CalcPct( counters->geoip2_hit, counters->events_received) );
@@ -178,13 +178,13 @@ void Statistics( void )
             Sagan_Log(NORMAL, "           Program                    : %" PRIu64 " (%.3f%%)", counters->malformed_program, CalcPct(counters->malformed_program, counters->events_received) );
             Sagan_Log(NORMAL, "           Message                    : %" PRIu64 " (%.3f%%)", counters->malformed_message, CalcPct(counters->malformed_message, counters->events_received) );
 
-#ifdef HAVE_LIBFASTJSON 
+#ifdef HAVE_LIBFASTJSON
 
-	    if ( config->parse_json_program == true || config->parse_json_message == true ) 
-	    {
-	    Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->malformed_json_count, CalcPct(counters->malformed_json_count, counters->events_received) );
+            if ( config->parse_json_program == true || config->parse_json_message == true )
+                {
+                    Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->malformed_json_count, CalcPct(counters->malformed_json_count, counters->events_received) );
 
-	    }
+                }
 
 #endif
 

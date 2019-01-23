@@ -59,16 +59,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     memset(SyslogInput, 0, sizeof(_SyslogInput));
 
-    //SyslogInput->syslog_host = "UNDEFINED";
-    //SyslogInput->syslog_facility = "UNDEFINED";
-//    SyslogInput->syslog_priority = "UNDEFINED";
-    //SyslogInput->syslog_level = "UNDEFINED";
-    //SyslogInput->syslog_tag = "UNDEFINED";
-    //SyslogInput->syslog_date = "UNDEFINED";
-    //SyslogInput->syslog_time = "UNDEFINED";
-    //SyslogInput->syslog_program = "UNDEFINED";
-//    SyslogInput->syslog_message = "UNDEFINED";
-    
     memcpy(SyslogInput->syslog_message, "UNDEFINED\0", sizeof(SyslogInput->syslog_message));
     memcpy(SyslogInput->syslog_program, "UNDEFINED\0", sizeof(SyslogInput->syslog_program));
     memcpy(SyslogInput->syslog_time, "UNDEFINED\0", sizeof(SyslogInput->syslog_time));
@@ -85,67 +75,48 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
         {
-//            strlcpy(syslog_host,  json_object_get_string(tmp), sizeof(syslog_host));
-//            SyslogInput->syslog_host = syslog_host;
-	      strlcpy(SyslogInput->syslog_host, json_object_get_string(tmp), sizeof(SyslogInput->syslog_host));
+            strlcpy(SyslogInput->syslog_host, json_object_get_string(tmp), sizeof(SyslogInput->syslog_host));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_facility, &tmp))
         {
-//            strlcpy(syslog_facility,  json_object_get_string(tmp), sizeof(syslog_facility));
-//            SyslogInput->syslog_facility = syslog_facility;
-	      strlcpy(SyslogInput->syslog_facility, json_object_get_string(tmp), sizeof(SyslogInput->syslog_facility)); 
+            strlcpy(SyslogInput->syslog_facility, json_object_get_string(tmp), sizeof(SyslogInput->syslog_facility));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_priority, &tmp))
         {
-//            strlcpy(syslog_priority,  json_object_get_string(tmp), sizeof(syslog_priority));
-//            SyslogInput->syslog_priority = syslog_priority;
-	      strlcpy(SyslogInput->syslog_priority, json_object_get_string(tmp), sizeof(SyslogInput->syslog_priority));
+            strlcpy(SyslogInput->syslog_priority, json_object_get_string(tmp), sizeof(SyslogInput->syslog_priority));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_level, &tmp))
         {
-//            strlcpy(syslog_level,  json_object_get_string(tmp), sizeof(syslog_level));
-//            SyslogInput->syslog_level = syslog_level;
-	      strlcpy(SyslogInput->syslog_level, json_object_get_string(tmp), sizeof(SyslogInput->syslog_level));
+            strlcpy(SyslogInput->syslog_level, json_object_get_string(tmp), sizeof(SyslogInput->syslog_level));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_tags, &tmp))
         {
-//            strlcpy(syslog_tag,  json_object_get_string(tmp), sizeof(syslog_tag));
-//            SyslogInput->syslog_tag = syslog_tag;
-	      strlcpy(SyslogInput->syslog_tag, json_object_get_string(tmp), sizeof(SyslogInput->syslog_tag));
+            strlcpy(SyslogInput->syslog_tag, json_object_get_string(tmp), sizeof(SyslogInput->syslog_tag));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_date, &tmp))
         {
-//            strlcpy(syslog_date,  json_object_get_string(tmp), sizeof(syslog_date));
-//            SyslogInput->syslog_date = syslog_date;
-	      strlcpy(SyslogInput->syslog_date, json_object_get_string(tmp), sizeof(SyslogInput->syslog_date));
+            strlcpy(SyslogInput->syslog_date, json_object_get_string(tmp), sizeof(SyslogInput->syslog_date));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_time, &tmp))
         {
-//            strlcpy(syslog_time,  json_object_get_string(tmp), sizeof(syslog_time));
-//            SyslogInput->syslog_time = syslog_date;
-	      strlcpy(SyslogInput->syslog_time, json_object_get_string(tmp), sizeof(SyslogInput->syslog_time));
+            strlcpy(SyslogInput->syslog_time, json_object_get_string(tmp), sizeof(SyslogInput->syslog_time));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
         {
-            //strlcpy(syslog_program,  json_object_get_string(tmp), sizeof(syslog_program));
-            //SyslogInput->syslog_program = syslog_program;
-	    strlcpy(SyslogInput->syslog_program, json_object_get_string(tmp), sizeof(SyslogInput->syslog_program));
+            strlcpy(SyslogInput->syslog_program, json_object_get_string(tmp), sizeof(SyslogInput->syslog_program));
         }
 
     if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
         {
-            //strlcpy(syslog_message,  json_object_get_string(tmp), sizeof(syslog_message));
-            //SyslogInput->syslog_message = syslog_message;
-	    strlcpy(SyslogInput->syslog_message, json_object_get_string(tmp), sizeof(SyslogInput->syslog_message));
+            strlcpy(SyslogInput->syslog_message, json_object_get_string(tmp), sizeof(SyslogInput->syslog_message));
         }
-
 
     json_object_put(json_obj);
 

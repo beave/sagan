@@ -59,7 +59,6 @@ struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _Sagan_Pass_Syslog *SaganPassSyslog;
 struct _SaganConfig *config;
-//struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 
 int proc_msgslot; 		/* Comes from sagan.c */
@@ -115,9 +114,6 @@ void Processor ( void )
 
     memset(SyslogInput, 0, sizeof(_SyslogInput));
 
-
-//    bool ignore_flag = false;
-
     int i;
 
     while(death == false)
@@ -131,10 +127,6 @@ void Processor ( void )
                 {
                     pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
                 }
-
-//	    proc_running++;
-//            proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
-//                                 * original value */
 
             /* Copy inbound array from global to local */
 
@@ -151,7 +143,7 @@ void Processor ( void )
                 }
 
             proc_msgslot--;     /* This was ++ before coming over, so we now -- it to get to
-                                 * original value */ 
+                                 * original value */
 
             pthread_mutex_unlock(&SaganProcWorkMutex);
 
@@ -171,16 +163,12 @@ void Processor ( void )
                             SyslogInput_JSON( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
                         }
 
-
-
                     if (debug->debugsyslog)
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] **[Parsed Syslog]*********************************", __FILE__, __LINE__);
                             Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
                             Sagan_Log(DEBUG, "[%s, line %d] Parsed message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
                         }
-
-
 
                     /* Copy data from processors */
 
@@ -193,7 +181,6 @@ void Processor ( void )
                     strlcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
                     strlcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-
 
                     /* Dynamic goes here */
 
@@ -212,7 +199,6 @@ void Processor ( void )
 
 
                     (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
-		    //(void)Sagan_Engine(SyslogInput, dynamic_rule_flag );
 
                     /* If this is a dynamic run,  reset back to normal */
 
@@ -229,10 +215,6 @@ void Processor ( void )
                         }
 
                 }
-
-//	      pthread_mutex_lock(&SaganProcWorkMutex);
-//	      proc_running--;
-//	      pthread_mutex_unlock(&SaganProcWorkMutex);
 
             __atomic_sub_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
 
