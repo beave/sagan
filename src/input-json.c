@@ -89,6 +89,17 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             json_obj = json_tokener_parse(syslog_string);
 
+                            if ( json_obj == NULL )
+                                {   
+                                    Sagan_Log(WARN, "[%s, line %d] Detected JSON nest but Libfastjson errors. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
+                                    json_object_put(json_obj);
+                                    __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
+                                    return;
+                                }
+
+
+	    __atomic_add_fetch(&counters->json_count, 1, __ATOMIC_SEQ_CST);
+
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
                 {
                     strlcpy(SyslogInput->syslog_host, json_object_get_string(tmp), sizeof(SyslogInput->syslog_host));
@@ -131,7 +142,8 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_message, json_object_get_string(tmp), sizeof(SyslogInput->syslog_message));
+		    snprintf(SyslogInput->syslog_message, sizeof(SyslogInput->syslog_message)," %s", json_object_get_string(tmp));
+	            SyslogInput->syslog_message[ (sizeof(SyslogInput->syslog_message) -1 ) ] = '\0'; 
                     has_message = true;
                 }
 
@@ -206,7 +218,8 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_message, json_object_get_string(tmp), sizeof(SyslogInput->syslog_message));
+                                    snprintf(SyslogInput->syslog_message, sizeof(SyslogInput->syslog_message)," %s", json_object_get_string(tmp));
+                                    SyslogInput->syslog_message[ (sizeof(SyslogInput->syslog_message) -1 ) ] = '\0';
                                     has_message = true;
                                 }
 
