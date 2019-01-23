@@ -132,9 +132,9 @@ void Processor ( void )
                     pthread_cond_wait(&SaganReloadCond, &SaganReloadMutex);
                 }
 
-            proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
-                                 * original value */
-
+//	    proc_running++;
+//            proc_msgslot--;	/* This was ++ before coming over, so we now -- it to get to
+//                                 * original value */
 
             /* Copy inbound array from global to local */
 
@@ -147,8 +147,11 @@ void Processor ( void )
                             Sagan_Log(DEBUG, "[%s, line %d] [batch position %d] Raw log: %s",  __FILE__, __LINE__, i, SaganPassSyslog[proc_msgslot].syslog[i]);
                         }
 
-                    memcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
+                    strlcpy(SaganPassSyslog_LOCAL->syslog[i],  SaganPassSyslog[proc_msgslot].syslog[i], sizeof(SaganPassSyslog_LOCAL->syslog[i]));
                 }
+
+            proc_msgslot--;     /* This was ++ before coming over, so we now -- it to get to
+                                 * original value */ 
 
             pthread_mutex_unlock(&SaganProcWorkMutex);
 
@@ -181,15 +184,16 @@ void Processor ( void )
 
                     /* Copy data from processors */
 
-                    memcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-                    memcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
 
                     /* Dynamic goes here */
 
@@ -208,6 +212,7 @@ void Processor ( void )
 
 
                     (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
+		    //(void)Sagan_Engine(SyslogInput, dynamic_rule_flag );
 
                     /* If this is a dynamic run,  reset back to normal */
 
@@ -224,6 +229,10 @@ void Processor ( void )
                         }
 
                 }
+
+//	      pthread_mutex_lock(&SaganProcWorkMutex);
+//	      proc_running--;
+//	      pthread_mutex_unlock(&SaganProcWorkMutex);
 
             __atomic_sub_fetch(&proc_running, 1, __ATOMIC_SEQ_CST);
 

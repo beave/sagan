@@ -1228,6 +1228,7 @@ int main(int argc, char **argv)
                                             pthread_mutex_lock(&SaganProcWorkMutex);
 
                                             counters->events_processed = counters->events_processed + config->max_batch;
+
                                             proc_msgslot++;
 
                                             /* Send work to thread */

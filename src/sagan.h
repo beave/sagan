@@ -155,15 +155,24 @@ int       PageSupportsRWX(void);
 typedef struct _SyslogInput _SyslogInput;
 struct _SyslogInput
 {
-    char *syslog_host;
-    char *syslog_facility;
-    char *syslog_priority;
-    char *syslog_level;
-    char *syslog_tag;
-    char *syslog_date;
-    char *syslog_time;
-    char *syslog_program;
-    char *syslog_message;
+//    char *syslog_host;
+    char syslog_host[MAX_SYSLOG_HOST];
+//    char *syslog_facility;
+    char syslog_facility[MAX_SYSLOG_FACILITY];
+//    char *syslog_priority;
+    char syslog_priority[MAX_SYSLOG_PRIORITY];
+//    char *syslog_level;
+    char syslog_level[MAX_SYSLOG_LEVEL];
+//    char *syslog_tag;
+    char syslog_tag[MAX_SYSLOG_TAG];
+//    char *syslog_date;
+    char syslog_date[MAX_SYSLOG_DATE];
+//    char *syslog_time;
+    char syslog_time[MAX_SYSLOG_TIME];
+//    char *syslog_program;
+    char syslog_program[MAX_SYSLOG_PROGRAM];
+//    char *syslog_message;
+    char syslog_message[MAX_SYSLOGMSG];
 };
 
 typedef struct _SaganDNSCache _SaganDNSCache;
@@ -320,6 +329,8 @@ struct _SaganCounters
 
 #ifdef HAVE_LIBFASTJSON
     int json_message_map;
+    uint64_t json_count;
+    uint64_t malformed_json_count;
 #endif
 
 
