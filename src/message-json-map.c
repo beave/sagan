@@ -109,6 +109,7 @@ void Load_Message_JSON_Map ( const char *json_map )
             if ( json_obj == NULL )
                 {
                     Sagan_Log(ERROR, "[%s, line %d] JSON message map is incorrect at: \"%s\"", __FILE__, __LINE__, json_message_map_buf);
+                    json_object_put(json_obj);
                     return;
                 }
 
@@ -204,7 +205,15 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     if ( json_obj == NULL )
         {
-            Sagan_Log(WARN, "[%s, line %d] Detected JSON but function was incorrect. The log line was: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+
+            if ( debug->debugmalformed )
+                {
+                    Sagan_Log(WARN, "[%s, line %d] Sagan Detected JSON but Libfastjson failed to decode it. The log line was: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
+                }
+
+            json_object_put(json_obj);
+            free(JSON_Message_Map_Found);
+            __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
             return;
         }
 
@@ -258,11 +267,14 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             for ( a = 0; a < json_str_count; a++ )
                 {
 
+                    struct json_object *json_obj = NULL;
                     json_obj = json_tokener_parse(json_str[a]);
 
                     if ( json_obj == NULL )
                         {
                             Sagan_Log(WARN, "[%s, line %d] Detected JSON Nest but function was incorrect. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
+                            json_object_put(json_obj);
+                            free(JSON_Message_Map_Found);
                             return;
                         }
 
@@ -310,6 +322,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
+                    json_object_put(json_obj);
 
                 }
 
@@ -339,11 +352,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     /* We have to have a "message!" */
 
-    SaganProcSyslog_LOCAL->json_src_flag = false;
-
     if ( found == true )
         {
 
+            __atomic_add_fetch(&counters->json_count, 1, __ATOMIC_SEQ_CST);
 
             /* Put JSON values into place */
 
@@ -420,6 +432,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
         }
 
+    free(JSON_Message_Map_Found);
     json_object_put(json_obj);
 
 }
