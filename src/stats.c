@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2018 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2018 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -123,7 +123,8 @@ void Statistics( void )
 #ifdef HAVE_LIBFASTJSON
             if ( config->parse_json_program == true || config->parse_json_message == true )
                 {
-                    Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->json_count, CalcPct( counters->json_count, counters->events_received) );
+                    Sagan_Log(NORMAL, "           JSON Input                 : %" PRIu64 " (%.3f%%)", counters->json_input_count, CalcPct( counters->json_input_count, counters->events_received) );
+                    Sagan_Log(NORMAL, "           JSON Program/Message       : %" PRIu64 " (%.3f%%)", counters->json_mp_count, CalcPct( counters->json_mp_count, counters->events_received) );
 
                 }
 
@@ -182,7 +183,8 @@ void Statistics( void )
 
             if ( config->parse_json_program == true || config->parse_json_message == true )
                 {
-                    Sagan_Log(NORMAL, "           JSON                       : %" PRIu64 " (%.3f%%)", counters->malformed_json_count, CalcPct(counters->malformed_json_count, counters->events_received) );
+		    Sagan_Log(NORMAL, "           JSON Input                 : %" PRIu64 " (%.3f%%)", counters->malformed_json_input_count, CalcPct(counters->malformed_json_input_count, counters->events_received) );
+                    Sagan_Log(NORMAL, "           JSON Program/Messages      : %" PRIu64 " (%.3f%%)", counters->malformed_json_mp_count, CalcPct(counters->malformed_json_mp_count, counters->events_received) );
 
                 }
 

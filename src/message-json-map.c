@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2018 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2018 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -213,7 +213,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             json_object_put(json_obj);
             free(JSON_Message_Map_Found);
-            __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
+            __atomic_add_fetch(&counters->malformed_json_mp_count, 1, __ATOMIC_SEQ_CST);
             return;
         }
 
@@ -355,7 +355,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     if ( found == true )
         {
 
-            __atomic_add_fetch(&counters->json_count, 1, __ATOMIC_SEQ_CST);
+            __atomic_add_fetch(&counters->json_mp_count, 1, __ATOMIC_SEQ_CST);
 
             /* Put JSON values into place */
 

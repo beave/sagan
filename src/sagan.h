@@ -320,8 +320,13 @@ struct _SaganCounters
 
 #ifdef HAVE_LIBFASTJSON
     int json_message_map;
-    uint64_t json_count;
-    uint64_t malformed_json_count;
+
+    uint64_t json_input_count;
+    uint64_t malformed_json_input_count;
+
+    uint64_t json_mp_count;
+    uint64_t malformed_json_mp_count;
+    
 #endif
 
 

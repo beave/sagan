@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2018 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2018 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -81,7 +81,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
     memcpy(SyslogInput->syslog_facility, "UNDEFINED\0", sizeof(SyslogInput->syslog_facility));
     memcpy(SyslogInput->syslog_host, "UNDEFINED\0", sizeof(SyslogInput->syslog_host));
 
-
     /* If the json isn't nested,  we can do this the easy way */
 
     if ( Syslog_JSON_Map->is_nested == false )
@@ -91,14 +90,14 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
                             if ( json_obj == NULL )
                                 {   
-                                    Sagan_Log(WARN, "[%s, line %d] Detected JSON nest but Libfastjson errors. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
+                                    Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
                                     json_object_put(json_obj);
-                                    __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                                     return;
                                 }
 
 
-	    __atomic_add_fetch(&counters->json_count, 1, __ATOMIC_SEQ_CST);
+	    __atomic_add_fetch(&counters->json_input_count, 1, __ATOMIC_SEQ_CST);
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
                 {
@@ -165,7 +164,7 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
                         }
 
                     json_object_put(json_obj);
-                    __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
+                    __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                     return;
                 }
 
@@ -210,11 +209,11 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
                                 {
                                     Sagan_Log(WARN, "[%s, line %d] Detected JSON nest but Libfastjson errors. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
                                     json_object_put(json_obj);
-                                    __atomic_add_fetch(&counters->malformed_json_count, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                                     return;
                                 }
 
-                            __atomic_add_fetch(&counters->json_count, 1, __ATOMIC_SEQ_CST);
+                            __atomic_add_fetch(&counters->json_input_count, 1, __ATOMIC_SEQ_CST);
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                                 {
