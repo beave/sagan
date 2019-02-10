@@ -1044,7 +1044,7 @@ void Load_Rules( const char *ruleset )
 
                     /* Non-quoted information (sid, reference, etc) */
 
-                    if (!strcmp(rulesplit, "flowbits") || !strcmp(rulesplit, "xbits"))
+                    if ( !strcmp(rulesplit, "flowbits") || !strcmp(rulesplit, "xbits") || !strcmp(rulesplit, "flexbits") )
                         {
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
