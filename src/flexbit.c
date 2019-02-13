@@ -37,19 +37,19 @@
 #include "sagan-defs.h"
 #include "sagan-config.h"
 
-#include "xbit.h"
-#include "xbit-mmap.h"
+#include "flexbit.h"
+#include "flexbit-mmap.h"
 
 #ifdef HAVE_LIBHIREDIS
 
 #include "redis.h"
-#include "xbit-redis.h"
+#include "flexbit-redis.h"
 
 #endif
 
 struct _SaganConfig *config;
 
-bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
 #ifdef HAVE_LIBHIREDIS
@@ -57,24 +57,24 @@ bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
 
-            return(Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
+            return(Flexbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
         }
 
 #endif
 
-    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
+    return(Flexbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
 
 }
 
 
-bool Xbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
+bool Flexbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char, char *selector )
 {
 
-    return(Xbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char, selector ));
+    return(Flexbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char, selector ));
 
 }
 
-void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
+void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
 #ifdef HAVE_LIBHIREDIS
@@ -82,18 +82,18 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_p
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
 
-            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL );
+            Flexbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL );
             return;
         }
 
 #endif
 
-    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL->syslog_message );
+    Flexbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL->syslog_message );
 
 }
 
 
-int Xbit_Type ( char *type, int linecount, const char *ruleset )
+int Flexbit_Type ( char *type, int linecount, const char *ruleset )
 {
 
     if (!strcmp(type, "none"))

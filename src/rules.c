@@ -48,8 +48,8 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 
-#include "xbit.h"
-#include "xbit-mmap.h"
+#include "flexbit.h"
+#include "flexbit-mmap.h"
 #include "lockfile.h"
 #include "classifications.h"
 #include "rules.h"
@@ -878,7 +878,7 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_find_proto_program = true;
                         }
 
-                    if (!strcmp(rulesplit, "xbit_upause"))
+                    if (!strcmp(rulesplit, "flexbit_upause"))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
@@ -1121,7 +1121,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1141,7 +1141,7 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Xbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
                                     rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
@@ -1180,7 +1180,7 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Xbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
                                     rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;               	/* isset */
@@ -1219,7 +1219,7 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Xbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
                                     rulestruct[counters->rulecount].xbit_flag = 1;                               	/* We have xbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;               	/* isnotset */
@@ -1274,7 +1274,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1310,7 +1310,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1346,7 +1346,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     xbit_count++;
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
 
@@ -1456,7 +1456,7 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].xbit_count_flag = true;
 
                                     xbit_count++;
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
                                     rulestruct[counters->rulecount].xbit_count_count++;
                                 }
 

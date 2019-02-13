@@ -47,7 +47,7 @@
 
 #include "sagan.h"
 #include "sagan-defs.h"
-#include "xbit-mmap.h"
+#include "flexbit-mmap.h"
 #include "sagan-config.h"
 #include "config-yaml.h"
 #include "lockfile.h"

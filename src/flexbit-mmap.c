@@ -38,7 +38,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "ipc.h"
-#include "xbit-mmap.h"
+#include "flexbit-mmap.h"
 #include "rules.h"
 #include "sagan-config.h"
 #include "parsers/parsers.h"
@@ -51,14 +51,14 @@ struct _SaganConfig *config;
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Xbit *xbit_ipc;
+struct _Sagan_IPC_Flexbit *xbit_ipc;
 
 /*****************************************************************************
- * Xbit_Condition - Used for testing "isset" & "isnotset".  Full
+ * Flexbit_Condition - Used for testing "isset" & "isnotset".  Full
  * rule condition is tested here and returned.
  *****************************************************************************/
 
-bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
+bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
 {
 
     time_t t;
@@ -75,7 +75,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    Xbit_Cleanup_MMAP();
+    Flexbit_Cleanup_MMAP();
 
     for (i = 0; i < rulestruct[rule_position].xbit_count; i++)
         {
@@ -88,13 +88,13 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                 {
 
 
-                    if ( debug->debugxbit )
+                    if ( debug->debugflexbit )
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] Condition \"isset\" found in rule.", __FILE__, __LINE__);
                         }
 
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
 
                             /* Short circuit if no selector match */
@@ -108,7 +108,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                     continue;
                                 }
 
-                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) &&
+                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].flexbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) &&
                                     xbit_ipc[a].xbit_state == true )
                                 {
 
@@ -119,9 +119,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit )
+                                            if ( debug->debugflexbit )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, xbit_ipc[a].ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, xbit_ipc[a].ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -134,9 +134,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit )
+                                            if ( debug->debugflexbit )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name);
                                                 }
 
                                             xbit_total_match++;
@@ -151,9 +151,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit )
+                                            if ( debug->debugflexbit )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
                                             xbit_total_match++;
@@ -167,9 +167,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             xbit_total_match++;
@@ -183,9 +183,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                               !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
 
                                         {
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -199,9 +199,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -215,9 +215,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             xbit_total_match++;
@@ -234,9 +234,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
                                             xbit_total_match++;
@@ -251,9 +251,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -268,9 +268,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"by_dst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             xbit_total_match++;
@@ -287,9 +287,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
 
                                         {
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -304,9 +304,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             xbit_total_match++;
@@ -321,16 +321,16 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             xbit_total_match++;
 
                                         }
 
-                                } /* End of strcmp xbit_name & xbit_state = 1 */
+                                } /* End of strcmp flexbit_name & flexbit_state = 1 */
 
                         } /* End of "for a" */
 
@@ -344,16 +344,16 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                 {
 
 
-                    if ( debug->debugxbit )
+                    if ( debug->debugflexbit )
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] Condition \"isnotset\" found in rule.", __FILE__, __LINE__);
                         }
 
                     xbit_match = false;
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].xbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) )
+                            if ( !memcmp(rulestruct[rule_position].xbit_name[i], xbit_ipc[a].flexbit_name, sizeof(rulestruct[rule_position].xbit_name[i])) )
                                 {
 
                                     /* direction: none */
@@ -363,9 +363,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
                                             if ( xbit_ipc[a].xbit_state == true )
                                                 {
-                                                    if ( debug->debugxbit )
+                                                    if ( debug->debugflexbit )
                                                         {
-                                                            Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                            Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name);
 
                                                         }
 
@@ -383,9 +383,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, ip_dst);
 
                                                                 }
 
@@ -403,9 +403,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
 
                                                                 }
 
@@ -423,9 +423,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
 
                                                                 }
 
@@ -444,9 +444,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, ip_src);
 
                                                                 }
 
@@ -464,9 +464,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
 
                                                                 }
 
@@ -484,9 +484,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
 
                                                                 }
 
@@ -508,9 +508,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
 
                                                                 }
 
@@ -530,9 +530,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src_p\"). (%s:%d -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_src_p\"). (%s:%d -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, src_port);
 
                                                                 }
 
@@ -552,9 +552,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, dst_port);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"by_dst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, dst_port);
 
                                                                 }
 
@@ -575,9 +575,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, dst_port, ip_dst, src_port);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"reverse_p\"). (%s:%d -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, dst_port, ip_dst, src_port);
 
                                                                 }
 
@@ -597,9 +597,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, src_port);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"src_xbitdst_p\"). (any -> %s:%d)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, src_port);
 
                                                                 }
 
@@ -619,9 +619,9 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
                                                 {
                                                     if ( xbit_ipc[a].xbit_state == true )
                                                         {
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc_p\"). (%s:%d-> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, dst_port);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" xbit \"%s\" true (direction: \"dst_xbitsrc_p\"). (%s:%d-> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, dst_port);
 
                                                                 }
 
@@ -648,7 +648,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
     if ( xbit_total_match == rulestruct[rule_position].xbit_condition_count )
         {
 
-            if ( debug->debugxbit )
+            if ( debug->debugflexbit )
                 {
                     Sagan_Log(DEBUG, "[%s, line %d] Got %d xbits & needed %d. Got corrent number of xbits, return true!", __FILE__, __LINE__, xbit_total_match, rulestruct[rule_position].xbit_condition_count );
                 }
@@ -659,7 +659,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
     else
         {
 
-            if ( debug->debugxbit )
+            if ( debug->debugflexbit )
                 {
                     Sagan_Log(DEBUG, "[%s, line %d] Got %d xbits, needed %d", __FILE__, __LINE__, xbit_total_match, rulestruct[rule_position].xbit_condition_count );
                 }
@@ -674,12 +674,12 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_
 
 
 /*****************************************************************************
- * Xbit_Count - Used to determine how many xbits have been set based on a
+ * Flexbit_Count - Used to determine how many xbits have been set based on a
  * source or destination address.  This is useful for identification of
  * distributed attacks.
  *****************************************************************************/
 
-bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
+bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
 {
 
     uint32_t a = 0;
@@ -689,7 +689,7 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
     for (i = 0; i < rulestruct[rule_position].xbit_count_count; i++)
         {
 
-            for (a = 0; a < counters_ipc->xbit_count; a++)
+            for (a = 0; a < counters_ipc->flexbit_count; a++)
                 {
                     /* Short circuit if no selector match */
 
@@ -714,9 +714,9 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
                                     if ( counter > rulestruct[rule_position].xbit_count_counter[i] )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit count 'by_src' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit count 'by_src' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].flexbit_name);
                                                 }
 
 
@@ -737,9 +737,9 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
                                     if ( counter > rulestruct[rule_position].xbit_count_counter[i] )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit count 'by_dst' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit count 'by_dst' threshold reached for xbit '%s'.", __FILE__, __LINE__, xbit_ipc[a].flexbit_name);
                                                 }
 
                                             return(true);
@@ -749,7 +749,7 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
                 }
         }
 
-    if ( debug->debugxbit)
+    if ( debug->debugflexbit)
         {
             Sagan_Log(DEBUG, "[%s, line %d] Xbit count threshold NOT reached for xbit.", __FILE__, __LINE__);
         }
@@ -759,11 +759,11 @@ bool Xbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selec
 
 
 /*****************************************************************************
- * Xbit_Set - Used to "set" & "unset" xbit.  All rule "set" and
+ * Flexbit_Set - Used to "set" & "unset" xbit.  All rule "set" and
  * "unset" happen here.
  *****************************************************************************/
 
-void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector, char *syslog_message )
+void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector, char *syslog_message )
 {
 
     int i = 0;
@@ -780,20 +780,20 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    struct _Sagan_Xbit_Track *xbit_track;
+    struct _Sagan_Flexbit_Track *xbit_track;
 
-    xbit_track = malloc(sizeof(_Sagan_Xbit_Track));
+    xbit_track = malloc(sizeof(_Sagan_Flexbit_Track));
 
     if ( xbit_track  == NULL )
         {
             Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for xbit_track. Abort!", __FILE__, __LINE__);
         }
 
-    memset(xbit_track, 0, sizeof(_Sagan_Xbit_Track));
+    memset(xbit_track, 0, sizeof(_Sagan_Flexbit_Track));
 
     int xbit_track_count = 0;
 
-    Xbit_Cleanup_MMAP();
+    Flexbit_Cleanup_MMAP();
 
     for (i = 0; i < rulestruct[rule_position].xbit_count; i++)
         {
@@ -805,7 +805,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
             if ( rulestruct[rule_position].xbit_type[i] == 2 )
                 {
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
                             /* Short circuit if no selector match */
 
@@ -819,7 +819,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                 }
 
 
-                            if ( !strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i] ))
+                            if ( !strcmp(xbit_ipc[a].flexbit_name, rulestruct[rule_position].xbit_name[i] ))
                                 {
 
                                     /* direction: none */
@@ -827,9 +827,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     if ( rulestruct[rule_position].xbit_direction[i] == 0 )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"none\"). (any -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name);
                                                 }
 
 
@@ -853,9 +853,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -877,9 +877,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -901,9 +901,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -926,9 +926,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -949,9 +949,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               !memcmp(xbit_ipc[a].ip_dst, ip_src, sizeof(xbit_ipc[a].ip_dst)) )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -972,9 +972,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               !memcmp(xbit_ipc[a].ip_src, ip_dst, sizeof(xbit_ipc[a].ip_src)) )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -998,9 +998,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1023,9 +1023,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1048,9 +1048,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               xbit_ipc[a].dst_port == dst_port )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1075,9 +1075,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1099,9 +1099,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               xbit_ipc[a].dst_port == src_port )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_src);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1123,9 +1123,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                               xbit_ipc[a].src_port == dst_port )
                                         {
 
-                                            if ( debug->debugxbit)
+                                            if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].xbit_name, ip_dst);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" xbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, xbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
                                             File_Lock(config->shm_xbit);
@@ -1143,7 +1143,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                 }
                         }
 
-                    if ( debug->debugxbit && xbit_unset_match == 0 )
+                    if ( debug->debugflexbit && xbit_unset_match == 0 )
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] No xbit found to \"unset\" for %s.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[i]);
                         }
@@ -1157,7 +1157,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
             else if ( rulestruct[rule_position].xbit_type[i] == 1 )
                 {
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
                             /* Short circuit if no selector match */
 
@@ -1172,7 +1172,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                             /* Do we have the xbit already in memory?  If so,  update the information */
 
-                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                            if (!strcmp(xbit_ipc[a].flexbit_name, rulestruct[rule_position].xbit_name[i]) &&
                                     !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                     !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                     xbit_ipc[a].src_port == config->sagan_port &&
@@ -1191,7 +1191,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     xbit_ipc[a].sid = rulestruct[rule_position].s_sid;
 
 
-                                    if ( debug->debugxbit)
+                                    if ( debug->debugflexbit)
                                         {
 
                                             Sagan_Log(DEBUG,"[%s, line %d] [%d] Updated via \"set\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
@@ -1212,23 +1212,23 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                     if ( xbit_match == false )
                         {
 
-                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+                            xbit_track = ( _Sagan_Flexbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Flexbit_Track));
 
                             if ( xbit_track == NULL )
                                 {
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Flexbit_Track));
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].flexbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].flexbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
                             xbit_ipc[xbit_track_count].sid = rulestruct[rule_position].s_sid;
 
-                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                            xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
-                            xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
+                            xbit_track[xbit_track_count].flexbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].flexbit_srcport = config->sagan_port;
+                            xbit_track[xbit_track_count].flexbit_dstport = config->sagan_port;
                             xbit_track_count++;
 
                         }
@@ -1244,7 +1244,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
                             /* Short circuit if no selector match */
 
@@ -1259,7 +1259,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                             /* Do we have the xbit already in memory?  If so,  update the information */
 
-                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                            if (!strcmp(xbit_ipc[a].flexbit_name, rulestruct[rule_position].xbit_name[i]) &&
                                     !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                     !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                     xbit_ipc[a].src_port == src_port &&
@@ -1274,7 +1274,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     xbit_ipc[a].xbit_state = true;
                                     strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
 
-                                    if ( debug->debugxbit)
+                                    if ( debug->debugflexbit)
                                         {
 
                                             Sagan_Log(DEBUG,"[%s, line %d] [%d] Updated via \"set_srcport\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
@@ -1295,20 +1295,20 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                     if ( xbit_match == false )
                         {
 
-                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+                            xbit_track = ( _Sagan_Flexbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Flexbit_Track));
 
                             if ( xbit_track == NULL )
                                 {
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Flexbit_Track));
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].flexbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].flexbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                            xbit_track[xbit_track_count].xbit_srcport = src_port;
-                            xbit_track[xbit_track_count].xbit_dstport = config->sagan_port;
+                            xbit_track[xbit_track_count].flexbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].flexbit_srcport = src_port;
+                            xbit_track[xbit_track_count].flexbit_dstport = config->sagan_port;
                             xbit_track_count++;
 
                         }
@@ -1324,7 +1324,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
                             /* Short circuit if no selector match */
 
@@ -1339,7 +1339,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                             /* Do we have the xbit already in memory?  If so,  update the information */
 
-                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                            if (!strcmp(xbit_ipc[a].flexbit_name, rulestruct[rule_position].xbit_name[i]) &&
                                     !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                     !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                     xbit_ipc[a].src_port == config->sagan_port &&
@@ -1354,7 +1354,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     xbit_ipc[a].xbit_state = true;
                                     strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
 
-                                    if ( debug->debugxbit)
+                                    if ( debug->debugflexbit)
                                         {
 
                                             Sagan_Log(DEBUG,"[%s, line %d] [%d] Updated via \"set_dstport\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
@@ -1375,20 +1375,20 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                     if ( xbit_match == false )
                         {
 
-                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+                            xbit_track = ( _Sagan_Flexbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Flexbit_Track));
 
                             if ( xbit_track == NULL )
                                 {
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Flexbit_Track));
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].flexbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].flexbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
-                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                            xbit_track[xbit_track_count].xbit_srcport = config->sagan_port;
-                            xbit_track[xbit_track_count].xbit_dstport = dst_port;
+                            xbit_track[xbit_track_count].flexbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].flexbit_srcport = config->sagan_port;
+                            xbit_track[xbit_track_count].flexbit_dstport = dst_port;
                             xbit_track_count++;
 
                         }
@@ -1404,7 +1404,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                     xbit_match = false;
 
-                    for (a = 0; a < counters_ipc->xbit_count; a++)
+                    for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
                             /* Short circuit if no selector match */
 
@@ -1419,7 +1419,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
 
                             /* Do we have the xbit already in memory?  If so,  update the information */
 
-                            if (!strcmp(xbit_ipc[a].xbit_name, rulestruct[rule_position].xbit_name[i]) &&
+                            if (!strcmp(xbit_ipc[a].flexbit_name, rulestruct[rule_position].xbit_name[i]) &&
                                     !memcmp(xbit_ipc[a].ip_src, ip_src, sizeof(xbit_ipc[a].ip_src)) &&
                                     !memcmp(xbit_ipc[a].ip_dst, ip_dst, sizeof(xbit_ipc[a].ip_dst)) &&
                                     xbit_ipc[a].src_port == src_port &&
@@ -1434,7 +1434,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                                     xbit_ipc[a].xbit_state = true;
                                     strlcpy(xbit_ipc[a].syslog_message, syslog_message, sizeof(xbit_ipc[a].syslog_message));
 
-                                    if ( debug->debugxbit)
+                                    if ( debug->debugflexbit)
                                         {
 
                                             Sagan_Log(DEBUG,"[%s, line %d] [%d] Updated via \"set_ports\" for xbit \"%s\". Nex expire time is %d (%d) [ %s:%d -> %s:%d ]", __FILE__, __LINE__, a, rulestruct[rule_position].xbit_name[i], xbit_ipc[i].xbit_expire, rulestruct[rule_position].xbit_timeout[i], xbit_ipc[a].ip_src, xbit_ipc[a].src_port, xbit_ipc[a].ip_dst, xbit_ipc[a].dst_port);
@@ -1455,23 +1455,23 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                     if ( xbit_match == false )
                         {
 
-                            xbit_track = ( _Sagan_Xbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Xbit_Track));
+                            xbit_track = ( _Sagan_Flexbit_Track * ) realloc(xbit_track, (xbit_track_count+1) * sizeof(_Sagan_Flexbit_Track));
 
                             if ( xbit_track == NULL )
                                 {
                                     Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for xbit_track. Abort!", __FILE__, __LINE__);
                                 }
 
-                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Xbit_Track));
+                            memset(&xbit_track[xbit_track_count], 0, sizeof(_Sagan_Flexbit_Track));
 
-                            strlcpy(xbit_track[xbit_track_count].xbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].xbit_name));
+                            strlcpy(xbit_track[xbit_track_count].flexbit_name, rulestruct[rule_position].xbit_name[i], sizeof(xbit_track[xbit_track_count].flexbit_name));
                             strlcpy(xbit_ipc[xbit_track_count].syslog_message, syslog_message, sizeof(xbit_ipc[xbit_track_count].syslog_message));
                             strlcpy(xbit_ipc[xbit_track_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[xbit_track_count].signature_msg));
                             xbit_ipc[xbit_track_count].sid = rulestruct[rule_position].s_sid;
 
-                            xbit_track[xbit_track_count].xbit_timeout = rulestruct[rule_position].xbit_timeout[i];
-                            xbit_track[xbit_track_count].xbit_srcport = src_port;
-                            xbit_track[xbit_track_count].xbit_dstport = dst_port;
+                            xbit_track[xbit_track_count].flexbit_timeout = rulestruct[rule_position].xbit_timeout[i];
+                            xbit_track[xbit_track_count].flexbit_srcport = src_port;
+                            xbit_track[xbit_track_count].flexbit_dstport = dst_port;
                             xbit_track_count++;
 
                         }
@@ -1494,32 +1494,32 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
                             File_Lock(config->shm_xbit);
                             pthread_mutex_lock(&Xbit_Mutex);
 
-                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_src));
-                            memcpy(xbit_ipc[counters_ipc->xbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->xbit_count].ip_dst));
+                            memcpy(xbit_ipc[counters_ipc->flexbit_count].ip_src, ip_src, sizeof(xbit_ipc[counters_ipc->flexbit_count].ip_src));
+                            memcpy(xbit_ipc[counters_ipc->flexbit_count].ip_dst, ip_dst, sizeof(xbit_ipc[counters_ipc->flexbit_count].ip_dst));
 
-                            selector == NULL ? xbit_ipc[counters_ipc->xbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->xbit_count].selector, selector, MAXSELECTOR);
+                            selector == NULL ? xbit_ipc[counters_ipc->flexbit_count].selector[0] = '\0' : strlcpy(xbit_ipc[counters_ipc->flexbit_count].selector, selector, MAXSELECTOR);
 
-                            xbit_ipc[counters_ipc->xbit_count].src_port = xbit_track[i].xbit_srcport;
-                            xbit_ipc[counters_ipc->xbit_count].dst_port = xbit_track[i].xbit_dstport;
-                            xbit_ipc[counters_ipc->xbit_count].xbit_date = atol(timet);
-                            xbit_ipc[counters_ipc->xbit_count].xbit_expire = atol(timet) + xbit_track[i].xbit_timeout;
-                            xbit_ipc[counters_ipc->xbit_count].xbit_state = true;
-                            xbit_ipc[counters_ipc->xbit_count].expire = xbit_track[i].xbit_timeout;
+                            xbit_ipc[counters_ipc->flexbit_count].src_port = xbit_track[i].flexbit_srcport;
+                            xbit_ipc[counters_ipc->flexbit_count].dst_port = xbit_track[i].flexbit_dstport;
+                            xbit_ipc[counters_ipc->flexbit_count].xbit_date = atol(timet);
+                            xbit_ipc[counters_ipc->flexbit_count].xbit_expire = atol(timet) + xbit_track[i].flexbit_timeout;
+                            xbit_ipc[counters_ipc->flexbit_count].xbit_state = true;
+                            xbit_ipc[counters_ipc->flexbit_count].expire = xbit_track[i].flexbit_timeout;
 
-                            strlcpy(xbit_ipc[counters_ipc->xbit_count].xbit_name, xbit_track[i].xbit_name, sizeof(xbit_ipc[counters_ipc->xbit_count].xbit_name));
-                            strlcpy(xbit_ipc[counters_ipc->xbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[counters_ipc->xbit_count].signature_msg));
-                            strlcpy(xbit_ipc[counters_ipc->xbit_count].syslog_message, syslog_message, sizeof(xbit_ipc[counters_ipc->xbit_count].syslog_message));
-                            xbit_ipc[counters_ipc->xbit_count].sid = rulestruct[rule_position].s_sid;
+                            strlcpy(xbit_ipc[counters_ipc->flexbit_count].flexbit_name, xbit_track[i].flexbit_name, sizeof(xbit_ipc[counters_ipc->flexbit_count].flexbit_name));
+                            strlcpy(xbit_ipc[counters_ipc->flexbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(xbit_ipc[counters_ipc->flexbit_count].signature_msg));
+                            strlcpy(xbit_ipc[counters_ipc->flexbit_count].syslog_message, syslog_message, sizeof(xbit_ipc[counters_ipc->flexbit_count].syslog_message));
+                            xbit_ipc[counters_ipc->flexbit_count].sid = rulestruct[rule_position].s_sid;
 
 
-                            if ( debug->debugxbit)
+                            if ( debug->debugflexbit)
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d]", __FILE__, __LINE__, counters_ipc->xbit_count, xbit_ipc[counters_ipc->xbit_count].xbit_name, ip_src, xbit_track[i].xbit_srcport, ip_dst, xbit_track[i].xbit_dstport);
+                                    Sagan_Log(DEBUG, "[%s, line %d] [%d] Created xbit \"%s\" via \"set, set_srcport, set_dstport, or set_ports\" [%s:%d -> %s:%d]", __FILE__, __LINE__, counters_ipc->flexbit_count, xbit_ipc[counters_ipc->flexbit_count].flexbit_name, ip_src, xbit_track[i].flexbit_srcport, ip_dst, xbit_track[i].flexbit_dstport);
                                 }
 
                             File_Lock(config->shm_counters);
 
-                            counters_ipc->xbit_count++;
+                            counters_ipc->flexbit_count++;
 
                             File_Unlock(config->shm_counters);
                             File_Unlock(config->shm_xbit);
@@ -1539,7 +1539,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, 
  * to "off"
  *****************************************************************************/
 
-void Xbit_Cleanup_MMAP(void)
+void Flexbit_Cleanup_MMAP(void)
 {
 
     int i = 0;
@@ -1552,14 +1552,14 @@ void Xbit_Cleanup_MMAP(void)
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
 
-    for (i=0; i<counters_ipc->xbit_count; i++)
+    for (i=0; i<counters_ipc->flexbit_count; i++)
         {
 
             if (  xbit_ipc[i].xbit_state == true && atol(timet) >= xbit_ipc[i].xbit_expire )
                 {
-                    if (debug->debugxbit)
+                    if (debug->debugflexbit)
                         {
-                            Sagan_Log(DEBUG, "[%s, line %d] Setting xbit %s to \"expired\" state.", __FILE__, __LINE__, xbit_ipc[i].xbit_name);
+                            Sagan_Log(DEBUG, "[%s, line %d] Setting xbit %s to \"expired\" state.", __FILE__, __LINE__, xbit_ipc[i].flexbit_name);
                         }
                     xbit_ipc[i].xbit_state = false;
                 }

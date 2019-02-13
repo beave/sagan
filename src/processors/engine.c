@@ -44,8 +44,8 @@
 #include "aetas.h"
 #include "meta-content.h"
 #include "send-alert.h"
-#include "xbit.h"
-#include "xbit-mmap.h"
+#include "flexbit.h"
+#include "flexbit-mmap.h"
 #include "rules.h"
 #include "sagan-config.h"
 #include "ipc.h"
@@ -1026,12 +1026,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             if ( rulestruct[b].xbit_condition_count )
                                                 {
-                                                    xbit_return = Xbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
+                                                    xbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
                                                 }
 
                                             if ( rulestruct[b].xbit_count_flag )
                                                 {
-                                                    xbit_count_return = Xbit_Count(b, ip_src, ip_dst, pnormalize_selector);
+                                                    xbit_count_return = Flexbit_Count(b, ip_src, ip_dst, pnormalize_selector);
                                                 }
 
                                         }
@@ -1423,7 +1423,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                     if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
                                                                                                                                         {
-                                                                                                                                            Xbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
+                                                                                                                                            Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
                                                                                                                                         }
 
                                                                                                                                     threadid++;

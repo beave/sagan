@@ -35,9 +35,9 @@
 
 #include "rules.h"
 
-#include "xbit.h"
-#include "xbit-mmap.h"
-#include "xbit-redis.h"
+#include "flexbit.h"
+#include "flexbit-mmap.h"
+#include "flexbit-redis.h"
 #include "parsers/parsers.h"
 #include "redis.h"
 
@@ -70,11 +70,11 @@ struct _Sagan_Redis *SaganRedis;
  ****************************************************************/
 
 /*****************************************************************************
- Xbit_Condition_Redis - Test the condition of xbits.  For example,  "isset"
+ Flexbit_Condition_Redis - Test the condition of xbits.  For example,  "isset"
  and "isnotset"
  *****************************************************************************/
 
-bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
+bool Flexbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector )
 {
 
     int i;
@@ -175,7 +175,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                             else if ( rulestruct[rule_position].xbit_direction[i] == 1 )
                                 {
 
-                                    if ( debug->debugxbit )
+                                    if ( debug->debugflexbit )
                                         {
                                             Sagan_Log(DEBUG, "[%s, line %d] \"isset\" xbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, tmp_xbit_name, ip_src_char, ip_dst_char);
                                         }
@@ -197,7 +197,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                             if ( rulestruct[rule_position].xbit_type[i] == 3 )
                                                 {
 
-                                                    if ( debug->debugxbit )
+                                                    if ( debug->debugflexbit )
                                                         {
                                                             Sagan_Log(DEBUG, "[%s, line %d] Found xbit '%s' for 'isset'.", __FILE__, __LINE__, tmp_xbit_name );
                                                         }
@@ -207,7 +207,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                                     if ( and_or == OR || and_or == NONE )
                                                         {
 
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
                                                                     Sagan_Log(DEBUG, "[%s, line %d] '|' set or only one xbit used, returning TRUE", __FILE__, __LINE__, tmp_xbit_name );
                                                                 }
@@ -232,7 +232,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                             if ( rulestruct[rule_position].xbit_type[i] == 4 )
                                                 {
 
-                                                    if ( debug->debugxbit )
+                                                    if ( debug->debugflexbit )
                                                         {
                                                             Sagan_Log(DEBUG, "[%s, line %d] Did not find xbit '%s' for 'isnotset'.", __FILE__, __LINE__, tmp_xbit_name );
                                                         }
@@ -242,7 +242,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                                     if ( and_or == AND || and_or == NONE )
                                                         {
 
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
                                                                     Sagan_Log(DEBUG, "[%s, line %d] AND in isnotset, returning TRUE.", __FILE__, __LINE__, tmp_xbit_name );
                                                                 }
@@ -308,7 +308,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                                     if ( and_or == OR || and_or == NONE )
                                                         {
 
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
 
                                                                     Sagan_Log(DEBUG, "[%s, line %d] xbit found, return TRUE", __FILE__, __LINE__ );
@@ -336,7 +336,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                                                     if ( and_or == AND || and_or == NONE )
                                                         {
 
-                                                            if ( debug->debugxbit )
+                                                            if ( debug->debugflexbit )
                                                                 {
                                                                     Sagan_Log(DEBUG, "[%s, line %d] Single xbit or '&' found in xbit set. Returning TRUE", __FILE__, __LINE__ );
                                                                 }
@@ -382,7 +382,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
     if ( ( rulestruct[rule_position].xbit_condition_count == xbit_total_match ) || ( and_or == OR && xbit_total_match != 0 ) )
         {
 
-            if ( debug->debugxbit)
+            if ( debug->debugflexbit)
                 {
                     Sagan_Log(DEBUG, "[%s, line %d] Condition of xbit returning TRUE. %d %d", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
                 }
@@ -392,7 +392,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
     /* isset/isnotset failed. */
 
-    if ( debug->debugxbit)
+    if ( debug->debugflexbit)
         {
             Sagan_Log(DEBUG, "[%s, line %d] Condition of xbit returning FALSE. Needed %d but got %d.", __FILE__, __LINE__, rulestruct[rule_position].xbit_condition_count, xbit_total_match);
         }
@@ -401,10 +401,10 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 }
 
 /*****************************************************************************
- * Xbit_Set_Redis - This will "set" and "unset" xbits in Redis
+ * Flexbit_Set_Redis - This will "set" and "unset" xbits in Redis
  *****************************************************************************/
 
-void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
+void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     time_t t;
@@ -439,7 +439,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
     if ( debug->debugredis )
         {
-            Sagan_Log(DEBUG, "[%s, line %d] Redis Xbit Xbit_Set_Redis()", __FILE__, __LINE__);
+            Sagan_Log(DEBUG, "[%s, line %d] Redis FLexbit Flexbit_Set_Redis()", __FILE__, __LINE__);
         }
 
     snprintf(fullsyslog_orig, sizeof(fullsyslog_orig), "%s|%s|%s|%s|%s|%s|%s|%s|%s",
@@ -493,7 +493,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 
                                     /* First, clean up */
 
-                                    Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
+                                    Flexbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                     utime_plus_timeout = utime + rulestruct[rule_position].xbit_timeout[i];
 
@@ -558,7 +558,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
+                                            Flexbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
@@ -594,7 +594,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
+                                            Flexbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                                      "ZREM %s%s:by_src %s",
@@ -627,7 +627,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
                                     if ( redis_msgslot < config->redis_max_writer_threads )
                                         {
 
-                                            Xbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
+                                            Flexbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
                                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                                      "ZREM %s%s:by_dst %s",
@@ -659,11 +659,11 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, int
 }
 
 /*****************************************************************************
- * Xbit_Cleanup_Redis - Cleans up old/stale xbits from Redis
+ * Flexbit_Cleanup_Redis - Cleans up old/stale xbits from Redis
  *****************************************************************************/
 
 
-void Xbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector, char *ip_src_char, char *ip_dst_char )
+void Flexbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector, char *ip_src_char, char *ip_dst_char )
 {
 
     if ( redis_msgslot < config->redis_max_writer_threads )

@@ -178,7 +178,7 @@ typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
 struct _Sagan_IPC_Counters
 {
 
-    int  xbit_count;
+    int  flexbit_count;
 
     int  thresh2_count;
     int  after2_count;
@@ -229,7 +229,7 @@ struct _SaganCounters
     int	     thread_output_counter;
     int	     thread_processor_counter;
 
-    int	     xbit_total_counter;
+    int	     flexbit_total_counter;
 
     int      var_count;
 
@@ -341,7 +341,7 @@ struct _SaganDebug
     bool debugfwsam;
     bool debugexternal;
     bool debugthreads;
-    bool debugxbit;
+    bool debugflexbit;
     bool debugengine;
     bool debugbrointel;
     bool debugmalformed;

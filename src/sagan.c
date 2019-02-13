@@ -57,7 +57,7 @@
 #include "version.h"
 
 #include "credits.h"
-#include "xbit-mmap.h"
+#include "flexbit-mmap.h"
 #include "processor.h"
 #include "sagan-config.h"
 #include "config-yaml.h"
@@ -422,9 +422,9 @@ int main(int argc, char **argv)
                             debugflag = true;
                         }
 
-                    if (Sagan_strstr(optarg, "xbit"))
+                    if (Sagan_strstr(optarg, "flexbit"))
                         {
-                            debug->debugxbit = true;
+                            debug->debugflexbit = true;
                             debugflag = true;
                         }
 
@@ -695,7 +695,7 @@ int main(int argc, char **argv)
 #endif
 
     Sagan_Log(NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-    Sagan_Log(NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->xbit_total_counter);
+    Sagan_Log(NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->flexbit_total_counter);
     Sagan_Log(NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
 
 #ifdef HAVE_LIBFASTJSON

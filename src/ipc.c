@@ -49,16 +49,15 @@
 #include "sagan-config.h"
 #include "util-time.h"
 #include "ipc.h"
-#include "xbit-mmap.h"
+#include "flexbit-mmap.h"
 
 #include "processors/track-clients.h"
 
 struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Xbit *xbit_ipc;
+struct _Sagan_IPC_Flexbit *xbit_ipc;
 
 struct _SaganConfig *config;
 
-//pthread_mutex_t CounterMutex;
 pthread_mutex_t After2_Mutex;
 pthread_mutex_t Thresh2_Mutex;
 pthread_mutex_t Xbit_Mutex;
@@ -253,7 +252,7 @@ bool Clean_IPC_Object( int type )
 
     /* Xbit_IPC */
 
-    else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count && config->xbit_storage == XBIT_STORAGE_MMAP )
+    else if ( type == XBIT && config->max_xbits < counters_ipc->flexbit_count && config->xbit_storage == XBIT_STORAGE_MMAP )
         {
 
             time_t t;
@@ -277,14 +276,14 @@ bool Clean_IPC_Object( int type )
             File_Lock(config->shm_xbit);
             pthread_mutex_lock(&Xbit_Mutex);
 
-            struct _Sagan_IPC_Xbit *temp_xbit_ipc;
-            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits);
+            struct _Sagan_IPC_Flexbit *temp_xbit_ipc;
+            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_xbits);
 
-            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits));
+            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flexbit) * config->max_xbits));
 
-            old_count = counters_ipc->xbit_count;
+            old_count = counters_ipc->flexbit_count;
 
-            for (i = 0; i < counters_ipc->xbit_count; i++)
+            for (i = 0; i < counters_ipc->flexbit_count; i++)
                 {
                     if ( (utime - xbit_ipc[i].xbit_expire) < xbit_ipc[i].expire )
                         {
@@ -307,7 +306,7 @@ bool Clean_IPC_Object( int type )
                             memcpy(temp_xbit_ipc[new_count].ip_dst, xbit_ipc[i].ip_dst, sizeof(xbit_ipc[i].ip_dst));
                             temp_xbit_ipc[new_count].xbit_expire = xbit_ipc[i].xbit_expire;
                             temp_xbit_ipc[new_count].expire = xbit_ipc[i].expire;
-                            strlcpy(temp_xbit_ipc[new_count].xbit_name, xbit_ipc[i].xbit_name, sizeof(temp_xbit_ipc[new_count].xbit_name));
+                            strlcpy(temp_xbit_ipc[new_count].flexbit_name, xbit_ipc[i].flexbit_name, sizeof(temp_xbit_ipc[new_count].flexbit_name));
 
                             new_count++;
                         }
@@ -322,23 +321,23 @@ bool Clean_IPC_Object( int type )
                             memcpy(temp_xbit_ipc[i].ip_dst, temp_xbit_ipc[i].ip_dst, sizeof(temp_xbit_ipc[i].ip_dst));
                             xbit_ipc[i].xbit_expire = temp_xbit_ipc[i].xbit_expire;
                             xbit_ipc[i].expire = temp_xbit_ipc[i].expire;
-                            strlcpy(xbit_ipc[i].xbit_name, temp_xbit_ipc[i].xbit_name, sizeof(xbit_ipc[i].xbit_name));
+                            strlcpy(xbit_ipc[i].flexbit_name, temp_xbit_ipc[i].flexbit_name, sizeof(xbit_ipc[i].flexbit_name));
                         }
 
-                    counters_ipc->xbit_count = new_count;
+                    counters_ipc->flexbit_count = new_count;
 
                 }
             else
                 {
 
-                    Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flexbit.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_xbit_ipc);
                     pthread_mutex_unlock(&Xbit_Mutex);
                     File_Unlock(config->shm_xbit);
                     return(1);
                 }
 
-            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Xbit.", __FILE__, __LINE__, new_count, old_count);
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flexbit.", __FILE__, __LINE__, new_count, old_count);
             free(temp_xbit_ipc);
 
             pthread_mutex_unlock(&Xbit_Mutex);
@@ -442,19 +441,19 @@ void IPC_Init(void)
                     Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
-            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 )
+            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Flexbit) * config->max_xbits ) != 0 )
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
-            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
+            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if ( new_object == 0)
                 {
-                    Sagan_Log(NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
+                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_xbits);
                 }
 
             new_object = 0;

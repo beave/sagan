@@ -29,9 +29,9 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        geoip.c \
                                                        meta-content.c \
                                                        redis.c \
-                                                       xbit.c \
-                                                       xbit-mmap.c \
-                                                       xbit-redis.c \
+                                                       flexbit.c \
+                                                       flexbit-mmap.c \
+                                                       flexbit-redis.c \
                                                        flow.c\
                                                        aetas.c \
                                                        ipc.c \
