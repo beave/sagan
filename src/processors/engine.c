@@ -1011,9 +1011,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                      * Xbit "upause".  This lets xbits settle in "tight" timing situations.
                                                      ****************************************************************************/
 
-                                    if ( rulestruct[b].xbit_upause_time != 0 )
+                                    if ( rulestruct[b].flexbit_upause_time != 0 )
                                         {
-                                            usleep( rulestruct[b].xbit_upause_time );
+                                            usleep( rulestruct[b].flexbit_upause_time );
                                         }
 
 
@@ -1029,7 +1029,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     xbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
                                                 }
 
-                                            if ( rulestruct[b].xbit_count_flag )
+                                            if ( rulestruct[b].flexbit_count_flag )
                                                 {
                                                     xbit_count_return = Flexbit_Count(b, ip_src, ip_dst, pnormalize_selector);
                                                 }
@@ -1344,7 +1344,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     ( rulestruct[b].xbit_set_count == false && rulestruct[b].xbit_condition_count && xbit_return ))
                                                 {
 
-                                                    if ( rulestruct[b].xbit_count_flag == false ||
+                                                    if ( rulestruct[b].flexbit_count_flag == false ||
                                                             xbit_count_return == true )
                                                         {
 

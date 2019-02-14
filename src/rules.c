@@ -172,7 +172,7 @@ void Load_Rules( const char *ruleset )
     int meta_content_count=0;
     int meta_content_converted_count=0;
     int pcre_count=0;
-    int xbit_count;
+    int flexbit_count;
     int flow_1_count=0;
     int flow_2_count=0;
     int port_1_count=0;
@@ -229,7 +229,7 @@ void Load_Rules( const char *ruleset )
             content_count=0;
             meta_content_count=0;
             meta_content_converted_count=0;
-            xbit_count=0;
+            flexbit_count=0;
             netcount=0;
             ref_count=0;
             flow_1_count=0;
@@ -885,11 +885,11 @@ void Load_Rules( const char *ruleset )
                             if ( arg == NULL )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] The \"xbit_upause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    Sagan_Log(WARN, "[%s, line %d] The \"flexbit_upause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                     continue;
                                 }
 
-                            rulestruct[counters->rulecount].xbit_upause_time = atoi(arg);
+                            rulestruct[counters->rulecount].flexbit_upause_time = atoi(arg);
                         }
 
                     if (!strcmp(rulesplit, "default_proto"))
@@ -1099,28 +1099,28 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;		/* set */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 1;		/* set */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
-                                    xbit_count++;
+                                    flexbit_count++;
                                     __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
@@ -1141,26 +1141,26 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have flexbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 2;                	/* unset */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 2;                	/* unset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
-                                    xbit_count++;
+                                    flexbit_count++;
 
                                 }
 
@@ -1174,32 +1174,32 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have xbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;               	/* isset */
+                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 3;               	/* isset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
                                     rulestruct[counters->rulecount].xbit_condition_count++;
-                                    xbit_count++;
+                                    flexbit_count++;
 
                                 }
 
@@ -1213,32 +1213,32 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;                               	/* We have xbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;               	/* isnotset */
+                                    rulestruct[counters->rulecount].xbit_flag = 1;                               	/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 4;               	/* isnotset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Return(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
                                     rulestruct[counters->rulecount].xbit_condition_count++;
-                                    xbit_count++;
+                                    flexbit_count++;
 
                                 }
 
@@ -1252,28 +1252,28 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;		/* set_srcport */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 5;		/* set_srcport */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                             continue;
                                         }
 
-                                    xbit_count++;
+                                    flexbit_count++;
                                     __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
@@ -1288,28 +1288,28 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 6;		/* set_dstport */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 6;		/* set_dstport */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
-                                    xbit_count++;
+                                    flexbit_count++;
                                     __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
@@ -1324,28 +1324,28 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have xbit in the rule! */
+                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 7;		/* set_ports */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 7;		/* set_ports */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[xbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[xbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
-                                    xbit_count++;
+                                    flexbit_count++;
                                     __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
 
                                 }
@@ -1360,7 +1360,7 @@ void Load_Rules( const char *ruleset )
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
@@ -1378,38 +1378,38 @@ void Load_Rules( const char *ruleset )
                                     if ( !strcmp(tmptoken, "by_src") )
                                         {
 
-                                            rulestruct[counters->rulecount].xbit_direction[xbit_count] = 2;
+                                            rulestruct[counters->rulecount].xbit_direction[flexbit_count] = 2;
 
                                         }
                                     else
                                         {
 
-                                            rulestruct[counters->rulecount].xbit_direction[xbit_count] = 3;
+                                            rulestruct[counters->rulecount].xbit_direction[flexbit_count] = 3;
 
                                         }
 
                                     rulestruct[counters->rulecount].xbit_flag = 1;
                                     rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 8;         /* count */
+                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 8;         /* count */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit name to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit name to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected xbit value to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected flexbit value to count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
@@ -1419,48 +1419,48 @@ void Load_Rules( const char *ruleset )
                                     if ( tmp1[0] != '>' && tmp1[0] != '<' && tmp1[0] != '=' )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected '>', '<' or '=' operator in xbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected '>', '<' or '=' operator in flexbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
 
                                         }
 
-                                    /* Determine the xbit counter operator */
+                                    /* Determine the flexbit counter operator */
 
                                     if ( tmp1[0] == '>' )
                                         {
-                                            rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 0;
+                                            rulestruct[counters->rulecount].flexbit_count_gt_lt[flexbit_count] = 0;
                                             tmptoken = strtok_r(tmp1, ">", &saveptrrule3);
                                         }
 
                                     else if ( tmp1[0] == '<' )
                                         {
-                                            rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 1;
+                                            rulestruct[counters->rulecount].flexbit_count_gt_lt[flexbit_count] = 1;
                                             tmptoken = strtok_r(tmp1, "<", &saveptrrule3);
                                         }
 
                                     else if ( tmp1[0] == '=' )
                                         {
-                                            rulestruct[counters->rulecount].xbit_count_gt_lt[xbit_count] = 2;
+                                            rulestruct[counters->rulecount].flexbit_count_gt_lt[flexbit_count] = 2;
                                             tmptoken = strtok_r(tmp1, "=", &saveptrrule3);
                                         }
 
                                     if ( tmptoken == NULL )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected value to look for in xbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected value to look for in flexbit count at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
                                             continue;
                                         }
 
                                     Remove_Spaces(tmptoken);
-                                    rulestruct[counters->rulecount].xbit_count_counter[xbit_count] = atoi(tmptoken);
-                                    rulestruct[counters->rulecount].xbit_count_flag = true;
+                                    rulestruct[counters->rulecount].flexbit_count_counter[flexbit_count] = atoi(tmptoken);
+                                    rulestruct[counters->rulecount].flexbit_count_flag = true;
 
-                                    xbit_count++;
+                                    flexbit_count++;
                                     __atomic_add_fetch(&counters->flexbit_total_counter, 1, __ATOMIC_SEQ_CST);
-                                    rulestruct[counters->rulecount].xbit_count_count++;
+                                    rulestruct[counters->rulecount].flexbit_count_count++;
                                 }
 
-                            rulestruct[counters->rulecount].xbit_count = xbit_count;
+                            rulestruct[counters->rulecount].flexbit_count = flexbit_count;
 
                         }
 
