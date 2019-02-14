@@ -250,9 +250,9 @@ bool Clean_IPC_Object( int type )
 
         }
 
-    /* Xbit_IPC */
+    /* Flexbit_IPC */
 
-    else if ( type == XBIT && config->max_xbits < counters_ipc->flexbit_count && config->xbit_storage == XBIT_STORAGE_MMAP )
+    else if ( type == XBIT && config->max_xbits < counters_ipc->flexbit_count && config->flexbit_storage == XBIT_STORAGE_MMAP )
         {
 
             time_t t;
@@ -285,7 +285,7 @@ bool Clean_IPC_Object( int type )
 
             for (i = 0; i < counters_ipc->flexbit_count; i++)
                 {
-                    if ( (utime - xbit_ipc[i].xbit_expire) < xbit_ipc[i].expire )
+                    if ( (utime - xbit_ipc[i].flexbit_expire) < xbit_ipc[i].expire )
                         {
 
                             if ( debug->debugipc )
@@ -301,10 +301,10 @@ bool Clean_IPC_Object( int type )
                                               htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[3]));
                                 }
 
-                            temp_xbit_ipc[new_count].xbit_state = xbit_ipc[i].xbit_state;
+                            temp_xbit_ipc[new_count].flexbit_state = xbit_ipc[i].flexbit_state;
                             memcpy(temp_xbit_ipc[new_count].ip_src, xbit_ipc[i].ip_src, sizeof(xbit_ipc[i].ip_src));
                             memcpy(temp_xbit_ipc[new_count].ip_dst, xbit_ipc[i].ip_dst, sizeof(xbit_ipc[i].ip_dst));
-                            temp_xbit_ipc[new_count].xbit_expire = xbit_ipc[i].xbit_expire;
+                            temp_xbit_ipc[new_count].flexbit_expire = xbit_ipc[i].flexbit_expire;
                             temp_xbit_ipc[new_count].expire = xbit_ipc[i].expire;
                             strlcpy(temp_xbit_ipc[new_count].flexbit_name, xbit_ipc[i].flexbit_name, sizeof(temp_xbit_ipc[new_count].flexbit_name));
 
@@ -316,10 +316,10 @@ bool Clean_IPC_Object( int type )
                 {
                     for ( i = 0; i < new_count; i++ )
                         {
-                            xbit_ipc[i].xbit_state = temp_xbit_ipc[i].xbit_state;
+                            xbit_ipc[i].flexbit_state = temp_xbit_ipc[i].flexbit_state;
                             memcpy(temp_xbit_ipc[i].ip_src, temp_xbit_ipc[i].ip_src, sizeof(temp_xbit_ipc[i].ip_src));
                             memcpy(temp_xbit_ipc[i].ip_dst, temp_xbit_ipc[i].ip_dst, sizeof(temp_xbit_ipc[i].ip_dst));
-                            xbit_ipc[i].xbit_expire = temp_xbit_ipc[i].xbit_expire;
+                            xbit_ipc[i].flexbit_expire = temp_xbit_ipc[i].flexbit_expire;
                             xbit_ipc[i].expire = temp_xbit_ipc[i].expire;
                             strlcpy(xbit_ipc[i].flexbit_name, temp_xbit_ipc[i].flexbit_name, sizeof(xbit_ipc[i].flexbit_name));
                         }
@@ -421,9 +421,9 @@ void IPC_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    /* Xbit memory object - File based mmap() */
+    /* Flexbit memory object - File based mmap() */
 
-    if ( config->xbit_storage == XBIT_STORAGE_MMAP )
+    if ( config->flexbit_storage == XBIT_STORAGE_MMAP )
         {
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
@@ -459,7 +459,7 @@ void IPC_Init(void)
             new_object = 0;
 
         }
-    else      /* if ( config->xbit_storage == XBIT_STORAGE_MMAP ) */
+    else      /* if ( config->flexbit_storage == XBIT_STORAGE_MMAP ) */
         {
 
             Sagan_Log(NORMAL, "- Xbit shared object (Objects stored in Redis)");

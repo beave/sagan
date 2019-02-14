@@ -42,14 +42,14 @@ typedef struct _Sagan_IPC_Flexbit _Sagan_IPC_Flexbit;
 struct _Sagan_IPC_Flexbit
 {
     char flexbit_name[64];
-    bool xbit_state;
+    bool flexbit_state;
     unsigned char ip_src[MAXIPBIT];
     unsigned char ip_dst[MAXIPBIT];
     int src_port;
     int dst_port;
     char username[64];
-    uint64_t xbit_date;
-    uint64_t xbit_expire;
+    uint64_t flexbit_date;
+    uint64_t flexbit_expire;
     int expire;
     char selector[MAXSELECTOR];  /* No need to clean this, as we always set it when tracking */
     char syslog_message[MAX_SYSLOGMSG];

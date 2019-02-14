@@ -133,7 +133,7 @@ sagan-core:
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
+    flexbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
 
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy

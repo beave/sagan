@@ -90,7 +90,7 @@ struct _SaganConfig
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
-    char	 xbit_storage;				/* 0 == mmap, 1 == redis */
+    char	 flexbit_storage;			/* 0 == mmap, 1 == redis */
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     bool         sagan_droplist_flag;

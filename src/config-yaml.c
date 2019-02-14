@@ -863,7 +863,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
-                                    else if (!strcmp(last_pass, "xbit-storage"))
+                                    else if (!strcmp(last_pass, "flexbit-storage"))
                                         {
 
                                             Var_To_Value(value, tmp, sizeof(tmp));
@@ -871,20 +871,20 @@ void Load_YAML_Config( char *yaml_file )
                                             if (strcmp(tmp, "mmap") && strcmp(tmp, "redis"))
                                                 {
 
-                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|xbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|flexbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
 
                                                 }
 
                                             if (!strcmp(tmp, "redis"))
                                                 {
 
-                                                    config->xbit_storage = XBIT_STORAGE_REDIS;
+                                                    config->flexbit_storage = XBIT_STORAGE_REDIS;
 
                                                 }
                                             else
                                                 {
 
-                                                    config->xbit_storage = XBIT_STORAGE_MMAP;
+                                                    config->flexbit_storage = XBIT_STORAGE_MMAP;
 
                                                 }
                                         }
