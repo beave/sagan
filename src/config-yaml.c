@@ -902,15 +902,15 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
-                                    else if (!strcmp(last_pass, "xbit"))
+                                    else if (!strcmp(last_pass, "flexbit"))
                                         {
 
                                             Var_To_Value(value, tmp, sizeof(tmp));
-                                            config->max_xbits = atoi(tmp);
+                                            config->max_flexbits = atoi(tmp);
 
-                                            if ( config->max_xbits == 0 )
+                                            if ( config->max_flexbits == 0 )
                                                 {
-                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'xbits' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'flexbits' is set to zero.  Abort!", __FILE__, __LINE__);
                                                 }
                                         }
 

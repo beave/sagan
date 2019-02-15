@@ -146,23 +146,23 @@ struct _Rule_Struct
     unsigned char meta_content_count;
     unsigned char meta_content_converted_count;
 
-    int flexbit_count;				/* Number of xbits in memory */
-    int flexbit_upause_time;			/* Delay to let xbits settle */
-    unsigned char xbit_condition_count;		/* Number of isset/isnot within a rule */
-    unsigned char xbit_set_count;		/* Number of set/unset within a rule */
+    int flexbit_count;				/* Number of flexbits in memory */
+    int flexbit_upause_time;			/* Delay to let flexbits settle */
+    unsigned char flexbit_condition_count;	/* Number of isset/isnot within a rule */
+    unsigned char flexbit_set_count;		/* Number of set/unset within a rule */
     unsigned char flexbit_count_count;		/* Number of count within a rule */
 
-    bool xbit_flag;              	        /* Does the rule contain a xbit? */
-    bool xbit_noalert;                         /* Do we want to suppress "alerts" from xbits in ALL output plugins? */
-    bool xbit_nounified2;                      /* Do we want to suppress "unified2" from xbits in unified2 output */
-    bool xbit_noeve;				/* Do we want to suppress "eve" from xbits */
+    bool flexbit_flag;              	        /* Does the rule contain a flexbit? */
+    bool flexbit_noalert;                         /* Do we want to suppress "alerts" from flexbits in ALL output plugins? */
+    bool flexbit_nounified2;                      /* Do we want to suppress "unified2" from flexbits in unified2 output */
+    bool flexbit_noeve;				/* Do we want to suppress "eve" from flexbits */
 
-    unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
+    unsigned char flexbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
 						   6 == set_dstport, 7 == set_ports, 8 == count */
 
-    unsigned char xbit_direction[MAX_XBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
-    int xbit_timeout[MAX_XBITS];                /* How long a xbit is to stay alive (seconds) */
-    char xbit_name[MAX_XBITS][64];              /* Name of the xbit */
+    unsigned char flexbit_direction[MAX_XBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    int flexbit_timeout[MAX_XBITS];                /* How long a flexbit is to stay alive (seconds) */
+    char flexbit_name[MAX_XBITS][64];              /* Name of the flexbit */
 
     unsigned char flexbit_count_gt_lt[MAX_XBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
     int flexbit_count_counter[MAX_XBITS];        /* The amount the user is looking for */

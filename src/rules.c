@@ -1053,7 +1053,7 @@ void Load_Rules( const char *ruleset )
                             if ( tmptoken == NULL )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Incomplete 'xbit' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    Sagan_Log(WARN, "[%s, line %d] Incomplete 'flexbit' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                     continue;
                                 }
 
@@ -1075,17 +1075,17 @@ void Load_Rules( const char *ruleset )
 
                             if (!strcmp(tmptoken, "noalert"))
                                 {
-                                    rulestruct[counters->rulecount].xbit_noalert=true;
+                                    rulestruct[counters->rulecount].flexbit_noalert=true;
                                 }
 
                             if (!strcmp(tmptoken, "nounified2"))
                                 {
-                                    rulestruct[counters->rulecount].xbit_nounified2=true;
+                                    rulestruct[counters->rulecount].flexbit_nounified2=true;
                                 }
 
                             if (!strcmp(tmptoken, "noeve"))
                                 {
-                                    rulestruct[counters->rulecount].xbit_noeve=true;
+                                    rulestruct[counters->rulecount].flexbit_noeve=true;
                                 }
 
 
@@ -1105,15 +1105,15 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 1;		/* set */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1; 				/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 1;		/* set */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
                                             Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1141,11 +1141,11 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].flexbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 2;                	/* unset */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1;               			/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 2;                	/* unset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1158,7 +1158,7 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
                                     flexbit_count++;
 
@@ -1180,10 +1180,10 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].flexbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;               			/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 3;               	/* isset */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1;               			/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 3;               	/* isset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1196,9 +1196,9 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_condition_count++;
+                                    rulestruct[counters->rulecount].flexbit_condition_count++;
                                     flexbit_count++;
 
                                 }
@@ -1219,10 +1219,10 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
+                                    rulestruct[counters->rulecount].flexbit_direction[flexbit_count] = Flexbit_Type(tmptoken, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;                               	/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 4;               	/* isnotset */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1;                               	/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 4;               	/* isnotset */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1235,9 +1235,9 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Return(tmptoken);
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_condition_count++;
+                                    rulestruct[counters->rulecount].flexbit_condition_count++;
                                     flexbit_count++;
 
                                 }
@@ -1258,15 +1258,15 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 5;		/* set_srcport */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1; 				/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 5;		/* set_srcport */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
                                             Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
@@ -1294,15 +1294,15 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 6;		/* set_dstport */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1; 				/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 6;		/* set_dstport */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
                                             Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
@@ -1330,15 +1330,15 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1; 				/* We have flexbit in the rule! */
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 7;		/* set_ports */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1; 				/* We have flexbit in the rule! */
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 7;		/* set_ports */
 
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
-                                    rulestruct[counters->rulecount].xbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
+                                    rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] = atoi(strtok_r(NULL, ",", &saveptrrule2));
 
-                                    if ( rulestruct[counters->rulecount].xbit_timeout[flexbit_count] == 0 )
+                                    if ( rulestruct[counters->rulecount].flexbit_timeout[flexbit_count] == 0 )
                                         {
                                             bad_rule = true;
                                             Sagan_Log(WARN, "[%s, line %d] Expected flexbit valid expire time for \"set\" at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset);
@@ -1378,19 +1378,19 @@ void Load_Rules( const char *ruleset )
                                     if ( !strcmp(tmptoken, "by_src") )
                                         {
 
-                                            rulestruct[counters->rulecount].xbit_direction[flexbit_count] = 2;
+                                            rulestruct[counters->rulecount].flexbit_direction[flexbit_count] = 2;
 
                                         }
                                     else
                                         {
 
-                                            rulestruct[counters->rulecount].xbit_direction[flexbit_count] = 3;
+                                            rulestruct[counters->rulecount].flexbit_direction[flexbit_count] = 3;
 
                                         }
 
-                                    rulestruct[counters->rulecount].xbit_flag = 1;
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[flexbit_count]  = 8;         /* count */
+                                    rulestruct[counters->rulecount].flexbit_flag = 1;
+                                    rulestruct[counters->rulecount].flexbit_set_count++;
+                                    rulestruct[counters->rulecount].flexbit_type[flexbit_count]  = 8;         /* count */
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1402,7 +1402,7 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     Remove_Spaces(tmptoken);
-                                    strlcpy(rulestruct[counters->rulecount].xbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[flexbit_count]));
+                                    strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 

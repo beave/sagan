@@ -187,7 +187,7 @@ sagan-core:
                                  # be present in the normalized result
 
   # Redis configuration.  Redis can be used to act as a global storage engine for
-  # xbits.  This allows Sagan to "share" xbit data across a network # infrastructure.
+  # flexbits.  This allows Sagan to "share" xbit data across a network # infrastructure.
   # This is experimental! 
 
   redis-server:
@@ -198,14 +198,14 @@ sagan-core:
     #password: "mypassword"  # Comment out to disable authentication.
     writer_threads: 10
 
-  # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
-  # and afters.  This allows Sagan to "remember" threshold, xbits and after
+  # Sagan creates "memory mapped" files to keep track of flexbits, thresholds, 
+  # and afters.  This allows Sagan to "remember" threshold, flexbits and after
   # data between system restarts (including system reboots!). 
   
   # This also allows Sagan to share information with other Sagan processes.
   # For example, if one Sagan instance is monitoring "Linux" logs & another is
   # monitoring "Windows" logs, Sagan can communicate between the two Sagan 
-  # processes using these memory mapped files. A "xbit" that is "set" by the
+  # processes using these memory mapped files. A "flexbit" that is "set" by the
   # "Linux" process accessible and "known" to the Windows instance.
 
   # The storage is pre-allocated when the memory mapped files are created
@@ -217,7 +217,7 @@ sagan-core:
   mmap-ipc: 
 
     ipc-directory: /dev/shm
-    xbit: $MMAP_DEFAULT
+    flexbit: $MMAP_DEFAULT
     after: $MMAP_DEFAULT
     threshold: $MMAP_DEFAULT
     track-clients: $MMAP_DEFAULT

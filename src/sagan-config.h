@@ -172,7 +172,7 @@ struct _SaganConfig
 
     char	ipc_directory[MAXPATH];
 
-    int		max_xbits;
+    int		max_flexbits;
     int		max_threshold2;
     int		max_after2;
     int		max_track_clients;

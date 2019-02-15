@@ -131,8 +131,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     int alter_num = 0;
     int meta_alter_num = 0;
 
-    bool xbit_return = 0;
-    bool xbit_count_return = 0;
+    bool flexbit_return = 0;
+    bool flexbit_count_return = 0;
 
     bool alert_time_trigger = false;
     bool check_flow_return = true;  /* 1 = match, 0 = no match */
@@ -1008,7 +1008,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
                                     /****************************************************************************
-                                                     * Xbit "upause".  This lets xbits settle in "tight" timing situations.
+                                                     * flexbit "upause".  This lets flexbits settle in "tight" timing situations.
                                                      ****************************************************************************/
 
                                     if ( rulestruct[b].flexbit_upause_time != 0 )
@@ -1018,20 +1018,20 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
                                     /****************************************************************************
-                                     * Xbit - ISSET || ISNOTSET
+                                     * flexbit - ISSET || ISNOTSET
                                      ****************************************************************************/
 
-                                    if ( rulestruct[b].xbit_flag )
+                                    if ( rulestruct[b].flexbit_flag )
                                         {
 
-                                            if ( rulestruct[b].xbit_condition_count )
+                                            if ( rulestruct[b].flexbit_condition_count )
                                                 {
-                                                    xbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
+                                                    flexbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
                                                 }
 
                                             if ( rulestruct[b].flexbit_count_flag )
                                                 {
-                                                    xbit_count_return = Flexbit_Count(b, ip_src, ip_dst, pnormalize_selector);
+                                                    flexbit_count_return = Flexbit_Count(b, ip_src, ip_dst, pnormalize_selector);
                                                 }
 
                                         }
@@ -1338,14 +1338,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( check_flow_return == true )
                                         {
 
-                                            if ( rulestruct[b].xbit_flag == false ||
-                                                    ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count == 0 ) ||
-                                                    ( rulestruct[b].xbit_set_count && rulestruct[b].xbit_condition_count && xbit_return ) ||
-                                                    ( rulestruct[b].xbit_set_count == false && rulestruct[b].xbit_condition_count && xbit_return ))
+                                            if ( rulestruct[b].flexbit_flag == false ||
+                                                    ( rulestruct[b].flexbit_set_count && rulestruct[b].flexbit_condition_count == 0 ) ||
+                                                    ( rulestruct[b].flexbit_set_count && rulestruct[b].flexbit_condition_count && flexbit_return ) ||
+                                                    ( rulestruct[b].flexbit_set_count == false && rulestruct[b].flexbit_condition_count && flexbit_return ))
                                                 {
 
                                                     if ( rulestruct[b].flexbit_count_flag == false ||
-                                                            xbit_count_return == true )
+                                                            flexbit_count_return == true )
                                                         {
 
                                                             if ( rulestruct[b].alert_time_flag == false || alert_time_trigger == true )
@@ -1416,12 +1416,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                             Sagan_Log(DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
                                                                                                                                             Sagan_Log(DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Xbit Flag: %d | Xbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].xbit_flag, xbit_return);
+                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flexbit Flag: %d | Flexbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flexbit_flag, flexbit_return);
                                                                                                                                             Sagan_Log(DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                                                                                         }
 
-                                                                                                                                    if ( rulestruct[b].xbit_flag && rulestruct[b].xbit_set_count )
+                                                                                                                                    if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
                                                                                                                                         {
                                                                                                                                             Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
                                                                                                                                         }
@@ -1443,7 +1443,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                     processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
                                                                                                                                     processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
 
-                                                                                                                                    if ( rulestruct[b].xbit_flag == false || rulestruct[b].xbit_noalert == 0 )
+                                                                                                                                    if ( rulestruct[b].flexbit_flag == false || rulestruct[b].flexbit_noalert == 0 )
                                                                                                                                         {
 
                                                                                                                                             if ( rulestruct[b].type == NORMAL_RULE )
@@ -1491,9 +1491,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 #endif
                                                                 } /* Time based alerts */
 
-                                                        } /* Xbit count */
+                                                        } /* Flexbit count */
 
-                                                } /* Xbit */
+                                                } /* Flexbit */
 
                                         } /* Check Rule Flow */
 
@@ -1504,7 +1504,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     match = false;  		      /* Reset match! */
                     sagan_match=0;	      /* Reset pcre/meta_content/content match! */
                     rc=0;		      /* Return code */
-                    xbit_return=0;	      /* Xbit reset */
+                    flexbit_return=0;	      /* Flexbit reset */
                     check_flow_return = true;      /* Rule flow direction reset */
 
                 } /* If normal or dynamic rule */

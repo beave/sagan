@@ -252,7 +252,7 @@ bool Clean_IPC_Object( int type )
 
     /* Flexbit_IPC */
 
-    else if ( type == XBIT && config->max_xbits < counters_ipc->flexbit_count && config->flexbit_storage == XBIT_STORAGE_MMAP )
+    else if ( type == XBIT && config->max_flexbits < counters_ipc->flexbit_count && config->flexbit_storage == XBIT_STORAGE_MMAP )
         {
 
             time_t t;
@@ -277,9 +277,9 @@ bool Clean_IPC_Object( int type )
             pthread_mutex_lock(&Xbit_Mutex);
 
             struct _Sagan_IPC_Flexbit *temp_xbit_ipc;
-            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_xbits);
+            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits);
 
-            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flexbit) * config->max_xbits));
+            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits));
 
             old_count = counters_ipc->flexbit_count;
 
@@ -441,19 +441,19 @@ void IPC_Init(void)
                     Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
-            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Flexbit) * config->max_xbits ) != 0 )
+            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
-            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
+            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if ( new_object == 0)
                 {
-                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_xbits);
+                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_flexbits);
                 }
 
             new_object = 0;
