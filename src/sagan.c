@@ -976,7 +976,7 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBHIREDIS
 
-    /* Right now,  Redis is only used for xbit storage */
+    /* Right now,  Redis is only used for xbit/flexbit storage */
 
     if ( config->redis_flag && config->flexbit_storage == XBIT_STORAGE_REDIS )
         {

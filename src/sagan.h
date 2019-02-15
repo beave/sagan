@@ -326,7 +326,7 @@ struct _SaganCounters
 
     uint64_t json_mp_count;
     uint64_t malformed_json_mp_count;
-    
+
 #endif
 
 

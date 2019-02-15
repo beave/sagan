@@ -833,13 +833,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                 }
 
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = false;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -858,13 +858,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"both\"). (%s -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = false;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -882,13 +882,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"by_src\"). (%s -> any)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = false;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -906,13 +906,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = false;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -931,13 +931,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"reverse\"). (%s -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = false;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -954,13 +954,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"src_xbitdst\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -977,13 +977,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"dst_xbitsrc\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1003,13 +1003,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"both_p\"). (%s -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1028,13 +1028,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"by_src_p\"). (%s -> any)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1053,13 +1053,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"by_dst\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1080,13 +1080,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"reverse_p\"). (%s -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1104,13 +1104,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"src_xbitdst_p\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_src);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1128,13 +1128,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                                     Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"dst_xbitsrc_p\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, ip_dst);
                                                 }
 
-                                            File_Lock(config->shm_xbit);
+                                            File_Lock(config->shm_flexbit);
                                             pthread_mutex_lock(&Flexbit_Mutex);
 
                                             flexbit_ipc[a].flexbit_state = 0;
 
                                             pthread_mutex_unlock(&Flexbit_Mutex);
-                                            File_Unlock(config->shm_xbit);
+                                            File_Unlock(config->shm_flexbit);
 
                                             flexbit_unset_match = 1;
 
@@ -1180,7 +1180,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                 {
 
 
-                                    File_Lock(config->shm_xbit);
+                                    File_Lock(config->shm_flexbit);
                                     pthread_mutex_lock(&Flexbit_Mutex);
 
                                     flexbit_ipc[a].flexbit_date = atol(timet);
@@ -1199,7 +1199,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                         }
 
                                     pthread_mutex_unlock(&Flexbit_Mutex);
-                                    File_Unlock(config->shm_xbit);
+                                    File_Unlock(config->shm_flexbit);
 
                                     flexbit_match = true;
                                 }
@@ -1266,7 +1266,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                     flexbit_ipc[a].dst_port == config->sagan_port )
                                 {
 
-                                    File_Lock(config->shm_xbit);
+                                    File_Lock(config->shm_flexbit);
                                     pthread_mutex_lock(&Flexbit_Mutex);
 
                                     flexbit_ipc[a].flexbit_date = atol(timet);
@@ -1282,7 +1282,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                         }
 
                                     pthread_mutex_unlock(&Flexbit_Mutex);
-                                    File_Unlock(config->shm_xbit);
+                                    File_Unlock(config->shm_flexbit);
 
                                     flexbit_match = true;
                                 }
@@ -1346,7 +1346,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                     flexbit_ipc[a].dst_port == dst_port )
                                 {
 
-                                    File_Lock(config->shm_xbit);
+                                    File_Lock(config->shm_flexbit);
                                     pthread_mutex_lock(&Flexbit_Mutex);
 
                                     flexbit_ipc[a].flexbit_date = atol(timet);
@@ -1362,7 +1362,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                         }
 
                                     pthread_mutex_unlock(&Flexbit_Mutex);
-                                    File_Unlock(config->shm_xbit);
+                                    File_Unlock(config->shm_flexbit);
 
                                     flexbit_match = true;
                                 }
@@ -1426,7 +1426,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                     flexbit_ipc[a].dst_port == dst_port )
                                 {
 
-                                    File_Lock(config->shm_xbit);
+                                    File_Lock(config->shm_flexbit);
                                     pthread_mutex_lock(&Flexbit_Mutex);
 
                                     flexbit_ipc[a].flexbit_date = atol(timet);
@@ -1442,7 +1442,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                         }
 
                                     pthread_mutex_unlock(&Flexbit_Mutex);
-                                    File_Unlock(config->shm_xbit);
+                                    File_Unlock(config->shm_flexbit);
 
                                     flexbit_match = true;
                                 }
@@ -1491,7 +1491,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                     if ( Clean_IPC_Object(XBIT) == 0 )
                         {
 
-                            File_Lock(config->shm_xbit);
+                            File_Lock(config->shm_flexbit);
                             pthread_mutex_lock(&Flexbit_Mutex);
 
                             memcpy(flexbit_ipc[counters_ipc->flexbit_count].ip_src, ip_src, sizeof(flexbit_ipc[counters_ipc->flexbit_count].ip_src));
@@ -1522,7 +1522,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                             counters_ipc->flexbit_count++;
 
                             File_Unlock(config->shm_counters);
-                            File_Unlock(config->shm_xbit);
+                            File_Unlock(config->shm_flexbit);
 
                             pthread_mutex_unlock(&Flexbit_Mutex);
 

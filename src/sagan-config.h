@@ -156,7 +156,7 @@ struct _SaganConfig
     int		sagan_syslog_options;
 
     int		shm_counters;
-    int		shm_xbit;
+    int		shm_flexbit;
     int 	shm_thresh_by_src;
     int		shm_thresh_by_dst;
     int		shm_thresh_by_dstport;
@@ -181,7 +181,7 @@ struct _SaganConfig
     char        plog_interface[50];
     char        plog_logdev[50];
     char        plog_filter[256];
-    bool       plog_flag;
+    bool        plog_flag;
     int         plog_promiscuous;
 #endif
 

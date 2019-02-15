@@ -133,7 +133,7 @@ sagan-core:
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    flexbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
+    flexbit-storage: mmap          # flexbit storage engine. ("mmap" or "redis")
 
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy
@@ -187,7 +187,7 @@ sagan-core:
                                  # be present in the normalized result
 
   # Redis configuration.  Redis can be used to act as a global storage engine for
-  # flexbits.  This allows Sagan to "share" xbit data across a network # infrastructure.
+  # flexbits.  This allows Sagan to "share" flexbit data across a network # infrastructure.
   # This is experimental! 
 
   redis-server:
@@ -612,9 +612,9 @@ rules-files:
   #- $RULE_PATH/windows-bluedot.rules
   #- $RULE_PATH/windows-owa-bluedot.rules
 
-  #############################################################################
-  # Correlated rules - Rules that use xbits to detect malicious behavor       #
-  #############################################################################
+  ################################################################################
+  # Correlated rules - Rules that use xbits/flexbits to detect malicious behavor #
+  ################################################################################
 
   - $RULE_PATH/cisco-correlated.rules
   - $RULE_PATH/citrix-correlated.rules

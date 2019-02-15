@@ -54,7 +54,7 @@
 #include "processors/track-clients.h"
 
 struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Flexbit *xbit_ipc;
+struct _Sagan_IPC_Flexbit *flexbit_ipc;
 
 struct _SaganConfig *config;
 
@@ -273,40 +273,40 @@ bool Clean_IPC_Object( int type )
             new_count = 0;
             old_count = 0;
 
-            File_Lock(config->shm_xbit);
+            File_Lock(config->shm_flexbit);
             pthread_mutex_lock(&Xbit_Mutex);
 
-            struct _Sagan_IPC_Flexbit *temp_xbit_ipc;
-            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits);
+            struct _Sagan_IPC_Flexbit *temp_flexbit_ipc;
+            temp_flexbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits);
 
-            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits));
+            memset(temp_flexbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits));
 
             old_count = counters_ipc->flexbit_count;
 
             for (i = 0; i < counters_ipc->flexbit_count; i++)
                 {
-                    if ( (utime - xbit_ipc[i].flexbit_expire) < xbit_ipc[i].expire )
+                    if ( (utime - flexbit_ipc[i].flexbit_expire) < flexbit_ipc[i].expire )
                         {
 
                             if ( debug->debugipc )
                                 {
                                     Sagan_Log(DEBUG, "[%s, %d line] Flowbot_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__,
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_src)[0]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_src)[1]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_src)[2]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_src)[3]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[0]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[1]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[2]),
-                                              htonl(((unsigned int *)&xbit_ipc[i].ip_dst)[3]));
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[0]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[1]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[2]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[3]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_dst)[0]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_dst)[1]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_dst)[2]),
+                                              htonl(((unsigned int *)&flexbit_ipc[i].ip_dst)[3]));
                                 }
 
-                            temp_xbit_ipc[new_count].flexbit_state = xbit_ipc[i].flexbit_state;
-                            memcpy(temp_xbit_ipc[new_count].ip_src, xbit_ipc[i].ip_src, sizeof(xbit_ipc[i].ip_src));
-                            memcpy(temp_xbit_ipc[new_count].ip_dst, xbit_ipc[i].ip_dst, sizeof(xbit_ipc[i].ip_dst));
-                            temp_xbit_ipc[new_count].flexbit_expire = xbit_ipc[i].flexbit_expire;
-                            temp_xbit_ipc[new_count].expire = xbit_ipc[i].expire;
-                            strlcpy(temp_xbit_ipc[new_count].flexbit_name, xbit_ipc[i].flexbit_name, sizeof(temp_xbit_ipc[new_count].flexbit_name));
+                            temp_flexbit_ipc[new_count].flexbit_state = flexbit_ipc[i].flexbit_state;
+                            memcpy(temp_flexbit_ipc[new_count].ip_src, flexbit_ipc[i].ip_src, sizeof(flexbit_ipc[i].ip_src));
+                            memcpy(temp_flexbit_ipc[new_count].ip_dst, flexbit_ipc[i].ip_dst, sizeof(flexbit_ipc[i].ip_dst));
+                            temp_flexbit_ipc[new_count].flexbit_expire = flexbit_ipc[i].flexbit_expire;
+                            temp_flexbit_ipc[new_count].expire = flexbit_ipc[i].expire;
+                            strlcpy(temp_flexbit_ipc[new_count].flexbit_name, flexbit_ipc[i].flexbit_name, sizeof(temp_flexbit_ipc[new_count].flexbit_name));
 
                             new_count++;
                         }
@@ -316,12 +316,12 @@ bool Clean_IPC_Object( int type )
                 {
                     for ( i = 0; i < new_count; i++ )
                         {
-                            xbit_ipc[i].flexbit_state = temp_xbit_ipc[i].flexbit_state;
-                            memcpy(temp_xbit_ipc[i].ip_src, temp_xbit_ipc[i].ip_src, sizeof(temp_xbit_ipc[i].ip_src));
-                            memcpy(temp_xbit_ipc[i].ip_dst, temp_xbit_ipc[i].ip_dst, sizeof(temp_xbit_ipc[i].ip_dst));
-                            xbit_ipc[i].flexbit_expire = temp_xbit_ipc[i].flexbit_expire;
-                            xbit_ipc[i].expire = temp_xbit_ipc[i].expire;
-                            strlcpy(xbit_ipc[i].flexbit_name, temp_xbit_ipc[i].flexbit_name, sizeof(xbit_ipc[i].flexbit_name));
+                            flexbit_ipc[i].flexbit_state = temp_flexbit_ipc[i].flexbit_state;
+                            memcpy(temp_flexbit_ipc[i].ip_src, temp_flexbit_ipc[i].ip_src, sizeof(temp_flexbit_ipc[i].ip_src));
+                            memcpy(temp_flexbit_ipc[i].ip_dst, temp_flexbit_ipc[i].ip_dst, sizeof(temp_flexbit_ipc[i].ip_dst));
+                            flexbit_ipc[i].flexbit_expire = temp_flexbit_ipc[i].flexbit_expire;
+                            flexbit_ipc[i].expire = temp_flexbit_ipc[i].expire;
+                            strlcpy(flexbit_ipc[i].flexbit_name, temp_flexbit_ipc[i].flexbit_name, sizeof(flexbit_ipc[i].flexbit_name));
                         }
 
                     counters_ipc->flexbit_count = new_count;
@@ -331,17 +331,17 @@ bool Clean_IPC_Object( int type )
                 {
 
                     Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flexbit.  Nothing to remove!", __FILE__, __LINE__);
-                    free(temp_xbit_ipc);
+                    free(temp_flexbit_ipc);
                     pthread_mutex_unlock(&Xbit_Mutex);
-                    File_Unlock(config->shm_xbit);
+                    File_Unlock(config->shm_flexbit);
                     return(1);
                 }
 
             Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flexbit.", __FILE__, __LINE__, new_count, old_count);
-            free(temp_xbit_ipc);
+            free(temp_flexbit_ipc);
 
             pthread_mutex_unlock(&Xbit_Mutex);
-            File_Unlock(config->shm_xbit);
+            File_Unlock(config->shm_flexbit);
             return(0);
 
         }
@@ -428,32 +428,32 @@ void IPC_Init(void)
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
 
-            IPC_Check_Object(tmp_object_check, new_counters, "xbit");
+            IPC_Check_Object(tmp_object_check, new_counters, "flexbit");
 
-            if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+            if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
                 {
                     Sagan_Log(NORMAL, "+ Xbit shared object (new).");
                     new_object=1;
                 }
 
-            else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+            else if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for flexbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
-            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
+            if ( ftruncate(config->shm_flexbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate flexbit. [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
-            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
+            if (( flexbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flexbit, 0)) == MAP_FAILED )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for flexbit object! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
 
             if ( new_object == 0)
                 {
-                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_flexbits);
+                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d flexbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_flexbits);
                 }
 
             new_object = 0;

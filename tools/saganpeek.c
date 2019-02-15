@@ -21,7 +21,7 @@
 /* sagan-peek.c
  *
  * This small utility "peeks" into Sagan memory to display thresholds,
- * afters, xbits, etc.  The term "peek" goes back to old BASIC "peek"
+ * afters, xbits, flexbits, etc.  The term "peek" goes back to old BASIC "peek"
  * in memory.
  *
  */
@@ -46,7 +46,7 @@
 
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
-#include "../src/xbit-mmap.h"
+#include "../src/flexbit-mmap.h"
 #include "../src/util-time.h"
 
 #include "../src/processors/track-clients.h"
@@ -54,7 +54,7 @@
 #define ALL_TYPES 0
 #define THRESHOLD_TYPE 1
 #define AFTER_TYPE 2
-#define XBIT_TYPE 3
+#define FLEXBIT_TYPE 3
 #define TRACK_TYPE 4
 
 /****************************************************************************
@@ -65,7 +65,7 @@ void Usage( void )
 {
 
     fprintf(stderr, "\n--[ saganpeek help ]---------------------------------------------------------\n\n");
-    fprintf(stderr, "-t, --type\tthreshold, after, xbit, track, all (default: all)\n");
+    fprintf(stderr, "-t, --type\tthreshold, after, flexbit, track, all (default: all)\n");
     fprintf(stderr, "-h, --help\tThis screen.\n");
     fprintf(stderr, "-i, --ipc\tIPC source directory. (default: %s)\n", IPC_DIRECTORY);
     fprintf(stderr, "-a, --all\tShow active/inactive data (default shows only active)\n\n");
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
     int option_index = 0;
 
     struct _Sagan_IPC_Counters *counters_ipc;
-    struct _Sagan_IPC_Xbit *xbit_ipc;
+    struct _Sagan_IPC_Flexbit *flexbit_ipc;
     struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
     struct _After2_IPC *After2_IPC;
     struct _Threshold2_IPC *Threshold2_IPC;
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
 
     uint64_t thresh_oldtime;
     uint64_t after_oldtime;
-    uint64_t xbit_oldtime;
+    uint64_t flexbit_oldtime;
 
     /* For convert to IP string */
 
@@ -220,9 +220,9 @@ int main(int argc, char **argv)
                             typeflag = true;
                         }
 
-                    else if (!strcmp(optarg, "xbit"))
+                    else if (!strcmp(optarg, "flexbit"))
                         {
-                            type = XBIT_TYPE;
+                            type = FLEXBIT_TYPE;
                             typeflag = true;
                         }
 
@@ -535,7 +535,7 @@ int main(int argc, char **argv)
 
     /*** Get "xbit" data ***/
 
-    if ( type == ALL_TYPES || type == XBIT_TYPE )
+    if ( type == ALL_TYPES || type == FLEXBIT_TYPE )
         {
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, XBIT_IPC_FILE);
@@ -553,7 +553,7 @@ int main(int argc, char **argv)
                     exit(1);
                 }
 
-            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) + (sizeof(_Sagan_IPC_Xbit) * counters_ipc->xbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+            if (( flexbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) + (sizeof(_Sagan_IPC_Flexbit) * counters_ipc->flexbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
                 {
                     fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
                     exit(1);
@@ -562,37 +562,37 @@ int main(int argc, char **argv)
             close(shm);
 
 
-            if ( counters_ipc->xbit_count >= 1 )
+            if ( counters_ipc->flexbit_count >= 1 )
                 {
 
-                    for (i= 0; i < counters_ipc->xbit_count; i++ )
+                    for (i= 0; i < counters_ipc->flexbit_count; i++ )
                         {
 
-                            if ( xbit_ipc[i].xbit_state == 1 || all_flag == true )
+                            if ( flexbit_ipc[i].flexbit_state == 1 || all_flag == true )
                                 {
 
-                                    u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
-                                    xbit_oldtime = xbit_ipc[i].xbit_expire - current_time;
+                                    u32_Time_To_Human(flexbit_ipc[i].flexbit_expire, time_buf, sizeof(time_buf));
+                                    flexbit_oldtime = flexbit_ipc[i].flexbit_expire - current_time;
 
-                                    printf("Type: xbit [%d].\n", i);
+                                    printf("Type: flexbit [%d].\n", i);
                                     printf("Selector: ");
 
-                                    if ( xbit_ipc[i].selector[0] == 0 )
+                                    if ( flexbit_ipc[i].selector[0] == 0 )
                                         {
                                             printf("[None]\n");
                                         }
                                     else
                                         {
-                                            printf("%s\n", xbit_ipc[i].selector);
+                                            printf("%s\n", flexbit_ipc[i].selector);
                                         }
 
-                                    printf("Xbit name: \"%s\"\n", xbit_ipc[i].xbit_name);
-                                    printf("State: %s\n", xbit_ipc[i].xbit_state == 1 ? "ACTIVE" : "INACTIVE");
-                                    printf("IP: %s:%d -> %s:%d\n", xbit_ipc[i].ip_src, xbit_ipc[i].src_port, xbit_ipc[i].ip_dst, xbit_ipc[i].dst_port);
-                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
-                                    printf("Expire Time: %s (%d seconds)\n", time_buf, xbit_ipc[i].expire);
-                                    printf("Time until expire: %" PRIu64 " seconds.\n", xbit_oldtime);
-                                    printf("Syslog message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+                                    printf("Xbit name: \"%s\"\n", flexbit_ipc[i].flexbit_name);
+                                    printf("State: %s\n", flexbit_ipc[i].flexbit_state == 1 ? "ACTIVE" : "INACTIVE");
+                                    printf("IP: %s:%d -> %s:%d\n", flexbit_ipc[i].ip_src, flexbit_ipc[i].src_port, flexbit_ipc[i].ip_dst, flexbit_ipc[i].dst_port);
+                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", flexbit_ipc[i].signature_msg, flexbit_ipc[i].sid);
+                                    printf("Expire Time: %s (%d seconds)\n", time_buf, flexbit_ipc[i].expire);
+                                    printf("Time until expire: %" PRIu64 " seconds.\n", flexbit_oldtime);
+                                    printf("Syslog message: \"%s\"\n\n", flexbit_ipc[i].syslog_message );
 
                                 }
 

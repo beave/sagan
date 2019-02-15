@@ -157,15 +157,15 @@ struct _Rule_Struct
     bool flexbit_nounified2;                      /* Do we want to suppress "unified2" from flexbits in unified2 output */
     bool flexbit_noeve;				/* Do we want to suppress "eve" from flexbits */
 
-    unsigned char flexbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
+    unsigned char flexbit_type[MAX_FLEXBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
 						   6 == set_dstport, 7 == set_ports, 8 == count */
 
-    unsigned char flexbit_direction[MAX_XBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
-    int flexbit_timeout[MAX_XBITS];                /* How long a flexbit is to stay alive (seconds) */
-    char flexbit_name[MAX_XBITS][64];              /* Name of the flexbit */
+    unsigned char flexbit_direction[MAX_FLEXBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
+    int flexbit_timeout[MAX_FLEXBITS];                /* How long a flexbit is to stay alive (seconds) */
+    char flexbit_name[MAX_FLEXBITS][64];              /* Name of the flexbit */
 
-    unsigned char flexbit_count_gt_lt[MAX_XBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
-    int flexbit_count_counter[MAX_XBITS];        /* The amount the user is looking for */
+    unsigned char flexbit_count_gt_lt[MAX_FLEXBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
+    int flexbit_count_counter[MAX_FLEXBITS];        /* The amount the user is looking for */
     bool flexbit_count_flag;
 
     int ref_count;

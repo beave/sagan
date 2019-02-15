@@ -218,11 +218,11 @@ void Sig_Handler( void )
                             Sagan_Log(WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
-                    File_Unlock(config->shm_xbit);
+                    File_Unlock(config->shm_flexbit);
 
-                    if ( close(config->shm_xbit) != 0 )
+                    if ( close(config->shm_flexbit) != 0 )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC xbit! [%s]", __FILE__, __LINE__, strerror(errno));
+                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC flexbit! [%s]", __FILE__, __LINE__, strerror(errno));
                         }
 
                     File_Unlock(config->shm_thresh2);

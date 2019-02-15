@@ -112,7 +112,7 @@ typedef void json_object;
 #define MAX_META_ITEM_SIZE	512		/* Max string size per meta_content type */
 
 
-#define MAX_XBITS		20		/* Max 'xbits' within a rule */
+#define MAX_FLEXBITS		20		/* Max 'flexbits' within a rule */
 
 #define MAX_CHECK_FLOWS		100		/* Max amount of IP addresses to be checked in a flow */
 
@@ -193,7 +193,7 @@ typedef void json_object;
 #define IPC_DIRECTORY			"/dev/shm"
 
 #define COUNTERS_IPC_FILE 		"sagan-counters.shared"
-#define XBIT_IPC_FILE 	     	        "sagan-xbits.shared"
+#define XBIT_IPC_FILE 	     	        "sagan-flexbits.shared"
 #define THRESH_BY_SRC_IPC_FILE 		"sagan-thresh-by-source.shared"
 #define THRESH_BY_DST_IPC_FILE 		"sagan-thresh-by-destination.shared"
 #define THRESH_BY_DSTPORT_IPC_FILE 	"sagan-thresh-by-destination-port.shared"
