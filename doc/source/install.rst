@@ -172,7 +172,7 @@ Basic Maxmind GeoIP2 Country Code updates::
 hiredis (Redis)
 ---------------
 
-Sagan has the ability to store ``xbit`` data in an `Redis <https://redis.oi>`_ database.  This allows data
+Sagan has the ability to store ``flexbit`` data in an `Redis <https://redis.oi>`_ database.  This allows data
 to be shared over a distributed enviornment.  **This feature is considered beta**.  To use this functionality
 you will need to install the ``hiredis`` library.
 
@@ -331,7 +331,7 @@ Common configure options
 
 .. option:: --enable-redis
 
-   Sagan has the ability to store ``xbits`` in a Redis database.  This option enables this Redis feature.
+   Sagan has the ability to store ``flexbits`` in a Redis database.  This option enables this Redis feature.
    You need the ``libhiredis`` library installed (see ``libhiredis`` above).
 
 .. option:: --disable-lognorm

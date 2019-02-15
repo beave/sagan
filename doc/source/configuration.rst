@@ -273,7 +273,7 @@ The ``core`` is also the area where you can point Sagan to external data.  For e
 file assigns priorities numbers to different classifications levels.  The ``references`` is a pointer 
 to addresses that Sagan can point users to find more information about an alert. 
 
-The ``xbit-storage`` tells Sagan "how" to store xbit information.  In most cases, you'll want to leave this
+The ``flexbit-storage`` tells Sagan "how" to store flexbit information.  In most cases, you'll want to leave this
 default (mmap).  
 
 The ``input-type`` tells what format Sagan will receive data via the named PIPE (FIFO).  Traditionally, 
@@ -298,7 +298,7 @@ Example ``core`` subsection::
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    xbit-storage: mmap          # xbit storage engine. ("mmap" or "redis")
+    flexbit-storage: mmap          # flexbit storage engine. ("mmap" or "redis")
 
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy
@@ -341,8 +341,8 @@ sensor-name
 ~~~~~~~~~~~~
 
 The ``sensor-name`` is a unique human readable name of the Sagan instances.  This is used
-to identify data sources.  For example,  Sagan can write ``xbits`` to a shared database.  The
-``sensor-name`` can help identify which Sagan instance wrote which ``xbit``.
+to identify data sources.  For example,  Sagan can write ``flexbits`` to a shared database.  The
+``sensor-name`` can help identify which Sagan instance wrote which ``flexbit``.
 
 default-host
 ~~~~~~~~~~~~
@@ -438,11 +438,11 @@ rule keyword.
 
 https://github.com/beave/sagan-rules/blob/master/protocol.map
 
-xbit-storage
-~~~~~~~~~~~~
+flexbit-storage
+~~~~~~~~~~~~~~~
 
-The ``xbit-storage`` tells Sagan how to store ``xbit`` data.  The default is ``mmap`` (memory 
-mapped files).  Sagan can also store xbit data in a `Redis <https://redis.io>`_ database.  To use
+The ``flexbit-storage`` tells Sagan how to store ``flexbit`` data.  The default is ``mmap`` (memory 
+mapped files).  Sagan can also store flexbit data in a `Redis <https://redis.io>`_ database.  To use
 the Redis value,  Sagan will need to be compiled with ``hiredis`` support.
 **Redis is currently consider experimental**
 
@@ -558,8 +558,8 @@ Example ``selector`` subsection::
 redis-server (experimental)
 ---------------------------
 
-The ``redis-server`` is a beta feature that allows Sagan to store ``xbits`` in a Redis database
-rather than a ``mmap()`` file.  This can be useful in sharing ``xbits`` across multiple platforms
+The ``redis-server`` is a beta feature that allows Sagan to store ``flexbits`` in a Redis database
+rather than a ``mmap()`` file.  This can be useful in sharing ``flexbits`` across multiple platforms
 within a network.  The ``server`` is the network address of your Redis server.  The ``port`` is 
 the network port address of the Redis server.  The ``password`` is the Redis servers password.
 The ``writer_threads`` is how many Redis write threads Sagan should spawn to deal with Redis write operations. 
@@ -568,7 +568,7 @@ Example ``redis-server`` subsection::
 
 
      # Redis configuration.  Redis can be used to act as a global storage engine for
-     # xbits.  This allows Sagan to "share" xbit data across a network infrastructure. 
+     # flexbits.  This allows Sagan to "share" flexbit data across a network infrastructure. 
      # This is experimental! 
 
      redis-server:
@@ -587,21 +587,21 @@ The ``mmacp-ipc`` subsection tells Sagan how much data to store in ``mmap()`` fi
 to store it.  The ``ipc-directory`` is where Sagan should store ``mmap()`` file.  This set to
 ``/dev/shm`` by default.  On Linux systems ``/dev/shm`` is a ram drive.  Ic you want to store
 ``mmap()`` files in a more permanent location,  change the ``ipc-directory``.   Keep in mind, 
-this may effect ``mmap()`` performance.  The ``xbit``, ``after``, ``threshold`` and ``track-clients``
+this may effect ``mmap()`` performance.  The ``flexbit``, ``after``, ``threshold`` and ``track-clients``
 are the max items that can be stored in ``mmap()``.  This typically defaults to 10,000 via the
 ``$MMAP_DEFAULT`` variable.
 
 Example ``mmap-ipc`` subsection::
 
 
-     # Sagan creates "memory mapped" files to keep track of xbits, thresholds, 
-     # and afters.  This allows Sagan to "remember" threshold, xbits and after
+     # Sagan creates "memory mapped" files to keep track of flexbits, thresholds, 
+     # and afters.  This allows Sagan to "remember" threshold, flexbits and after
      # data between system restarts (including system reboots!). 
 
      # This also allows Sagan to share information with other Sagan processes.
      # For exampe, if one Sagan instance is monitoring "Linux" logs & another is
      # monitoring "Windows" logs, Sagan can communicate between the two Sagan 
-     # processes using these memory mapped files. A "xbit" that is "set" by the
+     # processes using these memory mapped files. A "flexbit" that is "set" by the
      # "Linux" process accessible and "known" to the Windows instance.
 
      # The storage is pre-allocated when the memory mapped files are created
@@ -613,7 +613,7 @@ Example ``mmap-ipc`` subsection::
      mmap-ipc:
 
        ipc-directory: /dev/shm
-       xbit: $MMAP_DEFAULT
+       flexbit: $MMAP_DEFAULT
        after: $MMAP_DEFAULT
        threshold: $MMAP_DEFAULT
        track-clients: $MMAP_DEFAULT
@@ -1191,9 +1191,9 @@ Example ``rule-files`` subsection::
      #- $RULE_PATH/windows-bluedot.rules
      #- $RULE_PATH/windows-owa-bluedot.rules
 
-     #############################################################################
-     # Correlated rules - Rules that use xbits to detect malicious behavor       #
-     #############################################################################
+     ###############################################################################
+     # Correlated rules - Rules that use xbits/flexbit to detect malicious behavor #
+     ###############################################################################
 
      - $RULE_PATH/cisco-correlated.rules
      - $RULE_PATH/citrix-correlated.rules

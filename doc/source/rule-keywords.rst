@@ -290,44 +290,44 @@ Searches only messages from a specified facility.  This can be multiple faciliti
 
 **facility: daemon;**
 
-xbit
-----
+flexbit
+--------
 
-.. option:: xbits: set, {xbit name}, {expire time}; 
+.. option:: flexbits: set, {flexbit name}, {expire time}; 
 
-This option is used in conjunction with xbits: unset, isset, isnotset. This allows Sagan to "track" through multiple log events to trigger an alert. For example, let say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the xbit set you can turn on a xbit when a system is being rebooted. Our xbit set would look like this:
+This option is used in conjunction with flexbits: unset, isset, isnotset. This allows Sagan to "track" through multiple log events to trigger an alert. For example, let say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the flexbit set you can turn on a flexbit when a system is being rebooted. Our flexbit set would look like this:
 
-**xbits: set, windows_reboot, 30;**
+**flexbits: set, windows_reboot, 30;**
 
-We are "setting" a xbit named "windows_reboot" for 30 seconds. This means that thw "windows_reboot" xbit will "expire" in 30 seconds. The xbit set automatically records the source and destination of the message that triggered the event. It is important to point out, the source and destination address is what Sagan has normalized through parse_src_ip, parse_dst_ip or liblognorm.
+We are "setting" a flexbit named "windows_reboot" for 30 seconds. This means that thw "windows_reboot" fleflexbit will "expire" in 30 seconds. The flexbit set automatically records the source and destination of the message that triggered the event. It is important to point out, the source and destination address is what Sagan has normalized through parse_src_ip, parse_dst_ip or liblognorm.
 
-**xbits: {unset|isset|isnotset},{by_src|by_dst|both|reverse|none},{xbit name}**
+**flexbits: {unset|isset|isnotset},{by_src|by_dst|both|reverse|none},{flexbit name}**
 
-This option works in conjunction with the xbit set option. In the xbit set example above, we are trying to detect when a systems "anti-virus" has been disabled and is not related to a system reboot. If Sagan detects a system reboot, it will set xbit "windows_reboot". Another rule can us the presence, or lack thereof, to trigger an event. For example:
+This option works in conjunction with the flexbit set option. In the flexbit set example above, we are trying to detect when a systems "anti-virus" has been disabled and is not related to a system reboot. If Sagan detects a system reboot, it will set flexbit "windows_reboot". Another rule can us the presence, or lack thereof, to trigger an event. For example:
 
-**xbits: isnotset, by_src, windows_reboot;**
+**flexbits: isnotset, by_src, windows_reboot;**
 
-This means, if the "windows_reboot" xbit is not set (ie - it did not see any systems rebooting), trigger an event. The by_src tells Sagan that the trigger ( isnotset) is to be tracked by the "source" IP address. by_src, by_dst, both and none are valid options.
+This means, if the "windows_reboot" flexbit is not set (ie - it did not see any systems rebooting), trigger an event. The by_src tells Sagan that the trigger ( isnotset) is to be tracked by the "source" IP address. by_src, by_dst, both and none are valid options.
 
 More examples:
 
-**xbits: isset, both, myxbit;**
+**flexbits: isset, both, myflexbit;**
 
-If the xbit "myxbit" isset, then trigger an event/alert. Track by the source of the log message.
+If the flexbit "myflexbit" isset, then trigger an event/alert. Track by the source of the log message.
 
-**xbits: isnotset, both, myxbit;**
+**flexbits: isnotset, both, myflexbit;**
 
-If the xbit "myxbit" isnotset, then trigger an event/alert. Track by both the source and desination of the message.
+If the flexbit "myflexbit" isnotset, then trigger an event/alert. Track by both the source and desination of the message.
 
-**xbits: unset, both, myxbit;**
+**flexbits: unset, both, myflexbit;**
 
-This unset removes an xbit from memory. In this example, unset is removing a xbit "myxbit" if the source and destination math (both).
+This unset removes an flexbit from memory. In this example, unset is removing a flexbit "myflexbit" if the source and destination math (both).
 
-Example of xbit use can be found in the rules https://wiki.quadrantsec.com/twiki/bin/view/Main/5001880 and https://wiki.quadrantsec.com/twiki/bin/view/Main/5001881 . The first rule (5001880) "sets" a xbit is a Microsoft Windows account is "created". The second rule (5001881) alerts an account is "enabled", but the xbit has not (isnotset) set. In this example, it's normal for a users account to be "created and then enabled". However, there might be an anomaly if an account goes from a "disabled" and then "enabled" state without being "created".
+Example of flexbit use can be found in the rules https://wiki.quadrantsec.com/twiki/bin/view/Main/5001880 and https://wiki.quadrantsec.com/twiki/bin/view/Main/5001881 . The first rule (5001880) "sets" a flexbit is a Microsoft Windows account is "created". The second rule (5001881) alerts an account is "enabled", but the flexbit has not (isnotset) set. In this example, it's normal for a users account to be "created and then enabled". However, there might be an anomaly if an account goes from a "disabled" and then "enabled" state without being "created".
 
-**xbits: noalert;**
+**flexbits: noalert;**
 
-This informs Sagan to preform a xbit operation, such as set or unset, but do not generate an alert. This is useful when used in conjunction with the set and unset xbit keywords.
+This informs Sagan to preform a flexbit operation, such as set or unset, but do not generate an alert. This is useful when used in conjunction with the set and unset flexbit keywords.
 
 fwsam
 -----
