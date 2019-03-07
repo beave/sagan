@@ -21,7 +21,7 @@
 
 /* xbit.c - Handles and routes requests for xbits via mmap() or redir */
 
-/* TODO - no really handling the "selector" properly 
+/* TODO - no really handling the "selector" properly
           redis
 */
 
@@ -127,7 +127,7 @@ bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, cha
     #endif
     */
 
-    Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, selector);
+    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, selector));
 
 }
 

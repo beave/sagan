@@ -39,6 +39,7 @@
 #include "xbit-mmap.h"
 #include "rules.h"
 #include "sagan-config.h"
+#include "util-time.h"
 
 
 struct _SaganCounters *counters;

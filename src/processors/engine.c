@@ -134,7 +134,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool flexbit_return = 0;
     bool flexbit_count_return = 0;
 
-    bool xbit_return = 0; 
+    bool xbit_return = 0;
     bool xbit_count_return = 0;
 
     bool alert_time_trigger = false;
@@ -1019,15 +1019,15 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             usleep( rulestruct[b].flexbit_upause_time );
                                         }
 
-				    /****************************************************************************
-				     * xbit - ISSET || ISNOTSET 
-				     ****************************************************************************/
+                                    /****************************************************************************
+                                     * xbit - ISSET || ISNOTSET
+                                     ****************************************************************************/
 
-				    if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_isset_count || rulestruct[b].xbit_isnotset_count ) )
-					{
+                                    if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_isset_count || rulestruct[b].xbit_isnotset_count ) )
+                                        {
 
-					xbit_return = Xbit_Condition(b, ip_src, ip_dst, pnormalize_selector);
-					}
+                                            xbit_return = Xbit_Condition(b, ip_src, ip_dst, pnormalize_selector);
+                                        }
 
 
                                     /****************************************************************************
@@ -1361,156 +1361,162 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                             flexbit_count_return == true )
                                                         {
 
-                                                            if ( rulestruct[b].alert_time_flag == false || alert_time_trigger == true )
+                                                            if ( rulestruct[b].xbit_flag == false || xbit_return == true || ( rulestruct[b].xbit_isset_count == 0 && rulestruct[b].xbit_isnotset_count == 0 ))
                                                                 {
 
+
+                                                                    if ( rulestruct[b].alert_time_flag == false || alert_time_trigger == true )
+                                                                        {
+
 #ifdef HAVE_LIBMAXMINDDB
 
-                                                                    if ( rulestruct[b].geoip2_flag == false || geoip2_isset == true )
-                                                                        {
-#endif
-                                                                            if ( rulestruct[b].blacklist_flag == false || blacklist_results == true )
+                                                                            if ( rulestruct[b].geoip2_flag == false || geoip2_isset == true )
                                                                                 {
-
-                                                                                    if ( rulestruct[b].brointel_flag == false || brointel_results == true )
+#endif
+                                                                                    if ( rulestruct[b].blacklist_flag == false || blacklist_results == true )
                                                                                         {
+
+                                                                                            if ( rulestruct[b].brointel_flag == false || brointel_results == true )
+                                                                                                {
 #ifdef WITH_BLUEDOT
 
 
-                                                                                            if ( config->bluedot_flag == false || rulestruct[b].bluedot_file_hash == false || ( rulestruct[b].bluedot_file_hash == true && bluedot_hash_flag == true ))
-                                                                                                {
-
-                                                                                                    if ( config->bluedot_flag == false || rulestruct[b].bluedot_filename == false || ( rulestruct[b].bluedot_filename == true && bluedot_filename_flag == true ))
+                                                                                                    if ( config->bluedot_flag == false || rulestruct[b].bluedot_file_hash == false || ( rulestruct[b].bluedot_file_hash == true && bluedot_hash_flag == true ))
                                                                                                         {
 
-                                                                                                            if ( config->bluedot_flag == false || rulestruct[b].bluedot_url == false || ( rulestruct[b].bluedot_url == true && bluedot_url_flag == true ))
+                                                                                                            if ( config->bluedot_flag == false || rulestruct[b].bluedot_filename == false || ( rulestruct[b].bluedot_filename == true && bluedot_filename_flag == true ))
                                                                                                                 {
 
-                                                                                                                    if ( config->bluedot_flag == false || rulestruct[b].bluedot_ipaddr_type == false || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == true ))
+                                                                                                                    if ( config->bluedot_flag == false || rulestruct[b].bluedot_url == false || ( rulestruct[b].bluedot_url == true && bluedot_url_flag == true ))
                                                                                                                         {
 
+                                                                                                                            if ( config->bluedot_flag == false || rulestruct[b].bluedot_ipaddr_type == false || ( rulestruct[b].bluedot_ipaddr_type != 0 && bluedot_ip_flag == true ))
+                                                                                                                                {
+
 
 
 #endif
-                                                                                                                            /* After */
+                                                                                                                                    /* After */
 
-                                                                                                                            after_log_flag = false;
+                                                                                                                                    after_log_flag = false;
 
-                                                                                                                            if ( rulestruct[b].after2 == true )
-                                                                                                                                {
-                                                                                                                                    after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                }
-
-                                                                                                                            /* Threshold */
-
-                                                                                                                            thresh_log_flag = false;
-
-                                                                                                                            if ( rulestruct[b].threshold2_type != 0 && after_log_flag == false )
-                                                                                                                                {
-                                                                                                                                    thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
-                                                                                                                                }
-
-
-                                                                                                                            if ( config->rule_tracking_flag == true )
-                                                                                                                                {
-                                                                                                                                    Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
-                                                                                                                                }
-
-
-                                                                                                                            __atomic_add_fetch(&counters->saganfound, 1, __ATOMIC_SEQ_CST);
-
-                                                                                                                            /* Check for thesholding & "after" */
-
-                                                                                                                            if ( thresh_log_flag == false && after_log_flag == false )
-                                                                                                                                {
-
-                                                                                                                                    if ( debug->debugengine )
+                                                                                                                                    if ( rulestruct[b].after2 == true )
                                                                                                                                         {
-
-                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
-                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
-                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flexbit Flag: %d | Flexbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flexbit_flag, flexbit_return);
-                                                                                                                                            Sagan_Log(DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
-
+                                                                                                                                            after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                         }
 
-			  /* Do we need to "set" an xbit? */
+                                                                                                                                    /* Threshold */
 
-			  if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_set_count || rulestruct[b].xbit_unset_count ) ) 
-			     {
-				Xbit_Set(b, ip_src, ip_dst, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message); 
-			     }
+                                                                                                                                    thresh_log_flag = false;
 
-			  /* Check to "set" a flexbit */
-                                                                                                                                    if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
+                                                                                                                                    if ( rulestruct[b].threshold2_type != 0 && after_log_flag == false )
                                                                                                                                         {
-                                                                                                                                            Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
-                                                                                                                                        }
-
-                                                                                                                                    threadid++;
-
-                                                                                                                                    if ( threadid >= MAX_THREADS )
-                                                                                                                                        {
-                                                                                                                                            threadid=0;
+                                                                                                                                            thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                         }
 
 
-                                                                                                                                    processor_info_engine->processor_name          =       s_msg;
-                                                                                                                                    processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
-                                                                                                                                    processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
-                                                                                                                                    processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
-                                                                                                                                    processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
-                                                                                                                                    processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
-                                                                                                                                    processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
-                                                                                                                                    processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+                                                                                                                                    if ( config->rule_tracking_flag == true )
+                                                                                                                                        {
+                                                                                                                                            Ruleset_Track[rulestruct[b].ruleset_id].trigger = true;
+                                                                                                                                        }
 
-                                                                                                                                    if ( rulestruct[b].flexbit_flag == false || rulestruct[b].flexbit_noalert == 0 )
+
+                                                                                                                                    __atomic_add_fetch(&counters->saganfound, 1, __ATOMIC_SEQ_CST);
+
+                                                                                                                                    /* Check for thesholding & "after" */
+
+                                                                                                                                    if ( thresh_log_flag == false && after_log_flag == false )
                                                                                                                                         {
 
-                                                                                                                                            if ( rulestruct[b].type == NORMAL_RULE )
+                                                                                                                                            if ( debug->debugengine )
                                                                                                                                                 {
 
-                                                                                                                                                    Send_Alert(SaganProcSyslog_LOCAL,
-                                                                                                                                                               liblognorm_status == 1 && rulestruct[b].normalize == 1 ? json_normalize : NULL,
-                                                                                                                                                               processor_info_engine,
-                                                                                                                                                               ip_src,
-                                                                                                                                                               ip_dst,
-                                                                                                                                                               normalize_http_uri,
-                                                                                                                                                               normalize_http_hostname,
-                                                                                                                                                               proto,
-                                                                                                                                                               rulestruct[b].s_sid,
-                                                                                                                                                               ip_srcport_u32,
-                                                                                                                                                               ip_dstport_u32,
-                                                                                                                                                               b, tp, bluedot_json );
-
-
-                                                                                                                                                }
-                                                                                                                                            else
-                                                                                                                                                {
-
-                                                                                                                                                    Sagan_Dynamic_Rules(SaganProcSyslog_LOCAL, b, processor_info_engine,
-                                                                                                                                                                        ip_src, ip_dst);
+                                                                                                                                                    Sagan_Log(DEBUG, "[%s, line %d] **[Trigger]*********************************", __FILE__, __LINE__);
+                                                                                                                                                    Sagan_Log(DEBUG, "[%s, line %d] Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag);
+                                                                                                                                                    Sagan_Log(DEBUG, "[%s, line %d] Threshold flag: %d | After flag: %d | Flexbit Flag: %d | Flexbit status: %d", __FILE__, __LINE__, thresh_log_flag, after_log_flag, rulestruct[b].flexbit_flag, flexbit_return);
+                                                                                                                                                    Sagan_Log(DEBUG, "[%s, line %d] Triggering Message: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
 
                                                                                                                                                 }
 
-                                                                                                                                        }
+                                                                                                                                            /* Do we need to "set" an xbit? */
+
+                                                                                                                                            if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_set_count || rulestruct[b].xbit_unset_count ) )
+                                                                                                                                                {
+                                                                                                                                                    Xbit_Set(b, ip_src, ip_dst, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                                                }
+
+                                                                                                                                            /* Check to "set" a flexbit */
+                                                                                                                                            if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
+                                                                                                                                                {
+                                                                                                                                                    Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
+                                                                                                                                                }
+
+                                                                                                                                            threadid++;
+
+                                                                                                                                            if ( threadid >= MAX_THREADS )
+                                                                                                                                                {
+                                                                                                                                                    threadid=0;
+                                                                                                                                                }
 
 
-                                                                                                                                } /* Threshold / After */
+                                                                                                                                            processor_info_engine->processor_name          =       s_msg;
+                                                                                                                                            processor_info_engine->processor_generator_id  =       SAGAN_PROCESSOR_GENERATOR_ID;
+                                                                                                                                            processor_info_engine->processor_facility      =       SaganProcSyslog_LOCAL->syslog_facility;
+                                                                                                                                            processor_info_engine->processor_priority      =       SaganProcSyslog_LOCAL->syslog_level;
+                                                                                                                                            processor_info_engine->processor_pri           =       rulestruct[b].s_pri;
+                                                                                                                                            processor_info_engine->processor_class         =       rulestruct[b].s_classtype;
+                                                                                                                                            processor_info_engine->processor_tag           =       SaganProcSyslog_LOCAL->syslog_tag;
+                                                                                                                                            processor_info_engine->processor_rev           =       rulestruct[b].s_rev;
+
+                                                                                                                                            if ( rulestruct[b].flexbit_flag == false || rulestruct[b].flexbit_noalert == 0 )
+                                                                                                                                                {
+
+                                                                                                                                                    if ( rulestruct[b].type == NORMAL_RULE )
+                                                                                                                                                        {
+
+                                                                                                                                                            Send_Alert(SaganProcSyslog_LOCAL,
+                                                                                                                                                                       liblognorm_status == 1 && rulestruct[b].normalize == 1 ? json_normalize : NULL,
+                                                                                                                                                                       processor_info_engine,
+                                                                                                                                                                       ip_src,
+                                                                                                                                                                       ip_dst,
+                                                                                                                                                                       normalize_http_uri,
+                                                                                                                                                                       normalize_http_hostname,
+                                                                                                                                                                       proto,
+                                                                                                                                                                       rulestruct[b].s_sid,
+                                                                                                                                                                       ip_srcport_u32,
+                                                                                                                                                                       ip_dstport_u32,
+                                                                                                                                                                       b, tp, bluedot_json );
+
+
+                                                                                                                                                        }
+                                                                                                                                                    else
+                                                                                                                                                        {
+
+                                                                                                                                                            Sagan_Dynamic_Rules(SaganProcSyslog_LOCAL, b, processor_info_engine,
+                                                                                                                                                                                ip_src, ip_dst);
+
+                                                                                                                                                        }
+
+                                                                                                                                                }
+
+
+                                                                                                                                        } /* Threshold / After */
 #ifdef WITH_BLUEDOT
-                                                                                                                        } /* Bluedot */
+                                                                                                                                } /* Bluedot */
+                                                                                                                        }
                                                                                                                 }
                                                                                                         }
-                                                                                                }
 #endif
 
-                                                                                        } /* Bro Intel */
+                                                                                                } /* Bro/Zeek Intel */
 
-                                                                                } /* Blacklist */
+                                                                                        } /* Blacklist */
 #ifdef HAVE_LIBMAXMINDDB
-                                                                        } /* GeoIP2 */
+                                                                                } /* GeoIP2 */
 #endif
-                                                                } /* Time based alerts */
+                                                                        } /* Time based alerts */
+
+                                                                } /* xbit */
 
                                                         } /* Flexbit count */
 
@@ -1526,6 +1532,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     sagan_match=0;	      /* Reset pcre/meta_content/content match! */
                     rc=0;		      /* Return code */
                     flexbit_return=0;	      /* Flexbit reset */
+		    xbit_return=0;            /* xbit reset */
                     check_flow_return = true;      /* Rule flow direction reset */
 
                 } /* If normal or dynamic rule */
