@@ -93,6 +93,27 @@ void CreateIsoTimeString (const struct timeval *ts, char *str, size_t size)
 
 
 /************************************************
+ * Returns current epoch time in uint64_t format
+ ************************************************/
+
+uint64_t Return_Epoch( void )
+{
+
+    time_t t;
+    struct tm *now;
+    char timet[20] = { 0 };
+
+
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
+
+    return(atol(timet));
+
+}
+
+
+/************************************************
  * This function should be removed and replaced
  ************************************************/
 

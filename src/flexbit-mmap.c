@@ -409,7 +409,7 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
 
                                                                 }
 
-                                                           flexbit_match = true;
+                                                            flexbit_match = true;
                                                         }
                                                 }
                                         }
@@ -1488,7 +1488,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
             for (i = 0; i < flexbit_track_count; i++)
                 {
 
-                    if ( Clean_IPC_Object(XBIT) == 0 )
+                    if ( Clean_IPC_Object(FLEXBIT) == 0 )
                         {
 
                             File_Lock(config->shm_flexbit);

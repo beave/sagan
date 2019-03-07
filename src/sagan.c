@@ -428,6 +428,13 @@ int main(int argc, char **argv)
                             debugflag = true;
                         }
 
+                    if (Sagan_strstr(optarg, "xbit"))
+                        {
+                            debug->debugxbit = true;
+                            debugflag = true;
+                        }
+
+
                     if (Sagan_strstr(optarg, "engine"))
                         {
                             debug->debugengine = true;

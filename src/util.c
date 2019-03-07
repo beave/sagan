@@ -1372,7 +1372,6 @@ bool Is_IP_Range (char *str)
 {
 
     char *tmp = NULL;
-    //char *ip = NULL;
     int prefix;
     unsigned int ipint = 0;
     unsigned char ipbits[MAXIP] = {0};

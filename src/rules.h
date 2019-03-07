@@ -146,6 +146,8 @@ struct _Rule_Struct
     unsigned char meta_content_count;
     unsigned char meta_content_converted_count;
 
+    /* Flexbit */
+
     int flexbit_count;				/* Number of flexbits in memory */
     int flexbit_upause_time;			/* Delay to let flexbits settle */
     unsigned char flexbit_condition_count;	/* Number of isset/isnot within a rule */
@@ -153,12 +155,12 @@ struct _Rule_Struct
     unsigned char flexbit_count_count;		/* Number of count within a rule */
 
     bool flexbit_flag;              	        /* Does the rule contain a flexbit? */
-    bool flexbit_noalert;                         /* Do we want to suppress "alerts" from flexbits in ALL output plugins? */
-    bool flexbit_nounified2;                      /* Do we want to suppress "unified2" from flexbits in unified2 output */
+    bool flexbit_noalert;                       /* Do we want to suppress "alerts" from flexbits in ALL output plugins? */
+    bool flexbit_nounified2;                    /* Do we want to suppress "unified2" from flexbits in unified2 output */
     bool flexbit_noeve;				/* Do we want to suppress "eve" from flexbits */
 
     unsigned char flexbit_type[MAX_FLEXBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
-						   6 == set_dstport, 7 == set_ports, 8 == count */
+						         6 == set_dstport, 7 == set_ports, 8 == count */
 
     unsigned char flexbit_direction[MAX_FLEXBITS];    /* 0 == none, 1 == both, 2 == by_src, 3 == by_dst */
     int flexbit_timeout[MAX_FLEXBITS];                /* How long a flexbit is to stay alive (seconds) */
@@ -167,6 +169,26 @@ struct _Rule_Struct
     unsigned char flexbit_count_gt_lt[MAX_FLEXBITS];  	/* 0 == Greater, 1 == Less than, 2 == Equals. */
     int flexbit_count_counter[MAX_FLEXBITS];        /* The amount the user is looking for */
     bool flexbit_count_flag;
+
+    /* Xbit */
+
+    int xbit_count;
+
+    bool xbit_flag;
+    bool xbit_noalert;
+    bool xbit_noeve;
+    unsigned char xbit_direction[MAX_XBITS];	      /* 1 == ip_src, 2 == ip_dst,  3 == ip_par */
+
+    unsigned char xbit_set_count;            /* Number of set within a rule */
+    unsigned char xbit_unset_count;
+    unsigned char xbit_isset_count;
+    unsigned char xbit_isnotset_count;
+    unsigned char xbit_condition_count;
+    unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
+                                                   6 == set_dstport, 7 == set_ports, 8 == count */
+    char xbit_name[MAX_XBITS][64];
+    uint32_t xbit_name_hash[MAX_XBITS];
+    int xbit_expire[MAX_XBITS];
 
     int ref_count;
     int ip_proto;                               /*protocol to match against events*/
@@ -180,7 +202,7 @@ struct _Rule_Struct
     bool s_find_proto_program;
 
     bool s_find_src_ip;
-    int   s_find_src_pos;
+    int  s_find_src_pos;
 
     bool s_find_dst_ip;
     int   s_find_dst_pos;

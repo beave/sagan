@@ -112,7 +112,8 @@ typedef void json_object;
 #define MAX_META_ITEM_SIZE	512		/* Max string size per meta_content type */
 
 
-#define MAX_FLEXBITS		20		/* Max 'flexbits' within a rule */
+#define MAX_FLEXBITS		10		/* Max 'flexbits' within a rule */
+#define MAX_XBITS               10              /* Max 'xbits' within a rule */
 
 #define MAX_CHECK_FLOWS		100		/* Max amount of IP addresses to be checked in a flow */
 
@@ -193,7 +194,8 @@ typedef void json_object;
 #define IPC_DIRECTORY			"/dev/shm"
 
 #define COUNTERS_IPC_FILE 		"sagan-counters.shared"
-#define XBIT_IPC_FILE 	     	        "sagan-flexbits.shared"
+#define FLEXBIT_IPC_FILE 	        "sagan-flexbits.shared"
+#define XBIT_IPC_FILE			"sagan-xbits.shared"
 #define THRESH_BY_SRC_IPC_FILE 		"sagan-thresh-by-source.shared"
 #define THRESH_BY_DST_IPC_FILE 		"sagan-thresh-by-destination.shared"
 #define THRESH_BY_DSTPORT_IPC_FILE 	"sagan-thresh-by-destination-port.shared"
@@ -209,11 +211,13 @@ typedef void json_object;
 #define DEFAULT_IPC_CLIENT_TRACK_IPC	1000
 #define DEFAULT_IPC_AFTER2_IPC		10000
 #define DEFAULT_IPC_THRESHOLD2_IPC      10000
+#define DEFAULT_IPC_FLEXBITS		1000
 #define DEFAULT_IPC_XBITS		10000
 
 #define	AFTER2				0
 #define THRESHOLD2			1
-#define XBIT				2
+#define FLEXBIT				2
+#define XBIT				3
 
 #define PARSE_HASH_MD5			1
 #define	PARSE_HASH_SHA1			2
@@ -222,6 +226,9 @@ typedef void json_object;
 
 #define NORMAL_RULE			0
 #define DYNAMIC_RULE			1
+
+#define FLEXBIT_STORAGE_MMAP		0
+#define FLEXBIT_STORAGE_REDIS		1
 
 #define XBIT_STORAGE_MMAP		0
 #define XBIT_STORAGE_REDIS		1

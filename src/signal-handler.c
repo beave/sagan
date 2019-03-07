@@ -87,6 +87,8 @@ struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 #endif
 
+#define MAX_DEATH_TIME 15
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
@@ -126,6 +128,7 @@ void Sig_Handler( void )
     sigset_t signal_set;
     int sig;
     bool orig_perfmon_value = 0;
+    unsigned char max_death_time = MAX_DEATH_TIME;
 
 #ifdef HAVE_LIBPCAP
     bool orig_plog_value = 0;
@@ -160,8 +163,25 @@ void Sig_Handler( void )
 
                     while( proc_running > 0 )
                         {
-                            Sagan_Log(WARN, "Waiting on %d working thread(s)....", proc_running);
+                            Sagan_Log(WARN, "Waiting on %d working thread(s)....[%d/%d]", proc_running, max_death_time, MAX_DEATH_TIME);
                             sleep(1);
+                            max_death_time++;
+
+                            if ( max_death_time >= MAX_DEATH_TIME )
+                                {
+                                    Sagan_Log(WARN, "Hard abort! :(");
+                                    break;
+                                }
+
+                        }
+
+                    /* Sagan will wait indefinitely for a hung thread to quit.  In the
+                       event it has been more that MAX_DEATH_TIME seconds,  we force
+                               an abort and let the user know */
+
+                    if ( max_death_time > MAX_DEATH_TIME )
+                        {
+                            Sagan_Log(WARN, "Not all threads stopped.  Forcing abort!");
                         }
 
                     Statistics();

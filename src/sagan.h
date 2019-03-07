@@ -179,6 +179,7 @@ struct _Sagan_IPC_Counters
 {
 
     int  flexbit_count;
+    int	 xbit_count;
 
     int  thresh2_count;
     int  after2_count;
@@ -342,6 +343,7 @@ struct _SaganDebug
     bool debugexternal;
     bool debugthreads;
     bool debugflexbit;
+    bool debugxbit;
     bool debugengine;
     bool debugbrointel;
     bool debugmalformed;

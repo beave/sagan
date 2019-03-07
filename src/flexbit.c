@@ -19,7 +19,7 @@
 */
 
 /*
- * xbit.c - Functions used for tracking events over multiple log
+ * flexbit.c - Functions used for tracking events over multiple log
  * lines.
  *
  */
@@ -54,7 +54,7 @@ bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, 
 
 #ifdef HAVE_LIBHIREDIS
 
-    if ( config->redis_flag && config->flexbit_storage == XBIT_STORAGE_REDIS )
+    if ( config->redis_flag && config->flexbit_storage == FLEXBIT_STORAGE_REDIS )
         {
 
             return(Flexbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector));
@@ -79,7 +79,7 @@ void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int sr
 
 #ifdef HAVE_LIBHIREDIS
 
-    if ( config->redis_flag && config->flexbit_storage == XBIT_STORAGE_REDIS )
+    if ( config->redis_flag && config->flexbit_storage == FLEXBIT_STORAGE_REDIS )
         {
 
             Flexbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, selector, SaganProcSyslog_LOCAL );

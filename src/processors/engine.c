@@ -134,6 +134,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool flexbit_return = 0;
     bool flexbit_count_return = 0;
 
+    bool xbit_return = 0; 
+    bool xbit_count_return = 0;
+
     bool alert_time_trigger = false;
     bool check_flow_return = true;  /* 1 = match, 0 = no match */
 
@@ -1009,12 +1012,22 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     /****************************************************************************
                                                      * flexbit "upause".  This lets flexbits settle in "tight" timing situations.
-                                                     ****************************************************************************/
+                                      ****************************************************************************/
 
                                     if ( rulestruct[b].flexbit_upause_time != 0 )
                                         {
                                             usleep( rulestruct[b].flexbit_upause_time );
                                         }
+
+				    /****************************************************************************
+				     * xbit - ISSET || ISNOTSET 
+				     ****************************************************************************/
+
+				    if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_isset_count || rulestruct[b].xbit_isnotset_count ) )
+					{
+
+					xbit_return = Xbit_Condition(b, ip_src, ip_dst, pnormalize_selector);
+					}
 
 
                                     /****************************************************************************
@@ -1421,6 +1434,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                         }
 
+			  /* Do we need to "set" an xbit? */
+
+			  if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_set_count || rulestruct[b].xbit_unset_count ) ) 
+			     {
+				Xbit_Set(b, ip_src, ip_dst, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message); 
+			     }
+
+			  /* Check to "set" a flexbit */
                                                                                                                                     if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
                                                                                                                                         {
                                                                                                                                             Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);

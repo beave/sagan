@@ -90,7 +90,10 @@ struct _SaganConfig
     char         sagan_startutime[20];                  /* Records utime at startup */
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
-    char	 flexbit_storage;			/* 0 == mmap, 1 == redis */
+
+    bool	 flexbit_storage;		/* 0 == mmap, 1 == redis */
+    bool 	 xbit_storage;			/* 0 == mmap, 1 == redis */
+
 
     char         sagan_droplistfile[MAXPATH];           /* Log lines to "ignore" */
     bool         sagan_droplist_flag;
@@ -157,6 +160,7 @@ struct _SaganConfig
 
     int		shm_counters;
     int		shm_flexbit;
+    int		shm_xbit;
     int 	shm_thresh_by_src;
     int		shm_thresh_by_dst;
     int		shm_thresh_by_dstport;
@@ -173,6 +177,7 @@ struct _SaganConfig
     char	ipc_directory[MAXPATH];
 
     int		max_flexbits;
+    int		max_xbits;
     int		max_threshold2;
     int		max_after2;
     int		max_track_clients;

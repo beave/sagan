@@ -204,6 +204,8 @@ void Load_YAML_Config( char *yaml_file )
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
             config->max_threshold2 = DEFAULT_IPC_THRESHOLD2_IPC;
             config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
+            config->max_flexbits = DEFAULT_IPC_FLEXBITS;
+            config->max_xbits = DEFAULT_IPC_XBITS;
 
             config->max_batch = DEFAULT_SYSLOG_BATCH;
 
@@ -878,13 +880,39 @@ void Load_YAML_Config( char *yaml_file )
                                             if (!strcmp(tmp, "redis"))
                                                 {
 
-                                                    config->flexbit_storage = XBIT_STORAGE_REDIS;
+                                                    config->flexbit_storage = FLEXBIT_STORAGE_REDIS;
 
                                                 }
                                             else
                                                 {
 
-                                                    config->flexbit_storage = XBIT_STORAGE_MMAP;
+                                                    config->flexbit_storage = FLEXBIT_STORAGE_MMAP;
+
+                                                }
+                                        }
+
+                                    else if (!strcmp(last_pass, "xbit-storage"))
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+
+                                            if (strcmp(tmp, "mmap") && strcmp(tmp, "redis"))
+                                                {
+
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|xbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
+
+                                                }
+
+                                            if (!strcmp(tmp, "redis"))
+                                                {
+
+                                                    config->xbit_storage = XBIT_STORAGE_REDIS;
+
+                                                }
+                                            else
+                                                {
+
+                                                    config->xbit_storage = XBIT_STORAGE_MMAP;
 
                                                 }
                                         }
@@ -900,6 +928,18 @@ void Load_YAML_Config( char *yaml_file )
                                             Var_To_Value(value, tmp, sizeof(tmp));
                                             strlcpy(config->ipc_directory, tmp, sizeof(config->ipc_directory));
 
+                                        }
+
+                                    else if (!strcmp(last_pass, "xbit"))
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->max_xbits = atoi(tmp);
+
+                                            if ( config->max_xbits == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|mmap-ipc - 'xbits' is set to zero.  Abort!", __FILE__, __LINE__);
+                                                }
                                         }
 
                                     else if (!strcmp(last_pass, "flexbit"))

@@ -32,6 +32,9 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        flexbit.c \
                                                        flexbit-mmap.c \
                                                        flexbit-redis.c \
+						       xbit.c \
+						       xbit-mmap.c \
+						       xbit-redis.c \
                                                        flow.c\
                                                        aetas.c \
                                                        ipc.c \

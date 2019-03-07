@@ -50,21 +50,23 @@
 #include "util-time.h"
 #include "ipc.h"
 #include "flexbit-mmap.h"
+#include "xbit-mmap.h"
 
 #include "processors/track-clients.h"
 
 struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Flexbit *flexbit_ipc;
 
 struct _SaganConfig *config;
 
 pthread_mutex_t After2_Mutex;
 pthread_mutex_t Thresh2_Mutex;
-pthread_mutex_t Xbit_Mutex;
+pthread_mutex_t Flexbit_Mutex;
 
 struct _After2_IPC *After2_IPC;
 struct _Threshold2_IPC *Threshold2_IPC;
 struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
+struct _Sagan_IPC_Flexbit *flexbit_ipc;
+struct _Sagan_IPC_Xbit *Xbit_IPC;
 
 struct _SaganDebug *debug;
 
@@ -252,7 +254,7 @@ bool Clean_IPC_Object( int type )
 
     /* Flexbit_IPC */
 
-    else if ( type == XBIT && config->max_flexbits < counters_ipc->flexbit_count && config->flexbit_storage == XBIT_STORAGE_MMAP )
+    else if ( type == FLEXBIT && config->max_flexbits < counters_ipc->flexbit_count && config->flexbit_storage == FLEXBIT_STORAGE_MMAP )
         {
 
             time_t t;
@@ -274,7 +276,7 @@ bool Clean_IPC_Object( int type )
             old_count = 0;
 
             File_Lock(config->shm_flexbit);
-            pthread_mutex_lock(&Xbit_Mutex);
+            pthread_mutex_lock(&Flexbit_Mutex);
 
             struct _Sagan_IPC_Flexbit *temp_flexbit_ipc;
             temp_flexbit_ipc = malloc(sizeof(struct _Sagan_IPC_Flexbit) * config->max_flexbits);
@@ -332,7 +334,7 @@ bool Clean_IPC_Object( int type )
 
                     Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Flexbit.  Nothing to remove!", __FILE__, __LINE__);
                     free(temp_flexbit_ipc);
-                    pthread_mutex_unlock(&Xbit_Mutex);
+                    pthread_mutex_unlock(&Flexbit_Mutex);
                     File_Unlock(config->shm_flexbit);
                     return(1);
                 }
@@ -340,7 +342,7 @@ bool Clean_IPC_Object( int type )
             Sagan_Log(NORMAL, "[%s, line %d] Kept %d elements out of %d for _Sagan_IPC_Flexbit.", __FILE__, __LINE__, new_count, old_count);
             free(temp_flexbit_ipc);
 
-            pthread_mutex_unlock(&Xbit_Mutex);
+            pthread_mutex_unlock(&Flexbit_Mutex);
             File_Unlock(config->shm_flexbit);
             return(0);
 
@@ -421,18 +423,64 @@ void IPC_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
-    /* Flexbit memory object - File based mmap() */
+    /* xbit memory object - File based mmap() */
 
-    if ( config->flexbit_storage == XBIT_STORAGE_MMAP )
+    if ( config->xbit_storage == XBIT_STORAGE_MMAP )
         {
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, XBIT_IPC_FILE);
+
+            IPC_Check_Object(tmp_object_check, new_counters, "xbit");
+
+            if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
+                {
+                    Sagan_Log(NORMAL, "+ Xbit shared object (new).");
+                    new_object=1;
+                }
+
+            else if ((config->shm_xbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
+                }
+
+            if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate xbit. [%s]", __FILE__, __LINE__, strerror(errno));
+                }
+
+            if (( Xbit_IPC = mmap(0, sizeof(_Sagan_IPC_Xbit) * config->max_xbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_xbit, 0)) == MAP_FAILED )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for xbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+                }
+
+            if ( new_object == 0)
+                {
+                    Sagan_Log(NORMAL, "- Xbit shared object reloaded (%d xbits loaded / max: %d).", counters_ipc->xbit_count, config->max_xbits);
+                }
+
+            new_object = 0;
+
+        }
+    else      /* if ( config->flexbit_storage == XBIT_STORAGE_MMAP ) */
+        {
+
+            Sagan_Log(NORMAL, "- Xbit shared object (Objects stored in Redis)");
+
+        }
+
+
+    /* Flexbit memory object - File based mmap() */
+
+    if ( config->flexbit_storage == FLEXBIT_STORAGE_MMAP )
+        {
+
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, FLEXBIT_IPC_FILE);
 
             IPC_Check_Object(tmp_object_check, new_counters, "flexbit");
 
             if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
                 {
-                    Sagan_Log(NORMAL, "+ Xbit shared object (new).");
+                    Sagan_Log(NORMAL, "+ Flexbit shared object (new).");
                     new_object=1;
                 }
 
@@ -459,10 +507,10 @@ void IPC_Init(void)
             new_object = 0;
 
         }
-    else      /* if ( config->flexbit_storage == XBIT_STORAGE_MMAP ) */
+    else      /* if ( config->flexbit_storage == FLEXBIT_STORAGE_MMAP ) */
         {
 
-            Sagan_Log(NORMAL, "- Xbit shared object (Objects stored in Redis)");
+            Sagan_Log(NORMAL, "- Flexbit shared object (Objects stored in Redis)");
 
         }
 

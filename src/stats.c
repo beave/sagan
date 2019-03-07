@@ -183,7 +183,7 @@ void Statistics( void )
 
             if ( config->parse_json_program == true || config->parse_json_message == true )
                 {
-		    Sagan_Log(NORMAL, "           JSON Input                 : %" PRIu64 " (%.3f%%)", counters->malformed_json_input_count, CalcPct(counters->malformed_json_input_count, counters->events_received) );
+                    Sagan_Log(NORMAL, "           JSON Input                 : %" PRIu64 " (%.3f%%)", counters->malformed_json_input_count, CalcPct(counters->malformed_json_input_count, counters->events_received) );
                     Sagan_Log(NORMAL, "           JSON Program/Messages      : %" PRIu64 " (%.3f%%)", counters->malformed_json_mp_count, CalcPct(counters->malformed_json_mp_count, counters->events_received) );
 
                 }
