@@ -702,8 +702,10 @@ int main(int argc, char **argv)
 #endif
 
     Sagan_Log(NORMAL, "Configuration file %s loaded and %d rules loaded.", config->sagan_config, counters->rulecount);
-    Sagan_Log(NORMAL, "Out of %d rules, %d xbit(s) are in use.", counters->rulecount, counters->flexbit_total_counter);
-    Sagan_Log(NORMAL, "Out of %d rules, %d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
+    Sagan_Log(NORMAL, "There are %d rules loaded.", counters->rulecount);
+    Sagan_Log(NORMAL, "%d flexbits are in use.", counters->flexbit_total_counter);
+    Sagan_Log(NORMAL, "%d xbit(s) are in use.", counters->rulecount, counters->xbit_total_counter);
+    Sagan_Log(NORMAL, "%d dynamic rule(s) are loaded.", counters->rulecount, counters->dynamic_rule_count);
 
 #ifdef HAVE_LIBFASTJSON
 

@@ -1532,7 +1532,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     sagan_match=0;	      /* Reset pcre/meta_content/content match! */
                     rc=0;		      /* Return code */
                     flexbit_return=0;	      /* Flexbit reset */
-		    xbit_return=0;            /* xbit reset */
+                    xbit_return=0;            /* xbit reset */
                     check_flow_return = true;      /* Rule flow direction reset */
 
                 } /* If normal or dynamic rule */

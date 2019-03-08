@@ -231,6 +231,7 @@ struct _SaganCounters
     int	     thread_processor_counter;
 
     int	     flexbit_total_counter;
+    int	     xbit_total_counter;
 
     int      var_count;
 

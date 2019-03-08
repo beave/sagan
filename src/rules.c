@@ -1094,6 +1094,7 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].xbit_set_count++;
                                     rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;   /* set */
+                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
                                 }
 
                             if (!strcmp(tmptoken, "unset") )
@@ -1244,7 +1245,6 @@ void Load_Rules( const char *ruleset )
 
                             xbit_count++;
                             rulestruct[counters->rulecount].xbit_count = xbit_count;
-
 
                         }
 

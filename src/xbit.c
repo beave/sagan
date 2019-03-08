@@ -23,6 +23,7 @@
 
 /* TODO - no really handling the "selector" properly
           redis
+	  sagan-peek support!
 */
 
 #ifdef HAVE_CONFIG_H
