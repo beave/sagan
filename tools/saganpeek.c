@@ -47,6 +47,7 @@
 #include "../src/sagan.h"
 #include "../src/sagan-defs.h"
 #include "../src/flexbit-mmap.h"
+#include "../src/xbit-mmap.h"
 #include "../src/util-time.h"
 
 #include "../src/processors/track-clients.h"
@@ -56,6 +57,7 @@
 #define AFTER_TYPE 2
 #define FLEXBIT_TYPE 3
 #define TRACK_TYPE 4
+#define XBIT_TYPE 5
 
 /****************************************************************************
  * usage - Give the user some hints about how to use this utility!
@@ -140,6 +142,7 @@ int main(int argc, char **argv)
 
     struct _Sagan_IPC_Counters *counters_ipc;
     struct _Sagan_IPC_Flexbit *flexbit_ipc;
+    struct _Sagan_IPC_Xbit *xbit_ipc;
     struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
     struct _After2_IPC *After2_IPC;
     struct _Threshold2_IPC *Threshold2_IPC;
@@ -223,6 +226,12 @@ int main(int argc, char **argv)
                     else if (!strcmp(optarg, "flexbit"))
                         {
                             type = FLEXBIT_TYPE;
+                            typeflag = true;
+                        }
+
+                    else if (!strcmp(optarg, "xbit"))
+                        {
+                            type = XBIT_TYPE;
                             typeflag = true;
                         }
 
@@ -533,12 +542,12 @@ int main(int argc, char **argv)
                 }
         }
 
-    /*** Get "xbit" data ***/
+    /*** Get "flexbit" data ***/
 
     if ( type == ALL_TYPES || type == FLEXBIT_TYPE )
         {
 
-            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, XBIT_IPC_FILE);
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, FLEXBIT_IPC_FILE);
 
             if ( object_check(tmp_object_check) == false )
                 {
@@ -595,6 +604,77 @@ int main(int argc, char **argv)
                                     printf("Syslog message: \"%s\"\n\n", flexbit_ipc[i].syslog_message );
 
                                 }
+
+                        }
+                }
+        }
+
+    /*** Get "xbit" data ***/
+
+    if ( type == ALL_TYPES || type == XBIT_TYPE )
+        {
+
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, XBIT_IPC_FILE);
+
+            if ( object_check(tmp_object_check) == false )
+                {
+                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+                    Usage();
+                    exit(1);
+                }
+
+            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                {
+                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) + (sizeof(_Sagan_IPC_Xbit) * counters_ipc->xbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                {
+                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            close(shm);
+
+            if ( counters_ipc->xbit_count >= 1 )
+                {
+
+                    for (i= 0; i < counters_ipc->xbit_count; i++ )
+                        {
+
+                            u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
+
+                            printf("Type: xbit [%d].\n", i);
+
+                            printf("Selector: ");
+
+                            if ( xbit_ipc[i].selector[0] == 0 )
+                                {
+                                    printf("[None]\n");
+                                }
+                            else
+                                {
+                                    printf("%s\n", xbit_ipc[i].selector);
+                                }
+
+                            printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
+                            printf("State: ");
+
+                            if ( xbit_ipc[i].xbit_expire != 0 || xbit_ipc[i].xbit_expire <= current_time )
+                                {
+                                    printf("Active\n");
+                                }
+                            else
+                                {
+                                    printf("Inactive\n");
+                                }
+
+                            printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
+                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
+                            printf("Expire Time: %d\n", xbit_ipc[i].expire);
+                            printf("Expired at: %s\n", time_buf);
+                            printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
                         }
                 }
