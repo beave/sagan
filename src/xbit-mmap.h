@@ -20,19 +20,18 @@
 */
 
 
-void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector,  char *syslog_message );
-bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector);
+void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message );
+bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char);
+void Clean_Xbit_MMAP(void);
 
 typedef struct _Sagan_IPC_Xbit _Sagan_IPC_Xbit;
 struct _Sagan_IPC_Xbit
 {
     char xbit_name[64];
-    bool xbit_state;
     uint32_t xbit_hash;
     uint32_t xbit_name_hash;
     uint64_t xbit_expire;
     int expire;
-    char selector[MAXSELECTOR];  /* No need to clean this, as we always set it when tracking */
     char syslog_message[MAX_SYSLOGMSG];
     uint64_t sid;
     char signature_msg[MAX_SAGAN_MSG];

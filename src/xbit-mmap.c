@@ -56,7 +56,7 @@ pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
 /* Xbit_Set_MMAP - Used to "set", "unset" or "toggle" an xbit */
 /**************************************************************/
 
-void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector,  char *syslog_message )
+void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
 {
 
     int r = 0;
@@ -65,169 +65,163 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
     bool xbit_match = false;
     uint32_t hash;
 
-    for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
+    if ( Clean_IPC_Object(XBIT) == 0 )
         {
 
-            if ( rulestruct[rule_position].xbit_type[r] == XBIT_SET )
+            for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
                 {
 
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
-
-                    xbit_match = false;
-
-                    for ( x = 0; x < counters_ipc->xbit_count; x++ )
+                    if ( rulestruct[rule_position].xbit_type[r] == XBIT_SET )
                         {
 
-                            if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
+                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+
+                            xbit_match = false;
+
+                            for ( x = 0; x < counters_ipc->xbit_count; x++ )
                                 {
 
-                                    if ( debug->debugxbit )
+                                    if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
                                         {
-                                            Sagan_Log(DEBUG, "[%s, line %d] Got an xbit match at %d.  Updating xbit '%s' [hash: %u]", __FILE__, __LINE__, x, Xbit_IPC[x].xbit_name, Xbit_IPC[x].xbit_hash);
+
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s, line %d] Got an xbit match at %d.  Updating xbit '%s' [hash: %u]", __FILE__, __LINE__, x, Xbit_IPC[x].xbit_name, Xbit_IPC[x].xbit_hash);
+                                                }
+
+                                            xbit_match = true;
+
+                                            File_Lock(config->shm_xbit);
+                                            pthread_mutex_lock(&Xbit_Mutex);
+
+                                            strlcpy(Xbit_IPC[x].syslog_message, syslog_message, sizeof(Xbit_IPC[x].syslog_message));
+                                            strlcpy(Xbit_IPC[x].signature_msg, rulestruct[rule_position].s_msg, sizeof(Xbit_IPC[x].signature_msg));
+                                            Xbit_IPC[x].xbit_expire = Return_Epoch() + rulestruct[rule_position].xbit_expire[r];
+                                            Xbit_IPC[x].expire = rulestruct[rule_position].xbit_expire[r];
+                                            Xbit_IPC[x].sid = rulestruct[rule_position].s_sid;
+                                            Xbit_IPC[x].xbit_hash = hash;
+                                            Xbit_IPC[x].xbit_name_hash = rulestruct[rule_position].xbit_name_hash[r];
+                                            File_Unlock(config->shm_xbit);
+                                            pthread_mutex_unlock(&Xbit_Mutex);
+
                                         }
 
-                                    xbit_match = true;
+                                }
+
+
+                            /* No xbit to update, add one */
+
+                            if ( xbit_match == false )
+                                {
 
                                     File_Lock(config->shm_xbit);
                                     pthread_mutex_lock(&Xbit_Mutex);
 
-                                    strlcpy(Xbit_IPC[x].syslog_message, syslog_message, sizeof(Xbit_IPC[x].syslog_message));
-                                    strlcpy(Xbit_IPC[x].signature_msg, rulestruct[rule_position].s_msg, sizeof(Xbit_IPC[x].signature_msg));
+                                    strlcpy(Xbit_IPC[counters_ipc->xbit_count].xbit_name, rulestruct[rule_position].xbit_name[r], sizeof(Xbit_IPC[counters_ipc->xbit_count].xbit_name));
+                                    strlcpy(Xbit_IPC[counters_ipc->xbit_count].syslog_message, syslog_message, sizeof(Xbit_IPC[counters_ipc->xbit_count].syslog_message));
+                                    strlcpy(Xbit_IPC[counters_ipc->xbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(Xbit_IPC[counters_ipc->xbit_count].signature_msg));
 
-                                    if ( selector != NULL )
-                                        {
-                                            strlcpy(Xbit_IPC[x].selector, selector, sizeof(Xbit_IPC[x].selector));
-                                        }
-
-                                    Xbit_IPC[x].xbit_expire = Return_Epoch() + rulestruct[rule_position].xbit_expire[r];
-                                    Xbit_IPC[x].sid = rulestruct[rule_position].s_sid;
-                                    Xbit_IPC[x].xbit_hash = hash;
-                                    Xbit_IPC[x].xbit_name_hash = rulestruct[rule_position].xbit_name_hash[r];
-                                    File_Unlock(config->shm_xbit);
-                                    pthread_mutex_unlock(&Xbit_Mutex);
-
-                                }
-
-                        }
-
-
-                    /* No xbit to update, add one */
-
-                    if ( xbit_match == false )
-                        {
-
-                            File_Lock(config->shm_xbit);
-                            pthread_mutex_lock(&Xbit_Mutex);
-
-                            strlcpy(Xbit_IPC[counters_ipc->xbit_count].xbit_name, rulestruct[rule_position].xbit_name[r], sizeof(Xbit_IPC[counters_ipc->xbit_count].xbit_name));
-                            strlcpy(Xbit_IPC[counters_ipc->xbit_count].syslog_message, syslog_message, sizeof(Xbit_IPC[counters_ipc->xbit_count].syslog_message));
-                            strlcpy(Xbit_IPC[counters_ipc->xbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(Xbit_IPC[counters_ipc->xbit_count].signature_msg));
-
-                            if ( selector != NULL )
-                                {
-                                    strlcpy(Xbit_IPC[counters_ipc->xbit_count].selector, selector, sizeof(Xbit_IPC[counters_ipc->xbit_count].selector));
-                                }
-
-                            Xbit_IPC[counters_ipc->xbit_count].xbit_expire = Return_Epoch() + rulestruct[rule_position].xbit_expire[r];
-                            Xbit_IPC[counters_ipc->xbit_count].sid = rulestruct[rule_position].s_sid;
-                            Xbit_IPC[counters_ipc->xbit_count].xbit_hash = hash;
-                            Xbit_IPC[counters_ipc->xbit_count].xbit_name_hash = rulestruct[rule_position].xbit_name_hash[r];
-
-                            if ( debug->debugxbit )
-                                {
-                                    Sagan_Log(DEBUG, "[%s, line %d] Adding xbit '%s' at %d [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
-                                }
-
-                            counters_ipc->xbit_count++;
-
-                            pthread_mutex_unlock(&Xbit_Mutex);
-                            File_Unlock(config->shm_xbit);
-
-                        }
-
-                }
-
-            /* UNSET */
-
-            else if ( rulestruct[rule_position].xbit_type[r] == XBIT_UNSET )
-                {
-
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
-                    //current_epoch = Return_Epoch();
-
-                    xbit_match = false;
-
-                    for ( x = 0; x < counters_ipc->xbit_count; x++ )
-                        {
-
-                            if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
-                                {
+                                    Xbit_IPC[counters_ipc->xbit_count].xbit_expire = Return_Epoch() + rulestruct[rule_position].xbit_expire[r];
+                                    Xbit_IPC[x].expire = rulestruct[rule_position].xbit_expire[r];
+                                    Xbit_IPC[counters_ipc->xbit_count].sid = rulestruct[rule_position].s_sid;
+                                    Xbit_IPC[counters_ipc->xbit_count].xbit_hash = hash;
+                                    Xbit_IPC[counters_ipc->xbit_count].xbit_name_hash = rulestruct[rule_position].xbit_name_hash[r];
 
                                     if ( debug->debugxbit )
                                         {
-                                            Sagan_Log(DEBUG, "[%s, line %d] Unsetting xbit '%s' at %d [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
+                                            Sagan_Log(DEBUG, "[%s, line %d] Adding xbit '%s' at %d [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
                                         }
 
-                                    Xbit_IPC[x].xbit_expire = 0;
+                                    counters_ipc->xbit_count++;
+
+                                    pthread_mutex_unlock(&Xbit_Mutex);
+                                    File_Unlock(config->shm_xbit);
 
                                 }
 
                         }
 
-                }
+                    /* UNSET */
 
-            /* Toggle */
-
-            else if ( rulestruct[rule_position].xbit_type[r] == XBIT_TOGGLE )
-                {
-
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
-
-                    xbit_match = false;
-
-                    for ( x = 0; x < counters_ipc->xbit_count; x++ )
+                    else if ( rulestruct[rule_position].xbit_type[r] == XBIT_UNSET )
                         {
 
-                            if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
+                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+
+                            xbit_match = false;
+
+                            for ( x = 0; x < counters_ipc->xbit_count; x++ )
                                 {
 
-                                    /* xbit is inactve,  set to active */
-
-                                    if ( Xbit_IPC[x].xbit_expire == 0 )
+                                    if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
                                         {
 
                                             if ( debug->debugxbit )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to ACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
-                                                }
-
-                                            Xbit_IPC[x].xbit_expire = Return_Epoch() + Xbit_IPC[x].expire;
-
-                                        }
-                                    else
-                                        {
-
-                                            /* xbit is active, set to inactive */
-
-                                            if ( debug->debugxbit )
-                                                {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to INACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] Unsetting xbit '%s' at %d [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
                                                 }
 
                                             Xbit_IPC[x].xbit_expire = 0;
 
                                         }
+
+                                }
+
+                        }
+
+                    /* Toggle */
+
+                    else if ( rulestruct[rule_position].xbit_type[r] == XBIT_TOGGLE )
+                        {
+
+                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+
+                            xbit_match = false;
+
+                            for ( x = 0; x < counters_ipc->xbit_count; x++ )
+                                {
+
+                                    if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
+                                        {
+
+                                            /* xbit is inactve,  set to active */
+
+                                            if ( Xbit_IPC[x].xbit_expire == 0 )
+                                                {
+
+                                                    if ( debug->debugxbit )
+                                                        {
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to ACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
+                                                        }
+
+                                                    Xbit_IPC[x].xbit_expire = Return_Epoch() + Xbit_IPC[x].expire;
+
+                                                }
+                                            else
+                                                {
+
+                                                    /* xbit is active, set to inactive */
+
+                                                    if ( debug->debugxbit )
+                                                        {
+                                                            Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to INACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
+                                                        }
+
+                                                    Xbit_IPC[x].xbit_expire = 0;
+
+                                                }
+                                        }
                                 }
                         }
-                }
-        } /* for (r = 0; r < rulestruct[rule_position].xbit_count; r++) */
+                } /* for (r = 0; r < rulestruct[rule_position].xbit_count; r++) */
+        }
 }
 
 /*****************************************************/
 /* Xbit_Condition_MMAP - Handles logic for isset/isnotset */
 /*****************************************************/
 
-bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector)
+bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char)
 {
 
     int r = 0;
@@ -328,3 +322,4 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char
     return(false);
 
 }
+

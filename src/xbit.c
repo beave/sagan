@@ -21,9 +21,8 @@
 
 /* xbit.c - Handles and routes requests for xbits via mmap() or redir */
 
-/* TODO - no really handling the "selector" properly
+/* TODO - REMOVE SELECTOR
           redis
-	  sagan-peek support!
 */
 
 #ifdef HAVE_CONFIG_H
@@ -69,7 +68,7 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *sel
     #endif
     */
 
-    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, selector, syslog_message );
+    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, syslog_message );
 
 }
 
@@ -81,8 +80,7 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *sel
 uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char )
 {
 
-    char hash_pair[32] = { 0 };
-
+    char hash_pair[MAXIP*2] = { 0 };
 
     if ( rulestruct[rule_position].xbit_direction[xbit_position] == 1 )
         {
@@ -112,7 +110,7 @@ uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_cha
 /* Xbit_Condition - This handles xbit conditions like "isset", "issnotset". */
 /****************************************************************************/
 
-bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector)
+bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char)
 {
 
 
@@ -128,7 +126,7 @@ bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, cha
     #endif
     */
 
-    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, selector));
+    return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char));
 
 }
 

@@ -61,6 +61,7 @@ struct _SaganConfig *config;
 pthread_mutex_t After2_Mutex;
 pthread_mutex_t Thresh2_Mutex;
 pthread_mutex_t Flexbit_Mutex;
+pthread_mutex_t Xbit_Mutex;
 
 struct _After2_IPC *After2_IPC;
 struct _Threshold2_IPC *Threshold2_IPC;
@@ -292,7 +293,7 @@ bool Clean_IPC_Object( int type )
 
                             if ( debug->debugipc )
                                 {
-                                    Sagan_Log(DEBUG, "[%s, %d line] Flowbot_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__,
+                                    Sagan_Log(DEBUG, "[%s, %d line] Flexbit_IPC : Keeping [0x%.08X%.08X%.08X%.08X -> 0x%.08X%.08X%.08X%.08X].", __FILE__, __LINE__,
                                               htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[0]),
                                               htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[1]),
                                               htonl(((unsigned int *)&flexbit_ipc[i].ip_src)[2]),
@@ -345,6 +346,85 @@ bool Clean_IPC_Object( int type )
             pthread_mutex_unlock(&Flexbit_Mutex);
             File_Unlock(config->shm_flexbit);
             return(0);
+
+        }
+
+    else if ( type == XBIT && config->max_xbits < counters_ipc->xbit_count && config->xbit_storage == XBIT_STORAGE_MMAP )
+        {
+
+
+            int old_count = 0;
+            int new_count = 0;
+
+            int i = 0;
+
+            File_Lock(config->shm_xbit);
+            pthread_mutex_lock(&Xbit_Mutex);
+
+            struct _Sagan_IPC_Xbit *temp_xbit_ipc;
+            temp_xbit_ipc = malloc(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits);
+            memset(temp_xbit_ipc, 0, sizeof(sizeof(struct _Sagan_IPC_Xbit) * config->max_xbits));
+
+            old_count = counters_ipc->xbit_count;
+
+            for (i = 0; i < counters_ipc->xbit_count; i++)
+                {
+
+                    if ( Xbit_IPC[i].xbit_expire != 0 && Xbit_IPC[i].xbit_expire >= Return_Epoch() )
+                        {
+
+                            strlcpy(temp_xbit_ipc[new_count].xbit_name, Xbit_IPC[i].xbit_name, sizeof(temp_xbit_ipc[new_count].xbit_name));
+                            strlcpy(temp_xbit_ipc[new_count].syslog_message, Xbit_IPC[i].syslog_message, sizeof(temp_xbit_ipc[new_count].syslog_message));
+                            strlcpy(temp_xbit_ipc[new_count].signature_msg, Xbit_IPC[i].signature_msg, sizeof(temp_xbit_ipc[new_count].signature_msg));
+
+                            temp_xbit_ipc[new_count].xbit_hash = Xbit_IPC[i].xbit_hash;
+                            temp_xbit_ipc[new_count].xbit_name_hash = Xbit_IPC[i].xbit_name_hash;
+                            temp_xbit_ipc[new_count].xbit_expire = Xbit_IPC[i].xbit_expire;
+                            temp_xbit_ipc[new_count].expire = Xbit_IPC[i].expire;
+                            temp_xbit_ipc[new_count].sid =  Xbit_IPC[i].sid;
+
+                            new_count++;
+
+                        }
+                }
+
+            if ( new_count > 0 )
+                {
+
+                    for ( i = 0; i < new_count; i++ )
+                        {
+
+                            strlcpy(Xbit_IPC[i].xbit_name, temp_xbit_ipc[new_count].xbit_name, sizeof(Xbit_IPC[i].xbit_name));
+                            strlcpy(Xbit_IPC[i].syslog_message, temp_xbit_ipc[new_count].syslog_message, sizeof(Xbit_IPC[i].syslog_message));
+                            strlcpy(Xbit_IPC[i].signature_msg, temp_xbit_ipc[new_count].signature_msg, sizeof(Xbit_IPC[i].signature_msg));
+
+                            Xbit_IPC[i].xbit_hash = temp_xbit_ipc[new_count].xbit_hash;
+                            Xbit_IPC[i].xbit_name_hash = temp_xbit_ipc[new_count].xbit_name_hash;
+                            Xbit_IPC[i].xbit_expire = temp_xbit_ipc[new_count].xbit_expire;
+                            Xbit_IPC[i].expire = temp_xbit_ipc[new_count].expire;
+                            Xbit_IPC[i].sid = temp_xbit_ipc[new_count].sid;
+
+                        }
+
+                    counters_ipc->xbit_count = new_count;
+
+                }
+            else
+                {
+
+                    Sagan_Log(WARN, "[%s, line %d] Could not clean _Sagan_IPC_Xbit.  Nothing to remove!", __FILE__, __LINE__);
+                    free(temp_xbit_ipc);
+                    pthread_mutex_unlock(&Xbit_Mutex);
+                    File_Unlock(config->shm_xbit);
+                    return(1);
+
+                }
+
+            Sagan_Log(NORMAL, "[%s, line %d] Kept %d xbits out of %d for _Sagan_IPC_Xbit.", __FILE__, __LINE__, new_count, old_count);
+            free(temp_xbit_ipc);
+
+            File_Unlock(config->shm_xbit);
+            pthread_mutex_unlock(&Xbit_Mutex);
 
         }
 
