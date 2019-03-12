@@ -1061,6 +1061,7 @@ void Load_Rules( const char *ruleset )
                                 {
                                     bad_rule = true;
                                     Sagan_Log(WARN, "[%s, line %d] Incomplete 'xbits' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+
                                     continue;
                                 }
 
@@ -1069,10 +1070,10 @@ void Load_Rules( const char *ruleset )
 
                             if ( strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") &&
                                     strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "toggle") && strcmp(tmptoken, "noalert" ) &&
-                                    strcmp(tmptoken, "noeve" ) )
+                                    strcmp(tmptoken, "noeve" ) && strcmp(tmptoken, "nounified2") )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', or  'noeve' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                    Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', 'noeve' or 'nounified2'  but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     continue;
 
                                 }
@@ -1081,6 +1082,12 @@ void Load_Rules( const char *ruleset )
                             if (!strcmp(tmptoken, "noalert"))
                                 {
                                     rulestruct[counters->rulecount].xbit_noalert=true;
+                                    continue;
+                                }
+
+                            if (!strcmp(tmptoken, "nounified2"))
+                                {
+                                    rulestruct[counters->rulecount].xbit_nounified2=true;
                                     continue;
                                 }
 
@@ -1797,7 +1804,7 @@ void Load_Rules( const char *ruleset )
                     if (!strcmp(rulesplit, "country_code"))
                         {
                             Sagan_Log(WARN, "** WARNING: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support!", linecount, ruleset_fullname);
-                            Sagan_Log(WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip2\" or disable this rule!");
+                            Sagan_Log(WARN, "** WARNING: Rebuild Sagan with \"--enable-geoip\" or disable this rule!");
                         }
 #endif
 

@@ -177,6 +177,7 @@ struct _Rule_Struct
     bool xbit_flag;
     bool xbit_noalert;
     bool xbit_noeve;
+    bool xbit_nounified2;
     unsigned char xbit_direction[MAX_XBITS];	      /* 1 == ip_src, 2 == ip_dst,  3 == ip_par */
 
     unsigned char xbit_set_count;            /* Number of set within a rule */
