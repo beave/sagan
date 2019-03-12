@@ -1055,155 +1055,112 @@ void Load_Rules( const char *ruleset )
                         {
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
-                            tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
-                            if ( tmptoken == NULL )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Incomplete 'xbits' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                            Remove_Spaces(arg);
 
-                                    continue;
-                                }
+                            /* This handles "sbits: noeve;", etc */
 
+                            bool xbit_single = false; 	/* So we don't have to check multiple flags */
 
-                            Remove_Spaces(tmptoken);
-
-                            if ( strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") &&
-                                    strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "toggle") && strcmp(tmptoken, "noalert" ) &&
-                                    strcmp(tmptoken, "noeve" ) && strcmp(tmptoken, "nounified2") )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', 'noeve' or 'nounified2'  but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
-                                    continue;
-
-                                }
-
-
-                            if (!strcmp(tmptoken, "noalert"))
-                                {
-                                    rulestruct[counters->rulecount].xbit_noalert=true;
-                                    continue;
-                                }
-
-                            if (!strcmp(tmptoken, "nounified2"))
-                                {
-                                    rulestruct[counters->rulecount].xbit_nounified2=true;
-                                    continue;
-                                }
-
-                            if (!strcmp(tmptoken, "noeve"))
+                            if ( !strcmp(arg, "noeve") )
                                 {
                                     rulestruct[counters->rulecount].xbit_noeve=true;
-                                    continue;
+                                    xbit_single = true;
                                 }
 
-                            if (!strcmp(tmptoken, "set") )
+                            if ( !strcmp(arg, "nounified2") )
                                 {
-                                    rulestruct[counters->rulecount].xbit_set_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;   /* set */
-                                    __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                    rulestruct[counters->rulecount].xbit_nounified2=true;
+                                    xbit_single = true;
                                 }
 
-                            if (!strcmp(tmptoken, "unset") )
+                            if ( !strcmp(arg, "noalert") )
                                 {
-                                    rulestruct[counters->rulecount].xbit_unset_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 2;   /* unset */
-                                }
-
-                            if (!strcmp(tmptoken, "isset") )
-                                {
-                                    rulestruct[counters->rulecount].xbit_isset_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;   /* isset */
-                                }
-
-                            if (!strcmp(tmptoken, "isnotset") )
-                                {
-                                    rulestruct[counters->rulecount].xbit_isnotset_count++;
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;   /* isnotset */
-                                }
-
-                            if (!strcmp(tmptoken, "toggle") )
-                                {
-                                    rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;   /* toggle */
-                                }
-
-                            if ( rulestruct[counters->rulecount].xbit_type[xbit_count] == 0 )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Xbit is not 'set', 'unset', 'isset', 'isnotset' or 'toggle'. Skiping line %d in %s", __FILE__, __LINE__, linecount, ruleset);
-                                    continue;
-                                }
-
-                            rulestruct[counters->rulecount].xbit_flag = true;
-
-                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
-
-                            if ( tmptoken == NULL )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Missing xbit 'name'. skipping line %d in %s", __FILE__, __LINE__, linecount, ruleset);
-                                    continue;
-                                }
-
-                            Remove_Spaces(tmptoken);
-
-                            strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
-
-                            rulestruct[counters->rulecount].xbit_name_hash[xbit_count] = Djb2_Hash(tmptoken);
-
-                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
-
-                            if ( tmptoken == NULL )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Incomplete xbit at line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
-                                    continue;
-
-                                }
-
-                            Remove_Spaces(tmptoken);
-
-                            if ( strlen(tmptoken) < 6 || tmptoken[0] != 't' || tmptoken[1] != 'r' || tmptoken[2] != 'a' || tmptoken[3] != 'c' || tmptoken[4] != 'k' )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected 'track' for xbit at line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
-                                    continue;
+                                    rulestruct[counters->rulecount].xbit_noalert=true;
+                                    xbit_single = true;
                                 }
 
 
-                            if ( strlen(tmptoken) == 11 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
-                                    tmptoken[8] == 's' && tmptoken[9] == 'r' && tmptoken[10] == 'c' )
+                            /* xbits things like "set", "unset", which have multiple options */
+
+                            if ( xbit_single == false )
                                 {
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = 1; /* ip_src */
-                                }
+                                    tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
-                            if ( strlen(tmptoken) == 11 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
-                                    tmptoken[8] == 'd' && tmptoken[9] == 's' && tmptoken[10] == 't' )
-                                {
+                                    if ( tmptoken == NULL )
+                                        {
+                                            bad_rule = true;
+                                            Sagan_Log(WARN, "[%s, line %d] Incomplete 'xbits' option at %d in '%s', skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = 2; /* ip_dst */
-                                }
+                                            continue;
+                                        }
 
-                            if ( strlen(tmptoken) == 12 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
-                                    tmptoken[8] == 'p' && tmptoken[9] == 'a' && tmptoken[10] == 'i' && tmptoken[11] == 'r' )
-                                {
+                                    Remove_Spaces(tmptoken);
 
-                                    rulestruct[counters->rulecount].xbit_direction[xbit_count] = 3; /* ip_pair */
-                                }
+                                    if ( strcmp(tmptoken, "set") && strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") &&
+                                            strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "toggle") )
+                                        {
+                                            bad_rule = true;
+                                            Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', 'noeve' or 'nounified2'  but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                            continue;
 
-                            if ( rulestruct[counters->rulecount].xbit_direction[xbit_count] == 0 )
-                                {
-                                    bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected track by 'ip_src', 'ip_dst', or 'ip_pair'. Skipping line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
-                                    continue;
-                                }
+                                        }
 
 
-                            /* If we're in a 'set', we'll need expire time */
+                                    rulestruct[counters->rulecount].xbit_flag = true;
 
-                            if ( rulestruct[counters->rulecount].xbit_type[xbit_count] == 1 )
-                                {
+                                    if (!strcmp(tmptoken, "set") )
+                                        {
+                                            rulestruct[counters->rulecount].xbit_set_count++;
+                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;   /* set */
+                                            __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
+                                        }
+
+                                    if (!strcmp(tmptoken, "unset") )
+                                        {
+                                            rulestruct[counters->rulecount].xbit_unset_count++;
+                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 2;   /* unset */
+                                        }
+
+                                    if (!strcmp(tmptoken, "isset") )
+                                        {
+                                            rulestruct[counters->rulecount].xbit_isset_count++;
+                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;   /* isset */
+                                        }
+
+                                    if (!strcmp(tmptoken, "isnotset") )
+                                        {
+                                            rulestruct[counters->rulecount].xbit_isnotset_count++;
+                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;   /* isnotset */
+                                        }
+
+                                    if (!strcmp(tmptoken, "toggle") )
+                                        {
+                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;   /* toggle */
+                                        }
+
+                                    if ( rulestruct[counters->rulecount].xbit_type[xbit_count] == 0 )
+                                        {
+                                            bad_rule = true;
+                                            Sagan_Log(WARN, "[%s, line %d] Xbit is not 'set', 'unset', 'isset', 'isnotset' or 'toggle'. Skiping line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                            continue;
+                                        }
+
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                                    if ( tmptoken == NULL )
+                                        {
+                                            bad_rule = true;
+                                            Sagan_Log(WARN, "[%s, line %d] Missing xbit 'name'. skipping line %d in %s", __FILE__, __LINE__, linecount, ruleset);
+                                            continue;
+                                        }
+
+                                    Remove_Spaces(tmptoken);
+
+                                    strlcpy(rulestruct[counters->rulecount].xbit_name[xbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].xbit_name[xbit_count]));
+
+                                    rulestruct[counters->rulecount].xbit_name_hash[xbit_count] = Djb2_Hash(tmptoken);
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
@@ -1217,41 +1174,96 @@ void Load_Rules( const char *ruleset )
 
                                     Remove_Spaces(tmptoken);
 
-                                    if ( tmptoken[0] != 'e' || tmptoken[1] != 'x' || tmptoken[2] != 'p' || tmptoken[3] != 'i' ||
-                                            tmptoken[4] != 'r' || tmptoken[5] != 'e' )
-
+                                    if ( strlen(tmptoken) < 6 || tmptoken[0] != 't' || tmptoken[1] != 'r' || tmptoken[2] != 'a' || tmptoken[3] != 'c' || tmptoken[4] != 'k' )
                                         {
-
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Incomplete 'set' xbit at line %d in file %s.  Expected a 'expire' time.", __FILE__, __LINE__, linecount, ruleset);
-
+                                            Sagan_Log(WARN, "[%s, line %d] Expected 'track' for xbit at line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
+                                            continue;
                                         }
 
-                                    /* Zero tmp space */
 
-                                    tmp2[0] = '\0';
-
-                                    /* Get 'expire' time from the rule */
-
-                                    for ( i = 6; i < strlen(tmptoken); i++ )
+                                    if ( strlen(tmptoken) == 11 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
+                                            tmptoken[8] == 's' && tmptoken[9] == 'r' && tmptoken[10] == 'c' )
                                         {
-                                            snprintf(tmp, sizeof(tmp), "%c", tmptoken[i]);
-                                            strlcat(tmp2, tmp, sizeof(tmp2));
+
+                                            rulestruct[counters->rulecount].xbit_direction[xbit_count] = 1; /* ip_src */
                                         }
 
-                                    rulestruct[counters->rulecount].xbit_expire[xbit_count] = atol(tmp2);
+                                    if ( strlen(tmptoken) == 11 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
+                                            tmptoken[8] == 'd' && tmptoken[9] == 's' && tmptoken[10] == 't' )
+                                        {
+
+                                            rulestruct[counters->rulecount].xbit_direction[xbit_count] = 2; /* ip_dst */
+                                        }
+
+                                    if ( strlen(tmptoken) == 12 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
+                                            tmptoken[8] == 'p' && tmptoken[9] == 'a' && tmptoken[10] == 'i' && tmptoken[11] == 'r' )
+                                        {
+
+                                            rulestruct[counters->rulecount].xbit_direction[xbit_count] = 3; /* ip_pair */
+                                        }
 
                                     if ( rulestruct[counters->rulecount].xbit_direction[xbit_count] == 0 )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] xbit expire time is invalid at %d in file %s.", __FILE__, __LINE__, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected track by 'ip_src', 'ip_dst', or 'ip_pair'. Skipping line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
+                                            continue;
                                         }
 
 
-                                }
+                                    /* If we're in a 'set', we'll need expire time */
 
-                            xbit_count++;
-                            rulestruct[counters->rulecount].xbit_count = xbit_count;
+                                    if ( rulestruct[counters->rulecount].xbit_type[xbit_count] == 1 )
+                                        {
+
+                                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                                            if ( tmptoken == NULL )
+                                                {
+                                                    bad_rule = true;
+                                                    Sagan_Log(WARN, "[%s, line %d] Incomplete xbit at line %d in file %s. Skipping rule.", __FILE__, __LINE__, linecount, ruleset);
+                                                    continue;
+
+                                                }
+
+                                            Remove_Spaces(tmptoken);
+
+                                            if ( tmptoken[0] != 'e' || tmptoken[1] != 'x' || tmptoken[2] != 'p' || tmptoken[3] != 'i' ||
+                                                    tmptoken[4] != 'r' || tmptoken[5] != 'e' )
+
+                                                {
+
+                                                    bad_rule = true;
+                                                    Sagan_Log(WARN, "[%s, line %d] Incomplete 'set' xbit at line %d in file %s.  Expected a 'expire' time.", __FILE__, __LINE__, linecount, ruleset);
+
+                                                }
+
+                                            /* Zero tmp space */
+
+                                            tmp2[0] = '\0';
+
+                                            /* Get 'expire' time from the rule */
+
+                                            for ( i = 6; i < strlen(tmptoken); i++ )
+                                                {
+                                                    snprintf(tmp, sizeof(tmp), "%c", tmptoken[i]);
+                                                    strlcat(tmp2, tmp, sizeof(tmp2));
+                                                }
+
+                                            rulestruct[counters->rulecount].xbit_expire[xbit_count] = atol(tmp2);
+
+                                            if ( rulestruct[counters->rulecount].xbit_direction[xbit_count] == 0 )
+                                                {
+                                                    bad_rule = true;
+                                                    Sagan_Log(WARN, "[%s, line %d] xbit expire time is invalid at %d in file %s.", __FILE__, __LINE__, linecount, ruleset);
+                                                }
+
+
+                                        }
+
+                                    xbit_count++;
+                                    rulestruct[counters->rulecount].xbit_count = xbit_count;
+                                }
 
                         }
 

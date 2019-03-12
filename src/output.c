@@ -77,12 +77,12 @@ void Output( _Sagan_Event *Event )
     pthread_mutex_lock(&SaganOutputNonThreadMutex);
     nonthread_alert_lock = true;
 
-    if ( config->alert_flag )
+    if ( config->alert_flag && rulestruct[Event->found].xbit_noalert == false )
         {
             Alert_File(Event);
         }
 
-    if ( config->eve_flag && config->eve_alerts && rulestruct[Event->found].flexbit_noeve == false )
+    if ( config->eve_flag && config->eve_alerts && ( rulestruct[Event->found].flexbit_noeve == false || rulestruct[Event->found].xbit_noeve == false ) )
         {
             Alert_JSON(Event);
         }
@@ -94,7 +94,7 @@ void Output( _Sagan_Event *Event )
 
 #if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
 
-    if ( config->sagan_unified2_flag && rulestruct[Event->found].flexbit_nounified2 == false )
+    if ( config->sagan_unified2_flag && ( rulestruct[Event->found].flexbit_nounified2 == false || rulestruct[Event->found].xbit_nounified2 == false ) )
         {
 
             Unified2( Event );
