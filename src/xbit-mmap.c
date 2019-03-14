@@ -71,6 +71,8 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
             for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
                 {
 
+		    //printf("rulestruct[rule_position].xbit_count: %d\n", rulestruct[rule_position].xbit_count);
+
                     if ( rulestruct[rule_position].xbit_type[r] == XBIT_SET )
                         {
 

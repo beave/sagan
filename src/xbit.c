@@ -101,7 +101,7 @@ uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_cha
 
     /* Should never get here */
 
-    Sagan_Log(ERROR, "Bad xbit_direction '%d'", rulestruct[rule_position].xbit_direction[xbit_position]);
+    Sagan_Log(WARN, "[%s, line %d] Bad xbit_direction for sid %" PRIu64 "", __FILE__, __LINE__, rulestruct[rule_position].s_sid);
     return(0);
 
 }

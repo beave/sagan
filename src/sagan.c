@@ -171,6 +171,9 @@ int main(int argc, char **argv)
 
     int option_index = 0;
 
+
+    struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
+
     /****************************************************************************/
     /* libpcap/PLOG (syslog sniffer) local variables                            */
     /****************************************************************************/
@@ -684,6 +687,16 @@ int main(int argc, char **argv)
         }
 
     memset(SaganPassSyslog, 0, sizeof(struct _Sagan_Pass_Syslog));
+
+    SaganPassSyslog_LOCAL = malloc(config->max_processor_threads * sizeof(_Sagan_Pass_Syslog));
+
+    if ( SaganPassSyslog_LOCAL == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganPassSyslog_LOCAL. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SaganPassSyslog_LOCAL, 0, sizeof(struct _Sagan_Pass_Syslog));
+
 
     pthread_t processor_id[config->max_processor_threads];
     pthread_attr_t thread_processor_attr;
@@ -1213,9 +1226,10 @@ int main(int argc, char **argv)
 
                                     if ( ignore_flag == false )
                                         {
-                                            //memcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
-                                            strlcpy(SaganPassSyslog[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog[proc_msgslot].syslog[batch_count]));
 
+                                            /* Copy data to _LOCAL array */
+
+                                            strlcpy(SaganPassSyslog_LOCAL[proc_msgslot].syslog[batch_count], syslogstring, sizeof(SaganPassSyslog_LOCAL[proc_msgslot].syslog[batch_count]));
 
                                             batch_count++;
                                         }
@@ -1230,12 +1244,19 @@ int main(int argc, char **argv)
 
                                     /* Has our batch count been reached */
 
-                                    if ( batch_count >= config->max_batch ) // || config->max_batch == 1 )
+                                    if ( batch_count >= config->max_batch )
                                         {
 
                                             batch_count=0;              /* Reset batch/queue */
 
                                             pthread_mutex_lock(&SaganProcWorkMutex);
+
+                                            /* Copy local thread data to global thread */
+
+                                            for ( i = 0; i < config->max_batch; i++)
+                                                {
+                                                    strlcpy(SaganPassSyslog[proc_msgslot].syslog[i], SaganPassSyslog_LOCAL[proc_msgslot].syslog[i] , sizeof(SaganPassSyslog[proc_msgslot].syslog[i]));
+                                                }
 
                                             counters->events_processed = counters->events_processed + config->max_batch;
 

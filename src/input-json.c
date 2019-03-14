@@ -91,7 +91,16 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
             if ( json_obj == NULL )
                 {
 
-                    Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON.", __FILE__, __LINE__);
+                    if ( syslog_string != NULL )
+                        {
+                            Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON. Get: %s", __FILE__, __LINE__, syslog_string);
+                        }
+                    else
+                        {
+                            Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON. Got NULL data.", __FILE__, __LINE__);
+                        }
+
+
                     json_object_put(json_obj);
                     __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                     return;
