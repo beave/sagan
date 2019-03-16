@@ -50,6 +50,10 @@ int redis_msgslot = 0;
 pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 
+//pthread_cond_t SaganRedisDoWork;
+//pthread_mutex_t SaganRedisWorkMutex;
+
+
 struct _Sagan_Redis *SaganRedis;
 
 #define NONE 0
@@ -495,7 +499,7 @@ void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, 
 
                                     Flexbit_Cleanup_Redis(tmp_xbit_name, utime, notnull_selector, ip_src_char, ip_dst_char);
 
-                                    utime_plus_timeout = utime + rulestruct[rule_position].xbit_timeout[i];
+                                    utime_plus_timeout = utime + rulestruct[rule_position].flexbit_timeout[i];
 
                                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                              "ZADD %s%s:by_src %lu %s;"

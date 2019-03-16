@@ -233,7 +233,7 @@ void Load_Rules( const char *ruleset )
             meta_content_count=0;
             meta_content_converted_count=0;
             flexbit_count=0;
-	    xbit_count=0;
+            xbit_count=0;
             netcount=0;
             ref_count=0;
             flow_1_count=0;
@@ -1192,14 +1192,14 @@ void Load_Rules( const char *ruleset )
                                         }
 
                                     else if ( strlen(tmptoken) == 11 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
-                                            tmptoken[8] == 'd' && tmptoken[9] == 's' && tmptoken[10] == 't' )
+                                              tmptoken[8] == 'd' && tmptoken[9] == 's' && tmptoken[10] == 't' )
                                         {
 
                                             rulestruct[counters->rulecount].xbit_direction[xbit_count] = 2; /* ip_dst */
                                         }
 
                                     else if ( strlen(tmptoken) == 12 && tmptoken[5] == 'i' && tmptoken[6] == 'p' && tmptoken[7] == '_' &&
-                                            tmptoken[8] == 'p' && tmptoken[9] == 'a' && tmptoken[10] == 'i' && tmptoken[11] == 'r' )
+                                              tmptoken[8] == 'p' && tmptoken[9] == 'a' && tmptoken[10] == 'i' && tmptoken[11] == 'r' )
                                         {
 
                                             rulestruct[counters->rulecount].xbit_direction[xbit_count] = 3; /* ip_pair */
@@ -1265,7 +1265,7 @@ void Load_Rules( const char *ruleset )
 
                                     xbit_count++;
                                     rulestruct[counters->rulecount].xbit_count = xbit_count;
-				//rulestruct[counters->rulecount].xbit_count++;
+                                    //rulestruct[counters->rulecount].xbit_count++;
                                 }
 
                         }

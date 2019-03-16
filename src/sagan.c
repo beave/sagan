@@ -1000,7 +1000,7 @@ int main(int argc, char **argv)
 
     /* Right now,  Redis is only used for xbit/flexbit storage */
 
-    if ( config->redis_flag && config->flexbit_storage == XBIT_STORAGE_REDIS )
+    if ( config->redis_flag )
         {
 
             Redis_Writer_Init();
@@ -1075,7 +1075,7 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBHIREDIS
 
-    if ( config->redis_flag && config->flexbit_storage == XBIT_STORAGE_REDIS )
+    if ( config->redis_flag )
         {
 
             Sagan_Log(NORMAL, "Spawning %d Redis Writer Threads.", config->redis_max_writer_threads);

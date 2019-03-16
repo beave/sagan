@@ -2718,6 +2718,17 @@ void Load_YAML_Config( char *yaml_file )
         }
 
 
+#ifdef HAVE_LIBHIREDIS
+
+    if ( config->redis_flag == false && ( config->flexbit_storage == FLEXBIT_STORAGE_REDIS || config->xbit_storage == XBIT_STORAGE_REDIS ))
+        {
+            Sagan_Log(ERROR, "[%s, line %d] xbit/flexbit storage engine is Redis, but the redis configuration is disabled", __FILE__, __LINE__);
+        }
+
+
+
+#endif
+
 #ifdef HAVE_LIBESMTP
 
     if ( config->sagan_esmtp_flag == true )

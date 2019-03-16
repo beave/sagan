@@ -48,6 +48,8 @@
 #endif
 
 struct _Rule_Struct *rulestruct;
+struct _SaganConfig *config;
+
 
 /***************************************************/
 /* Xbit_Set - "set", "unset" and "toggle" and xbit */
@@ -56,17 +58,16 @@ struct _Rule_Struct *rulestruct;
 void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector,  char *syslog_message )
 {
 
-    /*
-    #ifdef HAVE_LIBHIREDIS
 
-        if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
-            {
-            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, selector, SaganProcSyslog_LOCAL );
+#ifdef HAVE_LIBHIREDIS
+
+    if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
+        {
+            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, syslog_message );
             return;
-            }
+        }
 
-    #endif
-    */
+#endif
 
     Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, syslog_message );
 
