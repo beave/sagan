@@ -52,9 +52,9 @@ struct _Sagan_IPC_Xbit *Xbit_IPC;
 
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
-/**************************************************************/
-/* Xbit_Set_MMAP - Used to "set", "unset" or "toggle" an xbit */
-/**************************************************************/
+/*************************************************/
+/* Xbit_Set_MMAP - Used to "set", "unset" a xbit */
+/*************************************************/
 
 void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
 {

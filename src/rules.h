@@ -184,6 +184,7 @@ struct _Rule_Struct
     unsigned char xbit_unset_count;
     unsigned char xbit_isset_count;
     unsigned char xbit_isnotset_count;
+    unsigned char xbit_toggle_count;
     unsigned char xbit_condition_count;
     unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
                                                    6 == set_dstport, 7 == set_ports, 8 == count */

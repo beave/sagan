@@ -60,9 +60,11 @@ int redis_msgslot;
 void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
 {
 
+
     int r;
     uint32_t hash;
-
+    char redis_results[32] = { 0 };
+    char redis_command[64] = { 0 };
 
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
         {
@@ -183,7 +185,6 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
         {
             Sagan_Log(DEBUG, "[%s, line %d] Rule matches all xbit conditions. Returning true.", __FILE__, __LINE__);
         }
-
 
     return(true);
 
