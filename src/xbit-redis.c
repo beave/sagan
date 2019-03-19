@@ -59,14 +59,42 @@ int redis_msgslot;
 /* Xbit_Set_Redis - set/unset xbit in Redis (threaded) */
 /*******************************************************/
 
-void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
+void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
 
-    int r;
+    int r = 0;
+    int i = 0;
     uint32_t hash;
     char redis_results[32] = { 0 };
     char redis_command[64] = { 0 };
+    char fullsyslog_orig[400 + MAX_SYSLOGMSG] = { 0 };
+
+    snprintf(fullsyslog_orig, sizeof(fullsyslog_orig), "%s|%s|%s|%s|%s|%s|%s|%s|%s",
+             SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_facility,
+             SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level,
+             SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog_LOCAL->syslog_date,
+             SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog_LOCAL->syslog_program,
+             SaganProcSyslog_LOCAL->syslog_message );
+
+    for ( i = 0; i < strlen(fullsyslog_orig); i++ )
+        {
+
+            switch(fullsyslog_orig[i])
+                {
+
+                case ' ':
+                    fullsyslog_orig[i] = '_';
+                    break;
+
+                case ';':
+                    fullsyslog_orig[i] = ':';
+                    break;
+
+                }
+        }
+
+
 
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
         {
@@ -82,7 +110,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, cha
                         }
 
                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
-                             "SET %s:%s:%u \"sensor:%s,expire:%d\" EX %d", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r], rulestruct[rule_position].xbit_expire[r]);
+                             "SET %s:%s:%u \"sensor:%s,expire:%d,%s\" EX %d", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r], fullsyslog_orig, rulestruct[rule_position].xbit_expire[r]);
 
                     redis_msgslot++;
 

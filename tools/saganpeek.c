@@ -612,29 +612,29 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-			    if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire >= current_time ) )
-			    {
-
-                            printf("Type: xbit [%d].\n", i);
-                            printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
-                            printf("State: ");
-
-                            if ( xbit_ipc[i].xbit_expire != 0 || xbit_ipc[i].xbit_expire <= current_time )
+                            if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire >= current_time ) )
                                 {
-                                    printf("Active\n");
-                                }
-                            else
-                                {
-                                    printf("Inactive\n");
-                                }
 
-                            printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
-                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
-                            printf("Expire Time: %d\n", xbit_ipc[i].expire);
-                            printf("Expired at: %s\n", time_buf);
-                            printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+                                    printf("Type: xbit [%d].\n", i);
+                                    printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
+                                    printf("State: ");
 
-			}
+                                    if ( xbit_ipc[i].xbit_expire != 0 || xbit_ipc[i].xbit_expire <= current_time )
+                                        {
+                                            printf("Active\n");
+                                        }
+                                    else
+                                        {
+                                            printf("Inactive\n");
+                                        }
+
+                                    printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
+                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
+                                    printf("Expire Time: %d\n", xbit_ipc[i].expire);
+                                    printf("Expired at: %s\n", time_buf);
+                                    printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+
+                                }
 
                         }
                 }

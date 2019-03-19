@@ -55,20 +55,20 @@ struct _SaganConfig *config;
 /* Xbit_Set - "set", "unset" and "toggle" and xbit */
 /***************************************************/
 
-void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
+void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
 #ifdef HAVE_LIBHIREDIS
 
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
-            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, syslog_message );
+            Xbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, SaganProcSyslog_LOCAL );
             return;
         }
 
 #endif
 
-    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, syslog_message );
+    Xbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, SaganProcSyslog_LOCAL->syslog_message );
 
 }
 

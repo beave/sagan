@@ -1433,7 +1433,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                             if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_set_count || rulestruct[b].xbit_unset_count ) )
                                                                                                                                                 {
-                                                                                                                                                    Xbit_Set(b, ip_src, ip_dst, (char *)SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                                                    Xbit_Set(b, ip_src, ip_dst, SaganProcSyslog_LOCAL);
                                                                                                                                                 }
                                                                                                                                             /* Check to "set" a flexbit */
                                                                                                                                             if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )

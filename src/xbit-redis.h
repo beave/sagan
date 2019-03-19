@@ -19,6 +19,6 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message );
+void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_char);
 
