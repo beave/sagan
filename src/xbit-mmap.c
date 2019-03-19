@@ -219,9 +219,9 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
         }
 }
 
-/*****************************************************/
+/**********************************************************/
 /* Xbit_Condition_MMAP - Handles logic for isset/isnotset */
-/*****************************************************/
+/**********************************************************/
 
 bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char)
 {

@@ -1025,8 +1025,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_isset_count || rulestruct[b].xbit_isnotset_count ) )
                                         {
-
-                                            xbit_return = Xbit_Condition(b, ip_src, ip_dst, pnormalize_selector);
+                                            xbit_return = Xbit_Condition(b, ip_src, ip_dst);
                                         }
 
 

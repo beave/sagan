@@ -55,9 +55,8 @@ struct _SaganConfig *config;
 /* Xbit_Set - "set", "unset" and "toggle" and xbit */
 /***************************************************/
 
-void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *selector,  char *syslog_message )
+void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, char *syslog_message )
 {
-
 
 #ifdef HAVE_LIBHIREDIS
 
@@ -114,18 +113,15 @@ uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_cha
 bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char)
 {
 
+#ifdef HAVE_LIBHIREDIS
 
-    /*
-    #ifdef HAVE_LIBHIREDIS
-
-        if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
-            {
-            Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, selector, SaganProcSyslog_LOCAL );
+    if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
+        {
+            Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char);
             return;
-            }
+        }
 
-    #endif
-    */
+#endif
 
     return(Xbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char));
 
