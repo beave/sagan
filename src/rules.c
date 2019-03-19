@@ -1115,47 +1115,47 @@ void Load_Rules( const char *ruleset )
                                         {
 
                                             rulestruct[counters->rulecount].xbit_type[xbit_count]  = 1;   /* set */
-					    rulestruct[counters->rulecount].xbit_set_count++;
+                                            rulestruct[counters->rulecount].xbit_set_count++;
                                             __atomic_add_fetch(&counters->xbit_total_counter, 1, __ATOMIC_SEQ_CST);
                                         }
 
                                     else if (!strcmp(tmptoken, "unset") )
                                         {
                                             rulestruct[counters->rulecount].xbit_type[xbit_count]  = 2;   /* unset */
-					    rulestruct[counters->rulecount].xbit_unset_count++;
+                                            rulestruct[counters->rulecount].xbit_unset_count++;
                                         }
 
                                     else if (!strcmp(tmptoken, "isset") )
                                         {
                                             rulestruct[counters->rulecount].xbit_type[xbit_count]  = 3;   /* isset */
-					    rulestruct[counters->rulecount].xbit_isset_count++;
+                                            rulestruct[counters->rulecount].xbit_isset_count++;
                                         }
 
                                     else if (!strcmp(tmptoken, "isnotset") )
                                         {
                                             rulestruct[counters->rulecount].xbit_type[xbit_count]  = 4;   /* isnotset */
-					    rulestruct[counters->rulecount].xbit_isnotset_count++;
+                                            rulestruct[counters->rulecount].xbit_isnotset_count++;
                                         }
 
-		
-/*
 
-			            Toggle presents some issues & I'm not sure of a decent use case.  For one, 
-                                    if the xbit is present (in memory), toggling isn't an issue because the expire
-                                    time is already in memory.  If it's _never_ been set,  we would have to locate 
-                                    the expire time in memory and store it.  With Redis storage,  it's worse.  We
-                                    let Redis handle the xbit expiring (via "DEL" command).  Again, we would need 
-                                    to locate an xbit "set" to determine the expire time to set that on "toggle" :(
+                                    /*
 
-				    2019/03/19 - Champ Clark III
+                                    			            Toggle presents some issues & I'm not sure of a decent use case.  For one,
+                                                                        if the xbit is present (in memory), toggling isn't an issue because the expire
+                                                                        time is already in memory.  If it's _never_ been set,  we would have to locate
+                                                                        the expire time in memory and store it.  With Redis storage,  it's worse.  We
+                                                                        let Redis handle the xbit expiring (via "DEL" command).  Again, we would need
+                                                                        to locate an xbit "set" to determine the expire time to set that on "toggle" :(
 
-                                    else if (!strcmp(tmptoken, "toggle") )
-                                        {
-                                            rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;
-					    rulestruct[counters->rulecount].xbit_toggle_count++;
+                                    				    2019/03/19 - Champ Clark III
 
-                                        }
-*/
+                                                                        else if (!strcmp(tmptoken, "toggle") )
+                                                                            {
+                                                                                rulestruct[counters->rulecount].xbit_type[xbit_count]  = 5;
+                                    					    rulestruct[counters->rulecount].xbit_toggle_count++;
+
+                                                                            }
+                                    */
 
                                     if ( rulestruct[counters->rulecount].xbit_type[xbit_count] == 0 )
                                         {

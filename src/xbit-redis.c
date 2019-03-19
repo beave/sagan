@@ -25,6 +25,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
+#ifdef HAVE_LIBHIREDIS
+
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -190,3 +192,4 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
 }
 
+#endif

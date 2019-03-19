@@ -19,12 +19,10 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-
 #define XBIT_SET	1
 #define XBIT_UNSET	2
 #define XBIT_ISSET	3
 #define XBIT_ISNOTSET	4
-#define XBIT_TOGGLE 	5
 
 bool Xbit_Condition(int rule_position, char *ip_src, char *ip_dst);
 uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char );

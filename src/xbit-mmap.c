@@ -171,50 +171,6 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
 
                         }
 
-                    /* Toggle */
-
-                    else if ( rulestruct[rule_position].xbit_type[r] == XBIT_TOGGLE )
-                        {
-
-                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
-
-                            xbit_match = false;
-
-                            for ( x = 0; x < counters_ipc->xbit_count; x++ )
-                                {
-
-                                    if ( hash == Xbit_IPC[x].xbit_hash && rulestruct[rule_position].xbit_name_hash[r] == Xbit_IPC[x].xbit_name_hash )
-                                        {
-
-                                            /* xbit is inactve,  set to active */
-
-                                            if ( Xbit_IPC[x].xbit_expire == 0 )
-                                                {
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to ACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
-                                                        }
-
-                                                    Xbit_IPC[x].xbit_expire = Return_Epoch() + Xbit_IPC[x].expire;
-
-                                                }
-                                            else
-                                                {
-
-                                                    /* xbit is active, set to inactive */
-
-                                                    if ( debug->debugxbit )
-                                                        {
-                                                            Sagan_Log(DEBUG, "[%s, line %d] Toggling xbit '%s' at %d to INACTIVE [hash: %u]", __FILE__, __LINE__, Xbit_IPC[x].xbit_name, x, Xbit_IPC[x].xbit_hash);
-                                                        }
-
-                                                    Xbit_IPC[x].xbit_expire = 0;
-
-                                                }
-                                        }
-                                }
-                        }
                 } /* for (r = 0; r < rulestruct[rule_position].xbit_count; r++) */
         }
 }
