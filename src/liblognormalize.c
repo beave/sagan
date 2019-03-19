@@ -123,8 +123,6 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
     SaganNormalizeLiblognorm->ip_dst[0] = '0';
     SaganNormalizeLiblognorm->ip_dst[1] = '\0';
 
-    SaganNormalizeLiblognorm->selector[0] = '\0';
-
     SaganNormalizeLiblognorm->username[0] = '\0';
     SaganNormalizeLiblognorm->src_host[0] = '\0';
     SaganNormalizeLiblognorm->dst_host[0] = '\0';
@@ -167,19 +165,6 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
     if ( tmp != NULL )
         {
             snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
-        }
-
-    /* Used for tracking in multi-tenant environment */
-
-    if (config->selector_flag)
-        {
-            json_object_object_get_ex(json, config->selector_name[0] != '\0' ? config->selector_name : "selector", &string_obj);
-            tmp = json_object_get_string(string_obj);
-
-            if ( tmp != NULL )
-                {
-                    snprintf(SaganNormalizeLiblognorm->selector, sizeof(SaganNormalizeLiblognorm->selector), "%s", tmp);
-                }
         }
 
     /* Get username information - Will be used in the future */
@@ -306,7 +291,6 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             Sagan_Log(DEBUG, "---------------------------------------------------");
             Sagan_Log(DEBUG, "Log message to normalize: |%s|", syslog_msg);
             Sagan_Log(DEBUG, "Parsed: %s", cstr);
-            Sagan_Log(DEBUG, "Slector: %s", SaganNormalizeLiblognorm->selector);
             Sagan_Log(DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
             Sagan_Log(DEBUG, "Destination IP: %s", SaganNormalizeLiblognorm->ip_dst);
             Sagan_Log(DEBUG, "Source Port: %d", SaganNormalizeLiblognorm->src_port);

@@ -19,7 +19,7 @@
 */
 
 
-void Flexbit_Set_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
-bool Flexbit_Condition_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *selector );
-void Flexbit_Cleanup_Redis( char *xbit_name, uint32_t utime, char *notnull_selector,  char *ip_src_char, char *ip_dst_char );
+void Flexbit_Set_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port,  _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
+bool Flexbit_Condition_Redis( int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port );
+void Flexbit_Cleanup_Redis( char *xbit_name, uint32_t utime,  char *ip_src_char, char *ip_dst_char );
 

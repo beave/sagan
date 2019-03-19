@@ -458,8 +458,6 @@ struct _Sagan_Event
     int   dst_port;
     int   src_port;
 
-    char *selector;
-
     struct timeval event_time;
 
     int  found;
@@ -532,7 +530,6 @@ struct _Threshold2_IPC
     uint64_t utime;
     uint64_t sid;
     int expire;
-    char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];
     char signature_msg[MAX_SAGAN_MSG];
 };
@@ -565,7 +562,6 @@ struct _After2_IPC
     uint32_t rev;
 
     int expire;
-    char selector[MAXSELECTOR];
     char syslog_message[MAX_SYSLOGMSG];
     char signature_msg[MAX_SAGAN_MSG];
 };

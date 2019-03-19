@@ -58,7 +58,7 @@ struct _Sagan_IPC_Flexbit *flexbit_ipc;
  * rule condition is tested here and returned.
  *****************************************************************************/
 
-bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector )
+bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port )
 {
 
     time_t t;
@@ -96,17 +96,6 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-
-                            /* Short circuit if no selector match */
-
-                            if (
-                                (selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                (selector != NULL && strcmp(selector, flexbit_ipc[a].selector) != 0)
-                            )
-                                {
-
-                                    continue;
-                                }
 
                             if ( !memcmp(rulestruct[rule_position].flexbit_name[i], flexbit_ipc[a].flexbit_name, sizeof(rulestruct[rule_position].flexbit_name[i])) &&
                                     flexbit_ipc[a].flexbit_state == true )
@@ -679,7 +668,7 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
  * distributed attacks.
  *****************************************************************************/
 
-bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *selector )
+bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst )
 {
 
     uint32_t a = 0;
@@ -691,16 +680,6 @@ bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *se
 
             for (a = 0; a < counters_ipc->flexbit_count; a++)
                 {
-                    /* Short circuit if no selector match */
-
-                    if (
-                        (selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                        (selector != NULL && 0 != strcmp(selector, flexbit_ipc[a].selector))
-                    )
-                        {
-
-                            continue;
-                        }
 
                     if ( rulestruct[rule_position].flexbit_direction[i] == 2 &&
                             !memcmp(flexbit_ipc[a].ip_src, ip_src, sizeof(flexbit_ipc[a].ip_src)) )
@@ -763,7 +742,7 @@ bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst, char *se
  * "unset" happen here.
  *****************************************************************************/
 
-void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *selector, char *syslog_message )
+void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *syslog_message )
 {
 
     int i = 0;
@@ -807,17 +786,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && strcmp(selector, flexbit_ipc[a].selector) != 0 )
-                            )
-                                {
-
-                                    continue;
-                                }
-
 
                             if ( !strcmp(flexbit_ipc[a].flexbit_name, rulestruct[rule_position].flexbit_name[i] ))
                                 {
@@ -1159,16 +1127,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && 0 != strcmp(selector, flexbit_ipc[a].selector ))
-                            )
-                                {
-
-                                    continue;
-                                }
 
                             /* Do we have the flexbit already in memory?  If so,  update the information */
 
@@ -1246,16 +1204,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && 0 != strcmp(selector, flexbit_ipc[a].selector ))
-                            )
-                                {
-
-                                    continue;
-                                }
 
                             /* Do we have the flexbit already in memory?  If so,  update the information */
 
@@ -1326,16 +1274,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && 0 != strcmp(selector, flexbit_ipc[a].selector))
-                            )
-                                {
-
-                                    continue;
-                                }
 
                             /* Do we have the flexbit already in memory?  If so,  update the information */
 
@@ -1406,16 +1344,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                     for (a = 0; a < counters_ipc->flexbit_count; a++)
                         {
-                            /* Short circuit if no selector match */
-
-                            if (
-                                ( selector == NULL && flexbit_ipc[a].selector[0] != '\0') ||
-                                ( selector != NULL && 0 != strcmp(selector, flexbit_ipc[a].selector))
-                            )
-                                {
-
-                                    continue;
-                                }
 
                             /* Do we have the flexbit already in memory?  If so,  update the information */
 
@@ -1496,8 +1424,6 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
 
                             memcpy(flexbit_ipc[counters_ipc->flexbit_count].ip_src, ip_src, sizeof(flexbit_ipc[counters_ipc->flexbit_count].ip_src));
                             memcpy(flexbit_ipc[counters_ipc->flexbit_count].ip_dst, ip_dst, sizeof(flexbit_ipc[counters_ipc->flexbit_count].ip_dst));
-
-                            selector == NULL ? flexbit_ipc[counters_ipc->flexbit_count].selector[0] = '\0' : strlcpy(flexbit_ipc[counters_ipc->flexbit_count].selector, selector, MAXSELECTOR);
 
                             flexbit_ipc[counters_ipc->flexbit_count].src_port = flexbit_track[i].flexbit_srcport;
                             flexbit_ipc[counters_ipc->flexbit_count].dst_port = flexbit_track[i].flexbit_dstport;

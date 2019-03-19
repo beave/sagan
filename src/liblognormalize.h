@@ -51,8 +51,6 @@ typedef struct _SaganNormalizeLiblognorm
     char src_host[MAXHOST];
     char dst_host[MAXHOST];
 
-    char selector[MAXSELECTOR];
-
     int  src_port;
     int  dst_port;
 

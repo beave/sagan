@@ -51,7 +51,7 @@ struct _SaganConfig *config;
 /* Threshold2          */
 /***********************/
 
-bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst,  uint32_t dst_port, char *username, char *selector, char *syslog_message )
+bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst,  uint32_t dst_port, char *username, char *syslog_message )
 {
 
     time_t t;
@@ -116,8 +116,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
     for (i = 0; i < counters_ipc->thresh2_count; i++ )
         {
 
-            if ( hash == Threshold2_IPC[i].hash && Threshold2_IPC[i].sid == rulestruct[rule_position].s_sid &&
-                    ( selector == NULL || !strcmp(selector, Threshold2_IPC[i].selector)) )
+            if ( hash == Threshold2_IPC[i].hash && Threshold2_IPC[i].sid == rulestruct[rule_position].s_sid )
                 {
 
                     File_Lock(config->shm_thresh2);
@@ -197,8 +196,6 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
             pthread_mutex_lock(&Thresh2_Mutex);
 
             Threshold2_IPC[counters_ipc->thresh2_count].hash = hash;
-
-            selector == NULL ? Threshold2_IPC[counters_ipc->thresh2_count].selector[0] = '\0' : strlcpy(Threshold2_IPC[counters_ipc->thresh2_count].selector, selector, MAXSELECTOR);
 
             Threshold2_IPC[counters_ipc->thresh2_count].count = 1;
             Threshold2_IPC[counters_ipc->thresh2_count].utime = current_time;

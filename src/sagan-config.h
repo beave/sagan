@@ -56,9 +56,6 @@ struct _SaganConfig
     const char	 *sagan_runas;
     char         sagan_config[MAXPATH];                 /* Master Sagan configuration file */
 
-    bool         selector_flag;
-    char         selector_name[MAXSELECTOR];
-
     bool	 alert_flag;
 
     bool	 	eve_flag; 			/* 0 = file */

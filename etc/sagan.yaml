@@ -178,15 +178,6 @@ sagan-core:
     ipv6: enabled			# Parse IPv6 Addresses
     ipv4-mapped-ipv6: disabled		# Map ffff::192.168.1.1 back to 192.168.1.1
 
-  # The "selector" adds "multi-tenancy" into Sagan.  Using the "selector" allows Sagan to 
-  # track IP source, IP destinations, etc. in order to ensure overlapping logs from different
-  # environments are tracked separately. 
-
-  selector:
-    enabled: no
-    name: "selector name"        # Log entry must be normalized and this value must 
-                                 # be present in the normalized result
-
   # Redis configuration.  Redis can be used to act as a global storage engine for
   # flexbits.  This allows Sagan to "share" flexbit data across a network # infrastructure.
   # This is experimental! 

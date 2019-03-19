@@ -558,11 +558,6 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_SAGAN_CORE_PARSE_IP;
                                 }
 
-                            else if (!strcmp(value, "selector" ))
-                                {
-                                    sub_type = YAML_SAGAN_CORE_SELECTOR;
-                                }
-
                             else if (!strcmp(value, "redis-server" ))
                                 {
                                     sub_type = YAML_SAGAN_CORE_REDIS;
@@ -1353,35 +1348,6 @@ void Load_YAML_Config( char *yaml_file )
                                         }
 
                                 }
-
-                            if ( sub_type == YAML_SAGAN_CORE_SELECTOR )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-
-                                                    config->selector_flag = true;
-
-                                                }
-                                        }
-
-                                    if ( config->selector_flag == true )
-                                        {
-
-                                            if (!strcmp(last_pass, "name"))
-                                                {
-
-                                                    Var_To_Value(value, tmp, sizeof(tmp));
-                                                    strlcpy(config->selector_name, tmp, sizeof(config->selector_name));
-
-                                                }
-                                        }
-
-                                } /* if sub_type == YAML_SAGAN_CORE_SELECTOR */
-
 
                         } /*  else if ( type == YAML_TYPE_SAGAN_CORE ) */
 

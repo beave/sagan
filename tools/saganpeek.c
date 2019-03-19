@@ -334,18 +334,6 @@ int main(int argc, char **argv)
 
                             printf("Type: Threshold [%d].\n", i);
 
-                            printf("Selector: ");
-
-                            if ( Threshold2_IPC[i].selector[0] == 0 )
-                                {
-                                    printf("[None]\n");
-                                }
-                            else
-                                {
-                                    printf("%s\n", Threshold2_IPC[i].selector);
-                                }
-
-
                             printf("Tracking hash: %u\n", Threshold2_IPC[i].hash);
 
                             printf("Tracking by:");
@@ -462,17 +450,6 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(After2_IPC[i].utime, time_buf, sizeof(time_buf));
 
-                            printf("Selector: ");
-
-                            if ( After2_IPC[i].selector[0] == 0 )
-                                {
-                                    printf("[None]\n");
-                                }
-                            else
-                                {
-                                    printf("%s\n", After2_IPC[i].selector);
-                                }
-
                             printf("Tracking hash: %u\n", After2_IPC[i].hash);
 
                             printf("Tracking by:");
@@ -584,16 +561,6 @@ int main(int argc, char **argv)
                                     flexbit_oldtime = flexbit_ipc[i].flexbit_expire - current_time;
 
                                     printf("Type: flexbit [%d].\n", i);
-                                    printf("Selector: ");
-
-                                    if ( flexbit_ipc[i].selector[0] == 0 )
-                                        {
-                                            printf("[None]\n");
-                                        }
-                                    else
-                                        {
-                                            printf("%s\n", flexbit_ipc[i].selector);
-                                        }
 
                                     printf("Xbit name: \"%s\"\n", flexbit_ipc[i].flexbit_name);
                                     printf("State: %s\n", flexbit_ipc[i].flexbit_state == 1 ? "ACTIVE" : "INACTIVE");

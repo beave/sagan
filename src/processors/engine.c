@@ -143,8 +143,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char *ptmp;
     char *tok2;
 
-    char *pnormalize_selector = NULL;
-
     char parse_ip_src[MAXIP] = { 0 };
     char parse_ip_dst[MAXIP] = { 0 };
     char parse_md5_hash[MD5_HASH_SIZE+1] = { 0 };
@@ -701,12 +699,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     normalize_username = SaganNormalizeLiblognorm.username;
                                                 }
 
-                                            if ( config->selector_flag && SaganNormalizeLiblognorm.selector[0] != '\0' )
-                                                {
-                                                    liblognorm_status = 1;
-                                                    pnormalize_selector = SaganNormalizeLiblognorm.username;
-                                                }
-
                                             if ( SaganNormalizeLiblognorm.http_uri[0] != '\0' )
                                                 {
                                                     liblognorm_status = 1;
@@ -1038,12 +1030,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             if ( rulestruct[b].flexbit_condition_count )
                                                 {
-                                                    flexbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector);
+                                                    flexbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32);
                                                 }
 
                                             if ( rulestruct[b].flexbit_count_flag )
                                                 {
-                                                    flexbit_count_return = Flexbit_Count(b, ip_src, ip_dst, pnormalize_selector);
+                                                    flexbit_count_return = Flexbit_Count(b, ip_src, ip_dst);
                                                 }
 
                                         }
@@ -1401,7 +1393,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                     if ( rulestruct[b].after2 == true )
                                                                                                                                         {
-                                                                                                                                            after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
+                                                                                                                                            after_log_flag = After2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                         }
 
                                                                                                                                     /* Threshold */
@@ -1410,7 +1402,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                                                                                                     if ( rulestruct[b].threshold2_type != 0 && after_log_flag == false )
                                                                                                                                         {
-                                                                                                                                            thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, pnormalize_selector, SaganProcSyslog_LOCAL->syslog_message );
+                                                                                                                                            thresh_log_flag = Threshold2 (b, ip_src, ip_srcport_u32, ip_dst, ip_dstport_u32, normalize_username, SaganProcSyslog_LOCAL->syslog_message );
                                                                                                                                         }
 
 
@@ -1440,13 +1432,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                             /* Do we need to "set" an xbit? */
 
                                                                                                                                             if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_set_count || rulestruct[b].xbit_unset_count ) )
-	{
-        Xbit_Set(b, ip_src, ip_dst, (char *)SaganProcSyslog_LOCAL->syslog_message);
-	}
+                                                                                                                                                {
+                                                                                                                                                    Xbit_Set(b, ip_src, ip_dst, (char *)SaganProcSyslog_LOCAL->syslog_message);
+                                                                                                                                                }
                                                                                                                                             /* Check to "set" a flexbit */
                                                                                                                                             if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
                                                                                                                                                 {
-                                                                                                                                                    Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, pnormalize_selector, SaganProcSyslog_LOCAL);
+                                                                                                                                                    Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, SaganProcSyslog_LOCAL);
                                                                                                                                                 }
 
                                                                                                                                             threadid++;

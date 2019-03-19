@@ -126,9 +126,6 @@ typedef void json_object;
 #define MAXIP			64		/* Max IP length */
 #define MAXIPBIT	     	16		/* Max IP length in bytes */
 
-
-#define MAXSELECTOR		64		/* Max tracking selector length */
-
 #define LOCKFILE 		"/var/run/sagan/sagan.pid"
 #define SAGANLOG		"/var/log/sagan/sagan.log"
 #define SAGANLOGPATH		"/var/log/sagan"

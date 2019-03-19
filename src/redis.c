@@ -44,15 +44,10 @@
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
 
-int redis_msgslot;
+int redis_msgslot = 0;
 
-pthread_cond_t SaganRedisDoWork;
-pthread_mutex_t SaganRedisWorkMutex;
-
-//pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
-//pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
-
-
+pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
+pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Redis *SaganRedis = NULL;

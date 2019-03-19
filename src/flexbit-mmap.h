@@ -24,10 +24,10 @@
 
 #include "sagan-defs.h"
 
-void Flexbit_Set_MMAP( int, char *, char *, int, int, char *, char * );
-bool Flexbit_Condition_MMAP ( int, char *, char *, int, int, char * );
+bool Flexbit_Condition_MMAP ( int, char *, char *, int, int );
 void Flexbit_Cleanup_MMAP( void );
-bool Flexbit_Count_MMAP( int, char *, char *, char * );
+void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *syslog_message );
+bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst );
 
 typedef struct _Sagan_Flexbit_Track _Sagan_Flexbit_Track;
 struct _Sagan_Flexbit_Track
@@ -51,7 +51,6 @@ struct _Sagan_IPC_Flexbit
     uint64_t flexbit_date;
     uint64_t flexbit_expire;
     int expire;
-    char selector[MAXSELECTOR];  /* No need to clean this, as we always set it when tracking */
     char syslog_message[MAX_SYSLOGMSG];
     uint64_t sid;
     char signature_msg[MAX_SAGAN_MSG];
