@@ -97,8 +97,9 @@ Source:%s\n\
 Source Port:%d\n\
 Destination:%s\n\
 Destination Port:%d\n\
-Facility:%s\n\
+Syslog Facility:%s\n\
 Syslog Priority:%s\n\
+Syslog Program:%s\n\
 Liblognorm JSON:%s\n\
 %sSyslog message:%s\n"\
              \
@@ -116,6 +117,7 @@ Liblognorm JSON:%s\n\
              Event->dst_port,\
              Event->facility,\
              Event->priority,\
+             Event->program,\
              !Event->json_normalize ? "{}" : json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN),
              tmpref,\
              Event->message);

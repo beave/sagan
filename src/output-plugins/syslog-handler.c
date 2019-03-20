@@ -56,7 +56,7 @@ void Alert_Syslog( _Sagan_Event *Event )
 
     /* Template to mimic Snort syslog output */
 
-    char *syslog_template = "[%lu:%" PRIu64 ":%d] %s [Classification: %s] [Priority: %d] %s %s:%d -> %s:%d - %s";
+    char *syslog_template = "[%lu:%" PRIu64 ":%d] %s [Classification: %s] [Priority: %d] [Program: %s] %s %s:%d -> %s:%d - %s";
 
     if ( Event->ip_proto != 1 || Event->ip_proto != 6 || Event->ip_proto != 17 )
         {
@@ -80,7 +80,7 @@ void Alert_Syslog( _Sagan_Event *Event )
 
     Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
-    snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, classbuf, Event->pri, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->message);
+    snprintf(syslog_message_output, sizeof(syslog_message_output), syslog_template, Event->generatorid, Event->sid, Event->rev, Event->f_msg, classbuf, Event->pri, Event->program, tmp_proto, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->message);
 
     /* Send syslog message */
 

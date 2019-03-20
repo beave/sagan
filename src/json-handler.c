@@ -142,6 +142,18 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jxff = json_object_new_string( Event->host );
     json_object_object_add(jobj,"xff", jxff);
 
+    json_object *jsyslog_facility = json_object_new_string(Event->facility);
+    json_object_object_add(jobj,"facility", jsyslog_facility);
+
+    json_object *jsyslog_priority = json_object_new_string(Event->priority);
+    json_object_object_add(jobj,"priority", jsyslog_priority);
+
+    json_object *jsyslog_level = json_object_new_string(Event->level);
+    json_object_object_add(jobj,"level", jsyslog_level);
+
+    json_object *jsyslog_program = json_object_new_string(Event->program);
+    json_object_object_add(jobj,"program", jsyslog_program);
+
     /* Alert data */
 
     json_object *jaction_alert = json_object_new_string( action );

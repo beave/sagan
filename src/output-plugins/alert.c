@@ -59,7 +59,7 @@ void Alert_File( _Sagan_Event *Event )
     fprintf(config->sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
     fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );
     fprintf(config->sagan_alert_stream, "[Alert Time: %s]\n", timebuf);
-    fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority);
+    fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->program);
     fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
 
     if ( Event->found != 0 )

@@ -68,7 +68,9 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, json_object *json_n
         }
 
     SaganProcessorEvent->message         =       SaganProcSyslog_LOCAL->syslog_message;
-    SaganProcessorEvent->program         =       processor_info->processor_name;
+    SaganProcessorEvent->program	 = 	 SaganProcSyslog_LOCAL->syslog_program;
+    SaganProcessorEvent->level           =       SaganProcSyslog_LOCAL->syslog_level;
+
     SaganProcessorEvent->facility        =       processor_info->processor_facility;
     SaganProcessorEvent->priority        =       processor_info->processor_priority;	/* Syslog priority */
     SaganProcessorEvent->pri             =       processor_info->processor_pri;		/* Sagan priority */
