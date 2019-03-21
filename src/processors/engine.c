@@ -1028,10 +1028,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 				    if ( rulestruct[b].xbit_pause_time != 0 ) 
 				        {
-	
-					    printf("Sleep %d\n", rulestruct[b].xbit_pause_time);
 					    sleep( rulestruct[b].xbit_pause_time );
-					    printf("Done\n");
 					}
 
 
