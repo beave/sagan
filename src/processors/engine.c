@@ -1003,13 +1003,37 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
                                     /****************************************************************************
-                                                     * flexbit "upause".  This lets flexbits settle in "tight" timing situations.
+                                                     * flexbit/xbit "upause".  This lets flexbits/xbit settle in "tight" timing situations.
                                       ****************************************************************************/
+
+
+				    /* upause (millisecond) */
 
                                     if ( rulestruct[b].flexbit_upause_time != 0 )
                                         {
                                             usleep( rulestruct[b].flexbit_upause_time );
                                         }
+
+				    if ( rulestruct[b].xbit_upause_time != 0 ) 
+				        {
+					    usleep( rulestruct[b].xbit_upause_time );
+					}
+
+				    /* pause (second) */
+
+                                    if ( rulestruct[b].flexbit_pause_time != 0 )
+                                        {
+                                            sleep( rulestruct[b].flexbit_pause_time );
+                                        }
+
+				    if ( rulestruct[b].xbit_pause_time != 0 ) 
+				        {
+	
+					    printf("Sleep %d\n", rulestruct[b].xbit_pause_time);
+					    sleep( rulestruct[b].xbit_pause_time );
+					    printf("Done\n");
+					}
+
 
                                     /****************************************************************************
                                      * xbit - ISSET || ISNOTSET

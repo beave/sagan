@@ -882,7 +882,7 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_find_proto_program = true;
                         }
 
-                    if (!strcmp(rulesplit, "flexbit_upause"))
+                    if (!strcmp(rulesplit, "flexbits_upause"))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
@@ -895,6 +895,49 @@ void Load_Rules( const char *ruleset )
 
                             rulestruct[counters->rulecount].flexbit_upause_time = atoi(arg);
                         }
+
+                    if (!strcmp(rulesplit, "xbits_upause"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"xbit_upause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            rulestruct[counters->rulecount].xbit_upause_time = atoi(arg);
+                        }
+
+                    if (!strcmp(rulesplit, "flexbits_pause"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"flexbit_pause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            rulestruct[counters->rulecount].flexbit_pause_time = atoi(arg);
+                        }
+
+                    if (!strcmp(rulesplit, "xbits_pause"))
+                        {
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"xbit_pause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            rulestruct[counters->rulecount].xbit_pause_time = atoi(arg);
+                        }
+
 
                     if (!strcmp(rulesplit, "default_proto"))
                         {
@@ -966,8 +1009,6 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].default_dst_port = atoi(tmp1);
 
                         }
-
-
 
                     if (!strcmp(rulesplit, "parse_src_ip"))
                         {

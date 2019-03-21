@@ -150,6 +150,7 @@ struct _Rule_Struct
 
     int flexbit_count;				/* Number of flexbits in memory */
     int flexbit_upause_time;			/* Delay to let flexbits settle */
+    int flexbit_pause_time;
     unsigned char flexbit_condition_count;	/* Number of isset/isnot within a rule */
     unsigned char flexbit_set_count;		/* Number of set/unset within a rule */
     unsigned char flexbit_count_count;		/* Number of count within a rule */
@@ -187,6 +188,10 @@ struct _Rule_Struct
     unsigned char xbit_condition_count;
     unsigned char xbit_type[MAX_XBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
                                                    6 == set_dstport, 7 == set_ports, 8 == count */
+
+    int xbit_upause_time;
+    int xbit_pause_time;
+
     char xbit_name[MAX_XBITS][64];
     uint32_t xbit_name_hash[MAX_XBITS];
     int xbit_expire[MAX_XBITS];
