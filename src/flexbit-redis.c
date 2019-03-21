@@ -356,6 +356,8 @@ void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, 
 
                             utime_plus_timeout = utime + rulestruct[rule_position].flexbit_timeout[i];
 
+                            pthread_mutex_lock(&SaganRedisWorkMutex);
+
                             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                      "ZADD %s:by_src %lu %s;"
                                      "ZADD %s:by_dst %lu %s;"
@@ -409,6 +411,8 @@ void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, 
 
                                     Flexbit_Cleanup_Redis(rulestruct[rule_position].flexbit_name[i], utime, ip_src_char, ip_dst_char);
 
+                                    pthread_mutex_lock(&SaganRedisWorkMutex);
+
                                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
 
                                              "ZREM %s:by_src %s;"
@@ -445,6 +449,8 @@ void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, 
 
                                     Flexbit_Cleanup_Redis(rulestruct[rule_position].flexbit_name[i], utime, ip_src_char, ip_dst_char);
 
+                                    pthread_mutex_lock(&SaganRedisWorkMutex);
+
                                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                              "ZREM %s:by_src %s", rulestruct[rule_position].flexbit_name[i], ip_src_char );
 
@@ -476,6 +482,8 @@ void Flexbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, 
                                 {
 
                                     Flexbit_Cleanup_Redis(rulestruct[rule_position].flexbit_name[i], utime, ip_src_char, ip_dst_char);
+
+                                    pthread_mutex_lock(&SaganRedisWorkMutex);
 
                                     snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                                              "ZREM %s:by_dst %s",
@@ -512,6 +520,7 @@ void Flexbit_Cleanup_Redis( char *flexbit_name, uint32_t utime, char *ip_src_cha
     if ( redis_msgslot < config->redis_max_writer_threads )
         {
 
+            pthread_mutex_lock(&SaganRedisWorkMutex);
 
             snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
                      "ZREMRANGEBYSCORE %s:by_src -inf %lu;"

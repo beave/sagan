@@ -619,7 +619,7 @@ int main(int argc, char **argv)
                                     printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
                                     printf("State: ");
 
-                                    if ( xbit_ipc[i].xbit_expire != 0 || xbit_ipc[i].xbit_expire <= current_time )
+                                    if (  xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time )
                                         {
                                             printf("Active\n");
                                         }
@@ -631,7 +631,17 @@ int main(int argc, char **argv)
                                     printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
                                     printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
                                     printf("Expire Time: %d\n", xbit_ipc[i].expire);
-                                    printf("Expired at: %s\n", time_buf);
+                                    printf("Expired at: ", time_buf);
+
+                                    if ( xbit_ipc[i].xbit_expire == 0 )
+                                        {
+                                            printf("[Unset]\n");
+                                        }
+                                    else
+                                        {
+                                            printf("%s\n", time_buf);
+                                        }
+
                                     printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
 
                                 }

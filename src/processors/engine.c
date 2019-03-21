@@ -1007,29 +1007,53 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                       ****************************************************************************/
 
 
-				    /* upause (millisecond) */
-
-                                    if ( rulestruct[b].flexbit_upause_time != 0 )
-                                        {
-                                            usleep( rulestruct[b].flexbit_upause_time );
-                                        }
-
-				    if ( rulestruct[b].xbit_upause_time != 0 ) 
-				        {
-					    usleep( rulestruct[b].xbit_upause_time );
-					}
-
-				    /* pause (second) */
+                                    /* upause (millisecond) */
 
                                     if ( rulestruct[b].flexbit_pause_time != 0 )
                                         {
-                                            sleep( rulestruct[b].flexbit_pause_time );
+
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s, line %d] flexbit_pause for %d seconds", __FILE__, __LINE__, rulestruct[b].flexbit_upause_time);
+                                                }
+
+
+                                            usleep( rulestruct[b].flexbit_pause_time );
                                         }
 
-				    if ( rulestruct[b].xbit_pause_time != 0 ) 
-				        {
-					    sleep( rulestruct[b].xbit_pause_time );
-					}
+                                    if ( rulestruct[b].flexbit_upause_time != 0 )
+                                        {
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s, line %d] flexbit_pause for %d microseconds", __FILE__, __LINE__, rulestruct[b].flexbit_upause_time);
+                                                }
+
+                                            usleep( rulestruct[b].flexbit_upause_time );
+                                        }
+
+                                    /* pause (second) */
+
+                                    if ( rulestruct[b].xbit_pause_time != 0 )
+                                        {
+
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s, line %d] xbit_pause for %d seconds", __FILE__, __LINE__, rulestruct[b].xbit_pause_time);
+                                                }
+
+                                            sleep( rulestruct[b].xbit_pause_time );
+                                        }
+
+                                    if ( rulestruct[b].xbit_upause_time != 0 )
+                                        {
+                                            if ( debug->debugxbit )
+                                                {
+                                                    Sagan_Log(DEBUG, "[%s, line %d] xbit_upause for %d microseconds", __FILE__, __LINE__, rulestruct[b].xbit_upause_time);
+                                                }
+
+
+                                            sleep( rulestruct[b].xbit_upause_time );
+                                        }
 
 
                                     /****************************************************************************

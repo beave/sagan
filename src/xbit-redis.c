@@ -109,13 +109,15 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' set in Redis for %d seconds [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], rulestruct[rule_position].xbit_expire[r], hash);
                         }
 
-                    snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
-                             "SET %s:%s:%u \"sensor:%s,expire:%d,%s\" EX %d", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r], fullsyslog_orig, rulestruct[rule_position].xbit_expire[r]);
-
-                    redis_msgslot++;
-
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
+
+                            pthread_mutex_lock(&SaganRedisWorkMutex);
+
+                            snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
+                                     "SET %s:%s:%u \"sensor:%s,expire:%d,%s\" EX %d", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r], fullsyslog_orig, rulestruct[rule_position].xbit_expire[r]);
+
+                            redis_msgslot++;
 
                             pthread_cond_signal(&SaganRedisDoWork);
                             pthread_mutex_unlock(&SaganRedisWorkMutex);
@@ -123,7 +125,6 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                         }
                     else
                         {
-
                             Sagan_Log(WARN, "[%s, line %d] Out of Redis 'writer' threads for 'set'.  Skipping!", __FILE__, __LINE__);
                             __atomic_add_fetch(&counters->redis_writer_threads_drop, 1, __ATOMIC_SEQ_CST);
                         }
@@ -140,13 +141,17 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' unset in Redis [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], hash);
                         }
 
-                    snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
-                             "DEL %s:%s:%u \"sensor:%s,expire:%d\"", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r]);
-
-                    redis_msgslot++;
 
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
+
+                            pthread_mutex_lock(&SaganRedisWorkMutex);
+
+                            snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
+                                     "DEL %s:%s:%u \"sensor:%s,expire:%d\"", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r]);
+
+                            redis_msgslot++;
+
                             pthread_cond_signal(&SaganRedisDoWork);
                             pthread_mutex_unlock(&SaganRedisWorkMutex);
                         }
