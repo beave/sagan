@@ -612,7 +612,7 @@ int main(int argc, char **argv)
 
                             u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                            if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire >= current_time ) )
+                            if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time ) )
                                 {
 
                                     printf("Type: xbit [%d].\n", i);
