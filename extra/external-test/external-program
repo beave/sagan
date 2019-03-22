@@ -1,15 +1,22 @@
 #!/usr/bin/perl
 
 ##############################################################################
-# This is a exmaple program to test the "external" output format with.  This
-# routine simply writes our a lot file of what it has received. 
+# This is a simple program that will take data from Sagan's "external" rule
+# option and decode the JSON.  The "external" program is called when a Sagan
+# rule is triggered.  This can be useful for having Sagan perform an 
+# operation when a specific log event or events occurs. 
 #
 # Champ Clark III
-# 08/05/2015
+#
+# 2015/08/05 - (original non-JSON format)
+# 2019/03/22 - (New JSON format support)
 ##############################################################################
 
-my $filename = "/tmp/myprogram.$$"; 
+use JSON; 
+use warnings; 
 
+my $filename = "/tmp/myprogram.$$"; 
+my $json_d;
 
 $SIG{'INT'} = \&signal_handler;
 $SIG{'TERM'} = \&signal_handler;
@@ -17,13 +24,42 @@ $SIG{'HUP'} = \&signal_handler;
 
 open(MYFILE, ">> $filename") || die "Cannot open $filename!\n"; 
 
+# Wait on stdin and collect the incoming json.
+
 while (<>) {
-    print MYFILE $_;
+
+$json_d = decode_json($_); 
+
+print MYFILE "Signature: " . $json_d->{signature_id} . "\n"; 
+print MYFILE "Signature ID: " . $json_d->{signature} . "\n"; 
+print MYFILE "Rev: " . $json_d->{rev} . "\n";
+print MYFILE "Severity: " . $json_d->{severity} . "\n";
+print MYFILE "Category: " . $json_d->{category} . "\n";
+print MYFILE "Priority: " . $json_d->{priority} . "\n";
+print MYFILE "Timestamp: " . $json_d->{timestamp} . "\n";
+print MYFILE "Drop: " . $json_d->{drop} . "\n";
+print MYFILE "Flow ID: " . $json_d->{flow_id} . "\n";
+print MYFILE "Interface: " . $json_d->{in_iface} . "\n";
+print MYFILE "Source IP: " . $json_d->{src_ip} . "\n";
+print MYFILE "Source Port: " . $json_d->{src_port} . "\n";
+print MYFILE "Destination IP: " . $json_d->{dest_ip} . "\n";
+print MYFILE "Destination Port: " . $json_d->{dest_port} . "\n";
+print MYFILE "XFF: " . $json_d->{xff} . "\n";
+print MYFILE "Protocol: " . $json_d->{proto} . "\n";
+print MYFILE "Syslog Facility: " . $json_d->{syslog_facility} . "\n";
+print MYFILE "Syslog Level: " . $json_d->{syslog_level} . "\n";
+print MYFILE "Syslog Priority: " . $json_d->{syslog_priority} . "\n";
+print MYFILE "Syslog Message: " . $json_d->{syslog_message} . "\n";
+
+# Normalized data is nested in the external JSON.  With that in mind, 
+# you will need to specify the keys you want.  For example,  if Sagan
+# is normalizing the "username" from the log, you would pull the 
+# $json_d->{normalize}->{username}. 
+
 }
 
 close(MYFILE); 
 exit(0);
-
 
 sub signal_handler {
 close(MYFILE); 
