@@ -5,12 +5,17 @@ Rule Keywords
 after
 -----
 
-.. option:: after: track {by_src|by_dst}, count {number of event}, seconds {number of seconds};
+.. option:: after: track {by_src|by_dst|by_username|by_string}, count {number of event}, seconds {number of seconds};
 
-after: track {by_src|by_dst}, count {number of event}, seconds {number of seconds}
 "after" is used to trigger an alert "after" a numbers of events have happened within a specific amount of time. "after" tracks by the source or destination IP address of the event. The example would track events by the source IP address. If the event is triggered more than 10 times within 300 seconds (5 minutes), an alert is triggered.
 
 **after: track by_src, count 10, seconds 300;**
+
+After can be tracked by multiple 'track' options.  For example:
+
+**after: track by_src&by_username, count 5, seconds 300;** 
+
+The above would track by the source IP address and by the username. 
 
 alert_time
 ----------
@@ -290,12 +295,14 @@ Searches only messages from a specified facility.  This can be multiple faciliti
 
 **facility: daemon;**
 
-flexbit
+flexbits
 --------
 
 .. option:: flexbits: set, {flexbit name}, {expire time}; 
 
-This option is used in conjunction with flexbits: unset, isset, isnotset. This allows Sagan to "track" through multiple log events to trigger an alert. For example, let say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the flexbit set you can turn on a flexbit when a system is being rebooted. Our flexbit set would look like this:
+Note: ``flexbits`` are similar to ``xbits`` but can deal with more complex conditions (tracking ports, reverse diection tracking, etc).  However, in most cases you'll likely want to use ``xbits`` which are more simple and are likely to do what you need. 
+
+The ``flexbis`` option is used in conjunection with ``unset``, ``isset``, ``isnotset``. This allows Sagan to "track" through multiple log events to trigger an alert. For example, let say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the flexbit set you can turn on a flexbit when a system is being rebooted. Our flexbit set would look like this:
 
 **flexbits: set, windows_reboot, 30;**
 
@@ -325,9 +332,22 @@ This unset removes an flexbit from memory. In this example, unset is removing a 
 
 Example of flexbit use can be found in the rules https://wiki.quadrantsec.com/twiki/bin/view/Main/5001880 and https://wiki.quadrantsec.com/twiki/bin/view/Main/5001881 . The first rule (5001880) "sets" a flexbit is a Microsoft Windows account is "created". The second rule (5001881) alerts an account is "enabled", but the flexbit has not (isnotset) set. In this example, it's normal for a users account to be "created and then enabled". However, there might be an anomaly if an account goes from a "disabled" and then "enabled" state without being "created".
 
-**flexbits: noalert;**
+**flexbits: {noalert|nounified2|noeve}**
 
-This informs Sagan to preform a flexbit operation, such as set or unset, but do not generate an alert. This is useful when used in conjunction with the set and unset flexbit keywords.
+This tells Sagan to not record certain types of data with a ``flexlbits`` when a condition is meant.  For example, you might not want to generate an alert when a ``xbits`` is ``set``. 
+
+flexbits_pause
+--------------
+
+ .. option:: flexbits_pause: {seconds}; 
+
+This tells the flexbit ``isset`` or ``isnotset`` to 'wait' for a specified number of seconds before checking the flexbit state.                                                                                                                                                                                                     
+flexbits_upause
+---------------
+
+.. option:: flexbits_upause: {microseconds}; 
+
+This tells the flexbit ``isset`` or ``isnotset`` to 'wait' for a specified number of microseconds before checking the flexbit state. 
 
 fwsam
 -----
@@ -632,13 +652,19 @@ Informs Sagan to only search syslog message with the specified tag.  This can be
 threshold
 ---------
 
-.. option:: threshold: type {limit|threshold}, track {by_src|by_dst}, count {number of event}, seconds {number of seconds}
+.. option:: threshold: type {limit|threshold}, track {by_src|by_dst|by_username|by_string}, count {number of event}, seconds {number of seconds}
 
 This allows Sagan to threshold alerts based on the volume of alerts over a specified amount of time.
 
 **threshold: type limit, track by_src, count 5, seconds 300;**
 
 Sagan will limit the amount of alerts via the source IP address if the count exceeds 5 within a 300 second (5 minute) period.
+
+You can also 'track' by multiple types.  For example:
+
+**threshold: type limit, track by_src&by_usernme, count 5, seconds 300;**
+
+The above would threshold by the source IP address and by the username. 
 
 within
 ------
@@ -654,6 +680,52 @@ For example:
 The first content would ony match on the world "GET" if it is contain within the first 3 bytes of the log line. The second content look for the term "downloads" if it is a distance of 10 bytes away from the depth. From the distance, only the first 9 bytes are examined for the term "downloads" (which is 9 bytes).
 
 This function is identical to Snort's "within" rule option. For more information see: http://blog.joelesler.net/2010/03/offset-depth-distance-and-within.html
+
+
+xbits
+-----
+
+.. option:: xbits:{set|unset|isset},{name},track {ip_src|ip_dst|ip_pair} [,expire <seconds>];
+
+The ``xbits`` rule keyword allows you to track and correlate events between multiple logs.  This is done by detecting an event and using the ``set`` for Sagan to "remember" an event.  Later,  if another event is detected,  it xbit can be tested via ``isset`` or ``isnotset`` to determine if an event happened earlier.  For example,  lets say you would like to detect when anti-virus is being shutdown bit **not** if it is related to a system reboot or shutdown.  
+
+When Sagan detects a shutdown/reboot,  Sagan can ``set`` and xbit. For this example, we will name the xbit being set 'system.reboot'.  WHen Sagan see's the anti-virus being shutdwn, Sagan can test to see if the xbit 'system.reboot' is set (``isset``) or is not set (``isnotset``).  In our case, if the xbit named 'system.reboot' ``isnotset``, when know that the anti-virus is being shutdown and is NOT related to a system reboot/shutdown. 
+
+Using ``xbis`` can be useful in detecting successful attacks.  Another example would be the Sagan 'brute_force' xbit.  Sagan monitors "brute force" attacks and ``sets`` and xbit associated to the source IP address (the 'brute_force' xbit).  If Sagan later detects a successful login,  we can test via the xbit (``isset``) to determine if the IP address has been associated with brute force attacks in the past. 
+
+Below is an example of setting an xbit by the source IP address. 
+
+**xbits: set,brute_force,track ip_src, expire 21600;**
+
+This will set an xbit named 'brute_force' by the source address.  The xbit will expire in 21000 seconds (6 hours). 
+
+To check the xbit later, use the ``isset`` or ``isnotset`` condition.  For example:
+
+**xbits: isset,brute_force,track ip_src;** 
+
+If the xbit 'brute_force' was already set and within the expire time,  the ``isset`` will return "true" (and fire).  The "track ip_src" on the ``isset`` or ``isnotset`` will compare the ip_src or the ``isset`` or ``isnotset`` rule with the ``set`` condition.  
+
+In certain situations, you may want to have a rule ``unset`` an xbit.  This effectively "clears" the xbit. For example:
+
+**xbits: unset,brute_force,track ip_src;**
+
+In some situations,  you might not want Sagan record data when a ``xbit`` condition is met.  For example, if you ``set`` an xbit,  you might not want to generate an alert.   To disable certain types of output, you can do this:
+
+**xbits: {noalert|nounified2|noeve}**
+
+xbits_pause
+-----------
+
+.. option:: xbits_pause: {seconds}; 
+
+This tells the xbit ``isset`` or ``isnotset`` to 'wait' for a specified number of seconds before checking the xbit state.
+
+xbits_upause
+------------
+
+.. option:: xbits_upause: {microseconds}; 
+
+This tells the xbit ``isset`` or ``isnotset`` to 'wait' for a specified number of microseconds before checking the xbit state.  
 
 
 
