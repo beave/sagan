@@ -88,11 +88,12 @@ Below is an example of querying a file hash in Bluedot
 
 **Note: Quadrnat Information Secrity Bluedot is not yet avaliable to the public.**
 
-bro-intel
----------
+zeek-intel
+----------
 
-.. option:: bro-intel: {src_ipaddr},{dst_ipaddr},{both_ipaddr},{all_ipaddr},{file_hash},{url},{software},{email},{user_name},{file_name},{cert_hash};
+.. option:: zeek-intel: {src_ipaddr},{dst_ipaddr},{both_ipaddr},{all_ipaddr},{file_hash},{url},{software},{email},{user_name},{file_name},{cert_hash};
 
+**Note: This option use to be known as "bro-intel"**
 
 This keyword allows Sagan to look malicious IP addresses, file hashes, URLs, software, email, user names, file hashes and certificate hash from Bro Intellegence feeds.
 
@@ -100,21 +101,21 @@ In order for the processors to be used, it must be enabled in your sagan.yaml fi
 
 The following is a simple example within a Sagan rule:
 
-**bro-intel: src_ipaddr;**
+**zeek-intel: src_ipaddr;**
 
 This informs Sagan to look up the parsed source address from the Bro Intel::ADDR data. The parsed source address is extracted via liblognorm or parse_src_ip.
 
 Multiple keywords can be used. For example:
 
-**bro-intel: both_ipaddr, domain, url;**
+**zeek-intel: both_ipaddr, domain, url;**
 
-This instructs Sagan to look up the parsed source and destination from the Bro Intel::ADDR data. It also looks up the Intel::DOMAIN and Intel::URL. If any of the "bro-intel" lookups return with a positive hit, the bro-intel option is triggered. Consider the following example:
+This instructs Sagan to look up the parsed source and destination from the Bro Intel::ADDR data. It also looks up the Intel::DOMAIN and Intel::URL. If any of the "zeek-intel" lookups return with a positive hit, the zeek-intel option is triggered. Consider the following example:
 
-**content: “thisisatest”; bro-intel: src_ipaddr;**
+**content: “thisisatest”; zeek-intel: src_ipaddr;**
 
 If a log messages contains the term “thisisatest” but the parsed source IP address is not found in the Bro Intellegence feeds, the rule will not trigger. If the log message “thisisatest” is found and the src_ipaddr is found, the rule will trigger.
 
-Sagan "bro-intel" types::
+Sagan "zeek-intel" types::
 
    src_ipaddr	Intel::ADDR             Look up the parsed source address
    dst_ipaddr	Intel::ADDR	        Look up the parsed destination address

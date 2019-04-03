@@ -117,7 +117,7 @@ When using boolean operators, be sure and use the ``stdbool.h`` ``true`` and ``f
      ...
      }
 
-You code should contain comments that are clear.  Proper comment syntax is desired as well.  For example:
+Your code should contain comments that are clear.  Proper comment syntax is desired as well.  For example:
 
 ::
 
@@ -135,7 +135,7 @@ You code should contain comments that are clear.  Proper comment syntax is desir
      ...
      }
 
-Tee ``{`` and ``}`` are converted in the GNU "artistic style".  Even if you do not prefer this formatting, 
+The ``{`` and ``}`` are converted in the GNU "artistic style".  Even if you do not prefer this formatting, 
 programs like ``astyle`` can correct them before commit.  For example:
 
 ::
@@ -166,6 +166,5 @@ programs like ``astyle`` can correct them before commit.  For example:
      }
 
 
-These are a few simple rules to consider before contributing code.  As stated,  in many cases ``astyle``
-will address them for you.
+These are a few simple rules to consider before contributing code.  In many cases ``astyle`` will address them for you.
 

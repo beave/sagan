@@ -13,6 +13,7 @@ Sagan User Guide
    rule-syntax
    rule-keywords
 
+   saganpeek
    liblognorm
 
    high-performance

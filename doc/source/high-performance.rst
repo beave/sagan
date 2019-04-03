@@ -36,10 +36,10 @@ To
 Then rebuild Sagan and set your ``batch-size`` to 1000.  While you will save CPU,  Sagan will 
 use more memory.  If you sent the `MAX_SYSLOG_BATCH` to 1000 and only set the ``batch-size`` to 
 100,  Sagan will still allocate memory for 1000 log lines.  In fact,  it will do the per-thread!
-Think of it this way:
+Think of it this way
 
 ::
-   ( MAX_MAX_SYSLOG_BATCH * 10240 bytes ) * Threads = Total memory usage.
+   ( MAX_SYSLOG_BATCH * 10240 bytes ) * Threads = Total memory usage.
 
 The default allocation per log line is 10240 bytes. 
 

@@ -92,7 +92,7 @@ The ``sagan.yaml`` is broken up in several parts.  Those parts are ``vars``, ``s
 Sagan with JSON input
 ---------------------
 
-agan reads data from your favorite syslog daemon (rsyslog, syslog-ng, nxlog, etc) via a “named pipe” (also known as a FIFO).  A named pipe operates similar to a file but with the writer (your syslog daemon) and a reader (Sagan).   Rather than the contents being written to a disk or file,  the data is stored in kernel memory.    This data will wait in kernel memory until a process (Sagan) reads it.   Named pipes (FIFOs) allows for separate processes to communicate with each other.  Since this happens in kernel memory,  the communications is extremely fast.
+Sagan reads data from your favorite syslog daemon (rsyslog, syslog-ng, nxlog, etc) via a “named pipe” (also known as a FIFO).  A named pipe operates similar to a file but with the writer (your syslog daemon) and a reader (Sagan).   Rather than the contents being written to a disk or file,  the data is stored in kernel memory.    This data will wait in kernel memory until a process (Sagan) reads it.   Named pipes (FIFOs) allows for separate processes to communicate with each other.  Since this happens in kernel memory,  the communications is extremely fast.
 
 In order for the writer (syslog daemon) and reader (Sagan) to be able to share data,  there has to be a standard between the two.  Traditionally,  Sagan required the syslog daemon to write data to the file in a very specific format.   This was done by a delimiting the data via the ‘|’ (pipe) symbol.   This format was similar to a CSV file. 
 
