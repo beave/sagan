@@ -8,13 +8,47 @@ Sagan typically receives its data from a third party daemon.  This is typically 
 rsyslog
 -------
 
+syslog-ng - "pipe" mode
+-----------------------
+
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to 
+Sagan in a legacy "pipe" delimited format.  For more complex configurations,  please consult 
+the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
+need to be set to ``pipe``.  
+
+
+Example ``syslog-ng`` "pipe" configuration::
+
+   # Sources of log data. 
+
+   source s_src { system(); internal(); }; 	# Internal 
+   source syslog_in { udp(port(514)); };	# UDP port 514
+
+   # A "destination" for send log data to.  In our case, a named pipe (FIFO)
+
+   destination sagan_fifo {
+      pipe("/var/sagan/sagan.fifo"
+      template("$SOURCEIP|$FACILITY|$PRIORITY|$LEVEL|$TAG|$YEAR-$MONTH-$DAY|$HOUR:$MIN:$SEC|$PROGRAM| $MS
+      };
+
+   # This line ties the sources and destinations together.
+
+   log { source(s_src); destination(sagan_fifo); };
+   log { source{syslog_in}; destination(sagan_fifo); };
+
+
+
 syslog-ng - JSON mode
 ---------------------
 
-Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration file.  For more
-complex configurations,  please consult the ``syslog-ng`` documentation.
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to 
+Sagan in a "JSON" format.  For more complex configurations,  please consult 
+the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
+need to be set to ``json``.  You will also to set you ``json-software`` to ``syslog-ng``. 
 
-Example ``syslog-ng`` configuration:: 
+Using the Sagan JSON format allows for more flexibility with the log data and is recommended.
+
+Example ``syslog-ng`` JSON configuration:: 
 
    # Sources of log data. 
 
@@ -32,7 +66,6 @@ Example ``syslog-ng`` configuration::
 
    log { source(s_src); destination(sagan_fifo); };
    log { source{syslog_in}; destination(sagan_fifo); };
-
 
 
 nxlog
@@ -55,6 +88,85 @@ and comments after statements are valid.
 
 The ``sagan.yaml`` is broken up in several parts.  Those parts are ``vars``, ``sagan-core``, ``processors``,
 ``outputs`` and ``rule-files``. 
+
+Sagan with JSON input
+---------------------
+
+agan reads data from your favorite syslog daemon (rsyslog, syslog-ng, nxlog, etc) via a “named pipe” (also known as a FIFO).  A named pipe operates similar to a file but with the writer (your syslog daemon) and a reader (Sagan).   Rather than the contents being written to a disk or file,  the data is stored in kernel memory.    This data will wait in kernel memory until a process (Sagan) reads it.   Named pipes (FIFOs) allows for separate processes to communicate with each other.  Since this happens in kernel memory,  the communications is extremely fast.
+
+In order for the writer (syslog daemon) and reader (Sagan) to be able to share data,  there has to be a standard between the two.  Traditionally,  Sagan required the syslog daemon to write data to the file in a very specific format.   This was done by a delimiting the data via the ‘|’ (pipe) symbol.   This format was similar to a CSV file. 
+
+A newer and more flexible way for the writer (syslog daemon) and reader (Sagan) to share data is via JSON.  Many modern day syslog daemons offer a JSON output format.   This is the ideal method of sharing data as it allows the data to be more dynamic. 
+
+Sagan-core configurations for JSON
+
+In the ``sagan-core`` section, in the sub section ``core`` is where you can set the ``input-type``.  There are two valid options.  The legacy ``pipe`` format or ``json``.  If you are using the legacy ``pipe`` format,  as long as both the syslog daemon can write to the named pipe in the proper format (see ``Syslog Configuations``),  there is no other configurations. 
+
+If you want to use the ``input-type`` of ``json``,  you’ll need to specify the mapping type.  Below is an example section of the ``input-type`` ::
+
+    input-type: json                       # pipe or json
+    json-map: "$RULE_PATH/json-input.map"  # mapping file if input-type: json
+    json-software: syslog-ng               # by "software" type.
+
+The ``json-map`` is a mapping file to assist Sagan in decoding JSON supplied by your syslog daemon.   The ``json-software`` configures Sagan “what” JSON map to use in the ``json-map``. 
+
+For example,  let’s say your syslog daemon is Syslog-NG configured to send JSON to the named pipe (JSON).  The data going into the pipe might look similar to this::
+
+    {"TAGS":".source.s_src","SOURCEIP":"127.0.0.1","SEQNUM":"3341","PROGRAM":"sshd","PRIORITY":"info","PID":"23233","MESSAGE":"Failed password for root from 218.92.0.190 port 34979 ssh2","LEGACY_MSGHDR":"sshd[23233]: ","HOST_FROM":"dev-2","HOST":"dev-2","FACILITY":"auth","DATE":"Apr  3 03:00:46"}
+
+Sagan needs to be able to identify the fields within the Syslog-NG formated JSON data.  Within the ``json-map`` file,  we have this line::
+
+   {"software":"syslog-ng","syslog-source-ip":"SOURCEIP","facility":"FACILITY","level":"PRIORITY","priority":"PRIORITY","time":"DATE","date":"DATE","program":"PROGRAM","message":"MESSAGE"}
+
+This maps the Syslog-NG fields to internal fields for Sagan to understand.  For example,  Sagan expects a “message” field.  Syslog-NG has this field named “MESSAGE”.  This mapping maps “message” = “MESSAGE”.   Sagan’s internal “syslog-source-ip” is mapped the Syslog-NG “SOURCEIP” field,  and so on. 
+
+Take special note of the “software” at the beginning of the JSON input mapping file.  This is the name of the “mapping” which is set in the ``sagan.yaml``.   In our example,  the ``json-software`` field is set to ``syslog-ng``.   The mapping file contains mappings for multiple software types (syslog-ng, rsyslog, nxlog, etc).  The ``json-software`` tells Sagan which mapping you want to use. 
+
+An important field,  similar to “software” is “nested”.  Normally,  most JSON from syslog daemon is flat.  In special cases,  you might find yourself dealing with “nested” JSON data.  In that case, you’ll want Sagan to dig into the nested data to extract the fields you need. 
+
+
+Sagan JSON variables
+~~~~~~~~~~~~~~~~~~~~
+
+.. option:: "software": "{software type}"
+
+    This is the name of the mapping.  This is use in the Sagan YAML ``json-software`` type.
+
+.. option:: "nested": "{yes|no|true|false}
+
+    The configures Sagan to look into nested data (automatically) for values for mappings
+
+Mappings:
+~~~~~~~~~
+
+.. option:: “syslog-source-ip”
+
+    TCP/IP address of where the log orignated from.  Typically the syslog server.
+
+.. option:: "facility"
+
+    Syslog facility
+
+.. option:: "level"
+
+    Syslog level.
+
+.. option:: "priority"
+
+    Syslog priority.
+
+.. option:: "time"
+
+    Syslog timestamp.
+
+.. option:: "date"
+
+    Syslog date.
+
+.. option:: "message"
+
+    Syslog "message" field.  This is the only required option.
+
 
 vars
 ====
@@ -299,6 +411,7 @@ Example ``core`` subsection::
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
     flexbit-storage: mmap          # flexbit storage engine. ("mmap" or "redis")
+    xbit-storage: mmap             # xbit storage engine. ("mmap" or "redis")
 
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy
@@ -444,7 +557,14 @@ flexbit-storage
 The ``flexbit-storage`` tells Sagan how to store ``flexbit`` data.  The default is ``mmap`` (memory 
 mapped files).  Sagan can also store flexbit data in a `Redis <https://redis.io>`_ database.  To use
 the Redis value,  Sagan will need to be compiled with ``hiredis`` support.
-**Redis is currently consider experimental**
+
+xbit-storage
+~~~~~~~~~~~~
+
+The ``xbit-storage`` tells Sagan how to store ``xbit`` data.  The default is ``mmap`` (memory 
+mapped files).  Sagan can also store xbit data in a `Redis <https://redis.io>`_ database.  To use
+the Redis value,  Sagan will need to be compiled with ``hiredis`` support.
+
 
 batch-size
 ~~~~~~~~~~
