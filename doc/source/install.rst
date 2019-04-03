@@ -254,7 +254,7 @@ A more complete quick start::
    sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
    wget https://quadrantsec.com/download/sagan-current.tar.gz
    cd sagan-1.2.1
-   ./configure --enable-geoip --enable-esmtp --enable--libpcap
+   ./configure --enable-geoip --enable-esmtp --enable--libpcap --enable-redis
    make
    sudo make install
    
@@ -266,7 +266,6 @@ Before compiling and installing Sagan,  your system will need some supporting li
 installed.  The primary prerequisites are ``libpcre``, ``libyaml`` and ``libpthreads`` (note: most systems
 have ``libpthread`` installed by default).  While there are no other required dependencies other than 
 these,  you should over the others for expanded functionality.  For example,  ``liblognorm`` **is not required but highly recommended**.
-
 
 
 Common configure options
