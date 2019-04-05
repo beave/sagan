@@ -64,6 +64,11 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     char timebuf[64];
     char classbuf[64];
 
+    /* For base64 encoding */
+
+    unsigned long b64_len = strlen(Event->message) * 2;
+    uint8_t b64_target[b64_len];
+
     char tmp_data[MAX_SYSLOGMSG*2] = { 0 };
 
     if ( Event->ip_proto == 17 )
@@ -97,10 +102,12 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     CreateIsoTimeString(&Event->event_time, timebuf, sizeof(timebuf));
 
-    unsigned long b64_len = strlen(Event->message) * 2;
-    uint8_t b64_target[b64_len];
 
-    Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
+    if ( config->eve_alerts_base64 == true )
+        {
+            Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);
+        }
+
     Classtype_Lookup( Event->class, classbuf, sizeof(classbuf) );
 
     jobj = json_object_new_object();
@@ -133,8 +140,18 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jproto = json_object_new_string( proto );
     json_object_object_add(jobj,"proto", jproto);
 
-    json_object *jpayload = json_object_new_string( (const char *)b64_target );
-    json_object_object_add(jobj,"payload", jpayload);
+    if ( config->eve_alerts_base64 == true )
+        {
+            json_object *jpayload = json_object_new_string( (const char *)b64_target );
+            json_object_object_add(jobj,"payload", jpayload);
+        }
+    else
+        {
+            json_object *jpayload = json_object_new_string( Event->message );
+            json_object_object_add(jobj,"payload", jpayload);
+        }
+
+    //json_object_object_add(jobj,"payload", jpayload);
 
     json_object *jstream = json_object_new_string( "0" );
     json_object_object_add(jobj,"stream", jstream);

@@ -63,8 +63,9 @@ struct _SaganConfig
     char		eve_interface[32];
     char 		eve_filename[MAXPATH];
     FILE		*eve_stream;
-    int		    eve_fd;
+    int		        eve_fd;
     bool		eve_alerts;
+    bool		eve_alerts_base64;
     bool		eve_logs;
 
     char         sagan_alert_filepath[MAXPATH];

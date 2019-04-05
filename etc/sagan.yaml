@@ -420,6 +420,7 @@ outputs:
       enabled: no
       interface: logs
       alerts: yes                     # Logs alerts
+      alerts-base64: yes              # Encode payload in base64 (like Suricata)
       logs: no                        # Send all logs to EVE. 
       filename: "$LOG_PATH/eve.json"
 

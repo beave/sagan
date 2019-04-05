@@ -201,6 +201,8 @@ void Load_YAML_Config( char *yaml_file )
             config->parse_ip_ipv6 = true;
             config->parse_ip_ipv4_mapped_ipv6 = false;
 
+            config->eve_alerts_base64 = true;
+
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
             config->max_threshold2 = DEFAULT_IPC_THRESHOLD2_IPC;
             config->max_track_clients = DEFAULT_IPC_CLIENT_TRACK_IPC;
@@ -1939,6 +1941,14 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
+                                    else if ( !strcmp(last_pass, "alerts-base64")  && config->eve_flag == true )
+                                        {
+                                            if ( !strcasecmp(value, "no") || !strcasecmp(value, "false") )
+                                                {
+                                                    config->eve_alerts_base64 = false;
+                                                }
+                                        }
+
                                     else if ( !strcmp(last_pass, "logs") && config->eve_flag == true )
                                         {
 
@@ -1948,6 +1958,7 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
 
                                         }
+
                                 }
 
                             else if ( sub_type == YAML_OUTPUT_ALERT )
