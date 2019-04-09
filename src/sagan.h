@@ -379,16 +379,6 @@ struct _SaganDebug
 
 };
 
-#ifdef HAVE_LIBHIREDIS
-
-typedef struct _Sagan_Redis _Sagan_Redis;
-struct _Sagan_Redis
-{
-    char redis_command[2048];
-};
-
-#endif
-
 typedef struct _Sagan_Proc_Syslog _Sagan_Proc_Syslog;
 struct _Sagan_Proc_Syslog
 {

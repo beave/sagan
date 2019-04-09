@@ -862,32 +862,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
-                                    else if (!strcmp(last_pass, "flexbit-storage"))
-                                        {
-
-                                            Var_To_Value(value, tmp, sizeof(tmp));
-
-                                            if (strcmp(tmp, "mmap") && strcmp(tmp, "redis"))
-                                                {
-
-                                                    Sagan_Log(ERROR, "[%s, line %d] sagan-core|flexbit-storage is set to an invalid type '%s'. It must be 'mmap' or 'redis'. Abort!", __FILE__, __LINE__, tmp);
-
-                                                }
-
-                                            if (!strcmp(tmp, "redis"))
-                                                {
-
-                                                    config->flexbit_storage = FLEXBIT_STORAGE_REDIS;
-
-                                                }
-                                            else
-                                                {
-
-                                                    config->flexbit_storage = FLEXBIT_STORAGE_MMAP;
-
-                                                }
-                                        }
-
                                     else if (!strcmp(last_pass, "xbit-storage"))
                                         {
 
@@ -2694,14 +2668,12 @@ void Load_YAML_Config( char *yaml_file )
             Sagan_Log(ERROR, "[%s, line %d] The 'sagan_host' option was not found and is required.", __FILE__, __LINE__);
         }
 
-
 #ifdef HAVE_LIBHIREDIS
 
-    if ( config->redis_flag == false && ( config->flexbit_storage == FLEXBIT_STORAGE_REDIS || config->xbit_storage == XBIT_STORAGE_REDIS ))
+    if ( config->redis_flag == false && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
-            Sagan_Log(ERROR, "[%s, line %d] xbit/flexbit storage engine is Redis, but the redis configuration is disabled", __FILE__, __LINE__);
+            Sagan_Log(ERROR, "[%s, line %d] xbit storage engine is Redis, but the redis configuration is disabled", __FILE__, __LINE__);
         }
-
 
 
 #endif

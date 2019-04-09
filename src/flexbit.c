@@ -40,54 +40,21 @@
 #include "flexbit.h"
 #include "flexbit-mmap.h"
 
-#ifdef HAVE_LIBHIREDIS
-
-#include "redis.h"
-#include "flexbit-redis.h"
-
-#endif
-
 struct _SaganConfig *config;
 
 bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
 {
-
-#ifdef HAVE_LIBHIREDIS
-
-    if ( config->redis_flag && config->flexbit_storage == FLEXBIT_STORAGE_REDIS )
-        {
-
-            return(Flexbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port));
-        }
-
-#endif
-
     return(Flexbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port));
-
 }
 
 
 bool Flexbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char )
 {
-
     return(Flexbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char));
-
 }
 
 void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
-
-#ifdef HAVE_LIBHIREDIS
-
-    if ( config->redis_flag && config->flexbit_storage == FLEXBIT_STORAGE_REDIS )
-        {
-
-            Flexbit_Set_Redis(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, SaganProcSyslog_LOCAL );
-            return;
-        }
-
-#endif
-
     Flexbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, SaganProcSyslog_LOCAL->syslog_message );
 
 }

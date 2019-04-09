@@ -255,7 +255,7 @@ bool Clean_IPC_Object( int type )
 
     /* Flexbit_IPC */
 
-    else if ( type == FLEXBIT && config->max_flexbits < counters_ipc->flexbit_count && config->flexbit_storage == FLEXBIT_STORAGE_MMAP )
+    else if ( type == FLEXBIT && config->max_flexbits < counters_ipc->flexbit_count )
         {
 
             time_t t;
@@ -551,48 +551,37 @@ void IPC_Init(void)
 
     /* Flexbit memory object - File based mmap() */
 
-    if ( config->flexbit_storage == FLEXBIT_STORAGE_MMAP )
+    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, FLEXBIT_IPC_FILE);
+
+    IPC_Check_Object(tmp_object_check, new_counters, "flexbit");
+
+    if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
         {
-
-            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", config->ipc_directory, FLEXBIT_IPC_FILE);
-
-            IPC_Check_Object(tmp_object_check, new_counters, "flexbit");
-
-            if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_EXCL | O_RDWR), (S_IREAD | S_IWRITE))) > 0 )
-                {
-                    Sagan_Log(NORMAL, "+ Flexbit shared object (new).");
-                    new_object=1;
-                }
-
-            else if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Cannot open() for flexbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
-                }
-
-            if ( ftruncate(config->shm_flexbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate flexbit. [%s]", __FILE__, __LINE__, strerror(errno));
-                }
-
-            if (( flexbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flexbit, 0)) == MAP_FAILED )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for flexbit object! [%s]", __FILE__, __LINE__, strerror(errno));
-                }
-
-            if ( new_object == 0)
-                {
-                    Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d flexbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_flexbits);
-                }
-
-            new_object = 0;
-
+            Sagan_Log(NORMAL, "+ Flexbit shared object (new).");
+            new_object=1;
         }
-    else      /* if ( config->flexbit_storage == FLEXBIT_STORAGE_MMAP ) */
+
+    else if ((config->shm_flexbit = open(tmp_object_check, (O_CREAT | O_RDWR), (S_IREAD | S_IWRITE))) < 0 )
         {
-
-            Sagan_Log(NORMAL, "- Flexbit shared object (Objects stored in Redis)");
-
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open() for flexbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
+
+    if ( ftruncate(config->shm_flexbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate flexbit. [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+    if (( flexbit_ipc = mmap(0, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_flexbit, 0)) == MAP_FAILED )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for flexbit object! [%s]", __FILE__, __LINE__, strerror(errno));
+        }
+
+    if ( new_object == 0)
+        {
+            Sagan_Log(NORMAL, "- Flexbit shared object reloaded (%d flexbits loaded / max: %d).", counters_ipc->flexbit_count, config->max_flexbits);
+        }
+
+    new_object = 0;
 
     /* Threshold2 */
 

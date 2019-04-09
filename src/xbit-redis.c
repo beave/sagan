@@ -49,7 +49,6 @@ struct _Rule_Struct *rulestruct;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
 
-struct _Sagan_Redis *SaganRedis;
 struct _Sagan_Redis_Write *Sagan_Redis_Write;
 
 pthread_cond_t SaganRedisDoWork;
@@ -90,60 +89,60 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
 
-		        json_object *jsensor = json_object_new_string(config->sagan_sensor_name);
-			json_object_object_add(jobj,"sensor", jsensor);  
+                            json_object *jsensor = json_object_new_string(config->sagan_sensor_name);
+                            json_object_object_add(jobj,"sensor", jsensor);
 
-		        json_object *jexpire = json_object_new_int(rulestruct[rule_position].xbit_expire[r]);
-			json_object_object_add(jobj,"expire", jexpire);  
+                            json_object *jexpire = json_object_new_int(rulestruct[rule_position].xbit_expire[r]);
+                            json_object_object_add(jobj,"expire", jexpire);
 
-		        json_object *jsrc_ip = json_object_new_string(SaganProcSyslog_LOCAL->syslog_host);
-			json_object_object_add(jobj,"src-ip", jsrc_ip);  
+                            json_object *jsrc_ip = json_object_new_string(SaganProcSyslog_LOCAL->syslog_host);
+                            json_object_object_add(jobj,"src-ip", jsrc_ip);
 
-		        json_object *jpriority = json_object_new_string(SaganProcSyslog_LOCAL->syslog_priority);
-			json_object_object_add(jobj,"priority", jpriority);  
+                            json_object *jpriority = json_object_new_string(SaganProcSyslog_LOCAL->syslog_priority);
+                            json_object_object_add(jobj,"priority", jpriority);
 
-		        json_object *jfacility = json_object_new_string(SaganProcSyslog_LOCAL->syslog_facility);
-			json_object_object_add(jobj,"facility", jfacility);  
+                            json_object *jfacility = json_object_new_string(SaganProcSyslog_LOCAL->syslog_facility);
+                            json_object_object_add(jobj,"facility", jfacility);
 
-		        json_object *jlevel = json_object_new_string(SaganProcSyslog_LOCAL->syslog_level);
-			json_object_object_add(jobj,"level", jlevel);  
+                            json_object *jlevel = json_object_new_string(SaganProcSyslog_LOCAL->syslog_level);
+                            json_object_object_add(jobj,"level", jlevel);
 
-		        json_object *jprogram = json_object_new_string(SaganProcSyslog_LOCAL->syslog_program);
-		        json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
-			json_object_object_add(jobj,"tag", jtag);  
+                            json_object *jprogram = json_object_new_string(SaganProcSyslog_LOCAL->syslog_program);
+                            json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
+                            json_object_object_add(jobj,"tag", jtag);
 
-		        json_object *jdate = json_object_new_string(SaganProcSyslog_LOCAL->syslog_date);
-			json_object_object_add(jobj,"date", jdate);  
+                            json_object *jdate = json_object_new_string(SaganProcSyslog_LOCAL->syslog_date);
+                            json_object_object_add(jobj,"date", jdate);
 
-		        json_object *jtime = json_object_new_string(SaganProcSyslog_LOCAL->syslog_time);
-			json_object_object_add(jobj,"time", jtime);  
+                            json_object *jtime = json_object_new_string(SaganProcSyslog_LOCAL->syslog_time);
+                            json_object_object_add(jobj,"time", jtime);
 
-			json_object_object_add(jobj,"program", jprogram);  
+                            json_object_object_add(jobj,"program", jprogram);
 
-		        json_object *jmessage = json_object_new_string(SaganProcSyslog_LOCAL->syslog_message);
-			json_object_object_add(jobj,"message", jmessage);  
+                            json_object *jmessage = json_object_new_string(SaganProcSyslog_LOCAL->syslog_message);
+                            json_object_object_add(jobj,"message", jmessage);
 
-		        json_object *jsignature = json_object_new_string(rulestruct[rule_position].s_msg);
-			json_object_object_add(jobj,"signature", jsignature);  
-			
-		        json_object *jsid = json_object_new_int64(rulestruct[rule_position].s_sid);
-			json_object_object_add(jobj,"sid", jsid);  
+                            json_object *jsignature = json_object_new_string(rulestruct[rule_position].s_msg);
+                            json_object_object_add(jobj,"signature", jsignature);
 
-		        json_object *jrev = json_object_new_int(rulestruct[rule_position].s_rev);
-			json_object_object_add(jobj,"rev", jrev);  
+                            json_object *jsid = json_object_new_int64(rulestruct[rule_position].s_sid);
+                            json_object_object_add(jobj,"sid", jsid);
 
-			snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
-			tmp_data[sizeof(tmp_data) - 1] = '\0';
-			json_object_put(jobj);
+                            json_object *jrev = json_object_new_int(rulestruct[rule_position].s_rev);
+                            json_object_object_add(jobj,"rev", jrev);
+
+                            snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
+                            tmp_data[sizeof(tmp_data) - 1] = '\0';
+                            json_object_put(jobj);
 
 
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
-			    strlcpy(Sagan_Redis_Write[redis_msgslot].command, "SET", sizeof(Sagan_Redis_Write[redis_msgslot].command));
-			    snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
+                            strlcpy(Sagan_Redis_Write[redis_msgslot].command, "SET", sizeof(Sagan_Redis_Write[redis_msgslot].command));
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
 
-			    strlcpy(Sagan_Redis_Write[redis_msgslot].value, tmp_data, sizeof(Sagan_Redis_Write[redis_msgslot].value));
-			    Sagan_Redis_Write[redis_msgslot].expire = rulestruct[rule_position].xbit_expire[r];
+                            strlcpy(Sagan_Redis_Write[redis_msgslot].value, tmp_data, sizeof(Sagan_Redis_Write[redis_msgslot].value));
+                            Sagan_Redis_Write[redis_msgslot].expire = rulestruct[rule_position].xbit_expire[r];
 
                             redis_msgslot++;
 
@@ -175,8 +174,10 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
 
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
-                            snprintf(SaganRedis[redis_msgslot].redis_command, sizeof(SaganRedis[redis_msgslot].redis_command),
-                                     "DEL %s:%s:%u \"sensor:%s,expire:%d\"", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash, config->sagan_sensor_name, rulestruct[rule_position].xbit_expire[r]);
+                            strlcpy(Sagan_Redis_Write[redis_msgslot].command, "DEL", sizeof(Sagan_Redis_Write[redis_msgslot].command));
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
+                            Sagan_Redis_Write[redis_msgslot].value[0] = '\0';
+                            Sagan_Redis_Write[redis_msgslot].expire = 0;
 
                             redis_msgslot++;
 

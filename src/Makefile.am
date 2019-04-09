@@ -31,7 +31,6 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        redis.c \
                                                        flexbit.c \
                                                        flexbit-mmap.c \
-                                                       flexbit-redis.c \
 						       xbit.c \
 						       xbit-mmap.c \
 						       xbit-redis.c \

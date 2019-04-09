@@ -89,7 +89,6 @@ struct _SaganConfig
     char         home_net[MAXPATH];
     char         external_net[MAXPATH];
 
-    bool	 flexbit_storage;		/* 0 == mmap, 1 == redis */
     bool 	 xbit_storage;			/* 0 == mmap, 1 == redis */
 
 
