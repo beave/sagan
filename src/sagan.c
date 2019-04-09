@@ -171,7 +171,6 @@ int main(int argc, char **argv)
 
     int option_index = 0;
 
-
     struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
 
     /****************************************************************************/

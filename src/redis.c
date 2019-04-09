@@ -51,6 +51,7 @@ pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Redis *SaganRedis = NULL;
+struct _Sagan_Redis_Write *Sagan_Redis_Write = NULL; 
 
 /*****************************************************************************
  * Redis_Writer_Init - Redis "writer" threads initialization.
@@ -60,6 +61,15 @@ void Redis_Writer_Init ( void )
 {
 
     SaganRedis = malloc(config->redis_max_writer_threads * sizeof(struct _Sagan_Redis));
+
+    Sagan_Redis_Write = malloc(config->redis_max_writer_threads * sizeof(struct _Sagan_Redis_Write));
+
+    if ( Sagan_Redis_Write == NULL )
+       {
+       Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for Sagan_Redis_Write. Abort!", __FILE__, __LINE__);
+       }
+
+    memset(Sagan_Redis_Write, 0, sizeof(struct _Sagan_Redis_Write));
 
 }
 
@@ -106,8 +116,13 @@ void Redis_Writer ( void )
     redisContext *c_writer_redis;
 
     char *tok = NULL;
-    char *split_redis_command = NULL;
-    char tmp_redis_command[16384] = { 0 };
+//    char *split_redis_command = NULL;
+//    char tmp_redis_command[16384] = { 0 };
+
+    char command[16] = { 0 }; 
+    char key[128] = { 0 };
+    char value[MAX_SYSLOGMSG*2];
+    int expire = 0;
 
     struct timeval timeout = { 1, 500000 }; // 1.5 seconds
     c_writer_redis = redisConnectWithTimeout(config->redis_server, config->redis_port, timeout);
@@ -134,6 +149,7 @@ void Redis_Writer ( void )
     /* Log into Redis */
     /******************/
 
+
     if ( config->redis_password[0] != '\0' )
         {
 
@@ -159,6 +175,7 @@ void Redis_Writer ( void )
                 }
         }
 
+
     /* Redis "threaded" operations */
 
     for (;;)
@@ -170,29 +187,20 @@ void Redis_Writer ( void )
 
             redis_msgslot--;
 
-            strlcpy(tmp_redis_command, SaganRedis[redis_msgslot].redis_command, sizeof(tmp_redis_command));
+	    strlcpy(command, Sagan_Redis_Write[redis_msgslot].command, sizeof(command));
+ 	    strlcpy(key, Sagan_Redis_Write[redis_msgslot].key, sizeof(key));
+ 	    strlcpy(value, Sagan_Redis_Write[redis_msgslot].value, sizeof(value));
+	    expire = Sagan_Redis_Write[redis_msgslot].expire;
 
             pthread_mutex_unlock(&SaganRedisWorkMutex);
 
             if ( debug->debugredis )
                 {
 
-                    Sagan_Log(DEBUG, "Thread %u received the following work: '%s'", pthread_self(), tmp_redis_command);
+                    Sagan_Log(DEBUG, "Thread %u received the following work: '%s %s %s EX %d'", pthread_self(), command, key, value, expire);
                 }
 
-            split_redis_command = strtok_r(tmp_redis_command, ";", &tok);
-
-            while ( split_redis_command != NULL )
-                {
-
-                    if ( debug->debugredis )
-                        {
-
-                            Sagan_Log(DEBUG, "Thread %u executing Redis command: '%s'", pthread_self(), split_redis_command);
-
-                        }
-
-                    reply = redisCommand(c_writer_redis, split_redis_command);
+		    reply = redisCommand(c_writer_redis, "%s %s %s EX %d", command, key, value, expire);
 
                     if ( debug->debugredis )
                         {
@@ -202,9 +210,6 @@ void Redis_Writer ( void )
                         }
 
                     freeReplyObject(reply);
-
-                    split_redis_command = strtok_r(NULL, ";", &tok);
-                }
 
         }
 

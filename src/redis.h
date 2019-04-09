@@ -27,4 +27,13 @@ void Redis_Writer (void);
 void Redis_Writer_Init (void);
 void Redis_Reader ( char *redis_command, char *str, size_t size );
 
+typedef struct _Sagan_Redis_Write _Sagan_Redis_Write;
+struct _Sagan_Redis_Write
+{           
+    char command[16];
+    char key[128];
+    char value[MAX_SYSLOGMSG*2];
+    int expire;
+};
+
 #endif
