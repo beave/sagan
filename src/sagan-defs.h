@@ -43,6 +43,7 @@ typedef void json_object;
 /* Various buffers used during configurations loading */
 
 #define SENSOR_NAME		"default_sensor_name"
+#define CLUSTER_NAME		"default_cluster_name"
 
 #define CLASSBUF		1024
 #define RULEBUF			5128

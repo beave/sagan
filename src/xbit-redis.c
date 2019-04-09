@@ -139,7 +139,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].command, "SET", sizeof(Sagan_Redis_Write[redis_msgslot].command));
-                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].value, tmp_data, sizeof(Sagan_Redis_Write[redis_msgslot].value));
                             Sagan_Redis_Write[redis_msgslot].expire = rulestruct[rule_position].xbit_expire[r];
@@ -175,7 +175,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].command, "DEL", sizeof(Sagan_Redis_Write[redis_msgslot].command));
-                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
                             Sagan_Redis_Write[redis_msgslot].value[0] = '\0';
                             Sagan_Redis_Write[redis_msgslot].expire = 0;
 
@@ -215,7 +215,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
                     hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
 
                     snprintf(redis_command, sizeof(redis_command),
-                             "GET %s:%s:%u", REDIS_PREFIX, rulestruct[rule_position].xbit_name[r], hash);
+                             "GET %s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
 
                     Redis_Reader ( (char *)redis_command, redis_results, sizeof(redis_results) );
 

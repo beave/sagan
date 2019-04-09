@@ -71,6 +71,7 @@ struct _SaganConfig
     char         sagan_alert_filepath[MAXPATH];
 
     char	 sagan_sensor_name[64];
+    char	 sagan_cluster_name[64];
     char         sagan_interface[50];
     FILE         *sagan_alert_stream;
     int          sagan_alert_fd;

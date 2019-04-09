@@ -121,7 +121,8 @@ sagan-core:
 
   core:
 
-    sensor-name: "default_sensor_name"  # Unique name for this sensor (no spaces)
+    sensor-name: "default_sensor_name"   # Unique name for this sensor (no spaces)
+    cluster-name: "default_cluster_name" # Cluster name (no spaces)
     default-host: 192.168.2.1
     default-port: 514
     default-proto: udp
