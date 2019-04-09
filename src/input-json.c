@@ -59,16 +59,6 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
-    char syslog_host[MAX_SYSLOG_HOST] = { 0 };
-    char syslog_facility[MAX_SYSLOG_FACILITY] = { 0 };
-    char syslog_priority[MAX_SYSLOG_PRIORITY] = { 0 };
-    char syslog_level[MAX_SYSLOG_LEVEL] = { 0 };
-    char syslog_tag[MAX_SYSLOG_TAG] = { 0 };
-    char syslog_date[MAX_SYSLOG_DATE] = { 0 };
-    char syslog_time[MAX_SYSLOG_TIME] = { 0 };
-    char syslog_program[MAX_SYSLOG_PROGRAM] = { 0 };
-    char syslog_message[MAX_SYSLOGMSG] = { 0 };
-
     memset(SyslogInput, 0, sizeof(_SyslogInput));
 
     memcpy(SyslogInput->syslog_message, "UNDEFINED\0", sizeof(SyslogInput->syslog_message));

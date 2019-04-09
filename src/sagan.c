@@ -741,7 +741,7 @@ int main(int argc, char **argv)
 #endif
 
     Sagan_Log(NORMAL, "");
-    Sagan_Log(NORMAL, "Sagan version %s is firing up on '%s'!", VERSION, config->sagan_sensor_name);
+    Sagan_Log(NORMAL, "Sagan version %s is firing up on %s (cluster: %s)", VERSION, config->sagan_sensor_name, config->sagan_cluster_name);
     Sagan_Log(NORMAL, "");
 
 #ifdef HAVE_LIBPCAP

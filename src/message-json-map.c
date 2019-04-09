@@ -361,13 +361,13 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
-            if ( JSON_Message_Map_Found[pos].src_ip != '\0' )
+            if ( JSON_Message_Map_Found[pos].src_ip[0] != '\0' )
                 {
                     SaganProcSyslog_LOCAL->json_src_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
                 }
 
-            if ( JSON_Message_Map_Found[pos].dst_ip != '\0' )
+            if ( JSON_Message_Map_Found[pos].dst_ip[0] != '\0' )
                 {
                     SaganProcSyslog_LOCAL->json_dst_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->dst_ip, JSON_Message_Map_Found[pos].dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));

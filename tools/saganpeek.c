@@ -631,7 +631,7 @@ int main(int argc, char **argv)
                                     printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
                                     printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
                                     printf("Expire Time: %d\n", xbit_ipc[i].expire);
-                                    printf("Expired at: ", time_buf);
+                                    printf("Expired at: ");
 
                                     if ( xbit_ipc[i].xbit_expire == 0 )
                                         {

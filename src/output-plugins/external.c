@@ -70,7 +70,6 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     int pid;
     char buf[MAX_SYSLOGMSG];
     char tmpref[256];
-    char tmp[6];
     char timebuf[64] = { 0 };
 
     char tmp_data[MAX_SYSLOGMSG*2] = { 0 };
@@ -81,7 +80,6 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     char *proto=NULL;
 
     struct json_object *jobj;
-    struct json_object *jobj_normalize;
 
     if ( debug->debugexternal )
         {

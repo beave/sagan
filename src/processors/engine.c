@@ -52,6 +52,7 @@
 #include "flow.h"
 #include "after.h"
 #include "threshold.h"
+#include "xbit.h"
 
 #include "parsers/parsers.h"
 
@@ -135,7 +136,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool flexbit_count_return = 0;
 
     bool xbit_return = 0;
-    bool xbit_count_return = 0;
 
     bool alert_time_trigger = false;
     bool check_flow_return = true;  /* 1 = match, 0 = no match */
