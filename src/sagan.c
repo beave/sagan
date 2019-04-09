@@ -1005,24 +1005,6 @@ int main(int argc, char **argv)
             Redis_Writer_Init();
             Redis_Reader_Connect();
 
-            if ( config->redis_password[0] != '\0' )
-                {
-
-                    snprintf(redis_command, sizeof(redis_command), "AUTH %s", config->redis_password);
-                    Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
-
-                    if (!strcmp(redis_reply, "OK"))
-                        {
-                            Sagan_Log(NORMAL, "Authentication success for 'reader' to Redis server at %s:%d.", config->redis_server, config->redis_port);
-                        }
-                    else
-                        {
-
-                            Remove_Lock_File();
-                            Sagan_Log(ERROR, "Authentication failure for 'reader' to Redis server at %s:%d. Abort!", config->redis_server, config->redis_port);
-                        }
-                }
-
             strlcpy(redis_command, "PING", sizeof(redis_command));
 
             Redis_Reader(redis_command, redis_reply, sizeof(redis_reply));
