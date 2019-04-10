@@ -22,6 +22,7 @@
 *
 * This becomes a threaded operation.  This handles all I/O intensive output plugins
 */
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -82,9 +83,13 @@ void Output( _Sagan_Event *Event )
             Alert_File(Event);
         }
 
-    if ( config->eve_flag && config->eve_alerts && ( rulestruct[Event->found].flexbit_noeve == false || rulestruct[Event->found].xbit_noeve == false ) )
+    if ( config->eve_flag && config->eve_alerts )
         {
-            Alert_JSON(Event);
+
+            if ( rulestruct[Event->found].xbit_noeve == false && rulestruct[Event->found].flexbit_noeve == false )
+                {
+                    Alert_JSON(Event);
+                }
         }
 
     if ( config->fast_flag )
