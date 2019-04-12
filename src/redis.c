@@ -324,9 +324,9 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
         }
     else
         {
-//            pthread_mutex_lock(&RedisReaderMutex);
-
+            pthread_mutex_lock(&RedisReaderMutex);
             reply = redisCommand(config->c_reader_redis, redis_command);
+	    pthread_mutex_unlock(&RedisReaderMutex);      
 
             if ( reply != NULL )
                 {
@@ -376,7 +376,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
 
         }
 
-	freeReplyObject(reply);
+//	freeReplyObject(reply);
 }
 
 #endif
