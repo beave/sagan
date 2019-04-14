@@ -326,7 +326,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
         {
             pthread_mutex_lock(&RedisReaderMutex);
             reply = redisCommand(config->c_reader_redis, redis_command);
-	    pthread_mutex_unlock(&RedisReaderMutex);      
+            pthread_mutex_unlock(&RedisReaderMutex);
 
             if ( reply != NULL )
                 {
@@ -357,26 +357,21 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                                 {
                                     strlcpy(str, reply->element[0]->str, size);
                                 }
-
-                            //pthread_mutex_unlock(&RedisReaderMutex);
-                            freeReplyObject(reply);
                         }
+
+                    /* Got good response, free here.  If we don't get a good response
+                       and free, we'll get a fault. */
+
+                    freeReplyObject(reply);
                 }
             else
                 {
 
                     Sagan_Log(WARN, "[%s, line %d] Got disconnected from Redis.  Reconnecting....", __FILE__, __LINE__);
-                    //pthread_mutex_unlock(&RedisReaderMutex);
                     connection_read_error = true;
                     Redis_Reader_Connect();
                 }
-
-	//pthread_mutex_unlock(&RedisReaderMutex); 
-	//freeReplyObject(reply);
-
         }
-
-//	freeReplyObject(reply);
 }
 
 #endif
