@@ -241,7 +241,6 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
                             return(false);
                         }
-
                 }
         }
 

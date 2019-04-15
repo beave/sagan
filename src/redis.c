@@ -49,6 +49,7 @@ int redis_msgslot = 0;
 pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t RedisErrorMutex=PTHREAD_MUTEX_INITIALIZER;
 
 bool connection_write_error = false;
 bool connection_read_error = false;
@@ -139,7 +140,9 @@ void Redis_Reader_Connect ( void )
                 }
         }
 
+    pthread_mutex_lock(&RedisErrorMutex);
     connection_read_error = false;
+    pthread_mutex_unlock(&RedisErrorMutex);
 
 }
 
@@ -212,7 +215,10 @@ void Redis_Writer_Connect(void)
                 }
         }
 
+    pthread_mutex_lock(&RedisErrorMutex);
     connection_write_error = false;
+    pthread_mutex_unlock(&RedisErrorMutex);
+
 }
 
 /*****************************************************************************
@@ -299,7 +305,11 @@ void Redis_Writer ( void )
                         {
 
                             Sagan_Log(WARN, "[%s, line %d] Got disconnected from Redis.  Reconnecting....", __FILE__, __LINE__);
+
+                            pthread_mutex_lock(&RedisErrorMutex);
                             connection_write_error = true;
+                            pthread_mutex_unlock(&RedisErrorMutex);
+
                             Redis_Writer_Connect();
                         }
 
@@ -368,7 +378,16 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                 {
 
                     Sagan_Log(WARN, "[%s, line %d] Got disconnected from Redis.  Reconnecting....", __FILE__, __LINE__);
+
+                    /* Error state, so we need to return "false" (failure) for the lookup.  This
+                       insures that */
+
+                    strlcpy(str, " ", size);
+
+                    pthread_mutex_lock(&RedisErrorMutex);
                     connection_read_error = true;
+                    pthread_mutex_unlock(&RedisErrorMutex);
+
                     Redis_Reader_Connect();
                 }
         }
