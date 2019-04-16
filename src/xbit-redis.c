@@ -253,4 +253,33 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
 }
 
+/*
+
+void Xbit_Return_Tracking_IP ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char, char *str, size_t size )
+{
+
+    char tmp_ip[128] = { 0 };
+
+    if ( rulestruct[rule_position].xbit_direction[xbit_position] == 1 )
+        {   
+	    return(ip_src_char);
+        }
+
+    else if ( rulestruct[rule_position].xbit_direction[xbit_position] == 2 )
+        {
+	    retrun(ip_dst_char);
+        }
+
+    else if (  rulestruct[rule_position].xbit_direction[xbit_position] == 3 )
+        {   
+            snprintf(tmp_ip, sizeof(tmp_ip), "%s:%s",  ip_src_char, ip_dst_char);
+	    tmp_ip[ sizeof(tmp_ip)-1 ] = '\0'; 
+            return( tmp_ip );
+        }
+
+    Sagan_Log(ERROR, "[%s, line %d] Got impossible xbit tracking type!\n", __FILE__, __LINE__);
+
+}
+*/
+
 #endif

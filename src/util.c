@@ -1547,6 +1547,7 @@ char *strrpbrk(const char *str, const char *accept)
  * might be expanded on
  ***************************************************************************/
 
+/*
 void Escape_Chars( char *str_in, char *str, size_t size)
 {
 
@@ -1575,3 +1576,4 @@ void Escape_Chars( char *str_in, char *str, size_t size)
     snprintf(str, size, "%s", alter_log);
 
 }
+*/
