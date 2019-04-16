@@ -151,8 +151,10 @@ struct _SaganConfig
     bool	perfmonitor_flag;
     int		perfmonitor_time;
     char	perfmonitor_file_name[MAXPATH];
+
     FILE	*perfmonitor_file_stream;
-    int	    perfmonitor_file_fd;
+    bool        perfmonitor_file_stream_status;
+    int	        perfmonitor_file_fd;
 
     bool        sagan_fwsam_flag;
     char         sagan_fwsam_info[1024];
@@ -171,18 +173,22 @@ struct _SaganConfig
     int		sagan_syslog_options;
 
     int		shm_counters;
+    bool	shm_counters_status;
+
     int		shm_flexbit;
+    bool	shm_flexbit_status;
+
     int		shm_xbit;
-    int 	shm_thresh_by_src;
-    int		shm_thresh_by_dst;
-    int		shm_thresh_by_dstport;
-    int		shm_thresh_by_srcport;
-    int		shm_thresh_by_username;
+    bool        shm_xbit_status;
 
     int		shm_thresh2;
+    bool	shm_thresh2_status;
+
     int	 	shm_after2;
+    bool	shm_after2_status;
 
     int		shm_track_clients;
+    bool	shm_track_clients_status;
 
     /* IPC sizes for threshold, after, etc */
 

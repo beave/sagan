@@ -209,7 +209,6 @@ void Sig_Handler( void )
 
                         }
 
-
                     if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
                         {
 
@@ -234,35 +233,48 @@ void Sig_Handler( void )
 
                     /* IPC Shared Memory */
 
-                    File_Unlock(config->shm_counters);
-
-                    if ( close(config->shm_counters) != 0 )
+                    if ( config->shm_counters_status == true )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
+
+                            File_Unlock(config->shm_counters);
+
+                            if ( close(config->shm_counters) != 0 )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Cannot close IPC counters! [%s]", __FILE__, __LINE__, strerror(errno));
+                                }
                         }
 
-                    File_Unlock(config->shm_flexbit);
-
-                    if ( close(config->shm_flexbit) != 0 )
+                    if ( config->shm_flexbit_status == true )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC flexbit! [%s]", __FILE__, __LINE__, strerror(errno));
+                            File_Unlock(config->shm_flexbit);
+
+                            if ( close(config->shm_flexbit) != 0 )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Cannot close IPC flexbit! [%s]", __FILE__, __LINE__, strerror(errno));
+                                }
                         }
 
-                    File_Unlock(config->shm_thresh2);
-
-                    if ( close(config->shm_thresh2) != 0 )
+                    if ( config->shm_thresh2_status == true )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _Threshold2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                            File_Unlock(config->shm_thresh2);
+
+                            if ( close(config->shm_thresh2) != 0 )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _Threshold2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                                }
                         }
 
-                    File_Unlock(config->shm_after2);
-
-                    if ( close(config->shm_after2) != 0 )
+                    if ( config->shm_after2_status == true )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _After2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                            File_Unlock(config->shm_after2);
+
+                            if ( close(config->shm_after2) != 0 )
+                                {
+                                    Sagan_Log(WARN, "[%s, line %d] Cannot close IPC _After2_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
+                                }
                         }
 
-                    if ( config->sagan_track_clients_flag )
+                    if ( config->sagan_track_clients_flag == true && config->shm_track_clients == true )
                         {
 
                             File_Unlock(config->shm_track_clients);
@@ -275,7 +287,7 @@ void Sig_Handler( void )
                         }
 
 
-                    if ( config->perfmonitor_flag )
+                    if ( config->perfmonitor_flag == true && config->perfmonitor_file_stream_status == true )
                         {
                             Sagan_Perfmonitor_Close();
                         }

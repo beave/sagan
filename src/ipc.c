@@ -492,6 +492,7 @@ void IPC_Init(void)
             Sagan_Log(NORMAL, "- Counters shared object (reload)");
         }
 
+    config->shm_counters_status = true;
 
     if ( ftruncate(config->shm_counters, sizeof(_Sagan_IPC_Counters)) != 0 )
         {
@@ -522,6 +523,8 @@ void IPC_Init(void)
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Cannot open() for xbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
+
+            config->shm_xbit_status = true;
 
             if ( ftruncate(config->shm_xbit, sizeof(_Sagan_IPC_Xbit) * config->max_xbits ) != 0 )
                 {
@@ -566,6 +569,8 @@ void IPC_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Cannot open() for flexbit (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
+    config->shm_flexbit_status = true;
+
     if ( ftruncate(config->shm_flexbit, sizeof(_Sagan_IPC_Flexbit) * config->max_flexbits ) != 0 )
         {
             Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate flexbit. [%s]", __FILE__, __LINE__, strerror(errno));
@@ -600,6 +605,8 @@ void IPC_Init(void)
         {
             Sagan_Log(ERROR, "[%s, line %d] Cannot open() for thresh2 (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
+
+    config->shm_thresh2_status = true;
 
     if ( ftruncate(config->shm_thresh2, sizeof(_Threshold2_IPC) * config->max_threshold2 ) != 0 )
         {
@@ -637,13 +644,12 @@ void IPC_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Cannot open() for after2 (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
         }
 
+    config->shm_after2_status = true;
 
     if ( ftruncate(config->shm_after2, sizeof(_After2_IPC) * config->max_after2 ) != 0 )
         {
             Sagan_Log(ERROR, "[%s, line %d] Failed to ftruncate after2. [%s]", __FILE__, __LINE__, strerror(errno));
         }
-
-
 
     if (( After2_IPC = mmap(0, sizeof(_After2_IPC) * config->max_after2, (PROT_READ | PROT_WRITE), MAP_SHARED, config->shm_after2, 0)) == MAP_FAILED )
         {
@@ -678,6 +684,7 @@ void IPC_Init(void)
                     Sagan_Log(ERROR, "[%s, line %d] Cannot open() for Sagan_track_clients (%s:%s)", __FILE__, __LINE__, tmp_object_check, strerror(errno));
                 }
 
+            config->shm_track_clients_status = true;
 
             if ( ftruncate(config->shm_track_clients, sizeof(_Sagan_Track_Clients_IPC) * config->max_track_clients ) != 0 )
                 {
@@ -688,7 +695,6 @@ void IPC_Init(void)
                 {
                     Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for _Sagan_Track_Clients_IPC! [%s]", __FILE__, __LINE__, strerror(errno));
                 }
-
 
             if ( new_object == 0 )
                 {
