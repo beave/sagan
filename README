@@ -8,19 +8,18 @@ Sagan is an open source (GNU/GPLv2) high performance, real-time log
 analysis & correlation engine.  It is written in C and uses a 
 multi-threaded architecture to deliver high performance log & event 
 analysis. The Sagan structure and Sagan rules work similarly to the 
-Sourcefire "Snort" IDS engine. This was intentionally done to maintain 
+Suricata & Snort IDS engine. This was intentionally done to maintain 
 compatibility with rule management software (oinkmaster/pulledpork/etc)
-and allows Sagan to correlate log events with your Snort IDS/IPS 
-system. Since Sagan can write to Snort IDS/IPS databases via 
-unified2/barnyard2, it is compatible with all Snort "consoles". 
-For example, Sagan is compatible with Snorby [http://www.snorby.org],
-Sguil [http://sguil.sourceforge.net], BASE, and the Prelude IDS 
-framework! (to name a few).
+and allows Sagan to correlate log events with your IDS/IPS system. 
+
+Sagan can write out to databases via Suricata EVE formats and/or 
+Unified2, it is compatible with all Snort & Suricata consoles.  Sagan
+can write also write out JSON which can be ingested by Elasticsearch
+and viewed with console like Kibana, EVEbox, etc. 
 
 Sagan supports many different output formats,  log normalization 
 (via liblognorm),  GeoIP detection, script execution on event and
-automatic firewall support via "Snortsam" 
-(see http://www.snortsam.net).  
+automatic firewall support via "Snortsam" (see http://www.snortsam.net).  
 
 Sagan uses the GNU "artisic style". 
 
