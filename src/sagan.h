@@ -598,5 +598,4 @@ struct _Sagan_Lookup_Cache_Other
 /* Function that require the above arrays */
 
 int64_t	  FlowGetId(struct timeval tp);
-void 	  Escape_Chars( char *str_in, char *str, size_t size);
 

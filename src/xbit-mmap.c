@@ -71,12 +71,10 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
             for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
                 {
 
-                    //printf("rulestruct[rule_position].xbit_count: %d\n", rulestruct[rule_position].xbit_count);
-
                     if ( rulestruct[rule_position].xbit_type[r] == XBIT_SET )
                         {
 
-                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                            hash = Xbit_Return_Tracking_Hash( rule_position, r, ip_src_char, ip_dst_char );
 
                             xbit_match = false;
 
@@ -148,7 +146,7 @@ void Xbit_Set_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char, char
                     else if ( rulestruct[rule_position].xbit_type[r] == XBIT_UNSET )
                         {
 
-                            hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                            hash = Xbit_Return_Tracking_Hash( rule_position, r, ip_src_char, ip_dst_char );
 
                             xbit_match = false;
 
@@ -197,7 +195,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char
             if ( rulestruct[rule_position].xbit_type[r] == XBIT_ISSET )
                 {
 
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                    hash = Xbit_Return_Tracking_Hash( rule_position, r, ip_src_char, ip_dst_char );
 
                     for ( x = 0; x < counters_ipc->xbit_count; x++ )
                         {
@@ -226,7 +224,7 @@ bool Xbit_Condition_MMAP(int rule_position, char *ip_src_char, char *ip_dst_char
             else if ( rulestruct[rule_position].xbit_type[r] == XBIT_ISNOTSET )
                 {
 
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                    hash = Xbit_Return_Tracking_Hash( rule_position, r, ip_src_char, ip_dst_char );
 
                     for ( x = 0; x < counters_ipc->xbit_count; x++ )
                         {

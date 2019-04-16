@@ -21,10 +21,6 @@
 
 /* xbit.c - Handles and routes requests for xbits via mmap() or redir */
 
-/* TODO - REMOVE SELECTOR
-          redis
-*/
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -73,11 +69,11 @@ void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, _Sagan_Pr
 }
 
 /*********************************************************************************/
-/* Xbit_Direction - Used by mmap/redis.  Used to determine the direction an xbit */
-/* so search for a xbit                                                          */
+/* Xbit_Return_Tracking_Hash - Used by mmap() xbit tracking. This is used to     */
+/* determine the direction an xbit and returns a hash for association            */
 /*********************************************************************************/
 
-uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char )
+uint32_t Xbit_Return_Tracking_Hash ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char )
 {
 
     char hash_pair[MAXIP*2] = { 0 };

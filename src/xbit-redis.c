@@ -1,7 +1,7 @@
 /* $Id$ */
 /*
-** Copyright (C) 2009-2018 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2018 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -67,7 +67,8 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
 
     int r = 0;
     int i = 0;
-    uint32_t hash;
+
+    char tmp_ip[MAXIP] = { 0 };
 
     char tmp_data[MAX_SYSLOGMSG*2] = { 0 };
 
@@ -79,11 +80,11 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
             if ( rulestruct[rule_position].xbit_type[r] == XBIT_SET )
                 {
 
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                    Xbit_Return_Tracking_IP( rule_position, r, ip_src_char, ip_dst_char, tmp_ip, sizeof(tmp_ip));
 
                     if ( debug->debugxbit )
                         {
-                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' set in Redis for %d seconds [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], rulestruct[rule_position].xbit_expire[r], hash);
+                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' set in Redis for %s for %d seconds", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip, rulestruct[rule_position].xbit_expire[r]);
                         }
 
                     if ( redis_msgslot < config->redis_max_writer_threads )
@@ -139,7 +140,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].command, "SET", sizeof(Sagan_Redis_Write[redis_msgslot].command));
-                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%s", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], tmp_ip);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].value, tmp_data, sizeof(Sagan_Redis_Write[redis_msgslot].value));
                             Sagan_Redis_Write[redis_msgslot].expire = rulestruct[rule_position].xbit_expire[r];
@@ -161,13 +162,12 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
             else if ( rulestruct[rule_position].xbit_type[r] == XBIT_UNSET )
                 {
 
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                    Xbit_Return_Tracking_IP( rule_position, r, ip_src_char, ip_dst_char, tmp_ip, sizeof(tmp_ip));
 
                     if ( debug->debugxbit )
                         {
-                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' unset in Redis [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], hash);
+                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' for %s unset in Redis", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
                         }
-
 
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
@@ -175,7 +175,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
                             strlcpy(Sagan_Redis_Write[redis_msgslot].command, "DEL", sizeof(Sagan_Redis_Write[redis_msgslot].command));
-                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
+                            snprintf(Sagan_Redis_Write[redis_msgslot].key, sizeof(Sagan_Redis_Write[redis_msgslot].key), "%s:%s:%s:%s", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], tmp_ip);
                             Sagan_Redis_Write[redis_msgslot].value[0] = '\0';
                             Sagan_Redis_Write[redis_msgslot].expire = 0;
 
@@ -201,9 +201,9 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 {
 
     int r;
-    uint32_t hash;
     char redis_command[64] = { 0 };
     char redis_results[32] = { 0 };
+    char tmp_ip[MAXIP] = { 0 };
     bool xbit_match = false;
 
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
@@ -212,10 +212,10 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
             if ( rulestruct[rule_position].xbit_type[r] == XBIT_ISSET ||
                     rulestruct[rule_position].xbit_type[r] == XBIT_ISNOTSET )
                 {
-                    hash = Xbit_Direction( rule_position, r, ip_src_char, ip_dst_char );
+                    Xbit_Return_Tracking_IP( rule_position, r, ip_src_char, ip_dst_char, tmp_ip, sizeof(tmp_ip));
 
                     snprintf(redis_command, sizeof(redis_command),
-                             "GET %s:%s:%s:%u", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], hash);
+                             "GET %s:%s:%s:%s", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], tmp_ip);
 
                     Redis_Reader ( (char *)redis_command, redis_results, sizeof(redis_results) );
 
@@ -224,7 +224,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
                             if ( debug->debugxbit )
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] '%s' was not found for isset. Returning false. [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], hash);
+                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was not found IP address %s for isset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
                                 }
 
                             return(false);
@@ -235,7 +235,7 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
                             if ( debug->debugxbit )
                                 {
-                                    Sagan_Log(DEBUG, "[%s, line %d] '%s' was found for isnotset. Returning false. [hash: %u]", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], hash);
+                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was found for IP address %s for isnotset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
                                 }
 
 
@@ -253,33 +253,31 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
 
 }
 
-/*
+/******************************************************************************************
+ * Xbit_Return_Tracking_IP - We don't use tracking hashes with Redis.  We use the actual
+ * Actual IP addresses so that it's easier to "see" in Redis.
+ ******************************************************************************************/
 
 void Xbit_Return_Tracking_IP ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char, char *str, size_t size )
 {
 
-    char tmp_ip[128] = { 0 };
+    /* These 1,2,3 values should really be defined */
 
     if ( rulestruct[rule_position].xbit_direction[xbit_position] == 1 )
-        {   
-	    return(ip_src_char);
+        {
+            snprintf(str, size, "%s", ip_src_char);
         }
 
     else if ( rulestruct[rule_position].xbit_direction[xbit_position] == 2 )
         {
-	    retrun(ip_dst_char);
+            snprintf(str, size, "%s", ip_dst_char);
         }
 
     else if (  rulestruct[rule_position].xbit_direction[xbit_position] == 3 )
-        {   
-            snprintf(tmp_ip, sizeof(tmp_ip), "%s:%s",  ip_src_char, ip_dst_char);
-	    tmp_ip[ sizeof(tmp_ip)-1 ] = '\0'; 
-            return( tmp_ip );
+        {
+            snprintf(str, size, "%s:%s",  ip_src_char, ip_dst_char);
         }
 
-    Sagan_Log(ERROR, "[%s, line %d] Got impossible xbit tracking type!\n", __FILE__, __LINE__);
-
 }
-*/
 
 #endif

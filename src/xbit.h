@@ -25,6 +25,6 @@
 #define XBIT_ISNOTSET	4
 
 bool Xbit_Condition(int rule_position, char *ip_src, char *ip_dst);
-uint32_t Xbit_Direction ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char );
+uint32_t Xbit_Return_Tracking_Hash ( int rule_position, int xbit_position, char *ip_src_char, char *ip_dst_char );
 void Xbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 
