@@ -62,7 +62,11 @@ struct _SaganConfig
     unsigned char 	eve_type;
     char		eve_interface[32];
     char 		eve_filename[MAXPATH];
+
     FILE		*eve_stream;
+    bool		eve_stream_status;
+
+
     int		        eve_fd;
     bool		eve_alerts;
     bool		eve_alerts_base64;
@@ -73,12 +77,22 @@ struct _SaganConfig
     char	 sagan_sensor_name[64];
     char	 sagan_cluster_name[64];
     char         sagan_interface[50];
+
     FILE         *sagan_alert_stream;
+    bool	 sagan_alert_stream_status;
+
+
     int          sagan_alert_fd;
+
     FILE	 *sagan_fast_stream;
+    bool	 sagan_fast_stream_status;
+
     int	         sagan_fast_fd;
     char         sagan_log_filepath[MAXPATH];
+
     FILE         *sagan_log_stream;
+    bool	 sagan_log_stream_status;
+
     int          sagan_log_fd;
     char         sagan_lockfile[MAXPATH];
     char         sagan_fifo[MAXPATH];

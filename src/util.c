@@ -1081,6 +1081,8 @@ void Open_Log_File( bool state, int type )
                     fprintf(stderr, "[E] [%s, line %d] Cannot open %s - %s!\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
                     exit(-1);
                 }
+
+            config->sagan_log_stream_status = true;
         }
 
 
@@ -1113,6 +1115,8 @@ void Open_Log_File( bool state, int type )
                             Sagan_Log(ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
                         }
 
+                    config->eve_stream_status = true;
+
 
                 }
             if ( config->fast_flag )
@@ -1123,6 +1127,8 @@ void Open_Log_File( bool state, int type )
                             Remove_Lock_File();
                             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
                         }
+
+                    config->sagan_fast_stream_status = true;
 
                 }
 
@@ -1135,6 +1141,8 @@ void Open_Log_File( bool state, int type )
                             Remove_Lock_File();
                             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
                         }
+
+                    config->sagan_alert_stream_status = true;
 
                 }
         }

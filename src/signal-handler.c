@@ -201,7 +201,7 @@ void Sig_Handler( void )
 
 #endif
 
-                    if ( config->eve_flag == true )
+                    if ( config->eve_flag == true && config->eve_stream_status == true )
                         {
 
                             fflush(config->eve_stream);
@@ -210,7 +210,7 @@ void Sig_Handler( void )
                         }
 
 
-                    if ( config->alert_flag == true )
+                    if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
                         {
 
                             fflush(config->sagan_alert_stream);
@@ -218,7 +218,7 @@ void Sig_Handler( void )
 
                         }
 
-                    if ( config->fast_flag == true )
+                    if ( config->fast_flag == true && config->sagan_fast_stream_status == true )
                         {
 
                             fflush(config->sagan_fast_stream);
@@ -226,8 +226,11 @@ void Sig_Handler( void )
 
                         }
 
-                    fflush(config->sagan_log_stream);               /* Close the sagan.log */
-                    fclose(config->sagan_log_stream);
+                    if ( config->sagan_log_stream_status == true )
+                        {
+                            fflush(config->sagan_log_stream);               /* Close the sagan.log */
+                            fclose(config->sagan_log_stream);
+                        }
 
                     /* IPC Shared Memory */
 
