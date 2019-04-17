@@ -1212,6 +1212,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                 {
 
                                                     bluedot_results = 0;
+						    bluedot_json[0] = '\0'; 
 
                                                     /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
