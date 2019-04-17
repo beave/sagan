@@ -128,7 +128,7 @@ void Sig_Handler( void )
     sigset_t signal_set;
     int sig;
     bool orig_perfmon_value = 0;
-    unsigned char max_death_time = MAX_DEATH_TIME;
+    unsigned char max_death_time = 0;
 
 #ifdef HAVE_LIBPCAP
     bool orig_plog_value = 0;
