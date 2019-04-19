@@ -1208,11 +1208,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( config->bluedot_flag )
                                         {
+
+                                            bluedot_results = 0;
+                                            bluedot_json[0] = '\0';
+
                                             if ( rulestruct[b].bluedot_ipaddr_type )
                                                 {
-
-                                                    bluedot_results = 0;
-						    bluedot_json[0] = '\0'; 
 
                                                     /* 1 == src,  2 == dst,  3 == both,  4 == all */
 
@@ -1251,8 +1252,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                         }
 
-                                                }
 
+                                                }
 
                                             if ( rulestruct[b].bluedot_file_hash && ( md5_hash[0] != '\0' ||
                                                     sha256_hash[0] != '\0' || sha256_hash[0] != '\0') )
@@ -1521,7 +1522,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                                                                                        rulestruct[b].s_sid,
                                                                                                                                                                        ip_srcport_u32,
                                                                                                                                                                        ip_dstport_u32,
-                                                                                                                                                                       b, tp, bluedot_json );
+                                                                                                                                                                       b, tp, bluedot_json, bluedot_results );
 
 
                                                                                                                                                         }

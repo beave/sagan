@@ -473,6 +473,7 @@ struct _Sagan_Event
     char *message;
 
     char *bluedot_json;
+    unsigned char bluedot_results;
 
     uint64_t sid;
     uint32_t rev;
