@@ -1063,6 +1063,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                      * xbit - ISSET || ISNOTSET
                                      ****************************************************************************/
 
+				    xbit_return = 0; 
+
                                     if ( rulestruct[b].xbit_flag && ( rulestruct[b].xbit_isset_count || rulestruct[b].xbit_isnotset_count ) )
                                         {
                                             xbit_return = Xbit_Condition(b, ip_src, ip_dst);
@@ -1072,6 +1074,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     /****************************************************************************
                                      * flexbit - ISSET || ISNOTSET
                                      ****************************************************************************/
+
+				    flexbit_return = 0;
+				    flexbit_count_return = 0;
 
                                     if ( rulestruct[b].flexbit_flag )
                                         {
