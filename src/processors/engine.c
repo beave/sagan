@@ -196,13 +196,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #ifdef WITH_BLUEDOT
 
-    unsigned char bluedot_results = 0;
     bool bluedot_ip_flag = 0;
     bool bluedot_hash_flag = 0;
     bool bluedot_url_flag = 0;
     bool bluedot_filename_flag = 0;
 
 #endif
+  
+    /* Needs to be outside ifdef */
+
+    unsigned char bluedot_results = 0;
 
     /* Outside the WITH_BLUEDOT because we use it in passing to Send_Alert() */
 
