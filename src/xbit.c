@@ -113,8 +113,7 @@ bool Xbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char)
 
     if ( config->redis_flag && config->xbit_storage == XBIT_STORAGE_REDIS )
         {
-            Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char);
-            return;
+            return(Xbit_Condition_Redis(rule_position, ip_src_char, ip_dst_char));
         }
 
 #endif

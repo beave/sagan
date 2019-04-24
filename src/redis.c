@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <string.h>
+#include <unistd.h>
 #include <errno.h>
 #include <hiredis/hiredis.h>
 
