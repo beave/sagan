@@ -291,231 +291,239 @@ int main(int argc, char **argv)
 
     /*** Get "Threshold" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESHOLD2_IPC_FILE);
-
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            Usage();
-            exit(1);
-        }
-
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    if (( Threshold2_IPC = mmap(0, sizeof(_Threshold2_IPC) + (sizeof(_Threshold2_IPC) * counters_ipc->thresh2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    close(shm);
-
-    if ( counters_ipc->thresh2_count >= 1 )
+    if ( type == ALL_TYPES || type == THRESHOLD_TYPE )
         {
 
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, THRESHOLD2_IPC_FILE);
 
-            for ( i = 0; i < counters_ipc->thresh2_count; i++)
+            if ( object_check(tmp_object_check) == false )
+                {
+                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+                    Usage();
+                    exit(1);
+                }
+
+            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                {
+                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            if (( Threshold2_IPC = mmap(0, sizeof(_Threshold2_IPC) + (sizeof(_Threshold2_IPC) * counters_ipc->thresh2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                {
+                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            close(shm);
+
+            if ( counters_ipc->thresh2_count >= 1 )
                 {
 
-                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
 
-                    /* Show only active threshold unless told otherwise */
-
-                    if ( ( thresh_oldtime < Threshold2_IPC[i].expire &&
-                            Threshold2_IPC[i].count > Threshold2_IPC[i].target_count ) ||
-                            all_flag == true )
+                    for ( i = 0; i < counters_ipc->thresh2_count; i++)
                         {
 
-                            u32_Time_To_Human(Threshold2_IPC[i].utime, time_buf, sizeof(time_buf));
+                            thresh_oldtime = current_time - Threshold2_IPC[i].utime;
 
-                            printf("Type: Threshold [%d].\n", i);
+                            /* Show only active threshold unless told otherwise */
 
-                            printf("Tracking hash: %u\n", Threshold2_IPC[i].hash);
-
-                            printf("Tracking by:");
-
-                            if ( Threshold2_IPC[i].threshold2_method_src == true )
+                            if ( ( thresh_oldtime < Threshold2_IPC[i].expire &&
+                                    Threshold2_IPC[i].count > Threshold2_IPC[i].target_count ) ||
+                                    all_flag == true )
                                 {
-                                    printf(" by_src");
+
+                                    u32_Time_To_Human(Threshold2_IPC[i].utime, time_buf, sizeof(time_buf));
+
+                                    printf("Type: Threshold [%d].\n", i);
+
+                                    printf("Tracking hash: %u\n", Threshold2_IPC[i].hash);
+
+                                    printf("Tracking by:");
+
+                                    if ( Threshold2_IPC[i].threshold2_method_src == true )
+                                        {
+                                            printf(" by_src");
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dst == true )
+                                        {
+                                            printf(" by_dst");
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_username == true )
+                                        {
+                                            printf(" by_username");
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_srcport == true )
+                                        {
+                                            printf(" by_srcport");
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dstport == true )
+                                        {
+                                            printf(" by_dstport");
+                                        }
+
+                                    printf("\n");
+
+                                    if ( Threshold2_IPC[i].threshold2_method_src == true )
+                                        {
+                                            printf("IP SRC: %s\n", Threshold2_IPC[i].ip_src);
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_srcport == true )
+                                        {
+                                            printf("SRC Port: %d\n", Threshold2_IPC[i].src_port);
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dst == true )
+                                        {
+                                            printf("IP DST: %s\n", Threshold2_IPC[i].ip_dst);
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_dstport == true )
+                                        {
+                                            printf("DST Port: %d\n", Threshold2_IPC[i].dst_port);
+                                        }
+
+                                    if ( Threshold2_IPC[i].threshold2_method_username == true )
+                                        {
+                                            printf("Username: %s\n",  Threshold2_IPC[i].username);
+                                        }
+
+
+                                    printf("Signature: \"%s\" (%" PRIu64 ")\n", Threshold2_IPC[i].signature_msg, Threshold2_IPC[i].sid);
+                                    printf("Syslog Message: \"%s\"\n", Threshold2_IPC[i].syslog_message);
+                                    printf("Date added/modified: %s\n", time_buf);
+                                    printf("Target Count: %" PRIu64 "\n", Threshold2_IPC[i].target_count);
+                                    printf("Counter: %" PRIu64 "\n", Threshold2_IPC[i].count);
+                                    printf("Time until expire: %" PRIu64 " seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
+                                    printf("Expire Time: %d seconds.\n\n", Threshold2_IPC[i].expire);
+
                                 }
-
-                            if ( Threshold2_IPC[i].threshold2_method_dst == true )
-                                {
-                                    printf(" by_dst");
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_username == true )
-                                {
-                                    printf(" by_username");
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_srcport == true )
-                                {
-                                    printf(" by_srcport");
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_dstport == true )
-                                {
-                                    printf(" by_dstport");
-                                }
-
-                            printf("\n");
-
-                            if ( Threshold2_IPC[i].threshold2_method_src == true )
-                                {
-                                    printf("IP SRC: %s\n", Threshold2_IPC[i].ip_src);
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_srcport == true )
-                                {
-                                    printf("SRC Port: %d\n", Threshold2_IPC[i].src_port);
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_dst == true )
-                                {
-                                    printf("IP DST: %s\n", Threshold2_IPC[i].ip_dst);
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_dstport == true )
-                                {
-                                    printf("DST Port: %d\n", Threshold2_IPC[i].dst_port);
-                                }
-
-                            if ( Threshold2_IPC[i].threshold2_method_username == true )
-                                {
-                                    printf("Username: %s\n",  Threshold2_IPC[i].username);
-                                }
-
-
-                            printf("Signature: \"%s\" (%" PRIu64 ")\n", Threshold2_IPC[i].signature_msg, Threshold2_IPC[i].sid);
-                            printf("Syslog Message: \"%s\"\n", Threshold2_IPC[i].syslog_message);
-                            printf("Date added/modified: %s\n", time_buf);
-                            printf("Target Count: %" PRIu64 "\n", Threshold2_IPC[i].target_count);
-                            printf("Counter: %" PRIu64 "\n", Threshold2_IPC[i].count);
-                            printf("Time until expire: %" PRIu64 " seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
-                            printf("Expire Time: %d seconds.\n\n", Threshold2_IPC[i].expire);
 
                         }
-
                 }
         }
 
 
     /*** Get "After" data ***/
 
-    snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER2_IPC_FILE);
-
-
-    if ( object_check(tmp_object_check) == false )
-        {
-            fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-            Usage();
-            exit(1);
-        }
-
-    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-        {
-            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    if (( After2_IPC = mmap(0, sizeof(_After2_IPC) + (sizeof(_After2_IPC) * counters_ipc->after2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-        {
-            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-            exit(1);
-        }
-
-    close(shm);
-
-    if ( counters_ipc->after2_count >= 1 )
+    if ( type == ALL_TYPES || type == AFTER_TYPE )
         {
 
-            for ( i = 0; i < counters_ipc->after2_count; i++)
+            snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, AFTER2_IPC_FILE);
+
+
+            if ( object_check(tmp_object_check) == false )
+                {
+                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
+                    Usage();
+                    exit(1);
+                }
+
+            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                {
+                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            if (( After2_IPC = mmap(0, sizeof(_After2_IPC) + (sizeof(_After2_IPC) * counters_ipc->after2_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                {
+                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                    exit(1);
+                }
+
+            close(shm);
+
+            if ( counters_ipc->after2_count >= 1 )
                 {
 
-                    after_oldtime = current_time - After2_IPC[i].utime;
-
-                    /* Show only active after unless told otherwise */
-
-                    if ( ( after_oldtime < After2_IPC[i].expire &&
-                            After2_IPC[i].count > After2_IPC[i].target_count ) ||
-                            all_flag == true )
+                    for ( i = 0; i < counters_ipc->after2_count; i++)
                         {
 
-                            printf("Type: After [%d].\n", i);
+                            after_oldtime = current_time - After2_IPC[i].utime;
 
-                            u32_Time_To_Human(After2_IPC[i].utime, time_buf, sizeof(time_buf));
+                            /* Show only active after unless told otherwise */
 
-                            printf("Tracking hash: %u\n", After2_IPC[i].hash);
-
-                            printf("Tracking by:");
-
-                            if ( After2_IPC[i].after2_method_src == true )
+                            if ( ( after_oldtime < After2_IPC[i].expire &&
+                                    After2_IPC[i].count > After2_IPC[i].target_count ) ||
+                                    all_flag == true )
                                 {
-                                    printf(" by_src");
+
+                                    printf("Type: After [%d].\n", i);
+
+                                    u32_Time_To_Human(After2_IPC[i].utime, time_buf, sizeof(time_buf));
+
+                                    printf("Tracking hash: %u\n", After2_IPC[i].hash);
+
+                                    printf("Tracking by:");
+
+                                    if ( After2_IPC[i].after2_method_src == true )
+                                        {
+                                            printf(" by_src");
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_dst == true )
+                                        {
+                                            printf(" by_dst");
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_username == true )
+                                        {
+                                            printf(" by_username");
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_srcport == true )
+                                        {
+                                            printf(" by_username");
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_dstport == true )
+                                        {
+                                            printf(" by_username");
+                                        }
+
+                                    printf("\n");
+
+                                    if ( After2_IPC[i].after2_method_src == true )
+                                        {
+                                            printf("IP SRC: %s\n", After2_IPC[i].ip_src);
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_srcport == true )
+                                        {
+                                            printf("SRC Port: %d\n", After2_IPC[i].src_port);
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_dst == true )
+                                        {
+                                            printf("IP DST: %s\n", After2_IPC[i].ip_dst);
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_dstport == true )
+                                        {
+                                            printf("DST Port: %d\n", After2_IPC[i].dst_port);
+                                        }
+
+                                    if ( After2_IPC[i].after2_method_username == true )
+                                        {
+                                            printf("Username: %s\n",  After2_IPC[i].username);
+                                        }
+
+
+                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 " Revision: %d)\n", After2_IPC[i].signature_msg, After2_IPC[i].sid, After2_IPC[i].rev);
+                                    printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
+                                    printf("Date added/modified: %s\n", time_buf);
+                                    printf("Counter: %" PRIu64 "\n", After2_IPC[i].count);
+                                    printf("Time until expire: %" PRIu64 " seconds.\n", After2_IPC[i].expire - after_oldtime);
+                                    printf("Expire Time: %d seconds.\n\n", After2_IPC[i].expire);
+
                                 }
-
-                            if ( After2_IPC[i].after2_method_dst == true )
-                                {
-                                    printf(" by_dst");
-                                }
-
-                            if ( After2_IPC[i].after2_method_username == true )
-                                {
-                                    printf(" by_username");
-                                }
-
-                            if ( After2_IPC[i].after2_method_srcport == true )
-                                {
-                                    printf(" by_username");
-                                }
-
-                            if ( After2_IPC[i].after2_method_dstport == true )
-                                {
-                                    printf(" by_username");
-                                }
-
-                            printf("\n");
-
-                            if ( After2_IPC[i].after2_method_src == true )
-                                {
-                                    printf("IP SRC: %s\n", After2_IPC[i].ip_src);
-                                }
-
-                            if ( After2_IPC[i].after2_method_srcport == true )
-                                {
-                                    printf("SRC Port: %d\n", After2_IPC[i].src_port);
-                                }
-
-                            if ( After2_IPC[i].after2_method_dst == true )
-                                {
-                                    printf("IP DST: %s\n", After2_IPC[i].ip_dst);
-                                }
-
-                            if ( After2_IPC[i].after2_method_dstport == true )
-                                {
-                                    printf("DST Port: %d\n", After2_IPC[i].dst_port);
-                                }
-
-                            if ( After2_IPC[i].after2_method_username == true )
-                                {
-                                    printf("Username: %s\n",  After2_IPC[i].username);
-                                }
-
-
-                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 " Revision: %d)\n", After2_IPC[i].signature_msg, After2_IPC[i].sid, After2_IPC[i].rev);
-                            printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
-                            printf("Date added/modified: %s\n", time_buf);
-                            printf("Counter: %" PRIu64 "\n", After2_IPC[i].count);
-                            printf("Time until expire: %" PRIu64 " seconds.\n", After2_IPC[i].expire - after_oldtime);
-                            printf("Expire Time: %d seconds.\n\n", After2_IPC[i].expire);
 
                         }
-
                 }
         }
 
