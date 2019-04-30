@@ -44,6 +44,7 @@ typedef void json_object;
 
 #define SENSOR_NAME		"default_sensor_name"
 #define CLUSTER_NAME		"default_cluster_name"
+#define MMAP_VERSION		2.0
 
 #define CLASSBUF		1024
 #define RULEBUF			5128

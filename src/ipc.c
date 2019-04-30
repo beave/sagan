@@ -504,6 +504,21 @@ void IPC_Init(void)
             Sagan_Log(ERROR, "[%s, line %d] Error allocating memory for counters object! [%s]", __FILE__, __LINE__, strerror(errno));
         }
 
+    /* Make sure we are using the correct mmap() version/format */
+
+    if ( new_counters == 1 )
+        {
+	    /* Write mmap() version */
+            counters_ipc->version = MMAP_VERSION;
+        }
+    else
+        {
+            if ( counters_ipc->version != MMAP_VERSION )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Incorrect mmap version. Was looking for %.1f but got %d. Removed your mmap files and restart!", __FILE__ , __LINE__, MMAP_VERSION, counters_ipc->version );
+                }
+        }
+
     /* xbit memory object - File based mmap() */
 
     if ( config->xbit_storage == XBIT_STORAGE_MMAP )

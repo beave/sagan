@@ -178,6 +178,8 @@ typedef struct _Sagan_IPC_Counters _Sagan_IPC_Counters;
 struct _Sagan_IPC_Counters
 {
 
+    double version;
+
     int  flexbit_count;
     int	 xbit_count;
 
