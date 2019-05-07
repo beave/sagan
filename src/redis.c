@@ -50,6 +50,7 @@ int redis_msgslot = 0;
 pthread_cond_t SaganRedisDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganRedisWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisReaderMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t RedisWriterMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t RedisErrorMutex=PTHREAD_MUTEX_INITIALIZER;
 
 bool connection_write_error = false;
@@ -284,11 +285,15 @@ void Redis_Writer ( void )
 
                     if ( expire == 0 )
                         {
+                            pthread_mutex_lock(&RedisWriterMutex);
                             reply = redisCommand(c_writer_redis, "%s %s %s", command, key, value);
+                            pthread_mutex_unlock(&RedisWriterMutex);
                         }
                     else
                         {
+                            pthread_mutex_lock(&RedisWriterMutex);
                             reply = redisCommand(c_writer_redis, "%s %s %s EX %d", command, key, value, expire);
+                            pthread_mutex_unlock(&RedisWriterMutex);
                         }
 
                     if ( reply != NULL )
@@ -332,6 +337,8 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
     if ( connection_read_error == true )
         {
             Sagan_Log(WARN, "[%s, line %d] Redis is an error state.  Cannot write.", __FILE__, __LINE__);
+            strlcpy(str, " ", size);
+            return;
         }
     else
         {

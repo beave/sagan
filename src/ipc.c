@@ -508,7 +508,7 @@ void IPC_Init(void)
 
     if ( new_counters == 1 )
         {
-	    /* Write mmap() version */
+            /* Write mmap() version */
             counters_ipc->version = MMAP_VERSION;
         }
     else
