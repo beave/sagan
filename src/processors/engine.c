@@ -202,7 +202,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool bluedot_filename_flag = 0;
 
 #endif
-  
+
     /* Needs to be outside ifdef */
 
     unsigned char bluedot_results = 0;
@@ -678,6 +678,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             /* Set that normalization has been tried work isn't repeated */
 
                                             liblognorm_status = -1;
+                                            json_normalize = NULL;
 
                                             json_normalize = Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
 
