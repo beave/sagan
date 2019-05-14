@@ -737,6 +737,10 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
+	    /* For some reason, when I try to use the IP2Bit passed from engine.c,  it 
+               is sometimes 16 bytes off!  Not idea why and doesn't happen all the time.
+	       We call IP2Bit here to prevent it from getting off :(  Champ 2019/05/14 */
+
             IP2Bit(data, ip_convert);
 
             if ( is_notroutable(ip_convert) )
