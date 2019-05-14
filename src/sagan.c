@@ -1236,7 +1236,7 @@ int main(int argc, char **argv)
 
                                             for ( i = 0; i < config->max_batch; i++)
                                                 {
-                                                    strlcpy(SaganPassSyslog[proc_msgslot].syslog[i], SaganPassSyslog_LOCAL[proc_msgslot].syslog[i] , sizeof(SaganPassSyslog[proc_msgslot].syslog[i]));
+                                                    strlcpy(SaganPassSyslog[proc_msgslot].syslog[i], SaganPassSyslog_LOCAL[proc_msgslot].syslog[i], sizeof(SaganPassSyslog[proc_msgslot].syslog[i]));
                                                 }
 
                                             counters->events_processed = counters->events_processed + config->max_batch;

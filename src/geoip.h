@@ -34,7 +34,7 @@
 #define GEOIP_SKIP	2
 
 void Open_GeoIP2_Database( void );
-int GeoIP2_Lookup_Country( char *, unsigned char *ip_bits, int );
+int GeoIP2_Lookup_Country( char *ipaddr, int rule_position );
 
 typedef struct _Sagan_GeoIP_Skip _Sagan_GeoIP_Skip;
 struct _Sagan_GeoIP_Skip

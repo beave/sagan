@@ -1107,12 +1107,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, ip_src_bits, b );
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_src, b );
                                                 }
 
                                             else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                                 {
-                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, ip_dst_bits, b );
+                                                    geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
                                                 }
 
                                             if ( geoip2_return != GEOIP_SKIP )
@@ -1222,27 +1222,27 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 1 && ip_src_flag )
                                                         {
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, ip_src_bits, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 2 && ip_dst_flag )
                                                         {
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, ip_dst_bits, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                         }
 
                                                     if ( rulestruct[b].bluedot_ipaddr_type == 3 && ip_src_flag && ip_dst_flag )
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, ip_src_bits, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
 
                                                             /* If the source isn't found,  then check the dst */
 
                                                             if ( bluedot_ip_flag != 0 )
                                                                 {
-                                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, ip_dst_bits, bluedot_json, sizeof(bluedot_json));
+                                                                    bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                                     bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
                                                                 }
 
@@ -1265,7 +1265,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     if ( md5_hash[0] != '\0')
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( md5_hash, BLUEDOT_LOOKUP_HASH, b, NULL, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup( md5_hash, BLUEDOT_LOOKUP_HASH, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1273,7 +1273,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     if ( sha256_hash[0] != '\0' )
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, NULL, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH );
 
                                                         }
@@ -1281,7 +1281,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     if ( sha256_hash[0] != '\0')
                                                         {
 
-                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, NULL, bluedot_json, sizeof(bluedot_json));
+                                                            bluedot_results = Sagan_Bluedot_Lookup( sha256_hash, BLUEDOT_LOOKUP_HASH, b, bluedot_json, sizeof(bluedot_json));
                                                             bluedot_hash_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_HASH);
 
                                                         }
@@ -1291,7 +1291,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             if ( rulestruct[b].bluedot_url && normalize_http_uri != NULL )
                                                 {
 
-                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b, NULL, bluedot_json, sizeof(bluedot_json));
+                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_http_uri, BLUEDOT_LOOKUP_URL, b, bluedot_json, sizeof(bluedot_json));
                                                     bluedot_url_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_URL);
 
                                                 }
@@ -1299,7 +1299,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             if ( rulestruct[b].bluedot_filename && normalize_filename != NULL )
                                                 {
 
-                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b, NULL, bluedot_json, sizeof(bluedot_json));
+                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_filename, BLUEDOT_LOOKUP_FILENAME, b, bluedot_json, sizeof(bluedot_json));
                                                     bluedot_filename_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_FILENAME);
 
                                                 }

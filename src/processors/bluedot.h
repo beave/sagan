@@ -44,7 +44,7 @@
 
 int Sagan_Bluedot_Cat_Compare ( unsigned char, int, unsigned char );
 int Sagan_Bluedot ( _Sagan_Proc_Syslog *, int  );
-unsigned char Sagan_Bluedot_Lookup(char *, unsigned char, int, unsigned char *ip_bits, char *bluedot_str, size_t bluedot_size);
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, char *bluedot_str, size_t bluedot_size );
 int Sagan_Bluedot_IP_Lookup_All ( char *, int, _Sagan_Lookup_Cache_Entry *, int );
 
 void Sagan_Bluedot_Clean_Cache ( void );

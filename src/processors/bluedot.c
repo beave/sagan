@@ -649,7 +649,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 4 == Filename
  */
 
-unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, unsigned char *ip,  char *bluedot_str, size_t bluedot_size )
+unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, char *bluedot_str, size_t bluedot_size )
 {
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
@@ -737,10 +737,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-            memset(ip_convert, 0, MAXIPBIT);
-            memcpy(ip_convert, ip, MAXIPBIT);
+            IP2Bit(data, ip_convert);
 
-            if ( is_notroutable(ip) )
+            if ( is_notroutable(ip_convert) )
                 {
 
                     if ( debug->debugbluedot )
@@ -754,7 +753,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             for ( i = 0; i < counters->bluedot_skip_count; i++ )
                 {
 
-                    if ( is_inrange(ip, (unsigned char *)&Bluedot_Skip[i].range, 1) )
+                    if ( is_inrange(ip_convert, (unsigned char *)&Bluedot_Skip[i].range, 1) )
                         {
 
                             if ( debug->debugbluedot )
@@ -1116,7 +1115,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
-            Sagan_Bluedot_Clean_Queue(data, type, ip);
+            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
 
             return(false);
         }
@@ -1172,7 +1171,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
-            Sagan_Bluedot_Clean_Queue(data, type, ip);
+            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
 
             return(false);
         }
@@ -1189,7 +1188,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( bluedot_alertid == -1 )
         {
             Sagan_Log(WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
-            Sagan_Bluedot_Clean_Queue(data, type, ip);
+            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
             counters->bluedot_error_count++;
             return(false);
         }
@@ -1313,7 +1312,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         }
 
 
-    Sagan_Bluedot_Clean_Queue(data, type, ip);	/* Remove item for "queue" */
+    Sagan_Bluedot_Clean_Queue(data, type, ip_convert);	/* Remove item for "queue" */
 
     json_object_put(json_in);       		/* Clear json_in as we're done with it */
 
@@ -1417,7 +1416,7 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, lookup_cache[i].ip_bits, NULL, 0);
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, NULL, 0);
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )

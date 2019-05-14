@@ -515,7 +515,7 @@ void IPC_Init(void)
         {
             if ( counters_ipc->version != MMAP_VERSION )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Incorrect mmap version. Was looking for %.1f but got %d. Removed your mmap files and restart!", __FILE__ , __LINE__, MMAP_VERSION, counters_ipc->version );
+                    Sagan_Log(ERROR, "[%s, line %d] Incorrect mmap version. Was looking for %.1f but got %d. Removed your mmap files and restart!", __FILE__, __LINE__, MMAP_VERSION, counters_ipc->version );
                 }
         }
 
