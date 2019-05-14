@@ -337,7 +337,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
     if ( connection_read_error == true )
         {
             Sagan_Log(WARN, "[%s, line %d] Redis is an error state.  Cannot write.", __FILE__, __LINE__);
-            strlcpy(str, " ", size);
+            str[0] = '\0';
             return;
         }
     else
@@ -367,7 +367,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                                         }
                                     else
                                         {
-                                            strlcpy(str, " ", size);
+                                            str[0] = '\0';
                                         }
 
                                 }
@@ -390,7 +390,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                     /* Error state, so we need to return "false" (failure) for the lookup.  This
                        insures that */
 
-                    strlcpy(str, " ", size);
+                    str[0] = '\0';
 
                     pthread_mutex_lock(&RedisErrorMutex);
                     connection_read_error = true;

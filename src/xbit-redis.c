@@ -209,38 +209,34 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
         {
 
-            if ( rulestruct[rule_position].xbit_type[r] == XBIT_ISSET ||
-                    rulestruct[rule_position].xbit_type[r] == XBIT_ISNOTSET )
+            Xbit_Return_Tracking_IP( rule_position, r, ip_src_char, ip_dst_char, tmp_ip, sizeof(tmp_ip));
+
+            snprintf(redis_command, sizeof(redis_command),
+                     "GET %s:%s:%s:%s", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], tmp_ip);
+
+            Redis_Reader ( (char *)redis_command, redis_results, sizeof(redis_results) );
+
+            if ( redis_results[0] == '\0' && rulestruct[rule_position].xbit_type[r] == XBIT_ISSET )
                 {
-                    Xbit_Return_Tracking_IP( rule_position, r, ip_src_char, ip_dst_char, tmp_ip, sizeof(tmp_ip));
 
-                    snprintf(redis_command, sizeof(redis_command),
-                             "GET %s:%s:%s:%s", REDIS_PREFIX, config->sagan_cluster_name, rulestruct[rule_position].xbit_name[r], tmp_ip);
-
-                    Redis_Reader ( (char *)redis_command, redis_results, sizeof(redis_results) );
-
-                    if ( redis_results[0] == ' ' && rulestruct[rule_position].xbit_type[r] == XBIT_ISSET )
+                    if ( debug->debugxbit )
                         {
-
-                            if ( debug->debugxbit )
-                                {
-                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was not found IP address %s for isset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
-                                }
-
-                            return(false);
+                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was not found IP address %s for isset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
                         }
 
-                    if ( redis_results[0] != ' ' && rulestruct[rule_position].xbit_type[r] == XBIT_ISNOTSET )
+                    return(false);
+                }
+
+            else if ( redis_results[0] != '\0' && rulestruct[rule_position].xbit_type[r] == XBIT_ISNOTSET )
+                {
+
+                    if ( debug->debugxbit )
                         {
-
-                            if ( debug->debugxbit )
-                                {
-                                    Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was found for IP address %s for isnotset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
-                                }
-
-
-                            return(false);
+                            Sagan_Log(DEBUG, "[%s, line %d] Xbit '%s' was found for IP address %s for isnotset. Returning false.", __FILE__, __LINE__, rulestruct[rule_position].xbit_name[r], tmp_ip);
                         }
+
+
+                    return(false);
                 }
         }
 
