@@ -327,7 +327,7 @@ void Load_YAML_Config( char *yaml_file )
                     /* Useful YAML vars: parser.context_mark.line+1, parser.context_mark.column+1, parser.problem, parser.problem_mark.line+1,
                        parser.problem_mark.column+1 */
 
-                    Sagan_Log(ERROR, "[%s, line %d] libyam parse error at line %d in '%s'", __FILE__, __LINE__, parser.problem_mark.line+1, config->sagan_config);
+                    Sagan_Log(ERROR, "[%s, line %d] libyaml parse error at line %d in '%s'", __FILE__, __LINE__, parser.problem_mark.line+1, config->sagan_config);
 
                 }
 
