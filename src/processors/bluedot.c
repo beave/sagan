@@ -197,7 +197,7 @@ void Sagan_Bluedot_Init(void)
  * happens a lot with IP address looks
  ****************************************************************************/
 
-int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *ip )
+int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 {
 
     int i=0;
@@ -206,9 +206,8 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type, unsigned char *i
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-
-            memset(ip_convert, 0, MAXIPBIT);
-            memcpy(ip_convert, ip, MAXIPBIT);
+	    
+	    IP2Bit(data, ip_convert);
 
             for (i=0; i<config->bluedot_ip_queue; i++)
                 {
@@ -1119,7 +1118,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
-            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
+            //Sagan_Bluedot_Clean_Queue(data, type);
 
             return(false);
         }
@@ -1175,7 +1174,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
-            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
+            //Sagan_Bluedot_Clean_Queue(data, type);
 
             return(false);
         }
@@ -1192,7 +1191,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( bluedot_alertid == -1 )
         {
             Sagan_Log(WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
-            Sagan_Bluedot_Clean_Queue(data, type, ip_convert);
+            //Sagan_Bluedot_Clean_Queue(data, type);
             counters->bluedot_error_count++;
             return(false);
         }
@@ -1316,7 +1315,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         }
 
 
-    Sagan_Bluedot_Clean_Queue(data, type, ip_convert);	/* Remove item for "queue" */
+    Sagan_Bluedot_Clean_Queue(data, type);	/* Remove item for "queue" */
 
     json_object_put(json_in);       		/* Clear json_in as we're done with it */
 

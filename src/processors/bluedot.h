@@ -53,7 +53,7 @@ void Sagan_Bluedot_Load_Cat(void);
 void Sagan_Verify_Categories( char *, int, const char *, int, unsigned char );
 void Sagan_Bluedot_Check_Cache_Time (void);
 
-int Sagan_Bluedot_Clean_Queue ( char *, unsigned char, unsigned char *ip );
+int Sagan_Bluedot_Clean_Queue ( char *, unsigned char );
 
 
 typedef struct _Sagan_Bluedot_Cat_List _Sagan_Bluedot_Cat_List;
