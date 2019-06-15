@@ -109,8 +109,8 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             json_object_object_add(jobj,"level", jlevel);
 
                             json_object *jprogram = json_object_new_string(SaganProcSyslog_LOCAL->syslog_program);
-                            json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
-                            json_object_object_add(jobj,"tag", jtag);
+//                            json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
+//                            json_object_object_add(jobj,"tag", jtag);
 
                             json_object *jdate = json_object_new_string(SaganProcSyslog_LOCAL->syslog_date);
                             json_object_object_add(jobj,"date", jdate);

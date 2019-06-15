@@ -124,8 +124,6 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
 
                     after_oldtime = current_time - After2_IPC[i].utime;
 
-                    After2_IPC[i].utime = current_time; /* Reset the time */
-
                     strlcpy(After2_IPC[i].syslog_message, syslog_message, sizeof(After2_IPC[i].syslog_message));
                     strlcpy(After2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(After2_IPC[i].signature_msg));
 
@@ -133,10 +131,8 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
 
                     if ( after_oldtime > rulestruct[rule_position].after2_seconds || After2_IPC[i].count == 0 )
                         {
-
                             After2_IPC[i].count=1;
                             After2_IPC[i].utime = current_time;
-
                             after_log_flag = true;
                         }
 
@@ -144,6 +140,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                     if ( rulestruct[rule_position].after2_count < After2_IPC[i].count )
                         {
 
+			    After2_IPC[i].utime = current_time;
                             after_log_flag = false;
 
                             if ( debug->debuglimits )
