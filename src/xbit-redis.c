@@ -90,6 +90,11 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
 
+			    json_object *jtest = json_object_new_string("CHAMP DEBUGGING");
+			    json_object_object_add(jobj,"debuggign", jtest);
+
+			    /*
+
                             json_object *jsensor = json_object_new_string(config->sagan_sensor_name);
                             json_object_object_add(jobj,"sensor", jsensor);
 
@@ -109,8 +114,8 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             json_object_object_add(jobj,"level", jlevel);
 
                             json_object *jprogram = json_object_new_string(SaganProcSyslog_LOCAL->syslog_program);
-//                            json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
-//                            json_object_object_add(jobj,"tag", jtag);
+                            json_object *jtag = json_object_new_string(SaganProcSyslog_LOCAL->syslog_tag);
+                            json_object_object_add(jobj,"tag", jtag);
 
                             json_object *jdate = json_object_new_string(SaganProcSyslog_LOCAL->syslog_date);
                             json_object_object_add(jobj,"date", jdate);
@@ -134,8 +139,16 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
 
                             snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
                             tmp_data[sizeof(tmp_data) - 1] = '\0';
-                            json_object_put(jobj);
 
+			    */
+			    
+			   
+			    /* DEBUG CODE */
+
+                            json_object_put(jobj);
+			    strlcpy(tmp_data, json_object_to_json_string(jobj), sizeof(tmp_data));
+
+			    /* ** DEBUG ABOVE ** */
 
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 
