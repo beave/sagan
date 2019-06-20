@@ -90,7 +90,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                     if ( redis_msgslot < config->redis_max_writer_threads )
                         {
 
-			    jobj = json_object_new_object();
+                            jobj = json_object_new_object();
 
                             json_object *jsensor = json_object_new_string(config->sagan_sensor_name);
                             json_object_object_add(jobj,"sensor", jsensor);
@@ -137,7 +137,7 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
                             snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
                             tmp_data[sizeof(tmp_data) - 1] = '\0';
 
-			    /* Send to redis */
+                            /* Send to redis */
 
                             pthread_mutex_lock(&SaganRedisWorkMutex);
 

@@ -140,7 +140,7 @@ bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst, 
                     if ( rulestruct[rule_position].after2_count < After2_IPC[i].count )
                         {
 
-			    After2_IPC[i].utime = current_time;
+                            After2_IPC[i].utime = current_time;
                             after_log_flag = false;
 
                             if ( debug->debuglimits )

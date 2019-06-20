@@ -108,7 +108,7 @@ char *u32_time_to_human( uint64_t utime )
     char *return_time = NULL;
 
     memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%lu", utime);
+    snprintf(tmp, sizeof(tmp) - 1, "%llu", utime);
 
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);
@@ -399,7 +399,7 @@ int main(int argc, char **argv)
                                     printf("Date added/modified: %s\n", time_buf);
                                     printf("Target Count: %" PRIu64 "\n", Threshold2_IPC[i].target_count);
                                     printf("Counter: %" PRIu64 "\n", Threshold2_IPC[i].count);
-                                    printf("Time until expire: %" PRIu64 " seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
+                                    printf("Time until expire: %" PRIi64 " seconds.\n", Threshold2_IPC[i].expire - thresh_oldtime);
                                     printf("Expire Time: %d seconds.\n\n", Threshold2_IPC[i].expire);
 
                                 }
@@ -518,7 +518,8 @@ int main(int argc, char **argv)
                                     printf("Syslog Message: \"%s\"\n", After2_IPC[i].syslog_message);
                                     printf("Date added/modified: %s\n", time_buf);
                                     printf("Counter: %" PRIu64 "\n", After2_IPC[i].count);
-                                    printf("Time until expire: %" PRIu64 " seconds.\n", After2_IPC[i].expire - after_oldtime);
+
+                                    printf("Time until expire: %" PRIi64 " seconds.\n", After2_IPC[i].expire - after_oldtime);
                                     printf("Expire Time: %d seconds.\n\n", After2_IPC[i].expire);
 
                                 }
@@ -575,7 +576,7 @@ int main(int argc, char **argv)
                                     printf("IP: %s:%d -> %s:%d\n", flexbit_ipc[i].ip_src, flexbit_ipc[i].src_port, flexbit_ipc[i].ip_dst, flexbit_ipc[i].dst_port);
                                     printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", flexbit_ipc[i].signature_msg, flexbit_ipc[i].sid);
                                     printf("Expire Time: %s (%d seconds)\n", time_buf, flexbit_ipc[i].expire);
-                                    printf("Time until expire: %" PRIu64 " seconds.\n", flexbit_oldtime);
+                                    printf("Time until expire: %" PRIi64 " seconds.\n", flexbit_oldtime);
                                     printf("Syslog message: \"%s\"\n\n", flexbit_ipc[i].syslog_message );
 
                                 }

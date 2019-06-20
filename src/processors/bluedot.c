@@ -206,8 +206,8 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
     if ( type == BLUEDOT_LOOKUP_IP )
         {
-	    
-	    IP2Bit(data, ip_convert);
+
+            IP2Bit(data, ip_convert);
 
             for (i=0; i<config->bluedot_ip_queue; i++)
                 {
@@ -736,9 +736,9 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( type == BLUEDOT_LOOKUP_IP )
         {
 
-	    /* For some reason, when I try to use the IP2Bit passed from engine.c,  it 
-               is sometimes 16 bytes off!  Not idea why and doesn't happen all the time.
-	       We call IP2Bit here to prevent it from getting off :(  Champ 2019/05/14 */
+            /* For some reason, when I try to use the IP2Bit passed from engine.c,  it
+                   is sometimes 16 bytes off!  Not idea why and doesn't happen all the time.
+               We call IP2Bit here to prevent it from getting off :(  Champ 2019/05/14 */
 
             IP2Bit(data, ip_convert);
 
