@@ -168,7 +168,6 @@ int main(int argc, char **argv)
     /* For convert to IP string */
 
     char ip_src[MAXIP] = { 0 };
-
     char time_buf[80] = { 0 };
 
     /* Shared memory descriptors */
@@ -181,6 +180,7 @@ int main(int argc, char **argv)
     bool typeflag = 0;
     unsigned char type = ALL_TYPES;
     bool all_flag = false;
+    bool err = false;
 
     char tmp_object_check[255];
 
@@ -592,69 +592,76 @@ int main(int argc, char **argv)
 
             snprintf(tmp_object_check, sizeof(tmp_object_check) - 1, "%s/%s", ipc_directory, XBIT_IPC_FILE);
 
+
             if ( object_check(tmp_object_check) == false )
                 {
-                    fprintf(stderr, "Error.  Can't locate %s. Abort!\n", tmp_object_check);
-                    Usage();
-                    exit(1);
+                    fprintf(stderr, "Warning: Can't locate %s. This might be normal if using 'xbits' with Redis storage.\n", tmp_object_check);
+                    err = true;
                 }
 
-            if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
-                {
-                    fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
+	    /* If using "redis" for xbit storage, this mmap() file might not exsist.  In that
+	     * case,  we just pass a warning - Champ Clark (2019/06/20) */
 
-            if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) + (sizeof(_Sagan_IPC_Xbit) * counters_ipc->xbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
-                {
-                    fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
-                    exit(1);
-                }
-
-            close(shm);
-
-            if ( counters_ipc->xbit_count >= 1 )
+            if ( err == false )
                 {
 
-                    for (i= 0; i < counters_ipc->xbit_count; i++ )
+                    if ((shm = open(tmp_object_check, O_RDONLY ) ) == -1 )
+                        {
+                            fprintf(stderr, "[%s, line %d] Cannot open() (%s)\n", __FILE__, __LINE__, strerror(errno));
+                            exit(1);
+                        }
+
+                    if (( xbit_ipc = mmap(0, sizeof(_Sagan_IPC_Xbit) + (sizeof(_Sagan_IPC_Xbit) * counters_ipc->xbit_count ) , PROT_READ, MAP_SHARED, shm, 0)) == MAP_FAILED )
+                        {
+                            fprintf(stderr, "[%s, line %d] Error allocating memory object! [%s]\n", __FILE__, __LINE__, strerror(errno));
+                            exit(1);
+                        }
+
+                    close(shm);
+
+                    if ( counters_ipc->xbit_count >= 1 )
                         {
 
-                            u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
-
-                            if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time ) )
+                            for (i= 0; i < counters_ipc->xbit_count; i++ )
                                 {
 
-                                    printf("Type: xbit [%d].\n", i);
-                                    printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
-                                    printf("State: ");
+                                    u32_Time_To_Human(xbit_ipc[i].xbit_expire, time_buf, sizeof(time_buf));
 
-                                    if (  xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time )
+                                    if ( all_flag == true || ( xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time ) )
                                         {
-                                            printf("Active\n");
-                                        }
-                                    else
-                                        {
-                                            printf("Inactive\n");
-                                        }
 
-                                    printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
-                                    printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
-                                    printf("Expire Time: %d\n", xbit_ipc[i].expire);
-                                    printf("Expired at: ");
+                                            printf("Type: xbit [%d].\n", i);
+                                            printf("Xbit name: \"%s\" (Hash name: %u)\n", xbit_ipc[i].xbit_name, xbit_ipc[i].xbit_name_hash);
+                                            printf("State: ");
 
-                                    if ( xbit_ipc[i].xbit_expire == 0 )
-                                        {
-                                            printf("[Unset]\n");
-                                        }
-                                    else
-                                        {
-                                            printf("%s\n", time_buf);
-                                        }
+                                            if (  xbit_ipc[i].xbit_expire != 0 && xbit_ipc[i].xbit_expire <= current_time )
+                                                {
+                                                    printf("Active\n");
+                                                }
+                                            else
+                                                {
+                                                    printf("Inactive\n");
+                                                }
 
-                                    printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+                                            printf("IP Hash: %u\n", xbit_ipc[i].xbit_hash);
+                                            printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", xbit_ipc[i].signature_msg, xbit_ipc[i].sid);
+                                            printf("Expire Time: %d\n", xbit_ipc[i].expire);
+                                            printf("Expired at: ");
+
+                                            if ( xbit_ipc[i].xbit_expire == 0 )
+                                                {
+                                                    printf("[Unset]\n");
+                                                }
+                                            else
+                                                {
+                                                    printf("%s\n", time_buf);
+                                                }
+
+                                            printf("Syslog Message: \"%s\"\n\n", xbit_ipc[i].syslog_message );
+
+                                        }
 
                                 }
-
                         }
                 }
         }
