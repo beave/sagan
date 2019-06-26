@@ -46,6 +46,8 @@ struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_Ruleset_Track *Ruleset_Track;
 struct _SaganConfig *config;
 
+int proc_running; 	/* Count of executing threads */
+
 void Statistics( void )
 {
 
