@@ -1,3 +1,124 @@
+2019/07/XX - 	Sagan 1.2.2 released. 
+
+		* Sagan has new and improved documentation.  You can get to it by going to:
+		  https://sagan.readthedocs.io! The new documentation system makes it a part of the
+		  development cycle.  We are continuing to add and improve our documentation.
+
+		* New performance enhancements - This version was "stress tested" in our lab to 
+		  identify bottleneck issues.  The first major issue we noticed was pthread_mutex_lock()
+		  pthread_mutex_unlock() calls and how expensive they are.  For simple lock 
+		  scenarios,  we now use __atomic_add_fetch() and __atomic_sub_fetch().  For bigger
+		  lock issues,  we introduced "batching" in Sagan.  This allows Sagan to "lock"
+		  memory for more than one object (log line) at a time.  To control how many logs
+	  	  lines get sent to a thread,  adjust the "batch-size" sagan.yaml option.  By 
+		  default,  the "batch-size" is set to 1.  This allows Sagan to perform like you
+		  would normally expect.  In situations of 5-10k EPS or higher,  consider
+		  adjusting the "batch-size" to a higher value.  For more information see:
+
+		  https://sagan.readthedocs.io/en/latest/high-performance.html
+
+		  https://github.com/beave/sagan/commit/ece4be4d1b1440bfaa8cedaf56d2477ecc73d07a
+		  https://github.com/beave/sagan/commit/ece4be4d1b1440bfaa8cedaf56d2477ecc73d07a
+
+		* Suricata style 'xbits' and Sagan 'flexbits' - Sagan has aligned the way its 
+		  'xbits' keyword usage with Suricata.  If you understand how Suricata xbits 
+		  function,  then you understand how the new Sagan 'xbits' function.  What had
+		  previously been known as 'xbits' (prior to this version) is now known as 
+	 	  'flexbits'.  In certain situation, 'flexbits' may be more flexible in that
+		  they can be set on TCP/IP port usage and direction. 
+		  
+		  https://github.com/beave/sagan/commit/eb8cd0e4024a294183c2ec9aeef45920ce900a22
+		  https://github.com/beave/sagan/commit/26e783bbe9b4c0755bb7ccbd3f49db03cecb07d5
+		  https://github.com/beave/sagan/commit/fe6bda08b90cf04505dff086369f6ad60c53480d
+		  https://github.com/beave/sagan/commit/4e60945c0df14eafc9f030ce03fc4d2ff54e841b
+
+	 i	* New 'xbits' in Redis support - Normally 'xbits' are stored to a mmap() file. 
+		  This is done to not only store xbit values but allows multiple Sagan processes
+		  to "share" (intra-process communications) xbit data.  It also allows Sagan
+		  persistent storage xbit (xbits can survive processes restarts).  The 'xbit' in 
+		  in Redis concept allows Sagan to share 'xbits' between multiple Sagan systems
+		  over a network.  That is,  a Sagan system physically in one location can share
+		  xbit data with another system in another physical location via the network.  
+		  In the sagan.yaml,  you can set your Redis server location (TCP/IP address, 
+		  password, etc).  You can also set the 'xbit-storage' type to 'redis' (defaults
+		  to mmap).  Once done,  'xbits' will be stored to Redis rather than mmap() files.
+		  While this sort of network level communication of threats is great, it comes at 
+		  a cost of network speed.  Any xbits that fire in rapid succession might perform
+		  poorly.  In those cases,  you might want to consider using 'xbits' for high level
+		  communications and detection and 'flexbits', which is mmap() only, for low level
+		  communications and detection.
+
+		  Sagan 'xbits' are stored using the following key format (via SET):	
+
+		  sagan:{cluster name}:{xbit name}:{triggering IP}
+
+		  For example:
+
+		  sagan:my_company_name:brute_force:192.168.2.1
+
+		  Data about the xbit it stored in JSON can can be retrieved using "GET {keyname}".
+		
+		  https://github.com/beave/sagan/commit/1ba4421d66db70a5398f3a71df88bd0671f1dedf
+
+		* Added "cluster name", used for xbit in Redis support - The 'cluster' name is
+		  currently only used by Redis 'xbits'.  This allows you to control what other
+		  nodes can and cannot query as part of there Redis datasets.
+
+		  https://github.com/beave/sagan/commit/34a21187d9f6a239453c1dc51f3c6d52938020a1
+	
+		* The "external" output module has been removed from the sagan.yaml. The "external"
+		  rule keyword is still valid.  This calls an external program to processes data
+		  from an event.	
+
+		  https://github.com/beave/sagan/commit/477131b00cc856b88d70e9672e48df0432095d6d
+
+		* When using "external" within a rule,  the data is now passed in a sane JSON
+		  format via stdin to the program you are calling.  This makes processing the data
+		  much easier.
+
+		  https://github.com/beave/sagan/commit/5186ff1ca6718e3a2944a603f85ed155dc679209
+
+		* Fixed various Bluedot JSON parsing issues.  Added Bluedot lookup returns to EVE
+		  output.
+
+		* Added "program" field to EVE output.
+
+		* You can now enabled/disabled base64 payload encoding in the sagan.yaml file by
+		  using the 'alerts-base64' configuration option.  By default,  to remain compatible
+		  with Suricata style EVE output,  it is enabled.   If set to 'false',  Sagan will
+		  dump the data as plan text.
+
+		  https://github.com/beave/sagan/commit/1b438950a9b866686a21f316343ff63b752c69ad
+
+		* Fixed an issue where using the "ignore" option can consume all worker threads.
+
+		  https://github.com/beave/sagan/commit/af5991c908b5739587b7e6f95deb8a931484c68a
+
+		* Removed support for the "selector" in Sagan.  This was remove to keep the Sagan 
+		  code clean.  It was also our opinion that this would function better at the 
+		  syslog daemon level rather than within Sagan. 
+
+		  https://github.com/beave/sagan/commit/e4894e67deeb4d110a432e5672892ec21b3abb03
+
+		* Sagan now shuts down more cleanly.   Sagan will attempt to "wait" for any worker
+		  threads to complete there tasks.  The default "wait" time is 15 seconds.  Upon 
+		  reaching 15 seconds,  Sagan will for worker threads to abort. 
+
+	    	  https://github.com/beave/sagan/commit/e0253f5de9a052a62d8856c7928be403bba4661a
+
+		* In certain situations,  the "after" keyword would misfire.  This was due to a 
+		  timestamp update issue that was out of place.  
+
+		  https://github.com/beave/sagan/commit/e48eef785058619f654aa8826cb161d09d87d3fd
+
+		* This version makes the "saganpeek" (src/tools/saganpeek.c) more useful.  This
+		  tool allows you to "see" what is currently in Sagan memory.  For example, what
+		  has a 'threshold' on it,  what 'xbits' are set, what 'after' has tripped.  This
+		  utility give you statistics along with the "offending" log line.
+
+		* Multiple bug fixes that addressed stability.  New JSON bug fixes.  
+
+
 2018/11/07 -	Sagan 1.2.1 released.
 
 		* Sagan can now read JSON via the FIFO.  Traditionally,  Sagan has used 
