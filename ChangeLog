@@ -1,16 +1,19 @@
 2019/07/XX - 	Sagan 1.2.2 released. 
 
-		* Sagan has new and improved documentation.  You can get to it by going to:
-		  https://sagan.readthedocs.io! The new documentation system makes it a part of the
-		  development cycle.  We are continuing to add and improve our documentation.
+		* Sagan has new and improved documentation! Go to:
+
+		  https://sagan.readthedocs.io! 
+
+		  The new documentation system makes it a part of the development cycle.  We are 
+		  continuing to add and improve our documentation.
 
 		* New performance enhancements - This version was "stress tested" in our lab to 
-		  identify bottleneck issues.  The first major issue we noticed was pthread_mutex_lock()
+		  identify bottlenecks.  The first major issue we noticed was pthread_mutex_lock()/
 		  pthread_mutex_unlock() calls and how expensive they are.  For simple lock 
 		  scenarios,  we now use __atomic_add_fetch() and __atomic_sub_fetch().  For bigger
 		  lock issues,  we introduced "batching" in Sagan.  This allows Sagan to "lock"
 		  memory for more than one object (log line) at a time.  To control how many logs
-	  	  lines get sent to a thread,  adjust the "batch-size" sagan.yaml option.  By 
+	  	  lines get sent to a thread,  adjust the "batch-size" in the sagan.yaml.  By 
 		  default,  the "batch-size" is set to 1.  This allows Sagan to perform like you
 		  would normally expect.  In situations of 5-10k EPS or higher,  consider
 		  adjusting the "batch-size" to a higher value.  For more information see:
@@ -20,10 +23,10 @@
 		  https://github.com/beave/sagan/commit/ece4be4d1b1440bfaa8cedaf56d2477ecc73d07a
 		  https://github.com/beave/sagan/commit/ece4be4d1b1440bfaa8cedaf56d2477ecc73d07a
 
-		* Suricata style 'xbits' and Sagan 'flexbits' - Sagan has aligned the way its 
+		* Suricata style 'xbits' and Sagan 'flexbits' - Sagan has aligned the
 		  'xbits' keyword usage with Suricata.  If you understand how Suricata xbits 
 		  function,  then you understand how the new Sagan 'xbits' function.  What had
-		  previously been known as 'xbits' (prior to this version) is now known as 
+		  previously been known as 'xbits' (prior to this version) are now known as 
 	 	  'flexbits'.  In certain situation, 'flexbits' may be more flexible in that
 		  they can be set on TCP/IP port usage and direction. 
 		  
@@ -34,8 +37,8 @@
 
 	 i	* New 'xbits' in Redis support - Normally 'xbits' are stored to a mmap() file. 
 		  This is done to not only store xbit values but allows multiple Sagan processes
-		  to "share" (intra-process communications) xbit data.  It also allows Sagan
-		  persistent storage xbit (xbits can survive processes restarts).  The 'xbit' in 
+		  to "share" (intra-process communications) xbit data.  This also allows Sagan
+		  persistent xbit storage (xbits can survive processes restarts).  The 'xbit' in 
 		  in Redis concept allows Sagan to share 'xbits' between multiple Sagan systems
 		  over a network.  That is,  a Sagan system physically in one location can share
 		  xbit data with another system in another physical location via the network.  
@@ -43,10 +46,10 @@
 		  password, etc).  You can also set the 'xbit-storage' type to 'redis' (defaults
 		  to mmap).  Once done,  'xbits' will be stored to Redis rather than mmap() files.
 		  While this sort of network level communication of threats is great, it comes at 
-		  a cost of network speed.  Any xbits that fire in rapid succession might perform
-		  poorly.  In those cases,  you might want to consider using 'xbits' for high level
-		  communications and detection and 'flexbits', which is mmap() only, for low level
-		  communications and detection.
+		  a cost of network speed and latency.  Any xbits that fire in rapid succession 
+		  might perform poorly.  In those cases,  you may want to consider using 'xbits' 
+		  for high level communications and detection and 'flexbits', which is mmap() 
+		  only, for low level communications and detection.
 
 		  Sagan 'xbits' are stored using the following key format (via SET):	
 
@@ -60,15 +63,15 @@
 		
 		  https://github.com/beave/sagan/commit/1ba4421d66db70a5398f3a71df88bd0671f1dedf
 
-		* Added "cluster name", used for xbit in Redis support - The 'cluster' name is
-		  currently only used by Redis 'xbits'.  This allows you to control what other
-		  nodes can and cannot query as part of there Redis datasets.
+		* "cluster-name" is added to Sagan - You can define a 'cluster-name' within 
+		  the sagan.yaml.  This is currently only used by Redis xbits.  This allows 
+		  you to control what xbits can be shared in Redis between Sagan instances.
 
 		  https://github.com/beave/sagan/commit/34a21187d9f6a239453c1dc51f3c6d52938020a1
 	
 		* The "external" output module has been removed from the sagan.yaml. The "external"
 		  rule keyword is still valid.  This calls an external program to processes data
-		  from an event.	
+		  from an event.
 
 		  https://github.com/beave/sagan/commit/477131b00cc856b88d70e9672e48df0432095d6d
 
