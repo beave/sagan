@@ -199,7 +199,6 @@ void Processor ( void )
                                 }
                         }
 
-
                     (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
                     /* If this is a dynamic run,  reset back to normal */
@@ -208,6 +207,13 @@ void Processor ( void )
                         {
 
                             __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
+
+                        }
+
+                    if ( config->client_stats_flag )
+                        {
+
+                            Client_Stats_Add_Update_IP ( SyslogInput->syslog_host );
 
                         }
 

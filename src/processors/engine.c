@@ -1011,19 +1011,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                       ****************************************************************************/
 
 
-                                    /* upause (millisecond) */
+                                    /* pause (seconds) */
 
                                     if ( rulestruct[b].flexbit_pause_time != 0 )
                                         {
 
                                             if ( debug->debugxbit )
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] flexbit_pause for %d seconds", __FILE__, __LINE__, rulestruct[b].flexbit_upause_time);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] flexbit_pause for %d seconds", __FILE__, __LINE__, rulestruct[b].flexbit_pause_time);
                                                 }
 
 
-                                            usleep( rulestruct[b].flexbit_pause_time );
+                                            sleep( rulestruct[b].flexbit_pause_time );
                                         }
+
+                                    /* upause (millisecond) */
 
                                     if ( rulestruct[b].flexbit_upause_time != 0 )
                                         {

@@ -124,6 +124,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
 
                     Threshold2_IPC[i].count++;
 
+                    // surpress
                     thresh_oldtime = current_time - Threshold2_IPC[i].utime;
                     Threshold2_IPC[i].utime = current_time;
 

@@ -292,6 +292,12 @@ void Sig_Handler( void )
                             Sagan_Perfmonitor_Close();
                         }
 
+                    if ( config->client_stats_flag == true && config->client_stats_file_stream_status == true )
+                        {
+                            Client_Stats_Close();
+                        }
+
+
                     Remove_Lock_File();
                     exit(0);
                     break;

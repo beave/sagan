@@ -917,7 +917,7 @@ void Load_Rules( const char *ruleset )
                             if ( arg == NULL )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] The \"flexbit_pause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    Sagan_Log(WARN, "[%s, line %d] The \"flexbits_pause\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                     continue;
                                 }
 

@@ -91,6 +91,7 @@
 #include "processors/blacklist.h"
 #include "processors/track-clients.h"
 #include "processors/perfmon.h"
+#include "processors/client-stats.h"
 #include "processors/bro-intel.h"
 
 
@@ -201,6 +202,16 @@ int main(int argc, char **argv)
     pthread_attr_t thread_perfmonitor_attr;
     pthread_attr_init(&thread_perfmonitor_attr);
     pthread_attr_setdetachstate(&thread_perfmonitor_attr,  PTHREAD_CREATE_DETACHED);
+
+    /****************************************************************************/
+    /* Client local variables                                              */
+    /****************************************************************************/
+
+    pthread_t client_stats_thread;
+    pthread_attr_t thread_client_stats_attr;
+    pthread_attr_init(&thread_client_stats_attr);
+    pthread_attr_setdetachstate(&thread_client_stats_attr,  PTHREAD_CREATE_DETACHED);
+
 
     /****************************************************************************/
     /* Various local variables						        */
@@ -786,6 +797,20 @@ int main(int argc, char **argv)
                 {
                     Remove_Lock_File();
                     Sagan_Log(ERROR, "[%s, line %d] Error creating Perfmonitor thread [error: %d].", __FILE__, __LINE__, rc);
+                }
+        }
+
+    if ( config->client_stats_flag )
+        {
+
+            Client_Stats_Init();
+
+            rc = pthread_create( &client_stats_thread, NULL, (void *)Client_Stats_Handler, NULL );
+
+            if ( rc != 0 )
+                {
+                    Remove_Lock_File();
+                    Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats  thread [error: %d].", __FILE__, __LINE__, rc);
                 }
         }
 

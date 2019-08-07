@@ -229,6 +229,8 @@ struct _SaganCounters
     uint64_t blacklist_hit_count;
     uint64_t blacklist_lookup_count;
 
+    uint32_t client_stats_count;
+
     int	     thread_output_counter;
     int	     thread_processor_counter;
 

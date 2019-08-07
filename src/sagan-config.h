@@ -148,6 +148,13 @@ struct _SaganConfig
     bool       blacklist_flag;
     char        blacklist_files[2048];
 
+    bool        client_stats_flag;
+    char 	client_stats_file_name[MAXPATH];
+    int 	client_stats_time;
+
+    bool        client_stats_file_stream_status;
+    FILE	*client_stats_file_stream;
+
     bool	perfmonitor_flag;
     int		perfmonitor_time;
     char	perfmonitor_file_name[MAXPATH];

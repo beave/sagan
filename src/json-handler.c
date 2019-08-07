@@ -203,7 +203,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
 #ifdef WITH_BLUEDOT
 
-//    if ( Event->bluedot_json[0] != '\0' )
     if ( Event->bluedot_results != 0 )
         {
             snprintf(tmp_data, sizeof(tmp_data), ", \"bluedot\": %s", Event->bluedot_json);

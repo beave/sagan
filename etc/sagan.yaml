@@ -662,7 +662,7 @@ rules-files:
   - $RULE_PATH/fipaypin.rules
   - $RULE_PATH/fortinet.rules
   - $RULE_PATH/ftpd.rules
-  - $RULE_PATH/grsec.rules
+  #- $RULE_PATH/grsec.rules
   - $RULE_PATH/honeyd.rules
   #- $RULE_PATH/hordeimp.rules
   #- $RULE_PATH/hostapd.rules

@@ -113,7 +113,6 @@ typedef void json_object;
 #define MAX_META_CONTENT_ITEMS	256		/* Max strings to look for in meta_content */
 #define MAX_META_ITEM_SIZE	512		/* Max string size per meta_content type */
 
-
 #define MAX_FLEXBITS		10		/* Max 'flexbits' within a rule */
 #define MAX_XBITS               10              /* Max 'xbits' within a rule */
 

@@ -487,7 +487,14 @@ void Load_YAML_Config( char *yaml_file )
 
                                                             strlcat(var[counters->var_count].var_value, tmpbuf, sizeof(var[counters->var_count].var_value));
 
+
+                                                            var[counters->var_count].var_value[strlen(var[counters->var_count].var_value)] = ',';
+                                                            var[counters->var_count].var_value[strlen(var[counters->var_count].var_value) + 1] = '\0';
+
                                                         }
+
+                                                    var[counters->var_count].var_value[strlen(var[counters->var_count].var_value) - 1] = '\0';
+
 
                                                     fclose(varfile);
 
@@ -1346,6 +1353,11 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_PROCESSORS_PERFMON;
                                 }
 
+                            else if (!strcmp(value, "client-stats"))
+                                {
+                                    sub_type = YAML_PROCESSORS_CLIENT_STATS;
+                                }
+
                             else if (!strcmp(value, "blacklist"))
                                 {
                                     sub_type = YAML_PROCESSORS_BLACKLIST;
@@ -1401,6 +1413,40 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
 
                                         }
+                                }
+
+                            else if ( sub_type == YAML_PROCESSORS_CLIENT_STATS )
+                                {
+
+                                    if (!strcmp(last_pass, "enabled"))
+                                        {
+
+                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
+                                                {
+                                                    config->client_stats_flag = true;
+                                                }
+
+                                        }
+
+                                    else if (!strcmp(last_pass, "filename") && config->client_stats_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            strlcpy(config->client_stats_file_name, tmp, sizeof(config->client_stats_file_name));
+                                        }
+
+                                    else if (!strcmp(last_pass, "time" ) && config->client_stats_flag == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->client_stats_time = atoi(tmp);
+
+                                            if ( config->client_stats_time == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'client_stats' - 'time' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+
                                 }
 
                             else if ( sub_type == YAML_PROCESSORS_PERFMON )

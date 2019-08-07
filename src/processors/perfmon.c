@@ -36,7 +36,6 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <string.h>
-#include <errno.h>
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
