@@ -213,7 +213,7 @@ void Processor ( void )
                     if ( config->client_stats_flag )
                         {
 
-                            Client_Stats_Add_Update_IP ( SyslogInput->syslog_host );
+                            Client_Stats_Add_Update_IP ( SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_message );
 
                         }
 
