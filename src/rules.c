@@ -2719,10 +2719,18 @@ void Load_Rules( const char *ruleset )
                                                     rulestruct[counters->rulecount].threshold2_type = 1;
                                                 }
 
-                                            if (Sagan_strstr(tmptoken, "threshold"))
+                                            /* This isn't really used */
+
+                                            else if (Sagan_strstr(tmptoken, "threshold"))
                                                 {
                                                     rulestruct[counters->rulecount].threshold2_type = 2;
                                                 }
+
+                                            else if (Sagan_strstr(tmptoken, "suppress"))
+                                                {
+                                                    rulestruct[counters->rulecount].threshold2_type = 3;
+                                                }
+
                                         }
 
                                     if (Sagan_strstr(tmptoken, "track"))

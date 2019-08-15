@@ -1447,6 +1447,19 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
+                                    else if (!strcmp(last_pass, "data-interval" ) && config->client_stats_flag == true )
+                                        {
+
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->client_stats_interval = atoi(tmp);
+
+                                            if ( config->client_stats_interval == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'client_stats' - 'data-interval' has to be a non-zero number. Abort!!", __FILE__, __LINE__);
+                                                }
+
+                                        }
+
                                 }
 
                             else if ( sub_type == YAML_PROCESSORS_PERFMON )

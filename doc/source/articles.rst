@@ -17,11 +17,11 @@ Reading
 Audio/Video
 -----------
 
-Champ's discusses Sagan "Pauldotcom Security Weekly" (2013/12/12) - http://traffic.libsyn.com/pauldotcom/PaulDotCom-356-Part1.mp3
+Champ discusses Sagan "Pauldotcom Security Weekly" (2013/12/12) - http://traffic.libsyn.com/pauldotcom/PaulDotCom-356-Part1.mp3
 
 "Taking a bite out of logs with Sagan" at "Hackers On Planet Earth" (HOPE9) (2012/07) - https://www.youtube.com/watch?v=pMlAmteCjQo
 
-Champ talks with the Jacksonville Linux User group about Sagan (- https://www.youtube.com/watch?v=rySjNnEpjbI
+Champ talks with the Jacksonville Linux User group about Sagan - https://www.youtube.com/watch?v=rySjNnEpjbI
 
 
 Presentations/Papers

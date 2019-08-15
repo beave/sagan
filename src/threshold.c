@@ -124,9 +124,13 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
 
                     Threshold2_IPC[i].count++;
 
-                    // surpress
+                    /* Suppress */
+
+//		    if ( rulestruct[counters->rulecount].threshold2_type = 3 )
+//			    {
                     thresh_oldtime = current_time - Threshold2_IPC[i].utime;
                     Threshold2_IPC[i].utime = current_time;
+//			    }
 
                     strlcpy(Threshold2_IPC[i].syslog_message, syslog_message, sizeof(Threshold2_IPC[i].syslog_message));
                     strlcpy(Threshold2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(Threshold2_IPC[i].signature_msg));
@@ -134,9 +138,7 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
                     if ( thresh_oldtime > rulestruct[rule_position].threshold2_seconds )
                         {
                             Threshold2_IPC[i].count=1;
-
                             Threshold2_IPC[i].utime = current_time;  /* Reset the time */
-
                             thresh_log_flag = false;
                         }
 

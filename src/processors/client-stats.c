@@ -1,3 +1,30 @@
+/*
+** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+**
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License Version 2 as
+** published by the Free Software Foundation.  You may not use, modify or
+** distribute this program under any other version of the GNU General
+** Public License.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+/* client-stats.c
+ *
+ * This writes out data about clients reporting to Sagan.  In particular,  the last
+ * time a client send Sagan data along with a copy of "example" data (program/
+ * message) every so often (via the "data-interval" option).
+ *
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -21,11 +48,19 @@
 #include "sagan-defs.h"
 #include "sagan-config.h"
 
+#include "lockfile.h"
+
 #include "processors/client-stats.h"
+
+uint64_t old_epoch = 0;
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 struct _Client_Stats_Struct *Client_Stats;
+
+/****************************************************************************
+ * Client_Stats_Iint
+ ****************************************************************************/
 
 void Client_Stats_Init( void )
 {
@@ -37,8 +72,13 @@ void Client_Stats_Init( void )
         }
 
     config->client_stats_file_stream_status = true;
+    counters->client_stats_interval_count = 0;
 
 }
+
+/****************************************************************************
+ * Client_Stats_Close - Closes clients stats files
+ ****************************************************************************/
 
 void Client_Stats_Close( void )
 {
@@ -48,6 +88,9 @@ void Client_Stats_Close( void )
 
 }
 
+/****************************************************************************
+ * Client_Stats_Handler - Thread that writes out client stat data
+ ****************************************************************************/
 
 void Client_Stats_Handler( void )
 {
@@ -70,11 +113,12 @@ void Client_Stats_Handler( void )
             json_object *jarray_ip = json_object_new_array();
             json_object *jarray_epoch = json_object_new_array();
             json_object *jarray_program = json_object_new_array();
-	    json_object *jarray_message = json_object_new_array();
-
+            json_object *jarray_message = json_object_new_array();
 
             json_object *jevent_type = json_object_new_string( "client_stats" );
             json_object_object_add(jobj,"event_type", jevent_type);
+
+            /* Update any existing client stats */
 
             for ( i = 0; i < counters->client_stats_count; i++ )
                 {
@@ -93,13 +137,20 @@ void Client_Stats_Handler( void )
 
                 }
 
-            json_object_object_add(jobj,"ip_addresses", jarray_ip);
-            json_object_object_add(jobj,"timestamp", jarray_epoch);
-            json_object_object_add(jobj,"program", jarray_program);
-  	    json_object_object_add(jobj,"message", jarray_message);
+            /* If there is no data,  don't bother writing */
 
-            fprintf(config->client_stats_file_stream, "%s\n", json_object_to_json_string(jobj));
-            fflush(config->client_stats_file_stream);
+            if ( counters->client_stats_count != 0 )
+                {
+
+                    json_object_object_add(jobj,"ip_addresses", jarray_ip);
+                    json_object_object_add(jobj,"timestamp", jarray_epoch);
+                    json_object_object_add(jobj,"program", jarray_program);
+                    json_object_object_add(jobj,"message", jarray_message);
+
+                    fprintf(config->client_stats_file_stream, "%s\n", json_object_to_json_string(jobj));
+                    fflush(config->client_stats_file_stream);
+
+                }
 
             json_object_put(jobj);
             sleep(config->client_stats_time);
@@ -108,16 +159,22 @@ void Client_Stats_Handler( void )
 
 }
 
+/****************************************************************************
+ * Client_Stats_Add_Update_IP - Adds IP addresses and other data to the
+ * array of systems Sagan is keeping track of.
+ ****************************************************************************/
+
 void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
 {
 
     int i = 0;
     bool flag = false;
+    bool epoch_flag = false;
     uint32_t hash = Djb2_Hash( ip );
 
     time_t t;
     struct tm *now;
-    uint32_t epoch = 0;
+    uint64_t epoch = 0;
     char timet[20];
 
     t = time(NULL);
@@ -130,14 +187,21 @@ void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
 
             if ( hash == Client_Stats[i].hash )
                 {
-                   Client_Stats[i].epoch = epoch;
 
-		   /* DEBUG needs to be an interval, not every time */
+                    Client_Stats[i].epoch = epoch;
 
-		   strlcpy( Client_Stats[i].program, program, sizeof(Client_Stats[i].program) );
-		   strlcpy( Client_Stats[i].message, message, sizeof(Client_Stats[i].message) );
-		   
-//		   printf("Got hit: %d, %d, %s\n", Client_Stats[i].hash, Client_Stats[i].epoch, Client_Stats[i].ip);
+                    /* Check if the data-interval has been reached.  We only want to do this for old records */
+
+                    if ( Client_Stats[i].epoch > Client_Stats[i].old_epoch + config->client_stats_interval)
+                        {
+
+                            strlcpy( Client_Stats[i].program, program, sizeof(Client_Stats[i].program) );
+                            strlcpy( Client_Stats[i].message, message, sizeof(Client_Stats[i].message) );
+
+                            Client_Stats[i].old_epoch = epoch;
+
+                        }
+
                     return;
                 }
 
@@ -154,6 +218,7 @@ void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
 
     Client_Stats[counters->client_stats_count].hash = hash;
     Client_Stats[counters->client_stats_count].epoch = epoch;
+    Client_Stats[counters->client_stats_count].old_epoch = epoch;
 
     strlcpy( Client_Stats[counters->client_stats_count].program, program, sizeof(Client_Stats[counters->client_stats_count].program ) );
 
@@ -162,9 +227,6 @@ void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
     strlcpy(Client_Stats[counters->client_stats_count].ip, ip, sizeof(Client_Stats[counters->client_stats_count].ip));
 
     __atomic_add_fetch(&counters->client_stats_count, 1, __ATOMIC_SEQ_CST);
-
-//printf("In add! %s, %d, %d\n", ip, hash, epoch);
-
 
 }
 

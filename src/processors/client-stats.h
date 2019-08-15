@@ -11,6 +11,7 @@ struct _Client_Stats_Struct
     uint32_t hash;
     char ip[64];
     uint64_t epoch;
+    uint64_t old_epoch;
     char program[MAX_SYSLOG_PROGRAM];
     char message[MAX_SYSLOGMSG];
 };

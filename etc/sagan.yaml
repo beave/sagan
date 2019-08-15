@@ -299,6 +299,18 @@ processors:
       enabled: no
       timeout: 1440		# In minutes
 
+  # This records information about clients reporting to Sagan.  This can be useful
+  # to keep track of when clients last sent data and the types of data they sent. 
+  # The 'time' option sets how often Sagan should write out this data.  The 
+  # 'interval' option set how often Sagan should record data (program and message
+  # data) from the client. 
+ 
+  - client-stats:
+      enabled: no
+      filename: "$LOG_PATH/eve.json"
+      time: 30
+      data-interval: 300
+
   # This reports on rule sets that have and have not "fired".  This can be 
   # useful in tuning Sagan. 
 

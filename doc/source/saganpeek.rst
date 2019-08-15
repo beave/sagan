@@ -25,6 +25,6 @@ Redis for ``xbits`` or ``flexbits``, this data will not be displayed**
 Building "saganpeek"
 --------------------
 
-After building the Sagan, simply change into the ``tools/`` directory and run ``make`` and then
+After building Sagan, simply change into the ``tools/`` directory and run ``make`` and then
 ``make install``.  
 

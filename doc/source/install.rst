@@ -2,7 +2,7 @@ Installation
 ============
 
 Before Sagan can be used it has to be installed. Sagan can be installed
-on various distributions using binary packages,  however,  these are typcally out 
+on various distributions using binary packages;  however,  these are typically out 
 of date.  Check your distribution to verify if the latest version of Sagan is 
 available. 
 
@@ -56,8 +56,8 @@ To install ``libyaml`` on Gentoo:
 Other dependencies
 ------------------
 
-While ``libpcre`` and ``libyaml`` are required Sagan dependencies,  you'll likely want Sagan to preform 
-other function like parsing JSON data or writing data out in various formats.  While these 
+While ``libpcre`` and ``libyaml`` are required Sagan dependencies,  you'll likely want Sagan to perform 
+other functions like parsing JSON data or writing data out in various formats.  While these 
 prerequisites are not required,  you should look them over for further functionality. 
 
 liblognorm (Normalization)
@@ -172,7 +172,7 @@ Basic Maxmind GeoIP2 Country Code updates::
 hiredis (Redis)
 ---------------
 
-Sagan has the ability to store ``flexbit`` data in an `Redis <https://redis.oi>`_ database.  This allows data
+Sagan has the ability to store ``flexbit`` data in a `Redis <https://redis.oi>`_ database.  This allows data
 to be shared over a distributed enviornment.  **This feature is considered beta**.  To use this functionality
 you will need to install the ``hiredis`` library.
 
@@ -191,7 +191,7 @@ libpcap (Sniffing logs)
 -----------------------
 
 By using the ``libpcap`` library,  Sagan has the ability to 'sniff' unencrypted logs 'off the wire' and 
-process them.  This can be useful for capturing logs in transit to centralized log server.   It can also
+process them.  This can be useful for capturing logs in transit to a centralized log server.   It can also
 be useful for testing Sagan's effectiveness before doing a full deployment.   You will need a method to
 'capture' the traffic off the wire.  This is typically done via a ``span`` port or a ``network tap``.
 
@@ -228,7 +228,7 @@ other options need to be manually enabled or disabled.
 Quick start from source
 -----------------------
 
-The first example installs Sagan with the basics (all prereqisities and ``liblognorm``).
+The first example installs Sagan with the basics (all prerequisites and ``liblognorm``).
 
 Quick start with the bare basics::
 
@@ -240,14 +240,14 @@ Quick start with the bare basics::
    sudo make install
 
 
-This example Quick start installs Sagan with more features including the required prerequisitises, 
+This example Quick start installs Sagan with more features including the required prerequisites, 
 ``libognorm`` (log normalization), ``libesmtp`` (e-mail support), ``libmaxminddb`` (GeoIP), 
 ``hiredis`` (Redis), ``libpcap`` (sniffing logs). 
 
 A more complete quick start
 ---------------------------
 
-This example installs Sagan with the most common and useful prereqisities.
+This example installs Sagan with the most common and useful prerequisites.
 
 A more complete quick start::
 
@@ -265,7 +265,7 @@ Prerequisites
 Before compiling and installing Sagan,  your system will need some supporting libraries 
 installed.  The primary prerequisites are ``libpcre``, ``libyaml`` and ``libpthreads`` (note: most systems
 have ``libpthread`` installed by default).  While there are no other required dependencies other than 
-these,  you should over the others for expanded functionality.  For example,  ``liblognorm`` **is not required but highly recommended**.
+these,  you should look over the others for expanded functionality.  For example,  ``liblognorm`` **is not required but highly recommended**.
 
 
 Common configure options
@@ -294,7 +294,7 @@ Common configure options
 
 .. option:: --enable-esmtp
 
-   This option enabled Sagans ability to send data and alerts via e-mail.  In order to use this functionality,
+   This option enabled Sagan's ability to send data and alerts via e-mail.  In order to use this functionality,
    you will need ``libesmtp`` support (see above).
 
 .. option:: --with-esmtp-includes=DIR
@@ -325,7 +325,7 @@ Common configure options
 
    By default,  Sagan uses a built in assembly version of the C function ``strstr()`` for rule ``content``
    checks.  This code is CPU specific and may cause issues on non-x86 hardware.  This option disables
-   Sagans built in ``strstr`` and uses the defaults operating systems ``strstr``.  This option is 
+   Sagans built in ``strstr`` and uses the default operating system's ``strstr``.  This option is 
    useful when building Sagan on embedded systems. 
 
 .. option:: --enable-redis
@@ -347,7 +347,7 @@ Common configure options
 
 .. option:: --enable-libpcap
 
-   This options enables Sagan to 'sniff' logs off the network.  The ``libpcap`` library needs to be 
+   This option enables Sagan to 'sniff' logs off the network.  The ``libpcap`` library needs to be 
    installed (see ``libpcap`` above).
 
 .. option:: --with-libpcap-includes=DIR
@@ -373,7 +373,7 @@ Common configure options
 
 .. option:: --disable-libfastjson
 
-   This option disables processing and producting JSON output.  Note: If using ``liblognorm`` automatically
+   This option disables processing and producting JSON output.  Note: Using ``liblognorm`` automatically
    enables this feature.  **You probably don't want to do with**
 
 .. option:: --with-libfastjson-includes=DIR
@@ -387,8 +387,8 @@ Common configure options
 .. option:: --enable-bluedot
 
    Bluedot is <Quadrant Information Security's <https://quadrantsec.com>`_ 'Threat Intelligence' plateform.
-   This allows Sagan to preform lookups of TCP/IP addresses,  file hashes,  etc.  **Note:  You likely
-   do not need this option as the API is not publically avaliable at this time**.
+   This allows Sagan to perform lookups of TCP/IP addresses,  file hashes,  etc.  **Note:  You likely
+   do not need this option as the API is not publically available at this time**.
 
 .. option:: --with-libpthread-includes=DIR
 

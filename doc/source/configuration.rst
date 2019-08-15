@@ -2,7 +2,7 @@ Syslog Configuration
 ====================
 
 Sagan typically receives its data from a third party daemon.  This is typically something like 
-``rsyslog``, ``syslog-ng`` or ``nxlog``.  The first step is to get one of those systems setup. 
+``rsyslog``, ``syslog-ng`` or ``nxlog``.  The first step is to get one of those systems set up. 
 
 
 rsyslog
@@ -11,7 +11,7 @@ rsyslog
 syslog-ng - "pipe" mode
 -----------------------
 
-Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to 
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to
 Sagan in a legacy "pipe" delimited format.  For more complex configurations,  please consult 
 the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
 need to be set to ``pipe``.  
@@ -24,7 +24,7 @@ Example ``syslog-ng`` "pipe" configuration::
    source s_src { system(); internal(); }; 	# Internal 
    source syslog_in { udp(port(514)); };	# UDP port 514
 
-   # A "destination" for send log data to.  In our case, a named pipe (FIFO)
+   # A "destination" to send log data to.  In our case, a named pipe (FIFO)
 
    destination sagan_fifo {
       pipe("/var/sagan/sagan.fifo"
@@ -44,7 +44,7 @@ syslog-ng - JSON mode
 Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to 
 Sagan in a "JSON" format.  For more complex configurations,  please consult 
 the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
-need to be set to ``json``.  You will also to set you ``json-software`` to ``syslog-ng``. 
+need to be set to ``json``.  You will also need to set your ``json-software`` to ``syslog-ng``. 
 
 Using the Sagan JSON format allows for more flexibility with the log data and is recommended.
 
@@ -55,7 +55,7 @@ Example ``syslog-ng`` JSON configuration::
    source s_src { system(); internal(); }; 	# Internal 
    source syslog_in { udp(port(514)); };	# UDP port 514
 
-   # A "destination" for send log data to.  In our case, a named pipe (FIFO)
+   # A "destination" to send log data to.  In our case, a named pipe (FIFO)
 
    destination sagan_fifo {
          pipe("/var/sagan/sagan.fifo"
@@ -83,7 +83,7 @@ Sagan Configuration
 The primary Sagan configuration file is ``sagan.yaml``.  Its default location is the ``/usr/local/etc``
 directory.  
 
-Comments within the ``sagan.yaml`` file start with a '#'.  Stand alone comments (on lines of there own)
+Comments within the ``sagan.yaml`` file start with a '#'.  Stand-alone comments (on lines of their own)
 and comments after statements are valid.
 
 The ``sagan.yaml`` is broken up in several parts.  Those parts are ``vars``, ``sagan-core``, ``processors``,
@@ -92,7 +92,7 @@ The ``sagan.yaml`` is broken up in several parts.  Those parts are ``vars``, ``s
 Sagan with JSON input
 ---------------------
 
-Sagan reads data from your favorite syslog daemon (rsyslog, syslog-ng, nxlog, etc) via a “named pipe” (also known as a FIFO).  A named pipe operates similar to a file but with the writer (your syslog daemon) and a reader (Sagan).   Rather than the contents being written to a disk or file,  the data is stored in kernel memory.    This data will wait in kernel memory until a process (Sagan) reads it.   Named pipes (FIFOs) allows for separate processes to communicate with each other.  Since this happens in kernel memory,  the communications is extremely fast.
+Sagan reads data from your favorite syslog daemon (rsyslog, syslog-ng, nxlog, etc) via a “named pipe” (also known as a FIFO).  A named pipe operates similarly to a file but with the writer (your syslog daemon) and a reader (Sagan).   Rather than the contents being written to a disk or file,  the data is stored in kernel memory.    This data will wait in kernel memory until a process (Sagan) reads it.   Named pipes (FIFOs) allow for separate processes to communicate with each other.  Since this happens in kernel memory,  the communications is extremely fast.
 
 In order for the writer (syslog daemon) and reader (Sagan) to be able to share data,  there has to be a standard between the two.  Traditionally,  Sagan required the syslog daemon to write data to the file in a very specific format.   This was done by a delimiting the data via the ‘|’ (pipe) symbol.   This format was similar to a CSV file. 
 
@@ -100,7 +100,7 @@ A newer and more flexible way for the writer (syslog daemon) and reader (Sagan) 
 
 Sagan-core configurations for JSON
 
-In the ``sagan-core`` section, in the sub section ``core`` is where you can set the ``input-type``.  There are two valid options.  The legacy ``pipe`` format or ``json``.  If you are using the legacy ``pipe`` format,  as long as both the syslog daemon can write to the named pipe in the proper format (see ``Syslog Configuations``),  there is no other configurations. 
+In the ``sagan-core`` section, in the sub section ``core`` is where you can set the ``input-type``.  There are two valid options.  The legacy ``pipe`` format or ``json``.  If you are using the legacy ``pipe`` format,  as long as both the syslog daemon can write to the named pipe in the proper format (see ``Syslog Configuations``),  there are no other configurations. 
 
 If you want to use the ``input-type`` of ``json``,  you’ll need to specify the mapping type.  Below is an example section of the ``input-type`` ::
 
@@ -130,22 +130,22 @@ Sagan JSON variables
 
 .. option:: "software": "{software type}"
 
-    This is the name of the mapping.  This is use in the Sagan YAML ``json-software`` type.
+    This is the name of the mapping.  This is used in the Sagan YAML ``json-software`` type.
 
 .. option:: "nested": "{yes|no|true|false}
 
-    The configures Sagan to look into nested data (automatically) for values for mappings
+    This configures Sagan to look into nested data (automatically) for values for mappings.
 
 Mappings:
 ~~~~~~~~~
 
 .. option:: “syslog-source-ip”
 
-    TCP/IP address of where the log orignated from.  Typically the syslog server.
+    TCP/IP address of where the log originated from.  Typically the syslog server.
 
 .. option:: "facility"
 
-    Syslog facility
+    Syslog facility.
 
 .. option:: "level"
 
@@ -173,23 +173,23 @@ vars
 
 The ``var`` section of the ``sagan.yaml`` is a place reserved for declaring variables for the Sagan
 system to use.  Using variables can be useful when you have multiple rules that use semi dynamic content.
-For example,  lets say you have signature that looks for a combination of users.  In the ``vars`` area, 
-you might setup a variable like this::
+For example,  let's say you have a signature that looks for a combination of users.  In the ``vars`` area, 
+you might set up a variable like this::
 
    USERSNAME "bob, frank, mary, david"
 
 Within a signature,  you would then reference ``$USERNAME`` to have access to the values in that variable. 
 If at a later date you wish to add or remove values from that variable,  all signatures will adopt the 
-new variables values. 
+new variable's values. 
 
 Variables can also be used within the ``sagan.yaml`` file.  For example,  when you set the ``RULE_PATH``
-variable, if can be used within signatures but also within the ``sagan.yaml``.  By doing this,  it allows
-you one location to make changes across multiple configurations options or signatures.
+variable, it can be used within signatures but also within the ``sagan.yaml``.  By doing this,  it allows
+you one location to make changes across multiple configuration options or signatures.
 
 
-The ``vars`` section os the ``sagan.yaml`` is broken into subsections.  These subsections are
+The ``vars`` section of the ``sagan.yaml`` is broken into subsections.  These subsections are
 ``sagan-groups``, ``address-groups``, ``port-groups``,  ``geoip-groups``, ``aetas-groups``, 
-``mmap-groups``, ``misc-groups``.   Each group has it's own purpose and function. 
+``mmap-groups``, ``misc-groups``.   Each group has its own purpose and function. 
 In the majority of cases,  if you want to define variables of your own,  you would put them in the
 ``misc-groups`` subsection.
 
@@ -275,9 +275,9 @@ Example ``port-groups`` subsection::
 geoip-groups
 ~~~~~~~~~~~~
 
-The ``geoip-groups`` relate to the ``*-geoip.rules`` sets.  This allows you to set your organizations 
+The ``geoip-groups`` relate to the ``*-geoip.rules`` sets.  This allows you to set your organization's 
 locations.  The ``*-geoip.rules`` can then monitor for usage within your network from outside of your 
-``HONE_COUNTRY``. 
+``HOME_COUNTRY``. 
 
 Example ``geoip-groups`` subsection::
 
@@ -294,13 +294,13 @@ Example ``geoip-groups`` subsection::
 aetas-groups
 ~~~~~~~~~~~~
 
-The ``aetas-groups`` relate to the ``*-aetas.rules`` sets.  This allows you to define your organizations
+The ``aetas-groups`` relate to the ``*-aetas.rules`` sets.  This allows you to define your organization's
 normal "work" hours.   The ``*-aetas.rules`` can then monitor network usage and tool usage at defined 
 hours of the day.
 
 Example ``aetas-groups`` subsection::
 
-     # If you want to use -aetas, also know as time based rule sets,  you'll
+     # If you want to use -aetas, also known as time based rule sets,  you'll
      # want to define the $SAGAN_HOURS and $SAGAN_DAYS variables. $SAGAN_HOURS is
      # considered "normal" hours in a 24 hour clock format from "start time" to 
      # "end time".  $SAGAN_DAYS is the day of the week (0 == Sunday -> 
@@ -374,7 +374,7 @@ core
 ----
 
 The ``core`` subsection defines and sets some important information in the ``sagan.yaml`` configuration. 
-Items like the ``default-host`` are used for when Sagan cannot normalize of find IP addresses it needs. 
+Items like the ``default-host`` are used for when Sagan cannot normalize or find IP addresses it needs. 
 The default ``default-port`` and ``default-proto`` are used for similar purposes. 
 
 One important item is the ``max-threads``.   This directly controls how much data Sagan can process 
@@ -382,14 +382,14 @@ at any given time.  If you find yourself in a situation where Sagan is dropping 
 to increase this value. 
 
 The ``core`` is also the area where you can point Sagan to external data.  For example,  the ``classifications``
-file assigns priorities numbers to different classifications levels.  The ``references`` is a pointer 
+file assigns priority numbers to different classification levels.  The ``references`` is a pointer 
 to addresses that Sagan can point users to find more information about an alert. 
 
 The ``flexbit-storage`` tells Sagan "how" to store flexbit information.  In most cases, you'll want to leave this
 default (mmap).  
 
 The ``input-type`` tells what format Sagan will receive data via the named PIPE (FIFO).  Traditionally, 
-Sagan uses a "pipe" delimited format.   Sagan is increasing moving to a JSON format and the JSON
+Sagan uses a "pipe" delimited format.   Sagan is increasingly moving to a JSON format and the JSON
 format will become the default.   See the ``Syslog Configuration`` portion of this document for more
 information. 
 
@@ -428,7 +428,7 @@ Example ``core`` subsection::
     batch-size: 1
 
     # Controls how data is read from the FIFO. The "pipe" setting is the traditional 
-    # way Sagan reads in events and is default. "json" is more flexible and 
+    # way Sagan reads in events and is the default. "json" is more flexible and 
     # will become the default in the future. If "pipe" is set, "json-map"
     # and "json-software" have no function.
 
@@ -467,7 +467,7 @@ default-port
 ~~~~~~~~~~~~
 
 The ``default-port`` is used when Sagan cannot normalize the destination port from a log message.
-When that happens,  this value use used.
+When that happens,  this value is used.
 
 default-proto
 ~~~~~~~~~~~~~
@@ -478,9 +478,9 @@ from a log message.  Valid types are ``udp``, ``tcp` and ``icmp``.
 dns-warnings
 ~~~~~~~~~~~~
 
-If Sagan receives a hostname rather than a IP address from a syslog server,  Sagan has the ability
+If Sagan receives a hostname rather than an IP address from a syslog server,  Sagan has the ability
 to do an "A record" lookup.  If Sagan is unable to do a DNS lookup,  it will emit a DNS warning
-message.  The ``dns-warnings`` options disables those warnings.  The ``source-lookup`` option must
+message.  The ``dns-warnings`` option disables those warnings.  The ``source-lookup`` option must
 be enabled for this to have any effect.  By default, this option is disabled.
 
 source-lookup
@@ -506,18 +506,18 @@ max-threads
 The ``max-threads`` allows you to adjust how many worker threads Sagan spawns.  Threads are 
 what do the bulk of the log and data analysis work.  Threads are used for CPU intensive analysis
 along with high latency operations.  The busier the system is,  the more threads you will need. 
-Threads are also depended on the type of ``processors`` are enabled.  Some ``processors``, like
-threat intellegence lookups require more time to complete.  These require idle threads to do those
+Threads are also dependent on the type of ``processors`` enabled.  Some ``processors``, such as
+threat intelligence lookups require more time to complete.  These require idle threads to do those
 lookups.  The proper number of threads is largely dependent on several factors.  Start at 100 and
-monitor the systems performance.  While running Sagan in the foreground,  monitor the 
+monitor the system's performance.  While running Sagan in the foreground,  monitor the 
 ``Thread Exhaustion`` statistics.  This will let you know if Sagan is running out of threads.  If
-this number goes up,  increase the number of threads avaliable to Sagan.  The default ``max-threads`` is set to 100.  
+this number goes up,  increase the number of threads available to Sagan.  The default ``max-threads`` is set to 100.  
 
 classification
 ~~~~~~~~~~~~~~
 
-This points Sagan to where the ``classications.config``.  The ``classifications.config`` is a file
-the maps classification types (ie - "attempted recon") to a priority level (ie - "1").  This 
+This points Sagan to the ``classications.config``.  The ``classifications.config`` is a file
+that maps classification types (ie - "attempted recon") to a priority level (ie - "1").  This 
 data is used in rules via the ``classtype`` keyword.  
 
 https://github.com/beave/sagan-rules/blob/master/classification.config
@@ -525,7 +525,7 @@ https://github.com/beave/sagan-rules/blob/master/classification.config
 gen-msg-map
 ~~~~~~~~~~~
 
-The ``gen-msg-map`` is use to point ``processors`` to there "generator id".  The Sagan engine
+The ``gen-msg-map`` is used to point ``processors`` to their "generator id".  The Sagan engine
 uses an ID of "1".  This file is used to assign other ``processors`` other IDs. 
 
 https://github.com/beave/sagan-rules/blob/master/gen-msg.map
@@ -543,7 +543,7 @@ protocol-map
 
 The ``protocol-map`` is a simple method that Sagan can use to assign a TCP/IP protocol to a 
 log message.  The ``protocol-map`` contains either keywords to search for within a log "message"
-or within a "program" fields.  For example,  if Sagan see's the program "sshd" is in use,  it 
+or within a "program" field.  For example,  if Sagan sees that the program "sshd" is in use,  it 
 will assign a TCP/IP protocol of TCP because the protocol SSH uses SSH.  Another example might
 be a router log that contains the term "TCP" or "icmp" in it.  Sagan will "see" this and assign
 the protocol within the log message internally.  The ``protocol-map`` is used by the ``parse_proto``
@@ -571,10 +571,10 @@ batch-size
 
 The ``batch-size`` option lets you set how much data can be passed from Sagan's master/main thread
 to "worker" threads (set by ``max-threads``).  This option can be very important in performance
-tuning in high data processing enviornments.  The number specified in this option represents 
+tuning in high data processing environments.  The number specified in this option represents 
 how many "log lines" will be passed.  By default,  it is set to 1.  This means every time that
 Sagan gets a log line,  it will pass it to a worker threads.  This isn't very efficient and there
-is a performance penalty incurred.  If you are in an environment where you expect to process more
+is a performance penalty.  If you are in an environment where you expect to process more
 than 10 events per/second (10 EPS),  consider bumping this up to 10 or even the max of 100.  If you
 are processing 50k EPS or more,  see the "High Performance Considerations" of this document. 
 
@@ -594,7 +594,7 @@ json-map
 
 The ``json-map`` works in conjuction with the ``input-type`` of ``json``.  The ``json-nap``
 tells Sagan where to load a mapping table of different software types (ie - ``rsyslog``, 
-``syslog-ng``, etc) and there associated JSON decode mappings.  These data in this file is
+``syslog-ng``, etc) and their associated JSON decode mappings.  The data in this file is
 used with the ``json-software`` option to tell Sagan how do decode incoming JSON data from the
 named pipe.  To use the ``json-map`` option, Sagan will need to be compiled with the 
 ``libfastjson`` or ``liblognorm``.
@@ -619,8 +619,8 @@ parse-json-program:
 ~~~~~~~~~~~~~~~~~~~
 
 The ``parse-json-program`` allows Sagan to detect JSON that starts within the "program" section of a
-log messages.  In certain situations,  some systems start JSON within the "program" fields rather
-than within the "message" field.  When this happens,  Sagan detects it an joins the "program" and 
+log message.  In certain situations,  some systems start JSON within the "program" field rather
+than within the "message" field.  When this happens,  Sagan detects it and joins the "program" and 
 "message" fields together (as one data source).  Once that is done,  the data can be decoded.  This
 option is used in conjunction with ``parse-message-map`` and requires that Sagan be compiled with 
 ``libfastjson`` or ``liblognorm`` support.
@@ -641,14 +641,14 @@ https://github.com/beave/sagan-rules/blob/master/json-input.map
 parse_ip
 --------
 
-The ``parse_ip`` subsection controls what the Sagan rule keywords ``parse_src_ip`` and ``parse_dst_ip``
+The ``parse_ip`` subsection controls how the Sagan rule keywords ``parse_src_ip`` and ``parse_dst_ip``
 function from within rules.  The ``ipv4-mapped-ipv6`` determines how Sagan will work with 
 IPv4 addresses mapped as IPv6. 	If ``ipv4-mapped-ipv6`` is enabled,  Sagan will re-write 
 IPv6 mapped addresses (for example ffff::192.168.1.1) to normal IPv4 notation (192.168.1.1). 
 
 Example ``parse_ip`` subsection::
 
-     # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 
+     # This controls how "parse_src_ip" and "parse_dst_ip" function within a rule. 
 
      parse-ip:
        ipv6: enabled                       # Parse IPv6 Addresses
@@ -660,7 +660,7 @@ selector
 
 The ``selector`` can be used in "multi-tenant" environments.  This can be useful if you have multiple
 organizational logs going into one named pipe (FIFO) and you wish to apply rule logic on a per 
-sensor/organization level.  The ``name`` is the keywords that identifies the ``selector``. 
+sensor/organization level.  The ``name`` is the keyword that identifies the ``selector``. 
 
 Example ``selector`` subsection::
 
@@ -681,7 +681,7 @@ redis-server (experimental)
 The ``redis-server`` is a beta feature that allows Sagan to store ``flexbits`` in a Redis database
 rather than a ``mmap()`` file.  This can be useful in sharing ``flexbits`` across multiple platforms
 within a network.  The ``server`` is the network address of your Redis server.  The ``port`` is 
-the network port address of the Redis server.  The ``password`` is the Redis servers password.
+the network port address of the Redis server.  The ``password`` is the Redis server's password.
 The ``writer_threads`` is how many Redis write threads Sagan should spawn to deal with Redis write operations. 
 
 Example ``redis-server`` subsection::
@@ -704,10 +704,10 @@ mmap-ipc
 --------
 
 The ``mmacp-ipc`` subsection tells Sagan how much data to store in ``mmap()`` files and where
-to store it.  The ``ipc-directory`` is where Sagan should store ``mmap()`` file.  This set to
-``/dev/shm`` by default.  On Linux systems ``/dev/shm`` is a ram drive.  Ic you want to store
+to store it.  The ``ipc-directory`` is where Sagan should store ``mmap()`` file.  This is set to
+``/dev/shm`` by default.  On Linux systems ``/dev/shm`` is a ram drive.  If you want to store
 ``mmap()`` files in a more permanent location,  change the ``ipc-directory``.   Keep in mind, 
-this may effect ``mmap()`` performance.  The ``flexbit``, ``after``, ``threshold`` and ``track-clients``
+this may affect ``mmap()`` performance.  The ``flexbit``, ``after``, ``threshold`` and ``track-clients``
 are the max items that can be stored in ``mmap()``.  This typically defaults to 10,000 via the
 ``$MMAP_DEFAULT`` variable.
 
@@ -722,7 +722,7 @@ Example ``mmap-ipc`` subsection::
      # For exampe, if one Sagan instance is monitoring "Linux" logs & another is
      # monitoring "Windows" logs, Sagan can communicate between the two Sagan 
      # processes using these memory mapped files. A "flexbit" that is "set" by the
-     # "Linux" process accessible and "known" to the Windows instance.
+     # "Linux" process is accessible and "known" to the Windows instance.
 
      # The storage is pre-allocated when the memory mapped files are created
      # The values can be increased/decreased by altering the $MMAP_DEFAULT
@@ -774,8 +774,8 @@ The ``skip_networks`` option tells Sagan what networks not to lookup.
 Example ``geoip`` subsection::
 
      # Maxmind GeoIP2 support allows Sagan to categorize events by their country
-     # code. For example; a rule can be created to track "authentication 
-     # successes" & associate the country the successful login came from.  If the
+     # code. For example, a rule can be created to track "authentication 
+     # successes" & associate the country where the successful login came from.  If the
      # successful login is from outside your country code,  via the $HOME_COUNTRY
      # variable, an alert can be generated.  Sagan will need to be compiled with 
      # --enable-geoip2 flag. 
@@ -807,12 +807,12 @@ file that lets Sagan extract useful information from logs.
 
 
 More information about ``liblognorm`` can be found in the `Prerequisites` section of the Sagan User Guide
-and the the `LibLogNorm <https://FIXME`>_ web site.
+and the `LibLogNorm <https://FIXME`>_ web site.
 
 Example ``liblognorm`` subsection::
 
 
-     # Liblognorm is a fast samplt-base log normalization library.  Sagan uses
+     # Liblognorm is a fast sample-based log normalization library.  Sagan uses
      # this library to rapidly extract useful data (IP address, hashes, etc) from
      # log messages.  While this library is not required it is recommended that 
      # Sagan be built with liblognorm enabled.  For more information, see: 
@@ -839,14 +839,14 @@ to "sniff" the logs,  you will need a "span" port or "tap".  This option can be 
 Sagan's functionality.  This should not be used in production environments since the robustness of 
 "sniffing" varies.  The ``interface`` option is the network device you want to "sniff" traffic on.
 the ``bpf`` (Berkely Packet Filter) is the filter to use to extract logs from the network.   The
-``log-device`` is where Sagan will inject logs after the are "sniffed" off the network.  The 
+``log-device`` is where Sagan will inject logs after they are "sniffed" off the network.  The 
 ``promiscuous`` option puts the network interface Sagan is using in "promiscious mode" or not.
 
 
 Example ``plog`` subsection::
 
      # 'plog',  the promiscuous syslog injector, allows Sagan to 'listen' on a
-     # network interface and 'suck' UDP syslog message off the wire.  When a 
+     # network interface and 'suck' UDP syslog messages off the wire.  When a 
      # syslog packet is detected, it is injected into /dev/log.  This is based
      # on work by Marcus J. Ranum in 2004 with his permission.  
      #
@@ -866,13 +866,13 @@ Example ``plog`` subsection::
 processors
 ==========
 
-Sagan ``processors`` are methods of detections outside of the Sagan rule engine.  
+Sagan ``processors`` are methods of detection outside of the Sagan rule engine.  
 
 track-clients
 -------------
 
-The ``track-clients`` processor is used to detect when syslog client has stopped or restarted sending
-logs to Sagan.  This can be useful for detecting systems thats logging has been disabled.  In the 
+The ``track-clients`` processor is used to detect when a syslog client has stopped or restarted sending
+logs to Sagan.  This can be useful for detecting systems where logging has been disabled.  In the 
 event a syslog client stops sending logs,  Sagan generates an alert for notification purposes.  When
 the syslog client comes back online,  Sagan will generate another alert for notification purposes.  The
 ``time`` is how long a syslog client has not sent a log message to be considered "down".
@@ -882,7 +882,7 @@ Example ``track-clients`` subsection::
      # The "tracking clients" processor keeps track of the systems (IP addresses), 
      # reporting to Sagan.  If Sagan stops receiving logs from a client for a 
      # specified amount of time ("timeout"), an alert/notification is created.  
-     # With the # system comes back online,  another alert/notification is 
+     # When the system comes back online,  another alert/notification is 
      # created. 
 
      - track-clients:
@@ -916,12 +916,12 @@ perfmonitor
 
 The ``perfmonitor`` processor records Sagan statistics to a CSV file.  This can provide useful data
 about detection and the performance of Sagan.  The ``time`` option sets how often Sagan should
-record ``permonitor`` data.
+record ``perfmonitor`` data.
 
 
 Example ``perfmonitor`` subsection::
 
-     # The "perfmonitor" processor write statistical information every specified
+     # The "perfmonitor" processor writes statistical information every specified
      # number of seconds ("time") to a CSV file.  This data can be useful for 
      # tracking the performance of Sagan.  This data can also be used with 
      # RRDTool to generate graphs.  
@@ -935,8 +935,8 @@ blacklist
 ---------
 
 The ``blacklist`` processor reads in a file at load time (or reload) that contains IP addresses 
-you which to alert on.  Detection is controlled by the ``*-blacklist.rules`` rule sets.  The idea
-is to load IP addresses of interest into this list and Sagna can monitor for them.  The list is a 
+you wish to alert on.  Detection is controlled by the ``*-blacklist.rules`` rule sets.  The idea
+is to load IP addresses of interest into this list and Sagan can monitor for them.  The list is a 
 file containing IP and network addresses in a CIDR format (ie - 192.168.1.0/24, 10.0.0.0/8). 
 
 Example ``perfmonitor`` subsection::
@@ -946,8 +946,8 @@ Example ``perfmonitor`` subsection::
      # DShield (http://feeds.dshield.org/block.txt) for Sagan to use.  If Sagan
      # identifies any hosts/networks in a log message from the list, an alert
      # will be generated.  The list can be in a IP (192.168.1.1) or CIDR format
-     # (192.168.1.0/24).  Rule identified as -blacklist.rules use this data.  
-     # You can load multiple blacklists by separating them via comma.  For 
+     # (192.168.1.0/24).  Rules identified as -blacklist.rules use this data.  
+     # You can load multiple blacklists by separating them with commas.  For 
      # example; filename: "$RULE_PATH/list1.txt, $RULE_PATH/list2.txt". 
 
      - blacklist:
@@ -1023,7 +1023,7 @@ Example ``zeek-intel`` subsection::
 dynamic-load
 ------------
 
-The ``dynamic-load`` processor will detects new logs entering the Sagan engine and can either 
+The ``dynamic-load`` processor will detect new logs entering the Sagan engine and can either 
 automatically load rules or send an alert about new logs being detected.  The idea here is to have
 Sagan assist with the detection of network and hardware changes.  This rule is tied to the 
 ``dynamic.rules`` rule set.  The ``dynamic.rules`` rule set has signatures used to detect 
@@ -1038,8 +1038,8 @@ generate an alert that new data was detected.
 
 Example ``dynamic-load`` subsection::
 
-     # The 'dynamic_load' processor uses rule with the "dynamic_load" rule option
-     # enabled. These rules tells Sagan to load additional rules when new log
+     # The 'dynamic_load' processor uses rules with the "dynamic_load" rule option
+     # enabled. These rules tell Sagan to load additional rules when new log
      # traffic is detected.  For example,  if Sagan does not have 'proftpd.rules'
      # enabled but detects 'proftp' log traffic,  a dynamic rule can automatically
      # load the 'proftpd.rules' for you.  Dynamic detection rules are named
@@ -1047,19 +1047,19 @@ Example ``dynamic-load`` subsection::
      # CPU to dedicated to detection new logs. The "type" informs the process 
      # "what" to do.  Valid types are "dynamic_load" (load & alert when new rules
      #  are loaded), "log_only" (only writes detection to the sagan.log file) and
-     # "alert" (create's an alert about new logs being detected). 
+     # "alert" (creates an alert about new logs being detected). 
 
      - dynamic-load:
          enabled: no
-         sample-rate: 100          # How often to 'test for new samples. 
+         sample-rate: 100          # How often to test for new samples. 
          type: dynamic_load        # What to do on detection of new logs.
 
 
 outputs
 =======
 
-Sagan supports writing data in various formats.  Some formats maybe more suitable for humans
-to read,  which other might be better for outputing to databases like Elasticsearch and MySQL.
+Sagan supports writing data in various formats.  Some formats may be more suitable for humans
+to read,  while others might be better for outputing to databases like Elasticsearch and MySQL.
 
 
 eve-log
@@ -1074,7 +1074,7 @@ Example ``eve-log`` subsection::
 
    outputs:
 
-     # EVE alerts can be load into software like Elasticsearch and is a good 
+     # EVE alerts can be loaded into software like Elasticsearch and is a good 
      # replacement for "unified2" with software like "Meer".  For more 
      # information on Meer, Check out:
      #
@@ -1091,7 +1091,7 @@ alert
 -----
 
 The ``alert`` format is a simple,  multiline human readable format.  The output is similar
-to that of traditional ``Snort`` "alert" log.
+to that of traditional ``Snort`` alert log.
 
 Example ``alert`` subsection::
 
@@ -1121,16 +1121,16 @@ unified2
 --------
 
 The ``unified2`` output is a binary blob format used to write event and alert data.  It is 
-compatible with the ``Snort`` "unified2" format.  This formats has traditionally been used to 
+compatible with the ``Snort`` "unified2" format.  This format has traditionally been used to 
 transport alert data from Sagan into a MySQL/MariaDB/PostgreSQL/etc database.   This means that 
 it is compatible with software like `Barnyard2 <https://github.com/firnsy/barnyard2>`_ , ``u2spew`` and ``u2boat``.  The ``unified2``. 
 
-``unified2`` is deperciated.  Consider using the ``eve-log`` instead.
+``unified2`` is depreciated.  Consider using the ``eve-log`` instead.
 
 Example ``unified2`` subsection::
 
      # The 'unified2' output allows Sagan to write in Snort's unified2 format. 
-     # This allows events/alerts generates by Sagan to be read and queued for
+     # This allows events/alerts generated by Sagan to be read and queued for
      # external programs like Barnyard2 (http://www.securixlive.com/barnyard2/).
      # Barnyard2 can then record events to various formats (Sguil, PostgreSQL, 
      # MySQL, MS-SQL, Oracle, etc).  Sagan must be compiled with libdnet support
@@ -1150,7 +1150,7 @@ The ``smtp`` output allows Sagan to send alerts via e-mail.
 Example ``smtp`` subsection::
 
   # The 'smtp' output allows Sagan to e-mail alerts that trigger.  The rules 
-  # you want e-mail need to contain the 'email' rule option and Sagan must
+  # you want e-mailed need to contain the 'email' rule option and Sagan must
   # be compiled with libesmtp support.  
 
   - smtp:
@@ -1167,9 +1167,9 @@ rule sets.
 
 Example ``snortsam`` subsection::
 
-     # The 'snortsam' output allows Sagan to send block information Snortsam 
-     # agents.  If a rule the fwsam: option in it,  the offending IP address can 
-     # be firewall/blocked. For example,  if a rule is triggered with the 'fwsam'
+     # The 'snortsam' output allows Sagan to send block information to Snortsam 
+     # agents.  If a rule has the fwsam: option in it,  the offending IP address can 
+     # be firewalled/blocked. For example,  if a rule is triggered with the 'fwsam'
      # option,  Sagan can instruct a firewall (iptables/ebtable/pf/iwpf/Cisco/etc)
      # to firewall off the source or destination. 
      #
@@ -1199,13 +1199,13 @@ Example ``snortsam`` subsection::
 syslog
 ------
 
-The ``syslog`` output plugin writes alerts to the systems syslog that Sagan is running on.  
+The ``syslog`` output plugin writes alerts to the system's syslog that Sagan is running on.  
 This can be useful for forwarding Sagan alert data to other SIEMs. 
 
 Example ``syslog`` subsection::
 
      # The 'syslog' output allows Sagan to send alerts to syslog. The syslog 
-     # output format used is exactly the same of Snorts.  This means that your 
+     # output format used is exactly the same as Snort's.  This means that your 
      # SIEMs Snort log parsers should work with Sagan.
 
      - syslog:
@@ -1217,8 +1217,8 @@ Example ``syslog`` subsection::
 rule-files
 ==========
 
-The ``rule-files`` section tells Sagan what "rules" to load.  This can a list of files or rules
-can be broken out into seperate ``include``. 
+The ``rule-files`` section tells Sagan what "rules" to load.  This can be a list of files or rules
+that can be broken out into seperate ``include``. 
 
 Example ``rule-files`` subsection::
 
@@ -1312,7 +1312,7 @@ Example ``rule-files`` subsection::
      #- $RULE_PATH/windows-owa-bluedot.rules
 
      ###############################################################################
-     # Correlated rules - Rules that use xbits/flexbit to detect malicious behavor #
+     # Correlated rules - Rules that use xbits/flexbit to detect malicious behavior #
      ###############################################################################
 
      - $RULE_PATH/cisco-correlated.rules
@@ -1439,7 +1439,7 @@ Example ``rule-files`` subsection::
    #
 
    # Includes.  Files included here will be handled as if they were
-   # inlined in this configuration file.
+   # included in this configuration file.
 
    #include: "/usr/local/etc/include1.yaml"
    #include: "$RULE_PATH/include2.yaml"
