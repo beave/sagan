@@ -134,6 +134,8 @@ struct _Sagan_Ignorelist *SaganIgnorelist;
 #endif
 
 struct _Sagan_Pass_Syslog *SaganPassSyslog = NULL;
+struct _Client_Stats_Struct *Client_Stats = NULL;
+
 
 int proc_msgslot = 0;
 int proc_running = 0;
@@ -211,7 +213,6 @@ int main(int argc, char **argv)
     pthread_attr_t thread_client_stats_attr;
     pthread_attr_init(&thread_client_stats_attr);
     pthread_attr_setdetachstate(&thread_client_stats_attr,  PTHREAD_CREATE_DETACHED);
-
 
     /****************************************************************************/
     /* Various local variables						        */
@@ -800,6 +801,7 @@ int main(int argc, char **argv)
                 }
         }
 
+/*
     if ( config->client_stats_flag )
         {
 
@@ -813,6 +815,9 @@ int main(int argc, char **argv)
                     Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats  thread [error: %d].", __FILE__, __LINE__, rc);
                 }
         }
+*/
+
+
 
 
     /* Open sagan alert file */

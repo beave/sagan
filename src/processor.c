@@ -78,10 +78,14 @@ pthread_mutex_t SaganReloadMutex;
 
 pthread_mutex_t SaganDynamicFlag;
 
+pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
+
+
 void Processor ( void )
 {
 
     (void)SetThreadName("SaganProcessor");
+
 
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
@@ -92,6 +96,7 @@ void Processor ( void )
         }
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
+
 
     struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
     SaganPassSyslog_LOCAL = malloc(sizeof(struct _Sagan_Pass_Syslog));
@@ -210,12 +215,18 @@ void Processor ( void )
 
                         }
 
+
+		    pthread_mutex_lock(&ClientStatsMutex);
+
                     if ( config->client_stats_flag )
                         {
 
                             Client_Stats_Add_Update_IP ( SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_message );
 
                         }
+
+                    pthread_mutex_unlock(&ClientStatsMutex);
+
 
                     if ( config->sagan_track_clients_flag )
                         {

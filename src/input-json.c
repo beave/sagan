@@ -83,7 +83,7 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
                     if ( syslog_string != NULL )
                         {
-                            Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON. Get: %s", __FILE__, __LINE__, syslog_string);
+                            Sagan_Log(WARN, "[%s, line %d] Libfastjson failed to decode JSON. Got: %s", __FILE__, __LINE__, syslog_string);
                         }
                     else
                         {

@@ -37,6 +37,7 @@
 #include <inttypes.h>
 #include <errno.h>
 #include <string.h>
+#include <pthread.h>
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -56,7 +57,10 @@ uint64_t old_epoch = 0;
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
+
 struct _Client_Stats_Struct *Client_Stats;
+
+//pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Client_Stats_Iint
@@ -73,6 +77,7 @@ void Client_Stats_Init( void )
 
     config->client_stats_file_stream_status = true;
     counters->client_stats_interval_count = 0;
+    counters->client_stats_count = 0; 
 
 }
 
@@ -167,67 +172,47 @@ void Client_Stats_Handler( void )
 void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
 {
 
-    int i = 0;
-    bool flag = false;
-    bool epoch_flag = false;
-    uint32_t hash = Djb2_Hash( ip );
+	//printf("|%s|\n", ip);
 
-    time_t t;
-    struct tm *now;
-    uint64_t epoch = 0;
-    char timet[20];
+	uint32_t hash = Djb2_Hash( ip ); 
+	int i = 0;
 
-    t = time(NULL);
-    now=localtime(&t);
-    strftime(timet, sizeof(timet), "%s",  now);
-    epoch = atol(timet);
+	for ( i = 0; i < counters->client_stats_count; i++ )
+		{
 
-    for ( i = 0; i < counters->client_stats_count; i++ )
-        {
+		/* Search here */
 
-            if ( hash == Client_Stats[i].hash )
-                {
 
-                    Client_Stats[i].epoch = epoch;
+		if ( Client_Stats[i].hash == hash ) 
+			{
+			return;
+			}
 
-                    /* Check if the data-interval has been reached.  We only want to do this for old records */
+		}
 
-                    if ( Client_Stats[i].epoch > Client_Stats[i].old_epoch + config->client_stats_interval)
-                        {
+// 	    pthread_mutex_lock(&ClientStatsMutex);
 
-                            strlcpy( Client_Stats[i].program, program, sizeof(Client_Stats[i].program) );
-                            strlcpy( Client_Stats[i].message, message, sizeof(Client_Stats[i].message) );
+	    printf("Adding %s\n", ip);
 
-                            Client_Stats[i].old_epoch = epoch;
+	    Client_Stats = ( _Client_Stats_Struct * ) realloc(Client_Stats, (counters->client_stats_count+1) * sizeof(_Client_Stats_Struct));
 
-                        }
-
-                    return;
+            if ( Client_Stats == NULL )
+                {   
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for _Client_Stats_Struct. Abort!", __FILE__, __LINE__);
                 }
 
-        }
+            memset(&Client_Stats[counters->client_stats_count], 0, sizeof(struct _Client_Stats_Struct));
 
-    /* Allocate memory for new stats */
+	    Client_Stats[counters->client_stats_count].hash = hash; 
 
-    Client_Stats = (_Client_Stats_Struct *) realloc(Client_Stats, (counters->client_stats_count+1) * sizeof(_Client_Stats_Struct));
+	    strlcpy(Client_Stats[counters->client_stats_count].ip, ip, sizeof(Client_Stats[counters->client_stats_count].ip));
 
-    if ( Client_Stats == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for _Client_Stats. Abort!", __FILE__, __LINE__);
-        }
+	    counters->client_stats_count++;
 
-    Client_Stats[counters->client_stats_count].hash = hash;
-    Client_Stats[counters->client_stats_count].epoch = epoch;
-    Client_Stats[counters->client_stats_count].old_epoch = epoch;
+//	    pthread_mutex_unlock(&ClientStatsMutex);
 
-    strlcpy( Client_Stats[counters->client_stats_count].program, program, sizeof(Client_Stats[counters->client_stats_count].program ) );
-
-    strlcpy( Client_Stats[counters->client_stats_count].message, message, sizeof(Client_Stats[counters->client_stats_count].message ) );
-
-    strlcpy(Client_Stats[counters->client_stats_count].ip, ip, sizeof(Client_Stats[counters->client_stats_count].ip));
-
-    __atomic_add_fetch(&counters->client_stats_count, 1, __ATOMIC_SEQ_CST);
 
 }
+
 
 #endif
