@@ -54,12 +54,14 @@
 #include "processors/track-clients.h"
 #include "processors/blacklist.h"
 #include "processors/dynamic-rules.h"
+#include "processors/client-stats.h"
 
 struct _SaganCounters *counters;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
 struct _Sagan_Pass_Syslog *SaganPassSyslog;
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
+
 
 int proc_msgslot; 		/* Comes from sagan.c */
 int proc_running;   	        /* Comes from sagan.c */
@@ -78,7 +80,7 @@ pthread_mutex_t SaganReloadMutex;
 
 pthread_mutex_t SaganDynamicFlag;
 
-pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
+//pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 
 void Processor ( void )
@@ -107,17 +109,6 @@ void Processor ( void )
         }
 
     memset(SaganPassSyslog_LOCAL, 0, sizeof(struct _Sagan_Pass_Syslog));
-
-    struct _SyslogInput *SyslogInput = NULL;
-
-    SyslogInput = malloc(sizeof(_SyslogInput));
-
-    if ( SyslogInput == NULL )
-        {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SyslogInput. Abort!", __FILE__, __LINE__);
-        }
-
-    memset(SyslogInput, 0, sizeof(_SyslogInput));
 
     int i;
 
@@ -163,31 +154,19 @@ void Processor ( void )
 
                     if ( config->input_type == INPUT_PIPE )
                         {
-                            SyslogInput_Pipe( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
+                            SyslogInput_Pipe( SaganPassSyslog_LOCAL->syslog[i], SaganProcSyslog_LOCAL );
                         }
                     else
                         {
-                            SyslogInput_JSON( SaganPassSyslog_LOCAL->syslog[i], SyslogInput );
+                            SyslogInput_JSON( SaganPassSyslog_LOCAL->syslog[i], SaganProcSyslog_LOCAL );
                         }
 
                     if (debug->debugsyslog)
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] **[Parsed Syslog]*********************************", __FILE__, __LINE__);
-                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_facility, SyslogInput->syslog_priority, SyslogInput->syslog_level, SyslogInput->syslog_tag, SyslogInput->syslog_date, SyslogInput->syslog_time);
-                            Sagan_Log(DEBUG, "[%s, line %d] Parsed message: %s", __FILE__, __LINE__,  SyslogInput->syslog_message);
+                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog_LOCAL->syslog_time);
+                            Sagan_Log(DEBUG, "[%s, line %d] Parsed message: %s", __FILE__, __LINE__,  SaganProcSyslog_LOCAL->syslog_message);
                         }
-
-                    /* Copy data from processors */
-
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, SyslogInput->syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, SyslogInput->syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, SyslogInput->syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, SyslogInput->syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, SyslogInput->syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, SyslogInput->syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, SyslogInput->syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, SyslogInput->syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, SyslogInput->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
                     /* Dynamic goes here */
 
@@ -210,27 +189,40 @@ void Processor ( void )
 
                     if ( dynamic_rule_flag == DYNAMIC_RULE )
                         {
-
                             __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
-
                         }
 
 
-		    pthread_mutex_lock(&ClientStatsMutex);
+//		    pthread_mutex_lock(&ClientStatsMutex);
 
                     if ( config->client_stats_flag )
                         {
 
-                            Client_Stats_Add_Update_IP ( SyslogInput->syslog_host, SyslogInput->syslog_program, SyslogInput->syslog_message );
+                            /*
+                            char tmp_host[1024][config->max_batch];
+                            char tmp_program[1024][config->max_batch];
+                            char tmp_message[10240][config->max_batch];
+
+                            strlcpy(tmp_host[i], SaganProcSyslog_LOCAL->syslog_host, sizeof(tmp_host[i]));
+                            strlcpy(tmp_program[i], SaganProcSyslog_LOCAL->syslog_program, sizeof(tmp_program[i]));
+                            strlcpy(tmp_message[i], SaganProcSyslog_LOCAL->syslog_message, sizeof(tmp_message[i]));
+                            */
+
+                            //Client_Stats_Add_Update_IP ( SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
+
+                            //Sagan_Log(DEBUG, "SEND: %s|%s|\n", SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program);
+                            Client_Stats_Add_Update_IP ( SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
+                            //Client_Stats_Add_Update_IP ( tmp_host[i], tmp_program[i], tmp_message[i] );
+
 
                         }
 
-                    pthread_mutex_unlock(&ClientStatsMutex);
+//                    pthread_mutex_unlock(&ClientStatsMutex);
 
 
                     if ( config->sagan_track_clients_flag )
                         {
-                            Track_Clients( SyslogInput->syslog_host );
+                            Track_Clients( SaganProcSyslog_LOCAL->syslog_host );
                         }
 
                 }

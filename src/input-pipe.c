@@ -38,7 +38,7 @@ struct _SaganDebug *debug;
 struct _SaganConfig *config;
 struct _SaganDNSCache *dnscache;
 
-void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
+void SyslogInput_Pipe( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     bool dns_flag;
@@ -50,7 +50,7 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     char *ptr = NULL;
 
-    memset(SyslogInput, 0, sizeof(_SyslogInput));
+    memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
 
     ptr = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
 
@@ -69,7 +69,7 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
                         {
                             if (!strcmp( dnscache[i].hostname, ptr))
                                 {
-                                    strlcpy(SyslogInput->syslog_host, dnscache[i].src_ip, sizeof(dnscache[i].src_ip));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, dnscache[i].src_ip, sizeof(dnscache[i].src_ip));
                                     dns_flag = true;
                                 }
                         }
@@ -110,7 +110,7 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
                             strlcpy(dnscache[counters->dns_cache_count].hostname, ptr, sizeof(dnscache[counters->dns_cache_count].hostname));
                             strlcpy(dnscache[counters->dns_cache_count].src_ip, src_dns_lookup, sizeof(dnscache[counters->dns_cache_count].src_ip));
                             counters->dns_cache_count++;
-                            strlcpy(SyslogInput->syslog_host, src_dns_lookup, sizeof(SyslogInput->syslog_host));
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_host, src_dns_lookup, sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
                         }
                 }
@@ -120,23 +120,23 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
         {
 
             /* We check to see if values from our FIFO are valid.  If we aren't doing DNS related
-            * stuff (above),  we start basic check with the SyslogInput->syslog_host */
+            * stuff (above),  we start basic check with the SaganProcSyslog_LOCAL->syslog_host */
 
             if ( ptr == NULL || !Is_IP(ptr, IPv4) || !Is_IP(ptr, IPv6) )
                 {
-                    strlcpy(SyslogInput->syslog_host, config->sagan_host, sizeof(SyslogInput->syslog_host));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, config->sagan_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
                     counters->malformed_host++;
 
                     if ( debug->debugmalformed )
                         {
-                            Sagan_Log(DEBUG, "Sagan received a malformed 'host': '%s' (replaced with %s)", SyslogInput->syslog_host, config->sagan_host);
+                            Sagan_Log(DEBUG, "Sagan received a malformed 'host': '%s' (replaced with %s)", SaganProcSyslog_LOCAL->syslog_host, config->sagan_host);
                             Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                         }
                 }
             else
                 {
-                    strlcpy(SyslogInput->syslog_host, ptr, sizeof(SyslogInput->syslog_host));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_host));
                 }
         }
 
@@ -148,19 +148,19 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy(SyslogInput->syslog_facility, "SAGAN: FACILITY ERROR", sizeof(SyslogInput->syslog_facility));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, "SAGAN: FACILITY ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_facility));
 
             counters->malformed_facility++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'facility' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'facility' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
-            strlcpy(SyslogInput->syslog_facility, ptr, sizeof(SyslogInput->syslog_facility));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
         }
 
     ptr = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
@@ -168,20 +168,20 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy(SyslogInput->syslog_priority, "SAGAN: PRIORITY ERROR", sizeof(SyslogInput->syslog_priority));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, "SAGAN: PRIORITY ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_priority));
 
             counters->malformed_priority++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'priority' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'priority' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
 
-            strlcpy(SyslogInput->syslog_priority, ptr, sizeof(SyslogInput->syslog_priority));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
 
         }
 
@@ -190,20 +190,20 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy(SyslogInput->syslog_level, "SAGAN: LEVEL ERROR", sizeof(SyslogInput->syslog_level));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_level, "SAGAN: LEVEL ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_level));
 
             counters->malformed_level++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'level' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'level' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
 
-            strlcpy(SyslogInput->syslog_level, ptr, sizeof(SyslogInput->syslog_level));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_level, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_level));
 
         }
 
@@ -212,19 +212,19 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy(SyslogInput->syslog_tag, "SAGAN: TAG ERROR", sizeof(SyslogInput->syslog_tag));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, "SAGAN: TAG ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
 
             counters->malformed_tag++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'tag' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'tag' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
-            strlcpy(SyslogInput->syslog_tag, ptr, sizeof(SyslogInput->syslog_tag));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
         }
 
     ptr = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
@@ -232,20 +232,20 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy(SyslogInput->syslog_date, "SAGAN: DATE ERROR", sizeof(SyslogInput->syslog_date));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_date, "SAGAN: DATE ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_date));
 
             counters->malformed_date++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'date' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'date' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
 
-            strlcpy(SyslogInput->syslog_date, ptr, sizeof(SyslogInput->syslog_date));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_date, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_date));
         }
 
     ptr = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
@@ -253,20 +253,20 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy( SyslogInput->syslog_time, "SAGAN: TIME ERROR", sizeof(SyslogInput->syslog_time) );
+            strlcpy( SaganProcSyslog_LOCAL->syslog_time, "SAGAN: TIME ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_time) );
 
             counters->malformed_time++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'time' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'time' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
         }
     else
         {
 
-            strlcpy(SyslogInput->syslog_time, ptr, sizeof(SyslogInput->syslog_time) );
+            strlcpy(SaganProcSyslog_LOCAL->syslog_time, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_time) );
         }
 
     ptr = syslog_string != NULL ? strsep(&syslog_string, "|") : NULL;
@@ -274,13 +274,13 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy( SyslogInput->syslog_program, "SAGAN: PROGRAM ERROR", sizeof(SyslogInput->syslog_program) );
+            strlcpy( SaganProcSyslog_LOCAL->syslog_program, "SAGAN: PROGRAM ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_program) );
 
             counters->malformed_program++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'program' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'program' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
 
                 }
@@ -288,7 +288,7 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     else
         {
 
-            strlcpy( SyslogInput->syslog_program, ptr, sizeof(SyslogInput->syslog_program) );
+            strlcpy( SaganProcSyslog_LOCAL->syslog_program, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_program) );
 
         }
 
@@ -297,13 +297,13 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     if ( ptr == NULL )
         {
 
-            strlcpy( SyslogInput->syslog_message, "SAGAN: MESSAGE ERROR", sizeof(SyslogInput->syslog_message) );
+            strlcpy( SaganProcSyslog_LOCAL->syslog_message, "SAGAN: MESSAGE ERROR", sizeof(SaganProcSyslog_LOCAL->syslog_message) );
 
             counters->malformed_message++;
 
             if ( debug->debugmalformed )
                 {
-                    Sagan_Log(DEBUG, "Sagan received a malformed 'message' from %s.", SyslogInput->syslog_host);
+                    Sagan_Log(DEBUG, "Sagan received a malformed 'message' from %s.", SaganProcSyslog_LOCAL->syslog_host);
                     Sagan_Log(DEBUG, "Raw malformed log: \"%s\"", syslog_string);
                 }
 
@@ -316,15 +316,15 @@ void SyslogInput_Pipe( char *syslog_string, struct _SyslogInput *SyslogInput )
     else
         {
 
-            strlcpy(SyslogInput->syslog_message, ptr, sizeof(SyslogInput->syslog_message));
+            strlcpy(SaganProcSyslog_LOCAL->syslog_message, ptr, sizeof(SaganProcSyslog_LOCAL->syslog_message));
 
         }
 
     /* Strip any \n or \r from the syslog_message */
 
-    if ( strcspn ( SyslogInput->syslog_message, "\n" ) < strlen( SyslogInput->syslog_message ) )
+    if ( strcspn ( SaganProcSyslog_LOCAL->syslog_message, "\n" ) < strlen( SaganProcSyslog_LOCAL->syslog_message ) )
         {
-            SyslogInput->syslog_message[strcspn (  SyslogInput->syslog_message, "\n" )] = '\0';
+            SaganProcSyslog_LOCAL->syslog_message[strcspn (  SaganProcSyslog_LOCAL->syslog_message, "\n" )] = '\0';
         }
 
 }

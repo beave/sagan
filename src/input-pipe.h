@@ -18,6 +18,6 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-void SyslogInput_Pipe( char *syslog,  struct _SyslogInput *SyslogInput );
+void SyslogInput_Pipe( char *syslog,  struct _Sagan_Proc_Syslog * );
 
 

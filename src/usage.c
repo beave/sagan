@@ -39,7 +39,7 @@ void Usage(void)
     fprintf(stderr, "\n--[Sagan version %s | Help/usage screen]--------------------------------\n\n", VERSION);
     fprintf(stderr, "-h, --help\t\tHelp (this screen).\n");
     fprintf(stderr, "-C, --credits\t\tSagan credits.\n");
-    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,ipc, limits, malformed, xbit, flexbit, brointel, parse_ip");
+    fprintf(stderr, "-d, --debug [type]\tTypes: engine, syslog, load, fwsam, external, threads,ipc, limits, malformed, xbit, flexbit, brointel, parse_ip, client-stats");
 
 #ifdef HAVE_LIBESMTP
     fprintf(stderr, ", smtp");

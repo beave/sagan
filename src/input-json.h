@@ -18,6 +18,6 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput );
+void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 
 

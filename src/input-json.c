@@ -41,7 +41,8 @@ struct _SaganDebug *debug;
 
 struct _Syslog_JSON_Map *Syslog_JSON_Map;
 
-void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
+//void SaganProcSyslog_LOCAL_JSON( char *syslog_string, struct _SaganProcSyslog_LOCAL *SaganProcSyslog_LOCAL )
+void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     struct json_object *json_obj = NULL;
@@ -59,17 +60,17 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
-    memset(SyslogInput, 0, sizeof(_SyslogInput));
+    memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
 
-    memcpy(SyslogInput->syslog_message, "UNDEFINED\0", sizeof(SyslogInput->syslog_message));
-    memcpy(SyslogInput->syslog_program, "UNDEFINED\0", sizeof(SyslogInput->syslog_program));
-    memcpy(SyslogInput->syslog_time, "UNDEFINED\0", sizeof(SyslogInput->syslog_time));
-    memcpy(SyslogInput->syslog_date, "UNDEFINED\0", sizeof(SyslogInput->syslog_date));
-    memcpy(SyslogInput->syslog_tag, "UNDEFINED\0", sizeof(SyslogInput->syslog_tag));
-    memcpy(SyslogInput->syslog_level, "UNDEFINED\0", sizeof(SyslogInput->syslog_level));
-    memcpy(SyslogInput->syslog_priority, "UNDEFINED\0", sizeof(SyslogInput->syslog_priority));
-    memcpy(SyslogInput->syslog_facility, "UNDEFINED\0", sizeof(SyslogInput->syslog_facility));
-    memcpy(SyslogInput->syslog_host, "UNDEFINED\0", sizeof(SyslogInput->syslog_host));
+    memcpy(SaganProcSyslog_LOCAL->syslog_message, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_message));
+    memcpy(SaganProcSyslog_LOCAL->syslog_program, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_program));
+    memcpy(SaganProcSyslog_LOCAL->syslog_time, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_time));
+    memcpy(SaganProcSyslog_LOCAL->syslog_date, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_date));
+    memcpy(SaganProcSyslog_LOCAL->syslog_tag, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+    memcpy(SaganProcSyslog_LOCAL->syslog_level, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_level));
+    memcpy(SaganProcSyslog_LOCAL->syslog_priority, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+    memcpy(SaganProcSyslog_LOCAL->syslog_facility, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+    memcpy(SaganProcSyslog_LOCAL->syslog_host, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
     /* If the json isn't nested,  we can do this the easy way */
 
@@ -101,48 +102,48 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_host, json_object_get_string(tmp), sizeof(SyslogInput->syslog_host));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_host));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_facility, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_facility, json_object_get_string(tmp), sizeof(SyslogInput->syslog_facility));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_facility));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_priority, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_priority, json_object_get_string(tmp), sizeof(SyslogInput->syslog_priority));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_priority));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_level, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_level, json_object_get_string(tmp), sizeof(SyslogInput->syslog_level));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_level));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_tag, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_tag, json_object_get_string(tmp), sizeof(SyslogInput->syslog_tag));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_date, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_date, json_object_get_string(tmp), sizeof(SyslogInput->syslog_date));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_date));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_time, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_time, json_object_get_string(tmp), sizeof(SyslogInput->syslog_time));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
                 {
-                    strlcpy(SyslogInput->syslog_program, json_object_get_string(tmp), sizeof(SyslogInput->syslog_program));
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                 {
-                    snprintf(SyslogInput->syslog_message, sizeof(SyslogInput->syslog_message)," %s", json_object_get_string(tmp));
-                    SyslogInput->syslog_message[ (sizeof(SyslogInput->syslog_message) -1 ) ] = '\0';
+                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", json_object_get_string(tmp));
+                    SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                     has_message = true;
                 }
 
@@ -217,49 +218,49 @@ void SyslogInput_JSON( char *syslog_string, struct _SyslogInput *SyslogInput )
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                                 {
-                                    snprintf(SyslogInput->syslog_message, sizeof(SyslogInput->syslog_message)," %s", json_object_get_string(tmp));
-                                    SyslogInput->syslog_message[ (sizeof(SyslogInput->syslog_message) -1 ) ] = '\0';
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", json_object_get_string(tmp));
+                                    SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                                     has_message = true;
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_host, json_object_get_string(tmp), sizeof(SyslogInput->syslog_host));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_host));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_facility, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_facility, json_object_get_string(tmp), sizeof(SyslogInput->syslog_facility));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_facility));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_priority, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_priority, json_object_get_string(tmp), sizeof(SyslogInput->syslog_priority));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_priority));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_level, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_level, json_object_get_string(tmp), sizeof(SyslogInput->syslog_level));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_level));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_tag, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_tag, json_object_get_string(tmp), sizeof(SyslogInput->syslog_tag));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_tag));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_date, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_date, json_object_get_string(tmp), sizeof(SyslogInput->syslog_date));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_date));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_time, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_time, json_object_get_string(tmp), sizeof(SyslogInput->syslog_time));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
                                 }
 
                             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
                                 {
-                                    strlcpy(SyslogInput->syslog_program, json_object_get_string(tmp), sizeof(SyslogInput->syslog_program));
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
                                 }
 
                         }

@@ -38,6 +38,7 @@
 #include <errno.h>
 #include <string.h>
 #include <pthread.h>
+#include <stdlib.h>
 
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
@@ -57,10 +58,11 @@ uint64_t old_epoch = 0;
 
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
+struct _SaganDebug *debug;
 
-struct _Client_Stats_Struct *Client_Stats;
+struct _Client_Stats_Struct *Client_Stats = NULL;
 
-//pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
 
 /****************************************************************************
  * Client_Stats_Iint
@@ -76,8 +78,16 @@ void Client_Stats_Init( void )
         }
 
     config->client_stats_file_stream_status = true;
-    counters->client_stats_interval_count = 0;
-    counters->client_stats_count = 0; 
+    counters->client_stats_count = 0;
+
+    Client_Stats = malloc(config->client_stats_max * sizeof(struct _Client_Stats_Struct));
+
+    if ( Client_Stats == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for _Client_Stats_Struct. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(Client_Stats, 0, sizeof(struct _Client_Stats_Struct));
 
 }
 
@@ -172,47 +182,88 @@ void Client_Stats_Handler( void )
 void Client_Stats_Add_Update_IP( char *ip, char *program, char *message )
 {
 
-	//printf("|%s|\n", ip);
+    uint32_t hash = Djb2_Hash( ip );
 
-	uint32_t hash = Djb2_Hash( ip ); 
-	int i = 0;
+    int i = 0;
+    time_t t;
+    struct tm *now;
+    uint64_t epoch = 0;
+    char timet[20];
 
-	for ( i = 0; i < counters->client_stats_count; i++ )
-		{
+    t = time(NULL);
+    now=localtime(&t);
+    strftime(timet, sizeof(timet), "%s",  now);
+    epoch = atol(timet);
 
-		/* Search here */
+
+    for ( i = 0; i < counters->client_stats_count; i++ )
+        {
+
+            /* Search here */
+
+            if ( Client_Stats[i].hash == hash )
+                {
+                    Client_Stats[i].epoch = epoch;
+
+                    if ( Client_Stats[i].epoch > Client_Stats[i].old_epoch + config->client_stats_interval)
+                        {
 
 
-		if ( Client_Stats[i].hash == hash ) 
-			{
-			return;
-			}
+                            if ( debug->debugclient_stats )
+                                {
+                                    Sagan_Log(DEBUG,"[%s, line %d] Updating program/message data for IP address %s [%d]", __FILE__, __LINE__, ip, i);
+                                }
 
-		}
+                            pthread_mutex_lock(&ClientStatsMutex);
 
-// 	    pthread_mutex_lock(&ClientStatsMutex);
+                            strlcpy( Client_Stats[i].program, program, sizeof(Client_Stats[i].program) );
+                            strlcpy( Client_Stats[i].message, message, sizeof(Client_Stats[i].message) );
 
-	    printf("Adding %s\n", ip);
+                            Client_Stats[i].old_epoch = epoch;
 
-	    Client_Stats = ( _Client_Stats_Struct * ) realloc(Client_Stats, (counters->client_stats_count+1) * sizeof(_Client_Stats_Struct));
+                            pthread_mutex_unlock(&ClientStatsMutex);
 
-            if ( Client_Stats == NULL )
-                {   
-                    Sagan_Log(ERROR, "[%s, line %d] Failed to reallocate memory for _Client_Stats_Struct. Abort!", __FILE__, __LINE__);
+                        }
+
+                    return;
+
                 }
 
-            memset(&Client_Stats[counters->client_stats_count], 0, sizeof(struct _Client_Stats_Struct));
+        }
 
-	    Client_Stats[counters->client_stats_count].hash = hash; 
+    if ( counters->client_stats_count < config->client_stats_max )
+        {
 
-	    strlcpy(Client_Stats[counters->client_stats_count].ip, ip, sizeof(Client_Stats[counters->client_stats_count].ip));
+            pthread_mutex_lock(&ClientStatsMutex);
 
-	    counters->client_stats_count++;
+            if ( debug->debugclient_stats )
+                {
+                    Sagan_Log(DEBUG,"[%s, line %d] Adding client IP address %s [%d]", __FILE__, __LINE__, ip, counters->client_stats_count);
+                }
 
-//	    pthread_mutex_unlock(&ClientStatsMutex);
 
+            Client_Stats[counters->client_stats_count].hash = hash;
+            Client_Stats[counters->client_stats_count].epoch = epoch;
+            Client_Stats[counters->client_stats_count].old_epoch = epoch;
+
+            strlcpy(Client_Stats[counters->client_stats_count].ip, ip, sizeof(Client_Stats[counters->client_stats_count].ip));
+            strlcpy( Client_Stats[counters->client_stats_count].program, program, sizeof(Client_Stats[counters->client_stats_count].program ) );
+            strlcpy( Client_Stats[counters->client_stats_count].message, message, sizeof(Client_Stats[counters->client_stats_count].message ) );
+
+            counters->client_stats_count++;
+
+            pthread_mutex_unlock(&ClientStatsMutex);
+
+        }
+    else
+
+        {
+
+            Sagan_Log(WARN, "[%s, line %d] 'clients-stats' processors ran out of space.  Consider increasing 'max-clients'!", __FILE__, __LINE__);
+
+
+        }
 
 }
-
 
 #endif

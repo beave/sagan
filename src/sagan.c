@@ -134,7 +134,6 @@ struct _Sagan_Ignorelist *SaganIgnorelist;
 #endif
 
 struct _Sagan_Pass_Syslog *SaganPassSyslog = NULL;
-struct _Client_Stats_Struct *Client_Stats = NULL;
 
 
 int proc_msgslot = 0;
@@ -473,6 +472,12 @@ int main(int argc, char **argv)
                             debugflag = true;
                         }
 
+                    if (Sagan_strstr(optarg, "client-stats"))
+                        {
+                            debug->debugclient_stats = true;
+                            debugflag = true;
+                        }
+
 #ifdef HAVE_LIBMAXMINDDB
 
                     if (Sagan_strstr(optarg, "geoip"))
@@ -801,7 +806,7 @@ int main(int argc, char **argv)
                 }
         }
 
-/*
+
     if ( config->client_stats_flag )
         {
 
@@ -815,9 +820,6 @@ int main(int argc, char **argv)
                     Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats  thread [error: %d].", __FILE__, __LINE__, rc);
                 }
         }
-*/
-
-
 
 
     /* Open sagan alert file */

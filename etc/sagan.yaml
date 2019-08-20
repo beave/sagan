@@ -310,6 +310,7 @@ processors:
       filename: "$LOG_PATH/eve.json"
       time: 30
       data-interval: 300
+      max-clients: 1000
 
   # This reports on rule sets that have and have not "fired".  This can be 
   # useful in tuning Sagan. 
