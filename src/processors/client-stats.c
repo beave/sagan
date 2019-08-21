@@ -40,6 +40,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 
+
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
 #endif
@@ -112,6 +113,10 @@ void Client_Stats_Handler( void )
 
     struct json_object *jobj = NULL;
 
+    struct timeval tp;
+    char timebuf[64] = { 0 };
+
+
     int i=0;
 
     (void)SetThreadName("SaganClientStats");
@@ -123,12 +128,24 @@ void Client_Stats_Handler( void )
     while(1)
         {
 
+            if ( debug->debugclient_stats )
+                {
+                    Sagan_Log(DEBUG,"[%s, line %d] Writing client stats %s.", __FILE__, __LINE__, config->client_stats_file_name );
+                }
+
+
+	    gettimeofday(&tp, 0);
+	    CreateIsoTimeString(&tp, timebuf, sizeof(timebuf));
+
             jobj = json_object_new_object();
 
             json_object *jarray_ip = json_object_new_array();
             json_object *jarray_epoch = json_object_new_array();
             json_object *jarray_program = json_object_new_array();
             json_object *jarray_message = json_object_new_array();
+
+            json_object *jdate = json_object_new_string(timebuf);
+            json_object_object_add(jobj,"timestamp", jdate);
 
             json_object *jevent_type = json_object_new_string( "client_stats" );
             json_object_object_add(jobj,"event_type", jevent_type);

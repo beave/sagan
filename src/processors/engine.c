@@ -172,7 +172,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool blacklist_results = false;
 
     char *ip_src = NULL;
-    //char ip_src[MAXIP] = { 0 };
     char *ip_dst = NULL;
 
     char *md5_hash = NULL;
