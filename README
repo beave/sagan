@@ -2,7 +2,7 @@
 Welcome to the README file.
 ---------------------------
 
-What is Sagan? 
+#What is Sagan? 
 
 Sagan is an open source (GNU/GPLv2) high performance, real-time log 
 analysis & correlation engine.  It is written in C and uses a 
