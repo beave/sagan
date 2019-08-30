@@ -1,8 +1,16 @@
 
-Welcome to the README file.
----------------------------
+<pre>
+,-._,-.    Sagan has been configured!
+\/)"(\/ 
+ (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]
+ /   \/)   Copyright (C) 2009-2019 Quadrant Information Security, et al.
+(|| ||) 
+ oo-oo  
+</pre>
 
-#What is Sagan? 
+
+What is Sagan? 
+--------------
 
 Sagan is an open source (GNU/GPLv2) high performance, real-time log 
 analysis & correlation engine.  It is written in C and uses a 
@@ -22,6 +30,9 @@ Sagan supports many different output formats,  log normalization
 automatic firewall support via "Snortsam" (see http://www.snortsam.net).  
 
 Sagan uses the GNU "artisic style". 
+
+Were can I get help with Sagan?
+-------------------------------
 
 For more general Sagan information, please visit the offical Sagan web site: 
 https://sagan.quadrantsec.com. 
