@@ -62,6 +62,5 @@ For help & assistence,  check out the Sagan mailing list.  If it located at:
 https://groups.google.com/forum/#!forum/sagan-users
 
 If you're looking for Sagan rule sets on Github,  they are located at:
-
 https://github.com/beave/sagan-rules
 
