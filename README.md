@@ -1,6 +1,6 @@
 
 <pre>
-,-._,-.    Sagan has been configured!
+,-._,-.    Sagan, the advanced Suricata/Snort like log analysis engine!
 \/)"(\/ 
  (_o_)     Champ Clark III & The Quadrant InfoSec Team [quadrantsec.com]
  /   \/)   Copyright (C) 2009-2019 Quadrant Information Security, et al.
