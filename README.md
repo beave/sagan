@@ -49,8 +49,8 @@ Sagan Features:
 * Sagan uses Intra-Process communications between Sagan processes to share data.   Sagan can also use Redis (beta) to share data between Sagan instances within a network.
 * To help reduce “alert fatigue”,  Sagan can “threshold” or only alert “after” certain criteria have been met. 
 
-Were can I get help with Sagan?
--------------------------------
+Where can I get help with Sagan?
+--------------------------------
 
 For more general Sagan information, please visit the offical Sagan web site: 
 https://sagan.quadrantsec.com. 
