@@ -116,8 +116,22 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jdate = json_object_new_string(timebuf);
     json_object_object_add(jobj,"timestamp", jdate);
 
-    json_object *jflow_id = json_object_new_int64( FlowGetId(Event->event_time) );
-    json_object_object_add(jobj,"flow_id", jflow_id);
+    /* If we don't have a flow_id,  create one */
+
+    if ( Event->flow_id == 0 )
+        {
+            json_object *jflow_id = json_object_new_int64( FlowGetId(Event->event_time) );
+            json_object_object_add(jobj,"flow_id", jflow_id);
+        }
+    else
+        {
+
+            /* Get already corresponding flow_id (likely from JSON/suricata) */
+
+            json_object *jflow_id = json_object_new_int64( Event->flow_id );
+            json_object_object_add(jobj,"flow_id", jflow_id);
+        }
+
 
     json_object *jin_iface = json_object_new_string( config->eve_interface );
     json_object_object_add(jobj,"in_iface", jin_iface);

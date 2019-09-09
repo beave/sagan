@@ -35,6 +35,14 @@ struct _JSON_Message_Map
 
     char proto[32];
 
+    char flow_id[32];
+    char md5[32];
+    char sha1[32];
+    char sha256[32];
+    char filename[32];
+    char hostname[32];
+    char url[32];
+
 };
 
 typedef struct _JSON_Message_Map_Found _JSON_Message_Map_Found;
@@ -51,6 +59,14 @@ struct _JSON_Message_Map_Found
     char dst_port[MAXIP];
 
     char proto[5];
+
+    uint64_t flow_id;
+    char md5[MD5_HASH_SIZE+1];
+    char sha1[SHA1_HASH_SIZE+1];
+    char sha256[SHA256_HASH_SIZE+1];
+    char filename[MAX_FILENAME_SIZE+1];
+    char hostname[MAX_HOSTNAME_SIZE+1];
+    char url[MAX_URL_SIZE+1];
 
 };
 

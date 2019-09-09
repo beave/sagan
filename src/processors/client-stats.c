@@ -134,8 +134,8 @@ void Client_Stats_Handler( void )
                 }
 
 
-	    gettimeofday(&tp, 0);
-	    CreateIsoTimeString(&tp, timebuf, sizeof(timebuf));
+            gettimeofday(&tp, 0);
+            CreateIsoTimeString(&tp, timebuf, sizeof(timebuf));
 
             jobj = json_object_new_object();
 

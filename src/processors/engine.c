@@ -322,7 +322,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 #ifdef HAVE_LIBFASTJSON
 
             /* If we've already located the source/destination IP address in JSON,  we can
-               set it here.  "normalize" and "parse_*_ip can still over rider */
+               set it here.  "normalize" and "parse_*_ip can still over ride */
 
             if ( SaganProcSyslog_LOCAL->json_src_flag == true )
                 {
@@ -352,6 +352,35 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 {
                     proto = SaganProcSyslog_LOCAL->proto;
                 }
+
+            if ( SaganProcSyslog_LOCAL->md5[0] != '\0' )
+                {
+                    md5_hash = SaganProcSyslog_LOCAL->md5;
+                }
+
+            if ( SaganProcSyslog_LOCAL->sha1[0] != '\0' )
+                {
+                    sha1_hash = SaganProcSyslog_LOCAL->sha1;
+                }
+
+            if ( SaganProcSyslog_LOCAL->sha256[0] != '\0' )
+                {
+                    sha256_hash = SaganProcSyslog_LOCAL->sha256;
+                }
+
+            if ( SaganProcSyslog_LOCAL->filename[0] != '\0' )
+                {
+                    normalize_filename = SaganProcSyslog_LOCAL->filename;
+                }
+
+            if ( SaganProcSyslog_LOCAL->hostname[0] != '\0' )
+                {
+                    char tmp_normalize_http_uri[MAX_HOSTNAME_SIZE + MAX_URL_SIZE] = { 0 };
+                    snprintf(tmp_normalize_http_uri, sizeof(tmp_normalize_http_uri), "%s%s", SaganProcSyslog_LOCAL->hostname, SaganProcSyslog_LOCAL->url);
+                    normalize_http_uri = tmp_normalize_http_uri;
+                }
+
+
 
 #endif
 

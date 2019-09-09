@@ -104,6 +104,14 @@ void Load_Message_JSON_Map ( const char *json_map )
             JSON_Message_Map[counters->json_message_map].dst_port[0] = '\0';
             JSON_Message_Map[counters->json_message_map].proto[0] = '\0';
 
+            //JSON_Message_Map[counters->json_message_map].flow_id = 0;
+            JSON_Message_Map[counters->json_message_map].md5[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].sha1[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].sha256[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].filename[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].url[0] = '\0';
+
             json_obj = json_tokener_parse(json_message_map_buf);
 
             if ( json_obj == NULL )
@@ -147,6 +155,42 @@ void Load_Message_JSON_Map ( const char *json_map )
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].proto,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].proto));
                 }
+
+            if ( json_object_object_get_ex(json_obj, "flow_id", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].flow_id,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].flow_id));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "md5", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].md5,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].md5));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "sha1", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].sha1,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].sha1));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "sha256", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].sha256,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].sha256));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "filename", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].filename,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].filename));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].hostname));
+                }
+
+            if ( json_object_object_get_ex(json_obj, "url", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].url,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].url));
+                }
+
 
             counters->json_message_map++;
 
@@ -279,8 +323,19 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                         }
 
 
-                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message, &tmp))
+
+                    if ( !strcmp(JSON_Message_Map[i].message, "%JSON%" ) )
                         {
+                            strlcpy( JSON_Message_Map_Found[i].message, SaganProcSyslog_LOCAL->syslog_message, sizeof(JSON_Message_Map_Found[i].message) );
+                            has_message = true;
+                            score++;
+                        }
+
+                    else if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message, &tmp))
+                        {
+
+                            strlcpy(JSON_Message_Map_Found[i].message, SaganProcSyslog_LOCAL->syslog_message, sizeof(JSON_Message_Map_Found[i].message));
+
                             strlcpy(JSON_Message_Map_Found[i].message, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].message));
                             has_message = true;
                             score++;
@@ -322,6 +377,51 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
+
+                    /* Suricata specific */
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].flow_id, &tmp))
+                        {
+                            JSON_Message_Map_Found[i].flow_id = atol( json_object_get_string(tmp) );
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].md5, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].md5, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].md5));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].sha1, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].sha1, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].sha1));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].sha256, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].sha256, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].sha256));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].filename, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].filename, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].filename));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].hostname, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].hostname, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].hostname));
+                            score++;
+                        }
+
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].url, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].url, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].url));
+                            score++;
+                        }
+
                     json_object_put(json_obj);
 
                 }
@@ -360,6 +460,39 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             /* Put JSON values into place */
 
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+            SaganProcSyslog_LOCAL->flow_id = JSON_Message_Map_Found[pos].flow_id;
+
+            if ( JSON_Message_Map_Found[pos].md5[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->md5, JSON_Message_Map_Found[pos].md5, sizeof(SaganProcSyslog_LOCAL->md5));
+                }
+
+            if ( JSON_Message_Map_Found[pos].sha1[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha1, JSON_Message_Map_Found[pos].sha1, sizeof(SaganProcSyslog_LOCAL->sha1));
+                }
+
+            if ( JSON_Message_Map_Found[pos].sha256[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha256, JSON_Message_Map_Found[pos].sha256, sizeof(SaganProcSyslog_LOCAL->sha256));
+                }
+
+            if ( JSON_Message_Map_Found[pos].filename[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->filename, JSON_Message_Map_Found[pos].filename, sizeof(SaganProcSyslog_LOCAL->filename));
+                }
+
+            if ( JSON_Message_Map_Found[pos].hostname[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->hostname, JSON_Message_Map_Found[pos].hostname, sizeof(SaganProcSyslog_LOCAL->hostname));
+                }
+
+            if ( JSON_Message_Map_Found[pos].url[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->url, JSON_Message_Map_Found[pos].url, sizeof(SaganProcSyslog_LOCAL->url));
+                }
+
 
             if ( JSON_Message_Map_Found[pos].src_ip[0] != '\0' )
                 {

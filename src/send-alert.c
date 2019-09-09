@@ -104,6 +104,8 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, json_object *json_n
     SaganProcessorEvent->bluedot_json       =    bluedot_json;
     SaganProcessorEvent->bluedot_results    =    bluedot_results;
 
+    SaganProcessorEvent->flow_id	    =    SaganProcSyslog_LOCAL->flow_id;
+
 
     Output ( SaganProcessorEvent );
     free(SaganProcessorEvent);
