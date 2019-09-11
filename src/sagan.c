@@ -898,6 +898,7 @@ int main(int argc, char **argv)
             Sagan_Log(NORMAL, "Bluedot Hash Cache Size: %" PRIu64 "", config->bluedot_hash_max_cache);
             Sagan_Log(NORMAL, "Bluedot URL Cache Size: %" PRIu64 "", config->bluedot_url_max_cache);
             Sagan_Log(NORMAL, "Bluedot Filename Cache Size: %" PRIu64 "", config->bluedot_filename_max_cache);
+            Sagan_Log(NORMAL, "Bluedot JA3 Cache Size: %" PRIu64 "", config->bluedot_ja3_max_cache);
 
         }
 

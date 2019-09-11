@@ -59,12 +59,15 @@ struct _Sagan_Bluedot_IP_Cache *SaganBluedotIPCache = NULL;
 struct _Sagan_Bluedot_Hash_Cache *SaganBluedotHashCache = NULL;
 struct _Sagan_Bluedot_URL_Cache *SaganBluedotURLCache = NULL;
 struct _Sagan_Bluedot_Filename_Cache *SaganBluedotFilenameCache = NULL;
+struct _Sagan_Bluedot_JA3_Cache *SaganBluedotJA3Cache = NULL;
+
 struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList = NULL;
 
 struct _Sagan_Bluedot_IP_Queue *SaganBluedotIPQueue = NULL;
 struct _Sagan_Bluedot_Hash_Queue *SaganBluedotHashQueue = NULL;
 struct _Sagan_Bluedot_URL_Queue *SaganBluedotURLQueue = NULL;
 struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue = NULL;
+struct _Sagan_Bluedot_JA3_Queue *SaganBluedotJA3Queue = NULL;
 
 struct _Rule_Struct *rulestruct;
 
@@ -75,6 +78,8 @@ pthread_mutex_t SaganProcBluedotIPWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotHashWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotURLWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t SaganProcBluedotFilenameWorkMutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t SaganProcBluedotJA3WorkMutex=PTHREAD_MUTEX_INITIALIZER;
+
 
 bool bluedot_cache_clean_lock=0;
 bool bluedot_dns_global=0;
@@ -142,6 +147,19 @@ void Sagan_Bluedot_Init(void)
 
     memset(SaganBluedotFilenameCache, 0, config->bluedot_filename_max_cache * sizeof(_Sagan_Bluedot_Filename_Cache));
 
+    /* Bluedot JA3 Cache */
+
+    SaganBluedotJA3Cache = malloc(config->bluedot_ja3_max_cache * sizeof(struct _Sagan_Bluedot_JA3_Cache));
+
+    if ( SaganBluedotJA3Cache == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Cache. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SaganBluedotJA3Cache, 0, config->bluedot_ja3_max_cache * sizeof(_Sagan_Bluedot_JA3_Cache));
+
+    /* ------------------ Queues ------------------------------------------------------ */
+
     /* Bluedot IP Queue */
 
     SaganBluedotIPQueue = malloc(config->bluedot_ip_queue * sizeof(struct _Sagan_Bluedot_IP_Queue));
@@ -186,6 +204,17 @@ void Sagan_Bluedot_Init(void)
         }
 
     memset(SaganBluedotFilenameQueue, 0, config->bluedot_filename_queue * sizeof(_Sagan_Bluedot_Filename_Queue));
+
+    /* Bluedot JA3 Queue */
+
+    SaganBluedotJA3Queue = malloc(config->bluedot_ja3_queue * sizeof(struct _Sagan_Bluedot_JA3_Queue));
+
+    if ( SaganBluedotJA3Queue == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Queue. Abort!", __FILE__, __LINE__);
+        }
+
+    memset(SaganBluedotJA3Queue, 0, config->bluedot_ja3_queue * sizeof(_Sagan_Bluedot_JA3_Queue));
 
 }
 
@@ -288,6 +317,26 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
+    else if ( type == BLUEDOT_LOOKUP_JA3 )
+        {
+
+            for  (i=0; i<config->bluedot_ja3_queue; i++)
+                {
+
+                    if ( !strcasecmp(data, SaganBluedotJA3Queue[i].ja3 ) )
+                        {
+
+                            pthread_mutex_lock(&SaganProcBluedotJA3WorkMutex);
+                            memset(SaganBluedotJA3Queue[i].ja3, 0, sizeof(SaganBluedotJA3Queue[i].ja3));
+                            pthread_mutex_unlock(&SaganProcBluedotJA3WorkMutex);
+                        }
+
+                }
+
+            __atomic_sub_fetch(&counters->bluedot_ja3_queue_current, 1, __ATOMIC_SEQ_CST);
+
+        }
+
     return(true);
 }
 
@@ -363,8 +412,6 @@ void Sagan_Bluedot_Load_Cat(void)
 
                     __atomic_add_fetch(&counters->bluedot_cat_count, 1, __ATOMIC_SEQ_CST);
 
-
-
                 }
         }
 
@@ -433,6 +480,11 @@ void Sagan_Bluedot_Check_Cache_Time (void)
             Sagan_Log(NORMAL, "[%s, line %d] Out of URL cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
 
+    if ( counters->bluedot_ja3_cache_count >= config->bluedot_ja3_max_cache )
+        {
+            Sagan_Log(NORMAL, "[%s, line %d] Out of JA3 cache space! Considering increasing cache size!", __FILE__, __LINE__);
+        }
+
 }
 
 /****************************************************************************
@@ -450,6 +502,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
     int new_bluedot_hash_max_cache = 0;
     int new_bluedot_url_max_cache = 0;
     int new_bluedot_filename_max_cache = 0;
+    int new_bluedot_ja3_max_cache = 0;
 
     char  timet[20] = { 0 };
     time_t t;
@@ -633,6 +686,48 @@ void Sagan_Bluedot_Clean_Cache ( void )
 
     Sagan_Log(NORMAL, "[%s, line %d] Deleted %d Filenames from Bluedot cache. New Filename cache count is %d.",__FILE__, __LINE__, deleted_count, counters->bluedot_filename_cache_count);
 
+    /* Clean JA3 cache */
+
+    deleted_count = 0;
+
+    for (i=0; i < config->bluedot_ja3_max_cache; i++ )
+        {
+
+            if ( ( timeint - SaganBluedotJA3Cache[i].cache_utime ) > config->bluedot_timeout )
+                {
+
+                    if (debug->debugbluedot)
+                        {
+                            Sagan_Log(DEBUG, "[%s, line %d] == Deleting JA3 from cache -> %s",  __FILE__, __LINE__, SaganBluedotJA3Cache[i].ja3);
+                        }
+
+                    pthread_mutex_lock(&SaganProcBluedotJA3WorkMutex);
+
+                    memset(SaganBluedotJA3Cache[i].ja3, 0, sizeof(SaganBluedotJA3Cache[i].ja3));
+                    SaganBluedotFilenameCache[i].cache_utime = 0;
+                    SaganBluedotFilenameCache[i].alertid = 0;
+
+                    pthread_mutex_unlock(&SaganProcBluedotJA3WorkMutex);
+
+                    deleted_count++;
+
+                }
+            else
+                {
+
+                    new_bluedot_ja3_max_cache++;
+
+                }
+        }
+
+    pthread_mutex_lock(&SaganProcBluedotJA3WorkMutex);
+    deleted_count = counters->bluedot_ja3_cache_count - new_bluedot_ja3_max_cache;
+    counters->bluedot_ja3_cache_count = new_bluedot_ja3_max_cache;
+    pthread_mutex_unlock(&SaganProcBluedotJA3WorkMutex);
+
+    Sagan_Log(NORMAL, "[%s, line %d] Deleted %d JA3 hashes from Bluedot cache. New Filename cache count is %d.",__FILE__, __LINE__, deleted_count, counters->bluedot_ja3_cache_count);
+
+
 }
 
 /***************************************************************************
@@ -646,6 +741,7 @@ void Sagan_Bluedot_Clean_Cache ( void )
  * 2 == Hash
  * 3 == URL
  * 4 == Filename
+ * 5 == JA3
  */
 
 unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_position, char *bluedot_str, size_t bluedot_size )
@@ -737,7 +833,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
         {
 
             /* For some reason, when I try to use the IP2Bit passed from engine.c,  it
-                   is sometimes 16 bytes off!  Not idea why and doesn't happen all the time.
+               is sometimes 16 bytes off!  Not idea why and doesn't happen all the time.
                We call IP2Bit here to prevent it from getting off :(  Champ 2019/05/14 */
 
             IP2Bit(data, ip_convert);
@@ -1085,6 +1181,78 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             snprintf(tmpurl, sizeof(tmpurl), "http://%s/%s%s%s", config->bluedot_ip, config->bluedot_uri, BLUEDOT_FILENAME_LOOKUP_URL, data);
         }
 
+    else if ( type == BLUEDOT_LOOKUP_JA3 )
+        {
+
+            for (i=0; i<counters->bluedot_ja3_cache_count; i++)
+                {
+
+                    if (!strcasecmp(data, SaganBluedotJA3Cache[i].ja3))
+                        {
+
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(DEBUG, "[%s, line %d] Pulled file JA3 '%s' from Bluedot JA3 cache with category of \"%d\".", __FILE__, __LINE__, data, SaganBluedotJA3Cache[i].alertid);
+                                }
+
+                            __atomic_add_fetch(&counters->bluedot_ja3_cache_hit, 1, __ATOMIC_SEQ_CST);
+
+                            snprintf(bluedot_str, bluedot_size, "%s",  SaganBluedotJA3Cache[i].bluedot_json);
+                            return(SaganBluedotJA3Cache[i].alertid);
+
+                        }
+
+                }
+
+            /* Check Bluedot JA3 Queue,  make sure we aren't looking up something that is already being looked up */
+
+            for (i=0; i < config->bluedot_ja3_queue; i++)
+                {
+                    if ( !strcasecmp(SaganBluedotJA3Queue[i].ja3, data ) )
+                        {
+                            if (debug->debugbluedot)
+                                {
+                                    Sagan_Log(DEBUG, "[%s, line %d] %s is already being looked up. Skipping....", __FILE__, __LINE__, data);
+                                }
+
+                            return(false);
+                        }
+                }
+
+
+            /* If not in Bluedot JA3 queue,  add it */
+
+            if ( counters->bluedot_ja3_queue_current >= config->bluedot_ja3_queue )
+                {
+                    Sagan_Log(NORMAL, "[%s, line %d] Out of JA3 queue space! Considering increasing cache size!", __FILE__, __LINE__);
+                    return(false);
+                }
+
+
+            for (i=0; i < config->bluedot_ja3_queue; i++)
+                {
+
+                    /* Find an empty slot */
+
+                    if ( SaganBluedotJA3Queue[i].ja3[0] == 0 )
+                        {
+                            pthread_mutex_lock(&SaganProcBluedotJA3WorkMutex);
+
+                            strlcpy(SaganBluedotJA3Queue[i].ja3, data, sizeof(SaganBluedotJA3Queue[i].ja3));
+                            counters->bluedot_ja3_queue_current++;
+
+                            pthread_mutex_unlock(&SaganProcBluedotJA3WorkMutex);
+
+                            break;
+
+                        }
+                }
+
+            snprintf(tmpurl, sizeof(tmpurl), "http://%s/%s%s%s", config->bluedot_ip, config->bluedot_uri, BLUEDOT_FILENAME_LOOKUP_URL, data);
+        }
+
+
+
     snprintf(tmpdeviceid, sizeof(tmpdeviceid), "X-BLUEDOT-DEVICEID: %s", config->bluedot_device_id);
 
     /* Do the Bluedot API call */
@@ -1117,8 +1285,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             Sagan_Log(WARN, "[%s, line %d] Bluedot returned a empty \"response\".", __FILE__, __LINE__);
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
-
-            //Sagan_Bluedot_Clean_Queue(data, type);
 
             return(false);
         }
@@ -1174,8 +1340,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
 
-            //Sagan_Bluedot_Clean_Queue(data, type);
-
             return(false);
         }
 
@@ -1191,7 +1355,6 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     if ( bluedot_alertid == -1 )
         {
             Sagan_Log(WARN, "Bluedot reports an invalid API key.  Lookup aborted!");
-            //Sagan_Bluedot_Clean_Queue(data, type);
             counters->bluedot_error_count++;
             return(false);
         }
@@ -1314,6 +1477,23 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             pthread_mutex_unlock(&SaganProcBluedotFilenameWorkMutex);
         }
 
+    /* JA3 Lookup */
+
+    else if ( type == BLUEDOT_LOOKUP_JA3 )
+        {
+
+            pthread_mutex_lock(&SaganProcBluedotJA3WorkMutex);
+
+            counters->bluedot_ja3_total++;
+
+            strlcpy(SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].ja3, data, sizeof(SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].ja3));
+            strlcpy(SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].bluedot_json, bluedot_json, sizeof(SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].bluedot_json));
+            SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].cache_utime = epoch_time;
+            SaganBluedotJA3Cache[counters->bluedot_ja3_cache_count].alertid = bluedot_alertid;
+            counters->bluedot_ja3_cache_count++;
+
+            pthread_mutex_unlock(&SaganProcBluedotJA3WorkMutex);
+        }
 
     Sagan_Bluedot_Clean_Queue(data, type);	/* Remove item for "queue" */
 
@@ -1399,6 +1579,24 @@ int Sagan_Bluedot_Cat_Compare ( unsigned char bluedot_results, int rule_position
                 }
             return(false);
         }
+
+
+    if ( type == BLUEDOT_LOOKUP_JA3 )
+        {
+            for ( i = 0; i < rulestruct[rule_position].bluedot_ja3_cat_count; i++ )
+                {
+
+                    if ( bluedot_results == rulestruct[rule_position].bluedot_ja3_cats[i] )
+                        {
+                            __atomic_add_fetch(&counters->bluedot_ja3_positive_hit, 1, __ATOMIC_SEQ_CST);
+
+                            return(true);
+
+                        }
+                }
+            return(false);
+        }
+
 
     return(false);
 }
@@ -1503,6 +1701,31 @@ void Sagan_Verify_Categories( char *categories, int rule_number, const char *rul
                                         }
                                 }
 
+                            if ( type == BLUEDOT_LOOKUP_FILENAME )
+                                {
+                                    if ( rulestruct[rule_number].bluedot_filename_cat_count <= BLUEDOT_MAX_CAT )
+                                        {
+                                            rulestruct[rule_number].bluedot_filename_cats[rulestruct[rule_number].bluedot_filename_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                            rulestruct[rule_number].bluedot_filename_cat_count++;
+                                        }
+                                    else
+                                        {
+                                            Sagan_Log(WARN, "[%s, line %d] To many Bluedot Filename catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                        }
+                                }
+
+                            if ( type == BLUEDOT_LOOKUP_JA3 )
+                                {
+                                    if ( rulestruct[rule_number].bluedot_ja3_cat_count <= BLUEDOT_MAX_CAT )
+                                        {
+                                            rulestruct[rule_number].bluedot_ja3_cats[rulestruct[rule_number].bluedot_ja3_cat_count] =  SaganBluedotCatList[i].cat_number;
+                                            rulestruct[rule_number].bluedot_ja3_cat_count++;
+                                        }
+                                    else
+                                        {
+                                            Sagan_Log(WARN, "[%s, line %d] To many Bluedot JA3 catagories detected in %s at line %d", __FILE__, __LINE__, ruleset, linecount);
+                                        }
+                                }
 
                         }
                 }

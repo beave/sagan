@@ -1633,6 +1633,17 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
+                                    else if (!strcmp(last_pass, "max-ja3-cache") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_ja3_max_cache = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_ja3_max_cache == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'max-ja3-cache' has to be a non-zero value. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
+
                                     else if (!strcmp(last_pass, "ip-queue") && config->bluedot_flag == true )
                                         {
                                             Var_To_Value(value, tmp, sizeof(tmp));
@@ -1678,6 +1689,16 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
+                                    else if (!strcmp(last_pass, "ja3-queue") && config->bluedot_flag == true )
+                                        {
+                                            Var_To_Value(value, tmp, sizeof(tmp));
+                                            config->bluedot_ja3_queue = strtoull(tmp, NULL, 10);
+
+                                            if ( config->bluedot_ja3_queue == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'bluedot' - 'ja3-queue' has to be a non-zero value. Abort!!", __FILE__, __LINE__);
+                                                }
+                                        }
 
                                     else if (!strcmp(last_pass, "cache-timeout") && config->bluedot_flag == true )
                                         {

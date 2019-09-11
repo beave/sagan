@@ -316,9 +316,13 @@ struct _Rule_Struct
     int   bluedot_filename_cats[BLUEDOT_MAX_CAT];
     int   bluedot_filename_cat_count;
 
+    int   bluedot_ja3_cats[BLUEDOT_MAX_CAT];
+    int   bluedot_ja3_cat_count;
+
     bool bluedot_file_hash;
     bool bluedot_url;
     bool bluedot_filename;
+    bool bluedot_ja3;
 
 #endif
 

@@ -185,6 +185,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char *normalize_filename = NULL;
     char *normalize_http_uri = NULL;
     char *normalize_http_hostname = NULL;
+    char *normalize_ja3 = NULL;
 
 #ifdef HAVE_LIBMAXMINDDB
 
@@ -199,6 +200,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     bool bluedot_hash_flag = 0;
     bool bluedot_url_flag = 0;
     bool bluedot_filename_flag = 0;
+    bool bluedot_ja3_flag = 0;
 
 #endif
 
@@ -380,10 +382,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     normalize_http_uri = tmp_normalize_http_uri;
                 }
 
+	    if ( SaganProcSyslog_LOCAL->ja3[0] != '\0' )
+		{
+		     normalize_ja3 = SaganProcSyslog_LOCAL->ja3;
+		}
 
 
 #endif
-
 
             /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
 
@@ -742,6 +747,13 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     liblognorm_status = 1;
                                                     normalize_filename = SaganNormalizeLiblognorm.filename;
                                                 }
+
+                                            if ( SaganNormalizeLiblognorm.ja3[0] != '\0' )
+                                                {
+                                                    liblognorm_status = 1;
+                                                    normalize_ja3 = SaganNormalizeLiblognorm.ja3;
+                                                }
+	
                                         }
 
                                     if ( liblognorm_status == 1  && rulestruct[b].normalize == 1 )
@@ -1140,7 +1152,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_src, b );
                                                 }
 
-                                            else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
+                                            else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 2 )
                                                 {
                                                     geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
                                                 }
@@ -1334,6 +1346,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                 }
 
+                                            if ( rulestruct[b].bluedot_ja3 && normalize_ja3 != NULL )
+                                                {
+
+                                                    bluedot_results = Sagan_Bluedot_Lookup( normalize_ja3, BLUEDOT_LOOKUP_JA3, b, bluedot_json, sizeof(bluedot_json));
+                                                    bluedot_ja3_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_JA3);
+
+                                                }
+
+
+
                                             /* Do cleanup at the end in case any "hits" above refresh the cache.  This why we don't
                                              * "delete" an entry only to re-add it! */
 
@@ -1455,6 +1477,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                                                     if ( config->bluedot_flag == false || rulestruct[b].bluedot_file_hash == false || ( rulestruct[b].bluedot_file_hash == true && bluedot_hash_flag == true ))
                                                                                                         {
 
+// HERE CHAMP
                                                                                                             if ( config->bluedot_flag == false || rulestruct[b].bluedot_filename == false || ( rulestruct[b].bluedot_filename == true && bluedot_filename_flag == true ))
                                                                                                                 {
 

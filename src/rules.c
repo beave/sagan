@@ -3243,9 +3243,28 @@ void Load_Rules( const char *ruleset )
 
                                         }
 
+                                    if ( Sagan_strstr(tmptoken, "ja3" ))
+                                        {
+                                            rulestruct[counters->rulecount].bluedot_ja3 = true;
+
+                                            tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
+
+                                            if ( tmptok_tmp == NULL )
+                                                {
+                                                    bad_rule = true;
+                                                    Sagan_Log(WARN, "[%s, line %d] %s at line %d has no Bluedot categories defined, skipping rule!", __FILE__, __LINE__, ruleset_fullname, linecount, tmptok_tmp);
+                                                    continue;
+                                                }
+
+                                            Var_To_Value(tmptok_tmp, tmp1, sizeof(tmp1));
+
+                                            Sagan_Verify_Categories( tmp1, counters->rulecount, ruleset_fullname, linecount, BLUEDOT_LOOKUP_HASH);
+                                        }
+
+
                                     if ( Sagan_strstr(tmptoken, "file_hash" ))
                                         {
-                                            rulestruct[counters->rulecount].bluedot_file_hash = 1;
+                                            rulestruct[counters->rulecount].bluedot_file_hash = true;
 
                                             tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 
@@ -3264,7 +3283,7 @@ void Load_Rules( const char *ruleset )
                                     if ( Sagan_strstr(tmptoken, "url" ))
 
                                         {
-                                            rulestruct[counters->rulecount].bluedot_url = 1;
+                                            rulestruct[counters->rulecount].bluedot_url = true;
 
                                             tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 
@@ -3283,7 +3302,7 @@ void Load_Rules( const char *ruleset )
 
                                     if ( Sagan_strstr(tmptoken, "filename" ))
                                         {
-                                            rulestruct[counters->rulecount].bluedot_filename = 1;
+                                            rulestruct[counters->rulecount].bluedot_filename = true;
 
                                             tmptok_tmp = strtok_r(NULL, ";", &saveptrrule2);   /* Support var's */
 

@@ -362,11 +362,13 @@ processors:
       max-hash-cache: 10000
       max-url-cache: 20000
       max-filename-cache: 1000
+      max-ja3-cache: 10000
 
       ip-queue: 1000
       hash-queue: 100
       url-queue: 1000
       filename-queue: 1000
+      ja3-queue: 1000
 
       host: "bluedot.qis.io"
       ttl: 86400

@@ -274,6 +274,7 @@ struct _SaganCounters
     int bluedot_hash_queue_current;
     int bluedot_url_queue_current;
     int bluedot_filename_queue_current;
+    int bluedot_ja3_queue_current;
 
     uint64_t bluedot_mdate;					   /* Hits , but where over a modification date */
     uint64_t bluedot_cdate;            	                   /* Hits , but where over a creation date */
@@ -295,6 +296,12 @@ struct _SaganCounters
     uint64_t bluedot_filename_cache_hit;
     uint64_t bluedot_filename_positive_hit;
     uint64_t bluedot_filename_total;
+
+    uint64_t bluedot_ja3_cache_count;
+    uint64_t bluedot_ja3_cache_hit;
+    uint64_t bluedot_ja3_positive_hit;
+    uint64_t bluedot_ja3_total;
+
 
     int bluedot_cat_count;
 
@@ -404,6 +411,7 @@ struct _Sagan_Proc_Syslog
     char filename[MAX_FILENAME_SIZE+1];
     char hostname[MAX_HOSTNAME_SIZE+1];
     char url[MAX_URL_SIZE+1];
+    char ja3[MD5_HASH_SIZE+1];
 
 
 #endif

@@ -36,11 +36,13 @@
 #define BLUEDOT_HASH_LOOKUP_URL "&hash="
 #define BLUEDOT_FILENAME_LOOKUP_URL "&filename="
 #define BLUEDOT_URL_LOOKUP_URL "&url="
+#define BLUEDOT_JA3_LOOKUP_URL "&ja3="
 
 #define BLUEDOT_LOOKUP_IP 1
 #define BLUEDOT_LOOKUP_HASH 2
 #define BLUEDOT_LOOKUP_URL 3
 #define BLUEDOT_LOOKUP_FILENAME 4
+#define BLUEDOT_LOOKUP_JA3 5
 
 int Sagan_Bluedot_Cat_Compare ( unsigned char, int, unsigned char );
 int Sagan_Bluedot ( _Sagan_Proc_Syslog *, int  );
@@ -93,7 +95,6 @@ struct _Sagan_Bluedot_URL_Cache
     int alertid;
 };
 
-
 typedef struct _Sagan_Bluedot_Filename_Cache _Sagan_Bluedot_Filename_Cache;
 struct _Sagan_Bluedot_Filename_Cache
 {
@@ -102,6 +103,16 @@ struct _Sagan_Bluedot_Filename_Cache
     char bluedot_json[BLUEDOT_JSON_SIZE];
     int alertid;
 };
+
+typedef struct _Sagan_Bluedot_JA3_Cache _Sagan_Bluedot_JA3_Cache;
+struct _Sagan_Bluedot_JA3_Cache
+{
+    char ja3[MD5_HASH_SIZE+1];
+    uint64_t cache_utime;
+    char bluedot_json[BLUEDOT_JSON_SIZE];
+    int alertid;
+};
+
 
 typedef struct _Sagan_Bluedot_IP_Queue _Sagan_Bluedot_IP_Queue;
 struct _Sagan_Bluedot_IP_Queue
@@ -126,6 +137,13 @@ struct _Sagan_Bluedot_Filename_Queue
 {
     char filename[256];
 };
+
+typedef struct _Sagan_Bluedot_JA3_Queue _Sagan_Bluedot_JA3_Queue;
+struct _Sagan_Bluedot_JA3_Queue
+{
+    char ja3[MD5_HASH_SIZE+1];
+};
+
 
 
 typedef struct _Sagan_Bluedot_Skip _Sagan_Bluedot_Skip;
