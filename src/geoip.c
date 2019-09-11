@@ -147,7 +147,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
             Sagan_Log(WARN, "Country code MMDB_get_value failure (%s) for %s.", MMDB_strerror(res), ipaddr);
 	
-//            __atomic_add_fetch(&counters->geoip2_miss, 1, __ATOMIC_SEQ_CST);
+            __atomic_add_fetch(&counters->geoip2_error, 1, __ATOMIC_SEQ_CST);
 
             return(GEOIP_SKIP);
 
@@ -160,8 +160,6 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                 {
                     Sagan_Log(DEBUG, "Country code for %s not found in GeoIP DB", ipaddr);
                 }
-
-	    __atomic_add_fetch(&counters->geoip2_miss, 1, __ATOMIC_SEQ_CST);
 
             return(GEOIP_SKIP);
         }
@@ -193,8 +191,6 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                             Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
                         }
 
-		    __atomic_add_fetch(&counters->geoip2_hit, 1, __ATOMIC_SEQ_CST);
-
                     return(GEOIP_HIT);  /* GeoIP was found / there was a hit */
                 }
 
@@ -203,7 +199,6 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
     if (debug->debuggeoip2) Sagan_Log(DEBUG, "GeoIP Status: Not found in user defined values.");
 
-    __atomic_add_fetch(&counters->geoip2_miss, 1, __ATOMIC_SEQ_CST);
     return(GEOIP_MISS);
 }
 

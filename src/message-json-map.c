@@ -126,6 +126,13 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
                 }
 
+	    /* Suricata event_type == program */
+
+            if ( json_object_object_get_ex(json_obj, "event_type", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
+                }
+
             if ( json_object_object_get_ex(json_obj, "message", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].message,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].message));

@@ -138,7 +138,9 @@ void Statistics( void )
 #ifdef HAVE_LIBMAXMINDDB
             Sagan_Log(NORMAL, "           GeoIP Hits:                : %" PRIu64 " (%.3f%%)", counters->geoip2_hit, CalcPct( counters->geoip2_hit, counters->events_received) );
             Sagan_Log(NORMAL, "           GeoIP Lookups:             : %" PRIu64 "", counters->geoip2_lookup);
-            Sagan_Log(NORMAL, "           GeoIP Misses               : %" PRIu64 "", counters->geoip2_miss);
+            Sagan_Log(NORMAL, "           GeoIP Errors               : %" PRIu64 "", counters->geoip2_error);
+#
+
 #endif
 
             uptime_days = seconds / 86400;

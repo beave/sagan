@@ -2021,14 +2021,14 @@ void Load_Rules( const char *ruleset )
 
                         }
 
-                    if (!strcmp(rulesplit, "program" ))
+                    if (!strcmp(rulesplit, "program" ) || !strcmp(rulesplit, "event_type" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
                             if (arg == NULL )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] The \"program\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    Sagan_Log(WARN, "[%s, line %d] The \"program\" or \"event_type\" appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
                                     continue;
                                 }
 

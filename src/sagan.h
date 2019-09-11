@@ -256,9 +256,9 @@ struct _SaganCounters
     uint64_t follow_flow_drop;   /* Amount of flows that did not match and were dropped */
 
 #ifdef HAVE_LIBMAXMINDDB
-    uint64_t geoip2_hit;				/* GeoIP2 hit count */
+    uint64_t geoip2_hit;				/* GeoIP hit count */
     uint64_t geoip2_lookup;				/* Total lookups */
-    uint64_t geoip2_miss;				/* Misses (country not found) */
+    uint64_t geoip2_error;				/* Lookup Errors */
     int	     geoip_skip_count;
 #endif
 

@@ -163,8 +163,8 @@ void Sagan_Perfmonitor_Handler( void )
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_hit - last_geoip2_hit);
                     last_geoip2_hit = counters->geoip2_hit;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_miss - last_geoip2_miss);
-                    last_geoip2_miss = counters->geoip2_miss;
+                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", 0);
+                    //last_geoip2_miss = counters->geoip2_miss;
 
 #endif
 
