@@ -148,12 +148,27 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
                 }
 
+	    /* Suricata compatibility */
+
+            if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
+                }
+
+
             if ( json_object_object_get_ex(json_obj, "src_port", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].src_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_port));
                 }
 
             if ( json_object_object_get_ex(json_obj, "dst_port", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
+                }
+
+	    /* Suricata compatibility */
+
+            if ( json_object_object_get_ex(json_obj, "dest_port", &tmp))
                 {
                     strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
                 }
