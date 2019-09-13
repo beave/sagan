@@ -134,6 +134,8 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
     SaganNormalizeLiblognorm->http_uri[0] = '\0';
     SaganNormalizeLiblognorm->http_hostname[0] = '\0';
 
+    SaganNormalizeLiblognorm->ja3[0] = '\0';
+
     SaganNormalizeLiblognorm->src_port = 0;
     SaganNormalizeLiblognorm->dst_port = 0;
 
@@ -304,6 +306,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             Sagan_Log(DEBUG, "HTTP URI: %s", SaganNormalizeLiblognorm->http_uri);
             Sagan_Log(DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
             Sagan_Log(DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
+            Sagan_Log(DEBUG, "JA3: %s",  SaganNormalizeLiblognorm->ja3);
 
             Sagan_Log(DEBUG, "");
         }

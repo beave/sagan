@@ -56,6 +56,8 @@ void Load_Message_JSON_Map ( const char *json_map )
 {
 
     struct json_object *json_obj = NULL;
+//    struct json_object *json_obj2 = NULL;
+
     struct json_object *tmp = NULL;
 
     FILE *json_message_map_file;
@@ -111,6 +113,7 @@ void Load_Message_JSON_Map ( const char *json_map )
             JSON_Message_Map[counters->json_message_map].filename[0] = '\0';
             JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
             JSON_Message_Map[counters->json_message_map].url[0] = '\0';
+            JSON_Message_Map[counters->json_message_map].ja3[0] = '\0';
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
@@ -126,7 +129,7 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
                 }
 
-	    /* Suricata event_type == program */
+            /* Suricata event_type == program */
 
             if ( json_object_object_get_ex(json_obj, "event_type", &tmp))
                 {
@@ -148,7 +151,7 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
                 }
 
-	    /* Suricata compatibility */
+            /* Suricata compatibility */
 
             if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp))
                 {
@@ -166,7 +169,7 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
                 }
 
-	    /* Suricata compatibility */
+            /* Suricata compatibility */
 
             if ( json_object_object_get_ex(json_obj, "dest_port", &tmp))
                 {
@@ -213,6 +216,11 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].url,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].url));
                 }
 
+            if ( json_object_object_get_ex(json_obj, "ja3", &tmp))
+                {
+                    strlcpy(JSON_Message_Map[counters->json_message_map].ja3,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].ja3));
+                }
+
 
             counters->json_message_map++;
 
@@ -252,15 +260,15 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     uint16_t json_str_count=1;
 
     const char *val_str = NULL;
+    const char *val_str2 = NULL;
 
     bool has_message;
     bool found = false;
 
     struct json_object *json_obj = NULL;
-    struct json_object *tmp = NULL;
+    struct json_object *json_obj2 = NULL;
 
-    struct json_object_iterator it;
-    struct json_object_iterator itEnd;
+    struct json_object *tmp = NULL;
 
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
@@ -283,34 +291,68 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             return;
         }
 
-    it = json_object_iter_begin(json_obj);
-    itEnd = json_object_iter_end(json_obj);
 
-    /* Go through all key/values. We do this find nested json */
+
+    if ( debug->debugjson )
+        {
+            Sagan_Log(DEBUG, "Syslog Message: |%s|\n", SaganProcSyslog_LOCAL->syslog_message);
+        }
+
+    struct json_object_iterator it = json_object_iter_begin(json_obj);
+    struct json_object_iterator itEnd = json_object_iter_end(json_obj);
 
     while (!json_object_iter_equal(&it, &itEnd))
         {
 
+            const char *key = json_object_iter_peek_name(&it);
             struct json_object *const val = json_object_iter_peek_value(&it);
-            val_str = json_object_get_string(val);
 
-            if ( val_str[0] == '{' || val_str[1] == '{' )
+            const char *val_str = json_object_get_string(val);
+
+            if ( debug->debugjson )
                 {
-
-                    /* If object looks like JSON, add it to array to be parsed later */
-
-                    if ( json_str_count < JSON_MAX_NEST )
-                        {
-                            strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
-                            json_str_count++;
-                        }
-                    else
-                        {
-                            Sagan_Log(ERROR, "[%s, line %d] Detected JSON past max nest of %d! Skipping extra JSON.", __FILE__, __LINE__, JSON_MAX_NEST);
-                        }
+                    Sagan_Log(DEBUG, "Key: \"%s\", Value: \"%s\"", key, json_object_get_string(val));
                 }
 
+            if ( val_str[0] == '{' )
+                {
+
+                    strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
+                    json_str_count++;
+
+                    /* Look for any second tier/third tier JSON */
+
+                    json_obj2 = json_tokener_parse(val_str);
+
+                    struct json_object_iterator it2 = json_object_iter_begin(json_obj2);
+                    struct json_object_iterator itEnd2 = json_object_iter_end(json_obj2);
+
+                    while (!json_object_iter_equal(&it2, &itEnd2))
+                        {
+
+                            const char *key2 = json_object_iter_peek_name(&it2);
+                            struct json_object *const val2 = json_object_iter_peek_value(&it2);
+
+                            const char *val_str2 = json_object_get_string(val2);
+
+                            if ( val_str2[0] == '{' )
+                                {
+
+                                    strlcpy(json_str[json_str_count], val_str2, sizeof(json_str[json_str_count]));
+                                    json_str_count++;
+
+                                }
+
+                            json_object_iter_next(&it2);
+
+
+                        }
+
+                }
+
+
             json_object_iter_next(&it);
+
         }
 
     if ( debug->debugjson )
@@ -444,6 +486,13 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].ja3, &tmp))
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].ja3, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].ja3));
+                            score++;
+                        }
+
+
                     json_object_put(json_obj);
 
                 }
@@ -538,6 +587,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     SaganProcSyslog_LOCAL->dst_port = atoi(JSON_Message_Map_Found[pos].dst_port);
                 }
 
+            if ( JSON_Message_Map_Found[pos].ja3[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->ja3, JSON_Message_Map_Found[pos].ja3, sizeof(SaganProcSyslog_LOCAL->ja3));
+                }
 
             if ( JSON_Message_Map_Found[pos].proto[0] != '\0' )
                 {
@@ -581,7 +634,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     Sagan_Log(DEBUG, "[%s, line %d] src_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_port );
                     Sagan_Log(DEBUG, "[%s, line %d] dst_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->dst_port );
                     Sagan_Log(DEBUG, "[%s, line %d] proto : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->proto );
-
+                    Sagan_Log(DEBUG, "[%s, line %d] ja3: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->ja3 );
                 }
 
 

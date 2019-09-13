@@ -287,7 +287,7 @@ void Statistics( void )
                     Sagan_Log(NORMAL, "          Filename hits from cache        : %" PRIu64 " (%.3f%%)", counters->bluedot_filename_cache_hit, CalcPct(counters->bluedot_filename_cache_hit, counters->bluedot_filename_cache_count));
                     Sagan_Log(NORMAL, "          Filename/Bluedot hits in logs   : %" PRIu64 "", counters->bluedot_filename_positive_hit);
                     Sagan_Log(NORMAL, "          URL queries per/second          : %lu (%" PRIu64 "/%" PRIu64 ")", bluedot_filename_total, counters->bluedot_filename_queue_current, config->bluedot_filename_queue);
-		    Sagan_Log(NORMAL, "");
+                    Sagan_Log(NORMAL, "");
 
                     Sagan_Log(NORMAL, "          * TLS/JA3 Reputation *");
                     Sagan_Log(NORMAL, "");

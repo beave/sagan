@@ -41,7 +41,6 @@ struct _SaganDebug *debug;
 
 struct _Syslog_JSON_Map *Syslog_JSON_Map;
 
-//void SaganProcSyslog_LOCAL_JSON( char *syslog_string, struct _SaganProcSyslog_LOCAL *SaganProcSyslog_LOCAL )
 void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 

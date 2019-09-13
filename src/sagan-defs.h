@@ -58,7 +58,7 @@ typedef void json_object;
 #define MAX_SYSLOG_DATE		50
 #define MAX_SYSLOG_TIME		50
 #define MAX_SYSLOG_PROGRAM	50
-#define MAX_SYSLOGMSG		10240
+#define MAX_SYSLOGMSG		20480
 
 #define JSON_MAP_HOST         32
 #define JSON_MAP_FACILITY     32
@@ -71,7 +71,7 @@ typedef void json_object;
 #define JSON_MAP_MESSAGE      32
 
 #define JSON_MAX_NEST	      10
-#define JSON_MAX_SIZE	      10240
+#define JSON_MAX_SIZE	      65536
 
 
 #define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
