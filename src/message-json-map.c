@@ -307,14 +307,16 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             const char *key = json_object_iter_peek_name(&it);
             struct json_object *const val = json_object_iter_peek_value(&it);
 
+        
             const char *val_str = json_object_get_string(val);
 
             if ( debug->debugjson )
                 {
-                    Sagan_Log(DEBUG, "Key: \"%s\", Value: \"%s\"", key, json_object_get_string(val));
+		      Sagan_Log(DEBUG, "Key: \"%s\", Value: \"%s\"", key, val_str );
+
                 }
 
-            if ( val_str[0] == '{' )
+            if ( val_str != NULL && val_str[0] == '{' )
                 {
 
                     strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
@@ -619,6 +621,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 {
 
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, JSON_Message_Map_Found[pos].program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+		    Remove_Spaces(SaganProcSyslog_LOCAL->syslog_program);
 
                 }
 

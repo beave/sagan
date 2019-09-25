@@ -439,6 +439,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                         {
 
                             strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
+
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
                             match = true;
 
