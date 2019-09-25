@@ -24,11 +24,15 @@ typedef struct _JSON_Message_Map _JSON_Message_Map;
 struct _JSON_Message_Map
 {
 
-    char program[MAX_SYSLOG_PROGRAM];
-    char message[MAX_SYSLOGMSG];
+    uint16_t message_count;
 
-    char src_ip[MAXIP];
-    char dst_ip[MAXIP];
+    char software[32];
+
+    char program[32];
+    char message[32][20];
+
+    char src_ip[32];
+    char dst_ip[32];
 
     char src_port[32];
     char dst_port[32];
@@ -42,7 +46,7 @@ struct _JSON_Message_Map
     char filename[32];
     char hostname[32];
     char url[32];
-    char ja3[MD5_HASH_SIZE+1];
+    char ja3[32];
 
 
 };
