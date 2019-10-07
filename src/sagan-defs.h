@@ -58,7 +58,7 @@ typedef void json_object;
 #define MAX_SYSLOG_DATE		50
 #define MAX_SYSLOG_TIME		50
 #define MAX_SYSLOG_PROGRAM	50
-#define MAX_SYSLOGMSG		20480
+#define MAX_SYSLOGMSG		65536
 
 #define JSON_MAP_HOST         32
 #define JSON_MAP_FACILITY     32

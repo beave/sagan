@@ -710,6 +710,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     free(JSON_Message_Map_Found);
     json_object_put(json_obj);
+    json_object_put(json_obj2);
 
 }
 

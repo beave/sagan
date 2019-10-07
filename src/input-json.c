@@ -61,7 +61,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
 
-    memcpy(SaganProcSyslog_LOCAL->syslog_message, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_message));
+    //memcpy(SaganProcSyslog_LOCAL->syslog_message, "UNDEFINED\0", MAX_SYSLOGMSG);
+    snprintf(SaganProcSyslog_LOCAL->syslog_message, MAX_SYSLOGMSG, "UNDEFINED\0");
     memcpy(SaganProcSyslog_LOCAL->syslog_program, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_program));
     memcpy(SaganProcSyslog_LOCAL->syslog_time, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_time));
     memcpy(SaganProcSyslog_LOCAL->syslog_date, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_date));
@@ -92,6 +93,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
 
                     json_object_put(json_obj);
+		    json_object_put(tmp);
+
                     __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                     return;
                 }
@@ -164,6 +167,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                         }
 
                     json_object_put(json_obj);
+		    json_object_put(tmp);
+
                     __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                     return;
                 }
@@ -209,6 +214,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                                 {
                                     Sagan_Log(WARN, "[%s, line %d] Detected JSON nest but Libfastjson errors. The log line was: \"%s\"", __FILE__, __LINE__, json_str[a]);
                                     json_object_put(json_obj);
+				    json_object_put(tmp);
+
                                     __atomic_add_fetch(&counters->malformed_json_input_count, 1, __ATOMIC_SEQ_CST);
                                     return;
                                 }
@@ -264,6 +271,9 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                         }
 
+			json_object_put(json_obj);
+		 	json_object_put(tmp);
+
                 }
         }
 
@@ -274,6 +284,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
         }
 
     json_object_put(json_obj);
+//    json_object_put(tmp);
+
 }
 
 #endif
