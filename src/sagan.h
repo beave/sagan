@@ -394,8 +394,8 @@ struct _Sagan_Proc_Syslog
 
 #ifdef HAVE_LIBFASTJSON
 
-    bool json_src_flag;
-    bool json_dst_flag;
+//    bool json_src_flag;
+//    bool json_dst_flag;
 
     char src_ip[MAXIP];
     char dst_ip[MAXIP];
@@ -432,15 +432,30 @@ struct _Syslog_JSON_Map
 {
 
     bool is_nested;
-    char syslog_map_host[JSON_MAP_HOST];
-    char syslog_map_facility[JSON_MAP_FACILITY];
-    char syslog_map_priority[JSON_MAP_PRIORITY];
-    char syslog_map_level[JSON_MAP_LEVEL];
-    char syslog_map_tag[JSON_MAP_TAG];
-    char syslog_map_date[JSON_MAP_DATE];
-    char syslog_map_time[JSON_MAP_TIME];
-    char syslog_map_program[JSON_MAP_PROGRAM];
-    char syslog_map_message[JSON_MAP_MESSAGE];
+    char syslog_map_host[32];
+    char syslog_map_facility[32];
+    char syslog_map_priority[32];
+    char syslog_map_level[32];
+    char syslog_map_tag[32];
+    char syslog_map_date[32];
+    char syslog_map_time[32];
+    char syslog_map_program[32];
+    char syslog_map_message[32];
+
+// LIBJSON?
+
+    char src_ip[32];
+    char dst_ip[32];
+
+    char src_port[32];
+    char dst_port[32];
+
+    char proto[32];
+
+    char md5[32];
+    char sha1[32];
+    char sha256[32];
+
 
 };
 

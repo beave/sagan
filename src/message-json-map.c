@@ -378,12 +378,15 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                         }
 
+			json_object_put(json_obj2);
+
                 }
 
 
             json_object_iter_next(&it);
 
         }
+
 
     if ( debug->debugjson )
         {
@@ -634,13 +637,13 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             if ( JSON_Message_Map_Found[pos].src_ip[0] != '\0' )
                 {
-                    SaganProcSyslog_LOCAL->json_src_flag = true;
+//                    SaganProcSyslog_LOCAL->json_src_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
                 }
 
             if ( JSON_Message_Map_Found[pos].dst_ip[0] != '\0' )
                 {
-                    SaganProcSyslog_LOCAL->json_dst_flag = true;
+//                    SaganProcSyslog_LOCAL->json_dst_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->dst_ip, JSON_Message_Map_Found[pos].dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));
                 }
 
@@ -710,7 +713,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     free(JSON_Message_Map_Found);
     json_object_put(json_obj);
-    json_object_put(json_obj2);
+//    json_object_put(json_obj2);
 
 }
 

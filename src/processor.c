@@ -152,7 +152,7 @@ void Processor ( void )
             for (i=0; i < config->max_batch; i++)
                 {
 
-		    memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
+//		    memset(SaganProcSyslog_LOCAL, 0, sizeof(struct _Sagan_Proc_Syslog));
 
                     if ( config->input_type == INPUT_PIPE )
                         {

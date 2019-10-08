@@ -62,7 +62,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
 
     //memcpy(SaganProcSyslog_LOCAL->syslog_message, "UNDEFINED\0", MAX_SYSLOGMSG);
-    snprintf(SaganProcSyslog_LOCAL->syslog_message, MAX_SYSLOGMSG, "UNDEFINED\0");
     memcpy(SaganProcSyslog_LOCAL->syslog_program, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_program));
     memcpy(SaganProcSyslog_LOCAL->syslog_time, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_time));
     memcpy(SaganProcSyslog_LOCAL->syslog_date, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_date));
@@ -70,7 +69,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     memcpy(SaganProcSyslog_LOCAL->syslog_level, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_level));
     memcpy(SaganProcSyslog_LOCAL->syslog_priority, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_priority));
     memcpy(SaganProcSyslog_LOCAL->syslog_facility, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_facility));
-    memcpy(SaganProcSyslog_LOCAL->syslog_host, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_host));
+    memcpy(SaganProcSyslog_LOCAL->syslog_host, "0.0.0.0\0", sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
     /* If the json isn't nested,  we can do this the easy way */
 
@@ -132,6 +131,26 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                     strlcpy(SaganProcSyslog_LOCAL->syslog_date, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_date));
                 }
 
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_ip, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->src_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->src_ip));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_ip, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->dst_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->dst_ip));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_port, &tmp))
+                {
+		      SaganProcSyslog_LOCAL->src_port = atoi( json_object_get_string(tmp) );
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_port, &tmp))
+                {
+		      SaganProcSyslog_LOCAL->dst_port = atoi( json_object_get_string(tmp) );
+                }
+
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_time, &tmp))
                 {
                     strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
@@ -142,12 +161,58 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                     strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
                 }
 
-            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
+		if ( !strcmp(Syslog_JSON_Map->syslog_map_message, "%JSON%" ) )
+ 		{
+			strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_string, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+			 has_message = true;
+	
+		}
+
+
+            else if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                 {
+
+	
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", json_object_get_string(tmp));
                     SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                     has_message = true;
                 }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->proto, &tmp))
+                {
+
+                    if ( !strcmp( json_object_get_string(tmp) , "tcp" ) || !strcmp( json_object_get_string(tmp), "TCP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 6;
+                        }
+
+                    else if ( !strcmp( json_object_get_string(tmp), "udp" ) || !strcmp( json_object_get_string(tmp), "UDP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 17;
+                        }
+
+                    else if ( !strcmp( json_object_get_string(tmp), "icmp" ) || !strcmp( json_object_get_string(tmp), "ICMP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 1;
+                        }
+	
+                } 
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->md5, &tmp))
+                {   
+                    strlcpy(SaganProcSyslog_LOCAL->md5, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->md5));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha1, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha1, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha1));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha256, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha256, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha256));
+                }
+
 
         }
     else
@@ -184,7 +249,9 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                     struct json_object *const val = json_object_iter_peek_value(&it);
                     val_str = json_object_get_string(val);
 
-                    if ( val_str[0] == '{' || val_str[1] == '{' )
+		    printf("|%s|\n", val_str);
+
+                    if ( val_str[0] == '{' )
                         {
 
                             /* If object looks like JSON, add it to array to be parsed later */
@@ -208,6 +275,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                         {
 
                             struct json_object *json_obj = NULL;
+//			    printf("|%s|\n", json_str[a]);
                             json_obj = json_tokener_parse(json_str[a]);
 
                             if ( json_obj == NULL )
@@ -222,8 +290,18 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                             __atomic_add_fetch(&counters->json_input_count, 1, __ATOMIC_SEQ_CST);
 
-                            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
+
+			    if ( !strcmp(Syslog_JSON_Map->syslog_map_message, "%JSON%" ) )
+				{
+
+				strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_string, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+				has_message = true;
+
+				}
+
+                            else if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                                 {
+	
                                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", json_object_get_string(tmp));
                                     SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                                     has_message = true;
@@ -264,15 +342,75 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                                     strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
                                 }
 
-                            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
-                                {
-                                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
-                                }
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
+                {   
+                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                }
+
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_ip, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->src_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->src_ip));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_ip, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->dst_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->dst_ip));
+                }
+
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_port, &tmp))
+                {
+                      SaganProcSyslog_LOCAL->src_port = atoi( json_object_get_string(tmp) );
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_port, &tmp))
+                {
+                      SaganProcSyslog_LOCAL->dst_port = atoi( json_object_get_string(tmp) );
+                } 
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->proto, &tmp))
+                {
+
+                    if ( !strcmp( json_object_get_string(tmp) , "tcp" ) || !strcmp( json_object_get_string(tmp), "TCP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 6;
+                        }
+
+                    else if ( !strcmp( json_object_get_string(tmp), "udp" ) || !strcmp( json_object_get_string(tmp), "UDP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 17;
+                        }
+
+                    else if ( !strcmp( json_object_get_string(tmp), "icmp" ) || !strcmp( json_object_get_string(tmp), "ICMP" ) )
+                        {   
+                            SaganProcSyslog_LOCAL->proto = 1;
+                        }
+	
+                } 
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->md5, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->md5, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->md5));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha1, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha1, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha1));
+                }
+
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha256, &tmp))
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->sha256, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha256));
+                }
+
+
+			//STOP ON MD5/SHA1/SHA256 ... Leaking memory bad (note below)
 
                         }
 
-			json_object_put(json_obj);
-		 	json_object_put(tmp);
+			//json_object_put(json_obj);
+		 	//json_object_put(tmp);
 
                 }
         }

@@ -81,10 +81,10 @@ void Load_Input_JSON_Map ( const char *json_map )
             if ( json_object_object_get_ex(json_obj, "software", &tmp))
                 {
 
-                    Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
-
                     if ( !strcmp(json_object_get_string(tmp), config->json_input_software ) )
                         {
+
+			Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
 
                             /* Is the target nested or not?  Default to "no" */
 
@@ -111,6 +111,7 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->syslog_map_host,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_host));
                                 }
 
+
                             if ( json_object_object_get_ex(json_obj, "facility", &tmp))
                                 {
                                     strlcpy(Syslog_JSON_Map->syslog_map_facility,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_facility));
@@ -131,6 +132,7 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->syslog_map_tag,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_tag));
                                 }
 
+
                             if ( json_object_object_get_ex(json_obj, "time", &tmp))
                                 {
                                     strlcpy(Syslog_JSON_Map->syslog_map_time,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_time));
@@ -141,7 +143,8 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->syslog_map_date,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_date));
                                 }
 
-                            if ( json_object_object_get_ex(json_obj, "program", &tmp))
+                            if ( json_object_object_get_ex(json_obj, "program", &tmp) || 
+			        json_object_object_get_ex(json_obj, "event_type", &tmp) )
                                 {
                                     strlcpy(Syslog_JSON_Map->syslog_map_program,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_program));
                                 }
@@ -151,14 +154,59 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->syslog_map_message,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_message));
                                 }
 
+                            if ( json_object_object_get_ex(json_obj, "src_ip", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->src_ip,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->src_ip));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp) || 
+				 json_object_object_get_ex(json_obj, "dst_ip", &tmp) )
+                                {
+                                    strlcpy(Syslog_JSON_Map->dst_ip,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->dst_ip));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "src_port", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->src_port,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->src_port));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "dest_port", &tmp) || 
+			 	 json_object_object_get_ex(json_obj, "dst_port", &tmp) )
+                                {
+                                    strlcpy(Syslog_JSON_Map->dst_port,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->dst_port));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "proto", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->proto,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->proto));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "md5", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->md5,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->md5));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "sha1", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->sha1,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->sha1));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "sha256", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->sha256,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->sha256));
+                                }
+
 
                             /* Sanity check */
 
+/*
                             if ( Syslog_JSON_Map->syslog_map_host[0] == '\0' )
                                 {
                                     Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'syslog-source-ip'. Abort!",  config->json_input_software );
                                 }
+*/
 
+/*
                             else if ( Syslog_JSON_Map->syslog_map_facility[0] == '\0' )
                                 {
                                     Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'facility'. Abort!",  config->json_input_software );
@@ -173,6 +221,8 @@ void Load_Input_JSON_Map ( const char *json_map )
                                 {
                                     Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'priority'. Abort!",  config->json_input_software );
                                 }
+
+*/
 
                             /*
                                                         else if ( Syslog_JSON_Map->syslog_map_tags[0] == '\0' )

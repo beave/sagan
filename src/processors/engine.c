@@ -128,9 +128,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
-
-
-
     struct _Sagan_Processor_Info *processor_info_engine = NULL;
     processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
 
@@ -275,8 +272,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     if ( config->parse_json_program == true || config->parse_json_message == true )
         {
-            SaganProcSyslog_LOCAL->json_src_flag = false;
-            SaganProcSyslog_LOCAL->json_dst_flag = false;
+            //SaganProcSyslog_LOCAL->json_src_flag = false;
+            //SaganProcSyslog_LOCAL->json_dst_flag = false;
+	    SaganProcSyslog_LOCAL->src_ip[0] = '\0';
+	    SaganProcSyslog_LOCAL->dst_ip[0] = '\0';
             SaganProcSyslog_LOCAL->src_port = 0;
             SaganProcSyslog_LOCAL->dst_port = 0;
             SaganProcSyslog_LOCAL->proto = 0;
@@ -364,15 +363,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
             /* If we've already located the source/destination IP address in JSON,  we can
                set it here.  "normalize" and "parse_*_ip can still over ride */
 
-            if ( SaganProcSyslog_LOCAL->json_src_flag == true )
+
+//            if ( SaganProcSyslog_LOCAL->json_src_flag == true )
+	      if ( SaganProcSyslog_LOCAL->src_ip[0] != '\0' )
                 {
+		    //printf("Got src: %s\n", SaganProcSyslog_LOCAL->src_ip);
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
                     IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
-            if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
+            //if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
+		if ( SaganProcSyslog_LOCAL->dst_ip[0] != '\0' )
                 {
+
+		    //printf("Got dest: %s\n", SaganProcSyslog_LOCAL->dst_ip);
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
                     IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
@@ -1339,9 +1344,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                 }
 
-                                            if ( rulestruct[b].bluedot_file_hash && ( md5_hash[0] != '\0' ||
-                                                    sha256_hash[0] != '\0' || sha256_hash[0] != '\0') )
+
+
+                                            if ( rulestruct[b].bluedot_file_hash ) // && ( md5_hash[0] != '\0' ||
+//                                                    sha256_hash[0] != '\0' || sha256_hash[0] != '\0') )
                                                 {
+
 
                                                     if ( md5_hash[0] != '\0')
                                                         {
@@ -1633,6 +1641,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     free(processor_info_engine);
     free(lookup_cache);
+    free(SaganRouting);
 
 #ifdef HAVE_LIBLOGNORM
     if ( json_normalize != NULL )
