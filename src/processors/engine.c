@@ -327,7 +327,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
-    printf("%s|%s|\n", SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message);
     /* Search for matches */
 
     /* First we search for 'program' and such.   This way,  we don't waste CPU
