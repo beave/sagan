@@ -41,6 +41,9 @@ libfastjson is required for Sagan to function!
 #include "version.h"
 #include "message-json-map.h"
 
+#include "parsers/parsers.h"
+
+
 struct _SaganConfig *config;
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
@@ -344,18 +347,29 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
+	    /* Is there nested JSON */
+
             if ( val_str != NULL && val_str[0] == '{' )
                 {
 
-                    strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
-                    json_str_count++;
+		     /* Validate it before handing it to the parser to save CPU */
 
-                    /* Look for any second tier/third tier JSON */
+//		     if ( Sagan_strstr(val_str, ":") && Sagan_strstr(val_str, "\"" ) )
+//	 	    {
 
                     json_obj2 = json_tokener_parse(val_str);
 
+		    if ( json_obj2 != NULL ) 
+		    {
+
+
+		    strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
+		    json_str_count++;
+
                     struct json_object_iterator it2 = json_object_iter_begin(json_obj2);
                     struct json_object_iterator itEnd2 = json_object_iter_end(json_obj2);
+
+		    /* Look for any second tier/third tier JSON */
 
                     while (!json_object_iter_equal(&it2, &itEnd2))
                         {
@@ -375,8 +389,9 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                             json_object_iter_next(&it2);
 
-
                         }
+			} /* json_obj2 != NULL */
+//			}
 
 			json_object_put(json_obj2);
 
