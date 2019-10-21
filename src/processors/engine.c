@@ -409,7 +409,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
             if ( SaganProcSyslog_LOCAL->sha256[0] != '\0' )
-                {
+		{
                     sha256_hash = SaganProcSyslog_LOCAL->sha256;
                 }
 

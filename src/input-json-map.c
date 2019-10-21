@@ -84,7 +84,7 @@ void Load_Input_JSON_Map ( const char *json_map )
                     if ( !strcmp(json_object_get_string(tmp), config->json_input_software ) )
                         {
 
-			Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
+                            Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
 
                             /* Is the target nested or not?  Default to "no" */
 
@@ -143,8 +143,8 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->syslog_map_date,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_date));
                                 }
 
-                            if ( json_object_object_get_ex(json_obj, "program", &tmp) || 
-			        json_object_object_get_ex(json_obj, "event_type", &tmp) )
+                            if ( json_object_object_get_ex(json_obj, "program", &tmp) ||
+                                    json_object_object_get_ex(json_obj, "event_type", &tmp) )
                                 {
                                     strlcpy(Syslog_JSON_Map->syslog_map_program,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->syslog_map_program));
                                 }
@@ -159,8 +159,8 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->src_ip,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->src_ip));
                                 }
 
-                            if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp) || 
-				 json_object_object_get_ex(json_obj, "dst_ip", &tmp) )
+                            if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp) ||
+                                    json_object_object_get_ex(json_obj, "dst_ip", &tmp) )
                                 {
                                     strlcpy(Syslog_JSON_Map->dst_ip,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->dst_ip));
                                 }
@@ -170,8 +170,8 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->src_port,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->src_port));
                                 }
 
-                            if ( json_object_object_get_ex(json_obj, "dest_port", &tmp) || 
-			 	 json_object_object_get_ex(json_obj, "dst_port", &tmp) )
+                            if ( json_object_object_get_ex(json_obj, "dest_port", &tmp) ||
+                                    json_object_object_get_ex(json_obj, "dst_port", &tmp) )
                                 {
                                     strlcpy(Syslog_JSON_Map->dst_port,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->dst_port));
                                 }
@@ -196,33 +196,58 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     strlcpy(Syslog_JSON_Map->sha256,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->sha256));
                                 }
 
+                            if ( json_object_object_get_ex(json_obj, "filename", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->filename,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->filename));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->hostname,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->hostname));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "url", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->url,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->url));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "ja3", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->ja3,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->ja3));
+                                }
+
+                            if ( json_object_object_get_ex(json_obj, "flow_id", &tmp))
+                                {
+                                    strlcpy(Syslog_JSON_Map->flow_id,  json_object_get_string(tmp), sizeof(Syslog_JSON_Map->flow_id));
+                                }
+
 
                             /* Sanity check */
 
-/*
-                            if ( Syslog_JSON_Map->syslog_map_host[0] == '\0' )
-                                {
-                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'syslog-source-ip'. Abort!",  config->json_input_software );
-                                }
-*/
+                            /*
+                                                        if ( Syslog_JSON_Map->syslog_map_host[0] == '\0' )
+                                                            {
+                                                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'syslog-source-ip'. Abort!",  config->json_input_software );
+                                                            }
+                            */
 
-/*
-                            else if ( Syslog_JSON_Map->syslog_map_facility[0] == '\0' )
-                                {
-                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'facility'. Abort!",  config->json_input_software );
-                                }
+                            /*
+                                                        else if ( Syslog_JSON_Map->syslog_map_facility[0] == '\0' )
+                                                            {
+                                                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'facility'. Abort!",  config->json_input_software );
+                                                            }
 
-                            else if ( Syslog_JSON_Map->syslog_map_level[0] == '\0' )
-                                {
-                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'level'. Abort!",  config->json_input_software );
-                                }
+                                                        else if ( Syslog_JSON_Map->syslog_map_level[0] == '\0' )
+                                                            {
+                                                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'level'. Abort!",  config->json_input_software );
+                                                            }
 
-                            else if ( Syslog_JSON_Map->syslog_map_priority[0] == '\0' )
-                                {
-                                    Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'priority'. Abort!",  config->json_input_software );
-                                }
+                                                        else if ( Syslog_JSON_Map->syslog_map_priority[0] == '\0' )
+                                                            {
+                                                                Sagan_Log(ERROR, "Error.  No JSON mapping found in '%s' for 'priority'. Abort!",  config->json_input_software );
+                                                            }
 
-*/
+                            */
 
                             /*
                                                         else if ( Syslog_JSON_Map->syslog_map_tags[0] == '\0' )

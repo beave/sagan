@@ -392,7 +392,7 @@ struct _Sagan_Proc_Syslog
 
 //    char syslog[MAX_SYSLOGMSG];
 
-#ifdef HAVE_LIBFASTJSON
+//#ifdef HAVE_LIBFASTJSON
 
 //    bool json_src_flag;
 //    bool json_dst_flag;
@@ -414,7 +414,7 @@ struct _Sagan_Proc_Syslog
     char ja3[MD5_HASH_SIZE+1];
 
 
-#endif
+//#endif
 
 };
 
@@ -455,6 +455,11 @@ struct _Syslog_JSON_Map
     char md5[32];
     char sha1[32];
     char sha256[32];
+    char filename[32];
+    char hostname[32];
+    char url[32];
+    char ja3[32];
+    char flow_id[32];
 
 
 };

@@ -147,7 +147,7 @@ void Load_Message_JSON_Map ( const char *json_map )
                 }
 
 
-	    /* Pull in "message" values.  It could be multiple valus for "message" */
+            /* Pull in "message" values.  It could be multiple valus for "message" */
 
             if ( json_object_object_get_ex(json_obj, "message", &tmp))
                 {
@@ -279,7 +279,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     uint16_t a=0;
     uint16_t b=0;
 
-
     uint32_t score=0;
     uint32_t prev_score=0;
     uint32_t pos=0;
@@ -347,53 +346,53 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
-	    /* Is there nested JSON */
+            /* Is there nested JSON */
 
             if ( val_str != NULL && val_str[0] == '{' )
                 {
 
-		     /* Validate it before handing it to the parser to save CPU */
+                    /* Validate it before handing it to the parser to save CPU */
 
 //		     if ( Sagan_strstr(val_str, ":") && Sagan_strstr(val_str, "\"" ) )
 //	 	    {
 
                     json_obj2 = json_tokener_parse(val_str);
 
-		    if ( json_obj2 != NULL ) 
-		    {
-
-
-		    strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
-		    json_str_count++;
-
-                    struct json_object_iterator it2 = json_object_iter_begin(json_obj2);
-                    struct json_object_iterator itEnd2 = json_object_iter_end(json_obj2);
-
-		    /* Look for any second tier/third tier JSON */
-
-                    while (!json_object_iter_equal(&it2, &itEnd2))
+                    if ( json_obj2 != NULL )
                         {
 
-                            const char *key2 = json_object_iter_peek_name(&it2);
-                            struct json_object *const val2 = json_object_iter_peek_value(&it2);
 
-                            const char *val_str2 = json_object_get_string(val2);
+                            strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
+                            json_str_count++;
 
-                            if ( val_str2[0] == '{' )
+                            struct json_object_iterator it2 = json_object_iter_begin(json_obj2);
+                            struct json_object_iterator itEnd2 = json_object_iter_end(json_obj2);
+
+                            /* Look for any second tier/third tier JSON */
+
+                            while (!json_object_iter_equal(&it2, &itEnd2))
                                 {
 
-                                    strlcpy(json_str[json_str_count], val_str2, sizeof(json_str[json_str_count]));
-                                    json_str_count++;
+                                    const char *key2 = json_object_iter_peek_name(&it2);
+                                    struct json_object *const val2 = json_object_iter_peek_value(&it2);
+
+                                    const char *val_str2 = json_object_get_string(val2);
+
+                                    if ( val_str2[0] == '{' )
+                                        {
+
+                                            strlcpy(json_str[json_str_count], val_str2, sizeof(json_str[json_str_count]));
+                                            json_str_count++;
+
+                                        }
+
+                                    json_object_iter_next(&it2);
 
                                 }
-
-                            json_object_iter_next(&it2);
-
-                        }
-			} /* json_obj2 != NULL */
+                        } /* json_obj2 != NULL */
 //			}
 
-			json_object_put(json_obj2);
+                    json_object_put(json_obj2);
 
                 }
 
