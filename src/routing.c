@@ -94,11 +94,13 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
                                                                                 }
                                                                         }
 #else
+
                                                                 ret = true;
 #endif
                                                                 }
                                                         }
 #ifdef HAVE_LIBMAXMINDDB
+
                                                 }
 #endif
                                         }
