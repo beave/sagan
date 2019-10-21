@@ -87,16 +87,19 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
                                                                                             if ( config->bluedot_flag == false || rulestruct[SaganRouting->position].bluedot_ipaddr_type == false || ( rulestruct[SaganRouting->position].bluedot_ipaddr_type != 0 && SaganRouting->bluedot_ip_flag == true ))
                                                                                                 {
 
-#endif
                                                                                                     ret = true;
 
                                                                                                 }
                                                                                         }
                                                                                 }
                                                                         }
+#endif
                                                                 }
                                                         }
+#ifdef HAVE_LIBMAXMINDDB
                                                 }
+#endif
+
                                         }
                                 }
                         }
