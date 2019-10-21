@@ -242,20 +242,6 @@ struct _SaganConfig
     char        sagan_email_subject[64];
 #endif
 
-    /* libdnet - Used for unified2 support */
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-    char         unified2_filepath[MAXPATH];
-    uint32_t     unified2_timestamp;
-    FILE         *unified2_stream;
-    int          unified2_fd;
-    unsigned int unified2_limit;
-    unsigned int unified2_current;
-    int          unified2_nostamp;
-    bool        sagan_unified2_flag;
-    bool	 unified2_force_ipv4;
-#endif
-
     /* Bluedot */
 
 #ifdef WITH_BLUEDOT

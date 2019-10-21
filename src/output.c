@@ -41,21 +41,12 @@
 #include "output-plugins/fast.h"
 #include "output-plugins/eve.h"
 
-#ifdef WITH_SNORTSAM
-#include "output-plugins/snortsam.h"
-#endif
-
 #ifdef WITH_SYSLOG
 #include "output-plugins/syslog-handler.h"
 #endif
 
 #ifdef HAVE_LIBESMTP
 #include "output-plugins/esmtp.h"
-#endif
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/unified2.h"
-uint64_t unified_event_id;
 #endif
 
 struct _SaganCounters *counters;
@@ -97,50 +88,6 @@ void Output( _Sagan_Event *Event )
             Fast_File(Event);
         }
 
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-
-    if ( config->sagan_unified2_flag && ( rulestruct[Event->found].flexbit_nounified2 == false || rulestruct[Event->found].xbit_nounified2 == false ) )
-        {
-
-            Unified2( Event );
-            Unified2LogPacketAlert( Event );
-
-            if ( Event->host[0] != '\0' )
-                {
-                    Unified2WriteExtraData( Event, Is_IP(Event->host, IPv6) ?  EVENT_INFO_XFF_IPV6 : EVENT_INFO_XFF_IPV4 );
-                }
-
-            /* Write IPv6 data to "extra" data */
-
-            if ( Is_IP(Event->ip_src, IPv6 ) )
-                {
-                    Unified2WriteExtraData( Event, EVENT_INFO_IPV6_SRC );
-                }
-
-            if ( Is_IP(Event->ip_dst, IPv6 ) )
-                {
-                    Unified2WriteExtraData( Event, EVENT_INFO_IPV6_DST );
-                }
-
-            /* These get normalized in engine.c and passed via
-             * send-alert.c.  When adding more,  remember to add
-             * them there! */
-
-            if ( Event->normalize_http_uri != NULL )
-                {
-                    Unified2WriteExtraData( Event, EVENT_INFO_HTTP_URI );
-                }
-
-            if ( Event->normalize_http_hostname != NULL )
-                {
-                    Unified2WriteExtraData( Event, EVENT_INFO_HTTP_HOSTNAME );
-                }
-
-            unified_event_id++;
-        }
-
-#endif
-
     nonthread_alert_lock = false;
     pthread_mutex_unlock(&SaganOutputNonThreadMutex);
 
@@ -155,21 +102,6 @@ void Output( _Sagan_Event *Event )
     if ( config->sagan_syslog_flag )
         {
             Alert_Syslog( Event );
-        }
-
-#endif
-
-    /****************************************************************************/
-    /* Snortsam Support	                                                        */
-    /****************************************************************************/
-
-    /* If we have a snortsam server && the rule requires snortsam..... */
-
-#ifdef WITH_SNORTSAM
-
-    if ( config->sagan_fwsam_flag && rulestruct[Event->found].fwsam_src_or_dst )
-        {
-            FWSam( Event );
         }
 
 #endif

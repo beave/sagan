@@ -61,9 +61,6 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 						       output-plugins/fast.c \
                                                        output-plugins/esmtp.c \
                                                        output-plugins/external.c \
-                                                       output-plugins/unified2.c \
-                                                       output-plugins/snortsam-twofish.c \
-                                                       output-plugins/snortsam.c \
                                                        output-plugins/syslog-handler.c \
 						       output-plugins/eve.c \
                                                        processors/engine.c \

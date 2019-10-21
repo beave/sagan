@@ -99,10 +99,6 @@
 #include "liblognormalize.h"
 #endif
 
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/unified2.h"
-#endif
-
 #define OVECCOUNT 30
 
 /* Init */
@@ -944,35 +940,6 @@ int main(int argc, char **argv)
         }
 
 #endif
-
-#ifdef WITH_SNORTSAM
-
-    if ( config->sagan_fwsam_flag )
-        {
-
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "Snortsam output plug in enabled.");
-
-        }
-
-#endif
-
-    /* Unified2 ****************************************************************/
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-
-    if ( config->sagan_unified2_flag )
-        {
-
-            Sagan_Log(NORMAL, "");
-            Sagan_Log(NORMAL, "Unified2 file: %s", config->unified2_filepath);
-            Sagan_Log(NORMAL, "Unified2 limit: %dM", config->unified2_limit  / 1024 / 1024 );
-            Unified2InitFile();
-
-        }
-
-#endif
-
 
     /***************************************************************************
      * Non-Processor/Output option

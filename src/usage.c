@@ -93,20 +93,12 @@ void Usage(void)
     fprintf(stderr, "* PLOG (syslog sniffer) support is included.\n");
 #endif
 
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-    fprintf(stderr, "* libdnet (for unified2) support is included.\n");
-#endif
-
 #if defined(HAVE_LIBFASTJSON) || defined(HAVE_LIBLOGNORM)
     fprintf(stderr, "* libfastjson support is included.\n");
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
     fprintf(stderr, "* Maxmind GeoIP support is included.\n");
-#endif
-
-#ifdef WITH_SNORTSAM
-    fprintf(stderr, "* Snortsam support is included.\n");
 #endif
 
 #ifdef WITH_SYSLOG

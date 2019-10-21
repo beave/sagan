@@ -208,28 +208,6 @@ if test "x$with_libpcap_libraries" != "xno"; then
    LDFLAGS="${LDFLAGS}  -L${with_libpcap_libraries}"
 fi
 
-AC_ARG_ENABLE(libdnet,
-  [  --enable-libdnet       Disable libdnet (unified2) support.],
-  [ LIBDNET="$enableval"],
-  [ LIBDNET="no" ]
-)
-
-AC_ARG_WITH(libdnet_includes,
-        [  --with-libdnet-includes=DIR    libdnet include directory],
-        [with_libdnet_includes="$withval"],[with_libdnet_includes="no"])
-
-AC_ARG_WITH(libdnet_libraries,
-        [  --with-libdnet-libraries=DIR   libdnet library directory],
-        [with_libdnet_libraries="$withval"],[with_libdnet_libraries="no"])
-
-if test "x$with_libdnet_includes" != "xno"; then
-   CPPFLAGS="${CPPFLAGS} -I${with_libdnet_includes}"
-   fi
-
-if test "x$with_libdnet_libraries" != "xno"; then
-   LDFLAGS="${LDFLAGS}  -L${with_libdnet_libraries}"
-fi
-
 AC_SUBST(VERSION)
 AM_INIT_AUTOMAKE([subdir-objects])
 AC_CONFIG_HEADER(config.h)
@@ -613,35 +591,6 @@ This library is used to run Sagan in a syslog 'sniffer' mode.  Please see
 https://wiki.quadrantsec.com/bin/view/Main/PLog.  To disable this feature use
 the --disable-libpcap flag. ))
        fi
-
-if test "$LIBDNET" = "yes"; then
-       AC_MSG_RESULT([------- libdnet support is enabled -------])
-
-AC_CHECK_HEADERS(dnet.h,,DNET_H="no")
-AC_CHECK_HEADERS(dumbnet.h,,DUMBNET_H="no")
-
-if test "x$DNET_H" = "xno" -a "x$DUMBNET_H" = "xno"; then
-    echo
-    echo "   The libdnet headers cannot be found.  This library is used for Sagan's"
-    echo "   Unified2 output support.  Please see:" 
-    echo "   https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
-    echo "   To disable this feature use the --disable-libdnet flag."
-    exit 1
-fi
-
-AC_CHECK_LIB(dnet, eth_set,,[DNET="no"])
-AC_CHECK_LIB(dumbnet, eth_set,,[DUMBNET="no"])
-
-if test "x$DNET" = "xno" -a "x$DUMBNET" = "xno"; then
-    echo
-    echo "   The libdnet headers cannot be found.  This library is used for Sagan's" 
-    echo "   Unified2 output support.  Please see:"
-    echo "   https://wiki.quadrantsec.com/bin/view/Main/Unified2Output"
-    echo "   To disable this feature use the --disable-libdnet flag."
-    exit 1
-fi
-
-fi
 
 if test "$BLUEDOT" = "yes"; then
         AC_MSG_RESULT([------- Quadrant "Bluedot" is enabled -------])

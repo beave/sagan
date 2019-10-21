@@ -71,11 +71,6 @@
 int liblognorm_count;
 #endif
 
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/unified2.h"
-bool sagan_unified2_flag;
-#endif
-
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
 #include "geoip.h"
@@ -185,15 +180,6 @@ void Sig_Handler( void )
                         }
 
                     Statistics();
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-
-                    if ( sagan_unified2_flag )
-                        {
-                            Unified2CleanExit();
-                        }
-
-#endif
 
 #ifdef HAVE_LIBMAXMINDDB
 
@@ -419,10 +405,6 @@ void Sig_Handler( void )
 
 #ifdef HAVE_LIBESMTP
                     config->sagan_esmtp_flag = 0;
-#endif
-
-#ifdef WITH_SNORTSAM
-                    config->sagan_fwsam_flag = 0;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB

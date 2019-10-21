@@ -453,19 +453,6 @@ outputs:
       enabled: no
       filename: "$LOG_PATH/fast.log"
 
-  # The 'unified2' output allows Sagan to write in Snort's unified2 format. 
-  # This allows events/alerts generates by Sagan to be read and queued for
-  # external programs like Barnyard2 (http://www.securixlive.com/barnyard2/).
-  # Barnyard2 can then record events to various formats (Sguil, PostgreSQL, 
-  # MySQL, MS-SQL, Oracle, etc).  Sagan must be compiled with libdnet support
-  # to use this function. 
-
-  - unified2:
-      enabled: no
-      force-ipv4: no
-      filename: "$LOG_PATH/unified2.alert"
-      limit: 128				# Max size in MB
-
   # The 'smtp' output allows Sagan to e-mail alerts that trigger.  The rules 
   # you want e-mail need to contain the 'email' rule option and Sagan must
   # be compiled with libesmtp support.  
@@ -476,35 +463,6 @@ outputs:
       server: 192.168.0.1:25
       subject: "** Sagan Alert **"
  
-  # The 'snortsam' output allows Sagan to send block information Snortsam 
-  # agents.  If a rule the fwsam: option in it,  the offending IP address can 
-  # be firewall/blocked. For example,  if a rule is triggered with the 'fwsam'
-  # option,  Sagan can instruct a firewall (iptables/ebtable/pf/iwpf/Cisco/etc)
-  # to firewall off the source or destination. 
-  #
-  # In order for Sagan to send a blocking request to the SnortSam agent,
-  # that agent has to be listed, including the port it listens on, and the
-  # encryption key it is using.  The server option is formatted like this: 
-  #
-  # server: {Snortsam Station}:{port}/{password}
-  #
-  #   {SnortSam Station}: IP address or host name of the host where SnortSam is
-  #                       running.
-  #   {port}:             The port the remote SnortSam agent listens on.
-  #   {password}:         The password, or key, used for encryption of the
-  #                       communication to the remote agent.
-  #
-  # At the very least, the IP address or host name of the host running SnortSam
-  # needs to be specified. If the port is omitted, it defaults to TCP port 898.
-  # If the password is omitted, it defaults to a preset password.
-  #
-  # More than one host can be specified, but has to be done on the same line.
-  # Just separate them with one or more spaces.
-
-  - snortsam: 
-      enabled: no
-      server: 127.0.0.1/mykey
-
   # The 'syslog' output allows Sagan to send alerts to syslog. The syslog 
   # output format used is exactly the same of Snorts.  This means that your 
   # SIEMs Snort log parsers should work with Sagan.

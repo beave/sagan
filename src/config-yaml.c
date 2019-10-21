@@ -69,10 +69,6 @@ struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 #endif
 
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-#include "output-plugins/unified2.h"
-#endif
-
 #ifdef HAVE_LIBLOGNORM
 #include <liblognorm.h>
 #include "liblognormalize.h"
@@ -1957,11 +1953,6 @@ void Load_YAML_Config( char *yaml_file )
                                     sub_type = YAML_OUTPUT_FAST;
                                 }
 
-                            else if (!strcmp(value, "unified2"))
-                                {
-                                    sub_type = YAML_OUTPUT_UNIFIED2;
-                                }
-
                             else if (!strcmp(value, "smtp"))
                                 {
                                     sub_type = YAML_OUTPUT_SMTP;
@@ -2081,73 +2072,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                 } /* sub_type == YAML_OUTPUT_FAST */
 
-#if !defined(HAVE_DNET_H) && !defined(HAVE_DUMBNET_H)
-
-                            else if ( sub_type == YAML_OUTPUT_UNIFIED2 )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-
-                                                    Sagan_Log(ERROR, "[%s, line %d] 'unified2' output is enabled, but Sagan is not compiled with libdnet support. Abort!", __FILE__, __LINE__);
-                                                }
-
-                                        }
-                                }
-#endif
-
-#if defined(HAVE_DNET_H) || defined(HAVE_DUMBNET_H)
-
-                            else if ( sub_type == YAML_OUTPUT_UNIFIED2 )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-                                                    config->sagan_unified2_flag = true;
-                                                }
-
-                                        }
-
-                                    else if ( !strcmp(last_pass, "filename") && config->sagan_unified2_flag == true )
-                                        {
-
-                                            Var_To_Value(value, tmp, sizeof(tmp));
-                                            strlcpy(config->unified2_filepath, tmp, sizeof(config->unified2_filepath));
-                                        }
-
-                                    else if ( !strcmp(last_pass, "limit") && config->sagan_unified2_flag == true )
-                                        {
-
-                                            Var_To_Value(value, tmp, sizeof(tmp));
-                                            config->unified2_limit = atoi(tmp) * 1024 * 1024;
-
-                                            if ( config->unified2_limit == 0 )
-                                                {
-
-                                                    Sagan_Log(ERROR, "[%s, line %d] 'outputs' : 'unified2' - 'limit' has to be a non-zero value. Abort!!", __FILE__, __LINE__);
-                                                }
-                                        }
-
-                                    else if ( !strcmp(last_pass, "force-ipv4") && config->sagan_unified2_flag == true )
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-                                                    config->unified2_force_ipv4 = true;
-                                                }
-
-                                        }
-
-                                } /* if sub_type == YAML_OUTPUT_UNIFIED2  */
-
-#endif
-
 #ifndef HAVE_LIBESMTP
 
                             else if ( sub_type == YAML_OUTPUT_SMTP )
@@ -2206,49 +2130,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                 } /* else if sub_type == YAML_OUTPUT_SMTP ) */
 
-#endif
-
-#ifndef WITH_SNORTSAM
-
-                            else if ( sub_type == YAML_OUTPUT_SNORTSAM )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-
-                                                    Sagan_Log(ERROR, "[%s, line %d] 'snortsam' output is enabled, but Sagan is not compiled with Snortsam support. Abort!", __FILE__, __LINE__);
-                                                }
-
-                                        }
-                                }
-
-#endif
-
-#ifdef WITH_SNORTSAM
-
-                            else if ( sub_type == YAML_OUTPUT_SNORTSAM )
-                                {
-
-                                    if (!strcmp(last_pass, "enabled"))
-                                        {
-
-                                            if ( !strcasecmp(value, "yes") || !strcasecmp(value, "true") )
-                                                {
-                                                    config->sagan_fwsam_flag = true;
-                                                }
-                                        }
-
-                                    else if (!strcmp(last_pass, "server") && config->sagan_fwsam_flag == true)
-                                        {
-
-                                            Var_To_Value(value, tmp, sizeof(tmp));
-                                            strlcpy(config->sagan_fwsam_info, tmp, sizeof(config->sagan_fwsam_info));
-
-                                        }
-                                }
 #endif
 
 #ifndef WITH_SYSLOG
