@@ -116,7 +116,8 @@ typedef void json_object;
 #define MAX_FLEXBITS		10		/* Max 'flexbits' within a rule */
 #define MAX_XBITS               10              /* Max 'xbits' within a rule */
 
-#define MAX_CHECK_FLOWS		100		/* Max amount of IP addresses to be checked in a flow */
+#define MAX_FLOW_SIZE		32768	
+#define MAX_CHECK_FLOWS		512		/* Max amount of IP addresses to be checked in a flow */
 
 #define MAX_REFERENCE		10		/* Max references within a rule */
 #define MAX_PARSE_IP		30		/* Max IP to collect form log line via parse.c */

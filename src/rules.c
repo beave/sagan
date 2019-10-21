@@ -156,8 +156,8 @@ void Load_Rules( const char *ruleset )
 
     char final_content[512] = { 0 };
 
-    char flow_a[1024] = { 0 };
-    char flow_b[1024] = { 0 };
+    char flow_a[MAX_FLOW_SIZE] = { 0 };
+    char flow_b[MAX_FLOW_SIZE] = { 0 };
 
     char alert_time_tmp[10] = { 0 };
     char alert_tmp_minute[3] = { 0 };
