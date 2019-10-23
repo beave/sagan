@@ -249,11 +249,13 @@ void Load_YAML_Config( char *yaml_file )
             config->bluedot_hash_max_cache = BLUEDOT_HASH_DEFAULT;
             config->bluedot_url_max_cache = BLUEDOT_URL_DEFAULT;
             config->bluedot_filename_max_cache = BLUEDOT_FILENAME_DEFAULT;
+	    config->bluedot_ja3_max_cache = BLUEDOT_JA3_DEFAULT;
 
             config->bluedot_ip_queue = BLUEDOT_IP_QUEUE_DEFAULT;
             config->bluedot_hash_queue = BLUEDOT_HASH_QUEUE_DEFAULT;
             config->bluedot_url_queue = BLUEDOT_URL_QUEUE_DEFAULT;
             config->bluedot_filename_queue = BLUEDOT_FILENAME_QUEUE_DEFAULT;
+	    config->bluedot_ja3_queue = BLUEDOT_JA3_QUEUE_DEFAULT;
 
 #endif
 

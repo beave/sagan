@@ -150,6 +150,10 @@ void Client_Stats_Handler( void )
             json_object *jevent_type = json_object_new_string( "client_stats" );
             json_object_object_add(jobj,"event_type", jevent_type);
 
+            json_object *jarray_sensor = json_object_new_string( config->sagan_sensor_name );
+            json_object_object_add(jobj,"sensor_name", jarray_sensor);
+
+
             /* Update any existing client stats */
 
             for ( i = 0; i < counters->client_stats_count; i++ )
