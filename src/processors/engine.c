@@ -440,7 +440,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                     match = false;
 
-                    if ( rulestruct[b].s_program[0] != '\0' )
+                    if ( rulestruct[b].s_program[0] != '\0' && match == false )
                         {
 
                             strlcpy(tmpbuf, rulestruct[b].s_program, sizeof(tmpbuf));
@@ -459,7 +459,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( rulestruct[b].s_facility[0] != '\0' )
+                    if ( rulestruct[b].s_facility[0] != '\0' && match == false )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_facility, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -476,7 +476,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( rulestruct[b].s_level[0] != '\0' )
+                    if ( rulestruct[b].s_level[0] != '\0' && match == false )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_level, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -493,7 +493,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( rulestruct[b].s_tag[0] != '\0' )
+                    if ( rulestruct[b].s_tag[0] != '\0' && match == false )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_tag, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
@@ -510,7 +510,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
                         }
 
-                    if ( rulestruct[b].s_syspri[0] != '\0' )
+                    if ( rulestruct[b].s_syspri[0] != '\0' && match == false )
                         {
                             strlcpy(tmpbuf, rulestruct[b].s_syspri, sizeof(tmpbuf));
                             ptmp = strtok_r(tmpbuf, "|", &tok2);
