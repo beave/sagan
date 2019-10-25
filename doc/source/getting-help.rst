@@ -14,13 +14,13 @@ is good for general configuration,  install and usage questions.
 
 `https://groups.google.com/forum/#!forum/sagan-users <https://groups.google.com/forum/#!forum/sagan-users>`_
 
-If you need to report a compile or programming issue,  please use our Github.com issues page.  That is 
-located at:
+If you need to report a compile or programming issue,  please use our Github.com issues page.  That is located at:
 
-https://github.com/beave/sagan/issues <https://github.com/beave/sagan/issues>`_
+`https://github.com/beave/sagan/issues <https://github.com/beave/sagan/issues>`_
 
-Sagan users and IRC lurkers are welcome.  Go to:
+If you want to chat about Sagan you can hit up our "Mattermost" chat system!
 
-irc.2600.net #sagan
+`https://m.telephreak.org/sagan/channels/town-square <https://m.telephreak.org/sagan/channels/town-square>`_
+
 
 
