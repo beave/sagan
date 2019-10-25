@@ -28,8 +28,10 @@ Example ``syslog-ng`` "pipe" configuration::
 
    destination sagan_fifo {
       pipe("/var/sagan/sagan.fifo"
-      template("$SOURCEIP|$FACILITY|$PRIORITY|$LEVEL|$TAG|$YEAR-$MONTH-$DAY|$HOUR:$MIN:$SEC|$PROGRAM| $MS
-      };
+      template("$SOURCEIP|$FACILITY|$PRIORITY|$LEVEL|$TAG|$YEAR-$MONTH-$DAY|$HOUR:$MIN:$SEC|$PROGRAM| $MSG\n")
+      template-escape(no)
+      );
+   };
 
    # This line ties the sources and destinations together.
 

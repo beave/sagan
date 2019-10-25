@@ -67,7 +67,8 @@ While not a required dependency,  it is recommended that you install liblognorm.
 used by Sagan to extract useful data from incoming log data.  ``liblognorm`` is part of the ``rsyslog``
 daemon.  Note:  Installing ``liblognorm`` will automatically install ``libfastjson``. 
 
-More information about ``liblognorm`` can be found at the `LibLogNorm <https://FIXME`>_ web site. 
+More information about ``liblognorm`` can be found at the
+`LibLogNorm <https://www.liblognorm.com/files/manual/index.html`>_ web site.
 
 To install ``liblognorm`` on Debian/Ubuntu:
 
@@ -88,7 +89,7 @@ parsing and building JSON data faster and more efficent.
 
 To install ``libfastjson`` on Debian/Ubuntu:
 
-.. option:: LOOK THIS UP
+.. option:: apt-get install libfastjson-dev
 
 To install ``liblfastjson`` on Redhat/Centos:
 
@@ -232,29 +233,27 @@ The first example installs Sagan with the basics (all prerequisites and ``liblog
 
 Quick start with the bare basics::
 
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev
-   wget https://quadrantsec.com/download/sagan-current.tar.gz
-   cd sagan-1.2.1
+   sudo apt-get install build-essential libpcre3-dev libpcre3 libyaml-dev liblognorm-dev
+   wget https://quadrantsec.com/download/sagan-1.x.x.tar.gz
+   tar -xvzf sagan-1.x.x.tar.gz
+   cd sagan-1.x.x
    ./configure
    make
    sudo make install
 
 
-This example Quick start installs Sagan with more features including the required prerequisites, 
-``libognorm`` (log normalization), ``libesmtp`` (e-mail support), ``libmaxminddb`` (GeoIP), 
-``hiredis`` (Redis), ``libpcap`` (sniffing logs). 
-
 A more complete quick start
 ---------------------------
 
-This example installs Sagan with the most common and useful prerequisites.
+This more complete Quick start installs Sagan with more features including the required prerequisites,
+``liblognorm`` (log normalization), ``libesmtp`` (e-mail support), ``libmaxminddb`` (GeoIP),
+``hiredis`` (Redis), ``libpcap`` (sniffing logs).
 
-A more complete quick start::
-
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
-   wget https://quadrantsec.com/download/sagan-current.tar.gz
-   cd sagan-1.2.1
-   ./configure --enable-geoip --enable-esmtp --enable--libpcap --enable-redis
+   sudo apt-get install build-essential libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
+   wget https://quadrantsec.com/download/sagan-1.x.x.tar.gz
+   tar -xvzf sagan-1.x.x.tar.gz
+   cd sagan-1.x.x
+   ./configure --enable-geoip --enable-esmtp --enable-libpcap --enable-redis
    make
    sudo make install
    
