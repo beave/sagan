@@ -157,7 +157,6 @@ struct _Rule_Struct
 
     bool flexbit_flag;              	        /* Does the rule contain a flexbit? */
     bool flexbit_noalert;                       /* Do we want to suppress "alerts" from flexbits in ALL output plugins? */
-    bool flexbit_nounified2;                    /* Do we want to suppress "unified2" from flexbits in unified2 output */
     bool flexbit_noeve;				/* Do we want to suppress "eve" from flexbits */
 
     unsigned char flexbit_type[MAX_FLEXBITS];         /* 1 == set, 2 == unset, 3 == isset, 4 == isnotset, 5 == set_srcport,
@@ -178,7 +177,6 @@ struct _Rule_Struct
     bool xbit_flag;
     bool xbit_noalert;
     bool xbit_noeve;
-    bool xbit_nounified2;
     unsigned char xbit_direction[MAX_XBITS];	      /* 1 == ip_src, 2 == ip_dst,  3 == ip_par */
 
     unsigned char xbit_set_count;            /* Number of set within a rule */

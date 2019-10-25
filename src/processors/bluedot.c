@@ -1274,7 +1274,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers );
             //res = curl_easy_perform(curl);
-	    (void)curl_easy_perform(curl);
+            (void)curl_easy_perform(curl);
         }
 
     curl_easy_cleanup(curl);

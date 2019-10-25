@@ -1110,12 +1110,6 @@ void Load_Rules( const char *ruleset )
                                     xbit_single = true;
                                 }
 
-                            if ( !strcmp(arg, "nounified2") )
-                                {
-                                    rulestruct[counters->rulecount].xbit_nounified2=true;
-                                    xbit_single = true;
-                                }
-
                             if ( !strcmp(arg, "noalert") )
                                 {
                                     rulestruct[counters->rulecount].xbit_noalert=true;
@@ -1144,7 +1138,7 @@ void Load_Rules( const char *ruleset )
                                             strcmp(tmptoken, "isnotset") && strcmp(tmptoken, "toggle") )
                                         {
                                             bad_rule = true;
-                                            Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', 'noeve' or 'nounified2'  but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                            Sagan_Log(WARN, "[%s, line %d] Expected 'set', 'unset', 'isset', 'isnotset', 'toggle', 'noalert', or 'noeve' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                             continue;
 
                                         }
@@ -1344,7 +1338,7 @@ void Load_Rules( const char *ruleset )
                             Remove_Spaces(tmptoken);
 
 
-                            if ( strcmp(tmptoken, "nounified2") && strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") &&
+                            if ( strcmp(tmptoken, "noalert") && strcmp(tmptoken, "set") &&
                                     strcmp(tmptoken, "unset") && strcmp(tmptoken, "isset") && strcmp(tmptoken, "isnotset") &&
                                     strcmp(tmptoken, "set_srcport") && strcmp(tmptoken, "set_dstport") && strcmp(tmptoken, "set_ports") &&
                                     strcmp(tmptoken, "count") && strcmp(tmptoken, "noeve" ) )
@@ -1352,7 +1346,7 @@ void Load_Rules( const char *ruleset )
 
 
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d] Expected 'nounified2', 'noalert', 'set', 'unset', 'isnotset', 'isset', 'noeve'  or 'count' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
+                                    Sagan_Log(WARN, "[%s, line %d] Expected 'noalert', 'set', 'unset', 'isnotset', 'isset', 'noeve'  or 'count' but got '%s' at line %d in %s, skipping rule", __FILE__, __LINE__, tmptoken, linecount, ruleset);
                                     continue;
 
                                 }
@@ -1362,16 +1356,10 @@ void Load_Rules( const char *ruleset )
                                     rulestruct[counters->rulecount].flexbit_noalert=true;
                                 }
 
-                            if (!strcmp(tmptoken, "nounified2"))
-                                {
-                                    rulestruct[counters->rulecount].flexbit_nounified2=true;
-                                }
-
                             if (!strcmp(tmptoken, "noeve"))
                                 {
                                     rulestruct[counters->rulecount].flexbit_noeve=true;
                                 }
-
 
                             /* SET */
 

@@ -274,8 +274,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
         {
             //SaganProcSyslog_LOCAL->json_src_flag = false;
             //SaganProcSyslog_LOCAL->json_dst_flag = false;
-	    SaganProcSyslog_LOCAL->src_ip[0] = '\0';
-	    SaganProcSyslog_LOCAL->dst_ip[0] = '\0';
+            SaganProcSyslog_LOCAL->src_ip[0] = '\0';
+            SaganProcSyslog_LOCAL->dst_ip[0] = '\0';
             SaganProcSyslog_LOCAL->src_port = 0;
             SaganProcSyslog_LOCAL->dst_port = 0;
             SaganProcSyslog_LOCAL->proto = 0;
@@ -365,19 +365,19 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
 //            if ( SaganProcSyslog_LOCAL->json_src_flag == true )
-	      if ( SaganProcSyslog_LOCAL->src_ip[0] != '\0' )
+            if ( SaganProcSyslog_LOCAL->src_ip[0] != '\0' )
                 {
-		    //printf("Got src: %s\n", SaganProcSyslog_LOCAL->src_ip);
+                    //printf("Got src: %s\n", SaganProcSyslog_LOCAL->src_ip);
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
                     IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
             //if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
-		if ( SaganProcSyslog_LOCAL->dst_ip[0] != '\0' )
+            if ( SaganProcSyslog_LOCAL->dst_ip[0] != '\0' )
                 {
 
-		    //printf("Got dest: %s\n", SaganProcSyslog_LOCAL->dst_ip);
+                    //printf("Got dest: %s\n", SaganProcSyslog_LOCAL->dst_ip);
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
                     IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
@@ -409,7 +409,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
             if ( SaganProcSyslog_LOCAL->sha256[0] != '\0' )
-		{
+                {
                     sha256_hash = SaganProcSyslog_LOCAL->sha256;
                 }
 
@@ -1073,7 +1073,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     /* Check for flow of rule - has_flow is set as rule loading.  It 1, then
                                     the rule has some sort of flow.  It 0,  rule is set any:any/any:any */
 
-                                    if ( rulestruct[b].has_flow == 1 )
+                                    if ( rulestruct[b].has_flow == true )
                                         {
 
                                             SaganRouting->check_flow_return = Check_Flow( b, proto, ip_src_bits, ip_srcport_u32, ip_dst_bits, ip_dstport_u32);

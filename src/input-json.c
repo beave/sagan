@@ -69,7 +69,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     memcpy(SaganProcSyslog_LOCAL->syslog_facility, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_facility));
     memcpy(SaganProcSyslog_LOCAL->syslog_host, "0.0.0.0\0", sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
-   SaganProcSyslog_LOCAL->md5[0] = '\0';
+    SaganProcSyslog_LOCAL->md5[0] = '\0';
 
     /* If the json isn't nested,  we can do this the easy way */
 
@@ -339,10 +339,10 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
         }
 
-/* This json_object_put works fine with the above (no leak but faults with the 
-   below */
+    /* This json_object_put works fine with the above (no leak but faults with the
+       below */
 
-json_object_put(json_obj);
+    json_object_put(json_obj);
 
     /* Search through the nest to see if we can find out values */
 
@@ -499,11 +499,11 @@ json_object_put(json_obj);
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->flow_id, &tmp))
-                {   
+                {
                     SaganProcSyslog_LOCAL->flow_id = atol( json_object_get_string(tmp) );
                 }
 
-	json_object_put(json_obj_sub);
+            json_object_put(json_obj_sub);
 
         }
 
@@ -512,7 +512,7 @@ json_object_put(json_obj);
             Sagan_Log(WARN, "[%s, line %d] Received JSON which has no decoded 'message' value. The log line was: \"%s\"", __FILE__, __LINE__, syslog_string);
         }
 
-	//json_object_put(json_obj);
+    //json_object_put(json_obj);
 
 
 }

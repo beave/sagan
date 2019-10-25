@@ -104,29 +104,6 @@ To install ``libjson`` on Gentoo:
 
 To build ``libjson`` from source code,  see ADD THIS IN
 
-libdnet (Unified2)
-------------------
-
-If you want Sagan to write in the Snort ``unified2`` output format,  you'll need to install ``libdnet``. 
-This allows you to use Sagan in conjuction with software like ``Barnyard2``.  **This is not recommended**. 
-Consider using Sagan's JSON / EVE output and software like `Meer <https://meer.readthedocs.org>`_ or 
-putting data into Elasticsearch. 
-
-To install ``libdnet`` on Debian/Ubuntu:
-
-.. option:: apt-get install libdumbnet1 libdumbnet-dev
-
-To install ``libdnet`` on FreeBSD/OpenBSD:
-
-.. option:: cd /usr/ports/net/libdnet && make && sudo make install
-
-To install ``libdnet`` on Gentoo:
-
-.. option:: emerge -av libdnet
-
-To build ``libdnet`` from source code,  see ADD THIS IN
-
-
 libesmtp (SMTP)
 ---------------
 
@@ -251,9 +228,9 @@ This example installs Sagan with the most common and useful prerequisites.
 
 A more complete quick start::
 
-   sudo apt-get install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
+   sudo apt-get build-essential pkg-config install libpcre3-dev libpcre3 libyaml-dev liblognorm-dev libesmtp-dev libmaxminddb0 libmaxminddb-dev libhiredis-dev libpcap-dev liblognorm-dev libfastjson-dev libestr-dev
    wget https://quadrantsec.com/download/sagan-current.tar.gz
-   cd sagan-1.2.1
+   cd sagan-1.2.2
    ./configure --enable-geoip --enable-esmtp --enable--libpcap --enable-redis
    make
    sudo make install
@@ -357,19 +334,6 @@ Common configure options
 .. option:: --with-libpcap-libraries=DIR
 
    Points ``configure`` to the  ``libpcap`` library directory (see ``libpcap`` above).
-
-.. option:: --enable-libdnet
-
-   This allows Sagan to write alert data in a ``unified2`` output format.  To use this option,  the system
-   will need ``libdnet`` installed (see ``libdnet`` above).
-
-.. option:: --with-libdnet-includes=DIR
-
-   Points ``configure`` to the ``libdnet`` headers (see ``libdnet`` above).
-
-.. option:: --with-libdnet-libraries=DIR
-
-   Points ``configure`` to the ``libdnet`` library files (see ``libdnet`` above).
 
 .. option:: --disable-libfastjson
 

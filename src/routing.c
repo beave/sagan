@@ -27,7 +27,8 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
 
     /* Check Flow */
 
-    if ( SaganRouting->check_flow_return == true )
+
+    if ( ( rulestruct[SaganRouting->position].has_flow == true && SaganRouting->check_flow_return == true ) || rulestruct[SaganRouting->position].has_flow == false  )
         {
 
             /* Flexbit */
@@ -38,12 +39,10 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
                     ( rulestruct[SaganRouting->position].flexbit_set_count == false && rulestruct[SaganRouting->position].flexbit_condition_count && SaganRouting->flexbit_return ))
                 {
 
-
                     if ( rulestruct[SaganRouting->position].flexbit_count_flag == false || SaganRouting->flexbit_count_return == true )
                         {
 
                             /* Xbit */
-
 
                             if ( rulestruct[SaganRouting->position].xbit_flag == false || SaganRouting->xbit_return == true ||
                                     ( rulestruct[SaganRouting->position].xbit_isset_count == 0
@@ -51,7 +50,6 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
                                 {
 
                                     /* Aetas */
-
 
                                     if ( rulestruct[SaganRouting->position].alert_time_flag == false || SaganRouting->alert_time_trigger == true )
                                         {
@@ -63,6 +61,7 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
 
                                             if ( rulestruct[SaganRouting->position].geoip2_flag == false || SaganRouting->geoip2_isset == true )
                                                 {
+
 #endif
 
                                                     if ( rulestruct[SaganRouting->position].blacklist_flag == false || SaganRouting->blacklist_results == true )
@@ -87,8 +86,11 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
                                                                                             if ( config->bluedot_flag == false || rulestruct[SaganRouting->position].bluedot_ipaddr_type == false || ( rulestruct[SaganRouting->position].bluedot_ipaddr_type != 0 && SaganRouting->bluedot_ip_flag == true ))
                                                                                                 {
 
+#endif
+
                                                                                                     ret = true;
 
+#ifdef WITH_BLUEDOT
                                                                                                 }
                                                                                         }
                                                                                 }

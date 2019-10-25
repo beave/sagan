@@ -333,7 +333,7 @@ This unset removes a flexbit from memory. In this example, unset is removing a f
 
 Example of flexbit use can be found in the rules https://wiki.quadrantsec.com/twiki/bin/view/Main/5001880 and https://wiki.quadrantsec.com/twiki/bin/view/Main/5001881 . The first rule (5001880) "sets" a flexbit is a Microsoft Windows account is "created". The second rule (5001881) alerts an account is "enabled", but the flexbit has not (isnotset) set. In this example, it's normal for a user's account to be "created and then enabled". However, there might be an anomaly if an account goes from a "disabled" and then "enabled" state without being "created".
 
-**flexbits: {noalert|nounified2|noeve}**
+**flexbits: {noalert|noeve}**
 
 This tells Sagan to not record certain types of data with ``flexlbits`` when a condition is met.  For example, you might not want to generate an alert when a ``xbits`` is ``set``. 
 
@@ -712,7 +712,7 @@ In certain situations, you may want to have a rule ``unset`` an xbit.  This effe
 
 In some situations,  you might not want Sagan to record data when a ``xbit`` condition is met.  For example, if you ``set`` an xbit,  you might not want to generate an alert.   To disable certain types of output, you can do this:
 
-**xbits: {noalert|nounified2|noeve}**
+**xbits: {noalert|noeve}**
 
 xbits_pause
 -----------
