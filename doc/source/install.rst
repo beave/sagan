@@ -233,6 +233,8 @@ A more complete quick start::
    tar -xvzf sagan-1.x.x.tar.gz
    cd sagan-1.x.x
    ./configure --enable-geoip --enable-esmtp --enable-libpcap --enable-redis
+   make
+   sudo make install
 
 Prerequisites
 -------------
