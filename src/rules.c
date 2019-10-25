@@ -2079,8 +2079,6 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-                    rulestruct[counters->rulecount].s_facility[0] = '\0';
-
                     if (!strcmp(rulesplit, "syslog_facility" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -2096,8 +2094,6 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].s_facility, arg, sizeof(rulestruct[counters->rulecount].s_facility));
                         }
 
-                    rulestruct[counters->rulecount].s_level[0] = '\0';
-
                     if (!strcmp(rulesplit, "syslog_level" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
@@ -2112,8 +2108,6 @@ void Load_Rules( const char *ruleset )
                             Remove_Spaces(arg);
                             strlcpy(rulestruct[counters->rulecount].s_level, arg, sizeof(rulestruct[counters->rulecount].s_level));
                         }
-
-                    rulestruct[counters->rulecount].s_syspri[0] = '\0';
 
                     if (!strcmp(rulesplit, "syslog_priority" ))
                         {
