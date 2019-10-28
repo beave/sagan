@@ -27,9 +27,11 @@ Example ``syslog-ng`` "pipe" configuration::
    # A "destination" to send log data to.  In our case, a named pipe (FIFO)
 
    destination sagan_fifo {
-      pipe("/var/sagan/sagan.fifo"
-      template("$SOURCEIP|$FACILITY|$PRIORITY|$LEVEL|$TAG|$YEAR-$MONTH-$DAY|$HOUR:$MIN:$SEC|$PROGRAM| $MS
-      };
+     pipe("/var/sagan/sagan.fifo"
+     template("$SOURCEIP|$FACILITY|$PRIORITY|$LEVEL|$TAG|$YEAR-$MONTH-$DAY|$HOUR:$MIN:$SEC|$PROGRAM| $MSG\n")
+     template-escape(no)
+     );
+   };
 
    # This line ties the sources and destinations together.
 
