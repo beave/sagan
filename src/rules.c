@@ -2061,8 +2061,6 @@ void Load_Rules( const char *ruleset )
                         }
 
 
-                    rulestruct[counters->rulecount].s_tag[0] = '\0';
-
                     if (!strcmp(rulesplit, "syslog_tag" ))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);
