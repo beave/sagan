@@ -84,6 +84,7 @@ void Credits(void)
     fprintf(stderr, "\"YoichSec\" (Github)\t\t\t\tChanging rules to match Suricata/Snort.\n");
     fprintf(stderr, "\"3vilJohn\" (Twitter)\t\t\t\tVarious bug reports & testing.\n");
     fprintf(stderr, "Kenneth Shelton (@netwatcher)\t\t\tIPv6 support, bug fixes.\n");
+    fprintf(stderr, "Brian Candler (@candlerb)\t\t\tLots of bug fixes, enchancements, improvements.");
 
     fprintf(stderr, "\n");
 
