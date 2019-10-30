@@ -5,13 +5,160 @@ Sagan typically receives its data from a third party daemon.  This is typically 
 ``rsyslog``, ``syslog-ng`` or ``nxlog``.  The first step is to get one of those systems set up. 
 
 
-rsyslog
--------
+rsyslog - "pipe" mode
+---------------------
+
+Below is a simple `rsyslog <https://www.rsyslog.com/doc/v8-stable/configuration/>`_ configuration to output to
+Sagan in a legacy "pipe" delimited format.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
+need to be set to ``pipe``.  For more information, consult the rsyslog documentation for
+`templates <https://www.rsyslog.com/doc/v8-stable/configuration/templates.html>`_,
+`properties <https://www.rsyslog.com/doc/v8-stable/configuration/properties.html>`_ and the
+`property replacer <https://www.rsyslog.com/doc/v8-stable/configuration/property_replacer.html>`.
+
+Example ``rsyslog`` "pipe" configuration, can be installed as
+``/etc/rsyslog.d/10-sagan.conf``::
+
+   template(name="SaganPipe" type="list") {
+       property(name="fromhost-ip")
+       constant(value="|")
+       property(name="syslogfacility-text")
+       constant(value="|")
+       property(name="pri")
+       constant(value="|")
+       property(name="syslogseverity-text")
+       constant(value="|")
+       property(name="syslogtag")
+       constant(value="|")
+       property(name="timereported" dateformat="year")
+       constant(value="-")
+       property(name="timereported" dateformat="month")
+       constant(value="-")
+       property(name="timereported" dateformat="day")
+       constant(value="|")
+       property(name="timereported" dateformat="hour")
+       constant(value=":")
+       property(name="timereported" dateformat="minute")
+       constant(value=":")
+       property(name="timereported" dateformat="second")
+       constant(value="|")
+       property(name="programname")
+       constant(value="|")
+       # Note: already escaped if EscapecontrolCharactersOnReceive is on (default)
+       property(name="msg" controlcharacters="escape")
+       constant(value="\n")
+   }
+   
+   *.*  action(type="ompipe" pipe="var/sagan/fifo/sagan.fifo" template="SaganPipe")
+
+NOTE: rsyslog's "msg" property includes
+`the space after the colon <https://www.rsyslog.com/log-normalization-and-the-leading-space/>`_.
+This is important because Sagan's liblognorm rules also expect the leading space.
+
+To receive over UDP you'll also need to uncomment these lines in
+``/etc/rsyslog.conf``:
+
+   # provides UDP syslog reception
+   module(load="imudp")
+   input(type="imudp" port="514")
+
+Set appropriate permissions on the fifo before restarting rsyslog
+(Beware: if you run sagan as root, it will
+`reset them back again <https://github.com/beave/sagan/issues/145>`_)
+
+   sudo chown sagan:syslog /var/sagan/fifo/sagan.fifo
+   sudo chmod 420 /var/sagan/fifo/sagan.fifo
+   sudo systemctl restart rsyslog
+
+To test:
+
+    logger -t sshd "User ubuntu not allowed because shell /etc/passwd is not executable"
+
+
+rsyslog - JSON mode
+-------------------
+
+Below is a simple `rsyslog <https://www.rsyslog.com/doc/v8-stable/configuration/>`_ configuration to output to
+Sagan in a "JSON" format.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
+need to be set to ``json``.  You will also need to set your ``json-software`` to ``rsyslog``.
+
+This uses rsyslog's standard JSON output:
+
+   template(name="SaganJson" type="list") {
+       property(name="jsonmesg")
+       constant(value="\n")
+   }
+
+   *.*  action(type="ompipe" pipe="/var/sagan/fifo/sagan.fifo" template="SaganJson")
+
+It formats messages as per the following sample:
+
+   {
+       "msg": " Stopping System Logging Service...",
+       "rawmsg": "<30>Oct 28 16:32:13 systemd[1]: Stopping System Logging Service...",
+       "timereported": "2019-10-28T16:32:13.970608+00:00",
+       "hostname": "sagan",
+       "syslogtag": "systemd[1]:",
+       "inputname": "imuxsock",
+       "fromhost": "sagan",
+       "fromhost-ip": "127.0.0.1",
+       "pri": "30",
+       "syslogfacility": "3",
+       "syslogseverity": "6",
+       "timegenerated": "2019-10-28T16:32:13.970608+00:00",
+       "programname": "systemd",
+       "protocol-version": "0",
+       "structured-data": "-",
+       "app-name": "systemd",
+       "procid": "1",
+       "msgid": "-",
+       "uuid": null,
+       "$!": null
+   }
+
+Unfortunately it does not include the text versions of the facility and
+severity, nor format the date and time the way Sagan expects.  So an
+alternative approach is to build up the JSON message explicitly containing
+the required fields:
+
+   template(name="SaganJson" type="list") {
+       constant(value="{")
+       property(name="fromhost-ip" format="jsonf")
+       constant(value=",")
+       property(name="syslogfacility-text" format="jsonf")
+       constant(value=",")
+       property(name="pri" format="jsonf")
+       constant(value=",")
+       property(name="syslogseverity-text" format="jsonf")
+       constant(value=",")
+       property(name="syslogtag" format="jsonf")
+       constant(value=",\"date\":\"")
+       property(name="timereported" dateformat="year")
+       constant(value="-")
+       property(name="timereported" dateformat="month")
+       constant(value="-")
+       property(name="timereported" dateformat="day")
+       constant(value="\",\"time\":\"")
+       property(name="timereported" dateformat="hour")
+       constant(value=":")
+       property(name="timereported" dateformat="minute")
+       constant(value=":")
+       property(name="timereported" dateformat="second")
+       constant(value="\",")
+       property(name="programname" format="jsonf")
+       constant(value=",")
+       property(name="msg" format="jsonf")
+       constant(value="}\n")
+   }
+   
+   *.*  action(type="ompipe" pipe="/var/sagan/fifo/sagan.fifo" template="SaganJson")
+
+To use this, set your ``json-software`` to ``rsyslog-alt``.
+
 
 syslog-ng - "pipe" mode
 -----------------------
 
-Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to output to 
 Sagan in a legacy "pipe" delimited format.  For more complex configurations,  please consult 
 the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
 need to be set to ``pipe``.  
@@ -43,7 +190,7 @@ Example ``syslog-ng`` "pipe" configuration::
 syslog-ng - JSON mode
 ---------------------
 
-Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to ouput to 
+Below is a simple `Syslog-NG <https://www.syslog-ng.com/>`_ configuration to output to 
 Sagan in a "JSON" format.  For more complex configurations,  please consult 
 the ``syslog-ng`` documentation.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
 need to be set to ``json``.  You will also need to set your ``json-software`` to ``syslog-ng``. 

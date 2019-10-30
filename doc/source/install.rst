@@ -378,3 +378,87 @@ Common configure options
 
    Points ``configure`` to the ``libpcre`` library directory.
 
+
+Post-installation setup and testing
+-----------------------------------
+
+Create a "sagan" user and related directories:
+
+   sudo useradd --system -d /var/sagan -s /bin/false sagan
+   sudo mkdir -p /var/sagan/fifo /var/log/sagan /var/run/sagan
+   sudo mkfifo /var/sagan/fifo/sagan.fifo
+   sudo chmod 420 /var/sagan/fifo/sagan.fifo
+   sudo chown -R sagan:sagan /var/sagan /var/log/sagan /var/run/sagan
+
+Checkout the "sagan-rules" repository into ``/usr/local/etc/sagan-rules``:
+
+    cd /usr/local/etc
+    sudo git clone https://github.com/beave/sagan-rules
+
+To test, run ``sagan --debug syslog,engine`` as the root user.  It will
+switch to the sagan user when ready, and remain running in the foreground.
+
+Manually generate a test syslog message in "pipe" format:
+
+   echo "192.0.2.1|local0|info|info|sshd|2001-01-01|00:00:00|sshd|User ubuntu not allowed because shell /etc/passwd is not executable" |
+     sudo tee /var/sagan/fifo/sagan.fifo
+
+From the sagan process, you should see the syslog message received and rules
+triggered:
+
+   [D] [processor.c, line 168] **[Parsed Syslog]*********************************
+   [D] [processor.c, line 169] Host: 192.0.2.1 | Program: sshd | Facility: local0 | Priority: info | Level: info | Tag: sshd | Date: 2001-01-01 | Time: 00:00:00
+   [D] [processor.c, line 170] Parsed message: User ubuntu not allowed because shell /etc/passwd is not executable
+   [D] [processors/engine.c, line 1543] **[Trigger]*********************************
+   [D] [processors/engine.c, line 1544] Program: sshd | Facility: local0 | Priority: info | Level: info | Tag: sshd
+   [D] [processors/engine.c, line 1545] Threshold flag: 0 | After flag: 0 | Flexbit Flag: 0 | Flexbit status: 0
+   [D] [processors/engine.c, line 1546] Triggering Message: User ubuntu not allowed because shell /etc/passwd is not executable
+   [D] [processors/engine.c, line 1543] **[Trigger]*********************************
+   [D] [processors/engine.c, line 1544] Program: sshd | Facility: local0 | Priority: info | Level: info | Tag: sshd
+   [D] [processors/engine.c, line 1545] Threshold flag: 0 | After flag: 0 | Flexbit Flag: 0 | Flexbit status: 0
+   [D] [processors/engine.c, line 1546] Triggering Message: User ubuntu not allowed because shell /etc/passwd is not executable
+
+The alert data is written to ``/var/log/sagan/alert.log``:
+
+   [**] [1:5000020:4] [OPENSSH] Not executable shell - login attempt [**]
+   [Classification: unsuccessful-user] [Priority: 1] [192.0.2.1]
+   [Alert Time: 10-28-2019 15:25:44.584658]
+   2001-01-01 00:00:00 192.0.2.1:514 -> 192.0.2.1:22 local0 info sshd
+   Message: User ubuntu not allowed because shell /etc/passwd is not executable
+   [Xref => http://wiki.quadrantsec.com/bin/view/Main/5000020]
+
+   [**] [1:5000077:3] [OPENSSH] Attempt to login using a denied user [**]
+   [Classification: unsuccessful-user] [Priority: 1] [192.0.2.1]
+   [Alert Time: 10-28-2019 15:25:44.584658]
+   2001-01-01 00:00:00 192.0.2.1:514 -> 192.0.2.1:22 local0 info sshd
+   Message: User ubuntu not allowed because shell /etc/passwd is not executable
+   [Xref => http://wiki.quadrantsec.com/bin/view/Main/5000077]
+
+Notice that this particular message triggers two rules - you can find them
+both in ``/usr/local/etc/sagan-rules/openssh.rules`` by searching for the
+rule IDs.
+
+Finally, configure the system to run the daemon in the background.  Create
+``/etc/systemd/system/sagan.service`` containing:
+
+   [Unit]
+   Description=Sagan daemon
+   Documentation=https://sagan.readthedocs.io/
+   Before=rsyslog.service syslog-ng.service
+
+   [Service]
+   User=sagan
+   Group=sagan
+   EnvironmentFile=-/etc/default/sagan
+   ExecStart=/usr/local/sbin/sagan $OPTIONS
+   ExecReload=/bin/kill -HUP $MAINPID
+   Restart=on-failure
+
+   [Install]
+   WantedBy=multi-user.target
+
+Then load and start it:
+
+   sudo systemctl daemon-reload
+   sudo systemctl start sagan
+   sudo systemctl enable sagan
