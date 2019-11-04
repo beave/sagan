@@ -108,7 +108,7 @@ char *u32_time_to_human( uint64_t utime )
     char *return_time = NULL;
 
     memset(&tm, 0, sizeof(struct tm));
-    snprintf(tmp, sizeof(tmp) - 1, "%llu", utime);
+    snprintf(tmp, sizeof(tmp) - 1, "%" PRIu64 "", utime);
 
     strptime(tmp, "%s", &tm);
     strftime(time_buf, sizeof(time_buf), "%b %d %H:%M:%S %Y", &tm);

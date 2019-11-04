@@ -50,7 +50,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
-
+#include "util-time.h"
 #include "lockfile.h"
 
 #include "processors/client-stats.h"

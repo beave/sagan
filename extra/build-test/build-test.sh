@@ -9,10 +9,10 @@
 #   2017/06/25 - Added "--enable-redis".
 #   2017/11/07 - Added test for "saganpeek". 
 #   2018/05/08 - Added FLAGS for make
+#   2019/11/03 - Removed --disable-snortsam
 
 # Champ Clark III 
 
-#  --disable-snortsam      Disable Snortsam support.
 #  --disable-syslog        Disable syslog support.
 #  --disable-lognorm       Disable Lognorm (liblognorm) support.
 #  --disable-libfastjson   Disable libfastjson.
@@ -26,9 +26,9 @@
 #  --disable-libfastjson   Endbale libfastjson
 
 
-STANDARD="--disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson"
-ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip --enable-system-strstr --enable-snortsam --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson --enable-redis --enable-libfastjson"
-NOFLAG="--disable-snortsam --disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --disable-system-strstr --disable-libfastjson --disable-redis --disable-libfastjson"
+STANDARD="--disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson"
+ALLFLAGS="--enable-bluedot --enable-esmtp --enable-geoip --enable-system-strstr --enable-syslog --enable-lognorm --enable-libpcap --enable-libdnet --enable-libfastjson --enable-redis --enable-libfastjson"
+NOFLAG="--disable-syslog --disable-lognorm --disable-libpcap --disable-libdnet --disable-bluedot --disable-esmtp --disable-geoip --disable-system-strstr --disable-system-strstr --disable-libfastjson --disable-redis --disable-libfastjson"
 
 LOG="output.log" 
 

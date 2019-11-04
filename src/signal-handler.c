@@ -64,6 +64,7 @@
 #include "processors/blacklist.h"
 #include "processors/track-clients.h"
 #include "processors/bro-intel.h"
+#include "processors/client-stats.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"

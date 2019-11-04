@@ -41,6 +41,9 @@
 #include "rules.h"
 #include "sagan-config.h"
 
+#include "processors/client-stats.h"
+
+
 struct _SaganCounters *counters;
 struct _Sagan_IPC_Counters *counters_ipc;
 struct _Sagan_Ruleset_Track *Ruleset_Track;
