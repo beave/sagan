@@ -13,7 +13,7 @@ Sagan in a legacy "pipe" delimited format.  The Sagan ``input-type`` (set in the
 need to be set to ``pipe``.  For more information, consult the rsyslog documentation for
 `templates <https://www.rsyslog.com/doc/v8-stable/configuration/templates.html>`_,
 `properties <https://www.rsyslog.com/doc/v8-stable/configuration/properties.html>`_ and the
-`property replacer <https://www.rsyslog.com/doc/v8-stable/configuration/property_replacer.html>`.
+`property replacer <https://www.rsyslog.com/doc/v8-stable/configuration/property_replacer.html>`_.
 
 Example ``rsyslog`` "pipe" configuration, can be installed as
 ``/etc/rsyslog.d/10-sagan.conf``::
@@ -55,21 +55,21 @@ NOTE: rsyslog's "msg" property includes
 This is important because Sagan's liblognorm rules also expect the leading space.
 
 To receive over UDP you'll also need to uncomment these lines in
-``/etc/rsyslog.conf``:
+``/etc/rsyslog.conf``::
 
    # provides UDP syslog reception
    module(load="imudp")
    input(type="imudp" port="514")
 
-Set appropriate permissions on the fifo before restarting rsyslog
+Set appropriate permissions on the fifo before restarting rsyslog.
 (Beware: if you run sagan as root, it will
-`reset them back again <https://github.com/beave/sagan/issues/145>`_)
+`reset them back again <https://github.com/beave/sagan/issues/145>`_)::
 
    sudo chown sagan:syslog /var/sagan/fifo/sagan.fifo
    sudo chmod 420 /var/sagan/fifo/sagan.fifo
    sudo systemctl restart rsyslog
 
-To test:
+To test::
 
     logger -t sshd "User ubuntu not allowed because shell /etc/passwd is not executable"
 
@@ -81,7 +81,7 @@ Below is a simple `rsyslog <https://www.rsyslog.com/doc/v8-stable/configuration/
 Sagan in a "JSON" format.  The Sagan ``input-type`` (set in the ``sagan.yaml``) will
 need to be set to ``json``.  You will also need to set your ``json-software`` to ``rsyslog``.
 
-This uses rsyslog's standard JSON output:
+This uses rsyslog's standard JSON output::
 
    template(name="SaganJson" type="list") {
        property(name="jsonmesg")
@@ -90,7 +90,7 @@ This uses rsyslog's standard JSON output:
 
    *.*  action(type="ompipe" pipe="/var/sagan/fifo/sagan.fifo" template="SaganJson")
 
-It formats messages as per the following sample:
+It formats messages as per the following sample::
 
    {
        "msg": " Stopping System Logging Service...",
@@ -118,7 +118,7 @@ It formats messages as per the following sample:
 Unfortunately it does not include the text versions of the facility and
 severity, nor format the date and time the way Sagan expects.  So an
 alternative approach is to build up the JSON message explicitly containing
-the required fields:
+the required fields::
 
    template(name="SaganJson" type="list") {
        constant(value="{")
