@@ -1323,10 +1323,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                                             bluedot_results = Sagan_Bluedot_Lookup(ip_src, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                             SaganRouting->bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
-
                                                             /* If the source isn't found,  then check the dst */
 
-                                                            if ( SaganRouting->bluedot_ip_flag != 0 )
+                                                            if ( SaganRouting->bluedot_ip_flag == 0 )
                                                                 {
                                                                     bluedot_results = Sagan_Bluedot_Lookup(ip_dst, BLUEDOT_LOOKUP_IP, b, bluedot_json, sizeof(bluedot_json));
                                                                     SaganRouting->bluedot_ip_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, b, BLUEDOT_LOOKUP_IP);
