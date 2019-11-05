@@ -50,7 +50,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     const char *val_str = NULL;
 
-    uint16_t json_str_count=1;
+    uint16_t json_str_count=0;
     uint16_t a;
 
     bool has_message = false;
@@ -251,6 +251,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
             /* The raw syslog is the first "nested" level".  Copy that */
 
             strlcpy(json_str[0], syslog_string, sizeof(json_str[0]));
+            json_str_count++;
             json_obj = json_tokener_parse(syslog_string);
 
             if ( json_obj == NULL )
