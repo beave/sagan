@@ -172,14 +172,17 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                 {
                     const char *msg = json_object_get_string(tmp);
 
-                    if (msg[0] == ' ') {
-                        // rsyslog retains the leading space in the message
-                        strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-                    } else {
-                        // syslog-ng strips the leading space: re-insert it
-                        snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
-                        SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
-                    }
+                    if (msg[0] == ' ')
+                        {
+                            // rsyslog retains the leading space in the message
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                        }
+                    else
+                        {
+                            // syslog-ng strips the leading space: re-insert it
+                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
+                            SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
+                        }
                     has_message = true;
                 }
 
@@ -384,14 +387,17 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                 {
                     const char *msg = json_object_get_string(tmp);
 
-                    if (msg[0] == ' ') {
-                        // rsyslog retains the leading space in the message
-                        strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-                    } else {
-                        // syslog-ng strips the leading space: re-insert it
-                        snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
-                        SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
-                    }
+                    if (msg[0] == ' ')
+                        {
+                            // rsyslog retains the leading space in the message
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                        }
+                    else
+                        {
+                            // syslog-ng strips the leading space: re-insert it
+                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
+                            SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
+                        }
                     has_message = true;
                 }
 

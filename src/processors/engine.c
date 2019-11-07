@@ -1488,18 +1488,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     /****************************************************************************/
 
                                     SaganRouting->position = b;
-//                                    SaganRouting->check_flow_return = check_flow_return;
-//                                    SaganRouting->flexbit_count_return = flexbit_count_return;
-//                                    SaganRouting->xbit_return = xbit_return;
-//                                    SaganRouting->alert_time_trigger = alert_time_trigger;
-//                                    SaganRouting->geoip2_isset = geoip2_isset;
-//                                    SaganRouting->blacklist_results = blacklist_results;
-//                                    SaganRouting->brointel_results = brointel_results;
-
-//                                    SaganRouting->bluedot_hash_flag = bluedot_hash_flag;
-//                                    SaganRouting->bluedot_filename_flag = bluedot_filename_flag;
-//                                    SaganRouting->bluedot_url_flag = bluedot_url_flag;
-//                                    SaganRouting->bluedot_ip_flag = bluedot_ip_flag;
 
                                     if ( Sagan_Check_Routing( SaganRouting ) == true )
                                         {

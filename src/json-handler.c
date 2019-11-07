@@ -217,29 +217,23 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
 #ifdef WITH_BLUEDOT
 
+    /* If we have bluedot data, dump it to eve */
+
     if ( Event->bluedot_results != 0 )
         {
             snprintf(tmp_data, sizeof(tmp_data), ", \"bluedot\": %s", Event->bluedot_json);
             strlcat(str, tmp_data, size);
-        }
 
+        }
 
 #endif
 
-    // NOTE: Log normalize to json?
+    /* Dump any normalization (liblognorm) data, if we have any */
 
-    /*
-        if ( Event->bluedot_json[0] == '\0' )
-    	{
-        	snprintf(str, size, "%s, \"alert\": %s", tmp_data, json_object_to_json_string(jobj_alert));
-    	} else {
-            snprintf(str, size, "%s, \"alert\": %s, \"bluedot\": %s", tmp_data, json_object_to_json_string(jobj_alert), Event->bluedot_json);
-    	}
-    */
-
+    snprintf(tmp_data, sizeof(tmp_data), ", \"normalize\": %s", json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
+    strlcat(str, tmp_data, size);
 
     strlcat(str, " }", size);
-
 
     json_object_put(jobj);
     json_object_put(jobj_alert);

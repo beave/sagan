@@ -102,7 +102,6 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
     if ( config->bluedot_flag == true )
         {
 
-
             if ( rulestruct[SaganRouting->position].bluedot_file_hash == true && SaganRouting->bluedot_hash_flag == false )
                 {
                     return false;
