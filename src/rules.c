@@ -60,6 +60,10 @@
 #include "processors/bluedot.h"
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+#include <json.h>
+#endif
+
 struct _SaganCounters *counters;
 struct _SaganDebug *debug;
 struct _SaganConfig *config;
@@ -83,6 +87,7 @@ int liblognorm_count;
 #endif
 
 /* For pre-8.20 PCRE compatibility */
+
 #ifndef PCRE_STUDY_JIT_COMPILE
 #define PCRE_STUDY_JIT_COMPILE 0
 #endif
@@ -193,8 +198,20 @@ void Load_Rules( const char *ruleset )
     int reverse=0;
 
     int is_masked = 0;
-
     int ruleset_track_id = 0;
+
+#ifdef HAVE_LIBFASTJSON
+
+    bool meta_bool = false;
+    char *saveptrmeta = NULL;
+    char meta_key[32] = { 0 };
+    unsigned char metadata_array_count = 0;
+
+    json_object *metadata_jobj = json_object_new_object();
+    json_object *metadata_jstring;
+    json_object *metadata_jarray[MAX_METADATA];
+
+#endif
 
     /* Store rule set names/path in memory for later usage dynamic loading, etc */
 
@@ -578,6 +595,7 @@ void Load_Rules( const char *ruleset )
                                 {
                                     rulestruct[counters->rulecount].port_1_var = 1;	  /* 1 = var */
                                     strlcpy(tmp4, nettmp, sizeof(tmp4));
+
                                     for (tmptoken = strtok_r(tmp4, ",", &saveptrport); tmptoken; tmptoken = strtok_r(NULL, ",", &saveptrport))
                                         {
                                             Strip_Chars(tmptoken, "not!", tok_help2);
@@ -2518,45 +2536,6 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].pcre_count=pcre_count;
                         }
 
-
-                    /* Snortsam */
-
-                    /* fwsam: src, 24 hours; */
-
-                    if (!strcmp(rulesplit, "fwsam" ))
-                        {
-
-                            /* Set some defaults - needs better error checking! */
-
-                            rulestruct[counters->rulecount].fwsam_src_or_dst=1;	/* by src */
-                            rulestruct[counters->rulecount].fwsam_seconds = 86400;   /* 1 day */
-
-                            tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
-                            tmptoken = strtok_r(tok_tmp, ",", &saveptrrule2);
-
-                            if (Sagan_strstr(tmptoken, "src"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_src_or_dst=1;
-                                }
-
-                            if (Sagan_strstr(tmptoken, "dst"))
-                                {
-                                    rulestruct[counters->rulecount].fwsam_src_or_dst=2;
-                                }
-
-                            /* DEBUG: Error checking?!!? */
-
-                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
-                            tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
-
-                            fwsam_time_tmp=atol(tmptok_tmp);	/* Digit/time */
-                            tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3); /* Type - hour/minute */
-
-                            rulestruct[counters->rulecount].fwsam_seconds = Value_To_Seconds(tmptok_tmp, fwsam_time_tmp);
-
-                        }
-
-
                     /* Time based alerting */
 
                     if (!strcmp(rulesplit, "alert_time"))
@@ -2679,7 +2658,6 @@ void Load_Rules( const char *ruleset )
                                 }
 
                         }
-
 
                     /* Threshold */
 
@@ -2901,16 +2879,16 @@ void Load_Rules( const char *ruleset )
 
                         }
 
-                    /* Bro Intel */
+                    /* Bro/Zeek Intel */
 
-                    if (!strcmp(rulesplit, "bro-intel"))
+                    if (!strcmp(rulesplit, "bro-intel") || !strcmp(rulesplit, "zeek-intel") )
                         {
                             tok_tmp = strtok_r(NULL, ":", &saveptrrule2);
 
                             if ( tok_tmp == NULL )
                                 {
                                     bad_rule = true;
-                                    Sagan_Log(WARN, "[%s, line %d]  %s on line %d appears to be incorrect.  \"bro-intel:\" options appear incomplete, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                    Sagan_Log(WARN, "[%s, line %d]  %s on line %d appears to be incorrect.  \"zeek-intel:\" options appear incomplete, skipping rule.", __FILE__, __LINE__, ruleset_fullname, linecount);
                                     continue;
                                 }
 
@@ -3315,6 +3293,69 @@ void Load_Rules( const char *ruleset )
                         }
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+
+                    /***********************************************/
+                    /* Suricata/Snort style "metadata" rule option */
+                    /***********************************************/
+
+                    if (!strcmp(rulesplit, "metadata"))
+                        {
+
+                            arg = strtok_r(NULL, ";", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    bad_rule = true;
+                                    Sagan_Log(WARN, "[%s, line %d] The \"metadata\" option appears to be incomplete at line %d in %s, skipping rule", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    continue;
+                                }
+
+                            tmptoken = strtok_r(arg, ",", &saveptrrule3);
+
+                            while ( tmptoken != NULL )
+                                {
+
+                                    tok_tmp = strtok_r(tmptoken, " ", &saveptrmeta);
+                                    metadata_jarray[metadata_array_count] = json_object_new_array();
+                                    meta_bool = false;
+
+                                    while ( tok_tmp != NULL )
+                                        {
+
+                                            if ( meta_bool == false )
+                                                {
+                                                    strlcpy(meta_key, tok_tmp, sizeof(meta_key));
+                                                    meta_bool = true;
+                                                }
+                                            else
+                                                {
+                                                    metadata_jstring = json_object_new_string(tok_tmp);
+                                                    json_object_array_add(metadata_jarray[metadata_array_count],metadata_jstring);
+                                                }
+
+                                            tok_tmp = strtok_r(NULL, " ", &saveptrmeta);
+
+                                        }
+
+                                    json_object_object_add(metadata_jobj, meta_key, metadata_jarray[metadata_array_count]);
+
+                                    metadata_array_count++;
+
+                                    if ( metadata_array_count > MAX_METADATA )
+                                        {
+                                            Sagan_Log(ERROR, "[%s, line %d] To many 'metadata' fields in rule at line %d in %s. Abort.", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                        }
+
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule3);
+
+                                }
+
+                            strlcpy(rulestruct[counters->rulecount].metadata_json, json_object_to_json_string(metadata_jobj), sizeof(rulestruct[counters->rulecount].metadata_json));
+
+                        }
+
+#endif
 
                     /* -< Go to next line >- */
 

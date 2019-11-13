@@ -234,6 +234,10 @@ typedef void json_object;
 
 #define	THREAD_NAME_LEN			16
 
+#ifdef HAVE_LIBFASTJSON
+#define MAX_METADATA			16
+#endif
+
 #ifdef WITH_BLUEDOT
 
 #define BLUEDOT_IP_DEFAULT		300000

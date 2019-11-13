@@ -334,6 +334,10 @@ struct _Rule_Struct
 
 #endif
 
+#ifdef HAVE_LIBFASTJSON
+    char metadata_json[1024];
+#endif
+
 };
 
 typedef struct _Sagan_Ruleset_Track _Sagan_Ruleset_Track;

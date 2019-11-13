@@ -40,6 +40,7 @@
 
 #include "sagan.h"
 #include "references.h"
+#include "rules.h"
 #include "util-base64.h"
 #include "util-time.h"
 #include "sagan-config.h"
@@ -47,6 +48,7 @@
 
 struct _SaganConfig *config;
 struct _SaganDebug *debug;
+struct _Rule_Struct *rulestruct;
 
 /*****************************************************************************
  * Format_JSON_Alert_EVE - Sends only alerts out to eve file in JSON
@@ -227,6 +229,12 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
         }
 
 #endif
+
+    if ( rulestruct[Event->found].metadata_json[0] != '\0' )
+        {
+            snprintf(tmp_data, sizeof(tmp_data), ", \"metadata\": %s", rulestruct[Event->found].metadata_json);
+            strlcat(str, tmp_data, size);
+        }
 
     /* Dump any normalization (liblognorm) data, if we have any */
 
