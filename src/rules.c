@@ -101,6 +101,12 @@ void Load_Rules( const char *ruleset )
 
     struct stat filecheck;
 
+    /* This is done for stanity check */
+
+    char valid_rules[2048] = { 0 };
+    //strlcpy(valid_rules, VALID_RULE_OPTIONS, sizeof(valid_rules));
+    bool is_valid = false;
+
     bool found = 0;
     bool bad_rule = 0;
 
@@ -128,6 +134,7 @@ void Load_Rules( const char *ruleset )
     char *saveptrflow;
     char *saveptrport;
     char *saveptrportrange;
+    char *saveptrcheck;
     char *tmptoken;
 
     char *tok_tmp;
@@ -1333,7 +1340,6 @@ void Load_Rules( const char *ruleset )
 
                                     xbit_count++;
                                     rulestruct[counters->rulecount].xbit_count = xbit_count;
-                                    //rulestruct[counters->rulecount].xbit_count++;
                                 }
 
                         }
@@ -3357,7 +3363,40 @@ void Load_Rules( const char *ruleset )
 
 #endif
 
+                    /*************************/
+                    /* Validate rule options */
+                    /*************************/
+
+                    strlcpy(valid_rules, VALID_RULE_OPTIONS, sizeof(valid_rules));
+
+                    arg = strtok_r( valid_rules, ",", &saveptrcheck);
+
+                    is_valid = false;
+
+                    while ( arg != NULL )
+                        {
+
+                            if ( !strcmp(tokenrule, arg) )
+                                {
+
+                                    /* Got valid rule option, check no further */
+
+                                    is_valid = true;
+                                    break;
+                                }
+
+                            arg = strtok_r(NULL, ",", &saveptrcheck);
+
+                        }
+
+                    if ( is_valid == false )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Got bad rule option '%s' on line %d of %s. Abort.", __FILE__, __LINE__, tokenrule, linecount, ruleset_fullname);
+                        }
+
+                    /*************************/
                     /* -< Go to next line >- */
+                    /*************************/
 
                     tokenrule = strtok_r(NULL, ";", &saveptrrule1);
                 }
