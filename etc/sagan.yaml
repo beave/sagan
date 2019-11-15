@@ -129,12 +129,15 @@ sagan-core:
     dns-warnings: disabled
     source-lookup: disabled		
     fifo-size: 1048576		# System must support F_GETPIPE_SZ/F_SETPIPE_SZ. 
-    max-threads: 100
     classification: "$RULE_PATH/classification.config"
     reference: "$RULE_PATH/reference.config"
     gen-msg-map: "$RULE_PATH/gen-msg.map"
     protocol-map: "$RULE_PATH/protocol.map"
-    xbit-storage: mmap             # "redis" or "mmap"
+    chown-fifo: yes             # Change ownership of FIFO to the "sagan" user.
+    xbit-storage: mmap          # "redis" or "mmap"
+
+    max-threads: 100            # Increase this if the system is under heavy load.
+
 
     # Sagan can sends logs in "batches" for performance reasons. In most 
     # environments, you'll likely want to set this to 10.  For more busy

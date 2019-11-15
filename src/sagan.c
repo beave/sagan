@@ -1111,6 +1111,7 @@ int main(int argc, char **argv)
 
                             if (mkfifo(config->sagan_fifo, 0700) == -1)
                                 {
+                                    Remove_Lock_File();
                                     Sagan_Log(ERROR, "Could not create FIFO '%s'. Abort!", config->sagan_fifo);
                                 }
 
@@ -1118,13 +1119,14 @@ int main(int argc, char **argv)
 
                             if ( fd == NULL )
                                 {
+                                    Remove_Lock_File();
                                     Sagan_Log(ERROR, "Error opening %s. Abort!", config->sagan_fifo);
                                 }
 
                         }
                     else
                         {
-
+                            Remove_Lock_File();
                             Sagan_Log(ERROR, "Could not open file '%s'. Abort!", config->sagan_fifo);
                         }
 

@@ -98,6 +98,8 @@ struct _SaganConfig
     char	 sagan_lockfile[MAXPATH];
     char	 sagan_lockpath[MAXPATH];
 
+    bool	 chown_fifo;
+
     char         sagan_fifo[MAXPATH];
     bool         sagan_is_file;                       /* FIFO or FILE */
     char         sagan_log_path[MAXPATH];

@@ -107,8 +107,6 @@ void Droppriv(void)
     if ( getuid() == 0 )
         {
 
-            Sagan_Log(NORMAL, "Setting permissions and dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
-
             /*
              * We chown certain log files to our Sagan user.  This is done so no files are "owned"
              * by "root".  This prevents problems in the future when doing things like handling
@@ -120,12 +118,19 @@ void Droppriv(void)
             if ( config->sagan_is_file == false )  	/* Don't change ownsership/etc if we're processing a file */
                 {
 
-                    ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
-
-                    if ( ret < 0 )
+                    if ( config->chown_fifo == true )
                         {
-                            Sagan_Log(ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+
+                            Sagan_Log(NORMAL, "Changing FIFO '%s' ownership to '%s'.", config->sagan_fifo, config->sagan_runas);
+
+                            ret = chown(config->sagan_fifo, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+                            if ( ret < 0 )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_fifo, config->sagan_runas, strerror(errno));
+                                }
                         }
+
 
                     if (stat(config->sagan_fifo, &fifocheck) != 0 )
                         {
@@ -133,6 +138,9 @@ void Droppriv(void)
                         }
 
                 }
+
+
+            Sagan_Log(NORMAL, "Dropping privileges! [UID: %lu GID: %lu]", (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid);
 
             if (initgroups(pw->pw_name, pw->pw_gid) != 0 ||
                     setgid(pw->pw_gid) != 0 || setuid(pw->pw_uid) != 0)

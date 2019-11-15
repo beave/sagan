@@ -221,6 +221,7 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_host[0] = '\0';
             config->sagan_port = 514;
             config->input_type = INPUT_PIPE;
+            config->chown_fifo = true;
 
             /* Defaults for Parse_IP(); */
 
@@ -656,6 +657,16 @@ void Load_YAML_Config( char *yaml_file )
                                                     Sagan_Log(ERROR, "[%s, line %d] sagan:core 'default-port' is set to zero. Abort!", __FILE__, __LINE__);
                                                 }
                                         }
+
+                                    else if (!strcmp(last_pass, "chown-fifo"))
+                                        {
+
+                                            if (!strcasecmp(value, "disable") || !strcasecmp(value, "false" ) || !strcasecmp(value, "no") )
+                                                {
+                                                    config->chown_fifo = false;
+                                                }
+                                        }
+
 
 
 #ifndef HAVE_LIBFASTJSON
