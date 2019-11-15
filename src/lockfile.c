@@ -34,12 +34,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
+#include <pwd.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -62,23 +64,34 @@ void CheckLockFile ( void )
     FILE *lck;
     int pid;
     struct stat lckcheck;
+    struct stat st = {0};
+    struct passwd *pw = NULL;
+
+    int ret = 0;
+
+    pw = getpwnam(config->sagan_runas);
+
+    if (!pw)
+        {
+            Sagan_Log(ERROR, "Couldn't locate user '%s'. Aborting...", config->sagan_runas);
+        }
 
     /* Check for lockfile first */
 
-    if (stat(config->sagan_lockfile, &lckcheck) == 0 )
+    if (stat(config->sagan_lockfile_full, &lckcheck) == 0 )
         {
 
             /* Lock file is present,  open for read */
 
-            if (( lck = fopen(config->sagan_lockfile, "r" )) == NULL )
+            if (( lck = fopen(config->sagan_lockfile_full, "r" )) == NULL )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Lock file '%s' is present but can't be read [%s]", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Lock file '%s' is present but can't be read [%s]", __FILE__, __LINE__, config->sagan_lockfile_full, strerror(errno));
                 }
             else
                 {
                     if (!fgets(buf, sizeof(buf), lck))
                         {
-                            Sagan_Log(ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile);
+                            Sagan_Log(ERROR, "[%s, line %d] Lock file (%s) is open for reading,  but can't read contents.", __FILE__, __LINE__, config->sagan_lockfile_full);
                         }
 
                     fclose(lck);
@@ -100,10 +113,10 @@ void CheckLockFile ( void )
                     else
                         {
 
-                            Sagan_Log(NORMAL, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (Removing stale %s file)", __FILE__, __LINE__, pid, config->sagan_lockfile);
-                            if (unlink(config->sagan_lockfile))
+                            Sagan_Log(NORMAL, "[%s, line %d] Lock file is present,  but Sagan isn't at pid %d (Removing stale %s file)", __FILE__, __LINE__, pid, config->sagan_lockfile_full);
+                            if (unlink(config->sagan_lockfile_full))
                                 {
-                                    Sagan_Log(ERROR, "Unable to delete %s. ", config->sagan_lockfile);
+                                    Sagan_Log(ERROR, "Unable to delete %s. ", config->sagan_lockfile_full);
                                 }
                         }
                 }
@@ -112,17 +125,63 @@ void CheckLockFile ( void )
     else
         {
 
+            /* Check if the lockfile/lockpath is made || attempt to make it */
+
+            if (stat(config->sagan_lockpath, &st) == -1)
+                {
+
+                    /* Make lockfile with reasonable permissions */
+
+                    if ( mkdir(config->sagan_lockpath, 0755) == -1 )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot create lock file directory (mkdir %s - %s)", __FILE__, __LINE__, config->sagan_lockpath, strerror(errno));
+                        }
+
+                    /* Make sure the directory is readable */
+
+                    ret = chown(config->sagan_lockpath, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+                    if ( ret < 0 )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_lockpath, config->sagan_runas, strerror(errno));
+                        }
+
+                }
+
             /* No lock file present, so create it */
 
-            if (( lck = fopen(config->sagan_lockfile, "w" )) == NULL )
+            if (( lck = fopen(config->sagan_lockfile_full, "w" )) == NULL )
                 {
-                    Sagan_Log(ERROR, "[%s, line %d] Cannot create lock file (%s - %s)", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot create lock file (%s - %s)", __FILE__, __LINE__, config->sagan_lockfile_full, strerror(errno));
                 }
             else
                 {
+
+                    /* Write PID */
+
                     fprintf(lck, "%d", getpid() );
                     fflush(lck);
                     fclose(lck);
+
+                    /* Change lockfile ownership (so we can work with it on exit) */
+
+                    ret = chown(config->sagan_lockfile_full, (unsigned long)pw->pw_uid,(unsigned long)pw->pw_gid);
+
+                    if ( ret < 0 )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot change ownership of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_lockfile_full, config->sagan_runas, strerror(errno));
+                        }
+
+                    /* Let other programs have access to the lockfile */
+
+                    ret = chmod (config->sagan_lockfile_full, 0644 );
+
+                    if ( ret < 0 )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot change permissions of %s to username \"%s\" - %s", __FILE__, __LINE__, config->sagan_lockfile_full, config->sagan_runas, strerror(errno));
+
+                        }
+
                 }
         }
 }
@@ -132,8 +191,8 @@ void Remove_Lock_File ( void )
 
     struct stat lckcheck;
 
-    if ((stat(config->sagan_lockfile, &lckcheck) == 0) && unlink(config->sagan_lockfile) != 0 )
+    if ((stat(config->sagan_lockfile_full, &lckcheck) == 0) && unlink(config->sagan_lockfile_full) != 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Cannot remove lock file (%s - %s)\n", __FILE__, __LINE__, config->sagan_lockfile, strerror(errno));
+            Sagan_Log(ERROR, "[%s, line %d] Cannot remove lock file (%s - %s)\n", __FILE__, __LINE__, config->sagan_lockfile_full, strerror(errno));
         }
 }

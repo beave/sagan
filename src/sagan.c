@@ -785,7 +785,11 @@ int main(int argc, char **argv)
 #endif
 
 
+
+    CheckLockFile();
+
     Droppriv();              /* Become the Sagan user */
+
     Sagan_Log(NORMAL, "---------------------------------------------------------------------------");
 
     IPC_Init();
@@ -989,13 +993,6 @@ int main(int argc, char **argv)
                         }
                 }
         }
-
-    /* We do this after forking so init scripts can complete */
-
-    /* Check lock file _after_ thread.  If you don't it'll retreive the wrong pid
-     * and incorrectly believe there is a stale lock file if --daemon */
-
-    CheckLockFile();
 
 #ifdef HAVE_LIBHIREDIS
 

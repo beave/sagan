@@ -33,6 +33,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <libgen.h>
+#include <string.h>
 
 #include "version.h"
 #include "sagan.h"
@@ -149,6 +151,10 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
+    char *lf1 = NULL;
+    char *lf2 = NULL;
+    char *dir = NULL;
+    char *filename = NULL;
 
     int a;
 
@@ -161,12 +167,35 @@ void Load_YAML_Config( char *yaml_file )
 
             strlcpy(config->sagan_sensor_name, SENSOR_NAME, sizeof(config->sagan_sensor_name));
             strlcpy(config->sagan_cluster_name, CLUSTER_NAME, sizeof(config->sagan_cluster_name));
-            strlcpy(config->sagan_lockfile, LOCKFILE, sizeof(config->sagan_lockfile));
             strlcpy(config->sagan_log_path, SAGANLOGPATH, sizeof(config->sagan_log_path));
             strlcpy(config->sagan_rule_path, RULE_PATH, sizeof(config->sagan_rule_path));
             strlcpy(config->ipc_directory, IPC_DIRECTORY, sizeof(config->ipc_directory));
             strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
             strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
+
+
+            /* Setup and get lockfile paths, filenames, etc */
+
+            strlcpy(config->sagan_lockfile_full, LOCKFILE, sizeof(config->sagan_lockfile_full));
+            lf1 = strdup(config->sagan_lockfile_full);
+            lf2 = strdup(config->sagan_lockfile_full);
+
+            dir = dirname(lf1);
+
+            if ( dir == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Directory for lockfile appears '%s' to be incorrect. Abort",  __FILE__, __LINE__, config->sagan_lockfile_full);
+                }
+
+            filename = basename(lf2);
+
+            if ( filename == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] The filename for lockfile appears '%s' to be incorrect. Abort",  __FILE__, __LINE__, config->sagan_lockfile_full);
+                }
+
+            strlcpy(config->sagan_lockpath, dir, sizeof(config->sagan_lockpath));
+            strlcpy(config->sagan_lockfile, filename, sizeof(config->sagan_lockfile));
 
 #ifdef HAVE_LIBFASTJSON
 
@@ -2613,7 +2642,28 @@ void Load_YAML_Config( char *yaml_file )
 
             else if ( !strcmp(var[a].var_name, "$LOCKFILE" ) )
                 {
-                    strlcpy(config->sagan_lockfile, var[a].var_value, sizeof(config->sagan_lockfile));
+                    strlcpy(config->sagan_lockfile_full, var[a].var_value, sizeof(config->sagan_lockfile_full));
+
+                    lf1 = strdup(config->sagan_lockfile_full);
+                    lf2 = strdup(config->sagan_lockfile_full);
+
+                    dir = dirname(lf1);
+
+                    if ( dir == NULL )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Directory for lockfile appears '%s' to be incorrect. Abort",  __FILE__, __LINE__, config->sagan_lockfile_full);
+                        }
+
+                    filename = basename(lf2);
+
+                    if ( filename == NULL )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] The filename for lockfile appears '%s' to be incorrect. Abort",  __FILE__, __LINE__, config->sagan_lockfile_full);
+                        }
+
+                    strlcpy(config->sagan_lockpath, dir, sizeof(config->sagan_lockpath));
+                    strlcpy(config->sagan_lockfile, filename, sizeof(config->sagan_lockfile));
+
                 }
 
             else if ( !strcmp(var[a].var_name, "$SAGANLOGPATH" ) )

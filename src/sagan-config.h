@@ -94,7 +94,10 @@ struct _SaganConfig
     bool	 sagan_log_stream_status;
 
     int          sagan_log_fd;
-    char         sagan_lockfile[MAXPATH];
+    char         sagan_lockfile_full[MAXPATH];
+    char	 sagan_lockfile[MAXPATH];
+    char	 sagan_lockpath[MAXPATH];
+
     char         sagan_fifo[MAXPATH];
     bool         sagan_is_file;                       /* FIFO or FILE */
     char         sagan_log_path[MAXPATH];
