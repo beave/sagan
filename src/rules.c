@@ -2484,20 +2484,19 @@ void Load_Rules( const char *ruleset )
 
                                             if (Sagan_strstr(tmptoken, "limit"))
                                                 {
-                                                    rulestruct[counters->rulecount].threshold2_type = 1;
-                                                }
-
-                                            /* This isn't really used */
-
-                                            else if (Sagan_strstr(tmptoken, "threshold"))
-                                                {
-                                                    rulestruct[counters->rulecount].threshold2_type = 2;
+                                                    rulestruct[counters->rulecount].threshold2_type = THRESHOLD_LIMIT;
                                                 }
 
                                             else if (Sagan_strstr(tmptoken, "suppress"))
                                                 {
-                                                    rulestruct[counters->rulecount].threshold2_type = 3;
+                                                    rulestruct[counters->rulecount].threshold2_type = THRESHOLD_SUPPRESS;
                                                 }
+
+                                            if ( rulestruct[counters->rulecount].threshold2_type == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] Invalid threshold type '%s' at line %d in %s. Threshold type must be 'limit' or 'suppress'. Abort.", __FILE__, __LINE__, tmptoken, linecount, ruleset_fullname);
+                                                }
+
 
                                         }
 
@@ -2535,6 +2534,12 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
                                             rulestruct[counters->rulecount].threshold2_count = atoi(tmptok_tmp);
+
+                                            if ( rulestruct[counters->rulecount].threshold2_count == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] Invalid threshold count '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
+                                                }
+
                                         }
 
                                     if (Sagan_strstr(tmptoken, "seconds"))
@@ -2542,6 +2547,11 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
                                             rulestruct[counters->rulecount].threshold2_seconds = atoi(tmptok_tmp);
+
+                                            if ( rulestruct[counters->rulecount].threshold2_seconds == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] Invalid threshold time '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
+                                                }
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);
@@ -2619,6 +2629,13 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
                                             rulestruct[counters->rulecount].after2_count = atoi(tmptok_tmp);
+
+                                            if ( rulestruct[counters->rulecount].threshold2_count == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] Invalid after count '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
+                                                }
+
+
                                         }
 
                                     if (Sagan_strstr(tmptoken, "seconds"))
@@ -2626,6 +2643,12 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(tmptoken, " ", &saveptrrule3);
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
                                             rulestruct[counters->rulecount].after2_seconds = atoi(tmptok_tmp);
+
+                                            if ( rulestruct[counters->rulecount].threshold2_seconds == 0 )
+                                                {
+                                                    Sagan_Log(ERROR, "[%s, line %d] Invalid after time '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
+                                                }
+
                                         }
 
                                     tmptoken = strtok_r(NULL, ",", &saveptrrule2);

@@ -221,7 +221,10 @@ struct _Rule_Struct
 
     int drop;                                   /* inline DROP for ext. */
 
-    unsigned char threshold_type;               /* 1 = limit,  2 = thresh */
+#define THRESHOLD_LIMIT 1
+#define THRESHOLD_SUPPRESS 2
+
+    unsigned char threshold_type;               /* 1 = limit,  2 = suppress */
     unsigned char threshold_method;             /* 1 ==  src,  2 == dst,  3 == username, 4 == srcport, 5 == dstport */
     int threshold_count;
     int threshold_seconds;

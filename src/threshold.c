@@ -124,13 +124,17 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
 
                     Threshold2_IPC[i].count++;
 
-                    /* Suppress */
+                    if ( rulestruct[rule_position].threshold2_type == THRESHOLD_SUPPRESS )
+                        {
+                            thresh_oldtime = current_time - Threshold2_IPC[i].utime;
+                            Threshold2_IPC[i].utime = current_time;
+                        }
 
-//		    if ( rulestruct[counters->rulecount].threshold2_type = 3 )
-//			    {
-                    thresh_oldtime = current_time - Threshold2_IPC[i].utime;
-                    Threshold2_IPC[i].utime = current_time;
-//			    }
+                    else if ( rulestruct[rule_position].threshold2_type == THRESHOLD_LIMIT )
+                        {
+                            thresh_oldtime = current_time - Threshold2_IPC[i].utime;
+                        }
+
 
                     strlcpy(Threshold2_IPC[i].syslog_message, syslog_message, sizeof(Threshold2_IPC[i].syslog_message));
                     strlcpy(Threshold2_IPC[i].signature_msg, rulestruct[rule_position].s_msg, sizeof(Threshold2_IPC[i].signature_msg));

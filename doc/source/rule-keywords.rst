@@ -653,19 +653,24 @@ Informs Sagan to only search syslog messages with the specified tag.  This can b
 threshold
 ---------
 
-.. option:: threshold: type {limit|threshold}, track {by_src|by_dst|by_username|by_string}, count {number of event}, seconds {number of seconds}
+.. option:: threshold: type {limit|suppress}, track {by_src|by_dst|by_username|by_string}, count {number of event}, seconds {number of seconds}
 
 This allows Sagan to threshold alerts based on the volume of alerts over a specified amount of time.
 
-**threshold: type limit, track by_src, count 5, seconds 300;**
+**threshold: type suppress, track by_src, count 5, seconds 300;**
 
-Sagan will limit the amount of alerts via the source IP address if the count exceeds 5 within a 300 second (5 minute) period.
+Sagan will suppress the amount of alerts via the source IP address if they exceed a count of 5 within a 300 second (5 minute) period.  Everytime an event happens that meets the threshold criteria,  Sagan's internal timer for this threshold will be reset.  This means that the event will _not_ trigger again until the alert criteria has stopped for at least a 300 second period.  If the event does stop for greater than 300 seconds,  the threshold will generate 5 events and the process will start over.  An example usage might be for a "brute force" attack.  Lets say that the attacker is attempting 10000 passwords every second.  Only the first 5 attempts would generate an alert. The threshold would apply to the remaining 9995 attempts.  After the attacker tries 10000 passwords,  they take a break for 20 minutes.  At this point,  the "suppress" threshold would time out.  This means that if the attackers starts another "brute force" attack, it would trip off a maximum of 5 alerts and start thresholding again.
 
 You can also 'track' by multiple types.  For example:
 
-**threshold: type limit, track by_src&by_usernme, count 5, seconds 300;**
+**threshold: type suppress, track by_src&by_username, count 5, seconds 300;**
 
 The above would threshold by the source IP address and by the username. 
+
+**threshold: type limit, track by_src, count 10, seconds 3600;**
+
+The above will threshold an alert after a count of 10 within 3600 seconds (1 hour).  Unlike ``suppress`` the ``limit`` option does not reset Sagan's internal counter for this threshold.  This means that 10 alerts will be generated every hour as long as the attack occurs.
+
 
 within
 ------
