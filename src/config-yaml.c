@@ -72,10 +72,12 @@ struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 #endif
 
 #ifdef HAVE_LIBLOGNORM
+
 #include <liblognorm.h>
 #include "liblognormalize.h"
 struct liblognorm_struct *liblognormstruct;
 int liblognorm_count;
+
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB

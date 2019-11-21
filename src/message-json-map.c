@@ -146,7 +146,6 @@ void Load_Message_JSON_Map ( const char *json_map )
                     strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
                 }
 
-
             /* Pull in "message" values.  It could be multiple valus for "message" */
 
             if ( json_object_object_get_ex(json_obj, "message", &tmp))
@@ -288,8 +287,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     uint16_t json_str_count=1;
 
-    const char *val_str = NULL;
-
     bool has_message;
     bool found = false;
 
@@ -336,7 +333,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             const char *key = json_object_iter_peek_name(&it);
             struct json_object *const val = json_object_iter_peek_value(&it);
 
-
             const char *val_str = json_object_get_string(val);
 
             if ( debug->debugjson )
@@ -351,9 +347,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 {
 
                     /* Validate it before handing it to the parser to save CPU */
-
-//		     if ( Sagan_strstr(val_str, ":") && Sagan_strstr(val_str, "\"" ) )
-//	 	    {
 
                     json_obj2 = json_tokener_parse(val_str);
 
@@ -396,7 +389,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                                 }
                         } /* json_obj2 != NULL */
-//			}
 
                     json_object_put(json_obj2);
 
@@ -608,7 +600,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             /* Put JSON values into place */
 
-
             /* If this is "message":"{value},{value},{value}", get rid of trailing , in the new "message */
 
             if ( JSON_Message_Map_Found[pos].message[ strlen(JSON_Message_Map_Found[pos].message) - 1 ] == ',' )
@@ -657,13 +648,11 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             if ( JSON_Message_Map_Found[pos].src_ip[0] != '\0' )
                 {
-//                    SaganProcSyslog_LOCAL->json_src_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->src_ip, JSON_Message_Map_Found[pos].src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
                 }
 
             if ( JSON_Message_Map_Found[pos].dst_ip[0] != '\0' )
                 {
-//                    SaganProcSyslog_LOCAL->json_dst_flag = true;
                     strlcpy(SaganProcSyslog_LOCAL->dst_ip, JSON_Message_Map_Found[pos].dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));
                 }
 
@@ -702,7 +691,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
-
             /* Don't override syslog program if no program is present */
 
             if ( JSON_Message_Map_Found[pos].program[0] != '\0' )
@@ -733,7 +721,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     free(JSON_Message_Map_Found);
     json_object_put(json_obj);
-//    json_object_put(json_obj2);
 
 }
 

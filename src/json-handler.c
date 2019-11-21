@@ -167,8 +167,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
             json_object_object_add(jobj,"payload", jpayload);
         }
 
-    //json_object_object_add(jobj,"payload", jpayload);
-
     json_object *jstream = json_object_new_string( "0" );
     json_object_object_add(jobj,"stream", jstream);
 

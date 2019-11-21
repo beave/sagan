@@ -569,7 +569,7 @@ void Load_Rules( const char *ruleset )
 
                                             if( flow_1_count > MAX_CHECK_FLOWS )
                                                 {
-                                                    Sagan_Log(ERROR,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '50', Abort.", __FILE__, __LINE__);
+                                                    Sagan_Log(ERROR,"[%s, line %d] You have exceeded the amount of IP's for flow_1 '%d', Abort.", __FILE__, __LINE__, MAX_CHECK_FLOWS);
                                                 }
                                         }
 

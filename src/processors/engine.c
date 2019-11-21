@@ -165,14 +165,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     int alter_num = 0;
     int meta_alter_num = 0;
 
-    //bool flexbit_return = 0;
-    //bool flexbit_count_return = 0;
-
-    //bool xbit_return = 0;
-
-    //bool alert_time_trigger = false;
-    //bool check_flow_return = true;  /* 1 = match, 0 = no match */
-
     char *ptmp;
     char *tok2;
 
@@ -201,9 +193,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     unsigned char proto = 0;
     int lookup_cache_size = 0;
 
-//    bool brointel_results = false;
-//    bool blacklist_results = false;
-
     char *ip_src = NULL;
     char *ip_dst = NULL;
 
@@ -214,30 +203,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     /* These do not need to be reset each time as they are _only_
      * set through normalize */
 
+#ifdef HAVE_LIBFASTJSON
+
     char *normalize_username = NULL;
     char *normalize_filename = NULL;
     char *normalize_http_uri = NULL;
     char *normalize_http_hostname = NULL;
     char *normalize_ja3 = NULL;
 
+#endif
+
 #ifdef HAVE_LIBMAXMINDDB
 
     unsigned char geoip2_return = GEOIP_MISS;
-    //bool geoip2_isset = false;
 
 #endif
-
-    /*
-    #ifdef WITH_BLUEDOT
-
-        bool bluedot_ip_flag = 0;
-        bool bluedot_hash_flag = 0;
-        bool bluedot_url_flag = 0;
-        bool bluedot_filename_flag = 0;
-        bool bluedot_ja3_flag = 0;
-
-    #endif
-    */
 
     /* Needs to be outside ifdef */
 
@@ -272,8 +252,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     if ( config->parse_json_program == true || config->parse_json_message == true )
         {
-            //SaganProcSyslog_LOCAL->json_src_flag = false;
-            //SaganProcSyslog_LOCAL->json_dst_flag = false;
             SaganProcSyslog_LOCAL->src_ip[0] = '\0';
             SaganProcSyslog_LOCAL->dst_ip[0] = '\0';
             SaganProcSyslog_LOCAL->src_port = 0;
@@ -364,20 +342,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                set it here.  "normalize" and "parse_*_ip can still over ride */
 
 
-//            if ( SaganProcSyslog_LOCAL->json_src_flag == true )
             if ( SaganProcSyslog_LOCAL->src_ip[0] != '\0' )
                 {
-                    //printf("Got src: %s\n", SaganProcSyslog_LOCAL->src_ip);
                     ip_src = SaganProcSyslog_LOCAL->src_ip;
                     IP2Bit(ip_src, ip_src_bits);
                     ip_src_flag = true;
                 }
 
-            //if ( SaganProcSyslog_LOCAL->json_dst_flag == true )
             if ( SaganProcSyslog_LOCAL->dst_ip[0] != '\0' )
                 {
 
-                    //printf("Got dest: %s\n", SaganProcSyslog_LOCAL->dst_ip);
                     ip_dst = SaganProcSyslog_LOCAL->dst_ip;
                     IP2Bit(ip_dst, ip_dst_bits);
                     ip_dst_flag = true;
@@ -981,15 +955,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             sha256_hash = parse_sha256_hash;
                                         }
 
-                                    /*  DEBUG
-                                    else if ( sha256_hash[0] == '\0' && rulestruct[b].s_find_hash_type == PARSE_HASH_ALL )
-                                        {
-                                    Parse_Hash(SaganProcSyslog_LOCAL->syslog_message, PARSE_HASH_SHA256, sha256_hash, sizeof(sha256_hash));
-                                            sha256_hash = parse_sha256_hash;
-                                                      }
-                                                      */
-
-
                                     /* If the rule calls for proto searching,  we do it now */
 
                                     if ( rulestruct[b].s_find_proto_program == true )
@@ -1043,9 +1008,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             IP2Bit(ip_dst, ip_dst_bits);
                                         }
-
-
-//					printf("HERE: %d |  %s\n", SaganProcSyslog_LOCAL->json_src_flag, SaganProcSyslog_LOCAL->src_ip);
 
                                     /* No source port was normalized, Use the rules default */
 
@@ -1345,8 +1307,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
 
-                                            if ( rulestruct[b].bluedot_file_hash ) // && ( md5_hash[0] != '\0' ||
-//                                                    sha256_hash[0] != '\0' || sha256_hash[0] != '\0') )
+                                            if ( rulestruct[b].bluedot_file_hash ) 
                                                 {
 
 

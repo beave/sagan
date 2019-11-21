@@ -48,8 +48,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     struct json_object *json_obj2 = NULL;
     struct json_object *tmp = NULL;
 
-    const char *val_str = NULL;
-
     uint16_t json_str_count=0;
     uint16_t a;
 
@@ -59,7 +57,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
 
-    //memcpy(SaganProcSyslog_LOCAL->syslog_message, "UNDEFINED\0", MAX_SYSLOGMSG);
     memcpy(SaganProcSyslog_LOCAL->syslog_program, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_program));
     memcpy(SaganProcSyslog_LOCAL->syslog_time, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_time));
     memcpy(SaganProcSyslog_LOCAL->syslog_date, "UNDEFINED\0", sizeof(SaganProcSyslog_LOCAL->syslog_date));
@@ -174,15 +171,18 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                     if (msg[0] == ' ')
                         {
-                            // rsyslog retains the leading space in the message
+                            /* rsyslog retains the leading space in the message */
+
                             strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
                         }
                     else
                         {
-                            // syslog-ng strips the leading space: re-insert it
+                            /* syslog-ng strips the leading space: re-insert it */
+
                             snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
                             SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                         }
+
                     has_message = true;
                 }
 
@@ -299,11 +299,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                         {
                             /* Validate it before handing it to the parser to save CPU */
 
-//                   if ( Sagan_strstr(val_str, ":") && Sagan_strstr(val_str, "\"" ) )
-//                  {
-
                             json_obj2 = json_tokener_parse(val_str);
-
 
                             if ( json_obj2 != NULL )
                                 {
@@ -395,15 +391,18 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                     if (msg[0] == ' ')
                         {
-                            // rsyslog retains the leading space in the message
+                            /* rsyslog retains the leading space in the message */
+
                             strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
                         }
                     else
                         {
-                            // syslog-ng strips the leading space: re-insert it
+                            /* syslog-ng strips the leading space: re-insert it */
+
                             snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
                             SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
                         }
+
                     has_message = true;
                 }
 
@@ -537,9 +536,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
         {
             Sagan_Log(WARN, "[%s, line %d] Received JSON which has no decoded 'message' value. The log line was: \"%s\"", __FILE__, __LINE__, syslog_string);
         }
-
-    //json_object_put(json_obj);
-
 
 }
 

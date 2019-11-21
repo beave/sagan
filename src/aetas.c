@@ -57,6 +57,7 @@ int Check_Time(int rule_number)
     struct     tm  ts;
 
     /* For current utime */
+
     time_t t;
     struct tm *now_utime;
 

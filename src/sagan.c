@@ -1290,6 +1290,7 @@ int main(int argc, char **argv)
                                 {
 
                                     Sagan_Log(WARN, "FIFO writer closed.  Waiting for FIFO writer to restart....");
+				    clearerr(fd);
                                     fifoerr = true; 			/* Set flag so our wile(fgets) knows */
                                 }
                         }
