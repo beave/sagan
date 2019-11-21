@@ -60,8 +60,8 @@ bool Threshold2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_d
 
     bool thresh_log_flag = false;
 
-    uint64_t thresh_oldtime;
-    uint64_t current_time;
+    uint64_t thresh_oldtime = 0;
+    uint64_t current_time = 0;
 
     int i;
 

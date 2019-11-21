@@ -324,6 +324,12 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                                             const char *val_str2 = json_object_get_string(val2);
 
+                                            if ( debug->debugjson )
+                                                {
+                                                    Sagan_Log(DEBUG, "Key2: \"%s\", Value: \"%s\"", key2, val_str );
+
+                                                }
+
                                             if ( val_str2[0] == '{' )
                                                 {
 

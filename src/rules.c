@@ -148,8 +148,6 @@ void Load_Rules( const char *ruleset )
     char tok_help[64];
     char tok_help2[64];
 
-    uint64_t fwsam_time_tmp;
-
     char netstr[RULEBUF] = { 0 };
     char rulestr[RULEBUF] = { 0 };
     char rulebuf[RULEBUF] = { 0 };
@@ -2630,7 +2628,7 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3);
                                             rulestruct[counters->rulecount].after2_count = atoi(tmptok_tmp);
 
-                                            if ( rulestruct[counters->rulecount].threshold2_count == 0 )
+                                            if ( rulestruct[counters->rulecount].after2_count == 0 )
                                                 {
                                                     Sagan_Log(ERROR, "[%s, line %d] Invalid after count '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
                                                 }
@@ -2644,7 +2642,7 @@ void Load_Rules( const char *ruleset )
                                             tmptok_tmp = strtok_r(NULL, " ", &saveptrrule3 );
                                             rulestruct[counters->rulecount].after2_seconds = atoi(tmptok_tmp);
 
-                                            if ( rulestruct[counters->rulecount].threshold2_seconds == 0 )
+                                            if ( rulestruct[counters->rulecount].after2_seconds == 0 )
                                                 {
                                                     Sagan_Log(ERROR, "[%s, line %d] Invalid after time '%s' at line %d in %s. Abort.", __FILE__, __LINE__, tmptok_tmp, linecount, ruleset_fullname);
                                                 }
