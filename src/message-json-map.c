@@ -451,7 +451,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message[b], &tmp))
                                         {
 
-                                            snprintf(tmp_message, sizeof(tmp_message), "%s:%s,", JSON_Message_Map[i].message[b], json_object_get_string(tmp));
+                                            snprintf(tmp_message, sizeof(tmp_message), "%s: %s ,", JSON_Message_Map[i].message[b], json_object_get_string(tmp));
                                             strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
 
                                             has_message=true;
@@ -468,7 +468,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message[0], &tmp) )
                                 {
 
-                                    snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s:%s", JSON_Message_Map[i].message[0], json_object_get_string(tmp));
+                                    snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s: %s", JSON_Message_Map[i].message[0], json_object_get_string(tmp));
 
                                 }
 

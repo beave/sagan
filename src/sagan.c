@@ -1152,6 +1152,8 @@ int main(int argc, char **argv)
                 {
 
 
+		    clearerr( fd );
+
                     while(fgets(syslogstring, MAX_SYSLOGMSG, fd) != NULL)
                         {
 

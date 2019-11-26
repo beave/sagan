@@ -460,27 +460,27 @@ void Sagan_Bluedot_Check_Cache_Time (void)
 
         }
 
-    if ( counters->bluedot_ip_cache_count >= config->bluedot_ip_max_cache )
+    if ( counters->bluedot_ip_cache_count >= config->bluedot_ip_max_cache && config->bluedot_ip_max_cache != 0  )
         {
             Sagan_Log(NORMAL, "[%s, line %d] Out of IP cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
 
-    if ( counters->bluedot_hash_cache_count >= config->bluedot_hash_max_cache )
+    if ( counters->bluedot_hash_cache_count >= config->bluedot_hash_max_cache && config->bluedot_hash_max_cache != 0 )
         {
             Sagan_Log(NORMAL, "[%s, line %d] Out of hash cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
 
-    if ( counters->bluedot_url_cache_count >= config->bluedot_url_max_cache )
+    if ( counters->bluedot_url_cache_count >= config->bluedot_url_max_cache && config->bluedot_url_max_cache != 0 )
         {
             Sagan_Log(NORMAL, "[%s, line %d] Out of URL cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
 
-    if ( counters->bluedot_filename_cache_count >= config->bluedot_filename_max_cache )
+    if ( counters->bluedot_filename_cache_count >= config->bluedot_filename_max_cache && config->bluedot_filename_max_cache != 0 )
         {
             Sagan_Log(NORMAL, "[%s, line %d] Out of URL cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }
 
-    if ( counters->bluedot_ja3_cache_count >= config->bluedot_ja3_max_cache )
+    if ( counters->bluedot_ja3_cache_count >= config->bluedot_ja3_max_cache && config->bluedot_ja3_max_cache != 0 )
         {
             Sagan_Log(NORMAL, "[%s, line %d] Out of JA3 cache space! Considering increasing cache size!", __FILE__, __LINE__);
         }

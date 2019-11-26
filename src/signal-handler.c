@@ -517,6 +517,7 @@ void Sig_Handler( void )
                 /* Signals to ignore */
                 case 17:		/* Child process has exited. */
                 case 28:		/* Terminal 'resize'/alarm. */
+		case 33:		/* Interrupts GDB ("Real time" signal) */
                     break;
 
                 case SIGUSR1:
