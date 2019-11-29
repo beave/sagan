@@ -130,20 +130,39 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             if ( json_object_object_get_ex(json_obj, "software", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].software,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].software));
+
+                    const char *software = json_object_get_string(tmp);
+
+                    if ( software != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].software,  software, sizeof(JSON_Message_Map[counters->json_message_map].software));
+                        }
 
                 }
 
             if ( json_object_object_get_ex(json_obj, "program", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
+
+                    const char *program = json_object_get_string(tmp);
+
+                    if ( program != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].program,  program, sizeof(JSON_Message_Map[counters->json_message_map].program));
+                        }
+
                 }
 
             /* Suricata event_type == program */
 
             if ( json_object_object_get_ex(json_obj, "event_type", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].program,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].program));
+
+                    const char *event_type = json_object_get_string(tmp);
+
+                    if ( event_type != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].program,  event_type, sizeof(JSON_Message_Map[counters->json_message_map].program));
+                        }
                 }
 
             /* Pull in "message" values.  It could be multiple valus for "message" */
@@ -152,100 +171,190 @@ void Load_Message_JSON_Map ( const char *json_map )
                 {
 
                     data = (char*)json_object_get_string(tmp);
-                    Remove_Spaces(data);
 
-                    ptr2 = strtok_r(data, ",", &ptr1);
-
-                    while ( ptr2 != NULL )
+                    if ( data != NULL )
                         {
 
-                            strlcpy(JSON_Message_Map[counters->json_message_map].message[JSON_Message_Map[counters->json_message_map].message_count], ptr2, sizeof(JSON_Message_Map[counters->json_message_map].message[JSON_Message_Map[counters->json_message_map].message_count]));
+                            Remove_Spaces(data);
 
-                            JSON_Message_Map[counters->json_message_map].message_count++;
+                            ptr2 = strtok_r(data, ",", &ptr1);
 
-                            ptr2 = strtok_r(NULL, ",", &ptr1);
+                            while ( ptr2 != NULL )
+                                {
+
+                                    strlcpy(JSON_Message_Map[counters->json_message_map].message[JSON_Message_Map[counters->json_message_map].message_count], ptr2, sizeof(JSON_Message_Map[counters->json_message_map].message[JSON_Message_Map[counters->json_message_map].message_count]));
+
+                                    JSON_Message_Map[counters->json_message_map].message_count++;
+
+                                    ptr2 = strtok_r(NULL, ",", &ptr1);
+                                }
                         }
 
                 }
 
             if ( json_object_object_get_ex(json_obj, "src_ip", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].src_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_ip));
+
+                    const char *src_ip = json_object_get_string(tmp);
+
+                    if ( src_ip != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].src_ip,  src_ip, sizeof(JSON_Message_Map[counters->json_message_map].src_ip));
+                        }
                 }
 
-            if ( json_object_object_get_ex(json_obj, "dst_ip", &tmp))
+            /* "dest_ip" is for Suricata compatibility */
+
+            if ( json_object_object_get_ex(json_obj, "dst_ip", &tmp) || json_object_object_get_ex(json_obj, "dest_ip", &tmp) )
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
+
+                    const char *dst_ip = json_object_get_string(tmp);
+
+                    if ( dst_ip != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  dst_ip, sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
+                        }
                 }
 
             /* Suricata compatibility */
 
-            if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp))
-                {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
-                }
+            /*
+                        if ( json_object_object_get_ex(json_obj, "dest_ip", &tmp))
+                            {
 
+                                strlcpy(JSON_Message_Map[counters->json_message_map].dst_ip,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_ip));
+                            }
+            */
 
             if ( json_object_object_get_ex(json_obj, "src_port", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].src_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].src_port));
+
+                    const char *src_port = json_object_get_string(tmp);
+
+                    if ( src_port != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].src_port,  src_port, sizeof(JSON_Message_Map[counters->json_message_map].src_port));
+                        }
+
                 }
 
-            if ( json_object_object_get_ex(json_obj, "dst_port", &tmp))
+            if ( json_object_object_get_ex(json_obj, "dst_port", &tmp) || json_object_object_get_ex(json_obj, "dest_port", &tmp) )
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
+
+                    const char *dst_port = json_object_get_string(tmp);
+
+                    if ( dst_port != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  dst_port, sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
+                        }
+
                 }
 
             /* Suricata compatibility */
-
-            if ( json_object_object_get_ex(json_obj, "dest_port", &tmp))
-                {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
-                }
+            /*
+                        if ( json_object_object_get_ex(json_obj, "dest_port", &tmp))
+                            {
+                                strlcpy(JSON_Message_Map[counters->json_message_map].dst_port,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].dst_port));
+                            }
+            */
 
             if ( json_object_object_get_ex(json_obj, "proto", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].proto,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].proto));
+
+                    const char *proto = json_object_get_string(tmp);
+
+                    if ( proto != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].proto, proto, sizeof(JSON_Message_Map[counters->json_message_map].proto));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "flow_id", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].flow_id,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].flow_id));
+                    const char *flow_id = json_object_get_string(tmp);
+
+                    if ( flow_id != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].flow_id,  flow_id, sizeof(JSON_Message_Map[counters->json_message_map].flow_id));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "md5", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].md5,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].md5));
+
+                    const char *md5 = json_object_get_string(tmp);
+
+                    if ( md5 != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].md5, md5, sizeof(JSON_Message_Map[counters->json_message_map].md5));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "sha1", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].sha1,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].sha1));
+
+                    const char *sha1 = json_object_get_string(tmp);
+
+                    if ( sha1 != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].sha1,  sha1, sizeof(JSON_Message_Map[counters->json_message_map].sha1));
+                        }
+
                 }
 
             if ( json_object_object_get_ex(json_obj, "sha256", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].sha256,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].sha256));
+
+                    const char *sha256 = json_object_get_string(tmp);
+
+                    if ( sha256 != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].sha256,  sha256, sizeof(JSON_Message_Map[counters->json_message_map].sha256));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "filename", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].filename,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].filename));
+
+                    const char *filename = json_object_get_string(tmp);
+
+                    if ( filename != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].filename,  filename, sizeof(JSON_Message_Map[counters->json_message_map].filename));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "hostname", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].hostname));
+
+                    const char *hostname = json_object_get_string(tmp);
+
+                    if ( hostname != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].hostname,  hostname,  sizeof(JSON_Message_Map[counters->json_message_map].hostname));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "url", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].url,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].url));
+
+                    const char *url = json_object_get_string(tmp);
+
+                    if ( url != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].url,  url, sizeof(JSON_Message_Map[counters->json_message_map].url));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, "ja3", &tmp))
                 {
-                    strlcpy(JSON_Message_Map[counters->json_message_map].ja3,  json_object_get_string(tmp), sizeof(JSON_Message_Map[counters->json_message_map].ja3));
+
+                    const char *ja3 = json_object_get_string(tmp);
+
+                    if ( ja3 != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].ja3,  ja3, sizeof(JSON_Message_Map[counters->json_message_map].ja3));
+                        }
                 }
 
 
@@ -295,7 +404,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     struct json_object *tmp = NULL;
 
-    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
+    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE];  // = { { 0 } };
     char tmp_message[MAX_SYSLOGMSG] = { 0 };
 
     strlcpy(json_str[0], SaganProcSyslog_LOCAL->syslog_message, sizeof(json_str[0]));
@@ -451,11 +560,17 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message[b], &tmp))
                                         {
 
-                                            snprintf(tmp_message, sizeof(tmp_message), "%s: %s ,", JSON_Message_Map[i].message[b], json_object_get_string(tmp));
-                                            strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
+                                            const char *message = json_object_get_string(tmp);
 
-                                            has_message=true;
-                                            score++;
+                                            if ( message != NULL )
+                                                {
+
+                                                    snprintf(tmp_message, sizeof(tmp_message), "%s: %s ,", JSON_Message_Map[i].message[b], message);
+                                                    strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
+
+                                                    has_message=true;
+                                                    score++;
+                                                }
 
                                         }
 
@@ -468,7 +583,14 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].message[0], &tmp) )
                                 {
 
-                                    snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s: %s", JSON_Message_Map[i].message[0], json_object_get_string(tmp));
+                                    const char *message = json_object_get_string(tmp);
+
+                                    if ( message != NULL )
+                                        {
+
+                                            snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s: %s", JSON_Message_Map[i].message[0], message);
+
+                                        }
 
                                 }
 
@@ -477,38 +599,77 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].program, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].program, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].program));
-                            score++;
+
+
+                            const char *program = json_object_get_string(tmp);
+
+                            if ( program != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].program, program, sizeof(JSON_Message_Map_Found[i].program));
+                                    score++;
+                                }
+
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].src_ip, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].src_ip, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].src_ip));
-                            score++;
+                            const char *src_ip = json_object_get_string(tmp);
+
+                            if ( src_ip != NULL )
+                                {
+
+                                    strlcpy(JSON_Message_Map_Found[i].src_ip, src_ip, sizeof(JSON_Message_Map_Found[i].src_ip));
+                                    score++;
+
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].dst_ip, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].dst_ip, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].dst_ip));
-                            score++;
+
+                            const char *dst_ip = json_object_get_string(tmp);
+
+                            if ( dst_ip != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].dst_ip, dst_ip, sizeof(JSON_Message_Map_Found[i].dst_ip));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].src_port, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].src_port, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].src_port));
-                            score++;
+                            const char *src_port = json_object_get_string(tmp);
+
+                            if ( src_port != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].src_port, src_port, sizeof(JSON_Message_Map_Found[i].src_port));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].dst_port, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].dst_port, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].dst_port));
-                            score++;
+
+                            const char *dst_port = json_object_get_string(tmp);
+
+                            if ( dst_port != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].dst_port, dst_port, sizeof(JSON_Message_Map_Found[i].dst_port));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].proto, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].proto, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].proto));
-                            score++;
+
+
+                            const char *proto = json_object_get_string(tmp);
+
+                            if ( proto != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].proto, proto, sizeof(JSON_Message_Map_Found[i].proto));
+                                    score++;
+                                }
                         }
 
 
@@ -516,50 +677,98 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].flow_id, &tmp))
                         {
-                            JSON_Message_Map_Found[i].flow_id = atol( json_object_get_string(tmp) );
-                            score++;
+
+                            const char *flow_id = json_object_get_string(tmp);
+
+                            if ( flow_id != NULL )
+                                {
+                                    JSON_Message_Map_Found[i].flow_id = atol( flow_id );
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].md5, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].md5, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].md5));
-                            score++;
+
+                            const char *md5 = json_object_get_string(tmp);
+
+                            if ( md5 != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].md5, md5, sizeof(JSON_Message_Map_Found[i].md5));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].sha1, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].sha1, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].sha1));
-                            score++;
+
+                            const char *sha1 = json_object_get_string(tmp);
+
+                            if ( sha1 != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].sha1, sha1, sizeof(JSON_Message_Map_Found[i].sha1));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].sha256, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].sha256, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].sha256));
-                            score++;
+
+                            const char *sha256 = json_object_get_string(tmp);
+
+                            if ( sha256 != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].sha256, sha256, sizeof(JSON_Message_Map_Found[i].sha256));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].filename, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].filename, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].filename));
-                            score++;
+
+                            const char *filename = json_object_get_string(tmp);
+
+                            if ( filename != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].filename, filename, sizeof(JSON_Message_Map_Found[i].filename));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].hostname, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].hostname, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].hostname));
-                            score++;
+
+                            const char *hostname = json_object_get_string(tmp);
+
+                            if ( hostname != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].hostname, hostname, sizeof(JSON_Message_Map_Found[i].hostname));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].url, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].url, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].url));
-                            score++;
+
+                            const char *url = json_object_get_string(tmp);
+
+                            if ( url != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].url, url, sizeof(JSON_Message_Map_Found[i].url));
+                                    score++;
+                                }
                         }
 
                     if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].ja3, &tmp))
                         {
-                            strlcpy(JSON_Message_Map_Found[i].ja3, json_object_get_string(tmp), sizeof(JSON_Message_Map_Found[i].ja3));
-                            score++;
+
+                            const char *ja3 = json_object_get_string(tmp);
+
+                            if ( ja3 != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].ja3, ja3, sizeof(JSON_Message_Map_Found[i].ja3));
+                                    score++;
+                                }
                         }
 
 

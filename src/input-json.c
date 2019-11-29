@@ -99,17 +99,35 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_host, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_host));
+
+                    const char *syslog_host = json_object_get_string(tmp);
+
+                    if ( syslog_host != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_host, syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_facility, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+
+                    const char *syslog_facility = json_object_get_string(tmp);
+
+                    if ( syslog_facility != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_priority, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+
+                    const char *syslog_priority = json_object_get_string(tmp);
+
+                    if ( syslog_priority != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_level, &tmp))
@@ -129,32 +147,69 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_ip, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->src_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->src_ip));
+
+                    const char *src_ip = json_object_get_string(tmp);
+
+                    if ( src_ip != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->src_ip, src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_ip, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->dst_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->dst_ip));
+
+                    const char *dst_ip = json_object_get_string(tmp);
+
+                    if ( dst_ip != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->dst_ip, dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->src_port, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->src_port = atoi( json_object_get_string(tmp) );
+
+                    const char *src_port = json_object_get_string(tmp);
+
+                    if ( src_port != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->src_port = atoi( src_port );
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->dst_port, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->dst_port = atoi( json_object_get_string(tmp) );
+
+                    const char *dst_port = json_object_get_string(tmp);
+
+                    if ( dst_port != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->dst_port = atoi( dst_port );
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_time, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
+
+                    const char *syslog_time = json_object_get_string(tmp);
+
+                    if ( syslog_time != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_time, syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_program, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
+
+                    const char *syslog_program = json_object_get_string(tmp);
+
+                    if ( syslog_program != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_program, syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                        }
+
                 }
 
             if ( !strcmp(Syslog_JSON_Map->syslog_map_message, "%JSON%" ) )
@@ -166,83 +221,147 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
             else if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->syslog_map_message, &tmp))
                 {
-                    const char *msg = json_object_get_string(tmp);
+                    const char *msg_tmp = json_object_get_string(tmp);
 
-                    if (msg[0] == ' ')
+                    if ( msg_tmp !=  NULL )
                         {
-                            /* rsyslog retains the leading space in the message */
 
-                            strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                            char msg[MAX_SYSLOGMSG] = { 0 };
+
+                            strlcpy(msg, msg_tmp, sizeof(msg));
+
+                            if (msg[0] == ' ')
+                                {
+                                    /* rsyslog retains the leading space in the message */
+
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                                }
+                            else
+                                {
+                                    /* syslog-ng strips the leading space: re-insert it */
+
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
+                                    SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
+                                }
+
+                            has_message = true;
                         }
-                    else
-                        {
-                            /* syslog-ng strips the leading space: re-insert it */
-
-                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
-                            SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
-                        }
-
-                    has_message = true;
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->proto, &tmp))
                 {
 
-                    if ( !strcmp( json_object_get_string(tmp) , "tcp" ) || !strcmp( json_object_get_string(tmp), "TCP" ) )
-                        {
-                            SaganProcSyslog_LOCAL->proto = 6;
-                        }
+                    const char *proto = json_object_get_string(tmp);
 
-                    else if ( !strcmp( json_object_get_string(tmp), "udp" ) || !strcmp( json_object_get_string(tmp), "UDP" ) )
+                    if ( proto != NULL )
                         {
-                            SaganProcSyslog_LOCAL->proto = 17;
-                        }
 
-                    else if ( !strcmp( json_object_get_string(tmp), "icmp" ) || !strcmp( json_object_get_string(tmp), "ICMP" ) )
-                        {
-                            SaganProcSyslog_LOCAL->proto = 1;
+                            if ( !strcmp( proto, "tcp" ) || !strcmp( proto, "TCP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 6;
+                                }
+
+                            else if ( !strcmp( proto, "udp" ) || !strcmp( proto, "UDP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 17;
+                                }
+
+                            else if ( !strcmp( proto, "icmp" ) || !strcmp( proto, "ICMP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 1;
+                                }
+
                         }
 
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->md5, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->md5, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->md5));
+
+                    const char *md5 = json_object_get_string(tmp);
+
+                    if ( md5 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->md5, md5, sizeof(SaganProcSyslog_LOCAL->md5));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha1, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->sha1, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha1));
+
+                    const char *sha1 = json_object_get_string(tmp);
+
+                    if ( sha1 != NULL )
+                        {
+
+                            strlcpy(SaganProcSyslog_LOCAL->sha1, sha1, sizeof(SaganProcSyslog_LOCAL->sha1));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->sha256, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->sha256, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha256));
+
+                    const char *sha256 = json_object_get_string(tmp);
+
+                    if ( sha256 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->sha256, sha256, sizeof(SaganProcSyslog_LOCAL->sha256));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->filename, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->filename, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->filename));
+
+                    const char *filename = json_object_get_string(tmp);
+
+                    if ( filename != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->filename, filename, sizeof(SaganProcSyslog_LOCAL->filename));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->hostname, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->hostname, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->hostname));
+
+                    const char *hostname = json_object_get_string(tmp);
+
+                    if ( hostname != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->hostname, hostname, sizeof(SaganProcSyslog_LOCAL->hostname));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->url, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->url, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->url));
+
+                    const char *url = json_object_get_string(tmp);
+
+                    if ( url != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->url, url, sizeof(SaganProcSyslog_LOCAL->url));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->ja3, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->ja3, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->ja3));
+
+                    const char *ja3 = json_object_get_string(tmp);
+
+                    if ( ja3 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->ja3, ja3, sizeof(SaganProcSyslog_LOCAL->ja3));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->flow_id, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->flow_id = atol( json_object_get_string(tmp) );
+
+                    const char *flow_id = json_object_get_string(tmp);
+
+                    if ( flow_id != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->flow_id = atol( flow_id );
+                        }
                 }
 
 
@@ -290,7 +409,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                             Sagan_Log(DEBUG, "Key: \"%s\", Value: \"%s\"", key, val_str );
 
                         }
-
 
                     /* Is there nested JSON */
 
@@ -388,143 +506,273 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                 {
                     const char *msg = json_object_get_string(tmp);
 
-                    if (msg[0] == ' ')
+                    if ( msg != NULL )
                         {
-                            /* rsyslog retains the leading space in the message */
 
-                            strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                            if (msg[0] == ' ')
+                                {
+                                    /* rsyslog retains the leading space in the message */
+
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, msg, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                                }
+                            else
+                                {
+                                    /* syslog-ng strips the leading space: re-insert it */
+
+                                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
+                                    SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
+                                }
+
+                            has_message = true;
                         }
-                    else
-                        {
-                            /* syslog-ng strips the leading space: re-insert it */
-
-                            snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message)," %s", msg);
-                            SaganProcSyslog_LOCAL->syslog_message[ (sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ) ] = '\0';
-                        }
-
-                    has_message = true;
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_host, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_host, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_host));
+
+                    const char *syslog_host = json_object_get_string(tmp);
+
+                    if ( *syslog_host != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_host, syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_facility, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_facility, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+
+                    const char *syslog_facility = json_object_get_string(tmp);
+
+                    if ( syslog_facility != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_facility, syslog_facility, sizeof(SaganProcSyslog_LOCAL->syslog_facility));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_priority, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_priority, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+
+                    const char *syslog_priority = json_object_get_string(tmp);
+
+                    if ( syslog_priority != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_priority, syslog_priority, sizeof(SaganProcSyslog_LOCAL->syslog_priority));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_level, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_level, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_level));
+
+                    const char *syslog_level = json_object_get_string(tmp);
+
+                    if ( syslog_level != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_level, syslog_level, sizeof(SaganProcSyslog_LOCAL->syslog_level));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_tag, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_tag, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+
+                    const char *syslog_tag = json_object_get_string(tmp);
+
+                    if ( syslog_tag != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_tag, syslog_tag, sizeof(SaganProcSyslog_LOCAL->syslog_tag));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_date, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_date, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_date));
+
+                    const char *syslog_date = json_object_get_string(tmp);
+
+                    if ( syslog_date != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_date, syslog_date, sizeof(SaganProcSyslog_LOCAL->syslog_date));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_time, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_time, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_time));
+
+                    const char *syslog_time = json_object_get_string(tmp);
+
+                    if ( syslog_time != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_time, syslog_time, sizeof(SaganProcSyslog_LOCAL->syslog_time));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->syslog_map_program, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_program, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->syslog_program));
+
+                    const char *syslog_program = json_object_get_string(tmp);
+
+                    if ( syslog_program != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->syslog_program, syslog_program, sizeof(SaganProcSyslog_LOCAL->syslog_program));
+                        }
                 }
 
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->src_ip, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->src_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->src_ip));
+
+                    const char *src_ip = json_object_get_string(tmp);
+
+                    if ( src_ip != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->src_ip, src_ip, sizeof(SaganProcSyslog_LOCAL->src_ip));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->dst_ip, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->dst_ip, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->dst_ip));
+
+                    const char *dst_ip = json_object_get_string(tmp);
+
+                    if ( dst_ip != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->dst_ip, dst_ip, sizeof(SaganProcSyslog_LOCAL->dst_ip));
+                        }
                 }
 
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->src_port, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->src_port = atoi( json_object_get_string(tmp) );
+
+                    const char *src_port = json_object_get_string(tmp);
+
+                    if ( src_port != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->src_port = atoi( src_port );
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->dst_port, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->dst_port = atoi( json_object_get_string(tmp) );
+
+                    const char *dst_port = json_object_get_string(tmp);
+
+                    if ( dst_port != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->dst_port = atoi( dst_port );
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->proto, &tmp))
                 {
 
-                    if ( !strcmp( json_object_get_string(tmp) , "tcp" ) || !strcmp( json_object_get_string(tmp), "TCP" ) )
-                        {
-                            SaganProcSyslog_LOCAL->proto = 6;
-                        }
+                    const char *proto = json_object_get_string(tmp);
 
-                    else if ( !strcmp( json_object_get_string(tmp), "udp" ) || !strcmp( json_object_get_string(tmp), "UDP" ) )
+                    if ( proto != NULL )
                         {
-                            SaganProcSyslog_LOCAL->proto = 17;
-                        }
 
-                    else if ( !strcmp( json_object_get_string(tmp), "icmp" ) || !strcmp( json_object_get_string(tmp), "ICMP" ) )
-                        {
-                            SaganProcSyslog_LOCAL->proto = 1;
-                        }
+                            if ( !strcmp( proto, "tcp" ) || !strcmp( proto, "TCP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 6;
+                                }
 
+                            else if ( !strcmp( proto, "udp" ) || !strcmp( proto, "UDP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 17;
+                                }
+
+                            else if ( !strcmp( proto, "icmp" ) || !strcmp( proto, "ICMP" ) )
+                                {
+                                    SaganProcSyslog_LOCAL->proto = 1;
+                                }
+
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->md5, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->md5, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->md5));
+
+                    const char *md5 = json_object_get_string(tmp);
+
+                    if ( md5 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->md5, md5, sizeof(SaganProcSyslog_LOCAL->md5));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->sha1, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->sha1, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha1));
+
+                    const char *sha1 = json_object_get_string(tmp);
+
+                    if ( sha1 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->sha1, sha1, sizeof(SaganProcSyslog_LOCAL->sha1));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->sha256, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->sha256, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->sha256));
+
+                    const char *sha256 = json_object_get_string(tmp);
+
+                    if ( sha256 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->sha256, sha256, sizeof(SaganProcSyslog_LOCAL->sha256));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->filename, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->filename, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->filename));
+
+                    const char *filename = json_object_get_string(tmp);
+
+                    if ( filename != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->filename, filename, sizeof(SaganProcSyslog_LOCAL->filename));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->hostname, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->hostname, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->hostname));
+
+                    const char *hostname = json_object_get_string(tmp);
+
+                    if ( hostname != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->hostname, hostname, sizeof(SaganProcSyslog_LOCAL->hostname));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->url, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->url, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->url));
+
+                    const char *url = json_object_get_string(tmp);
+
+                    if ( url != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->url, url, sizeof(SaganProcSyslog_LOCAL->url));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->ja3, &tmp))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->ja3, json_object_get_string(tmp), sizeof(SaganProcSyslog_LOCAL->ja3));
+
+                    const char *ja3 = json_object_get_string(tmp);
+
+                    if ( ja3 != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->ja3, ja3, sizeof(SaganProcSyslog_LOCAL->ja3));
+                        }
                 }
 
             if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->flow_id, &tmp))
                 {
-                    SaganProcSyslog_LOCAL->flow_id = atol( json_object_get_string(tmp) );
+
+                    const char *flow_id = json_object_get_string(tmp);
+
+                    if ( flow_id != NULL )
+                        {
+                            SaganProcSyslog_LOCAL->flow_id = atol( flow_id );
+                        }
                 }
 
             json_object_put(json_obj_sub);

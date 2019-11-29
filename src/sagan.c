@@ -1152,7 +1152,7 @@ int main(int argc, char **argv)
                 {
 
 
-		    clearerr( fd );
+                    clearerr( fd );
 
                     while(fgets(syslogstring, MAX_SYSLOGMSG, fd) != NULL)
                         {
@@ -1292,7 +1292,7 @@ int main(int argc, char **argv)
                                 {
 
                                     Sagan_Log(WARN, "FIFO writer closed.  Waiting for FIFO writer to restart....");
-				    clearerr(fd);
+                                    clearerr(fd);
                                     fifoerr = true; 			/* Set flag so our wile(fgets) knows */
                                 }
                         }
