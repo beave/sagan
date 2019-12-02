@@ -135,6 +135,7 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
     SaganNormalizeLiblognorm->http_hostname[0] = '\0';
 
     SaganNormalizeLiblognorm->ja3[0] = '\0';
+    SaganNormalizeLiblognorm->event_id[0] = '\0';
 
     SaganNormalizeLiblognorm->src_port = 0;
     SaganNormalizeLiblognorm->dst_port = 0;
@@ -287,6 +288,22 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             strlcpy(SaganNormalizeLiblognorm->filename, tmp, sizeof(SaganNormalizeLiblognorm->filename));
         }
 
+    json_object_object_get_ex(json, "ja3", &string_obj);
+    tmp = json_object_get_string(string_obj);
+
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->ja3, tmp, sizeof(SaganNormalizeLiblognorm->ja3));
+        }
+
+    json_object_object_get_ex(json, "event_id", &string_obj);
+    tmp = json_object_get_string(string_obj);
+
+    if ( tmp != NULL )
+        {
+            strlcpy(SaganNormalizeLiblognorm->event_id, tmp, sizeof(SaganNormalizeLiblognorm->event_id));
+        }
+
     if ( debug->debugnormalize )
         {
             Sagan_Log(DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
@@ -307,6 +324,8 @@ json_object *Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblog
             Sagan_Log(DEBUG, "HTTP HOSTNAME: %s", SaganNormalizeLiblognorm->http_hostname);
             Sagan_Log(DEBUG, "Filename: %s", SaganNormalizeLiblognorm->filename);
             Sagan_Log(DEBUG, "JA3: %s",  SaganNormalizeLiblognorm->ja3);
+            Sagan_Log(DEBUG, "Event ID: %s",  SaganNormalizeLiblognorm->event_id);
+
 
             Sagan_Log(DEBUG, "");
         }

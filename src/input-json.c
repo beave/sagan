@@ -67,6 +67,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     memcpy(SaganProcSyslog_LOCAL->syslog_host, "0.0.0.0\0", sizeof(SaganProcSyslog_LOCAL->syslog_host));
 
     SaganProcSyslog_LOCAL->md5[0] = '\0';
+    SaganProcSyslog_LOCAL->event_id[0] = '\0';
 
     /* If the json isn't nested,  we can do this the easy way */
 
@@ -364,6 +365,19 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                         }
                 }
 
+            if ( json_object_object_get_ex(json_obj, Syslog_JSON_Map->event_id, &tmp))
+                {
+
+                    const char *event_id = json_object_get_string(tmp);
+
+                    if ( event_id != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->event_id, event_id, sizeof(SaganProcSyslog_LOCAL->event_id) );
+                        }
+
+                }
+
+
 
         }
     else
@@ -532,7 +546,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                     const char *syslog_host = json_object_get_string(tmp);
 
-                    if ( *syslog_host != NULL )
+                    if ( syslog_host != NULL )
                         {
                             strlcpy(SaganProcSyslog_LOCAL->syslog_host, syslog_host, sizeof(SaganProcSyslog_LOCAL->syslog_host));
                         }
@@ -773,6 +787,18 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                         {
                             SaganProcSyslog_LOCAL->flow_id = atol( flow_id );
                         }
+                }
+
+            if ( json_object_object_get_ex(json_obj_sub, Syslog_JSON_Map->event_id, &tmp))
+                {
+
+                    const char *event_id = json_object_get_string(tmp);
+
+                    if ( event_id != NULL )
+                        {
+                            strlcpy(SaganProcSyslog_LOCAL->event_id, event_id, sizeof(SaganProcSyslog_LOCAL->event_id));
+                        }
+
                 }
 
             json_object_put(json_obj_sub);

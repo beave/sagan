@@ -390,13 +390,6 @@ struct _Sagan_Proc_Syslog
     char syslog_program[MAX_SYSLOG_PROGRAM];
     char syslog_message[MAX_SYSLOGMSG];
 
-//    char syslog[MAX_SYSLOGMSG];
-
-//#ifdef HAVE_LIBFASTJSON
-
-//    bool json_src_flag;
-//    bool json_dst_flag;
-
     char src_ip[MAXIP];
     char dst_ip[MAXIP];
 
@@ -405,6 +398,8 @@ struct _Sagan_Proc_Syslog
     unsigned char proto;
 
     uint64_t flow_id;
+
+    char event_id[32];
     char md5[MD5_HASH_SIZE+1];
     char sha1[SHA1_HASH_SIZE+1];
     char sha256[SHA256_HASH_SIZE+1];
@@ -412,9 +407,6 @@ struct _Sagan_Proc_Syslog
     char hostname[MAX_HOSTNAME_SIZE+1];
     char url[MAX_URL_SIZE+1];
     char ja3[MD5_HASH_SIZE+1];
-
-
-//#endif
 
 };
 
@@ -442,8 +434,6 @@ struct _Syslog_JSON_Map
     char syslog_map_program[32];
     char syslog_map_message[32];
 
-// LIBJSON?
-
     char src_ip[32];
     char dst_ip[32];
 
@@ -460,6 +450,7 @@ struct _Syslog_JSON_Map
     char url[32];
     char ja3[32];
     char flow_id[32];
+    char event_id[32];
 
 
 };

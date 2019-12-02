@@ -65,6 +65,7 @@ typedef struct _SaganNormalizeLiblognorm
     char http_hostname[MAX_HOSTNAME_SIZE];
 
     char ja3[MD5_HASH_SIZE+1];
+    char event_id[32];
 
 } _SaganNormalizeLiblognorm;
 #endif

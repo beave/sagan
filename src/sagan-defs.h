@@ -108,6 +108,7 @@ typedef void json_object;
 
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */
+#define MAX_EVENT_ID		25		/* Max 'event_id' within a rule */
 
 #define MAX_META_CONTENT	5		/* Max 'meta_content' within a rule */
 #define MAX_META_CONTENT_ITEMS	256		/* Max strings to look for in meta_content */

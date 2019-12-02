@@ -20,6 +20,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        output.c \
                                                        processor.c \
                                                        gen-msg.c \
+						       event-id.c \
                                                        liblognormalize.c \
                                                        ignore-list.c \
                                                        tracking-syslog.c \

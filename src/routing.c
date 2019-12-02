@@ -30,6 +30,13 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
             return false;
         }
 
+    /* Event ID */
+
+    if ( rulestruct[SaganRouting->position].event_id[0] != 0 && SaganRouting->event_id_return == false )
+        {
+            return false;
+        }
+
     /* Flexbit */
 
     if ( rulestruct[SaganRouting->position].flexbit_flag == false ||

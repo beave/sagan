@@ -53,6 +53,7 @@
 #include "after.h"
 #include "threshold.h"
 #include "xbit.h"
+#include "event-id.h"
 #include "routing.h"
 
 #include "parsers/parsers.h"
@@ -772,6 +773,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     normalize_ja3 = SaganNormalizeLiblognorm.ja3;
                                                 }
 
+                                           if ( SaganNormalizeLiblognorm.event_id[0] != '\0' )
+                                                {
+                                                    liblognorm_status = 1;
+						    strlcpy(SaganProcSyslog_LOCAL->event_id, SaganNormalizeLiblognorm.event_id, sizeof(SaganProcSyslog_LOCAL->event_id)); 
+                                                }
+
                                         }
 
                                     if ( liblognorm_status == 1  && rulestruct[b].normalize == 1 )
@@ -1106,6 +1113,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             sleep( rulestruct[b].xbit_upause_time );
                                         }
+
+
+				     if ( rulestruct[b].event_id_count > 0 ) 
+					{
+
+					SaganRouting->event_id_return = Event_ID( b, SaganProcSyslog_LOCAL );
+
+					}
 
 
                                     /****************************************************************************

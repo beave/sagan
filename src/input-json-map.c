@@ -358,6 +358,17 @@ void Load_Input_JSON_Map ( const char *json_map )
                                                 }
                                         }
 
+                                    if ( json_object_object_get_ex(json_obj, "event_id", &tmp))
+                                        {
+
+                                            const char *event_id = json_object_get_string(tmp);
+
+                                            if ( event_id != NULL )
+                                                {
+                                                    strlcpy(Syslog_JSON_Map->event_id, event_id, sizeof(Syslog_JSON_Map->event_id));
+                                                }
+                                        }
+
                                     /* Sanity Checks */
 
                                     if ( Syslog_JSON_Map->syslog_map_time[0] == '\0' )

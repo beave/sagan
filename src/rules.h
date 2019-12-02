@@ -26,7 +26,7 @@
 #define BLUEDOT_MAX_CAT        10
 #endif
 
-#define		VALID_RULE_OPTIONS "parse_port,parse_proto,parse_proto_program,flexbits_upause,xbits_upause,flexbits_pause,xbits_pause,default_proto,default_src_port,default_dst_port,parse_src_ip,parse_dst_ip,parse_hash,xbits,flexbits,dynamic_load,country_code,meta_content,meta_nocase,rev,classtype,program,event_type,reference,sid,syslog_tag,syslog_facility,syslog_level,syslog_priority,pri,priority,email,normalize,msg,content,nocase,offset,meta_offset,depth,meta_depth,distance,meta_distance,within,meta_within,pcre,alert_time,threshold,after,blacklist,bro-intel,zeek-intel,external,bluedot,metadata"
+#define		VALID_RULE_OPTIONS "parse_port,parse_proto,parse_proto_program,flexbits_upause,xbits_upause,flexbits_pause,xbits_pause,default_proto,default_src_port,default_dst_port,parse_src_ip,parse_dst_ip,parse_hash,xbits,flexbits,dynamic_load,country_code,meta_content,meta_nocase,rev,classtype,program,event_type,reference,sid,syslog_tag,syslog_facility,syslog_level,syslog_priority,pri,priority,email,normalize,msg,content,nocase,offset,meta_offset,depth,meta_depth,distance,meta_distance,within,meta_within,pcre,alert_time,threshold,after,blacklist,bro-intel,zeek-intel,external,bluedot,metadata,event_id"
 
 
 typedef struct _Rules_Loaded _Rules_Loaded;
@@ -98,6 +98,8 @@ struct _Rule_Struct
     char s_level[25];
     char s_tag[10];
 
+    char event_id[MAX_EVENT_ID][32];
+
     char email[255];
     bool email_flag;
 
@@ -146,6 +148,7 @@ struct _Rule_Struct
 
     unsigned char pcre_count;
     unsigned char content_count;
+    unsigned char event_id_count;
     unsigned char meta_content_count;
     unsigned char meta_content_converted_count;
 

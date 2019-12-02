@@ -40,6 +40,8 @@ struct _JSON_Message_Map
     char proto[32];
 
     char flow_id[32];
+    char event_id[32];
+
     char md5[32];
     char sha1[32];
     char sha256[32];
@@ -67,6 +69,9 @@ struct _JSON_Message_Map_Found
     char proto[5];
 
     uint64_t flow_id;
+
+    char event_id[32];
+
     char md5[MD5_HASH_SIZE+1];
     char sha1[SHA1_HASH_SIZE+1];
     char sha256[SHA256_HASH_SIZE+1];

@@ -180,6 +180,7 @@ void Load_Rules( const char *ruleset )
     int meta_content_count=0;
     int meta_content_converted_count=0;
     int pcre_count=0;
+    int event_id_count;
 
     int flexbit_count;
     int xbit_count;
@@ -1767,6 +1768,49 @@ void Load_Rules( const char *ruleset )
                             Sagan_Log(ERROR, "** Error: Rule %d of %s has \"country_code:\" tracking but Sagan lacks GeoIP support! Rebuild Sagan with \"--enable-geoip\" or disable this rule!", linecount, ruleset_fullname);
                         }
 #endif
+
+
+                    if (!strcmp(rulesplit, "event_id" ))
+                        {
+
+                            /* Is it over the MAX */
+
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] 'event_id' is not valid at line %d in %s. ABort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            tmptoken = strtok_r(arg, "|", &saveptrrule2);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Invalid value for 'event_id at line %d in %s. Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            while ( tmptoken != NULL )
+                                {
+
+                                    if ( event_id_count > MAX_EVENT_ID )
+                                        {
+                                            Sagan_Log(ERROR, "[%s, line %d] There is to many event ids in 'event_id' types in the rule at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                        }
+
+                                    Remove_Spaces(tmptoken);
+
+                                    /* We copy it as a string in case we have event id's that lead with a zero */
+
+                                    strlcpy(rulestruct[counters->rulecount].event_id[event_id_count], tmptoken, sizeof(rulestruct[counters->rulecount].event_id[event_id_count]));
+
+                                    event_id_count++;
+                                    rulestruct[counters->rulecount].event_id_count = event_id_count;
+//				event_id_count++;
+
+                                    tmptoken = strtok_r(NULL, "|", &saveptrrule2);
+
+                                }
+                        }
 
                     if (!strcmp(rulesplit, "meta_content"))
                         {

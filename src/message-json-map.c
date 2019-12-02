@@ -269,6 +269,17 @@ void Load_Message_JSON_Map ( const char *json_map )
                         }
                 }
 
+            if ( json_object_object_get_ex(json_obj, "event_id", &tmp))
+                {
+                    const char *event_id = json_object_get_string(tmp);
+
+                    if ( event_id != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].event_id,  event_id, sizeof(JSON_Message_Map[counters->json_message_map].event_id));
+                        }
+                }
+
+
             if ( json_object_object_get_ex(json_obj, "flow_id", &tmp))
                 {
                     const char *flow_id = json_object_get_string(tmp);
@@ -681,6 +692,17 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                 }
                         }
 
+                    if ( json_object_object_get_ex(json_obj, JSON_Message_Map[i].event_id, &tmp))
+                        {
+
+                            const char *event_id = json_object_get_string(tmp);
+
+                            if ( event_id != NULL )
+                                {
+                                    strlcpy(JSON_Message_Map_Found[i].event_id, event_id, sizeof(JSON_Message_Map_Found[i].event_id));
+                                    score++;
+                                }
+                        }
 
                     /* Suricata specific */
 

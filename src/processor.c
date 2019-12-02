@@ -166,7 +166,7 @@ void Processor ( void )
                     if (debug->debugsyslog)
                         {
                             Sagan_Log(DEBUG, "[%s, line %d] **[Parsed Syslog]*********************************", __FILE__, __LINE__);
-                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog_LOCAL->syslog_time);
+                            Sagan_Log(DEBUG, "[%s, line %d] Host: %s | Program: %s | Facility: %s | Priority: %s | Level: %s | Tag: %s | Date: %s | Time: %s | Event ID: %s", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_facility, SaganProcSyslog_LOCAL->syslog_priority, SaganProcSyslog_LOCAL->syslog_level, SaganProcSyslog_LOCAL->syslog_tag, SaganProcSyslog_LOCAL->syslog_date, SaganProcSyslog_LOCAL->syslog_time, SaganProcSyslog_LOCAL->event_id);
                             Sagan_Log(DEBUG, "[%s, line %d] Parsed message: %s", __FILE__, __LINE__,  SaganProcSyslog_LOCAL->syslog_message);
                         }
 
@@ -195,31 +195,12 @@ void Processor ( void )
                         }
 
 
-//		    pthread_mutex_lock(&ClientStatsMutex);
-
                     if ( config->client_stats_flag )
                         {
 
-                            /*
-                            char tmp_host[1024][config->max_batch];
-                            char tmp_program[1024][config->max_batch];
-                            char tmp_message[10240][config->max_batch];
-
-                            strlcpy(tmp_host[i], SaganProcSyslog_LOCAL->syslog_host, sizeof(tmp_host[i]));
-                            strlcpy(tmp_program[i], SaganProcSyslog_LOCAL->syslog_program, sizeof(tmp_program[i]));
-                            strlcpy(tmp_message[i], SaganProcSyslog_LOCAL->syslog_message, sizeof(tmp_message[i]));
-                            */
-
-                            //Client_Stats_Add_Update_IP ( SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
-
-                            //Sagan_Log(DEBUG, "SEND: %s|%s|\n", SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program);
                             Client_Stats_Add_Update_IP ( SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
-                            //Client_Stats_Add_Update_IP ( tmp_host[i], tmp_program[i], tmp_message[i] );
-
 
                         }
-
-//                    pthread_mutex_unlock(&ClientStatsMutex);
 
 
                     if ( config->sagan_track_clients_flag )
