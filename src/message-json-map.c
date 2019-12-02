@@ -565,7 +565,16 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                             if ( message != NULL )
                                                 {
 
-                                                    snprintf(tmp_message, sizeof(tmp_message), "%s: %s ,", JSON_Message_Map[i].message[b], message);
+                                                    if ( config->keys_in_message == true )
+                                                        {
+
+                                                            snprintf(tmp_message, sizeof(tmp_message), "%s: %s ,", JSON_Message_Map[i].message[b], message);
+                                                        }
+                                                    else
+                                                        {
+
+                                                            snprintf(tmp_message, sizeof(tmp_message), "%s", message);
+                                                        }
                                                     strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
 
                                                     has_message=true;

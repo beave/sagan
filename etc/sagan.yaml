@@ -171,8 +171,9 @@ sagan-core:
     # strings together (program+message) and then decode.  The "json-message-map"
     # tells Sagan how to decode JSON values when they are encountered.
 
-    parse-json-message: disable
-    parse-json-program: disable
+    parse-json-message: disabled
+    parse-json-program: disabled
+    keys-in-message: disabled
     json-message-map: "$RULE_PATH/json-message.map"
 
   # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 

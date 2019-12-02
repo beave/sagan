@@ -669,6 +669,30 @@ void Load_YAML_Config( char *yaml_file )
                                                 }
                                         }
 
+#ifndef HAVE_LIBFASTJSON
+
+                                    else if (!strcmp(last_pass, "keys-in-message"))
+                                        {
+                                            if (!strcasecmp(value, "enabled" && !strcasecmp(value, "true" ) )
+                                            {
+
+                                                Sagan_Log(ERROR, "[%s, line %d] sagan:core 'keys-in--message' isn't supported.  No JSON support. Abort!", __FILE__, __LINE__);
+                                                }
+
+
+                                        }
+
+#endif
+
+                                    else if (!strcmp(last_pass, "keys-in-message"))
+                                        {
+
+                                            if (!strcasecmp(value, "enabled") || !strcasecmp(value, "true" ) || !strcasecmp(value, "yes") )
+                                                {
+                                                    config->keys_in_message = true;
+                                                }
+                                        }
+
 
 
 #ifndef HAVE_LIBFASTJSON
