@@ -1805,7 +1805,6 @@ void Load_Rules( const char *ruleset )
 
                                     event_id_count++;
                                     rulestruct[counters->rulecount].event_id_count = event_id_count;
-//				event_id_count++;
 
                                     tmptoken = strtok_r(NULL, "|", &saveptrrule2);
 
