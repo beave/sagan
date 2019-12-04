@@ -32,6 +32,7 @@ bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )
 
     /* Event ID */
 
+
     if ( rulestruct[SaganRouting->position].event_id_count > 0 && SaganRouting->event_id_return == false )
         {
             return false;

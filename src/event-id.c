@@ -42,11 +42,15 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "rules.h"
 #include "event-id.h"
+
+#include "parsers/parsers.h"
+
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
@@ -72,6 +76,7 @@ bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
        1234 == the event ID.  This is how most logging programs (NXlog, Evtsys, etc) record the
        event ID. */
 
+
     if ( SaganProcSyslog_LOCAL->event_id[0] == '\0' )
         {
 
@@ -89,8 +94,9 @@ bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     /* Search.  If we find it,  return true! */
 
-                    if ( Sagan_strstr(alter_message, tmp_content ))
+                    if ( Sagan_stristr(alter_message, tmp_content, 0 ))
                         {
+			    printf("STRSTR TRUE: |%s| == |%s|\n", alter_message, tmp_content);
                             return(true);
                         }
                 }
@@ -103,6 +109,7 @@ bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             /* If we have a decoded "event id" via JSON/liblognorm,  we can use that
                value instead */
+
 
             for (i = 0; i < rulestruct[position].event_id_count; i++ )
                 {

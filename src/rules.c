@@ -1782,7 +1782,7 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(ERROR, "[%s, line %d] 'event_id' is not valid at line %d in %s. ABort", __FILE__, __LINE__, linecount, ruleset_fullname);
                                 }
 
-                            tmptoken = strtok_r(arg, "|", &saveptrrule2);
+                            tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
                             if ( tmptoken == NULL )
                                 {
@@ -1808,7 +1808,7 @@ void Load_Rules( const char *ruleset )
                                     event_id_count++;
                                     rulestruct[counters->rulecount].event_id_count = event_id_count;
 
-                                    tmptoken = strtok_r(NULL, "|", &saveptrrule2);
+                                    tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                                 }
                         }
