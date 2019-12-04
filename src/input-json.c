@@ -69,9 +69,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     SaganProcSyslog_LOCAL->md5[0] = '\0';
     SaganProcSyslog_LOCAL->event_id[0] = '\0';
 
-    return(0);
-
-
     /* If the json isn't nested,  we can do this the easy way */
 
     if ( Syslog_JSON_Map->is_nested == false )
