@@ -1789,7 +1789,7 @@ void Load_Rules( const char *ruleset )
                                     Sagan_Log(ERROR, "[%s, line %d] Invalid value for 'event_id at line %d in %s. Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
                                 }
 
-			    event_id_count = 0;
+                            event_id_count = 0;
 
                             while ( tmptoken != NULL )
                                 {

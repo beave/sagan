@@ -716,9 +716,20 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                         } /* End of content: & pcre */
 
-                    /* if you got match */
 
-                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count )
+                    /* Treat "event_id" similar to pcre/content */
+
+                    bool event_id_return = true;		/* Set this in case there is no "event_id" used */
+
+                    if ( rulestruct[b].event_id_count > 0 )
+                        {
+                            event_id_return = Event_ID( b, SaganProcSyslog_LOCAL );
+                        }
+
+                    /* if we have a match .... */
+
+
+                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true )
                         {
 
                             if ( match == false )
@@ -773,10 +784,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                     normalize_ja3 = SaganNormalizeLiblognorm.ja3;
                                                 }
 
-                                           if ( SaganNormalizeLiblognorm.event_id[0] != '\0' )
+                                            if ( SaganNormalizeLiblognorm.event_id[0] != '\0' )
                                                 {
                                                     liblognorm_status = 1;
-						    strlcpy(SaganProcSyslog_LOCAL->event_id, SaganNormalizeLiblognorm.event_id, sizeof(SaganProcSyslog_LOCAL->event_id)); 
+                                                    strlcpy(SaganProcSyslog_LOCAL->event_id, SaganNormalizeLiblognorm.event_id, sizeof(SaganProcSyslog_LOCAL->event_id));
                                                 }
 
                                         }
@@ -1114,13 +1125,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                             sleep( rulestruct[b].xbit_upause_time );
                                         }
 
+                                    /*
+                                    				     if ( rulestruct[b].event_id_count > 0 )
+                                    					{
 
-				     if ( rulestruct[b].event_id_count > 0 ) 
-					{
+                                    					SaganRouting->event_id_return = Event_ID( b, SaganProcSyslog_LOCAL );
 
-					SaganRouting->event_id_return = Event_ID( b, SaganProcSyslog_LOCAL );
-
-					}
+                                    					}
+                                    */
 
 
                                     /****************************************************************************
@@ -1322,7 +1334,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 
 
-                                            if ( rulestruct[b].bluedot_file_hash ) 
+                                            if ( rulestruct[b].bluedot_file_hash )
                                                 {
 
 

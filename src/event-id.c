@@ -20,23 +20,23 @@
 
 /* event-id.c
  *
- * This work in conjunction with the "event_id" rule option. 
+ * This work in conjunction with the "event_id" rule option.
  *
  * This searches for a event id based off the type of data it has received.  Think
- * of Microsoft Windows logs that have "event id". However,  this function is not 
- * restricted to Microsoft logs! If the event ID has already been parsed via 
- * JSON or liblognorm,  that value is used.  If the log has no "parsed" values, 
- * we treat it like a traditional Windows logs.  Most programs (NXlog, Evtsys, etc), 
- * place the event ID at the front of the log line.  For example. 
- * 
+ * of Microsoft Windows logs that have "event id". However,  this function is not
+ * restricted to Microsoft logs! If the event ID has already been parsed via
+ * JSON or liblognorm,  that value is used.  If the log has no "parsed" values,
+ * we treat it like a traditional Windows logs.  Most programs (NXlog, Evtsys, etc),
+ * place the event ID at the front of the log line.  For example.
+ *
  * 1234: log message here
  *
  * In that case,  we do the equivalant the following:
  *
- * content: " 1234|3a| "; offset: 0; depth: 8; 
+ * content: " 1234|3a| "; offset: 0; depth: 8;
  *
- * Event ID's are stored as "strings".  This allows for greater flexibility with 
- * event IDs.  For example,  0001234 doesn't get translated to 1234. 
+ * Event ID's are stored as "strings".  This allows for greater flexibility with
+ * event IDs.  For example,  0001234 doesn't get translated to 1234.
  *
  */
 
@@ -96,7 +96,7 @@ bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     if ( Sagan_stristr(alter_message, tmp_content, 0 ))
                         {
-			    printf("STRSTR TRUE: |%s| == |%s|\n", alter_message, tmp_content);
+                            printf("STRSTR TRUE: |%s| == |%s|\n", alter_message, tmp_content);
                             return(true);
                         }
                 }
