@@ -361,7 +361,7 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                                     /* strlcpy doesn't like to pass str as a \0.  This
                                        "works" around that issue (causes segfault otherwise) */
 
-                                    if ( reply->str != '\0' )
+                                    if ( reply->str[0] != '\0' )
                                         {
                                             strlcpy(str, reply->str, size);
                                         }

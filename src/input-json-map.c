@@ -52,7 +52,7 @@ void Load_Input_JSON_Map ( const char *json_map )
 
     FILE *json_map_file;
     char json_map_buf[10240] = { 0 };
-    char is_nested_tmp[8] = { 0 };
+//    char is_nested_tmp[8] = { 0 };
 
 
     Sagan_Log(NORMAL, "Loading JSON FIFO mapping file. [%s]", json_map );
@@ -90,26 +90,6 @@ void Load_Input_JSON_Map ( const char *json_map )
                                 {
 
                                     Sagan_Log(NORMAL, "Found JSON mapping for '%s'.  Loading values.", config->json_input_software);
-
-                                    /* Is the target nested or not?  Default to "no" */
-
-                                    Syslog_JSON_Map->is_nested = false;
-
-                                    if ( json_object_object_get_ex(json_obj, "nested", &tmp))
-                                        {
-
-                                            strlcpy(is_nested_tmp, json_object_get_string(tmp), sizeof(is_nested_tmp));
-
-                                            if ( !strcmp(is_nested_tmp, "yes") || !strcmp(is_nested_tmp, "true") ||
-                                                    !strcpy(is_nested_tmp, "enabled") )
-                                                {
-
-                                                    Syslog_JSON_Map->is_nested = true;
-
-                                                }
-
-                                        }
-
 
                                     if ( json_object_object_get_ex(json_obj, "syslog-source-ip", &tmp))
                                         {

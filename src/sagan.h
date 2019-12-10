@@ -423,7 +423,6 @@ typedef struct _Syslog_JSON_Map _Syslog_JSON_Map;
 struct _Syslog_JSON_Map
 {
 
-    bool is_nested;
     char syslog_map_host[32];
     char syslog_map_facility[32];
     char syslog_map_priority[32];

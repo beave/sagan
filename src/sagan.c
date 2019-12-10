@@ -365,8 +365,6 @@ int main(int argc, char **argv)
             switch(c)
                 {
 
-                    if (c == -1) break;
-
                 case 'h':
                     Usage();
                     exit(0);
@@ -735,7 +733,6 @@ int main(int argc, char **argv)
 #ifdef HAVE_LIBFASTJSON
 
     Sagan_Log(NORMAL, "Named pipe/FIFO input type: %s", config->input_type == INPUT_PIPE ? "Pipe":"JSON");
-    Sagan_Log(NORMAL, "Nested JSON: %s", Syslog_JSON_Map->is_nested == true ? "Yes":"No");
     Sagan_Log(NORMAL, "Parse JSON in message: %s", config->parse_json_message == true ? "Enabled":"Disabled");
     Sagan_Log(NORMAL, "Parse JSON in program: %s", config->parse_json_program == true ? "Enabled":"Disabled");
     Sagan_Log(NORMAL, "Client Stats         : %s", config->client_stats_flag == true ? "Enabled":"Disabled");

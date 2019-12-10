@@ -437,11 +437,9 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             return;
         }
 
-
-
     if ( debug->debugjson )
         {
-            Sagan_Log(DEBUG, "Syslog Message: |%s|\n", SaganProcSyslog_LOCAL->syslog_message);
+            Sagan_Log(DEBUG, "Syslog Message: \"%s\"\n", SaganProcSyslog_LOCAL->syslog_message);
         }
 
     struct json_object_iterator it = json_object_iter_begin(json_obj);
