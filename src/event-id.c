@@ -96,7 +96,6 @@ bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     if ( Sagan_stristr(alter_message, tmp_content, 0 ))
                         {
-                            printf("STRSTR TRUE: |%s| == |%s|\n", alter_message, tmp_content);
                             return(true);
                         }
                 }

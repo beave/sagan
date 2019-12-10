@@ -810,8 +810,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
             Sagan_Log(WARN, "[%s, line %d] Received JSON which has no decoded 'message' value. The log line was: \"%s\"", __FILE__, __LINE__, syslog_string);
         }
 
-    printf("Event ID: %s\n", SaganProcSyslog_LOCAL->event_id);
-
 
 }
 
