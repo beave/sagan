@@ -408,6 +408,11 @@ struct _Sagan_Proc_Syslog
     char url[MAX_URL_SIZE+1];
     char ja3[MD5_HASH_SIZE+1];
 
+    int json_count;
+    char json_key[50][64];
+    char json_value[50][1024];
+
+
 };
 
 typedef struct _Sagan_Pass_Syslog _Sagan_Pass_Syslog;
