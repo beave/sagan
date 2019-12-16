@@ -1899,6 +1899,8 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count-1]));
                         }
 
+                    /* "json_content" works like "content" but on JSON key/values */
+
                     if (!strcmp(rulesplit, "json_content"))
                         {
 
@@ -1910,14 +1912,15 @@ void Load_Rules( const char *ruleset )
 
                             arg = strtok_r(NULL, ":", &saveptrrule2);
 
-                            // CHeck if null
+                            if ( arg == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] To few arguments for rule options \"json_content\" at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
 
                             if ( Check_Content_Not(arg) == true )
                                 {
                                     rulestruct[counters->rulecount].json_content_not[json_content_count] = true;
                                 }
-
-                            printf("arg: |%s|\n", arg);
 
                             tmptoken = strtok_r(arg, ",", &saveptrrule2);
 
@@ -1928,8 +1931,6 @@ void Load_Rules( const char *ruleset )
 
                             Between_Quotes(tmptoken, rulestruct[counters->rulecount].json_content_key[json_content_count], sizeof(rulestruct[counters->rulecount].json_content_key[json_content_count]));
 
-                            printf("-> |%s|\n", rulestruct[counters->rulecount].json_content_key[json_content_count]);
-
                             tmptoken = strtok_r(NULL, ",", &saveptrrule2);
 
                             if ( tmptoken == NULL )
@@ -1939,14 +1940,13 @@ void Load_Rules( const char *ruleset )
 
                             Between_Quotes(tmptoken, rulestruct[counters->rulecount].json_content_content[json_content_count], sizeof(rulestruct[counters->rulecount].json_content_content[json_content_count]));
 
-                            printf("search: |%s|\n", rulestruct[counters->rulecount].json_content_content[json_content_count]);
-
                             json_content_count++;
                             rulestruct[counters->rulecount].json_content_count=json_content_count;
 
                         }
 
 
+                    /* Set the previous "json_content" to case insensitive */
 
                     if (!strcmp(rulesplit, "json_nocase"))
                         {
@@ -1958,6 +1958,7 @@ void Load_Rules( const char *ruleset )
                         }
 
 
+                    /* Rule revision */
 
                     if (!strcmp(rulesplit, "rev" ))
                         {
