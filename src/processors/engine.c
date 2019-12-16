@@ -714,24 +714,22 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                 }
 
 
-/*
-                            if ( rulestruct[b].json_content_count != 0 && sagan_match == rulestruct[b].content_count + rulestruct[b].pcre_count + rulestruct[b].meta_content_count )
-			{
-			printf("Lets do some json_content\n");
-			}
-*/
-
-
-
                         } /* End of content: & pcre */
+
+		
+		    bool json_pcre_return = true; 
+
+                    if ( rulestruct[b].json_pcre_count > 0 )
+                        {
+                        json_pcre_return = JSON_Pcre(b, SaganProcSyslog_LOCAL );
+                        }
+
 
 		    bool json_content_return = true; 
 
 		    if ( rulestruct[b].json_content_count > 0 ) 
 			{
-
 			json_content_return = JSON_Content(b, SaganProcSyslog_LOCAL );
-
 			}
 
 
@@ -747,7 +745,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     /* if we have a match .... */
 
 
-                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true && json_content_return == true )
+                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true && json_content_return == true && json_pcre_return == true )
                         {
 
                             if ( match == false )

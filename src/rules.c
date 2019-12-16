@@ -180,6 +180,7 @@ void Load_Rules( const char *ruleset )
     int json_content_count=0;
     int meta_content_count=0;
     int meta_content_converted_count=0;
+    int json_pcre_count=0;
     int pcre_count=0;
     int event_id_count;
 
@@ -1945,7 +1946,6 @@ void Load_Rules( const char *ruleset )
 
                         }
 
-
                     /* Set the previous "json_content" to case insensitive */
 
                     if (!strcmp(rulesplit, "json_nocase"))
@@ -1957,6 +1957,141 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].json_content_content[json_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].json_content_content[json_content_count-1]));
                         }
 
+		    /* Search JSON via PCRE */
+
+                    if (!strcmp(rulesplit, "json_pcre"))
+                        {
+
+                            if ( json_pcre_count > MAX_JSON_PCRE )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] There is to many \"json_pcre\" types in the rule at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            if ( arg == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] To few arguments for rule options \"json_pcre\" at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            tmptoken = strtok_r(arg, ",", &saveptrrule2);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Expected a json_pcre key,  but none was found at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+
+                            Between_Quotes(tmptoken, rulestruct[counters->rulecount].json_pcre_key[json_pcre_count], sizeof(rulestruct[counters->rulecount].json_pcre_key[json_pcre_count]));
+
+                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Expected a json_pcre \"pcre\" statement,  but none was found at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            Between_Quotes(tmptoken, tmp2, sizeof(tmp2));
+
+                            pcreflag=0;
+                            memset(pcrerule, 0, sizeof(pcrerule));
+
+                            for ( i = 1; i < strlen(tmp2); i++)
+                                {
+
+                                    if ( tmp2[i] == '/' && tmp2[i-1] != '\\' )
+                                        {
+                                            pcreflag++;
+                                        }
+
+                                    if ( pcreflag == 0 )
+                                        {
+                                            snprintf(tmp, sizeof(tmp), "%c", tmp2[i]);
+                                            strlcat(pcrerule, tmp, sizeof(pcrerule));
+                                        }
+
+                                    /* are we /past/ and at the args? */
+
+                                    if ( pcreflag == 1 )
+                                        {
+
+                                            switch(tmp2[i])
+                                                {
+
+                                                case 'i':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_CASELESS;
+                                                    break;
+                                                case 's':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_DOTALL;
+                                                    break;
+                                                case 'm':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_MULTILINE;
+                                                    break;
+                                                case 'x':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_EXTENDED;
+                                                    break;
+                                                case 'A':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_ANCHORED;
+                                                    break;
+                                                case 'E':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_DOLLAR_ENDONLY;
+                                                    break;
+                                                case 'G':
+                                                    if ( pcreflag == 1 ) pcreoptions |= PCRE_UNGREEDY;
+                                                    break;
+
+                                                }
+                                        }
+                                }
+
+
+                            if ( pcreflag == 0 )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Missing last '/' in json_pcre: %s at line %d, Abort", __FILE__, __LINE__, ruleset_fullname, linecount);
+                                }
+
+                            /* We store the compiled/study results. */
+
+                            rulestruct[counters->rulecount].json_re_pcre[json_pcre_count] =  pcre_compile( pcrerule, pcreoptions, &error, &erroffset, NULL );
+
+
+#ifdef PCRE_HAVE_JIT
+
+                            if ( config->pcre_jit == 1 )
+                                {
+                                    pcreoptions |= PCRE_STUDY_JIT_COMPILE;
+                                }
+#endif
+
+                            rulestruct[counters->rulecount].json_pcre_extra[json_pcre_count] = pcre_study( rulestruct[counters->rulecount].json_re_pcre[json_pcre_count], pcreoptions, &error);
+
+#ifdef PCRE_HAVE_JIT
+
+                            if ( config->pcre_jit == 1 )
+                                {
+                                    int jit = 0;
+                                    rc = 0;
+
+                                    rc = pcre_fullinfo(rulestruct[counters->rulecount].json_re_pcre[json_pcre_count], rulestruct[counters->rulecount].json_pcre_extra[json_pcre_count], PCRE_INFO_JIT, &jit);
+
+                                    if (rc != 0 || jit != 1)
+                                        {
+                                            Sagan_Log(WARN, "[%s, line %d] PCRE JIT does not support regexp in %s at line %d (json_pcre: \"%s\"). Continuing without PCRE JIT enabled for this rule.", __FILE__, __LINE__, ruleset_fullname, linecount, pcrerule);
+                                        }
+                                }
+
+#endif
+
+                            if (  rulestruct[counters->rulecount].json_re_pcre[json_pcre_count]  == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] PCRE failure in %s at %d [%d: %s], Abort", __FILE__, __LINE__, ruleset_fullname, linecount, erroffset, error);
+                                }
+
+
+                            json_pcre_count++;
+                            rulestruct[counters->rulecount].json_pcre_count=json_pcre_count;
+
+                        }
 
                     /* Rule revision */
 
