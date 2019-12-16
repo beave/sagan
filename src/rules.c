@@ -177,6 +177,7 @@ void Load_Rules( const char *ruleset )
     int ref_count=0;
 
     int content_count=0;
+    int json_content_count=0;
     int meta_content_count=0;
     int meta_content_converted_count=0;
     int pcre_count=0;
@@ -250,6 +251,7 @@ void Load_Rules( const char *ruleset )
 
             pcre_count=0;
             content_count=0;
+            json_content_count=0;
             meta_content_count=0;
             meta_content_converted_count=0;
             flexbit_count=0;
@@ -1896,6 +1898,65 @@ void Load_Rules( const char *ruleset )
                             strlcpy(tolower_tmp, rulestruct[counters->rulecount].meta_content[meta_content_count-1], sizeof(tolower_tmp));
                             strlcpy(rulestruct[counters->rulecount].meta_content[meta_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].meta_content[meta_content_count-1]));
                         }
+
+                    if (!strcmp(rulesplit, "json_content"))
+                        {
+
+                            if ( json_content_count > MAX_JSON_CONTENT )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] There is to many \"json_content\" types in the rule at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+
+                            arg = strtok_r(NULL, ":", &saveptrrule2);
+
+                            // CHeck if null
+
+                            if ( Check_Content_Not(arg) == true )
+                                {
+                                    rulestruct[counters->rulecount].json_content_not[json_content_count] = true;
+                                }
+
+                            printf("arg: |%s|\n", arg);
+
+                            tmptoken = strtok_r(arg, ",", &saveptrrule2);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Expected a json_content key,  but none was found at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            Between_Quotes(tmptoken, rulestruct[counters->rulecount].json_content_key[json_content_count], sizeof(rulestruct[counters->rulecount].json_content_key[json_content_count]));
+
+                            printf("-> |%s|\n", rulestruct[counters->rulecount].json_content_key[json_content_count]);
+
+                            tmptoken = strtok_r(NULL, ",", &saveptrrule2);
+
+                            if ( tmptoken == NULL )
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] Expected a json_content \"content\",  but none was found at line %d in %s - Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
+                            Between_Quotes(tmptoken, rulestruct[counters->rulecount].json_content_content[json_content_count], sizeof(rulestruct[counters->rulecount].json_content_content[json_content_count]));
+
+                            printf("search: |%s|\n", rulestruct[counters->rulecount].json_content_content[json_content_count]);
+
+                            json_content_count++;
+                            rulestruct[counters->rulecount].json_content_count=json_content_count;
+
+                        }
+
+
+
+                    if (!strcmp(rulesplit, "json_nocase"))
+                        {
+                            strtok_r(NULL, ":", &saveptrrule2);
+                            rulestruct[counters->rulecount].json_content_case[json_content_count-1] = 1;
+                            To_LowerC(rulestruct[counters->rulecount].json_content_content[json_content_count-1]);
+                            strlcpy(tolower_tmp, rulestruct[counters->rulecount].json_content_content[json_content_count-1], sizeof(tolower_tmp));
+                            strlcpy(rulestruct[counters->rulecount].json_content_content[json_content_count-1], tolower_tmp, sizeof(rulestruct[counters->rulecount].json_content_content[json_content_count-1]));
+                        }
+
 
 
                     if (!strcmp(rulesplit, "rev" ))

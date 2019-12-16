@@ -73,7 +73,6 @@ typedef void json_object;
 #define JSON_MAX_NEST	      10
 #define JSON_MAX_SIZE	      131072
 
-
 #define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
 #define INPUT_PIPE                      1
 #define INPUT_JSON                      2
@@ -113,6 +112,9 @@ typedef void json_object;
 #define MAX_META_CONTENT	5		/* Max 'meta_content' within a rule */
 #define MAX_META_CONTENT_ITEMS	256		/* Max strings to look for in meta_content */
 #define MAX_META_ITEM_SIZE	512		/* Max string size per meta_content type */
+
+#define MAX_JSON_CONTENT        30              /* Max JSON content within a rule */
+
 
 #define MAX_FLEXBITS		10		/* Max 'flexbits' within a rule */
 #define MAX_XBITS               10              /* Max 'xbits' within a rule */
