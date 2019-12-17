@@ -23,6 +23,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 						       event-id.c \
 						       json-content.c \
 						       json-pcre.c \
+						       json-meta-content.c \
                                                        liblognormalize.c \
                                                        ignore-list.c \
                                                        tracking-syslog.c \

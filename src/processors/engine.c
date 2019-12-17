@@ -732,6 +732,14 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 			json_content_return = JSON_Content(b, SaganProcSyslog_LOCAL );
 			}
 
+		    bool json_meta_content_return = true; 
+
+		    if ( rulestruct[b].json_meta_content_count > 0 ) 
+			{
+			json_meta_content_return = JSON_Meta_Content(b, SaganProcSyslog_LOCAL );
+			}
+
+
 
                     /* Treat "event_id" similar to pcre/content */
 

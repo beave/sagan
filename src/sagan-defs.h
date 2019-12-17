@@ -115,6 +115,9 @@ typedef void json_object;
 
 #define MAX_JSON_CONTENT        30              /* Max JSON content within a rule */
 #define MAX_JSON_PCRE		10		/* Max JSON pcre within a rule */
+#define MAX_JSON_META_CONTENT   10              /* Max JSON meta_content within a rule */
+#define MAX_JSON_META_ITEM_SIZE 512
+#define MAX_JSON_META_CONTENT_ITEMS 256
 
 
 #define MAX_FLEXBITS		10		/* Max 'flexbits' within a rule */
