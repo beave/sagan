@@ -20,6 +20,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        output.c \
                                                        processor.c \
                                                        gen-msg.c \
+						       search-type.c \
 						       event-id.c \
 						       json-content.c \
 						       json-pcre.c \

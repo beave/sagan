@@ -362,9 +362,6 @@
 /* With Bluedot */
 #undef WITH_BLUEDOT
 
-/* With Snortsam */
-#undef WITH_SNORTSAM
-
 /* With Syslog */
 #undef WITH_SYSLOG
 

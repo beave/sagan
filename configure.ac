@@ -64,12 +64,6 @@ echo -n "installation for $host OS... "
 
 AC_C_BIGENDIAN(AC_SUBST([ENDIAN],[big]),AC_SUBST([ENDIAN],[little]))
 
-AC_ARG_ENABLE(snortsam,
-  [  --disable-snortsam      Disable Snortsam support.],
-  [ SNORTSAM="$enableval"],
-  [ SNORTSAM="yes" ]
-)
-
 AC_ARG_ENABLE(bluedot,
   [  --enable-bluedot        Enable Quadrant\'s "Bluedot" lookups.],
   [ BLUEDOT="$enableval"],
@@ -602,12 +596,6 @@ To disable this feature use the --disable-bluedot flag. ))
         AC_CHECK_HEADER([curl/curl.h])
 	PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
         fi
-
-if test "$SNORTSAM" = "yes"; then
-        AC_MSG_RESULT([------- Snortsam support is enabled -------])
-        AC_DEFINE(WITH_SNORTSAM, 1, With Snortsam)
-        fi
-
 
 test "x$prefix" = x. || test "x$prefix" = xNONE && prefix=/usr/local
 AC_DEFINE_UNQUOTED(CONFIG_FILE_PATH, "`eval echo "${sysconfdir}/sagan.yaml"`", [Sagan configuration file]) 

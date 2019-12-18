@@ -740,7 +740,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 			}
 
 
-
                     /* Treat "event_id" similar to pcre/content */
 
                     bool event_id_return = true;		/* Set this in case there is no "event_id" used */
@@ -753,7 +752,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     /* if we have a match .... */
 
 
-                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true && json_content_return == true && json_pcre_return == true )
+                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true && json_content_return == true && json_pcre_return == true && json_meta_content_return == true )
                         {
 
                             if ( match == false )

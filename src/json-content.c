@@ -1,11 +1,31 @@
+/*
+** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+**
+** This program is free software; you can redistribute it and/or modify
+** it under the terms of the GNU General Public License Version 2 as
+** published by the Free Software Foundation.  You may not use, modify or
+** distribute this program under any other version of the GNU General
+** Public License.
+**
+** This program is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with this program; if not, write to the Free Software
+** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
-#include <stdio.h>
-
+/* json-content.c controls the 'json-content: "{key}", "{content}";" rule option.
+   This works similar to "content" but searches json key/value pairs */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
 
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 
@@ -23,8 +43,6 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 
     int i=0;
     int a=0;
-
-    int match = 0;
 
     for (i=0; i < rulestruct[rule_position].json_content_count; i++)
         {
@@ -44,20 +62,27 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 
                                     /* Is this a json_content or json_content:! */
 
-
-                                    if ( rulestruct[rule_position].json_content_not[i] != 1 && Sagan_stristr(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], false))
+                                    if ( rulestruct[rule_position].json_content_not[i] == false )
                                         {
-                                            match++;
+
+                                            if ( Search_Nocase(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], false, rulestruct[rule_position].json_content_strstr[i] ) == false  )
+                                                {
+
+                                                    return(false);
+
+                                                }
+
+
+
                                         }
                                     else
                                         {
 
-                                            /* json_content:! */
-
-                                            if ( rulestruct[rule_position].json_content_not[i] == 1 && !Sagan_stristr(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], false))
+                                            if ( Search_Nocase(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], false, rulestruct[rule_position].json_content_strstr[i] ) == true )
                                                 {
-                                                    match++;
+                                                    return(false);
                                                 }
+
 
                                         }
 
@@ -67,36 +92,33 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 
                                     /* Case sensitive */
 
-                                    if ( rulestruct[rule_position].json_content_not[i] != 1 && Sagan_strstr(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i] ))
+                                    if ( rulestruct[rule_position].json_content_not[i] == false )
                                         {
-                                            match++;
+
+                                            if ( Search_Case(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], rulestruct[rule_position].json_content_strstr[i]) ==  false )
+                                                {
+                                                    return(false);
+                                                }
 
                                         }
                                     else
                                         {
 
-                                            /* json_content:! */
-
-                                            if ( rulestruct[rule_position].json_content_not[i] == 1 && !Sagan_strstr(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i]) )
+                                            if ( Search_Case(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_content_content[i], rulestruct[rule_position].json_content_strstr[i]) == true )
                                                 {
-                                                    match++;
+                                                    return(false);
                                                 }
 
                                         }
-                                }
 
+                                }
                         }
                 }
         }
 
     /* If everything lines up,  we have a full json_content match */
 
-    if ( match == rulestruct[rule_position].json_content_count )
-        {
-            return(true);
-        }
-
-    return(false);
+    return(true);
 
 }
 
