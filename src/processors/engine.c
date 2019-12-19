@@ -510,110 +510,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( match == false )
                         {
 
-                            if ( rulestruct[b].content_count != 0 )
-                                {
-
-                                    for(z=0; z<rulestruct[b].content_count; z++)
-                                        {
-
-
-                                            /* Content: OFFSET */
-
-                                            alter_num = 0;
-
-                                            if ( rulestruct[b].s_offset[z] != 0 )
-                                                {
-
-                                                    if ( strlen(SaganProcSyslog_LOCAL->syslog_message) > rulestruct[b].s_offset[z] )
-                                                        {
-
-                                                            alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].s_offset[z];
-                                                            strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
-
-                                                        }
-                                                    else
-                                                        {
-
-                                                            alter_content[0] = '\0'; 	/* The offset is larger than the message.  Set content too NULL */
-
-                                                        }
-
-                                                }
-                                            else
-                                                {
-
-                                                    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message, sizeof(alter_content));
-
-                                                }
-
-                                            /* Content: DEPTH */
-
-                                            if ( rulestruct[b].s_depth[z] != 0 )
-                                                {
-
-                                                    /* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
-
-                                                    strlcpy(alter_content, alter_content, rulestruct[b].s_depth[z] + 2);
-
-                                                }
-
-                                            /* Content: DISTANCE */
-
-                                            if ( rulestruct[b].s_distance[z] != 0 )
-                                                {
-
-                                                    alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].s_depth[z-1] + rulestruct[b].s_distance[z] + 1);
-                                                    strlcpy(alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - alter_num), alter_num + 1);
-
-                                                    /* Content: WITHIN */
-
-                                                    if ( rulestruct[b].s_within[z] != 0 )
-                                                        {
-                                                            strlcpy(alter_content, alter_content, rulestruct[b].s_within[z] + 1);
-
-                                                        }
-
-                                                }
-
-                                            /* If case insensitive */
-
-                                            if ( rulestruct[b].s_nocase[z] == 1 )
-                                                {
-
-                                                    if (rulestruct[b].content_not[z] != 1 && Sagan_stristr(alter_content, rulestruct[b].s_content[z], false))
-
-                                                        {
-                                                            sagan_match++;
-                                                        }
-                                                    else
-                                                        {
-
-                                                            /* for content: ! */
-
-                                                            if ( rulestruct[b].content_not[z] == 1 && !Sagan_stristr(alter_content, rulestruct[b].s_content[z], false)) sagan_match++;
-
-                                                        }
-                                                }
-                                            else
-                                                {
-
-                                                    /* If case sensitive */
-
-                                                    if ( rulestruct[b].content_not[z] != 1 && Sagan_strstr(alter_content, rulestruct[b].s_content[z] ))
-                                                        {
-                                                            sagan_match++;
-                                                        }
-                                                    else
-                                                        {
-
-                                                            /* for content: ! */
-                                                            if ( rulestruct[b].content_not[z] == 1 && !Sagan_strstr(alter_content, rulestruct[b].s_content[z])) sagan_match++;
-
-                                                        }
-                                                }
-                                        }
-                                }
-
                             /* Search via PCRE */
 
                             /* Note:  We verify each "step" has succeeded before function execution.  For example,
@@ -636,94 +532,29 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         }  /* End of pcre if */
                                 }
 
-                            /* Search via meta_content */
-
-                            if ( rulestruct[b].meta_content_count != 0 && sagan_match == rulestruct[b].content_count + rulestruct[b].pcre_count )
-                                {
-
-                                    for (z=0; z<rulestruct[b].meta_content_count; z++)
-                                        {
-
-                                            meta_alter_num = 0;
-
-                                            /* Meta_content: OFFSET */
-
-                                            if ( rulestruct[b].meta_offset[z] != 0 )
-                                                {
-
-                                                    if ( strlen(SaganProcSyslog_LOCAL->syslog_message) > rulestruct[b].meta_offset[z] )
-                                                        {
-
-                                                            meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - rulestruct[b].meta_offset[z];
-                                                            strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - meta_alter_num), meta_alter_num + 1);
-
-                                                        }
-                                                    else
-                                                        {
-
-                                                            meta_alter_content[0] = '\0';    /* The offset is larger than the message.  Set meta_content too NULL */
-
-                                                        }
-
-                                                }
-                                            else
-                                                {
-
-                                                    strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message, sizeof(meta_alter_content));
-
-                                                }
-
-
-                                            /* Meta_content: DEPTH */
-
-                                            if ( rulestruct[b].meta_depth[z] != 0 )
-                                                {
-
-                                                    /* We do +2 to account for alter_count[0] and whitespace at the begin of syslog message */
-
-                                                    strlcpy(meta_alter_content, meta_alter_content, rulestruct[b].meta_depth[z] + 2);
-
-                                                }
-
-                                            /* Meta_content: DISTANCE */
-
-                                            if ( rulestruct[b].meta_distance[z] != 0 )
-                                                {
-
-                                                    meta_alter_num = strlen(SaganProcSyslog_LOCAL->syslog_message) - ( rulestruct[b].meta_depth[z-1] + rulestruct[b].meta_distance[z] + 1 );
-                                                    strlcpy(meta_alter_content, SaganProcSyslog_LOCAL->syslog_message + (strlen(SaganProcSyslog_LOCAL->syslog_message) - meta_alter_num), meta_alter_num + 1);
-
-                                                    /* Meta_ontent: WITHIN */
-
-                                                    if ( rulestruct[b].meta_within[z] != 0 )
-                                                        {
-                                                            strlcpy(meta_alter_content, meta_alter_content, rulestruct[b].meta_within[z] + 1);
-
-                                                        }
-
-                                                }
-
-                                            rc = Meta_Content_Search(meta_alter_content, b, z);
-
-                                            if ( rc == 1 )
-                                                {
-                                                    sagan_match++;
-                                                }
-
-                                        }
-                                }
-
-
                         } /* End of content: & pcre */
 
-		
+
+                   bool content_return = true;
+
+                   if ( rulestruct[b].content_count > 0 )
+                       {
+                       content_return = Content(b, SaganProcSyslog_LOCAL->syslog_message );
+                       }
+
+		    bool meta_content_return = true; 
+
+		    if ( rulestruct[b].meta_content_count > 0 )
+			{
+			meta_content_return = Meta_Content(b, SaganProcSyslog_LOCAL->syslog_message);
+			}
+
 		    bool json_pcre_return = true; 
 
                     if ( rulestruct[b].json_pcre_count > 0 )
                         {
                         json_pcre_return = JSON_Pcre(b, SaganProcSyslog_LOCAL );
                         }
-
 
 		    bool json_content_return = true; 
 
@@ -739,7 +570,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 			json_meta_content_return = JSON_Meta_Content(b, SaganProcSyslog_LOCAL );
 			}
 
-
                     /* Treat "event_id" similar to pcre/content */
 
                     bool event_id_return = true;		/* Set this in case there is no "event_id" used */
@@ -752,7 +582,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     /* if we have a match .... */
 
 
-                    if ( sagan_match == rulestruct[b].pcre_count + rulestruct[b].content_count + rulestruct[b].meta_content_count && event_id_return == true && json_content_return == true && json_pcre_return == true && json_meta_content_return == true )
+                    if ( sagan_match == rulestruct[b].pcre_count && event_id_return == true && json_content_return == true && json_pcre_return == true && json_meta_content_return == true && content_return == true && meta_content_return == true )
                         {
 
                             if ( match == false )

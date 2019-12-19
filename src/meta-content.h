@@ -22,5 +22,7 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-int Meta_Content_Search(char *, int, int);
+bool Meta_Content(int rule_position, const char *syslog_message);
+bool Meta_Content_Search(char *syslog_msg, int rule_position, int meta_content_count);
+
 

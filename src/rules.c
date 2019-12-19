@@ -2431,7 +2431,7 @@ void Load_Rules( const char *ruleset )
                             Content_Pipe(tmp2, linecount, ruleset_fullname, rule_tmp, sizeof(rule_tmp));
                             strlcpy(final_content, rule_tmp, sizeof(final_content));
 
-                            strlcpy(rulestruct[counters->rulecount].s_content[content_count], final_content, sizeof(rulestruct[counters->rulecount].s_content[content_count]));
+                            strlcpy(rulestruct[counters->rulecount].content[content_count], final_content, sizeof(rulestruct[counters->rulecount].content[content_count]));
                             final_content[0] = '\0';
                             content_count++;
                             rulestruct[counters->rulecount].content_count=content_count;
@@ -2442,7 +2442,7 @@ void Load_Rules( const char *ruleset )
                     if (!strcmp(rulesplit, "nocase"))
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
-                            rulestruct[counters->rulecount].s_nocase[content_count - 1] = 1;
+                            rulestruct[counters->rulecount].content_case[content_count - 1] = true;
                         }
 
                     if (!strcmp(rulesplit, "offset"))
@@ -3534,7 +3534,7 @@ void Load_Rules( const char *ruleset )
 
                     for (i=0; i<content_count; i++)
                         {
-                            Sagan_Log(DEBUG, "= [%d] content: \"%s\"", i, rulestruct[counters->rulecount].s_content[i]);
+                            Sagan_Log(DEBUG, "= [%d] content: \"%s\"", i, rulestruct[counters->rulecount].content[i]);
                         }
 
                     for (i=0; i<ref_count; i++)

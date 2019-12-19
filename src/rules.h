@@ -93,7 +93,7 @@ struct _Rule_Struct
     pcre *re_pcre[MAX_PCRE];
     pcre_extra *pcre_extra[MAX_PCRE];
 
-    char s_content[MAX_CONTENT][256];
+    char content[MAX_CONTENT][256];
     char s_reference[MAX_REFERENCE][256];
     char s_classtype[32];
     uint64_t s_sid;
@@ -143,7 +143,7 @@ struct _Rule_Struct
     int port_1_counter;
     int port_2_counter;
 
-    bool s_nocase[MAX_CONTENT];
+    bool content_case[MAX_CONTENT];
     int s_offset[MAX_CONTENT];
     int s_depth[MAX_CONTENT];
     int s_distance[MAX_CONTENT];
