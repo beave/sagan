@@ -56,6 +56,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
 						       json-handler.c \
 						       routing.c \
 						       content.c \
+						       pcre-s.c \
                                                        parsers/ip.c \
                                                        parsers/port.c \
                                                        parsers/proto.c \

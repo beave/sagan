@@ -42,7 +42,7 @@
 #include <getopt.h>
 #include <time.h>
 #include <signal.h>
-#include <pcre.h>
+//#include <pcre.h>
 #include <limits.h>
 #include <stdint.h>
 #include <inttypes.h>
