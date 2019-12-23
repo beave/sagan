@@ -10,4 +10,6 @@
 */
 
 bool JSON_Meta_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL);
+bool JSON_Meta_Content_Search(int rule_position, const char *json_string, int i );
+
 

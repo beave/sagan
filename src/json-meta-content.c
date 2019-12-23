@@ -37,6 +37,8 @@ bool JSON_Meta_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LO
     int a=0;
     int z=0;
 
+    int rc=0;
+    int match = 0;
     bool flag = false;
 
     for (i=0; i < rulestruct[rule_position].json_meta_content_count; i++)
@@ -45,76 +47,110 @@ bool JSON_Meta_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LO
             for (a=0; a < SaganProcSyslog_LOCAL->json_count; a++)
                 {
 
+                    /* Locate the key (if it's avaliable */
+
                     if ( !strcmp(SaganProcSyslog_LOCAL->json_key[a], rulestruct[rule_position].json_meta_content_key[i] ) )
                         {
 
-                            for ( z = 0; z < rulestruct[rule_position].json_meta_content_containers[i].json_meta_counter; z++ )
+                            /* Key found, test for json_meta_content */
+
+                            rc = JSON_Meta_Content_Search(rule_position, SaganProcSyslog_LOCAL->json_value[a], i );
+
+
+                            /* Got hit */
+
+                            if ( rc == true )
                                 {
-
-                                    flag = false;
-
-                                    if ( rulestruct[rule_position].json_meta_content_not[i] == false )
-                                        {
-
-                                            if ( rulestruct[rule_position].json_meta_content_case[i] == true )
-                                                {
-
-                                                    if ( Search_Nocase(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], false,  rulestruct[rule_position].json_meta_strstr[i] ) )
-                                                        {
-                                                            flag = true;
-                                                            break;
-                                                        }
-                                                }
-                                            else
-                                                {
-
-                                                    if ( Search_Case(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], rulestruct[rule_position].json_meta_strstr[i] ) )
-                                                        {
-                                                            flag = true;
-                                                            break;
-                                                        }
-                                                }
-
-                                        }
-                                    else
-                                        {
-
-                                            if ( rulestruct[rule_position].json_meta_content_case[i] == true )
-                                                {
-
-                                                    if ( !Search_Nocase(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z],false, rulestruct[rule_position].json_meta_strstr[i] ))
-                                                        {
-                                                            flag = true;
-                                                            break;
-                                                        }
-                                                }
-                                            else
-                                                {
-
-                                                    if ( !Search_Case(SaganProcSyslog_LOCAL->json_value[a], rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], rulestruct[rule_position].json_meta_strstr[i] ))
-                                                        {
-
-                                                            flag = true;
-                                                            break;
-                                                        }
-                                                }
-                                        }
-                                }
-
-                            /* The last pass got _no_ hits.  No need to go
-                               any further */
-
-                            if ( flag == false )
-                                {
-                                    return(false);
+                                    match++;
                                 }
                         }
                 }
         }
 
-    /* Got all matches */
+    /* Does the number of json_meta_contents match what we expect? */
 
-    return(true);
+    if ( match == rulestruct[rule_position].json_meta_content_count )
+        {
+            return(true);
+        }
+
+    return(false);
 
 }
 
+/*******************************************************************************/
+/* JSON_Meta_Content_Search - Does the actual "work" involved in determinining */
+/* a "json_meta_content" hit.                                                  */
+/*******************************************************************************/
+
+bool JSON_Meta_Content_Search(int rule_position, const char *json_string, int i )
+{
+
+    int z = 0;
+    bool flag = false;
+
+
+    if ( rulestruct[rule_position].json_meta_content_not[i] == false )
+        {
+
+            /* Standard "json_meta_content" (without !) */
+
+            for ( z = 0; z < rulestruct[rule_position].json_meta_content_containers[i].json_meta_counter; z++ )
+                {
+
+                    if ( rulestruct[rule_position].json_meta_content_case[i] == true )
+                        {
+
+                            if ( Search_Nocase(json_string, rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], false,  rulestruct[rule_position].json_meta_strstr[i] ) )
+                                {
+                                    return(true);
+                                }
+                        }
+                    else
+                        {
+
+                            if ( Search_Case(json_string, rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], rulestruct[rule_position].json_meta_strstr[i] ) )
+                                {
+                                    return(true);
+                                }
+                        }
+
+                }
+
+            return(false);
+        }
+
+    else
+
+        {
+
+            for ( z = 0; z < rulestruct[rule_position].json_meta_content_containers[i].json_meta_counter; z++ )
+                {
+
+                    /* "json_meta_content:!" */
+
+                    if ( rulestruct[rule_position].json_meta_content_case[i] == true )
+                        {
+
+                            if ( Search_Nocase(json_string, rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], false,  rulestruct[rule_position].json_meta_strstr[i] ) )
+                                {
+                                    return(false);
+                                }
+                        }
+                    else
+                        {
+
+                            if ( Search_Case(json_string, rulestruct[rule_position].json_meta_content_containers[i].json_meta_content_converted[z], rulestruct[rule_position].json_meta_strstr[i] ) )
+                                {
+                                    return(false);
+                                }
+                        }
+
+                }
+
+            return(true);
+
+        }
+
+    return(false);
+}
