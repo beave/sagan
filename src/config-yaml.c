@@ -684,16 +684,6 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
-                                    else if (!strcmp(last_pass, "keys-in-message"))
-                                        {
-
-                                            if (!strcasecmp(value, "enabled") || !strcasecmp(value, "true" ) || !strcasecmp(value, "yes") )
-                                                {
-                                                    config->keys_in_message = true;
-                                                }
-                                        }
-
-
 
 #ifndef HAVE_LIBFASTJSON
 

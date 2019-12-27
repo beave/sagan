@@ -47,7 +47,6 @@ struct _SaganConfig
 
     bool  	 parse_json_message;
     bool	 parse_json_program;
-    bool         keys_in_message;
     char	 json_message_map_file[MAXPATH];
 
 #endif
