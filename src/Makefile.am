@@ -54,6 +54,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        util-strlcat.c \
                                                        util-base64.c \
 						       json-handler.c \
+						       debug.c \
 						       routing.c \
 						       content.c \
 						       pcre-s.c \

@@ -376,12 +376,12 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
         }
 
-    /*
-        if ( has_message == false )
-            {
-                Sagan_Log(WARN, "[%s, line %d] Received JSON which has no decoded 'message' value. The log line was: \"%s\"", __FILE__, __LINE__, syslog_string);
-            }
-    */
+    /* If debugging, dump data that was located */
+
+    if ( debug->debugjson )
+        {
+            Debug_Sagan_Proc_Syslog( SaganProcSyslog_LOCAL );
+        }
 
 }
 

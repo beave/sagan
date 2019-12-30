@@ -39,6 +39,7 @@ libfastjson is required for Sagan to function!
 #include "sagan-defs.h"
 #include "sagan-config.h"
 #include "version.h"
+#include "debug.h"
 #include "message-json-map.h"
 
 #include "parsers/parsers.h"
@@ -838,19 +839,11 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
+            /* If debugging, dump data that was located */
 
             if ( debug->debugjson )
                 {
-                    Sagan_Log(DEBUG, "[%s, line %d] New data extracted from JSON:", __FILE__, __LINE__);
-                    Sagan_Log(DEBUG, "[%s, line %d] -------------------------------------------------------", __FILE__, __LINE__);
-                    Sagan_Log(DEBUG, "[%s, line %d] Message: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message );
-                    Sagan_Log(DEBUG, "[%s, line %d] Program: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_program );
-                    Sagan_Log(DEBUG, "[%s, line %d] src_ip : \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_ip );
-                    Sagan_Log(DEBUG, "[%s, line %d] dst_ip : \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->dst_ip );
-                    Sagan_Log(DEBUG, "[%s, line %d] src_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->src_port );
-                    Sagan_Log(DEBUG, "[%s, line %d] dst_port : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->dst_port );
-                    Sagan_Log(DEBUG, "[%s, line %d] proto : \"%d\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->proto );
-                    Sagan_Log(DEBUG, "[%s, line %d] ja3: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->ja3 );
+                    Debug_Sagan_Proc_Syslog( SaganProcSyslog_LOCAL );
                 }
 
         }
