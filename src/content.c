@@ -43,7 +43,6 @@ bool Content ( int rule_position, const char *syslog_message )
 
     int z = 0;
     int alter_num = 0;
-    int sagan_match = 0;
     char alter_content[MAX_SYSLOGMSG] = { 0 };
 
     /* Content: OFFSET */

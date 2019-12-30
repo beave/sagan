@@ -34,6 +34,7 @@
 #include "sagan-config.h"
 #include "version.h"
 #include "input-pipe.h"
+#include "debug.h"
 
 struct _SaganCounters *counters;
 struct _SaganConfig *config;
@@ -48,10 +49,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     struct json_object *json_obj2 = NULL;
     struct json_object *json_obj3 = NULL;
 
-    struct json_object *tmp = NULL;
-
     uint16_t json_str_count=0;
-    //uint16_t a;
     uint16_t i;
 
     bool has_message = false;

@@ -35,11 +35,9 @@ bool JSON_Meta_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LO
 
     int i=0;
     int a=0;
-    int z=0;
 
     int rc=0;
     int match = 0;
-    bool flag = false;
 
     for (i=0; i < rulestruct[rule_position].json_meta_content_count; i++)
         {
@@ -87,8 +85,6 @@ bool JSON_Meta_Content_Search(int rule_position, const char *json_string, int i 
 {
 
     int z = 0;
-    bool flag = false;
-
 
     if ( rulestruct[rule_position].json_meta_content_not[i] == false )
         {

@@ -33,6 +33,7 @@
 #include "sagan-defs.h"
 #include "rules.h"
 #include "json-content.h"
+#include "search-type.h"
 
 #include "parsers/parsers.h"
 

@@ -50,13 +50,11 @@ bool Meta_Content(int rule_position, const char *syslog_message)
 {
 
     int z=0;
-    int j=0;
-
     int meta_alter_num=0;
-    bool flag = false;
+    int match=0;
+
     char meta_alter_content[MAX_SYSLOGMSG] = { 0 };
 
-    int match=0;
     bool rc = 0;
 
     for (z=0; z<rulestruct[rule_position].meta_content_count; z++)

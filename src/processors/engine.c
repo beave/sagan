@@ -55,6 +55,10 @@
 #include "xbit.h"
 #include "event-id.h"
 #include "routing.h"
+#include "content.h"
+#include "pcre-s.h"
+#include "json-content.h"
+#include "json-meta-content.h"
 
 #include "parsers/parsers.h"
 
@@ -129,15 +133,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
-    bool content_return = true;
-    bool pcre_return = true;
-    bool meta_content_return = true;
-    bool json_pcre_return = true;
-    bool json_content_return = true;
-    bool json_meta_content_return = true;
-    bool event_id_return = true;                /* Set this in case there is no "event_id" used */
-
-
     struct _Sagan_Processor_Info *processor_info_engine = NULL;
     processor_info_engine = malloc(sizeof(struct _Sagan_Processor_Info));
 
@@ -164,7 +159,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     int threadid = 0;
 
     int b = 0;
-    int z = 0;
 
     bool pre_match = false;
 

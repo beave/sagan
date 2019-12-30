@@ -173,7 +173,6 @@ sagan-core:
 
     parse-json-message: disabled
     parse-json-program: disabled
-    keys-in-message: disabled
     json-message-map: "$RULE_PATH/json-message.map"
 
   # This controls how the "parse_src_ip" and "parse_dst_ip" function within a rule. 

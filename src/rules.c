@@ -119,8 +119,6 @@ void Load_Rules( const char *ruleset )
 
     char nettmp[64];
 
-    char tolower_tmp[512];
-
     char *tokenrule;
     char *tokennet;
     char *rulesplit;
