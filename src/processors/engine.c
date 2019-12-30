@@ -167,10 +167,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     int z = 0;
 
     bool pre_match = false;
-//    int sagan_match = 0;	/* Used to determine if all has "matched" (content, pcre, meta_content, etc) */
-
-    //int rc = 0;
-//    int ovector[PCRE_OVECCOUNT];
 
     int alter_num = 0;
     int meta_alter_num = 0;
@@ -196,8 +192,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     char tmpbuf[128] = { 0 };
     char s_msg[1024] = { 0 };
-    char alter_content[MAX_SYSLOGMSG] = { 0 };
-    char meta_alter_content[MAX_SYSLOGMSG] = { 0 };
+   
+    char syslog_append_program[MAX_SYSLOGMSG] = { 0 };
 
     struct timeval tp;
     unsigned char proto = 0;
@@ -521,6 +517,17 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( pre_match == false )
                         {
 
+			    /* If the "append_program" rule option is used,  we append the program here */
+
+			    if ( rulestruct[b].append_program == true ) 
+				{
+				snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
+				syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0'; 
+				strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message)); 
+				}
+
+			    /* Start processing searches from rule optison */
+
                             flag = true;
 
                             if ( rulestruct[b].content_count > 0 )
@@ -565,8 +572,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( pre_match == false && flag == true )
                         {
 
-//                            if ( pre_match == false )
-//                                {
 
 #ifdef HAVE_LIBLOGNORM
                             if ( liblognorm_status == false && rulestruct[b].normalize == true )
@@ -1410,13 +1415,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                 } /* End of routing */
 
-//                                } /* End of match */
-
-                        } /* End of pcre match */
+                        } /* End of pcre/content/etc match */
 
                     pre_match = false;  		      /* Reset match! */
-//                    sagan_match=0;	      /* Reset pcre/meta_content/content match! */
-                    //rc=0;		      /* Return code */
                     SaganRouting->flexbit_return=false;	      /* Flexbit reset */
                     SaganRouting->xbit_return=false;            /* xbit reset */
                     SaganRouting->check_flow_return = true;      /* Rule flow direction reset */

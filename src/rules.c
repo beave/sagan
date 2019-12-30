@@ -892,6 +892,12 @@ void Load_Rules( const char *ruleset )
                             rulestruct[counters->rulecount].s_find_proto_program = true;
                         }
 
+                    if (!strcmp(rulesplit, "append_program"))
+                        {
+                            strtok_r(NULL, ":", &saveptrrule2);
+                            rulestruct[counters->rulecount].append_program = true;
+                        }
+
                     if (!strcmp(rulesplit, "flexbits_upause"))
                         {
                             arg = strtok_r(NULL, ":", &saveptrrule2);

@@ -80,9 +80,6 @@ pthread_mutex_t SaganReloadMutex;
 
 pthread_mutex_t SaganDynamicFlag;
 
-//pthread_mutex_t ClientStatsMutex=PTHREAD_MUTEX_INITIALIZER;
-
-
 void Processor ( void )
 {
 
