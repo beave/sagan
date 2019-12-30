@@ -57,6 +57,7 @@
 #include "routing.h"
 #include "content.h"
 #include "pcre-s.h"
+#include "json-pcre.h"
 #include "json-content.h"
 #include "json-meta-content.h"
 
@@ -161,9 +162,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     int b = 0;
 
     bool pre_match = false;
-
-    int alter_num = 0;
-    int meta_alter_num = 0;
 
     char *ptmp;
     char *tok2;

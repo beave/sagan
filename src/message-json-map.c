@@ -390,15 +390,11 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     uint16_t json_str_count=1;
 
-    bool has_message;
     bool found = false;
 
     struct json_object *json_obj = NULL;
     struct json_object *json_obj2 = NULL;
     struct json_object *json_obj3 = NULL;
-
-
-    struct json_object *tmp = NULL;
 
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE];  // = { { 0 } };
     char tmp_message[MAX_SYSLOGMSG] = { 0 };
@@ -581,7 +577,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                             snprintf(tmp_message, sizeof(tmp_message), "%s:%s,", JSON_Message_Map[i].message[b], SaganProcSyslog_LOCAL->json_value[a]);
 
                                             strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
-                                            has_message = true;
                                             score++;
                                         }
 
@@ -597,7 +592,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                 {
 
                                     snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s:%s", JSON_Message_Map[i].message[0], SaganProcSyslog_LOCAL->json_value[a]);
-                                    has_message = true;
                                     score++;
 
                                 }
@@ -703,7 +697,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
-            if ( score > prev_score ) //  && has_message == true )
+            if ( score > prev_score ) 
                 {
                     pos = i;
                     prev_score = score;

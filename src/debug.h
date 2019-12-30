@@ -19,5 +19,5 @@
 */
 
 
-void JSON_Debug ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
+void Debug_Sagan_Proc_Syslog ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 
