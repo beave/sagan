@@ -16,6 +16,7 @@ Sagan User Guide
    saganpeek
    liblognorm
 
+   sagan-json
    high-performance
    contributing-coding-style
    blogs/index

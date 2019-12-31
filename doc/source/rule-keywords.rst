@@ -22,7 +22,7 @@ alert_time
 
 .. option:: alert_time: days {days}, hours {hours};
 
-"alert_time" allows a rule to only trigger on certain days and/or certain hours. For example, let's assume that Windows RDP (Remote Desktop Protocol) is normal between the hours of 0800 (8 AM) to 1800 (6 PM). However, RDP sessions outside of that timeframe would be considered suspicious. This allows you to build a rule that will trigger outside of the "normal RDP" times.
+"alert_time" allows a rule to only trigger on certain days and/or certain hours. For example, let's assume that Windows RDP (Remote Desktop Protocol) is normal between the hours of 0800 (8 AM) to 1800 (6 PM). However, RDP sessions outside of that time-frame would be considered suspicious. This allows you to build a rule that will trigger outside of the "normal RDP" times.
 
 Days are represented via digits 0 - 6. 0 = Sunday, 1 Monday, 2 Tuesday, 3 Wednesday, 4 Thursday, 5 Friday, 6 = Saturday.
 
@@ -34,11 +34,30 @@ The example above would cause a rule to trigger every day of the week between th
 
 **alert_time: days 1, hours 2300-0800;**
 
-You do not need to include Tuesday (2) in the "days" option. Since the times stretch between two days, Sagan will automatically take this into consideration and make the adjustments. If you were to include "days 12", this would cause Sagan to alert on Monday-Tueday between 2300 - 0800 and Tuesday-Wednesday 2300-0800.
+You do not need to include Tuesday (2) in the "days" option. Since the times stretch between two days, Sagan will automatically take this into consideration and make the adjustments. If you were to include "days 12", this would cause Sagan to alert on Monday-Tuesday between 2300 - 0800 and Tuesday-Wednesday 2300-0800.
 
 alert_time can also be used with sagan.yaml variables. For example, if you have "SAGAN_DAYS: 12345" and "SAGAN_HOURS: 0800-1300" in your sagan.yaml (see "aetas-groups" in your sagan.yaml), you could then create a rule like this:
 
 **alert_time: days $SAGAN_DAYS, hours $SAGAN_HOURS;**
+
+append_program
+~~~~~~~~~~~~~~
+
+.. option:: append_program; 
+
+The ``append_program`` rule option forces the syslog program field to be appended to the
+syslog message.  This can be useful when the program fields are unpredictable.  An 
+example of this are Cisco ASAs with 'Emblem' enabled or disabled.  When Cisco "Emblem"
+is disabled, the syslog "program" field will contain the Cisco ASA 'status' code (i.e - '%ASA-3-114006'). However,  when Cisco Emblem is enabled, the syslog "program" field gets shifted up
+in order and becomes part of the syslog "message".  The result is signatures that do not 
+fire despite the status code being present.  
+
+The ``append_program`` option will append the program field to the end of the syslog message. 
+This way, the rule writer can use rule options like ``content``, ``pcre``, etc to detect the
+status code regardless of if the syslog program has been shifted or not. 
+
+Sagan will append the syslog program as "syslog message | syslog program". 
+
 
 blacklist
 ---------
@@ -80,55 +99,13 @@ you can use the ``mdate_effective_period`` (last modification of the IoC) or ``c
 
 This will query all TCP/IP addresses found in a log line and query for `Malicious`, `Tor` and `Proxy`
 addresses that are no older than one month old.  If the time is set to ``none``,  then any IoCs found
-for a TCP/IP address are returned reguarless of ``mdate_effective_period`` or ``cdate_effective_perid``.
+for a TCP/IP address are returned regardless of ``mdate_effective_period`` or ``cdate_effective_period``.
 
 Below is an example of querying a file hash in Bluedot
 
 **bluedot: type file_hash,Malicious; parse_hash: sha1;**
 
-**Note: Quadrant Information Secrity Bluedot is not yet available to the public.**
-
-zeek-intel
-----------
-
-.. option:: zeek-intel: {src_ipaddr},{dst_ipaddr},{both_ipaddr},{all_ipaddr},{file_hash},{url},{software},{email},{user_name},{file_name},{cert_hash};
-
-**Note: This option used to be known as "bro-intel"**
-
-This keyword allows Sagan to look up malicious IP addresses, file hashes, URLs, software, email, user names, and certificate hashes from Bro Intelligence feeds.
-
-In order for the processors to be used, they must be enabled in your sagan.yaml file.
-
-The following is a simple example within a Sagan rule:
-
-**zeek-intel: src_ipaddr;**
-
-This informs Sagan to look up the parsed source address from the Bro Intel::ADDR data. The parsed source address is extracted via liblognorm or parse_src_ip.
-
-Multiple keywords can be used. For example:
-
-**zeek-intel: both_ipaddr, domain, url;**
-
-This instructs Sagan to look up the parsed source and destination from the Bro Intel::ADDR data. It also looks up the Intel::DOMAIN and Intel::URL. If any of the "zeek-intel" lookups return with a positive hit, the zeek-intel option is triggered. Consider the following example:
-
-**content: “thisisatest”; zeek-intel: src_ipaddr;**
-
-If a log message contains the term “thisisatest” but the parsed source IP address is not found in the Bro Intelligence feeds, the rule will not trigger. If the log message “thisisatest” is found and the src_ipaddr is found, the rule will trigger.
-
-Sagan "zeek-intel" types::
-
-   src_ipaddr	Intel::ADDR             Look up the parsed source address
-   dst_ipaddr	Intel::ADDR	        Look up the parsed destination address
-   all_ipaddr	Intel::ADDR	        Search all IP addresses in a log message and look them up
-   both_ipaddr	Intel::ADDR	        Look up the parsed source & destination address
-   file_hash	Intel::FILE_HASH	Search message content for malicious file hash
-   url	        Intel::URL	        Search message content for malicious URL
-   software	Intel::SOFTWARE	        Search message content for malicious software
-   email	Intel::EMAIL	        Search message content for malicious email
-   user_name	Intel::USER_NAME	Search message content for malicious user names
-   file_nasm	Intel::FILE_NAME	Search message content for malicious file names
-   cert_has	Intel::CERT_HASH	Search message content for malicious certificate hashes
-
+**Note: Quadrant Information Security Bluedot is not yet available to the public.**
 
 classtype
 ---------
@@ -199,7 +176,7 @@ default_dst_port
 
 .. option:: default_dst_port: {port number}
 
-The default_dst_port sets the default port number in the event normalization fails. For example, OpenSSH typically uses port 22. However, OpenSSH log messages do not specify the port being used. By using the rule option default_dst_port, Sagan will assign the port specified by the rule writer when triggered. This option can be overriden by liblognorm.
+The default_dst_port sets the default port number in the event normalization fails. For example, OpenSSH typically uses port 22. However, OpenSSH log messages do not specify the port being used. By using the rule option default_dst_port, Sagan will assign the port specified by the rule writer when triggered. This option can be overridden by liblognorm.
 
 Valid values are integers (1-63556) or defined variables (ie - "$SSH_PORT"). Defaults to the Sagan YAML "default-port".
 
@@ -225,7 +202,7 @@ For example:
 
 **content: "bob"; depth: 10;**
 
-This would start searching at the begining of the log line (default offset: 0) and search only 10 bytes deep for the term "bob".
+This would start searching at the beginning of the log line (default offset: 0) and search only 10 bytes deep for the term "bob".
 
 Example with offset and depth used together:
 
@@ -274,6 +251,25 @@ If present in a rule, Sagan will e-mail the event to the email address supplied.
 
 Note: This requires Sagan to be compiled with libesmtp support.  
 
+event_id
+~~~~~~~~
+
+.. option:: event_id: {id},{id},{id}...; 
+
+This option attempts to locate an "Event ID" in a syslog message or within JSON data.  This
+is typically used with Microsoft Windows event IDs but is not limited to this.  When searching
+log data,  the ``event_id`` option essentially acts like the following. 
+
+**meta_content: " %sagan%: ", {id}, {id}, {id}...; meta_depth: 10;**
+
+``event_id`` does this because most Windows agents (NXLog, etc) put the "event ID" at the 
+beginning of the message.  
+
+The the data that is being processed is JSON and an "event ID" is found and properly mapped, 
+the JSON data is used.  For more information about using Sagan with JSON data, see 
+``Sagan & JSON``. 
+
+
 external
 --------
 
@@ -290,7 +286,7 @@ port, facility, syslog priority, liblognorm JSON and the syslog message.
 syslog_facility
 ---------------
 
-.. option:: syslog_facility: {sylog facility}
+.. option:: syslog_facility: {syslog facility}
 
 Searches only messages from a specified facility.  This can be multiple facilities when separated with an '|' (or) symbol.
 
@@ -303,11 +299,11 @@ flexbits
 
 Note: ``flexbits`` are similar to ``xbits`` but can deal with more complex conditions (tracking ports, reverse direction tracking, etc).  However, in most cases you'll likely want to use ``xbits`` which are more simple and are likely to do what you need. 
 
-The ``flexbis`` option is used in conjunection with ``unset``, ``isset``, ``isnotset``. This allows Sagan to "track" through multiple log events to trigger an alert. For example, lets say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the flexbit set you can turn on a flexbit when a system is being rebooted. Our flexbit set would look like this:
+The ``flexbits`` option is used in conjunction with ``unset``, ``isset``, ``isnotset``. This allows Sagan to "track" through multiple log events to trigger an alert. For example, lets say you want to detect when "anti-virus" has been disabled but is not related to a system reboot. Using the flexbit set you can turn on a flexbit when a system is being rebooted. Our flexbit set would look like this:
 
 **flexbits: set, windows_reboot, 30;**
 
-We are "setting" a flexbit named "windows_reboot" for 30 seconds. This means that thw "windows_reboot" fleflexbit will "expire" in 30 seconds. The flexbit set automatically records the source and destination of the message that triggered the event. It is important to point out, the source and destination addresses are what Sagan has normalized through parse_src_ip, parse_dst_ip or liblognorm.
+We are "setting" a flexbit named "windows_reboot" for 30 seconds. This means that the "windows_reboot" flexbit will "expire" in 30 seconds. The flexbit set automatically records the source and destination of the message that triggered the event. It is important to point out, the source and destination addresses are what Sagan has normalized through parse_src_ip, parse_dst_ip or liblognorm.
 
 **flexbits: {unset|isset|isnotset},{by_src|by_dst|both|reverse|none},{flexbit name}**
 
@@ -325,7 +321,7 @@ If the flexbit "myflexbit" "isset", then trigger an event/alert. Track by the so
 
 **flexbits: isnotset, both, myflexbit;**
 
-If the flexbit "myflexbit" "isnotset", then trigger an event/alert. Track by both the source and desination of the message.
+If the flexbit "myflexbit" "isnotset", then trigger an event/alert. Track by both the source and destination of the message.
 
 **flexbits: unset, both, myflexbit;**
 
@@ -335,7 +331,7 @@ Example of flexbit use can be found in the rules https://wiki.quadrantsec.com/tw
 
 **flexbits: {noalert|noeve}**
 
-This tells Sagan to not record certain types of data with ``flexlbits`` when a condition is met.  For example, you might not want to generate an alert when a ``xbits`` is ``set``. 
+This tells Sagan to not record certain types of data with ``flexbits`` when a condition is met.  For example, you might not want to generate an alert when a ``xbits`` is ``set``. 
 
 flexbits_pause
 --------------
@@ -350,24 +346,96 @@ flexbits_upause
 
 This tells the flexbit ``isset`` or ``isnotset`` to 'wait' for a specified number of microseconds before checking the flexbit state. 
 
-fwsam
------
 
-.. option:: fwsam: {src|dst}, {number} {second|minute|hour|day|week|month|year}
+json_content
+~~~~~~~~~~~~
 
+.. option:: json_content: "{key}", "{search}"; 
 
-This informs Sagan that if the rule is successfully trigged, the source or destination IP address should be automatically firewalled via the "Snortsam" facility.
+This functions similar to ``content`` but works on JSON key/value data.  This option does _not_ 
+depend on JSON mapping and can be used on any located key. For example:
 
-**fwsam: src, 1 day;**
+**json_content: "sni", "www.quadrantsec.net";**
 
-This would firewall the offending source for 1 day. For more information about Snortsam, see: http://www.snortsam.net
+Similar to ``content``,  the not operator (!) can also be used:
+
+**json_content:! "sni", "www.google.com";**
+
+json_nocase
+~~~~~~~~~~~
+
+.. option:: json_nocase;
+
+This makes the previous ``json_content`` case insensitive (similar to the ``nocase`` option
+for ``content``). 
+
+json_strstr
+~~~~~~~~~~~
+
+.. option:: json_strstr; 
+
+Normally ``json_content`` will search for a literal match to a key/value pair.  This option makes
+the previous ``json_content`` do a string search for the value.  For example:
+
+**json_content: "name", "example";** 
+
+This will locate the key "name" and search that keys data for the word "example".  This example
+would __not__ trigger if the keys data was "this is an example of data".  This is because
+``json_content`` searches for a literal values (strcmp) rather than parsing the entire string. The
+``json_strstr`` option forces the previous ``json_content`` to do a string search (strstr) of
+the data. 
+
+json_pcre
+~~~~~~~~~
+
+.. option:: json_pcre: "key", "/regularexpression/"; 
+
+This functions similar to ``pcre`` but works on JSON key/value data. This option does _not_ 
+depend on JSON mapping and can be used on any located key.  For example:
+
+**json_pcre: "sni", "/www.quadrantsec.com/i";**
+
+json_meta_content
+~~~~~~~~~~~~~~~~~
+
+.. option:: json_meta_content: "key", value1,value2,value3... ; 
+
+This functions similar to ``meta_content`` but works on a JSON key/value data. This option
+does _not_ depend on JSON mapping and can be used with any located key.  For example:
+
+**json_meta_content: "threat",medium,low;** 
+
+This function can also be used with the not (!) operator.
+
+**json_meta_content: !"threat",informational,low;** 
+
+json_meta_nocase
+~~~~~~~~~~~~~~~~
+
+json_nocase
+~~~~~~~~~~~
+
+.. option:: json_meta_nocase;
+
+This makes the previous ``json_meta_content`` case insensitive (similar to the ``nocase`` option
+for ``content``).
+
+json_meta_strstr
+~~~~~~~~~~~~~~~~~
+
+.. option:: json_meta_strstr; 
+
+This is similar to ``json_strstr`` but works on the ``json_meta_content`` rule option.
+
+Normally ``json_meta_content`` will search for a literal match to a key/value pair (strcmp).  
+This option makes the previous ``json_meta_content`` do a string search for the value (strstr). 
 
 syslog_level
 ------------
 
 .. option:: syslog_level: {syslog level};
 
-Seaches only messages from a specified syslog level.  This can be multiple levels when seperated by a '|' (or) symbol.
+Searches only messages from a specified syslog level.  This can be multiple levels when separated by a '|' (or) symbol.
 
 **level: notice;**
 
@@ -376,11 +444,11 @@ meta_content
 
 .. option:: meta_content: "string %sagan% string",$VAR;
 
-This option allows you to create a content like rule option that functions with variable content. For example, let's say you want to trigger on the strings "Usernname: bob", "Username: frank" and "Username: mary". Without meta_content, this example would require three separate rules with content keywords. The meta_content allows you to make one rule option with multiple variables. For example:
+This option allows you to create a content like rule option that functions with variable content. For example, let's say you want to trigger on the strings "Username: bob", "Username: frank" and "Username: mary". Without meta_content, this example would require three separate rules with content keywords. The meta_content allows you to make one rule option with multiple variables. For example:
 
 **meta_content: "Username|3a| %sagan%", $USERS;**
 
-Note: The |3a| is the hexidecimal representation of a ':' .
+Note: The |3a| is the hexadecimal representation of a ':' .
 
 The %sagan% variable is populated with the values in $USERS. To populate the $USER variable, the sagan.conf would have the following variable declaration:
 
@@ -411,7 +479,7 @@ For example, if $VAR is set to "mary, frank, bob":
 
 **meta_content: "%sagan%", $VAR; meta_depth: 10;**
 
-This would start searching at the begining of the log line (default meta_ offset: 0) and search only 10 bytes deep for the term "mary", "frank" or "bob".
+This would start searching at the beginning of the log line (default meta_ offset: 0) and search only 10 bytes deep for the term "mary", "frank" or "bob".
 
 Example with offset and depth used together:
 
@@ -471,7 +539,7 @@ For example, $VAR1 is set to "GET" and "POST", while $VAR2 is set to "downloads"
 
 **meta_content:"%sagan", $VAR1; meta_depth:4; meta_content:"%sagan%", $VAR2; meta_distance:10; meta_within:9;**
 
-The first meta_content would ony match on the world "GET" or "POST" if it is contained within the first 4 bytes of the log line. The second meta_content looks for the term "downloads" or "uploads" if it is a meta_distance of 10 bytes away from the meta_depth. From the meta_distance, only the first 9 bytes are examined for the term "downloads" or "uploads" (which is 9 bytes).
+The first meta_content would only match on the world "GET" or "POST" if it is contained within the first 4 bytes of the log line. The second meta_content looks for the term "downloads" or "uploads" if it is a meta_distance of 10 bytes away from the meta_depth. From the meta_distance, only the first 9 bytes are examined for the term "downloads" or "uploads" (which is 9 bytes).
 
 This function is identical to Snort's "within" rule option. For more information see: http://blog.joelesler.net/2010/03/offset-depth-distance-and-within.html
 
@@ -489,7 +557,7 @@ nocase
 
 .. option:: nocase
 
-Used after and in conjuction with the "content" option. This forces the previous content to search for the {search} string regardless of case.
+Used after and in conjunction with the "content" option. This forces the previous content to search for the {search} string regardless of case.
 
 **content: "sagan"; nocase;**
 
@@ -583,7 +651,7 @@ priority
 
 priority: {priority};
 
-Sets the prority of an alert/signature.
+Sets the probity of an alert/signature.
 
 **priority: 1;**
 
@@ -659,7 +727,7 @@ This allows Sagan to threshold alerts based on the volume of alerts over a speci
 
 **threshold: type suppress, track by_src, count 5, seconds 300;**
 
-Sagan will suppress the amount of alerts via the source IP address if they exceed a count of 5 within a 300 second (5 minute) period.  Everytime an event happens that meets the threshold criteria,  Sagan's internal timer for this threshold will be reset.  This means that the event will _not_ trigger again until the alert criteria has stopped for at least a 300 second period.  If the event does stop for greater than 300 seconds,  the threshold will generate 5 events and the process will start over.  An example usage might be for a "brute force" attack.  Lets say that the attacker is attempting 10000 passwords every second.  Only the first 5 attempts would generate an alert. The threshold would apply to the remaining 9995 attempts.  After the attacker tries 10000 passwords,  they take a break for 20 minutes.  At this point,  the "suppress" threshold would time out.  This means that if the attackers starts another "brute force" attack, it would trip off a maximum of 5 alerts and start thresholding again.
+Sagan will suppress the amount of alerts via the source IP address if they exceed a count of 5 within a 300 second (5 minute) period.  Every time an event happens that meets the threshold criteria,  Sagan's internal timer for this threshold will be reset.  This means that the event will _not_ trigger again until the alert criteria has stopped for at least a 300 second period.  If the event does stop for greater than 300 seconds,  the threshold will generate 5 events and the process will start over.  An example usage might be for a "brute force" attack.  Lets say that the attacker is attempting 10000 passwords every second.  Only the first 5 attempts would generate an alert. The threshold would apply to the remaining 9995 attempts.  After the attacker tries 10000 passwords,  they take a break for 20 minutes.  At this point,  the "suppress" threshold would time out.  This means that if the attackers starts another "brute force" attack, it would trip off a maximum of 5 alerts and start thresholding again.
 
 You can also 'track' by multiple types.  For example:
 
@@ -683,7 +751,7 @@ For example:
 
 **content:"GET"; depth:3; content:"downloads"; distance:10; within:9;**
 
-The first content would ony match on the word "GET" if it is contained within the first 3 bytes of the log line. The second content looks for the term "downloads" if it is a distance of 10 bytes away from the depth. From the distance, only the first 9 bytes are examined for the term "downloads" (which is 9 bytes).
+The first content would only match on the word "GET" if it is contained within the first 3 bytes of the log line. The second content looks for the term "downloads" if it is a distance of 10 bytes away from the depth. From the distance, only the first 9 bytes are examined for the term "downloads" (which is 9 bytes).
 
 This function is identical to Snort's "within" rule option. For more information see: http://blog.joelesler.net/2010/03/offset-depth-distance-and-within.html
 
@@ -695,9 +763,9 @@ xbits
 
 The ``xbits`` rule keyword allows you to track and correlate events between multiple logs.  This is done by detecting an event and using the ``set`` for Sagan to "remember" an event.  Later,  if another event is detected,  xbit can be tested via ``isset`` or ``isnotset`` to determine if an event happened earlier.  For example,  lets say you would like to detect when anti-virus is being shutdown but **not** if it is related to a system reboot or shutdown.  
 
-When Sagan detects a shutdown/reboot,  Sagan can ``set`` an xbit. For this example, we will name the xbit being set 'system.reboot'.  WHen Sagan sees the anti-virus being shutdwn, Sagan can test to see if the xbit 'system.reboot' is set (``isset``) or is not set (``isnotset``).  In our case, if the xbit named 'system.reboot' ``isnotset``, we know that the anti-virus is being shutdown and is NOT related to a system reboot/shutdown. 
+When Sagan detects a shutdown/reboot,  Sagan can ``set`` an xbit. For this example, we will name the xbit being set 'system.reboot'.  When Sagan sees the anti-virus being shutdown, Sagan can test to see if the xbit 'system.reboot' is set (``isset``) or is not set (``isnotset``).  In our case, if the xbit named 'system.reboot' ``isnotset``, we know that the anti-virus is being shutdown and is NOT related to a system reboot/shutdown. 
 
-Using ``xbis`` can be useful in detecting successful attacks.  Another example would be the Sagan 'brute_force' xbit.  Sagan monitors "brute force" attacks and ``sets`` an xbit associated to the source IP address (the 'brute_force' xbit).  If Sagan later detects a successful login,  we can test via the xbit (``isset``) to determine if the IP address has been associated with brute force attacks in the past. 
+Using ``xbits`` can be useful in detecting successful attacks.  Another example would be the Sagan 'brute_force' xbit.  Sagan monitors "brute force" attacks and ``sets`` an xbit associated to the source IP address (the 'brute_force' xbit).  If Sagan later detects a successful login,  we can test via the xbit (``isset``) to determine if the IP address has been associated with brute force attacks in the past. 
 
 Below is an example to set an xbit by the source IP address. 
 
@@ -732,6 +800,47 @@ xbits_upause
 .. option:: xbits_upause: {microseconds}; 
 
 This tells the xbit ``isset`` or ``isnotset`` to 'wait' for a specified number of microseconds before checking the xbit state.  
+
+zeek-intel
+----------
+
+.. option:: zeek-intel: {src_ipaddr},{dst_ipaddr},{both_ipaddr},{all_ipaddr},{file_hash},{url},{software},{email},{user_name},{file_name},{cert_hash};
+
+**Note: This option used to be known as "bro-intel"**
+
+This keyword allows Sagan to look up malicious IP addresses, file hashes, URLs, software, email, user names, and certificate hashes from Bro Intelligence feeds.
+
+In order for the processors to be used, they must be enabled in your sagan.yaml file.
+
+The following is a simple example within a Sagan rule:
+
+**zeek-intel: src_ipaddr;**
+
+This informs Sagan to look up the parsed source address from the Bro Intel::ADDR data. The parsed source address is extracted via liblognorm or parse_src_ip.
+
+Multiple keywords can be used. For example:
+
+**zeek-intel: both_ipaddr, domain, url;**
+
+This instructs Sagan to look up the parsed source and destination from the Bro Intel::ADDR data. It also looks up the Intel::DOMAIN and Intel::URL. If any of the "zeek-intel" lookups return with a positive hit, the zeek-intel option is triggered. Consider the following example:
+
+**content: “thisisatest”; zeek-intel: src_ipaddr;**
+
+If a log message contains the term “thisisatest” but the parsed source IP address is not found in the Bro Intelligence feeds, the rule will not trigger. If the log message “thisisatest” is found and the src_ipaddr is found, the rule will trigger.
+
+Sagan "zeek-intel" types::
+
+   src_ipaddr	Intel::ADDR             Look up the parsed source address
+   dst_ipaddr	Intel::ADDR	        Look up the parsed destination address
+   all_ipaddr	Intel::ADDR	        Search all IP addresses in a log message and look them up
+   both_ipaddr	Intel::ADDR	        Look up the parsed source & destination address
+   file_hash	Intel::FILE_HASH	Search message content for malicious file hash
+   url	        Intel::URL	        Search message content for malicious URL
+   software	Intel::SOFTWARE	        Search message content for malicious software
+   email	Intel::EMAIL	        Search message content for malicious email
+   user_name	Intel::USER_NAME	Search message content for malicious user names
+   file_nasm	Intel::FILE_NAME	Search message content for malicious file names
+   cert_has	Intel::CERT_HASH	Search message content for malicious certificate hashes
 
 
 
