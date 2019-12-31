@@ -41,7 +41,7 @@ alert_time can also be used with sagan.yaml variables. For example, if you have 
 **alert_time: days $SAGAN_DAYS, hours $SAGAN_HOURS;**
 
 append_program
-~~~~~~~~~~~~~~
+--------------
 
 .. option:: append_program; 
 
@@ -252,7 +252,7 @@ If present in a rule, Sagan will e-mail the event to the email address supplied.
 Note: This requires Sagan to be compiled with libesmtp support.  
 
 event_id
-~~~~~~~~
+--------
 
 .. option:: event_id: {id},{id},{id}...; 
 
@@ -348,7 +348,7 @@ This tells the flexbit ``isset`` or ``isnotset`` to 'wait' for a specified numbe
 
 
 json_content
-~~~~~~~~~~~~
+------------
 
 .. option:: json_content: "{key}", "{search}"; 
 
@@ -362,7 +362,7 @@ Similar to ``content``,  the not operator (!) can also be used:
 **json_content:! "sni", "www.google.com";**
 
 json_nocase
-~~~~~~~~~~~
+-----------
 
 .. option:: json_nocase;
 
@@ -370,7 +370,7 @@ This makes the previous ``json_content`` case insensitive (similar to the ``noca
 for ``content``). 
 
 json_strstr
-~~~~~~~~~~~
+-----------
 
 .. option:: json_strstr; 
 
@@ -386,7 +386,7 @@ would __not__ trigger if the keys data was "this is an example of data".  This i
 the data. 
 
 json_pcre
-~~~~~~~~~
+---------
 
 .. option:: json_pcre: "key", "/regularexpression/"; 
 
@@ -396,7 +396,7 @@ depend on JSON mapping and can be used on any located key.  For example:
 **json_pcre: "sni", "/www.quadrantsec.com/i";**
 
 json_meta_content
-~~~~~~~~~~~~~~~~~
+-----------------
 
 .. option:: json_meta_content: "key", value1,value2,value3... ; 
 
@@ -410,10 +410,7 @@ This function can also be used with the not (!) operator.
 **json_meta_content: !"threat",informational,low;** 
 
 json_meta_nocase
-~~~~~~~~~~~~~~~~
-
-json_nocase
-~~~~~~~~~~~
+----------------
 
 .. option:: json_meta_nocase;
 
@@ -421,7 +418,7 @@ This makes the previous ``json_meta_content`` case insensitive (similar to the `
 for ``content``).
 
 json_meta_strstr
-~~~~~~~~~~~~~~~~~
+----------------
 
 .. option:: json_meta_strstr; 
 

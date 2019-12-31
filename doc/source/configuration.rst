@@ -271,8 +271,6 @@ This maps the Syslog-NG fields to internal fields for Sagan to understand.  For 
 
 Take special note of the “software” at the beginning of the JSON input mapping file.  This is the name of the “mapping” which is set in the ``sagan.yaml``.   In our example,  the ``json-software`` field is set to ``syslog-ng``.   The mapping file contains mappings for multiple software types (syslog-ng, rsyslog, nxlog, etc).  The ``json-software`` tells Sagan which mapping you want to use. 
 
-An important field,  similar to “software” is “nested”.  Normally,  most JSON from syslog daemon is flat.  In special cases,  you might find yourself dealing with “nested” JSON data.  In that case, you’ll want Sagan to dig into the nested data to extract the fields you need. 
-
 
 Sagan JSON variables
 ~~~~~~~~~~~~~~~~~~~~
@@ -280,10 +278,6 @@ Sagan JSON variables
 .. option:: "software": "{software type}"
 
     This is the name of the mapping.  This is used in the Sagan YAML ``json-software`` type.
-
-.. option:: "nested": "{yes|no|true|false}
-
-    This configures Sagan to look into nested data (automatically) for values for mappings.
 
 Mappings:
 ~~~~~~~~~
