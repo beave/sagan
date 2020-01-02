@@ -52,8 +52,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     uint16_t json_str_count=0;
     uint16_t i;
 
-    bool has_message = false;
-
     char json_str[JSON_MAX_NEST][JSON_MAX_SIZE] = { { 0 } };
 
     memset(SaganProcSyslog_LOCAL, 0, sizeof(_Sagan_Proc_Syslog));
@@ -226,7 +224,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
     if ( !strcmp(Syslog_JSON_Map->syslog_map_message, "%JSON%" ) )
         {
             strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_string, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-            has_message = true;
         }
 
 
@@ -238,7 +235,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
             if ( !strcmp(Syslog_JSON_Map->syslog_map_message, SaganProcSyslog_LOCAL->json_key[i] ) )
                 {
                     strlcpy(SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->json_value[i], sizeof(SaganProcSyslog_LOCAL->syslog_message));
-                    has_message = true;
                 }
 
             else if ( !strcmp(Syslog_JSON_Map->event_id, SaganProcSyslog_LOCAL->json_key[i] ) )

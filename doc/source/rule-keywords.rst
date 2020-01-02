@@ -105,8 +105,6 @@ Below is an example of querying a file hash in Bluedot
 
 **bluedot: type file_hash,Malicious; parse_hash: sha1;**
 
-**Note: Quadrant Information Security Bluedot is not yet available to the public.**
-
 classtype
 ---------
 
