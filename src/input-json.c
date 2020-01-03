@@ -90,6 +90,10 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
             return;
         }
 
+    /* JSON was successfully parsed */
+
+    __atomic_add_fetch(&counters->json_input_count, 1, __ATOMIC_SEQ_CST);
+
     struct json_object_iterator it = json_object_iter_begin(json_obj);
     struct json_object_iterator itEnd = json_object_iter_end(json_obj);
 
