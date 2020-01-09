@@ -522,6 +522,9 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 }
         }
 
+    if ( json_str_count > 1 )
+    {
+
     for ( i = 1; i < json_str_count; i++ )
         {
 
@@ -553,9 +556,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 }
         }
 
-    json_object_put(json_obj);
-    json_object_put(json_obj3);
+     json_object_put(json_obj3);
+    }
 
+    json_object_put(json_obj);
 
     for (i = 0; i < counters->json_message_map; i++ )
         {

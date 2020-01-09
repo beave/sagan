@@ -186,6 +186,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     json_object_put(json_obj);
 
+    if ( json_str_count > 1 ) 
+    {
 
     for ( i = 1; i < json_str_count; i++ )
         {
@@ -222,6 +224,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     json_object_put(json_obj3);
 
+    }
 
     /* User wants the entire JSON to become the "message" */
 
@@ -332,7 +335,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                 }
 
             /* Math */
-
 
             else if ( !strcmp(Syslog_JSON_Map->src_port, SaganProcSyslog_LOCAL->json_key[i] ) )
                 {
