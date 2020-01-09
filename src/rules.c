@@ -3413,6 +3413,8 @@ void Load_Rules( const char *ruleset )
                     /* Suricata/Snort style "metadata" rule option */
                     /***********************************************/
 
+		    metadata_array_count = 0; 
+
                     if (!strcmp(rulesplit, "metadata"))
                         {
 
