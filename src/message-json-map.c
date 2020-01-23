@@ -578,7 +578,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                                     if ( !strcmp(JSON_Message_Map[i].message[b], SaganProcSyslog_LOCAL->json_key[a] ) )
                                         {
 
-                                            snprintf(tmp_message, sizeof(tmp_message), "%s:%s,", JSON_Message_Map[i].message[b], SaganProcSyslog_LOCAL->json_value[a]);
+                                            snprintf(tmp_message, sizeof(tmp_message), " %s:%s,", JSON_Message_Map[i].message[b], SaganProcSyslog_LOCAL->json_value[a]);
 
                                             strlcat(JSON_Message_Map_Found[i].message, tmp_message, sizeof(JSON_Message_Map_Found[i].message));
                                             score++;
@@ -595,7 +595,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                                 {
 
-                                    snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), "%s:%s", JSON_Message_Map[i].message[0], SaganProcSyslog_LOCAL->json_value[a]);
+                                    snprintf(JSON_Message_Map_Found[i].message, sizeof(JSON_Message_Map_Found[i].message), " %s:%s", JSON_Message_Map[i].message[0], SaganProcSyslog_LOCAL->json_value[a]);
                                     score++;
 
                                 }
@@ -743,7 +743,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             if ( strcmp( (const char*)JSON_Message_Map[pos].message, "%JSON%"))
                 {
-                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+//                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                      snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), " %s", JSON_Message_Map_Found[pos].message);
+                        SaganProcSyslog_LOCAL->syslog_message[ sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ] = '\0';
+
                 }
 
 
