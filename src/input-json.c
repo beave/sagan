@@ -153,8 +153,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                                     /* Grab nests */
 
-				    Sagan_Log(DEBUG, "Key2: \"%s\", Value: \"%s\"", key2, val_str2 );
-
                                     if ( val_str2[0] == '{' )
                                         {
 
