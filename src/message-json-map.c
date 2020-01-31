@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2020 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2020 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -432,6 +432,12 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
         {
 
             const char *key = json_object_iter_peek_name(&it);
+
+	    if ( key == NULL ) 
+		{
+		key = "NULL";
+		}
+
             struct json_object *const val = json_object_iter_peek_value(&it);
 
             const char *val_str = json_object_get_string(val);
@@ -500,7 +506,16 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                     /* Grab the first level of the nest values */
 
                     strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
+
+		    if  ( val_str != NULL )
+			{
                     strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
+			} else {
+			strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], "null", sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
+			}
+		  
+
+		
                     SaganProcSyslog_LOCAL->json_count++;
 
                 }
@@ -848,6 +863,9 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 }
 
         }
+
+free(JSON_Message_Map_Found);
+
 }
 
 #endif

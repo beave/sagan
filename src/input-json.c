@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2020 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2020 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -140,6 +140,11 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                                     const char *val_str2 = json_object_get_string(val2);
 
+				    if ( val_str2 == NULL )
+					{
+					val_str2 = "NULL";
+					}
+
                                     if ( debug->debugjson )
                                         {
                                             Sagan_Log(DEBUG, "Key2: \"%s\", Value: \"%s\"", key2, val_str );
@@ -147,6 +152,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                                         }
 
                                     /* Grab nests */
+
+				    Sagan_Log(DEBUG, "Key2: \"%s\", Value: \"%s\"", key2, val_str2 );
 
                                     if ( val_str2[0] == '{' )
                                         {
@@ -204,6 +211,7 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
                     const char *val_str3;
 
                     struct json_object *const val3 = json_object_iter_peek_value(&it3);
+
                     val_str3 = json_object_get_string(val3);
 
                     if ( val_str3[0] != '{' )

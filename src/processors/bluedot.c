@@ -1,6 +1,6 @@
 /*
-** Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-** Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+** Copyright (C) 2009-2020 Quadrant Information Security <quadrantsec.com>
+** Copyright (C) 2009-2020 Champ Clark III <cclark@quadrantsec.com>
 **
 ** This program is free software; you can redistribute it and/or modify
 ** it under the terms of the GNU General Public License Version 2 as
@@ -1290,7 +1290,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             return(false);
         }
 
-    Remove_Return(response);
+//    Remove_Return(response);
     json_in = json_tokener_parse(response);
 
     strlcpy(bluedot_json, response, sizeof(bluedot_json));              /* Returned for alerts */

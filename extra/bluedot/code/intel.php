@@ -1,7 +1,7 @@
 <?php
 
-// Copyright (C) 2009-2019 Quadrant Information Security <quadrantsec.com>
-// Copyright (C) 2009-2019 Champ Clark III <cclark@quadrantsec.com>
+// Copyright (C) 2009-2020 Quadrant Information Security <quadrantsec.com>
+// Copyright (C) 2009-2020 Champ Clark III <cclark@quadrantsec.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License Version 2 as
