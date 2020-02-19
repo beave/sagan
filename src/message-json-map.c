@@ -433,10 +433,10 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             const char *key = json_object_iter_peek_name(&it);
 
-	    if ( key == NULL ) 
-		{
-		key = "NULL";
-		}
+            if ( key == NULL )
+                {
+                    key = "NULL";
+                }
 
             struct json_object *const val = json_object_iter_peek_value(&it);
 
@@ -507,15 +507,17 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
 
-		    if  ( val_str != NULL )
-			{
-                    strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-			} else {
-			strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], "null", sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-			}
-		  
+                    if  ( val_str != NULL )
+                        {
+                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
+                        }
+                    else
+                        {
+                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], "null", sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
+                        }
 
-		
+
+
                     SaganProcSyslog_LOCAL->json_count++;
 
                 }
@@ -538,41 +540,41 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
         }
 
     if ( json_str_count > 1 )
-    {
-
-    for ( i = 1; i < json_str_count; i++ )
         {
 
-            json_obj3 = json_tokener_parse(json_str[i]);
-
-            struct json_object_iterator it3 = json_object_iter_begin(json_obj3);
-            struct json_object_iterator itEnd3 = json_object_iter_end(json_obj3);
-
-            while (!json_object_iter_equal(&it3, &itEnd3))
+            for ( i = 1; i < json_str_count; i++ )
                 {
 
-                    const char *key3 = json_object_iter_peek_name(&it3);
-                    const char *val_str3;
+                    json_obj3 = json_tokener_parse(json_str[i]);
 
-                    struct json_object *const val3 = json_object_iter_peek_value(&it3);
-                    val_str3 = json_object_get_string(val3);
+                    struct json_object_iterator it3 = json_object_iter_begin(json_obj3);
+                    struct json_object_iterator itEnd3 = json_object_iter_end(json_obj3);
 
-                    if ( val_str3[0] != '{' )
+                    while (!json_object_iter_equal(&it3, &itEnd3))
                         {
 
-                            strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key3, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
-                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str3, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-                            SaganProcSyslog_LOCAL->json_count++;
+                            const char *key3 = json_object_iter_peek_name(&it3);
+                            const char *val_str3;
+
+                            struct json_object *const val3 = json_object_iter_peek_value(&it3);
+                            val_str3 = json_object_get_string(val3);
+
+                            if ( val_str3[0] != '{' )
+                                {
+
+                                    strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key3, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
+                                    strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str3, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
+                                    SaganProcSyslog_LOCAL->json_count++;
+
+                                }
+
+                            json_object_iter_next(&it3);
 
                         }
-
-                    json_object_iter_next(&it3);
-
                 }
-        }
 
-     json_object_put(json_obj3);
-    }
+            json_object_put(json_obj3);
+        }
 
     json_object_put(json_obj);
 
@@ -716,7 +718,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                 }
 
-            if ( score > prev_score ) 
+            if ( score > prev_score )
                 {
                     pos = i;
                     prev_score = score;
@@ -759,8 +761,8 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             if ( strcmp( (const char*)JSON_Message_Map[pos].message, "%JSON%"))
                 {
 //                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
-                      snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), " %s", JSON_Message_Map_Found[pos].message);
-                        SaganProcSyslog_LOCAL->syslog_message[ sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ] = '\0';
+                    snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), " %s", JSON_Message_Map_Found[pos].message);
+                    SaganProcSyslog_LOCAL->syslog_message[ sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ] = '\0';
 
                 }
 
@@ -864,7 +866,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
         }
 
-free(JSON_Message_Map_Found);
+    free(JSON_Message_Map_Found);
 
 }
 

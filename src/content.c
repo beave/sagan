@@ -107,7 +107,7 @@ bool Content ( int rule_position, const char *syslog_message )
 
                 }
 
-            /* If case insensitive */
+            /* If case insensitive - nocase */
 
             if ( rulestruct[rule_position].content_case[z] == true )
                 {
@@ -115,7 +115,8 @@ bool Content ( int rule_position, const char *syslog_message )
                     if ( rulestruct[rule_position].content_not[z] == false )
                         {
 
-                            if ( !Sagan_stristr(alter_content, rulestruct[rule_position].content[z], false))
+
+                            if ( !Sagan_stristr(alter_content, rulestruct[rule_position].content[z], true))
                                 {
                                     return(false);
                                 }
@@ -126,7 +127,7 @@ bool Content ( int rule_position, const char *syslog_message )
 
                             /* content not */
 
-                            if ( Sagan_stristr(alter_content, rulestruct[rule_position].content[z], false))
+                            if ( Sagan_stristr(alter_content, rulestruct[rule_position].content[z], true))
                                 {
                                     return(false);
                                 }
@@ -161,7 +162,6 @@ bool Content ( int rule_position, const char *syslog_message )
         }
 
     return(true);
-
 }
 
 
