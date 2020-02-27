@@ -1,0 +1,88 @@
+{	
+    "version": "2.0.0",	
+    "tasks": [
+        {	
+            "label": "Autogen Sagan",	
+            "type": "shell",	
+            "command": "./autogen.sh",	
+            "group": "build",
+            "presentation": {	
+                "echo": true,	
+                "reveal": "always",	
+                "focus": false,	
+                "panel": "shared"	
+            },
+            "problemMatcher": {	
+                "owner": "cpp",	
+                "fileLocation": ["absolute"],	
+                "pattern": {	
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",	
+                    "file": 1,	
+                    "line": 2,	
+                    "column": 3,	
+                    "severity": 4,	
+                    "message": 5	
+                }
+            }
+        },
+        {	
+            "label": "Configure Sagan",	
+            "type": "shell",	
+            "command": "./configure",	
+            "group": "build",
+            "presentation": {	
+                "echo": true,	
+                "reveal": "always",	
+                "focus": false,	
+                "panel": "shared"	
+            },
+            "problemMatcher": {	
+                "owner": "cpp",	
+                "fileLocation": ["absolute"],	
+                "pattern": {	
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",	
+                    "file": 1,	
+                    "line": 2,	
+                    "column": 3,	
+                    "severity": 4,	
+                    "message": 5	
+                }
+            }
+        },	
+        {	
+            "label": "Build Sagan",	
+            "type": "shell",	
+            "command": "make",	
+            // use options.cwd property if the Makefile is not in the project root ${workspaceRoot} dir	
+            //"options": {	
+            //    "cwd": "${workspaceRoot}/<DIR_WITH_MAKEFILE>"	
+            //},	
+            // start the build without prompting for task selection, use "group": "build" otherwise	
+            "group": {	
+                "kind": "build",	
+                "isDefault": true	
+            },	
+            "presentation": {	
+                "echo": true,	
+                "reveal": "always",	
+                "focus": false,	
+                "panel": "shared"	
+            },	
+            // arg passing example: in this case is executed make QUIET=0	
+            "args": ["QUIET=0"],	
+            // Use the standard less compilation problem matcher.	
+            "problemMatcher": {	
+                "owner": "cpp",	
+                "fileLocation": ["absolute"],	
+                "pattern": {	
+                    "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",	
+                    "file": 1,	
+                    "line": 2,	
+                    "column": 3,	
+                    "severity": 4,	
+                    "message": 5	
+                }	
+            }	
+        }	
+    ]	
+} 

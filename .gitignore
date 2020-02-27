@@ -21,4 +21,8 @@ missing
 # after make
 *.o
 src/sagan
+src/output-plugins/.dirstamp
+src/parsers/.dirstamp
+src/processors/.dirstamp
+
 
