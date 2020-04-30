@@ -119,6 +119,8 @@ void Load_Message_JSON_Map ( const char *json_map )
             JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
             JSON_Message_Map[counters->json_message_map].url[0] = '\0';
             JSON_Message_Map[counters->json_message_map].ja3[0] = '\0';
+	    JSON_Message_Map[counters->json_message_map].event_id[0] = '\0';
+	
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
@@ -825,6 +827,12 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                 {
                     strlcpy(SaganProcSyslog_LOCAL->ja3, JSON_Message_Map_Found[pos].ja3, sizeof(SaganProcSyslog_LOCAL->ja3));
                 }
+
+            if ( JSON_Message_Map_Found[pos].event_id[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->event_id, JSON_Message_Map_Found[pos].event_id, sizeof(SaganProcSyslog_LOCAL->event_id));
+                }
+
 
             if ( JSON_Message_Map_Found[pos].proto[0] != '\0' )
                 {
