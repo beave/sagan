@@ -73,6 +73,12 @@ typedef void json_object;
 #define JSON_MAX_NEST	      10
 #define JSON_MAX_SIZE	      131072
 
+/* This is used in JSON message/program parsing */
+
+#define JSON_MAX_OBJECTS        256
+#define JSON_MAX_KEY_SIZE       64
+#define JSON_MAX_VALUE_SIZE	2048
+
 #define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
 #define INPUT_PIPE                      1
 #define INPUT_JSON                      2

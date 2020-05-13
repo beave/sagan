@@ -409,9 +409,8 @@ struct _Sagan_Proc_Syslog
     char ja3[MD5_HASH_SIZE+1];
 
     int json_count;
-    char json_key[50][64];
-    char json_value[50][1024];
-
+    char json_key[JSON_MAX_OBJECTS][JSON_MAX_KEY_SIZE];
+    char json_value[JSON_MAX_OBJECTS][JSON_MAX_VALUE_SIZE];
 
 };
 

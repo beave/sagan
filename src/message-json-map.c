@@ -119,8 +119,8 @@ void Load_Message_JSON_Map ( const char *json_map )
             JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
             JSON_Message_Map[counters->json_message_map].url[0] = '\0';
             JSON_Message_Map[counters->json_message_map].ja3[0] = '\0';
-	    JSON_Message_Map[counters->json_message_map].event_id[0] = '\0';
-	
+            JSON_Message_Map[counters->json_message_map].event_id[0] = '\0';
+
 
             json_obj = json_tokener_parse(json_message_map_buf);
 
@@ -518,18 +518,18 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], "null", sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
                         }
 
-
+                    if ( SaganProcSyslog_LOCAL->json_count > JSON_MAX_OBJECTS )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Ran out of space for json objects! Consider increasing the JSON_MAX_OBJECTS in the sagan-defs.h and re-compiling.",  __FILE__, __LINE__, a, json_str[a]);
+                        }
 
                     SaganProcSyslog_LOCAL->json_count++;
-
                 }
 
-
             json_object_iter_next(&it);
-
         }
 
-
+    json_object_put(json_obj);
 
     if ( debug->debugjson )
         {
@@ -537,7 +537,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             for ( a=0; a < json_str_count; a++ )
                 {
                     Sagan_Log(DEBUG, "[%s, line %d] %d. JSON found: \"%s\"",  __FILE__, __LINE__, a, json_str[a]);
-
                 }
         }
 
@@ -577,8 +576,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             json_object_put(json_obj3);
         }
-
-    json_object_put(json_obj);
 
     for (i = 0; i < counters->json_message_map; i++ )
         {
