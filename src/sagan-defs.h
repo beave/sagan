@@ -109,7 +109,7 @@ typedef void json_object;
 #define MAX_THREADS     	4096            /* Max system threads */
 
 #define MAX_VAR_NAME_SIZE  	64		/* Max "var" name size */
-#define MAX_VAR_VALUE_SIZE 	4096		/* Max "var" value size */
+#define MAX_VAR_VALUE_SIZE 	32768		/* Max "var" value size */
 
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */
