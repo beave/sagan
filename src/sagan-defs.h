@@ -100,9 +100,10 @@ typedef void json_object;
 #define MAXTAG			32		/* Max syslog 'tag' length */
 #define MAXLEVEL		15		/* Max syslog 'level' length */
 
-#define MAX_SAGAN_MSG		256		/* Max "msg" option size */
+#define MAX_SAGAN_MSG		 256		/* Max "msg" option size */
 
-#define MAX_PCRE_SIZE		1024		/* Max pcre length in a rule */
+#define MAX_PCRE_SIZE		 1024		/* Max pcre length in a rule */
+#define MAX_SYSLOG_TAG_SIZE 256     /* Max syslog_tag length in a rule */
 
 #define MAX_FIFO_SIZE		1048576		/* Max pipe/FIFO size in bytes/pages */
 

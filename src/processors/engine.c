@@ -182,7 +182,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     uint32_t ip_dstport_u32 = 0;
     unsigned char ip_dst_bits[MAXIPBIT] = { 0 };
 
-    char tmpbuf[128] = { 0 };
+    char tmpbuf[256] = { 0 };
     char s_msg[1024] = { 0 };
 
     char syslog_append_program[MAX_SYSLOGMSG] = { 0 };

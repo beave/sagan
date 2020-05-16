@@ -103,7 +103,7 @@ struct _Rule_Struct
     char s_facility[50];
     char s_syspri[25];
     char s_level[25];
-    char s_tag[10];
+    char s_tag[MAX_SYSLOG_TAG_SIZE];
 
     char event_id[MAX_EVENT_ID][32];
 
