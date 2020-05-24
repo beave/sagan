@@ -1458,7 +1458,7 @@ void Load_Rules( const char *ruleset )
                                             Sagan_Log(ERROR, "[%s, line %d] Expected flexbit name at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
                                         }
 
-                                    Remove_Return(tmptoken);
+                                    Remove_Spaces(tmptoken);
 
                                     strlcpy(rulestruct[counters->rulecount].flexbit_name[flexbit_count], tmptoken, sizeof(rulestruct[counters->rulecount].flexbit_name[flexbit_count]));
 
