@@ -9,7 +9,7 @@
             "type": "cppdbg",	
             "request": "launch",	
             "program": "${workspaceFolder}/src/sagan",	
-            "args": ["-d", "syslog"],	
+            "args": ["-d", "flexbit"],	
             "stopAtEntry": false,	
             "cwd": "${workspaceFolder}",	
             "environment": [],	

@@ -971,7 +971,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( rulestruct[b].flexbit_condition_count )
                                         {
-                                            SaganRouting->flexbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32);
+                                            SaganRouting->flexbit_return = Flexbit_Condition(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, normalize_username);
                                         }
 
                                     if ( rulestruct[b].flexbit_count_flag )
@@ -1351,7 +1351,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                             if ( rulestruct[b].flexbit_flag && rulestruct[b].flexbit_set_count )
                                                 {
-                                                    Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, SaganProcSyslog_LOCAL);
+                                                    Flexbit_Set(b, ip_src, ip_dst, ip_srcport_u32, ip_dstport_u32, normalize_username, SaganProcSyslog_LOCAL);
                                                 }
 
                                             threadid++;
