@@ -24,9 +24,9 @@
 
 #include "sagan-defs.h"
 
-bool Flexbit_Condition_MMAP ( int, char *, char *, int, int );
+bool Flexbit_Condition_MMAP ( int, char *, char *, int, int, char * );
 void Flexbit_Cleanup_MMAP( void );
-void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *syslog_message );
+void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *username, char *syslog_message );
 bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst );
 
 typedef struct _Sagan_Flexbit_Track _Sagan_Flexbit_Track;
