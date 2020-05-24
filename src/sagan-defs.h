@@ -73,6 +73,12 @@ typedef void json_object;
 #define JSON_MAX_NEST	      10
 #define JSON_MAX_SIZE	      131072
 
+/* This is used in JSON message/program parsing */
+
+#define JSON_MAX_OBJECTS        256
+#define JSON_MAX_KEY_SIZE       64
+#define JSON_MAX_VALUE_SIZE	2048
+
 #define DEFAULT_JSON_INPUT_MAP          "/usr/local/etc/sagan-rules/json-input.map"
 #define INPUT_PIPE                      1
 #define INPUT_JSON                      2
@@ -94,16 +100,17 @@ typedef void json_object;
 #define MAXTAG			32		/* Max syslog 'tag' length */
 #define MAXLEVEL		15		/* Max syslog 'level' length */
 
-#define MAX_SAGAN_MSG		256		/* Max "msg" option size */
+#define MAX_SAGAN_MSG		 256		/* Max "msg" option size */
 
-#define MAX_PCRE_SIZE		1024		/* Max pcre length in a rule */
+#define MAX_PCRE_SIZE		 1024		/* Max pcre length in a rule */
+#define MAX_SYSLOG_TAG_SIZE 256     /* Max syslog_tag length in a rule */
 
 #define MAX_FIFO_SIZE		1048576		/* Max pipe/FIFO size in bytes/pages */
 
 #define MAX_THREADS     	4096            /* Max system threads */
 
 #define MAX_VAR_NAME_SIZE  	64		/* Max "var" name size */
-#define MAX_VAR_VALUE_SIZE 	4096		/* Max "var" value size */
+#define MAX_VAR_VALUE_SIZE 	32768		/* Max "var" value size */
 
 #define MAX_PCRE		10		/* Max PCRE within a rule */
 #define MAX_CONTENT		30		/* Max 'content' within a rule */

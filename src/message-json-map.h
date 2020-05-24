@@ -82,8 +82,6 @@ struct _JSON_Message_Map_Found
 
 };
 
-
-
 void Load_Message_JSON_Map ( const char *json_map );
 void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 

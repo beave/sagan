@@ -162,8 +162,8 @@ void Load_Rules( const char *ruleset )
 
     char final_content[512] = { 0 };
 
-    char flow_a[1024] = { 0 };
-    char flow_b[1024] = { 0 };
+    char flow_a[MAX_VAR_VALUE_SIZE] = { 0 };
+    char flow_b[MAX_VAR_VALUE_SIZE] = { 0 };
 
     char alert_time_tmp[10] = { 0 };
     char alert_tmp_minute[3] = { 0 };
@@ -2281,10 +2281,25 @@ void Load_Rules( const char *ruleset )
 
                             if (arg == NULL )
                                 {
-                                    Sagan_Log(ERROR, "[%s, line %d] The \"tag\" appears to be incomplete at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                    Sagan_Log(ERROR, "[%s, line %d] The \"syslog_tag\" appears to be incomplete at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+                            Remove_Spaces(arg);
+                            if (strlen(arg) > MAX_SYSLOG_TAG_SIZE)
+                            {
+                              Sagan_Log(ERROR, "[%s, line %d] The complete \"syslog_tag\" appears to be exceeding the max length at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);  
+                            }
+                            
+                            ptmp = strtok_r(arg, "|", &tok);
+                            while ( ptmp != NULL )
+                                {
+                                    if (strlen(ptmp) > MAX_SYSLOG_TAG)
+                                        {
+                                            Sagan_Log(ERROR, "[%s, line %d] The individual \"syslog_tag\" appears to be exceeding the max length at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                        }
+
+                                    ptmp = strtok_r(NULL, "|", &tok);
                                 }
 
-                            Remove_Spaces(arg);
                             strlcpy(rulestruct[counters->rulecount].s_tag, arg, sizeof(rulestruct[counters->rulecount].s_tag));
                         }
 

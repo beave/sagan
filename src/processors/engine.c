@@ -182,9 +182,9 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     uint32_t ip_dstport_u32 = 0;
     unsigned char ip_dst_bits[MAXIPBIT] = { 0 };
 
-    char tmpbuf[128] = { 0 };
+    char tmpbuf[256] = { 0 };
     char s_msg[1024] = { 0 };
-   
+
     char syslog_append_program[MAX_SYSLOGMSG] = { 0 };
 
     struct timeval tp;
@@ -509,16 +509,16 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( pre_match == false )
                         {
 
-			    /* If the "append_program" rule option is used,  we append the program here */
+                            /* If the "append_program" rule option is used,  we append the program here */
 
-			    if ( rulestruct[b].append_program == true ) 
-				{
-				snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
-				syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0'; 
-				strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message)); 
-				}
+                            if ( rulestruct[b].append_program == true )
+                                {
+                                    snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
+                                    syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0';
+                                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                                }
 
-			    /* Start processing searches from rule optison */
+                            /* Start processing searches from rule optison */
 
                             flag = true;
 

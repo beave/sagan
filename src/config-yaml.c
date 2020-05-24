@@ -1051,7 +1051,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                                     Var_To_Value(value, tmp, sizeof(tmp));
                                                     strlcpy(config->sagan_droplistfile, tmp, sizeof(config->sagan_droplistfile));
-
                                                 }
                                         }
 

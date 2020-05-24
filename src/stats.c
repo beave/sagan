@@ -122,11 +122,10 @@ void Statistics( void )
 
             Sagan_Log(NORMAL, "           Thread Usage               : %d/%d (%.3f%%)", proc_running, config->max_processor_threads, CalcPct( proc_running, config->max_processor_threads ));
 
-            /*
-                        if (config->sagan_droplist_flag)
-                            {
-                                Sagan_Log(NORMAL, "           Ignored Input            : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->events_received) );
-                            }*/
+            if (config->sagan_droplist_flag)
+                {
+                    Sagan_Log(NORMAL, "           Ignored Input              : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->events_received) );
+                }
 
 #ifdef HAVE_LIBFASTJSON
             if ( config->parse_json_program == true || config->parse_json_message == true )
