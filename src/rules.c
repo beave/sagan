@@ -2285,10 +2285,10 @@ void Load_Rules( const char *ruleset )
                                 }
                             Remove_Spaces(arg);
                             if (strlen(arg) > MAX_SYSLOG_TAG_SIZE)
-                            {
-                              Sagan_Log(ERROR, "[%s, line %d] The complete \"syslog_tag\" appears to be exceeding the max length at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);  
-                            }
-                            
+                                {
+                                    Sagan_Log(ERROR, "[%s, line %d] The complete \"syslog_tag\" appears to be exceeding the max length at line %d in %s, Abort", __FILE__, __LINE__, linecount, ruleset_fullname);
+                                }
+
                             ptmp = strtok_r(arg, "|", &tok);
                             while ( ptmp != NULL )
                                 {

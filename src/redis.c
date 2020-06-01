@@ -354,27 +354,15 @@ void Redis_Reader ( char *redis_command, char *str, size_t size )
                             Sagan_Log(DEBUG, "[%s, line %d] Redis Command: \"%s\"", __FILE__, __LINE__, redis_command);
                             Sagan_Log(DEBUG, "[%s, line %d] Redis Reply: \"%s\"", __FILE__, __LINE__, reply->str);
 
+                        }
 
-                            if ( reply->elements == 0 )
-                                {
-
-                                    /* strlcpy doesn't like to pass str as a \0.  This
-                                       "works" around that issue (causes segfault otherwise) */
-
-                                    if ( reply->str[0] != '\0' )
-                                        {
-                                            strlcpy(str, reply->str, size);
-                                        }
-                                    else
-                                        {
-                                            str[0] = '\0';
-                                        }
-
-                                }
-                            else
-                                {
-                                    strlcpy(str, reply->element[0]->str, size);
-                                }
+                    if ( reply->elements == 0 )
+                        {
+                            snprintf(str, sizeof(size), reply->str);
+                        }
+                    else
+                        {
+                            snprintf(str, sizeof(size), reply->element[0]->str);
                         }
 
                     /* Got good response, free here.  If we don't get a good response
