@@ -751,7 +751,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
     char tmpurl[1024] = { 0 };
     char tmpdeviceid[64] = { 0 };
-    char bluedot_json[1024] = { 0 };
+    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
+
 
     CURL *curl;
     //CURLcode res;
@@ -1273,13 +1274,12 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             headers = curl_slist_append (headers, tmpdeviceid);
 //	    headers = curl_slist_append (headers, "X-Bluedot-Verbose: 1");		/* For more verbose output */
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers );
-            //res = curl_easy_perform(curl);
             (void)curl_easy_perform(curl);
         }
 
     curl_easy_cleanup(curl);
     curl_slist_free_all(headers);
-    curl_global_cleanup();
+//    curl_global_cleanup();
 
     if ( response == NULL )
         {
@@ -1290,7 +1290,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
             return(false);
         }
 
-//    Remove_Return(response);
+
+    Remove_Return(response);
     json_in = json_tokener_parse(response);
 
     strlcpy(bluedot_json, response, sizeof(bluedot_json));              /* Returned for alerts */
@@ -1615,10 +1616,12 @@ int Sagan_Bluedot_IP_Lookup_All ( char *syslog_message, int rule_position, _Saga
     unsigned char bluedot_results;
     bool bluedot_flag;
 
+    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
+
     for (i = 0; i < lookup_cache_size; i++)
         {
 
-            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, NULL, 0);
+            bluedot_results = Sagan_Bluedot_Lookup(lookup_cache[i].ip, BLUEDOT_LOOKUP_IP, rule_position, bluedot_json, sizeof(bluedot_json));
             bluedot_flag = Sagan_Bluedot_Cat_Compare( bluedot_results, rule_position, BLUEDOT_LOOKUP_IP );
 
             if ( bluedot_flag == 1 )
