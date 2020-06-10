@@ -571,7 +571,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     liblognorm_status = -1;
 
-				    Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
+                                    Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
 
                                     if ( SaganNormalizeLiblognorm.ip_src[0] != '0'  ||
                                             SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
@@ -1376,7 +1376,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                         {
 
                                                             Send_Alert(SaganProcSyslog_LOCAL,
-                                                                       SaganNormalizeLiblognorm.json_normalize, 
+                                                                       SaganNormalizeLiblognorm.json_normalize,
                                                                        processor_info_engine,
                                                                        ip_src,
                                                                        ip_dst,

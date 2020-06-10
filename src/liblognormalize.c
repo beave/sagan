@@ -117,7 +117,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     struct json_object *json = NULL;
     struct json_object *string_obj = NULL;
 
-    SaganNormalizeLiblognorm->status = false; 
+    SaganNormalizeLiblognorm->status = false;
 
     SaganNormalizeLiblognorm->ip_src[0] = '0';
     SaganNormalizeLiblognorm->ip_src[1] = '\0';
@@ -141,7 +141,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     SaganNormalizeLiblognorm->src_port = 0;
     SaganNormalizeLiblognorm->dst_port = 0;
 
-    SaganNormalizeLiblognorm->json_normalize[0] = '\0'; 
+    SaganNormalizeLiblognorm->json_normalize[0] = '\0';
 
     snprintf(buf, sizeof(buf),"%s", syslog_msg);
 
@@ -172,7 +172,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             snprintf(SaganNormalizeLiblognorm->ip_dst, sizeof(SaganNormalizeLiblognorm->ip_dst), "%s", tmp);
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     /* Get username information - Will be used in the future */
@@ -183,7 +183,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             snprintf(SaganNormalizeLiblognorm->username, sizeof(SaganNormalizeLiblognorm->username), "%s", tmp);
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
 
@@ -195,7 +195,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->src_host, tmp, sizeof(SaganNormalizeLiblognorm->src_host));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
 
             if ( SaganNormalizeLiblognorm->ip_src[0] == '0' && config->syslog_src_lookup)
                 {
@@ -215,7 +215,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->dst_host, tmp, sizeof(SaganNormalizeLiblognorm->dst_host));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
 
             if ( SaganNormalizeLiblognorm->ip_dst[0] == '0' && config->syslog_src_lookup)
                 {
@@ -235,7 +235,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             SaganNormalizeLiblognorm->src_port = atoi(tmp);
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "dst-port", &string_obj);
@@ -244,7 +244,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             SaganNormalizeLiblognorm->dst_port = atoi(tmp);
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
 
@@ -254,7 +254,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->hash_md5, tmp, sizeof(SaganNormalizeLiblognorm->hash_md5));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
 
@@ -264,7 +264,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->hash_sha1, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha1));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "hash-sha256", &string_obj);
@@ -273,7 +273,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->hash_sha256, tmp, sizeof(SaganNormalizeLiblognorm->hash_sha256));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
 
@@ -283,7 +283,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->http_uri, tmp, sizeof(SaganNormalizeLiblognorm->http_uri));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "http_hostname", &string_obj);
@@ -292,7 +292,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->http_hostname, tmp, sizeof(SaganNormalizeLiblognorm->http_hostname));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "filename", &string_obj);
@@ -301,7 +301,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->filename, tmp, sizeof(SaganNormalizeLiblognorm->filename));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "ja3", &string_obj);
@@ -310,7 +310,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->ja3, tmp, sizeof(SaganNormalizeLiblognorm->ja3));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     json_object_object_get_ex(json, "event_id", &string_obj);
@@ -319,7 +319,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     if ( tmp != NULL )
         {
             strlcpy(SaganNormalizeLiblognorm->event_id, tmp, sizeof(SaganNormalizeLiblognorm->event_id));
-	    SaganNormalizeLiblognorm->status = true;
+            SaganNormalizeLiblognorm->status = true;
         }
 
     strlcpy(SaganNormalizeLiblognorm->json_normalize, json_object_to_json_string_ext(json, FJSON_TO_STRING_PLAIN), sizeof(SaganNormalizeLiblognorm->json_normalize) );
@@ -329,7 +329,7 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
 
             Sagan_Log(DEBUG, "Liblognorm DEBUG output: %d", rc_normalize);
             Sagan_Log(DEBUG, "---------------------------------------------------");
-	    Sagan_Log(DEBUG, "Status: %s", SaganNormalizeLiblognorm->status == true ? "true":"false");
+            Sagan_Log(DEBUG, "Status: %s", SaganNormalizeLiblognorm->status == true ? "true":"false");
             Sagan_Log(DEBUG, "Log message to normalize: |%s|", syslog_msg);
             Sagan_Log(DEBUG, "Parsed: %s", SaganNormalizeLiblognorm->json_normalize);
             Sagan_Log(DEBUG, "Source IP: %s", SaganNormalizeLiblognorm->ip_src);
@@ -352,8 +352,8 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
         }
 
 
-            json_object_put(json);
-	    json_object_put(string_obj);
+    json_object_put(json);
+    json_object_put(string_obj);
 }
 
 #endif

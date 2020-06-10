@@ -46,7 +46,7 @@ struct liblognorm_toload_struct
 typedef struct _SaganNormalizeLiblognorm
 {
 
-    bool status; 
+    bool status;
 
     char ip_src[MAXIP];
     char ip_dst[MAXIP];
@@ -70,12 +70,11 @@ typedef struct _SaganNormalizeLiblognorm
     char ja3[MD5_HASH_SIZE+1];
     char event_id[32];
 
-    char json_normalize[JSON_MAX_SIZE]; 
+    char json_normalize[JSON_MAX_SIZE];
 
 } _SaganNormalizeLiblognorm;
 #endif
 
 
 void Liblognorm_Load( char * );
-//json_object *Normalize_Liblognorm(char *, struct _SaganNormalizeLiblognorm *);
-void Normalize_Liblognorm(char *, struct _SaganNormalizeLiblognorm *); 
+void Normalize_Liblognorm(char *, struct _SaganNormalizeLiblognorm *);

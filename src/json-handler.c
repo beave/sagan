@@ -266,8 +266,6 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
     char timebuf[64] = { 0 };
     char tmp[32] = { 0 };
 
-    char tmp_data[MAX_SYSLOGMSG+1024] = { 0 };
-
     CreateIsoTimeString(&tp, timebuf, sizeof(timebuf));
 
     jobj = json_object_new_object();
@@ -311,10 +309,17 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
 
     /* liblognorm doesn't support JSON_C_TO_STRING_NOSLASHESCAPE :( */
 
+    /*
+
+    This was for adding "normalization" data (when applicable).  It's been removed but
+    might need it some day?
+
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';
+    snprintf(str, size, "%s, \"normalize\": %s }", tmp_data,  SaganProcSyslog_LOCAL->json_normalize);
+    */
 
-//    snprintf(str, size, "%s, \"normalize\": %s }", tmp_data,  SaganProcSyslog_LOCAL->json_normalize);
+    snprintf(str, size, "%s", json_object_to_json_string(jobj));
 
     json_object_put(jobj);
 

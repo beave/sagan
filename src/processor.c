@@ -85,7 +85,6 @@ void Processor ( void )
 
     (void)SetThreadName("SaganProcessor");
 
-
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));
 
@@ -217,6 +216,11 @@ void Processor ( void )
     /* Exit thread on shutdown. */
 
     __atomic_sub_fetch(&config->max_processor_threads, 1, __ATOMIC_SEQ_CST);
+
+    /* Cleans up valgrind */
+
+    free(SaganProcSyslog_LOCAL);
+    free(SaganPassSyslog_LOCAL);
 
     pthread_exit(NULL);
 

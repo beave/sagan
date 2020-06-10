@@ -519,8 +519,7 @@ struct _Sagan_Event
 
 #ifdef HAVE_LIBLOGNORM
 
-//    json_object *json_normalize;
-     char *json_normalize;
+    char *json_normalize;
 
 #endif
 

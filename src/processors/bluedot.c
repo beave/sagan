@@ -105,116 +105,155 @@ void Sagan_Bluedot_Init(void)
 
     /* Bluedot IP Cache */
 
-    SaganBluedotIPCache = malloc(config->bluedot_ip_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
-
-    if ( SaganBluedotIPCache == NULL )
+    if ( config->bluedot_ip_max_cache > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotIPCache, 0, config->bluedot_ip_max_cache * sizeof(_Sagan_Bluedot_IP_Cache));
+            SaganBluedotIPCache = malloc(config->bluedot_ip_max_cache * sizeof(struct _Sagan_Bluedot_IP_Cache));
+
+            if ( SaganBluedotIPCache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPCache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotIPCache, 0, config->bluedot_ip_max_cache * sizeof(_Sagan_Bluedot_IP_Cache));
+        }
 
     /* Bluedot Hash Cache */
 
-    SaganBluedotHashCache = malloc(config->bluedot_hash_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
-
-    if ( SaganBluedotHashCache == NULL )
+    if ( config->bluedot_hash_max_cache > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashCache. Abort!", __FILE__, __LINE__);
+
+            SaganBluedotHashCache = malloc(config->bluedot_hash_max_cache * sizeof(struct _Sagan_Bluedot_Hash_Cache));
+
+            if ( SaganBluedotHashCache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashCache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotHashCache, 0, config->bluedot_hash_max_cache * sizeof(_Sagan_Bluedot_Hash_Cache));
         }
 
-    memset(SaganBluedotHashCache, 0, config->bluedot_hash_max_cache * sizeof(_Sagan_Bluedot_Hash_Cache));
 
     /* Bluedot URL Cache */
 
-    SaganBluedotURLCache = malloc(config->bluedot_url_max_cache * sizeof(struct _Sagan_Bluedot_URL_Cache));
-
-    if ( SaganBluedotURLCache == NULL )
+    if ( config->bluedot_url_max_cache > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotURLCache. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotURLCache, 0, config->bluedot_url_max_cache * sizeof(_Sagan_Bluedot_URL_Cache));
+            SaganBluedotURLCache = malloc(config->bluedot_url_max_cache * sizeof(struct _Sagan_Bluedot_URL_Cache));
+
+            if ( SaganBluedotURLCache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotURLCache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotURLCache, 0, config->bluedot_url_max_cache * sizeof(_Sagan_Bluedot_URL_Cache));
+        }
 
     /* Bluedot Filename Cache */
 
-    SaganBluedotFilenameCache = malloc(config->bluedot_filename_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
-
-    if ( SaganBluedotFilenameCache == NULL )
+    if ( config->bluedot_filename_max_cache > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotFilenameCache, 0, config->bluedot_filename_max_cache * sizeof(_Sagan_Bluedot_Filename_Cache));
+            SaganBluedotFilenameCache = malloc(config->bluedot_filename_max_cache * sizeof(struct _Sagan_Bluedot_Filename_Cache));
+
+            if ( SaganBluedotFilenameCache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameCache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotFilenameCache, 0, config->bluedot_filename_max_cache * sizeof(_Sagan_Bluedot_Filename_Cache));
+        }
 
     /* Bluedot JA3 Cache */
 
-    SaganBluedotJA3Cache = malloc(config->bluedot_ja3_max_cache * sizeof(struct _Sagan_Bluedot_JA3_Cache));
-
-    if ( SaganBluedotJA3Cache == NULL )
+    if ( config->bluedot_ja3_max_cache > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Cache. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotJA3Cache, 0, config->bluedot_ja3_max_cache * sizeof(_Sagan_Bluedot_JA3_Cache));
+            SaganBluedotJA3Cache = malloc(config->bluedot_ja3_max_cache * sizeof(struct _Sagan_Bluedot_JA3_Cache));
+
+            if ( SaganBluedotJA3Cache == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Cache. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotJA3Cache, 0, config->bluedot_ja3_max_cache * sizeof(_Sagan_Bluedot_JA3_Cache));
+        }
 
     /* ------------------ Queues ------------------------------------------------------ */
 
     /* Bluedot IP Queue */
 
-    SaganBluedotIPQueue = malloc(config->bluedot_ip_queue * sizeof(struct _Sagan_Bluedot_IP_Queue));
-
-    if ( SaganBluedotIPQueue == NULL )
+    if ( config->bluedot_ip_queue > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotIPQueue, 0, config->bluedot_ip_queue * sizeof(_Sagan_Bluedot_IP_Queue));
+            SaganBluedotIPQueue = malloc(config->bluedot_ip_queue * sizeof(struct _Sagan_Bluedot_IP_Queue));
+
+            if ( SaganBluedotIPQueue == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotIPQueue. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotIPQueue, 0, config->bluedot_ip_queue * sizeof(_Sagan_Bluedot_IP_Queue));
+        }
 
 
     /* Bluedot Hash Queue */
 
-    SaganBluedotHashQueue = malloc(config->bluedot_hash_queue * sizeof(struct _Sagan_Bluedot_Hash_Queue));
-
-    if ( SaganBluedotHashQueue == NULL )
+    if ( config->bluedot_hash_queue > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
-        }
+            SaganBluedotHashQueue = malloc(config->bluedot_hash_queue * sizeof(struct _Sagan_Bluedot_Hash_Queue));
 
-    memset(SaganBluedotHashQueue, 0, config->bluedot_hash_queue * sizeof(_Sagan_Bluedot_Hash_Queue));
+            if ( SaganBluedotHashQueue == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotHashQueue. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotHashQueue, 0, config->bluedot_hash_queue * sizeof(_Sagan_Bluedot_Hash_Queue));
+        }
 
     /* Bluedot URL Queue */
 
-    SaganBluedotURLQueue = malloc(config->bluedot_url_queue * sizeof(struct _Sagan_Bluedot_URL_Queue));
-
-    if ( SaganBluedotURLQueue == NULL )
+    if ( config->bluedot_url_queue > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotURLQueue, 0, config->bluedot_url_queue * sizeof(_Sagan_Bluedot_URL_Queue));
+            SaganBluedotURLQueue = malloc(config->bluedot_url_queue * sizeof(struct _Sagan_Bluedot_URL_Queue));
+
+            if ( SaganBluedotURLQueue == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotURLQueue. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotURLQueue, 0, config->bluedot_url_queue * sizeof(_Sagan_Bluedot_URL_Queue));
+        }
 
     /* Bluedot Filename Queue */
 
-    SaganBluedotFilenameQueue = malloc(config->bluedot_filename_queue * sizeof(struct _Sagan_Bluedot_Filename_Queue));
-
-    if ( SaganBluedotFilenameQueue == NULL )
+    if ( config->bluedot_filename_queue > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
-        }
+            SaganBluedotFilenameQueue = malloc(config->bluedot_filename_queue * sizeof(struct _Sagan_Bluedot_Filename_Queue));
 
-    memset(SaganBluedotFilenameQueue, 0, config->bluedot_filename_queue * sizeof(_Sagan_Bluedot_Filename_Queue));
+            if ( SaganBluedotFilenameQueue == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotFilenameQueue. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotFilenameQueue, 0, config->bluedot_filename_queue * sizeof(_Sagan_Bluedot_Filename_Queue));
+        }
 
     /* Bluedot JA3 Queue */
 
-    SaganBluedotJA3Queue = malloc(config->bluedot_ja3_queue * sizeof(struct _Sagan_Bluedot_JA3_Queue));
-
-    if ( SaganBluedotJA3Queue == NULL )
+    if ( config->bluedot_ja3_queue > 0 )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Queue. Abort!", __FILE__, __LINE__);
-        }
 
-    memset(SaganBluedotJA3Queue, 0, config->bluedot_ja3_queue * sizeof(_Sagan_Bluedot_JA3_Queue));
+            SaganBluedotJA3Queue = malloc(config->bluedot_ja3_queue * sizeof(struct _Sagan_Bluedot_JA3_Queue));
+
+            if ( SaganBluedotJA3Queue == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for SaganBluedotJA3Queue. Abort!", __FILE__, __LINE__);
+                }
+
+            memset(SaganBluedotJA3Queue, 0, config->bluedot_ja3_queue * sizeof(_Sagan_Bluedot_JA3_Queue));
+        }
 
 }
 
@@ -233,7 +272,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
 
-    if ( type == BLUEDOT_LOOKUP_IP )
+    if ( type == BLUEDOT_LOOKUP_IP && config->bluedot_ip_max_cache > 0 )
         {
 
             IP2Bit(data, ip_convert);
@@ -256,7 +295,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
-    else if ( type == BLUEDOT_LOOKUP_HASH )
+    else if ( type == BLUEDOT_LOOKUP_HASH && config->bluedot_hash_max_cache > 0 )
         {
 
             for (i=0; i<config->bluedot_hash_queue; i++)
@@ -277,7 +316,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
-    else if ( type == BLUEDOT_LOOKUP_URL )
+    else if ( type == BLUEDOT_LOOKUP_URL && config->bluedot_url_max_cache > 0 )
         {
 
             for (i =0; i<config->bluedot_url_queue; i++)
@@ -296,7 +335,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
-    else if ( type == BLUEDOT_LOOKUP_FILENAME )
+    else if ( type == BLUEDOT_LOOKUP_FILENAME && config->bluedot_filename_max_cache > 0 )
         {
 
             for  (i=0; i<config->bluedot_filename_queue; i++)
@@ -317,7 +356,7 @@ int Sagan_Bluedot_Clean_Queue ( char *data, unsigned char type )
 
         }
 
-    else if ( type == BLUEDOT_LOOKUP_JA3 )
+    else if ( type == BLUEDOT_LOOKUP_JA3 && config->bluedot_ja3_max_cache > 0 )
         {
 
             for  (i=0; i<config->bluedot_ja3_queue; i++)
