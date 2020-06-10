@@ -61,12 +61,12 @@ void Alert_JSON( _Sagan_Event *Event )
 
 }
 
-void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, json_object *json_normalize )
+void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
 {
 
     char log_data[MAX_SYSLOGMSG+1024] = { 0 };
 
-    Format_JSON_Log_EVE( SaganProcSyslog_LOCAL, tp, log_data, sizeof(log_data), json_normalize );
+    Format_JSON_Log_EVE( SaganProcSyslog_LOCAL, tp, log_data, sizeof(log_data) );
     fprintf(config->eve_stream, "%s\n", log_data);
     fflush(config->eve_stream);
 

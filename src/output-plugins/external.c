@@ -184,7 +184,7 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';
 
-    snprintf(data, sizeof(data), "%s, \"normalize\": %s }\n", tmp_data, !Event->json_normalize ? "{}" : json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
+    snprintf(data, sizeof(data), "%s, \"normalize\": %s }\n", tmp_data, !Event->json_normalize ? "{}" : Event->json_normalize);
 
     data[ sizeof(data) - 1 ] = '\0';
 

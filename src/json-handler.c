@@ -239,7 +239,8 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     /* Dump any normalization (liblognorm) data, if we have any */
 
-    snprintf(tmp_data, sizeof(tmp_data), ", \"normalize\": %s", json_object_to_json_string_ext(Event->json_normalize, FJSON_TO_STRING_PLAIN));
+    snprintf(tmp_data, sizeof(tmp_data), ", \"normalize\": %s", Event->json_normalize);
+
     strlcat(str, tmp_data, size);
 
     strlcat(str, " }", size);
@@ -258,7 +259,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
  * Format_JSON_Log_EVE - Outputs all logs to the JSON/Eve file.
  *****************************************************************************/
 
-void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, char *str, size_t size, json_object *json_normalize )
+void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp, char *str, size_t size )
 {
 
     struct json_object *jobj;
@@ -313,7 +314,7 @@ void Format_JSON_Log_EVE( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct time
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';
 
-    snprintf(str, size, "%s, \"normalize\": %s }", tmp_data,  json_object_to_json_string_ext(json_normalize, FJSON_TO_STRING_PLAIN));
+//    snprintf(str, size, "%s, \"normalize\": %s }", tmp_data,  SaganProcSyslog_LOCAL->json_normalize);
 
     json_object_put(jobj);
 
