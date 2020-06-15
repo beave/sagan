@@ -1333,6 +1333,13 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     Remove_Return(response);
     json_in = json_tokener_parse(response);
 
+    if ( json_in == NULL )
+        {
+            Sagan_Log(WARN, "[%s, line %d] Unable to parse bluedot JSON: %s", __FILE__, __LINE__, response);
+            __atomic_add_fetch(&counters->bluedot_error_count, 1, __ATOMIC_SEQ_CST);
+            return(false);
+        }
+
     strlcpy(bluedot_json, response, sizeof(bluedot_json));              /* Returned for alerts */
 
     if ( type == BLUEDOT_LOOKUP_IP )

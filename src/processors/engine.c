@@ -198,7 +198,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char *sha1_hash = NULL;
     char *sha256_hash = NULL;
 
-    char json_normalize[JSON_MAX_SIZE] = { 0 }; 
+    char json_normalize[JSON_MAX_SIZE] = { 0 };
 
     /* These do not need to be reset each time as they are _only_
      * set through normalize */
@@ -231,7 +231,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     json_normalize[0] = '"';
     json_normalize[1] = '"';
-    json_normalize[2] = '\0'; 
+    json_normalize[2] = '\0';
 
 #ifdef HAVE_LIBLOGNORM
 
@@ -581,7 +581,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     Normalize_Liblognorm(SaganProcSyslog_LOCAL->syslog_message, &SaganNormalizeLiblognorm);
 
-				    strlcpy(json_normalize, SaganNormalizeLiblognorm.json_normalize, sizeof(json_normalize)); 
+                                    strlcpy(json_normalize, SaganNormalizeLiblognorm.json_normalize, sizeof(json_normalize));
 
                                     if ( SaganNormalizeLiblognorm.ip_src[0] != '0'  ||
                                             SaganNormalizeLiblognorm.ip_dst[0] != '0'  ||
