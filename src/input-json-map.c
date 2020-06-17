@@ -157,8 +157,6 @@ void Load_Input_JSON_Map ( const char *json_map )
                                                 {
                                                     strlcpy(Syslog_JSON_Map->syslog_map_time,  time, sizeof(Syslog_JSON_Map->syslog_map_time));
                                                 }
-
-                                            printf("-> TIME: %s\n", Syslog_JSON_Map->syslog_map_time);
                                         }
 
                                     if ( json_object_object_get_ex(json_obj, "date", &tmp))

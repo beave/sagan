@@ -229,9 +229,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
     /* Set a default for liblognorm JSON.  In case it's not used */
 
-    json_normalize[0] = '"';
-    json_normalize[1] = '"';
-    json_normalize[2] = '\0';
+    json_normalize[0] = '\0';
 
 #ifdef HAVE_LIBLOGNORM
 
