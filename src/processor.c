@@ -175,7 +175,6 @@ void Processor ( void )
 
                             if ( dynamic_line_count >= config->dynamic_load_sample_rate )
                                 {
-//                                    __atomic_store_n (&dynamic_rule_flag, DYNAMIC_RULE, __ATOMIC_SEQ_CST);
                                     dynamic_rule_flag = DYNAMIC_RULE;
 
                                     __atomic_store_n (&dynamic_line_count, 0, __ATOMIC_SEQ_CST);
@@ -189,7 +188,6 @@ void Processor ( void )
 
                     if ( dynamic_rule_flag == DYNAMIC_RULE )
                         {
-//                            __atomic_store_n (&dynamic_rule_flag, NORMAL_RULE, __ATOMIC_SEQ_CST);
                             dynamic_rule_flag = NORMAL_RULE;
                         }
 
@@ -219,8 +217,8 @@ void Processor ( void )
 
     /* Cleans up valgrind */
 
-    free(SaganPassSyslog_LOCAL);
-    free(SaganProcSyslog_LOCAL);
+//    free(SaganPassSyslog_LOCAL);
+//    free(SaganProcSyslog_LOCAL);
 
     pthread_exit(NULL);
 
