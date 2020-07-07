@@ -183,6 +183,9 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jsyslog_program = json_object_new_string(Event->program);
     json_object_object_add(jobj,"program", jsyslog_program);
 
+    json_object *jsyslog_host = json_object_new_string(config->sagan_sensor_name);
+    json_object_object_add(jobj,"host", jsyslog_host);
+
     /* Alert data */
 
     json_object *jaction_alert = json_object_new_string( action );
