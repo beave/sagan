@@ -324,6 +324,19 @@ processors:
       syslog: enabled
       time: 1440		# In minutes 
 
+  # The "stats-json" writes statistical information in a JSON format.  This
+  # format is similar to Suricata EVE/JSON stats output.  The option
+  # "subtract_old_values" will subtract values from the previous execution.
+  # This give you the statistics over the specified period of "time".  If
+  # "subtract_old_values" is set to "false",  then each time "time" is 
+  # reached,  the values are added to the previous one.  When "false", this
+  # is how Suricata writes the data.
+
+  - stats-json:
+      enabled: no
+      time: 1
+      subtract_old_values: true
+      filename: "$LOG_PATH/stats/stats.json"
  
   # The "perfmonitor" processor write statistical information every specified
   # number of seconds ("time") to a CSV file.  This data can be useful for 

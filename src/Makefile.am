@@ -76,6 +76,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        processors/bluedot.c \
                                                        processors/blacklist.c \
                                                        processors/perfmon.c \
+						       processors/stats-json.c \
 						       processors/client-stats.c \
                                                        processors/bro-intel.c \
 						       processors/dynamic-rules.c

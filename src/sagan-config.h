@@ -170,8 +170,12 @@ struct _SaganConfig
     bool        perfmonitor_file_stream_status;
     int	        perfmonitor_file_fd;
 
-    bool        sagan_fwsam_flag;
-    char         sagan_fwsam_info[1024];
+    bool	stats_json_sub_old_values;
+    bool	stats_json_flag;
+    bool	stats_json_file_stream_status;
+    FILE	*stats_json_file_stream;
+    char	stats_json_filename[MAXPATH];
+    int		stats_json_time;
 
     /* Dynamic rule loading and reporting */
 

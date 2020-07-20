@@ -123,7 +123,11 @@ void Sig_Handler( void )
 
     sigset_t signal_set;
     int sig;
-    bool orig_perfmon_value = 0;
+
+    bool orig_perfmon_value = false;
+    bool orig_stats_json_value = false;
+    bool orig_client_stats_value = false;
+
     unsigned char max_death_time = 0;
 
 #ifdef HAVE_LIBPCAP
@@ -279,6 +283,11 @@ void Sig_Handler( void )
                             Sagan_Perfmonitor_Close();
                         }
 
+                    if ( config->stats_json_flag == true && config->stats_json_file_stream_status == true )
+                        {
+                            Stats_JSON_Close();
+                        }
+
                     if ( config->client_stats_flag == true && config->client_stats_file_stream_status == true )
                         {
                             Client_Stats_Close();
@@ -329,17 +338,42 @@ void Sig_Handler( void )
 
                     /* Note: Processors that run as there own thread (perfmon, plog) cannot be
                      * loaded via SIGHUP.  They must be loaded at run time.  Once they are loaded,
-                     * they can be disabled/re-enabled. */
+                     * they cannot be disabled/re-enabled. */
 
                     /* Single Threaded processors */
 
-                    if ( config->perfmonitor_flag == 1 && orig_perfmon_value == 0 )
+
+                    /* Perfmon */
+
+                    if ( config->perfmonitor_flag == true && orig_perfmon_value == false )
                         {
                             Sagan_Perfmonitor_Close();
-                            orig_perfmon_value = 1;
+                            orig_perfmon_value = true;
                         }
 
-                    config->perfmonitor_flag = 0;
+                    config->perfmonitor_flag = false;
+
+                    /* Stats JSON */
+
+                    if ( config->stats_json_flag == true && orig_perfmon_value == false )
+                        {
+                            Stats_JSON_Close();
+                            orig_stats_json_value = true;
+                        }
+
+                    config->stats_json_flag = false;
+
+                    /* Client stats */
+
+                    if ( config->client_stats_flag == true && orig_client_stats_value == false )
+                        {
+                            Client_Stats_Close();
+                            orig_client_stats_value = true;
+                        }
+
+                    config->client_stats_flag = false;
+
+
 
 #ifdef HAVE_LIBPCAP
 
@@ -441,16 +475,48 @@ void Sig_Handler( void )
                     /* Re-load primary configuration (rules/classifictions/etc) */
                     /************************************************************/
 
-                    if ( config->perfmonitor_flag == 1 )
+                    /* Perfmon */
+
+                    if ( config->perfmonitor_flag == true )
                         {
-                            if ( orig_perfmon_value == 1 )
+                            if ( orig_perfmon_value == true )
                                 {
                                     Sagan_Perfmonitor_Open();
                                 }
                             else
                                 {
                                     Sagan_Log(WARN, "** 'perfmonitor' must be loaded at runtime! NOT loading 'perfmonitor'!");
-                                    config->perfmonitor_flag = 0;
+                                    config->perfmonitor_flag = false;
+                                }
+                        }
+
+                    /* JSON Stats */
+
+                    if ( config->stats_json_flag == true )
+                        {
+                            if ( orig_stats_json_value == true )
+                                {
+                                    Stats_JSON_Init();
+                                }
+                            else
+                                {
+                                    Sagan_Log(WARN, "** 'stats-json' must be loaded at runtime! NOT loading 'stats-json'!");
+                                    config->stats_json_flag = false;
+                                }
+                        }
+
+                    /* Client Stats */
+
+                    if ( config->client_stats_flag == true )
+                        {
+                            if ( orig_client_stats_value == true )
+                                {
+                                    Client_Stats_Init();
+                                }
+                            else
+                                {
+                                    Sagan_Log(WARN, "** 'client-stats' must be loaded at runtime! NOT loading 'client-stats'!");
+                                    config->client_stats_flag = false;
                                 }
                         }
 
