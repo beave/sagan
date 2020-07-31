@@ -209,7 +209,7 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jseverity_alert = json_object_new_int( Event->pri );
     json_object_object_add(jobj_alert,"severity", jseverity_alert);
 
-    /* liblognorm doesn't support JSON_C_TO_STRING_NOSLASHESCAPE :( */
+    /* libfastjson doesn't support JSON_C_TO_STRING_NOSLASHESCAPE :( */
 
     snprintf(tmp_data, sizeof(tmp_data), "%s", json_object_to_json_string(jobj));
     tmp_data[strlen(tmp_data) - 2] = '\0';

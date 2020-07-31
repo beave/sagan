@@ -20,6 +20,12 @@
 
 /* stats-json.c - write statistics about Sagan in a JSON format */
 
+/* NOTES:  Zeek (Bro) Intel "hits" never get counted.  That should be
+   part of the stats
+
+   "Dynamic" load data also has no stats */
+
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"             /* From autoconf */
 #endif
@@ -113,7 +119,46 @@ void Stats_JSON_Handler( void )
     uint64_t last_flow_total;
     uint64_t last_flow_drop;
 
+    uint64_t last_bluedot_errors;
+
+    uint64_t last_bluedot_ip_total;
+    uint64_t last_bluedot_ip_cache_count;
+    uint64_t last_bluedot_ip_cache_hit;
+    uint64_t last_bluedot_ip_positive_hit;
+
+    uint64_t last_bluedot_ip_mdate;
+    uint64_t last_bluedot_ip_cdate;
+    uint64_t last_bluedot_ip_mdate_cache;
+    uint64_t last_bluedot_ip_cdate_cache;
+
+    uint64_t last_bluedot_hash_total;
+    uint64_t last_bluedot_hash_cache_count;
+    uint64_t last_bluedot_hash_cache_hit;
+    uint64_t last_bluedot_hash_positive_hit;
+
+    uint64_t last_bluedot_url_total;
+    uint64_t last_bluedot_url_cache_count;
+    uint64_t last_bluedot_url_cache_hit;
+    uint64_t last_bluedot_url_positive_hit;
+
+    uint64_t last_bluedot_filename_total;
+    uint64_t last_bluedot_filename_cache_count;
+    uint64_t last_bluedot_filename_cache_hit;
+    uint64_t last_bluedot_filename_positive_hit;
+
+    uint64_t last_bluedot_ja3_total;
+    uint64_t last_bluedot_ja3_cache_count;
+    uint64_t last_bluedot_ja3_cache_hit;
+    uint64_t last_bluedot_ja3_positive_hit;
+
     unsigned long eps;
+
+    /* Tmp's for processing / building new JSON */
+
+    char json_1[1024] = { 0 };
+    char json_2[1024] = { 0 };
+    char json_head[1024] = { 0 };
+    char json_final[1024] = { 0 };
 
     while(1)
         {
@@ -134,7 +179,7 @@ void Stats_JSON_Handler( void )
             struct json_object *jobj_dns;
             struct json_object *jobj_flow;
             struct json_object *jobj_bluedot;
-
+//            struct json_object *jobj_zeek;
 
             jobj = json_object_new_object();
             jobj_stats = json_object_new_object();
@@ -145,6 +190,7 @@ void Stats_JSON_Handler( void )
             jobj_dns = json_object_new_object();
             jobj_flow = json_object_new_object();
             jobj_bluedot = json_object_new_object();
+//            jobj_zeek = json_object_new_object();
 
 
             /* Top level */
@@ -283,21 +329,189 @@ void Stats_JSON_Handler( void )
             last_flow_drop = counters->follow_flow_drop;
 
             /* Bluedot */
-            /*
-                    json_object *jflow_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->follow_flow_total - last_flow_total) : ( counters->follow_flow_total ) );
-                    json_object_object_add(jobj_flow, "total", jflow_total);
-                    last_flow_total = counters->follow_flow_total;
-            */
+
+            if ( config->bluedot_flag )
+                {
+
+                    /* --- Bluedot IP --- */
+
+                    json_object *jbluedot_errors = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_error_count - last_bluedot_errors) : ( counters->bluedot_error_count ) );
+                    json_object_object_add(jobj_bluedot, "lookup-errors", jbluedot_errors);
+                    last_bluedot_errors = counters->bluedot_error_count;
+
+                    json_object *jbluedot_ip_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ip_total - last_bluedot_ip_total) : ( counters->bluedot_ip_total ) );
+                    json_object_object_add(jobj_bluedot, "ip-total", jbluedot_ip_total);
+                    last_bluedot_ip_total = counters->bluedot_ip_total;
+
+                    json_object *jbluedot_ip_cache_count = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ip_cache_count - last_bluedot_ip_cache_count) : ( counters->bluedot_ip_cache_count ) );
+                    json_object_object_add(jobj_bluedot, "ip-cache-total", jbluedot_ip_cache_count);
+                    last_bluedot_ip_cache_count = counters->bluedot_ip_cache_count;
+
+                    json_object *jbluedot_ip_cache_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ip_cache_hit - last_bluedot_ip_cache_hit) : ( counters->bluedot_ip_cache_hit ) );
+                    json_object_object_add(jobj_bluedot, "ip-cache-hits", jbluedot_ip_cache_hit);
+                    last_bluedot_ip_cache_hit = counters->bluedot_ip_cache_hit;
+
+                    json_object *jbluedot_ip_positive_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ip_positive_hit - last_bluedot_ip_positive_hit) : ( counters->bluedot_ip_positive_hit ) );
+                    json_object_object_add(jobj_bluedot, "ip-hits", jbluedot_ip_positive_hit);
+                    last_bluedot_ip_positive_hit = counters->bluedot_ip_positive_hit;
+
+                    json_object *jbluedot_mdate = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_mdate - last_bluedot_ip_mdate) : ( counters->bluedot_mdate ) );
+                    json_object_object_add(jobj_bluedot, "mdate-hits", jbluedot_mdate);
+                    last_bluedot_ip_mdate = counters->bluedot_mdate;
+
+                    json_object *jbluedot_cdate = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_cdate - last_bluedot_ip_cdate) : ( counters->bluedot_cdate ) );
+                    json_object_object_add(jobj_bluedot, "cdate-hits", jbluedot_cdate);
+                    last_bluedot_ip_cdate = counters->bluedot_cdate;
+
+                    json_object *jbluedot_mdate_cache = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_mdate_cache - last_bluedot_ip_mdate_cache) : ( counters->bluedot_mdate_cache ) );
+                    json_object_object_add(jobj_bluedot, "mdate-cache-hits", jbluedot_mdate_cache);
+                    last_bluedot_ip_mdate_cache = counters->bluedot_mdate_cache;
+
+                    json_object *jbluedot_cdate_cache = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_cdate_cache - last_bluedot_ip_cdate_cache) : ( counters->bluedot_cdate_cache ) );
+                    json_object_object_add(jobj_bluedot, "cdate-cache-hits", jbluedot_cdate_cache);
+                    last_bluedot_ip_cdate_cache = counters->bluedot_cdate_cache;
 
 
-            printf("%s\n", json_object_to_json_string(jobj));
-            printf("  |---> stats: %s\n", json_object_to_json_string(jobj_stats));
-            printf("             |---> captured: %s\n", json_object_to_json_string(jobj_captured));
-            printf("	  |---> geoip: %s\n", json_object_to_json_string(jobj_geoip));
-            printf("	  |---> blacklist: %s\n", json_object_to_json_string(jobj_blacklist));
-            printf("          |---> smtp: %s\n", json_object_to_json_string(jobj_smtp));
-            printf("	  |---> dns: %s\n", json_object_to_json_string(jobj_dns));
-            printf("	  |---> flow: %s\n", json_object_to_json_string(jobj_flow));
+                    /* --- Bluedot Hash --- */
+
+                    json_object *jbluedot_hash_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_hash_total - last_bluedot_hash_total) : ( counters->bluedot_hash_total ) );
+                    json_object_object_add(jobj_bluedot, "hash-total", jbluedot_hash_total);
+                    last_bluedot_hash_total = counters->bluedot_hash_total;
+
+                    json_object *jbluedot_hash_cache_count = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_hash_cache_count - last_bluedot_hash_cache_count) : ( counters->bluedot_hash_cache_count ) );
+                    json_object_object_add(jobj_bluedot, "hash-cache-total", jbluedot_hash_cache_count);
+                    last_bluedot_hash_cache_count = counters->bluedot_hash_cache_count;
+
+                    json_object *jbluedot_hash_cache_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_hash_cache_hit - last_bluedot_hash_cache_hit) : ( counters->bluedot_hash_cache_hit ) );
+                    json_object_object_add(jobj_bluedot, "hash-cache-hits", jbluedot_hash_cache_hit);
+                    last_bluedot_hash_cache_hit = counters->bluedot_hash_cache_hit;
+
+                    json_object *jbluedot_hash_positive_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_hash_positive_hit - last_bluedot_hash_positive_hit) : ( counters->bluedot_hash_positive_hit ) );
+                    json_object_object_add(jobj_bluedot, "hash-hits", jbluedot_hash_positive_hit);
+                    last_bluedot_hash_positive_hit = counters->bluedot_hash_positive_hit;
+
+                    /* --- Bluedot URL --- */
+
+                    json_object *jbluedot_url_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_url_total - last_bluedot_url_total) : ( counters->bluedot_url_total ) );
+                    json_object_object_add(jobj_bluedot, "url-total", jbluedot_url_total);
+                    last_bluedot_url_total = counters->bluedot_url_total;
+
+                    json_object *jbluedot_url_cache_count = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_url_cache_count - last_bluedot_url_cache_count) : ( counters->bluedot_url_cache_count ) );
+                    json_object_object_add(jobj_bluedot, "url-cache-total", jbluedot_url_cache_count);
+                    last_bluedot_url_cache_count = counters->bluedot_url_cache_count;
+
+                    json_object *jbluedot_url_cache_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_url_cache_hit - last_bluedot_url_cache_hit) : ( counters->bluedot_url_cache_hit ) );
+                    json_object_object_add(jobj_bluedot, "url-cache-hits", jbluedot_url_cache_hit);
+                    last_bluedot_url_cache_hit = counters->bluedot_url_cache_hit;
+
+                    json_object *jbluedot_url_positive_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_url_positive_hit - last_bluedot_url_positive_hit) : ( counters->bluedot_url_positive_hit ) );
+                    json_object_object_add(jobj_bluedot, "url-hits", jbluedot_url_positive_hit);
+                    last_bluedot_url_positive_hit = counters->bluedot_url_positive_hit;
+
+                    /* --- Bluedot filename --- */
+
+                    json_object *jbluedot_filename_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_filename_total - last_bluedot_filename_total) : ( counters->bluedot_filename_total ) );
+                    json_object_object_add(jobj_bluedot, "filename-total", jbluedot_filename_total);
+                    last_bluedot_filename_total = counters->bluedot_filename_total;
+
+                    json_object *jbluedot_filename_cache_count = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_filename_cache_count - last_bluedot_filename_cache_count) : ( counters->bluedot_filename_cache_count ) );
+                    json_object_object_add(jobj_bluedot, "filename-cache-total", jbluedot_filename_cache_count);
+                    last_bluedot_filename_cache_count = counters->bluedot_filename_cache_count;
+
+                    json_object *jbluedot_filename_cache_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_filename_cache_hit - last_bluedot_filename_cache_hit) : ( counters->bluedot_filename_cache_hit ) );
+                    json_object_object_add(jobj_bluedot, "filename-cache-hits", jbluedot_filename_cache_hit);
+                    last_bluedot_filename_cache_hit = counters->bluedot_filename_cache_hit;
+
+                    json_object *jbluedot_filename_positive_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_filename_positive_hit - last_bluedot_filename_positive_hit) : ( counters->bluedot_filename_positive_hit ) );
+                    json_object_object_add(jobj_bluedot, "filename-hits", jbluedot_filename_positive_hit);
+                    last_bluedot_filename_positive_hit = counters->bluedot_filename_positive_hit;
+
+                    /* --- Bluedot JA3 --- */
+
+                    json_object *jbluedot_ja3_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ja3_total - last_bluedot_ja3_total) : ( counters->bluedot_ja3_total ) );
+                    json_object_object_add(jobj_bluedot, "ja3-total", jbluedot_ja3_total);
+                    last_bluedot_ja3_total = counters->bluedot_ja3_total;
+
+                    json_object *jbluedot_ja3_cache_count = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ja3_cache_count - last_bluedot_ja3_cache_count) : ( counters->bluedot_ja3_cache_count ) );
+                    json_object_object_add(jobj_bluedot, "ja3-cache-total", jbluedot_ja3_cache_count);
+                    last_bluedot_ja3_cache_count = counters->bluedot_ja3_cache_count;
+
+                    json_object *jbluedot_ja3_cache_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ja3_cache_hit - last_bluedot_ja3_cache_hit) : ( counters->bluedot_ja3_cache_hit ) );
+                    json_object_object_add(jobj_bluedot, "ja3-cache-hits", jbluedot_ja3_cache_hit);
+                    last_bluedot_ja3_cache_hit = counters->bluedot_ja3_cache_hit;
+
+                    json_object *jbluedot_ja3_positive_hit = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bluedot_ja3_positive_hit - last_bluedot_ja3_positive_hit) : ( counters->bluedot_ja3_positive_hit ) );
+                    json_object_object_add(jobj_bluedot, "ja3-hits", jbluedot_ja3_positive_hit);
+                    last_bluedot_ja3_positive_hit = counters->bluedot_ja3_positive_hit;
+
+                }
+
+	    /*****************************************************************
+             Start building out the JSON stats string. Why do it this way?
+             because libfastjson doesn't support 
+	     JSON_C_TO_STRING_NOSLASHESCAPE :( 
+            ******************************************************************/
+
+	    /* "cut" tailing } */ 
+
+            strlcpy(json_1, json_object_to_json_string(jobj), sizeof(json_1));
+            json_1[ strlen(json_1) - 2 ] = '\0';
+
+            strlcpy(json_2, json_object_to_json_string(jobj_stats), sizeof(json_2));
+            json_2[ strlen(json_2) - 2 ] = '\0';
+
+            snprintf(json_head, sizeof(json_head), "%s, \"stats\": %s, \"captured\": %s", json_1, json_2, json_object_to_json_string(jobj_captured));
+
+            /* Always have flow */
+
+            snprintf(json_final, sizeof(json_final), "%s, \"flow\": %s", json_head, json_object_to_json_string(jobj_flow));
+
+
+#ifdef HAVE_LIBMAXMINDDB
+
+            if ( config->have_geoip2 == true )
+                {
+                    strlcpy(json_1, json_final, sizeof(json_1));
+                    snprintf(json_final, sizeof(json_final), "%s, \"geoip\": %s", json_1, json_object_to_json_string(jobj_geoip));
+                }
+#endif
+
+            if ( config->blacklist_flag )
+                {
+                    strlcpy(json_1, json_final, sizeof(json_1));
+                    snprintf(json_final, sizeof(json_final), "%s, \"blacklist\": %s", json_1, json_object_to_json_string(jobj_blacklist));
+                }
+
+#ifdef HAVE_LIBESMTP
+
+            if( config->sagan_esmtp_flag == true )
+                {
+                    strlcpy(json_1, json_final, sizeof(json_1));
+                    snprintf(json_final, sizeof(json_final), "%s, \"smtp\": %s", json_1, json_object_to_json_string(jobj_smtp));
+                }
+
+#endif
+
+            if ( config->syslog_src_lookup == true )
+                {
+                    strlcpy(json_1, json_final, sizeof(json_1));
+                    snprintf(json_final, sizeof(json_final), "%s, \"dns\": %s", json_1, json_object_to_json_string(jobj_dns));
+                }
+
+#ifdef WITH_BLUEDOT
+
+            if ( config->bluedot_flag == true )
+                {
+                    strlcpy(json_1, json_final, sizeof(json_1));
+                    snprintf(json_final, sizeof(json_final), "%s, \"bluedot\": %s", json_1, json_object_to_json_string(jobj_bluedot));
+                }
+
+#endif
+
+            strlcat(json_final, " } }", sizeof(json_head));
+
+            fprintf( config->stats_json_file_stream, "%s\n", json_final);
+            fflush( config->stats_json_file_stream );
 
             json_object_put(jobj);
             json_object_put(jobj_stats);
@@ -307,12 +521,10 @@ void Stats_JSON_Handler( void )
             json_object_put(jobj_smtp);
             json_object_put(jobj_dns);
             json_object_put(jobj_flow);
+            json_object_put(jobj_bluedot);
+//            json_object_put(jobj_zeek);
 
-
-
-
-
-            sleep(1);
+            sleep( config->stats_json_time );
 
         }
 }
