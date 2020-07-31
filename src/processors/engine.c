@@ -64,7 +64,7 @@
 #include "parsers/parsers.h"
 
 #include "processors/engine.h"
-#include "processors/bro-intel.h"
+#include "processors/zeek-intel.h"
 #include "processors/blacklist.h"
 #include "processors/dynamic-rules.h"
 

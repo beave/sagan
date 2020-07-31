@@ -18,9 +18,9 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* bro-intel.c
+/* zeek-intel.c (Formally "Bro")
 *
-* This allows Sagan to read in Bro Intel files,  like those from Critical
+* This allows Sagan to read in Zeek Intel files,  like those from Critical
 * Stack (https://intel.brointel.com).
 *
 */
@@ -46,7 +46,7 @@
 
 #include "parsers/parsers.h"
 
-#include "processors/bro-intel.h"
+#include "processors/zeek-intel.h"
 
 #define MAX_BROINTEL_LINE_SIZE 10240
 

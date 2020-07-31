@@ -92,7 +92,7 @@
 #include "processors/track-clients.h"
 #include "processors/perfmon.h"
 #include "processors/client-stats.h"
-#include "processors/bro-intel.h"
+#include "processors/zeek-intel.h"
 #include "processors/stats-json.h"
 
 

@@ -53,7 +53,7 @@
 
 #include "processors/blacklist.h"
 #include "processors/perfmon.h"
-#include "processors/bro-intel.h"
+#include "processors/zeek-intel.h"
 
 #ifdef HAVE_LIBYAML
 #include <yaml.h>
