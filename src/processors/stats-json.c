@@ -42,11 +42,9 @@
 
 #include <json.h>
 
-
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>
 #endif
-
 
 #include "version.h"
 
@@ -204,6 +202,9 @@ void Stats_JSON_Handler( void )
 
             json_object *jsource = json_object_new_string("sagan");
             json_object_object_add(jobj,"event_source", jsource);
+
+	    json_object *jhost = json_object_new_string(config->sagan_sensor_name);
+            json_object_object_add(jobj,"host", jhost);
 
             /* stats */
 
