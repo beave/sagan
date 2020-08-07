@@ -48,7 +48,7 @@ Example ``rsyslog`` "pipe" configuration, can be installed as
        constant(value="\n")
    }
    
-   *.*  action(type="ompipe" pipe="var/sagan/fifo/sagan.fifo" template="SaganPipe")
+   *.*  action(type="ompipe" pipe="/var/sagan/fifo/sagan.fifo" template="SaganPipe")
 
 NOTE: rsyslog's "msg" property includes
 `the space after the colon <https://www.rsyslog.com/log-normalization-and-the-leading-space/>`_.
