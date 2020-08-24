@@ -102,7 +102,6 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     CreateIsoTimeString(&Event->event_time, timebuf, sizeof(timebuf));
 
-
     if ( config->eve_alerts_base64 == true )
         {
             Base64Encode( (const unsigned char*)Event->message, strlen(Event->message), b64_target, &b64_len);

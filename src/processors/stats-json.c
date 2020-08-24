@@ -39,6 +39,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdbool.h>
+#include <sys/time.h>
 
 #include <json.h>
 
@@ -51,6 +52,8 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "lockfile.h"
+#include "util-time.h"
 #include "processors/stats-json.h"
 
 struct _SaganConfig *config;
@@ -117,6 +120,8 @@ void Stats_JSON_Handler( void )
     uint64_t last_flow_total;
     uint64_t last_flow_drop;
 
+#ifdef WITH_BLUEDOT
+
     uint64_t last_bluedot_errors;
 
     uint64_t last_bluedot_ip_total;
@@ -149,7 +154,10 @@ void Stats_JSON_Handler( void )
     uint64_t last_bluedot_ja3_cache_hit;
     uint64_t last_bluedot_ja3_positive_hit;
 
+#endif
+
     unsigned long eps;
+    struct timeval tp;
 
     /* Tmp's for processing / building new JSON */
 
@@ -161,12 +169,15 @@ void Stats_JSON_Handler( void )
     while(1)
         {
 
+            /* Get our "uptime" */
+
             t = time(NULL);
             now=localtime(&t);
             strftime(current_utime, sizeof(current_utime), "%s",  now);
             uptime_seconds = atol(current_utime) - atol(config->sagan_startutime);
 
-            CreateIsoTimeString(&t, timebuf, sizeof(timebuf));
+            gettimeofday(&tp, 0);
+            CreateIsoTimeString(&tp, timebuf, sizeof(timebuf));
 
             struct json_object *jobj;
             struct json_object *jobj_stats;
@@ -176,7 +187,11 @@ void Stats_JSON_Handler( void )
             struct json_object *jobj_smtp;
             struct json_object *jobj_dns;
             struct json_object *jobj_flow;
+
+#ifdef WITH_BLUEDOT
             struct json_object *jobj_bluedot;
+#endif
+
 //            struct json_object *jobj_zeek;
 
             jobj = json_object_new_object();
@@ -187,7 +202,11 @@ void Stats_JSON_Handler( void )
             jobj_smtp = json_object_new_object();
             jobj_dns = json_object_new_object();
             jobj_flow = json_object_new_object();
+
+#ifdef WITH_BLUEDOT
             jobj_bluedot = json_object_new_object();
+#endif
+
 //            jobj_zeek = json_object_new_object();
 
 
@@ -203,7 +222,7 @@ void Stats_JSON_Handler( void )
             json_object *jsource = json_object_new_string("sagan");
             json_object_object_add(jobj,"event_source", jsource);
 
-	    json_object *jhost = json_object_new_string(config->sagan_sensor_name);
+            json_object *jhost = json_object_new_string(config->sagan_sensor_name);
             json_object_object_add(jobj,"host", jhost);
 
             /* stats */
@@ -331,6 +350,8 @@ void Stats_JSON_Handler( void )
 
             /* Bluedot */
 
+#ifdef WITH_BLUEDOT
+
             if ( config->bluedot_flag )
                 {
 
@@ -447,13 +468,15 @@ void Stats_JSON_Handler( void )
 
                 }
 
-	    /*****************************************************************
-             Start building out the JSON stats string. Why do it this way?
-             because libfastjson doesn't support 
-	     JSON_C_TO_STRING_NOSLASHESCAPE :( 
-            ******************************************************************/
+#endif
 
-	    /* "cut" tailing } */ 
+            /*****************************************************************
+                 Start building out the JSON stats string. Why do it this way?
+                 because libfastjson doesn't support
+             JSON_C_TO_STRING_NOSLASHESCAPE :(
+                ******************************************************************/
+
+            /* "cut" tailing } */
 
             strlcpy(json_1, json_object_to_json_string(jobj), sizeof(json_1));
             json_1[ strlen(json_1) - 2 ] = '\0';
@@ -522,7 +545,11 @@ void Stats_JSON_Handler( void )
             json_object_put(jobj_smtp);
             json_object_put(jobj_dns);
             json_object_put(jobj_flow);
+
+#ifdef WITH_BLUEDOT
             json_object_put(jobj_bluedot);
+#endif
+
 //            json_object_put(jobj_zeek);
 
             sleep( config->stats_json_time );
