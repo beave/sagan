@@ -70,8 +70,8 @@ typedef void json_object;
 #define JSON_MAP_PROGRAM      32
 #define JSON_MAP_MESSAGE      32
 
-#define JSON_MAX_NEST	      10
-#define JSON_MAX_SIZE	      131072
+#define JSON_MAX_NEST	      20
+#define JSON_MAX_SIZE	      MAX_SYSLOGMSG
 
 /* This is used in JSON message/program parsing */
 

@@ -62,16 +62,4 @@ void Debug_Sagan_Proc_Syslog ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     Sagan_Log(DEBUG, " * hostname: \"%s\"", SaganProcSyslog_LOCAL->hostname );
     Sagan_Log(DEBUG, " * url: \"%s\"", SaganProcSyslog_LOCAL->url );
 
-
-
-
-
-
-
-
-
-
-
-
-
 }
