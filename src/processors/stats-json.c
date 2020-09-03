@@ -40,6 +40,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <sys/time.h>
+#include <unistd.h>
 
 #include <json.h>
 
@@ -95,8 +96,6 @@ void Stats_JSON_Handler( void )
 
     uint64_t uptime_seconds;
 
-    bool check = true;
-
     uint64_t last_events_received;
     uint64_t last_drop;
     uint64_t last_ignore;
@@ -105,14 +104,22 @@ void Stats_JSON_Handler( void )
     uint64_t last_alert;
     uint64_t last_match;
 
+#ifdef HAVE_LIBMAXMINDDB                                                                                     
+
     uint64_t last_geoip_lookups;
     uint64_t last_geoip_hits;
+
+#endif 
 
     uint64_t last_blacklist_lookups;
     uint64_t last_blacklist_hits;
 
+#ifdef HAVE_LIBESMTP                                                                                         
+
     uint64_t last_esmtp_success;
     uint64_t last_esmtp_failed;
+
+#endif
 
     uint64_t last_dns_cached;
     uint64_t last_dns_missed;

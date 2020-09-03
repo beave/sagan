@@ -65,6 +65,7 @@
 #include "processors/track-clients.h"
 #include "processors/zeek-intel.h"
 #include "processors/client-stats.h"
+#include "processors/stats-json.h"
 
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"

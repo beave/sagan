@@ -55,7 +55,6 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
     struct json_object *json_obj = NULL;
 
-    uint16_t json_str_count=0;
     uint16_t i;
     uint16_t array_count = 1; 	/* Start at one! */
 
