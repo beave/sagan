@@ -588,12 +588,7 @@ the --disable-libpcap flag. ))
 
 if test "$BLUEDOT" = "yes"; then
         AC_MSG_RESULT([------- Quadrant "Bluedot" is enabled -------])
-        AC_CHECK_LIB(curl, main,,AC_MSG_ERROR(The libcurl library cannot be found.
-This library is used for Sagan's / "Bluedot" support.  Please see
-https://quadrantsec.com for more information.
-To disable this feature use the --disable-bluedot flag. ))
         AC_DEFINE(WITH_BLUEDOT, 1, With Bluedot)
-        AC_CHECK_HEADER([curl/curl.h])
 	PKG_CHECK_MODULES(LIBFASTJSON, libfastjson >= 0.0.0)
         fi
 

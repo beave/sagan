@@ -104,17 +104,17 @@ void Stats_JSON_Handler( void )
     uint64_t last_alert;
     uint64_t last_match;
 
-#ifdef HAVE_LIBMAXMINDDB                                                                                     
+#ifdef HAVE_LIBMAXMINDDB
 
     uint64_t last_geoip_lookups;
     uint64_t last_geoip_hits;
 
-#endif 
+#endif
 
     uint64_t last_blacklist_lookups;
     uint64_t last_blacklist_hits;
 
-#ifdef HAVE_LIBESMTP                                                                                         
+#ifdef HAVE_LIBESMTP
 
     uint64_t last_esmtp_success;
     uint64_t last_esmtp_failed;

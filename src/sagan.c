@@ -121,7 +121,6 @@ struct _Rule_Struct *rulestruct;
 struct _Sagan_Ignorelist *SaganIgnorelist;
 
 #ifdef WITH_BLUEDOT
-#include <curl/curl.h>
 #include "processors/bluedot.h"
 #endif
 
@@ -891,8 +890,6 @@ int main(int argc, char **argv)
 #ifdef WITH_BLUEDOT
     if ( config->bluedot_flag )
         {
-
-            curl_global_init(CURL_GLOBAL_ALL);
 
             /* Lookup Bluedot IP so we don't explode DNS :) */
 
