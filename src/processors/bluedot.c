@@ -37,7 +37,7 @@
 #include <stddef.h>
 #include <time.h>
 #include <pthread.h>
-//#include <curl/curl.h>
+#include <unistd.h>
 #include <json.h>
 #include <stdbool.h>
 
@@ -457,16 +457,6 @@ void Sagan_Bluedot_Load_Cat(void)
 }
 
 /****************************************************************************
- * write_callback_func() - Callback for data received via libcurl
- ****************************************************************************/
-/*
-size_t static write_callback_func(void *buffer, size_t size, size_t nmemb, void *userp)
-{
-    char **response_ptr =  (char**)userp;
-    *response_ptr = strndup(buffer, (size_t)(size *nmemb));     /* Return the string */
-//}
-
-/****************************************************************************
  * Sagan_Bluedot_Clean_Cache() - Cleans cache.  Remove old,  stale entries
  * to make room for new,  fresh entries :)
  ****************************************************************************/
@@ -792,17 +782,12 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     char tmpdeviceid[64] = { 0 };
     char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
 
-//   CURL *curl = NULL;
-    //CURLcode res;
-
     char *jsonptr = NULL;
     char *jsonptr_f = NULL;
 
     int sockfd, connfd;
     struct sockaddr_in servaddr, cli;
 
-//    struct curl_slist *headers = NULL;
-//    char *response=NULL;
     char json_final[2048] = { 0 };
 
     struct json_object *json_in = NULL;
