@@ -174,13 +174,13 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
                                     /* Store found nested JSON */
 
-                                    memcpy(JSON_Key_String_J[array_count].key, new_key, JSON_MAX_KEY_SIZE);
-                                    memcpy(JSON_Key_String_J[array_count].json, val_str, JSON_MAX_VALUE_SIZE);
+                                    strlcpy(JSON_Key_String_J[array_count].key, new_key, JSON_MAX_KEY_SIZE);
+                                    strlcpy(JSON_Key_String_J[array_count].json, val_str, JSON_MAX_VALUE_SIZE);
 
                                     /* Comitune searching array */
 
-                                    memcpy(JSON_Key_String[new_json_count].key, new_key, JSON_MAX_KEY_SIZE);
-                                    memcpy(JSON_Key_String[new_json_count].json, val_str, JSON_MAX_VALUE_SIZE);
+                                    strlcpy(JSON_Key_String[new_json_count].key, new_key, JSON_MAX_KEY_SIZE);
+                                    strlcpy(JSON_Key_String[new_json_count].json, val_str, JSON_MAX_VALUE_SIZE);
 
                                     new_json_count++;           /* json found this loop */
                                     array_count++;              /* Total nested/json found */
