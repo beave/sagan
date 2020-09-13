@@ -71,6 +71,13 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
     int flexbit_total_match = 0;
     bool flexbit_match = 0;
 
+    /* Flexbit do need a non-null username, otherwise a segmentation fault occurs */
+    char flexbit_username[MAX_USERNAME_SIZE] = {0};
+    if ( username != NULL )
+        {
+                memcpy(flexbit_username, username, sizeof(flexbit_username));
+        }
+
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
@@ -321,12 +328,12 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
                                     /* direction: username */
 
                                     else if ( rulestruct[rule_position].flexbit_direction[i] == 13 &&
-                                              !memcmp(flexbit_ipc[a].username, username, sizeof(flexbit_ipc[a].username)))
+                                              !memcmp(flexbit_ipc[a].username, flexbit_username, sizeof(flexbit_ipc[a].username)))
                                         {
 
                                             if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" flexbit \"%s\" (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, username);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isset\" flexbit \"%s\" (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, flexbit_username);
                                                 }
 
                                             flexbit_total_match++;
@@ -638,13 +645,13 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
                                     else if ( rulestruct[rule_position].flexbit_direction[i] == 13 )
                                         {
 
-                                            if ( !memcmp(flexbit_ipc[a].username, username, sizeof(flexbit_ipc[a].username)) )
+                                            if ( !memcmp(flexbit_ipc[a].username, flexbit_username, sizeof(flexbit_ipc[a].username)) )
                                                 {
                                                     if ( flexbit_ipc[a].flexbit_state == true )
                                                         {
                                                             if ( debug->debugflexbit )
                                                                 {
-                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" flexbit \"%s\" true (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, username);
+                                                                    Sagan_Log(DEBUG, "[%s, line %d] \"isnotset\" flexbit \"%s\" true (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, flexbit_username);
 
                                                                 }
 
@@ -778,7 +785,7 @@ bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst )
 
 void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *username, char *syslog_message )
 {
-
+    
     int i = 0;
     int a = 0;
 
@@ -789,6 +796,13 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
     bool flexbit_match = false;
     bool flexbit_unset_match = 0;
 
+    /* Flexbit do need a non-null username, otherwise a segmentation fault occurs */
+    char flexbit_username[MAX_USERNAME_SIZE] = {0};
+    if ( username != NULL )
+        {
+                memcpy(flexbit_username, username, sizeof(flexbit_username));
+        }
+    
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
@@ -1145,12 +1159,12 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                     /* direction: username */
 
                                     else if ( rulestruct[rule_position].flexbit_direction[i] == 13 &&
-                                              !memcmp(flexbit_ipc[a].username, username, sizeof(flexbit_ipc[a].username)) )
+                                              !memcmp(flexbit_ipc[a].username, flexbit_username, sizeof(flexbit_ipc[a].username)) )
                                         {
 
                                             if ( debug->debugflexbit)
                                                 {
-                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, username);
+                                                    Sagan_Log(DEBUG, "[%s, line %d] \"unset\" flexbit \"%s\" (direction: \"username\"). (any -> %s)", __FILE__, __LINE__, flexbit_ipc[a].flexbit_name, flexbit_username);
                                                 }
 
                                             File_Lock(config->shm_flexbit);
@@ -1190,7 +1204,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                             if (!strcmp(flexbit_ipc[a].flexbit_name, rulestruct[rule_position].flexbit_name[i]) &&
                                     !memcmp(flexbit_ipc[a].ip_src, ip_src, sizeof(flexbit_ipc[a].ip_src)) &&
                                     !memcmp(flexbit_ipc[a].ip_dst, ip_dst, sizeof(flexbit_ipc[a].ip_dst)) &&
-                                    !memcmp(flexbit_ipc[a].username, username, sizeof(flexbit_ipc[a].username)) &&
+                                    !memcmp(flexbit_ipc[a].username, flexbit_username, sizeof(flexbit_ipc[a].username)) &&
                                     flexbit_ipc[a].src_port == config->sagan_port &&
                                     flexbit_ipc[a].dst_port == config->sagan_port )
                                 {
@@ -1203,7 +1217,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                     flexbit_ipc[a].flexbit_expire = atol(timet) + rulestruct[rule_position].flexbit_timeout[i];
                                     flexbit_ipc[a].flexbit_state = true;
                                     strlcpy(flexbit_ipc[a].syslog_message, syslog_message, sizeof(flexbit_ipc[a].syslog_message));
-                                    strlcpy(flexbit_ipc[a].username, username, sizeof(flexbit_ipc[a].username));
+                                    strlcpy(flexbit_ipc[a].username, flexbit_username, sizeof(flexbit_ipc[a].username));
                                     strlcpy(flexbit_ipc[a].signature_msg, rulestruct[rule_position].s_msg, sizeof(flexbit_ipc[a].signature_msg));
                                     flexbit_ipc[a].sid = rulestruct[rule_position].s_sid;
 
@@ -1494,7 +1508,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                             strlcpy(flexbit_ipc[counters_ipc->flexbit_count].flexbit_name, flexbit_track[i].flexbit_name, sizeof(flexbit_ipc[counters_ipc->flexbit_count].flexbit_name));
                             strlcpy(flexbit_ipc[counters_ipc->flexbit_count].signature_msg, rulestruct[rule_position].s_msg, sizeof(flexbit_ipc[counters_ipc->flexbit_count].signature_msg));
                             strlcpy(flexbit_ipc[counters_ipc->flexbit_count].syslog_message, syslog_message, sizeof(flexbit_ipc[counters_ipc->flexbit_count].syslog_message));
-                            strlcpy(flexbit_ipc[counters_ipc->flexbit_count].username, username, sizeof(flexbit_ipc[counters_ipc->flexbit_count].username));
+                            strlcpy(flexbit_ipc[counters_ipc->flexbit_count].username, flexbit_username, sizeof(flexbit_ipc[counters_ipc->flexbit_count].username));
                             flexbit_ipc[counters_ipc->flexbit_count].sid = rulestruct[rule_position].s_sid;
 
 
