@@ -571,9 +571,10 @@ int main(int argc, char **argv)
 
                                     printf("Type: flexbit [%d].\n", i);
 
-                                    printf("Xbit name: \"%s\"\n", flexbit_ipc[i].flexbit_name);
+                                    printf("Flexbit name: \"%s\"\n", flexbit_ipc[i].flexbit_name);
                                     printf("State: %s\n", flexbit_ipc[i].flexbit_state == 1 ? "ACTIVE" : "INACTIVE");
                                     printf("IP: %s:%d -> %s:%d\n", flexbit_ipc[i].ip_src, flexbit_ipc[i].src_port, flexbit_ipc[i].ip_dst, flexbit_ipc[i].dst_port);
+                                    printf("Username: \"%s\"\n", flexbit_ipc[i].username);
                                     printf("Signature: \"%s\" (Signature ID: %" PRIu64 ")\n", flexbit_ipc[i].signature_msg, flexbit_ipc[i].sid);
                                     printf("Expire Time: %s (%d seconds)\n", time_buf, flexbit_ipc[i].expire);
                                     printf("Time until expire: %" PRIi64 " seconds.\n", flexbit_oldtime);
