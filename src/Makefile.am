@@ -62,6 +62,7 @@ AUTOMAKE_OPIONS=foreign no-dependencies subdir-objects
                                                        parsers/port.c \
                                                        parsers/proto.c \
                                                        parsers/hash.c \
+						       parsers/json.c \
                                                        parsers/strstr-asm/strstr-hook.c \
                                                        parsers/strstr-asm/strstr_sse2.S \
                                                        parsers/strstr-asm/strstr_sse4_2.S \

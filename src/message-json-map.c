@@ -43,6 +43,7 @@ libfastjson is required for Sagan to function!
 #include "message-json-map.h"
 
 #include "parsers/parsers.h"
+#include "parsers/json.h"
 
 
 struct _SaganConfig *config;
@@ -387,6 +388,8 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     uint32_t prev_score=0;
     uint32_t pos=0;
 
+    char tmp_message[MAX_SYSLOGMSG] = { 0 };
+
     /* We start at 1 because the SaganProcSyslog_LOCAL->message is considered the
        first JSON string */
 
@@ -394,192 +397,7 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
     bool found = false;
 
-    struct json_object *json_obj = NULL;
-    struct json_object *json_obj2 = NULL;
-    struct json_object *json_obj3 = NULL;
-
-    char json_str[JSON_MAX_NEST][JSON_MAX_SIZE];  // = { { 0 } };
-    char tmp_message[MAX_SYSLOGMSG] = { 0 };
-
-    strlcpy(json_str[0], SaganProcSyslog_LOCAL->syslog_message, sizeof(json_str[0]));
-    json_obj = json_tokener_parse(SaganProcSyslog_LOCAL->syslog_message);
-
-    /* If JSON parsing fails, it wasn't JSON after all */
-
-    if ( json_obj == NULL )
-        {
-
-            if ( debug->debugmalformed )
-                {
-                    Sagan_Log(WARN, "[%s, line %d] Sagan Detected JSON but Libfastjson failed to decode it. The log line was: \"%s\"", __FILE__, __LINE__, SaganProcSyslog_LOCAL->syslog_message);
-                }
-
-            json_object_put(json_obj);
-            free(JSON_Message_Map_Found);
-            __atomic_add_fetch(&counters->malformed_json_mp_count, 1, __ATOMIC_SEQ_CST);
-            return;
-        }
-
-    if ( debug->debugjson )
-        {
-            Sagan_Log(DEBUG, "Syslog Message: \"%s\"\n", SaganProcSyslog_LOCAL->syslog_message);
-        }
-
-    struct json_object_iterator it = json_object_iter_begin(json_obj);
-    struct json_object_iterator itEnd = json_object_iter_end(json_obj);
-
-    /* Search through all key/values looking for embedded JSON */
-
-    while (!json_object_iter_equal(&it, &itEnd))
-        {
-
-            const char *key = json_object_iter_peek_name(&it);
-
-            if ( key == NULL )
-                {
-                    key = "NULL";
-                }
-
-            struct json_object *const val = json_object_iter_peek_value(&it);
-
-            const char *val_str = json_object_get_string(val);
-
-            if ( debug->debugjson )
-                {
-                    Sagan_Log(DEBUG, "Key: \"%s\", Value: \"%s\"", key, val_str );
-
-                }
-
-            /* Is there nested JSON */
-
-            if ( val_str != NULL && val_str[0] == '{' )
-                {
-                    /* Validate it before handing it to the parser to save CPU */
-
-                    json_obj2 = json_tokener_parse(val_str);
-
-                    if ( json_obj2 != NULL )
-                        {
-
-                            strlcpy(json_str[json_str_count], val_str, sizeof(json_str[json_str_count]));
-                            json_str_count++;
-
-                            struct json_object_iterator it2 = json_object_iter_begin(json_obj2);
-                            struct json_object_iterator itEnd2 = json_object_iter_end(json_obj2);
-                            /* Look for any second tier/third tier JSON */
-
-                            while (!json_object_iter_equal(&it2, &itEnd2))
-                                {
-
-                                    const char *key2 = json_object_iter_peek_name(&it2);
-                                    struct json_object *const val2 = json_object_iter_peek_value(&it2);
-
-                                    const char *val_str2 = json_object_get_string(val2);
-
-                                    if ( debug->debugjson )
-                                        {
-                                            Sagan_Log(DEBUG, "Key2: \"%s\", Value: \"%s\"", key2, val_str );
-
-                                        }
-
-                                    /* Grab nests */
-
-                                    if ( val_str2[0] == '{' )
-                                        {
-
-                                            strlcpy(json_str[json_str_count], val_str2, sizeof(json_str[json_str_count]));
-                                            json_str_count++;
-
-                                        }
-
-                                    json_object_iter_next(&it2);
-
-                                }
-
-                        } /* json_obj2 != NULL */
-
-
-                    json_object_put(json_obj2);
-
-                }
-            else
-                {
-
-                    /* Grab the first level of the nest values */
-
-                    strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
-
-                    if  ( val_str != NULL )
-                        {
-                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-                        }
-                    else
-                        {
-                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], "null", sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-                        }
-
-                    if ( SaganProcSyslog_LOCAL->json_count > JSON_MAX_OBJECTS )
-                        {
-                            Sagan_Log(ERROR, "[%s, line %d] Ran out of space for json objects! Consider increasing the JSON_MAX_OBJECTS in the sagan-defs.h and re-compiling.",  __FILE__, __LINE__, a, json_str[a]);
-                        }
-
-                    SaganProcSyslog_LOCAL->json_count++;
-                }
-
-            json_object_iter_next(&it);
-        }
-
-    json_object_put(json_obj);
-
-    if ( debug->debugjson )
-        {
-
-            for ( a=0; a < json_str_count; a++ )
-                {
-                    Sagan_Log(DEBUG, "[%s, line %d] %d. JSON found: \"%s\"",  __FILE__, __LINE__, a, json_str[a]);
-                }
-        }
-
-    if ( json_str_count > 1 )
-        {
-
-            for ( i = 1; i < json_str_count; i++ )
-                {
-
-                    json_obj3 = json_tokener_parse(json_str[i]);
-
-                    if ( json_obj3 != NULL )
-                        {
-
-                            struct json_object_iterator it3 = json_object_iter_begin(json_obj3);
-                            struct json_object_iterator itEnd3 = json_object_iter_end(json_obj3);
-
-                            while (!json_object_iter_equal(&it3, &itEnd3))
-                                {
-
-                                    const char *key3 = json_object_iter_peek_name(&it3);
-                                    const char *val_str3;
-
-                                    struct json_object *const val3 = json_object_iter_peek_value(&it3);
-                                    val_str3 = json_object_get_string(val3);
-
-                                    if ( val_str3[0] != '{' )
-                                        {
-
-                                            strlcpy( SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count], key3, sizeof(SaganProcSyslog_LOCAL->json_key[SaganProcSyslog_LOCAL->json_count]));
-                                            strlcpy( SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count], val_str3, sizeof(SaganProcSyslog_LOCAL->json_value[SaganProcSyslog_LOCAL->json_count]));
-                                            SaganProcSyslog_LOCAL->json_count++;
-
-                                        }
-
-                                    json_object_iter_next(&it3);
-
-                                }
-                        }
-                }
-
-            json_object_put(json_obj3);
-        }
+    Parse_JSON( SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL);
 
     for (i = 0; i < counters->json_message_map; i++ )
         {

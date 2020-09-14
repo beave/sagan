@@ -82,7 +82,7 @@ int Parse_Src_Port (char *msg)
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
 
-            for ( i = 0 , str = portstring; ; i++ )
+            for ( i = 0, str = portstring; ; i++ )
                 {
 
                     token = strtok_r(NULL, " ", &saveptr1);
@@ -264,7 +264,7 @@ int Parse_Dst_Port (char *msg)
 
             portstring = strtok_r(tmpmsg, " ", &saveptr1);
 
-            for ( i = 0 , str = portstring; ; i++ )
+            for ( i = 0, str = portstring; ; i++ )
                 {
 
                     token = strtok_r(NULL, " ", &saveptr1);
