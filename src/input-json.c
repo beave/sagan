@@ -196,6 +196,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
 
         }  /* end of while */
 
+        json_object_put(json_obj);
+
     /* Copy objects into memory */
 
     for (i = 0; i < array_count; i++ )
@@ -228,6 +230,8 @@ void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProc
         }
 
     json_object_put(json_obj);
+    free(JSON_Key_String);
+    free(JSON_Key_String_J);
 
 
     /* User wants the entire JSON to become the "message" */
