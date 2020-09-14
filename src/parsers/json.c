@@ -46,7 +46,7 @@ struct _JSON_Key_String
 };
 
 
-Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
+void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
     struct json_object *json_obj = NULL;
