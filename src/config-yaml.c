@@ -468,19 +468,21 @@ void Load_YAML_Config( char *yaml_file )
 
                                                     strtok_r(value, ":", &tok);
 
-                                                    char *filename;
-                                                    char tmpbuf[CONFBUF];
-
+                                                    char *filename = NULL;
+                                                    char tmpbuf[CONFBUF] = { 0 }; 
                                                     FILE *varfile;
-
                                                     bool check = 0;
 
                                                     filename = strtok_r(NULL, ":", &tok);
 
+                                                    if ( filename == NULL )                                  
+                                                        {
+                                                        Sagan_Log(ERROR, "[%s, line %d] Attempted to load variable value via file:/ but no file found. Abort!",  __FILE__, __LINE__);
+                                                        }
+
                                                     if ((varfile = fopen(filename, "r")) == NULL)
                                                         {
-                                                            fprintf(stderr, "[E] [%s, line %d] Cannot open var file:%s\n", __FILE__,  __LINE__, filename);
-                                                            exit(-1);
+                                                            Sagan_Log(ERROR, "[%s, line %d] Cannot open var file:%s\n", __FILE__,  __LINE__, filename);
                                                         }
 
 
@@ -534,6 +536,8 @@ void Load_YAML_Config( char *yaml_file )
                                                             Sagan_Log(DEBUG, "[%s, line %d] Final load from file for \"%s\" value \"%s\"", __FILE__, __LINE__, var[counters->var_count].var_name, var[counters->var_count].var_value);
 
                                                         }
+
+						    __atomic_add_fetch(&Counters->var, 1, __ATOMIC_SEQ_CST);
 
                                                     toggle = 1;
 
