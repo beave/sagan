@@ -188,6 +188,10 @@ void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslo
     for (i = 0; i < array_count; i++ )
         {
             json_obj = json_tokener_parse(JSON_Key_String_J[i].json);
+
+	    if ( json_obj != NULL ) 
+		    {
+
             it = json_object_iter_begin(json_obj);
             itEnd = json_object_iter_end(json_obj);
 
@@ -212,6 +216,7 @@ void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslo
 
                     json_object_iter_next(&it);
                 }
+		    }
         }
 
     json_object_put(json_obj);

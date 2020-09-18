@@ -469,15 +469,15 @@ void Load_YAML_Config( char *yaml_file )
                                                     strtok_r(value, ":", &tok);
 
                                                     char *filename = NULL;
-                                                    char tmpbuf[CONFBUF] = { 0 }; 
+                                                    char tmpbuf[CONFBUF] = { 0 };
                                                     FILE *varfile;
                                                     bool check = 0;
 
                                                     filename = strtok_r(NULL, ":", &tok);
 
-                                                    if ( filename == NULL )                                  
+                                                    if ( filename == NULL )
                                                         {
-                                                        Sagan_Log(ERROR, "[%s, line %d] Attempted to load variable value via file:/ but no file found. Abort!",  __FILE__, __LINE__);
+                                                            Sagan_Log(ERROR, "[%s, line %d] Attempted to load variable value via file:/ but no file found. Abort!",  __FILE__, __LINE__);
                                                         }
 
                                                     if ((varfile = fopen(filename, "r")) == NULL)
@@ -537,8 +537,7 @@ void Load_YAML_Config( char *yaml_file )
 
                                                         }
 
-						    __atomic_add_fetch(&Counters->var, 1, __ATOMIC_SEQ_CST);
-
+                                                    __atomic_add_fetch(&counters->var_count, 1, __ATOMIC_SEQ_CST);
                                                     toggle = 1;
 
                                                 }
