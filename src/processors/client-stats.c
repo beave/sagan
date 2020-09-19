@@ -111,6 +111,10 @@ void Client_Stats_Close( void )
 void Client_Stats_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
+    (void)SetThreadName("SaganClientStats");
+#endif
+
     struct json_object *jobj = NULL;
 
     struct timeval tp;
@@ -118,8 +122,6 @@ void Client_Stats_Handler( void )
 
 
     int i=0;
-
-    (void)SetThreadName("SaganClientStats");
 
     /* Wait some time before dumping stats */
 

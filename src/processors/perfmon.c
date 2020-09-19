@@ -61,7 +61,9 @@ struct _Sagan_IPC_Counters *counters_ipc;
 void Sagan_Perfmonitor_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganPerfmon");
+#endif
 
     unsigned long total=0;
     unsigned long seconds=0;

@@ -86,7 +86,9 @@ void Stats_JSON_Close( void )
 void Stats_JSON_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganStatsJSON");
+#endif
 
     time_t t;
     struct tm *now;

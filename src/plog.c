@@ -80,7 +80,9 @@ static  int   outf;
 void Plog_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganPlog");
+#endif
 
     pcap_t                  *bp;
     struct  bpf_program     filtr;

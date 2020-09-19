@@ -120,7 +120,9 @@ int proc_running;
 void Sig_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganSignal");
+#endif
 
     sigset_t signal_set;
     int sig;

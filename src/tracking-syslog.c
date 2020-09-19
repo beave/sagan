@@ -63,7 +63,9 @@ struct _Sagan_Ruleset_Track *Ruleset_Track;
 void RuleTracking_Syslog( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganRuleTrack");
+#endif
 
     int i = 0;
     bool flag = 0;

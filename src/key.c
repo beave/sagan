@@ -52,7 +52,9 @@ struct _SaganConfig *config;
 void Key_Handler( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganKeyhandler");
+#endif
 
     while(1)
         {

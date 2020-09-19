@@ -180,7 +180,9 @@ void Track_Clients_Thread ( void )
     for(;;)
         {
 
+#ifdef HAVE_SYS_PRCTL_H
             (void)SetThreadName("SaganClientTrck");
+#endif
 
             struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
 

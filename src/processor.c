@@ -83,7 +83,9 @@ pthread_mutex_t SaganDynamicFlag;
 void Processor ( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganProcessor");
+#endif
 
     struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL = NULL;
     SaganProcSyslog_LOCAL = malloc(sizeof(struct _Sagan_Proc_Syslog));

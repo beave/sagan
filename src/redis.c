@@ -231,7 +231,9 @@ void Redis_Writer_Connect(void)
 void Redis_Writer ( void )
 {
 
+#ifdef HAVE_SYS_PRCTL_H
     (void)SetThreadName("SaganRedisWriter");
+#endif
 
     redisReply *reply;
 
