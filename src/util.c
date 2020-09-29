@@ -314,7 +314,7 @@ bool IP2Bit(char *ipaddr, unsigned char *out)
 
     if (!ret)
         {
-            Sagan_Log(WARN, "[%lu] Warning: Got a getaddrinfo() error for \"%s\" but continuing...", pthread_self(), ipaddr);
+//            Sagan_Log(WARN, "[%lu] Warning: Got a getaddrinfo() error for \"%s\" but continuing...", pthread_self(), ipaddr);
         }
     else
         {

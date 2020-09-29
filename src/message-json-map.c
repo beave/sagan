@@ -441,97 +441,91 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
                     /* Program  */
 
-                    if ( !strcmp(JSON_Message_Map[i].program, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].program[0] != '\0' && !strcmp(JSON_Message_Map[i].program, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].program, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].program));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].src_ip, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].src_ip[0] != '\0' && !strcmp(JSON_Message_Map[i].src_ip, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].src_ip, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].src_ip));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].dst_ip, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].dst_ip[0] != '\0' && !strcmp(JSON_Message_Map[i].dst_ip, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].dst_ip, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].dst_ip));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].src_port, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].src_port[0] != '\0' && !strcmp(JSON_Message_Map[i].src_port, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].src_port, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].src_port));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].dst_port, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].dst_port[0] != '\0' && !strcmp(JSON_Message_Map[i].dst_port, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].dst_port, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].dst_port));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].proto, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].proto[0] != '\0' && !strcmp(JSON_Message_Map[i].proto, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].proto, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].proto));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].event_id, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].event_id[0] != '\0' && !strcmp(JSON_Message_Map[i].event_id, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].event_id, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].event_id));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].flow_id, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].flow_id[0] != '\0' && !strcmp(JSON_Message_Map[i].flow_id, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             JSON_Message_Map_Found[i].flow_id = atol( SaganProcSyslog_LOCAL->json_value[a] );
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].md5, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].md5[0] != '\0' && !strcmp(JSON_Message_Map[i].md5, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].md5, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].md5));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].sha1, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].sha1[0] != '\0' && !strcmp(JSON_Message_Map[i].sha1, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].sha1, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].sha1));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].sha256, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].sha256[0] != '\0' && !strcmp(JSON_Message_Map[i].sha256, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].sha256, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].sha256));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].filename, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].filename[0] != '\0' && !strcmp(JSON_Message_Map[i].filename, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].filename, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].filename));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].hostname, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].hostname[0] != '\0' && !strcmp(JSON_Message_Map[i].hostname, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].hostname, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].hostname));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].url, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].url[0] != '\0' && !strcmp(JSON_Message_Map[i].url, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].url, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].url));
                             score++;
                         }
 
-                    if ( !strcmp(JSON_Message_Map[i].ja3, SaganProcSyslog_LOCAL->json_key[a] ) )
-                        {
-                            strlcpy(JSON_Message_Map_Found[i].ja3, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].ja3));
-                            score++;
-                        }
-
-                    if ( !strcmp(JSON_Message_Map[i].ja3, SaganProcSyslog_LOCAL->json_key[a] ) )
+                    if ( JSON_Message_Map[i].ja3[0] != '\0' && !strcmp(JSON_Message_Map[i].ja3, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].ja3, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].ja3));
                             score++;

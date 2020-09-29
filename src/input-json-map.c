@@ -66,6 +66,8 @@ void Load_Input_JSON_Map ( const char *json_map )
             Sagan_Log(ERROR, "[%s, line %d] Cannot open JSON map file (%s)", __FILE__, __LINE__, json_map);
         }
 
+
+
     while(fgets(json_map_buf, 10240, json_map_file) != NULL)
         {
 
