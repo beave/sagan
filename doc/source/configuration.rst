@@ -183,7 +183,7 @@ Example ``syslog-ng`` "pipe" configuration::
    # This line ties the sources and destinations together.
 
    log { source(s_src); destination(sagan_fifo); };
-   log { source{syslog_in}; destination(sagan_fifo); };
+   log { source(syslog_in); destination(sagan_fifo); };
 
 
 
@@ -214,7 +214,7 @@ Example ``syslog-ng`` JSON configuration::
    # This line ties the sources and destinations together.
 
    log { source(s_src); destination(sagan_fifo); };
-   log { source{syslog_in}; destination(sagan_fifo); };
+   log { source(syslog_in); destination(sagan_fifo); };
 
 
 nxlog
