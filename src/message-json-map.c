@@ -393,8 +393,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
     /* We start at 1 because the SaganProcSyslog_LOCAL->message is considered the
        first JSON string */
 
-    uint16_t json_str_count=1;
-
     bool found = false;
 
     Parse_JSON( SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL);

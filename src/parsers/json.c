@@ -42,15 +42,10 @@ void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslo
     struct json_object *json_obj = NULL;
 
     uint16_t i;
-    uint16_t array_count = 1;   /* Start at one! */
-
     uint16_t json_count = 1;
 
     struct json_object_iterator it;
     struct json_object_iterator itEnd;
-
-    char new_key[JSON_MAX_KEY_SIZE] = { 0 };
-    char tmp_key[JSON_MAX_KEY_SIZE] = { 0 };
 
     const char *key = NULL;
     const char *val_str = NULL;
