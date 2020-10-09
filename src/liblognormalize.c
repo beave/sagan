@@ -353,7 +353,6 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
 
 
     json_object_put(json);
-    json_object_put(string_obj);
 }
 
 #endif
