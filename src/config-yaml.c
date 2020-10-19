@@ -251,8 +251,6 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_log_fd        = -1;
             config->perfmonitor_file_fd = -1;
 
-            config->client_stats_lock = true;
-
             /* Copy default FIFO */
 
             if ( config->sagan_is_file == false )
@@ -1533,16 +1531,6 @@ void Load_YAML_Config( char *yaml_file )
                                             if ( config->client_stats_max == 0 )
                                                 {
                                                     Sagan_Log(ERROR, "[%s, line %d] 'processor' : 'client_stats' - 'max-clients' has to be a non-zero value. Abort!!", __FILE__, __LINE__);
-                                                }
-
-                                        }
-
-                                    else if (!strcmp(last_pass, "lock" ) && config->client_stats_flag == true )
-                                        {
-
-                                            if ( !strcasecmp(value, "no") || !strcasecmp(value, "disabled") || !strcasecmp(value, "false" ) )
-                                                {
-                                                    config->client_stats_lock = false;
                                                 }
 
                                         }
