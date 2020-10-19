@@ -251,6 +251,8 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_log_fd        = -1;
             config->perfmonitor_file_fd = -1;
 
+            config->client_stats_lock = true;
+
             /* Copy default FIFO */
 
             if ( config->sagan_is_file == false )
@@ -1522,7 +1524,6 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
-// client_stats_max
                                     else if (!strcmp(last_pass, "max-clients" ) && config->client_stats_flag == true )
                                         {
 
@@ -1536,7 +1537,15 @@ void Load_YAML_Config( char *yaml_file )
 
                                         }
 
+                                    else if (!strcmp(last_pass, "lock" ) && config->client_stats_flag == true )
+                                        {
 
+                                            if ( !strcasecmp(value, "no") || !strcasecmp(value, "disabled") || !strcasecmp(value, "false" ) )
+                                                {
+                                                    config->client_stats_lock = false;
+                                                }
+
+                                        }
 
                                 }
 
@@ -2872,6 +2881,31 @@ void Load_YAML_Config( char *yaml_file )
         }
 
 #endif
+
+    if ( config->client_stats_flag == true )
+        {
+
+            if ( config->client_stats_file_name[0] == '\0' )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] client-stats \"filename\" is missing.", __FILE__, __LINE__);
+                }
+
+            if ( config->client_stats_time == 0 )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] client-stats \"time\" is missing.", __FILE__, __LINE__);
+                }
+
+            if ( config->client_stats_interval == 0 )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] client-stats \"data-interval\" is missing.", __FILE__, __LINE__);
+                }
+
+            if ( config->client_stats_max == 0 )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] client-stats \"max-clients\" is missing.", __FILE__, __LINE__);
+                }
+
+        }
 
 #ifdef HAVE_LIBFASTJSON
 

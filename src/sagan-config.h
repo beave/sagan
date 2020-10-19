@@ -158,9 +158,11 @@ struct _SaganConfig
     int 	client_stats_time;
     uint16_t	client_stats_interval;
     uint32_t 	client_stats_max;
+    bool	client_stats_lock;
 
     bool        client_stats_file_stream_status;
     FILE	*client_stats_file_stream;
+    int		client_stats_file_stream_int;
 
     bool	perfmonitor_flag;
     int		perfmonitor_time;

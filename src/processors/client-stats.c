@@ -78,6 +78,8 @@ void Client_Stats_Init( void )
             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->client_stats_file_name, strerror(errno));
         }
 
+    config->client_stats_file_stream_int = fileno( config->client_stats_file_stream );
+
     config->client_stats_file_stream_status = true;
     counters->client_stats_count = 0;
 
@@ -185,8 +187,18 @@ void Client_Stats_Handler( void )
                     json_object_object_add(jobj,"program", jarray_program);
                     json_object_object_add(jobj,"message", jarray_message);
 
+                    if ( config->client_stats_lock == true )
+                        {
+                            File_Lock( config->client_stats_file_stream_int );
+                        }
+
                     fprintf(config->client_stats_file_stream, "%s\n", json_object_to_json_string(jobj));
                     fflush(config->client_stats_file_stream);
+
+                    if ( config->client_stats_lock == true )
+                        {
+                            File_Unlock( config->client_stats_file_stream_int );
+                        }
 
                 }
 
