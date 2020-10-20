@@ -2075,7 +2075,7 @@ void Load_Rules( const char *ruleset )
 
 #ifdef PCRE_HAVE_JIT
 
-                            if ( config->pcre_jit == 1 )
+                            if ( config->pcre_jit == true )
                                 {
                                     pcreoptions |= PCRE_STUDY_JIT_COMPILE;
                                 }
