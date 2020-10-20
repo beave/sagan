@@ -351,10 +351,16 @@ void Sagan_Perfmonitor_Open(void)
             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->perfmonitor_file_name, strerror(errno));
         }
 
+    config->perfmonitor_file_stream_int = fileno( config->perfmonitor_file_stream );
     config->perfmonitor_file_stream_status = true;
+
+    File_Lock( config->perfmonitor_file_stream_int );
 
     fprintf(config->perfmonitor_file_stream, "################################ Perfmon start: pid=%d at=%s ###################################\n", getpid(), curtime);
     fprintf(config->perfmonitor_file_stream, "# engine.utime,engine.total,engine.sig_match.total,engine.alerts.total,engine.after.total,engine.threshold.total, engine.drop.total,engine.ignored.total,engine.eps,geoip2.lookup.total,geoip2.hits,geoip2.misses,processor.drop.total,processor.blacklist.hits,processor.tracker.total,processor.tracker.down,output.drop.total,processor.esmtp.success,processor.esmtp.failed,dns.total,dns.miss,processor.bluedot_ip_cache_count,processor.bluedot_ip_cache_hit,processor.bluedot_ip_positive_hit,processor.bluedot_ip_qps,processor.bluedot_hash_cache_count,processor.bluedot_hash_cache_hit,processor.bluedot_hash_positive_hit,processor.bluedot_hash_qps,processor.bluedot_url_cache_count,processor.bluedot_url_cache_hit,processor.bluedot_url_positive_hit,processor.bluedot_url_qps,processor.bluedot_filename_cache_count,processor.bluedot_filename_cache_hit,processor.bluedot_filename_positive_hit,processor.bluedot_filename_qps,processor.bluedot_error_count,processor.bluedot_total_qps\n");
     fflush(config->perfmonitor_file_stream);
+
+    File_Unlock( config->perfmonitor_file_stream_int );
+
 
 }

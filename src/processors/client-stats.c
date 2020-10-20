@@ -187,8 +187,12 @@ void Client_Stats_Handler( void )
                     json_object_object_add(jobj,"program", jarray_program);
                     json_object_object_add(jobj,"message", jarray_message);
 
+                    File_Lock( config->client_stats_file_stream_int );
+
                     fprintf(config->client_stats_file_stream, "%s\n", json_object_to_json_string(jobj));
                     fflush(config->client_stats_file_stream);
+
+                    File_Unlock( config->client_stats_file_stream_int );
 
                 }
 

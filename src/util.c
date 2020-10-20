@@ -239,8 +239,13 @@ void Sagan_Log (int type, const char *format,... )
         }
 
     vsnprintf(buf, sizeof(buf), format, ap);
+
+    File_Lock( config->sagan_log_stream_int );
+
     fprintf(config->sagan_log_stream, "[%s] [%s] - %s\n", chr, curtime, buf);
     fflush(config->sagan_log_stream);
+
+    File_Unlock( config->sagan_log_stream_int );
 
     if ( config->daemonize == 0 && config->quiet == 0 )
         {
@@ -1090,6 +1095,7 @@ void Open_Log_File( bool state, int type )
                     exit(-1);
                 }
 
+            config->sagan_log_stream_int = fileno( config->sagan_log_stream );
             config->sagan_log_stream_status = true;
         }
 
@@ -1123,6 +1129,7 @@ void Open_Log_File( bool state, int type )
                             Sagan_Log(ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
                         }
 
+                    config->eve_stream_int = fileno( config->eve_stream );
                     config->eve_stream_status = true;
 
 
@@ -1136,6 +1143,7 @@ void Open_Log_File( bool state, int type )
                             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->fast_filename, strerror(errno));
                         }
 
+                    config->sagan_fast_stream_int = fileno( config->sagan_fast_stream );
                     config->sagan_fast_stream_status = true;
 
                 }
@@ -1150,6 +1158,7 @@ void Open_Log_File( bool state, int type )
                             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
                         }
 
+                    config->sagan_alert_stream_int = fileno( config->sagan_alert_stream );
                     config->sagan_alert_stream_status = true;
 
                 }

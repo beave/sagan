@@ -70,6 +70,7 @@ void Stats_JSON_Init( void )
             Sagan_Log(ERROR, "[%s, line %d] Can't open %s - %s!", __FILE__, __LINE__, config->stats_json_filename, strerror(errno));
         }
 
+    config->stats_json_file_stream_int = fileno( config->stats_json_file_stream );
     config->stats_json_file_stream_status = true;
 
 }
@@ -543,8 +544,12 @@ void Stats_JSON_Handler( void )
 
             strlcat(json_final, " } }", sizeof(json_head));
 
+            File_Lock( config->stats_json_file_stream_int );
+
             fprintf( config->stats_json_file_stream, "%s\n", json_final);
             fflush( config->stats_json_file_stream );
+
+            File_Unlock( config->stats_json_file_stream_int );
 
             json_object_put(jobj);
             json_object_put(jobj_stats);

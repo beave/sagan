@@ -50,6 +50,8 @@ void Fast_File( _Sagan_Event *Event )
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 0);
 
+    File_Lock( config->sagan_fast_stream_int );
+
     fprintf(config->sagan_fast_stream, "%s [**] [%lu:%" PRIu64 ":%d] %s [**] [Classification: %s] [Priority: %d] [Program: %s] ", timebuf,
             Event->generatorid, Event->sid, Event->rev, Event->f_msg, Event->class, Event->pri, Event->program);
 
@@ -76,5 +78,7 @@ void Fast_File( _Sagan_Event *Event )
     fprintf(config->sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
 
     fflush(config->sagan_fast_stream);
+
+    File_Unlock( config->sagan_fast_stream_int );
 
 }

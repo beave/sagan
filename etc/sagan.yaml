@@ -314,7 +314,6 @@ processors:
       time: 300
       data-interval: 300
       max-clients: 1000
-      lock: enabled		# Locks client stats when writing (default enabled).
 
   # This reports on rule sets that have and have not "fired".  This can be 
   # useful in tuning Sagan. 

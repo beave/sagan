@@ -56,6 +56,8 @@ void Alert_File( _Sagan_Event *Event )
 
     __atomic_add_fetch(&counters->alert_total, 1, __ATOMIC_SEQ_CST);
 
+    File_Lock( config->sagan_alert_stream_int );
+
     fprintf(config->sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
     fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );
     fprintf(config->sagan_alert_stream, "[Alert Time: %s]\n", timebuf);
@@ -74,5 +76,7 @@ void Alert_File( _Sagan_Event *Event )
         }
 
     fflush(config->sagan_alert_stream);
+
+    File_Unlock( config->sagan_alert_stream_int );
 
 }

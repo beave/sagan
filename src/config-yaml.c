@@ -249,7 +249,6 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_alert_fd      = -1;
             config->sagan_fast_fd       = -1;
             config->sagan_log_fd        = -1;
-            config->perfmonitor_file_fd = -1;
 
             /* Copy default FIFO */
 

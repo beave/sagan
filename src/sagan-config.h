@@ -65,7 +65,7 @@ struct _SaganConfig
 
     FILE		*eve_stream;
     bool		eve_stream_status;
-
+    int			eve_stream_int;
 
     int		        eve_fd;
     bool		eve_alerts;
@@ -80,11 +80,12 @@ struct _SaganConfig
 
     FILE         *sagan_alert_stream;
     bool	 sagan_alert_stream_status;
-
+    int		 sagan_alert_stream_int;
 
     int          sagan_alert_fd;
 
     FILE	 *sagan_fast_stream;
+    int		 sagan_fast_stream_int;
     bool	 sagan_fast_stream_status;
 
     int	         sagan_fast_fd;
@@ -92,6 +93,7 @@ struct _SaganConfig
 
     FILE         *sagan_log_stream;
     bool	 sagan_log_stream_status;
+    int		 sagan_log_stream_int;
 
     int          sagan_log_fd;
     char         sagan_lockfile_full[MAXPATH];
@@ -168,13 +170,14 @@ struct _SaganConfig
     char	perfmonitor_file_name[MAXPATH];
 
     FILE	*perfmonitor_file_stream;
+    int		perfmonitor_file_stream_int;
     bool        perfmonitor_file_stream_status;
-    int	        perfmonitor_file_fd;
 
     bool	stats_json_sub_old_values;
     bool	stats_json_flag;
     bool	stats_json_file_stream_status;
     FILE	*stats_json_file_stream;
+    int		stats_json_file_stream_int;
     char	stats_json_filename[MAXPATH];
     int		stats_json_time;
 

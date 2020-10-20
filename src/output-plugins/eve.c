@@ -51,14 +51,15 @@ void Alert_JSON( _Sagan_Event *Event )
     if ( config->eve_alerts == true )
         {
 
-            Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
+            File_Lock( config->eve_stream_int );
 
+            Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
             fprintf(config->eve_stream, "%s\n", alert_data);
+            fflush(config->eve_stream);
+
+            File_Unlock( config->eve_stream_int );
 
         }
-
-    fflush(config->eve_stream);
-
 }
 
 void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
