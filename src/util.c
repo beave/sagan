@@ -259,21 +259,6 @@ void Sagan_Log (int type, const char *format,... )
 
 }
 
-/******************************************
- * Check if system is big || little endian
- ******************************************/
-
-bool Check_Endian()
-{
-    int i = 1;
-    char *p = (char *) &i;
-    if (p[0] == 1)  /* Lowest address contains the least significant byte */
-        return 0;   /* Little endian */
-    else
-        return 1;   /* Big endian */
-}
-
-
 bool Mask2Bit(int mask, unsigned char *out)
 {
     int i;
@@ -361,7 +346,7 @@ bool IP2Bit(char *ipaddr, unsigned char *out)
  * Check if string contains only numbers
  ****************************************/
 
-bool Is_Numeric (char *str)
+bool Is_Numeric (const char *str)
 {
 
     if(strlen(str) == strspn(str, "0123456789"))
@@ -380,29 +365,29 @@ bool Is_Numeric (char *str)
  * parsing msg: and pcre
  ***************************************************************************/
 
-void Between_Quotes(char *instr, char *str, size_t size)
+void Between_Quotes( const char *in_str, char *str, size_t size)
 {
-    int flag=0;
-    int i;
+    bool flag = false;
+    int i = 0;
 
-    char tmp1[2];
-    char tmp2[512] = { 0 };
+    char tmp1[2] = { 0 };
+    char tmp2[1024] = { 0 };
 
-    for ( i=0; i<strlen(instr); i++)
+    for ( i=0; i<strlen(in_str); i++)
         {
 
-            if ( flag == 1 && instr[i] == '\"' )
+            if ( flag == true && in_str[i] == '\"' )
                 {
-                    flag = 0;
+                    flag = false;
                 }
 
-            if ( flag == 1 )
+            if ( flag == true )
                 {
-                    snprintf(tmp1, sizeof(tmp1), "%c", instr[i]);
+                    snprintf(tmp1, sizeof(tmp1), "%c", in_str[i]);
                     strlcat(tmp2, tmp1, sizeof(tmp2));
                 }
 
-            if ( instr[i] == '\"' ) flag++;
+            if ( in_str[i] == '\"' ) flag = true;
 
         }
 
@@ -502,7 +487,7 @@ int DNS_Lookup( char *host, char *str, size_t size )
  * String replacement function.  Used for things like $RULE_PATH
  ****************************************************************/
 
-void Replace_String(char *in_str, char *orig, char *rep, char *str, size_t size)
+void Replace_String(const char *in_str, char *orig, char *rep, char *str, size_t size)
 {
 
     char buffer[4096] = { 0 };
@@ -705,7 +690,7 @@ bool is_notroutable ( unsigned char *ip )
  * example - $RULE_PATH into it's true value.
  ****************************************************************************/
 
-void Var_To_Value(char *in_str, char *str, size_t size)
+void Var_To_Value(const char *in_str, char *str, size_t size)
 {
 
     char *ptmp = NULL;
@@ -798,7 +783,7 @@ int Check_Var(const char *string)
  * Move to this function 05/05/2014 - Champ Clark
  *************************************************************************************************/
 
-void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str, size_t size )
+void Content_Pipe( const char *in_string, int linecount, const char *ruleset, char *str, size_t size )
 {
 
     int pipe_flag = 0;
@@ -878,26 +863,24 @@ void Content_Pipe(char *in_string, int linecount, const char *ruleset, char *str
  * with *replace
  ****************************************************************************/
 
-void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
+void Replace_Sagan( const char *in_str, char *replace, char *str, size_t size)
 {
 
-    char string[1024] = { 0 };
     char tmp[2] = { 0 };
-
     char new_string[CONFBUF] = { 0 };
 
-    int i;
+    uint16_t i = 0;
 
-    strlcpy(string, string_in, sizeof(string));
+//    strlcpy(string, string_in, sizeof(string));
 
-    for (i = 0; i < strlen(string); i++)
+    for (i = 0; i < strlen(in_str); i++)
         {
 
-            if ( string[i] == '%' )
+            if ( in_str[i] == '%' )
                 {
 
-                    if ( string[i+1] == 's' && string[i+2] == 'a' && string[i+3] == 'g' &&
-                            string[i+4] == 'a' && string[i+5] == 'n' && string[i+6] == '%' )
+                    if ( in_str[i+1] == 's' && in_str[i+2] == 'a' && in_str[i+3] == 'g' &&
+                            in_str[i+4] == 'a' && in_str[i+5] == 'n' && in_str[i+6] == '%' )
                         {
 
                             strlcat(new_string, replace, sizeof(new_string));
@@ -914,7 +897,7 @@ void Replace_Sagan( char *string_in, char *replace, char *str, size_t size)
             else
                 {
 
-                    snprintf(tmp, sizeof(tmp), "%c", string[i]);
+                    snprintf(tmp, sizeof(tmp), "%c", in_str[i]);
                     strlcat(new_string, tmp, sizeof(new_string));
 
                 }
@@ -1363,7 +1346,7 @@ void Strip_Chars(const char *string, const char *chars, char *str)
  * address.
  ***************************************************/
 
-bool Is_IP (char *ipaddr, int ver )
+bool Is_IP (const char *ipaddr, int ver )
 {
 
     struct sockaddr_in sa;
@@ -1472,13 +1455,8 @@ int PageSupportsRWX(void)
  * EVE
  ***************************************************************************/
 
-//int64_t FlowGetId( _Sagan_Event *Event)
 int64_t FlowGetId( struct timeval tp )
-
 {
-//    return (int64_t)(Event->event_time.tv_sec & 0x0000FFFF) << 16 |
-//           (int64_t)(Event->event_time.tv_usec & 0x0000FFFF);
-
     return (int64_t)(tp.tv_sec & 0x0000FFFF) << 16 |
            (int64_t)(tp.tv_usec & 0x0000FFFF);
 }
@@ -1488,7 +1466,7 @@ int64_t FlowGetId( struct timeval tp )
  * in a string.  For example, content!"something";
  ***************************************************************************/
 
-bool Check_Content_Not( char *s )
+bool Check_Content_Not( const char *s )
 {
 
     char rule_tmp[RULEBUF] = { 0 };
@@ -1521,13 +1499,12 @@ bool Check_Content_Not( char *s )
     return(false);
 }
 
-
 /***************************************************************************
  * Djd2_Hash - creates a hash based off a string.  This code is from Dan
  * Bernstein.  See http://www.cse.yorku.ca/~oz/hash.html.
  ***************************************************************************/
 
-uint32_t Djb2_Hash(char *str)
+uint32_t Djb2_Hash(const char *str)
 {
 
     uint32_t hash = 5381;
@@ -1537,24 +1514,5 @@ uint32_t Djb2_Hash(char *str)
         hash = ((hash << 5) + hash) + c;
 
     return(hash);
-}
-
-char *strrpbrk(const char *str, const char *accept)
-{
-    const char *test = NULL;
-    const char *pstr = str+strlen(str);
-    while (pstr >= str)
-        {
-            test = accept;
-            while (test[0] != '\0')
-                {
-                    if ((test++)[0] == pstr[0])
-                        {
-                            return (char *)pstr;
-                        }
-                }
-            pstr--;
-        }
-    return NULL;
 }
 
