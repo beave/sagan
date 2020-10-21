@@ -382,7 +382,7 @@ bool Is_Numeric (char *str)
 
 void Between_Quotes(char *instr, char *str, size_t size)
 {
-    bool flag=0;
+    int flag=0;
     int i;
 
     char tmp1[2];
