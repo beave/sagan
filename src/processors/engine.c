@@ -186,6 +186,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char s_msg[1024] = { 0 };
 
     char syslog_append_program[MAX_SYSLOGMSG] = { 0 };
+    bool append_program_flag = false;
 
     struct timeval tp;
     unsigned char proto = 0;
@@ -308,11 +309,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
+    append_program_flag = false;
+
     /* Search for matches */
 
     /* First we search for 'program' and such.   This way,  we don't waste CPU
      * time with pcre/content.  */
-
 
     for(b=0; b < counters->rulecount; b++)
         {
@@ -516,11 +518,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                             /* If the "append_program" rule option is used,  we append the program here */
 
-                            if ( rulestruct[b].append_program == true )
+                            if ( rulestruct[b].append_program == true && append_program_flag == false )
                                 {
                                     snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
                                     syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0';
                                     strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                                    append_program_flag = true;
                                 }
 
                             /* Start processing searches from rule optison */
