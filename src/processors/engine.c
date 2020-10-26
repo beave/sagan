@@ -518,7 +518,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                             /* If the "append_program" rule option is used,  we append the program here */
 
-                            if ( rulestruct[b].append_program == true && append_program_flag == false )
+                            if ( rulestruct[b].append_program == true && append_program_flag == false && 
+				 SaganProcSyslog_LOCAL->syslog_program[0] != '\0' )
                                 {
                                     snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
                                     syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0';
