@@ -574,7 +574,15 @@ int main(int argc, char **argv)
                 }
         }
 
-    Open_Log_File(OPEN, SAGAN_LOG);
+    if (( config->sagan_log_stream = fopen( config->sagan_log_filepath, "a" )) == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+        }
+
+    config->sagan_log_fd = fileno( config->sagan_log_stream );
+
+
+    //Open_Log_File(OPEN, SAGAN_LOG);
 
     /* Become a daemon if requested */
 
@@ -846,7 +854,7 @@ int main(int argc, char **argv)
 
     /* Open sagan alert file */
 
-    Open_Log_File(OPEN, ALERT_LOG);
+    //Open_Log_File(OPEN, ALERT_LOG);
 
     /****************************************************************************
      * Display processor information as we load

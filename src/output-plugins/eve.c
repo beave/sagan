@@ -52,26 +52,23 @@ void Alert_JSON( _Sagan_Event *Event )
     FILE *eve_stream;
     int eve_stream_int = 0;
 
-    if ( config->eve_alerts == true )
+
+    if (( eve_stream = fopen( config->eve_filename, "a" )) == NULL )
         {
-
-            if (( eve_stream = fopen( config->eve_filename, "a" )) == NULL )
-                {
-                    Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->eve_filename, strerror(errno));
-                }
-
-            eve_stream_int = fileno( eve_stream );
-
-            File_Lock( eve_stream_int );
-
-            Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
-            fprintf(eve_stream, "%s\n", alert_data);
-            fflush(eve_stream);
-
-            File_Unlock( eve_stream_int );
-            fclose(eve_stream);
-
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->eve_filename, strerror(errno));
         }
+
+    eve_stream_int = fileno( eve_stream );
+
+    File_Lock( eve_stream_int );
+
+    Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
+    fprintf(eve_stream, "%s\n", alert_data);
+    fflush(eve_stream);
+
+    File_Unlock( eve_stream_int );
+    fclose(eve_stream);
+
 }
 
 void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
@@ -96,6 +93,7 @@ void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
     fflush(eve_stream);
 
     File_Unlock( eve_stream_int );
+    fclose(eve_stream);
 
 
 }

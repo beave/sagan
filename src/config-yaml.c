@@ -175,7 +175,6 @@ void Load_YAML_Config( char *yaml_file )
             strlcpy(config->external_net, EXTERNAL_NET, sizeof(config->external_net));
             strlcpy(config->home_net, HOME_NET, sizeof(config->home_net));
 
-
             /* Setup and get lockfile paths, filenames, etc */
 
             strlcpy(config->sagan_lockfile_full, LOCKFILE, sizeof(config->sagan_lockfile_full));
@@ -245,9 +244,6 @@ void Load_YAML_Config( char *yaml_file )
             config->sagan_proto = 17;           /* Default to UDP */
             config->max_processor_threads = MAX_PROCESSOR_THREADS;
 
-            config->eve_fd              = -1;
-            config->sagan_alert_fd      = -1;
-            config->sagan_fast_fd       = -1;
             config->sagan_log_fd        = -1;
 
             /* Copy default FIFO */

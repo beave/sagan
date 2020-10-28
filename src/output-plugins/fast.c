@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <errno.h>
 
 #include "sagan.h"
 #include "references.h"
@@ -47,38 +48,49 @@ void Fast_File( _Sagan_Event *Event )
 {
 
     char timebuf[64];
+    FILE *sagan_fast_stream;
+    int sagan_fast_stream_int = 0;
 
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 0);
 
-    File_Lock( config->sagan_fast_stream_int );
+    if (( sagan_fast_stream = fopen( config->fast_filename, "a" )) == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+        }
 
-    fprintf(config->sagan_fast_stream, "%s [**] [%lu:%" PRIu64 ":%d] %s [**] [Classification: %s] [Priority: %d] [Program: %s] ", timebuf,
-            Event->generatorid, Event->sid, Event->rev, Event->f_msg, Event->class, Event->pri, Event->program);
+    sagan_fast_stream_int = fileno( sagan_fast_stream );
+
+    File_Lock( sagan_fast_stream_int );
+
+    fprintf( sagan_fast_stream, "%s [**] [%lu:%" PRIu64 ":%d] %s [**] [Classification: %s] [Priority: %d] [Program: %s] ", timebuf,
+             Event->generatorid, Event->sid, Event->rev, Event->f_msg, Event->class, Event->pri, Event->program);
 
     if ( Event->ip_proto == 1 )
         {
-            fprintf(config->sagan_fast_stream, "{ICMP}");
+            fprintf(sagan_fast_stream, "{ICMP}");
         }
 
     else if ( Event->ip_proto == 6 )
         {
-            fprintf(config->sagan_fast_stream, "{TCP}");
+            fprintf(sagan_fast_stream, "{TCP}");
         }
 
     else if ( Event->ip_proto == 17 )
         {
-            fprintf(config->sagan_fast_stream, "{UDP}");
+            fprintf(sagan_fast_stream, "{UDP}");
         }
 
     else if ( Event->ip_proto != 1 && Event->ip_proto !=6 && Event->ip_proto != 17 )
         {
-            fprintf(config->sagan_fast_stream, "{UNKNOWN}");
+            fprintf(sagan_fast_stream, "{UNKNOWN}");
         }
 
-    fprintf(config->sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
+    fprintf(sagan_fast_stream," %s:%d -> %s:%d\n", Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port);
 
-    fflush(config->sagan_fast_stream);
+    fflush(sagan_fast_stream);
 
-    File_Unlock( config->sagan_fast_stream_int );
+    File_Unlock( sagan_fast_stream_int );
+
+    fclose(sagan_fast_stream);
 
 }

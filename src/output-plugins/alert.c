@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <errno.h>
 
 #include "sagan.h"
 
@@ -52,17 +53,28 @@ void Alert_File( _Sagan_Event *Event )
     char tmpref[256];
     char timebuf[64];
 
+    FILE *sagan_alert_stream;
+    int sagan_alert_stream_int = 0;
+
     CreateTimeString(&Event->event_time, timebuf, sizeof(timebuf), 1);
 
     __atomic_add_fetch(&counters->alert_total, 1, __ATOMIC_SEQ_CST);
 
-    File_Lock( config->sagan_alert_stream_int );
+    if (( sagan_alert_stream = fopen( config->sagan_alert_filepath, "a" )) == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+        }
 
-    fprintf(config->sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
-    fprintf(config->sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );
-    fprintf(config->sagan_alert_stream, "[Alert Time: %s]\n", timebuf);
-    fprintf(config->sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->program);
-    fprintf(config->sagan_alert_stream, "Message: %s\n", Event->message);
+    sagan_alert_stream_int = fileno( sagan_alert_stream );
+
+
+    File_Lock( sagan_alert_stream_int );
+
+    fprintf(sagan_alert_stream, "\n[**] [%lu:%" PRIu64 ":%d] %s [**]\n", Event->generatorid, Event->sid, Event->rev, Event->f_msg);
+    fprintf(sagan_alert_stream, "[Classification: %s] [Priority: %d] [%s]\n", Event->class, Event->pri, Event->host );
+    fprintf(sagan_alert_stream, "[Alert Time: %s]\n", timebuf);
+    fprintf(sagan_alert_stream, "%s %s %s:%d -> %s:%d %s %s %s\n", Event->date, Event->time, Event->ip_src, Event->src_port, Event->ip_dst, Event->dst_port, Event->facility, Event->priority, Event->program);
+    fprintf(sagan_alert_stream, "Message: %s\n", Event->message);
 
     if ( Event->found != 0 )
         {
@@ -71,12 +83,13 @@ void Alert_File( _Sagan_Event *Event )
 
             if (strcmp(tmpref, "" ))
                 {
-                    fprintf(config->sagan_alert_stream, "%s\n", tmpref);
+                    fprintf(sagan_alert_stream, "%s\n", tmpref);
                 }
         }
 
-    fflush(config->sagan_alert_stream);
+    fflush(sagan_alert_stream);
 
-    File_Unlock( config->sagan_alert_stream_int );
+    File_Unlock( sagan_alert_stream_int );
+    fclose(sagan_alert_stream);
 
 }

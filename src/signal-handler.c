@@ -205,21 +205,25 @@ void Sig_Handler( void )
                                             }
                     */
 
-                    if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
-                        {
+                    /*
+                            if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
+                                {
 
-                            fflush(config->sagan_alert_stream);
-                            fclose(config->sagan_alert_stream);             /* Close Sagan alert file */
+                                    fflush(config->sagan_alert_stream);
+                                    fclose(config->sagan_alert_stream);
 
-                        }
+                                }
+                    */
 
-                    if ( config->fast_flag == true && config->sagan_fast_stream_status == true )
-                        {
+                    /*
+                                        if ( config->fast_flag == true && config->sagan_fast_stream_status == true )
+                                            {
 
-                            fflush(config->sagan_fast_stream);
-                            fclose(config->sagan_fast_stream);
+                                                fflush(config->sagan_fast_stream);
+                                                fclose(config->sagan_fast_stream);
 
-                        }
+                                            }
+                    			*/
 
                     if ( config->sagan_log_stream_status == true )
                         {
@@ -315,7 +319,15 @@ void Sig_Handler( void )
                     * 04/14/2015 - Champ Clark III (cclark@quadrantsec.com)
                     */
 
-                    Open_Log_File(REOPEN, ALL_LOGS);
+                    fclose( config->sagan_log_stream );
+
+                    if (( config->sagan_log_stream = fopen( config->sagan_log_filepath, "a" )) == NULL )
+                        {
+                            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+                        }
+
+                    config->sagan_log_fd = fileno( config->sagan_log_stream );
+
 
                     /******************/
                     /* Reset counters */
@@ -449,14 +461,23 @@ void Sig_Handler( void )
 #ifdef HAVE_LIBMAXMINDDB
 
                     /* GeoIP skip */
-                    __atomic_store_n (&counters->geoip_skip_count, 0, __ATOMIC_SEQ_CST);
-                    memset(GeoIP_Skip, 0, sizeof(_Sagan_GeoIP_Skip));
+
+                    if ( config->have_geoip2 == true )
+                        {
+                            __atomic_store_n (&counters->geoip_skip_count, 0, __ATOMIC_SEQ_CST);
+                            memset(GeoIP_Skip, 0, sizeof(_Sagan_GeoIP_Skip));
+                        }
+
 #endif
 
 
 #ifdef WITH_BLUEDOT
-                    __atomic_store_n (&counters->bluedot_skip_count, 0, __ATOMIC_SEQ_CST);
-                    memset(Bluedot_Skip, 0, sizeof(_Sagan_Bluedot_Skip));
+
+                    if ( config->bluedot_flag == true )
+                        {
+                            __atomic_store_n (&counters->bluedot_skip_count, 0, __ATOMIC_SEQ_CST);
+                            memset(Bluedot_Skip, 0, sizeof(_Sagan_Bluedot_Skip));
+                        }
 #endif
 
                     /* Non-output / Processors */
