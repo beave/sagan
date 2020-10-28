@@ -63,9 +63,9 @@ struct _SaganConfig
     char		eve_interface[32];
     char 		eve_filename[MAXPATH];
 
-    FILE		*eve_stream;
-    bool		eve_stream_status;
-    int			eve_stream_int;
+    //FILE		*eve_stream;
+    //bool		eve_stream_status;
+    //int			eve_stream_int;
 
     int		        eve_fd;
     bool		eve_alerts;

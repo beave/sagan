@@ -1088,10 +1088,12 @@ void Open_Log_File( bool state, int type )
 
             /* For SIGHUP */
 
-            if ( state == REOPEN && config->eve_flag == true )
-                {
-                    CloseStream(config->eve_stream, &config->eve_fd);
-                }
+            /*
+                        if ( state == REOPEN && config->eve_flag == true )
+                            {
+                                CloseStream(config->eve_stream, &config->eve_fd);
+                            }
+            */
 
             if ( state == REOPEN && config->alert_flag == true )
                 {
@@ -1103,20 +1105,23 @@ void Open_Log_File( bool state, int type )
                     CloseStream(config->sagan_fast_stream, &config->sagan_fast_fd);
                 }
 
-            if ( config->eve_flag )
-                {
+            /*
+                        if ( config->eve_flag )
+                            {
 
-                    if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
-                        {
-                            Remove_Lock_File();
-                            Sagan_Log(ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
-                        }
+                                if (( config->eve_stream = OpenStream(config->eve_filename, &config->eve_fd, (unsigned long)pw->pw_uid, (unsigned long)pw->pw_gid )) == NULL )
+                                    {
+                                        Remove_Lock_File();
+                                        Sagan_Log(ERROR, "[%s, line %d] Can't open \"%s\" - %s!", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+                                    }
 
-                    config->eve_stream_int = fileno( config->eve_stream );
-                    config->eve_stream_status = true;
+                                config->eve_stream_int = fileno( config->eve_stream );
+                                config->eve_stream_status = true;
 
 
-                }
+                            }
+            */
+
             if ( config->fast_flag )
                 {
 

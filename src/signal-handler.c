@@ -195,13 +195,15 @@ void Sig_Handler( void )
 
 #endif
 
-                    if ( config->eve_flag == true && config->eve_stream_status == true )
-                        {
+                    /*
+                                        if ( config->eve_flag == true ) && config->eve_stream_status == true )
+                                            {
 
-                            fflush(config->eve_stream);
-                            fclose(config->eve_stream);
+                                                fflush(config->eve_stream);
+                                                fclose(config->eve_stream);
 
-                        }
+                                            }
+                    */
 
                     if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
                         {

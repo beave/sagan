@@ -33,6 +33,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <errno.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
@@ -47,17 +48,27 @@ void Alert_JSON( _Sagan_Event *Event )
 {
 
     char alert_data[MAX_SYSLOGMSG+1024] = { 0 };
+    FILE *eve_stream;
+    int eve_stream_int = 0;
 
     if ( config->eve_alerts == true )
         {
 
-            File_Lock( config->eve_stream_int );
+            if (( eve_stream = fopen( config->eve_filename, "a" )) == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+                }
+
+            eve_stream_int = fileno( eve_stream );
+
+            File_Lock( eve_stream_int );
 
             Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
-            fprintf(config->eve_stream, "%s\n", alert_data);
-            fflush(config->eve_stream);
+            fprintf(eve_stream, "%s\n", alert_data);
+            fflush(eve_stream);
 
-            File_Unlock( config->eve_stream_int );
+            File_Unlock( eve_stream_int );
+            fclose(eve_stream);
 
         }
 }
@@ -66,10 +77,24 @@ void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
 {
 
     char log_data[MAX_SYSLOGMSG+1024] = { 0 };
+    FILE *eve_stream;
+    int eve_stream_int = 0;
+
+    if (( eve_stream = fopen( config->eve_filename, "a" )) == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+        }
+
+
+    eve_stream_int = fileno( eve_stream );
+
+    File_Lock( eve_stream_int );
 
     Format_JSON_Log_EVE( SaganProcSyslog_LOCAL, tp, log_data, sizeof(log_data) );
-    fprintf(config->eve_stream, "%s\n", log_data);
-    fflush(config->eve_stream);
+    fprintf(eve_stream, "%s\n", log_data);
+    fflush(eve_stream);
+
+    File_Unlock( eve_stream_int );
 
 
 }
