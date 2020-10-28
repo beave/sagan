@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <errno.h>
+#include <string.h>
 
 #include "sagan.h"
 #include "sagan-defs.h"
