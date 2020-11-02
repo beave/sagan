@@ -50,7 +50,7 @@ before_install:
         sudo apt-get update -qq
         sudo apt-get install -y libpcre3-dev liblognorm-dev \
             build-essential autoconf automake libyaml-dev \
-            pkg-config libhiredis-dev
+            pkg-config libhiredis-dev libfastjson-dev
 
     fi
 
