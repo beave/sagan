@@ -97,76 +97,76 @@ void Stats_JSON_Handler( void )
     char  timebuf[64] = { 0 };
     char  current_utime[64] = { 0 };
 
-    uint64_t uptime_seconds;
+    uint64_t uptime_seconds = 0;
 
-    uint64_t last_events_received;
-    uint64_t last_drop;
-    uint64_t last_ignore;
-    uint64_t last_threshold;
-    uint64_t last_after;
-    uint64_t last_alert;
-    uint64_t last_match;
+    uint64_t last_events_received = 0;
+    uint64_t last_drop = 0;
+    uint64_t last_ignore = 0;
+    uint64_t last_threshold = 0;
+    uint64_t last_after = 0;
+    uint64_t last_alert = 0;
+    uint64_t last_match = 0;
 
 #ifdef HAVE_LIBMAXMINDDB
 
-    uint64_t last_geoip_lookups;
-    uint64_t last_geoip_hits;
+    uint64_t last_geoip_lookups = 0;
+    uint64_t last_geoip_hits = 0;
 
 #endif
 
-    uint64_t last_blacklist_lookups;
-    uint64_t last_blacklist_hits;
+    uint64_t last_blacklist_lookups = 0;
+    uint64_t last_blacklist_hits = 0;
 
 #ifdef HAVE_LIBESMTP
 
-    uint64_t last_esmtp_success;
-    uint64_t last_esmtp_failed;
+    uint64_t last_esmtp_success = 0;
+    uint64_t last_esmtp_failed = 0;
 
 #endif
 
-    uint64_t last_dns_cached;
-    uint64_t last_dns_missed;
+    uint64_t last_dns_cached = 0;
+    uint64_t last_dns_missed = 0;
 
-    uint64_t last_flow_total;
-    uint64_t last_flow_drop;
+    uint64_t last_flow_total = 0;
+    uint64_t last_flow_drop = 0;
 
 #ifdef WITH_BLUEDOT
 
-    uint64_t last_bluedot_errors;
+    uint64_t last_bluedot_errors = 0;
 
-    uint64_t last_bluedot_ip_total;
-    uint64_t last_bluedot_ip_cache_count;
-    uint64_t last_bluedot_ip_cache_hit;
-    uint64_t last_bluedot_ip_positive_hit;
+    uint64_t last_bluedot_ip_total = 0;
+    uint64_t last_bluedot_ip_cache_count = 0;
+    uint64_t last_bluedot_ip_cache_hit = 0;
+    uint64_t last_bluedot_ip_positive_hit = 0;
 
-    uint64_t last_bluedot_ip_mdate;
-    uint64_t last_bluedot_ip_cdate;
-    uint64_t last_bluedot_ip_mdate_cache;
-    uint64_t last_bluedot_ip_cdate_cache;
+    uint64_t last_bluedot_ip_mdate = 0;
+    uint64_t last_bluedot_ip_cdate = 0;
+    uint64_t last_bluedot_ip_mdate_cache = 0;
+    uint64_t last_bluedot_ip_cdate_cache = 0;
 
-    uint64_t last_bluedot_hash_total;
-    uint64_t last_bluedot_hash_cache_count;
-    uint64_t last_bluedot_hash_cache_hit;
-    uint64_t last_bluedot_hash_positive_hit;
+    uint64_t last_bluedot_hash_total = 0;
+    uint64_t last_bluedot_hash_cache_count = 0;
+    uint64_t last_bluedot_hash_cache_hit = 0;
+    uint64_t last_bluedot_hash_positive_hit = 0;
 
-    uint64_t last_bluedot_url_total;
-    uint64_t last_bluedot_url_cache_count;
-    uint64_t last_bluedot_url_cache_hit;
-    uint64_t last_bluedot_url_positive_hit;
+    uint64_t last_bluedot_url_total = 0;
+    uint64_t last_bluedot_url_cache_count = 0;
+    uint64_t last_bluedot_url_cache_hit = 0;
+    uint64_t last_bluedot_url_positive_hit = 0;
 
-    uint64_t last_bluedot_filename_total;
-    uint64_t last_bluedot_filename_cache_count;
-    uint64_t last_bluedot_filename_cache_hit;
-    uint64_t last_bluedot_filename_positive_hit;
+    uint64_t last_bluedot_filename_total = 0;
+    uint64_t last_bluedot_filename_cache_count = 0;
+    uint64_t last_bluedot_filename_cache_hit = 0;
+    uint64_t last_bluedot_filename_positive_hit = 0;
 
-    uint64_t last_bluedot_ja3_total;
-    uint64_t last_bluedot_ja3_cache_count;
-    uint64_t last_bluedot_ja3_cache_hit;
-    uint64_t last_bluedot_ja3_positive_hit;
+    uint64_t last_bluedot_ja3_total = 0;
+    uint64_t last_bluedot_ja3_cache_count = 0;
+    uint64_t last_bluedot_ja3_cache_hit = 0;
+    uint64_t last_bluedot_ja3_positive_hit = 0;
 
 #endif
 
-    unsigned long eps;
+    unsigned long eps = 0;
     struct timeval tp;
 
     /* Tmp's for processing / building new JSON */

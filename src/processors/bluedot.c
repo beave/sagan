@@ -779,14 +779,11 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     unsigned char ip_convert[MAXIPBIT] = { 0 };
 
     char buff[2048] = { 0 };
-    char tmpdeviceid[64] = { 0 };
-    char bluedot_json[BLUEDOT_JSON_SIZE] = { 0 };
-
     char *jsonptr = NULL;
     char *jsonptr_f = NULL;
 
-    int sockfd, connfd;
-    struct sockaddr_in servaddr, cli;
+    int sockfd;
+    struct sockaddr_in servaddr;
 
     char json_final[2048] = { 0 };
 
@@ -797,8 +794,8 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
     const char *cdate_utime=NULL;
     const char *mdate_utime=NULL;
 
-    uint64_t cdate_utime_u32;
-    uint64_t mdate_utime_u32;
+    uint64_t cdate_utime_u32 = 0;
+    uint64_t mdate_utime_u32 = 0;
 
     signed char bluedot_alertid = 0;		/* -128 to 127 */
     int i;

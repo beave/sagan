@@ -1,5 +1,78 @@
 2020/10/?? -	Sagan 2.0.0 released. 
 
+		* New JSON parsing and rule options! For more information on how Sagan
+		  can do JSON processing,  see:
+
+		  https://sagan.readthedocs.io/en/latest/sagan-json.html#sagan-json
+	
+		  New signature options: 
+
+		  "json_content" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-content
+		  "json_nocase" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-nocase
+		  "json_strstr" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-strstr
+		  "json_pcre" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-pcre
+		  "json_meta_content" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-meta-content
+		  "json_meta_nocase" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-meta-nocase
+		  "json_meta_strstr" - https://sagan.readthedocs.io/en/latest/rule-keywords.html#json-meta-strstr
+
+		* Removed all libcurl dependencies.  It was over kill and cause memory leaks for Bluedot.
+
+		* Renamed all "Bro" references to "Zeek".
+
+		* New "event_id" rule option.  This autmagically gets the event ID (for
+		  example, from Microsoft Windows, etc) from standard syslog or JSON if
+		  present.
+
+		* New "chown-fifo" configuration option.  If the FIFO (named pipe) is not
+		  owned by Sagan, its ownership is changed if this is set to "true".
+
+		* Better validation of signatures upon loading.
+	
+		* Added new "metadata" option.  This works exactly the same as the Suricata
+		  "metadata" option.  This rule option is not parsed by the Sagan engine.  
+		  It is used to add notes, comments, etc to a signature.
+
+		* Added "normalize" data to EVE (liblognorm normalization data).
+		 
+		  https://github.com/beave/sagan/commit/ddf5699fe867b8a372c4ada9c70f62f216b87b78
+
+		* "candlerb" @ Github submitted some bug fixes & code clean ups.  Thanks!
+		
+		  - Logic cleanup around where "routing.c" by 
+
+		  https://github.com/beave/sagan/pull/143
+
+		  - Fix logic for combined matches of program and syslog_*
+		
+		  https://github.com/beave/sagan/commit/3e177556a114e69161074bfcc05d14b37d42bee3
+
+		  - Do not forget rule conditions like syslog_facility, syslog_level etc
+
+		  https://github.com/beave/sagan/commit/c85d9f6c26d4fb85c4f68ab16ed35c462f3c0624
+
+		  - Update list of debug options in manpage
+
+		  https://github.com/beave/sagan/commit/c85d9f6c26d4fb85c4f68ab16ed35c462f3c0624
+
+
+		* Fixed "follow flow" option that would only follow up to 512 flows. 
+
+		* Removed "Snortsam" and Unified2 support. 
+
+		* New rule option "event_type" add.  These is essentially an alias for 
+		  "program".  This makes it less confusing when working with logs like 
+		  Suricata that have an "event_type" field. 
+
+		* First GeoIP destination bug. 
+
+		* Added new "client-stats" output option.  This take a log line from a
+		  reporting "host" every X seconds and records it.  This can be useful for
+		  tracking what is sending data along with a small example type.
+
+		* Re-worked how Sagan writes out EVE data.  This allows EVE files to be
+		  truncated,  renamed, etc and makes it easy for "log rotation" routines. 
+
+		* Lots of memory & CPU usage improvements. 
 
 2019/07/03 - 	Sagan 1.2.2 released. 
 

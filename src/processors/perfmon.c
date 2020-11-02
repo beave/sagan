@@ -87,7 +87,6 @@ void Sagan_Perfmonitor_Handler( void )
 #ifdef HAVE_LIBMAXMINDDB
     uint64_t last_geoip2_lookup = 0;
     uint64_t last_geoip2_hit = 0;
-    uint64_t last_geoip2_miss = 0;
 #endif
 
 #ifdef WITH_BLUEDOT
@@ -165,8 +164,7 @@ void Sagan_Perfmonitor_Handler( void )
                     fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", counters->geoip2_hit - last_geoip2_hit);
                     last_geoip2_hit = counters->geoip2_hit;
 
-                    fprintf(config->perfmonitor_file_stream, "%" PRIu64 ",", 0);
-                    //last_geoip2_miss = counters->geoip2_miss;
+                    fprintf(config->perfmonitor_file_stream, "0,");
 
 #endif
 

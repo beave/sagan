@@ -17,24 +17,24 @@ This means that in many cases it is important for Sagan to properly handle JSON.
 Different method of JSON input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sagan can interpret JSON from two locations.   From the named pipe (FIFO) input or from a "syslog message". 
+Sagan can interpret JSON from two locations.   From the named pipe (FIFO) or from a "syslog message". 
 
-The first methods general options is that Sagan reads incoming JSON data from a named pipe (FIFO).
-Traditionally, this data is in a pipe delimited format.  Pipe delimitation greatly limits the 
+The first methods is that Sagan reads incoming JSON data from a named pipe (FIFO).
+Traditionally, this data is in a "pipe" (|) delimited format.  The "pipe" delimitation greatly limits the 
 types of data Sagan can process.  As of Sagan 2.0.0,  Sagan can read JSON data via the named pipe.
 Most modern day syslog engines (Rsyslog, Syslog-NX, NXlog, etc) support JSON output.  See 
 sections
 `4.2. rsyslog - JSON mode <https://https://sagan.readthedocs.io/en/latest/configuration.html#rsyslog-json-modeg`>_ or `4.4. syslog-ng - JSON mode <https://sagan.readthedocs.io/en/latest/configuration.html#syslog-ng-json-mode>`_ 
 for more information about configuration of various log daemons.
 
-Keep in mind,  traditional syslog daemons are no longer the only sources Sagan can collect this
-type of data from.  For example, the IDS engine Suricata (https://suricata-ids.org) produces
+With this in mind,  this means that Sagan can collect data from non-syslog sources.  
+For example, the IDS engine Suricata (https://suricata-ids.org) produces
 a lot of JSON data.  Various security tool APIs like Cisco Umbrella, AWS Cloudtrail, CrowdStrike Falcon 
 Cloud, etc. also generate a lot of JSON output.  These all become possible "sources" for Sagan 
 data processing.
 
 The second method of JSON data collection is via the syslog "message" field.  Some syslog "forwarders" 
-use this method to send SIEM data.  The idea is that the data is transferred via the traditional
+use this method to send SIEMs data.  The idea is that the data is transferred via the traditional
 syslog transport but the message contains the JSON data.  Sagan can interpret that data for
 alerting purposes.
 
@@ -44,37 +44,39 @@ JSON "mapping"
 
 Either method you decide to receive the JSON data in, it is likely you will want to "map"
 the data so that Sagan can properly process it.  You can think of mapping this way; When Sagan receives
-JSON data,  it initially has no means to determine what is important and what is not.  Sagan
-"mapping" allows you to assign values so that the engine and signatures can be used.  It is
+JSON data,  it doesn't know what is "important" and what isn't.  "Mapping" allows you to assign values to the
+data so the engine can process it and signatures can be used.  It is
 also important to understand that different platforms label key/value pairs differently. For
 example,  a source IP address on one platform might be "src_ip",  while on another platform
-it might be "source_ip".  Mapping allows you to assign the source IP value from the JSON. 
+it might be "source_ip".  Mapping allows you to assign the "source" IP value from the JSON. 
 
-Mapping not only allows you to use signature key words (``content``, ``pcre``, ``meta_content``, 
-etc) but other Sagan features like ``threshold``, ``after``, ``xbits``, etc. 
+"Mapping" allows you to use signature keys words like ``content``, ``pcre``, ``meta_content``, 
+etc. and features like ``threshold``, ``after``, ``xbits``, etc. 
 
-As the name suggests,  "mapping" simply allows key/value pairs to be assigned to specific
-internal Sagan engine values.  
+Simply put,  "Mapping" allows you to assign JSON "key" data to specific internal Sagan values.
 
 Within the Sagan rules are two files.  One is ``json-input.map`` and the other is
 ``json-message.map``.  These are the mapping files that are used depending on your method of
-input.  These files can be altered to support the JSON mapping you might need. 
+input.  These files can be altered to support the JSON mapping you might need and come with
+some example mapping.
 
-Nesting Limitations
-~~~~~~~~~~~~~~~~~~~
+In some cases,  "mapping" might be over kill and can be skipped.  See ``When mapping is not needed``.
 
-Sagan will automatically processes "nested" JSON data.  There is a limitation in that Sagan
-will only keep the last "key" name.   To examine this,  lets look at a Suricata "nested" JSON line. ::
+
+How JSON nest are processed
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Sagan will automatically "flatten" nests.  For example,  let say you want to process the
+following JSON format.
 
    {"timestamp":"2019-11-19T20:50:02.856040+0000","flow_id":1221352694083219,"in_iface":"eth0","event_type":"alert","src_ip":"12.12.12.12","dest_ip":"13.13.13.13","proto":"ICMP","icmp_type":8,"icmp_code":0,"alert":{"action":"allowed","gid":1,"signature_id":20000004,"rev":1,"signature":"QUADRANT Ping Packet [ICMP]","category":"Not Suspicious Traffic","severity":3},"flow":{"pkts_toserver":2,"pkts_toclient":0,"bytes_toserver":196,"bytes_toclient":0,"start":"2019-11-19T20:50:01.847507+0000"},"payload":"elXUXQAAAACtDw0AAAAAAE9GVFdJTkstUElOR9raU09GVFdJTkstUElOR9raU09GVFdJTkstUEk=","stream":0,"packet":"VDloD8YYADAYyy0NCABFAABUkEpAAEABniMMnwIKDJHxAQgAk9tJcwACelXUXQAAAACtDw0AAAAAAE9GVFdJTkstUElOR9raU09GVFdJTkstUElOR9raU09GVFdJTkstUEk=","packet_info":{"linktype":1},"host":"firewall"} 
 
-Internally, Sagan will "break apart" the nests.  However,  the keys will not hold there nested
-key names.  For example,  the key "timestamp" will be recorded as "timestamp" within Sagan because
-that is within the first level of nesting.
+   All nest,  including the top nest,  start with a ``.``.  For example, the JSON key "timestamp" will become ``.timestamp`` 
+internally to Sagan.  The "event_type" and "src_ip" would become ``.event_type`` and ``.src_ip``.  For nested objects like "alert", you would access the  "signature_id" as ``.alert.signature_id``.  This structure is similar to JSON processing commands like ``jq``.
 
-However,  if you look at the "alert" JSON nest,  you might expect the nested value "action" 
-to be something like "alert.action".  Internally to Sagan, it will assign it a value of just 
-"action".  This means there might be some issues when dealing with JSON will duplicate key names.
+   There is no limitations on nest depths.   This logic applies for JSON "mapping" and Sagan signature keywords like ``json_content``,
+``json_pcre`` and ``json_meta_content``.
+
 
 When mapping is not needed
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -90,7 +92,7 @@ pairs in real time.  While you won't be able to use the standard Sagan rule oper
 These are ``json_content``, ``json_pcre`` and ``json_meta_content``.  With these, you can 
 specify the key you want to process and then what you are searching for.  
 
-This becomes useful when used in conjunction with mapping.  This way you can use traditional 
+This can be useful when used in conjunction with mapping.  This way you can use traditional 
 Sagan keywords (``threshold``, ``after``, ``content``, etc) along with JSON specific (``json_content``, 
 ``json_pcre``, etc) rule options.
 
@@ -202,7 +204,7 @@ option is the ``json-software`` type.  The ``json-input.map`` typically contains
 one mapping type.  The ``json-software`` tells Sagan which mapping to use from that file. A
 typically mapping for Syslog-NG looks like this: ::
 
-   {"software":"syslog-ng","syslog-source-ip":"SOURCEIP","facility":"FACILITY","level":"PRIORITY","priority":"PRIORITY","time":"DATE","date":"DATE","program":"PROGRAM","message":"MESSAGE"}
+   {"software":"syslog-ng","syslog-source-ip":".SOURCEIP","facility":".FACILITY","level":".PRIORITY","priority":".PRIORITY","time":".DATE","date":".DATE","program":".PROGRAM","message":".MESSAGE"}
 
 
 These are key/value pairs.  The first option (ie - ``message``, ``program``, etc) is the internal Sagan engine value.  
@@ -217,7 +219,7 @@ JSON via the named pipe that Sagan might receive: ::
 
    {"TAGS":".source.s_src","SOURCEIP":"127.0.0.1","SEQNUM":"437","PROGRAM":"sshd","PRIORITY":"notice","Authentication failures; logname= uid=0 euid=0 tty=ssh ruser= rhost=49.88.112.77  user=root","LEGACY_M"dev-2","HOST":"dev-2","FACILITY":"authpriv","DATE":"Jan  2 20:12:36"}
 
-As we can see,  Syslog-NG maps the syslog "message" field as "MESSAGE".  The Sagan engine takes that
+As we can see,  Syslog-NG maps the syslog "message" field as ".MESSAGE".  The Sagan engine takes that
 data and internally maps it to the "message" value.  It repeats this through the rest of the
 mapping.
 
@@ -237,10 +239,9 @@ maps can be applied.  The idea is that your Sagan system might be receiving diff
 of JSON data from different systems.
 
 To determine which "map" works best, the Sagan engine does an internal "scoring" of each map.
-The idea is that Sagan will apply the best map that matches the most fields.   This also means
-that sometimes mapping fields,  even if you don't plan on using them,  will ensure that the
-proper map "wins".   Even if you don't plan on internally using the field,  the more fields that
-"match" will mean an increased score.  This will help ensure you don't have two mappings competing over data.
+Sagan will then apply the best map that matches the most fields.   This means that you might 
+want to "map" fields event if you don't plan on using them.  This ensures that the proper 
+"map" will "win" (score the highest).
 
 To enabled JSON syslog message processing,  you will need to enable the following fields within
 the ``sagan-core`` part of the sagan.yaml. ::
@@ -272,23 +273,22 @@ As with the ``json-input.map``,  the Sagan rule sets come with a ``json-message.
 
 An example mapping::
 
-   { "software":"suricata", "syslog-source-ip":"src_ip","src_ip":"src_ip","dest_ip":"dest_ip","src_port":"src_port","dest_port":"dest_port","message":"signature,category,severity","event_type":"hash","time":"timestamp","date":"timestamp", "proto":"proto" } 
+   { "software":"suricata", "syslog-source-ip":".src_ip","src_ip":".src_ip","dest_ip":".dest_ip","src_port":".src_port","dest_port":".dest_port","message":".alert.signature,.alert_category,.alert.severity","event_type":".hash","time":".timestamp","date":".timestamp", "proto":".proto" } 
 
 Unlike named pipe JSON mapping,  the "software" name is not used other than for debugging. 
 When Sagan receives JSON data,  it will apply all mapping to found in the ``json-message.map``
 file.  
 
-Make a note of the "message" field.  This shows the message being assigned multiple key value pairs.  In this case the
-key "signature","category" and "severity" will be become the "message".  Internally,  the "message" will become
-"key:value,key:value,key:value".  For example,  let say the JSON Sagan is processing is the follow Suricata JSON line: ::
+Note of the “message” field. This shows the "message" being assigned multiple key values. In this case the key “.alert.signature”,”.alert.category” and “.alert.severity” will be become the “message”. Internally to Sagan, the “message” will become “key:value,key:value,key:value”. For example, let say the JSON Sagan is processing is the follow Suricata JSON line:
+
 
    {"timestamp":"2020-01-03T18:20:05.716295+0000","flow_id":812614352473482,"in_iface":"eth0","event_type":"alert","src_ip":"12.12.12.12","dest_ip":"13.13.13.13","proto":"ICMP","icmp_type":8,"icmp_code":0,"alert":{"action":"allowed","gid":1,"signature_id":20000004,"rev":1,"signature":"QUADRANT Ping Packet [ICMP]","category":"Not Suspicious Traffic","severity":3},"flow":{"pkts_toserver":5,"pkts_toclient":0,"bytes_toserver":490,"bytes_toclient":0,"start":"2020-01-03T18:20:01.691594+0000"},"payload":"1YUPXgAAAADM7QoAAAAAAE9GVFdJTkstUElOR9raU09GVFdJTkstUElOR9raU09GVFdJTkstUEk=","stream":0,"packet":"VDloD8YYADAYyy0NCABFAABUCshAAEABI6YMnwIKDJHxAQgAHoELvAAF1YUPXgAAAADM7QoAAAAAAE9GVFdJTkstUElOR9raU09GVFdJTkstUElOR9raU09GVFdJTkstUEk=","packet_info":{"linktype":1},"host":"firewall"}
 
 Internally to Sagan the "message" will become: ::
 
-   signature:QUADRANT Ping Packet [ICMP],category:Not Suspicious Traffic,severity:3
+   .alerts.ignature:QUADRANT Ping Packet [ICMP],.alert.category:Not Suspicious Traffic,alert.severity:3
 
 This means any signatures you are going to create will need to take this format into account.  In cases where you would like the
-entire JSON string to become the message,  simply make the "message" mapping "%JSON%" (no quotes).  This tells Sagan that the entire
-JSON string should be considered the message. 
+entire JSON string to become the message,  simply make the "message" mapping ``%JSON%``.  This tells Sagan that the entire
+JSON string should be considered the "message". 
 

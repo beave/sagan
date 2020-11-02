@@ -66,13 +66,8 @@ void Xbit_Set_Redis(int rule_position, char *ip_src_char, char *ip_dst_char, _Sa
     struct json_object *jobj;
 
     int r = 0;
-    int i = 0;
-
     char tmp_ip[MAXIP] = { 0 };
-
     char tmp_data[MAX_SYSLOGMSG*2] = { 0 };
-
-    //jobj = json_object_new_object();
 
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
         {
@@ -206,7 +201,6 @@ bool Xbit_Condition_Redis(int rule_position, char *ip_src_char, char *ip_dst_cha
     char redis_command[64] = { 0 };
     char redis_results[32] = { 0 };
     char tmp_ip[MAXIP] = { 0 };
-    bool xbit_match = false;
 
     for (r = 0; r < rulestruct[rule_position].xbit_count; r++)
         {

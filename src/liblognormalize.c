@@ -110,8 +110,6 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
     char tmp_host[254] = { 0 };
 
     int rc_normalize = 0;
-
-    const char *cstr = NULL;
     const char *tmp = NULL;
 
     struct json_object *json = NULL;
@@ -153,8 +151,6 @@ void Normalize_Liblognorm(char *syslog_msg, struct _SaganNormalizeLiblognorm *Sa
         {
             return;
         }
-
-    cstr = (char*)json_object_to_json_string(json);
 
     /* Get source address information */
 
