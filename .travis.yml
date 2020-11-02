@@ -2,6 +2,7 @@
 # matrix below. We define so Travis doesn't think this is a Ruby
 # project.
 os: linux
+dist: focal
 language: c
 compiler: gcc
 
