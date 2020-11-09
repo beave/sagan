@@ -195,41 +195,11 @@ void Sig_Handler( void )
 
 #endif
 
-                    /*
-                                        if ( config->eve_flag == true ) && config->eve_stream_status == true )
-                                            {
-
-                                                fflush(config->eve_stream);
-                                                fclose(config->eve_stream);
-
-                                            }
-                    */
-
-                    /*
-                            if ( config->alert_flag == true && config->sagan_alert_stream_status == true )
-                                {
-
-                                    fflush(config->sagan_alert_stream);
-                                    fclose(config->sagan_alert_stream);
-
-                                }
-                    */
-
-                    /*
-                                        if ( config->fast_flag == true && config->sagan_fast_stream_status == true )
-                                            {
-
-                                                fflush(config->sagan_fast_stream);
-                                                fclose(config->sagan_fast_stream);
-
-                                            }
-                    			*/
-
-                    if ( config->sagan_log_stream_status == true )
-                        {
+//                    if ( config->sagan_log_stream_status == true )
+//                        {
                             fflush(config->sagan_log_stream);               /* Close the sagan.log */
                             fclose(config->sagan_log_stream);
-                        }
+//                        }
 
                     /* IPC Shared Memory */
 
@@ -340,7 +310,6 @@ void Sig_Handler( void )
                     __atomic_store_n (&counters->genmapcount, 0, __ATOMIC_SEQ_CST);
                     __atomic_store_n (&counters->rules_loaded_count, 0, __ATOMIC_SEQ_CST);
                     __atomic_store_n (&counters->var_count, 0, __ATOMIC_SEQ_CST);
-
 
                     memset(rules_loaded, 0, sizeof(_Rules_Loaded));
                     memset(rulestruct, 0, sizeof(_Rule_Struct));

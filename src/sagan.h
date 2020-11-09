@@ -192,6 +192,8 @@ struct _SaganCounters
     uint64_t fwsam_count;
     uint64_t ignore_count;
     uint64_t blacklist_count;
+    uint64_t bytes_total;
+    uint64_t bytes_ignored; 
 
     uint64_t alert_total;
 

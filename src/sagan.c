@@ -42,7 +42,6 @@
 #include <getopt.h>
 #include <time.h>
 #include <signal.h>
-//#include <pcre.h>
 #include <limits.h>
 #include <stdint.h>
 #include <inttypes.h>
@@ -249,7 +248,6 @@ int main(int argc, char **argv)
     pthread_attr_t tracking_thread_attr;
     pthread_attr_init(&tracking_thread_attr);
     pthread_attr_setdetachstate(&tracking_thread_attr,  PTHREAD_CREATE_DETACHED);
-
 
     bool fifoerr = false;
     bool ignore_flag = false;
@@ -576,13 +574,15 @@ int main(int argc, char **argv)
 
     if (( config->sagan_log_stream = fopen( config->sagan_log_filepath, "a" )) == NULL )
         {
-            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+	
+	     /* We can't use Sagan_Log() because we can't _open_ the log! */
+
+	     fprintf(stderr, "[%s, line %d] Cannot open %s (%s). Abort.\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+	     exit(-1);
+
         }
 
     config->sagan_log_fd = fileno( config->sagan_log_stream );
-
-
-    //Open_Log_File(OPEN, SAGAN_LOG);
 
     /* Become a daemon if requested */
 
@@ -850,11 +850,6 @@ int main(int argc, char **argv)
                     Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats  thread [error: %d].", __FILE__, __LINE__, rc);
                 }
         }
-
-
-    /* Open sagan alert file */
-
-    //Open_Log_File(OPEN, ALERT_LOG);
 
     /****************************************************************************
      * Display processor information as we load
@@ -1198,7 +1193,9 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-                            __atomic_add_fetch(&counters->events_received, 1, __ATOMIC_SEQ_CST);
+                            //__atomic_add_fetch(&counters->events_received, 1, __ATOMIC_SEQ_CST);
+
+			    counters->events_received++;
 
                             /* Copy log line to batch/queue if we haven't reached our batch limit */
 
@@ -1209,6 +1206,10 @@ int main(int argc, char **argv)
                                         {
                                             Sagan_Log(DEBUG, "[%s, line %d] [batch position %d] Raw log: %s",  __FILE__, __LINE__, batch_count, syslogstring);
                                         }
+
+				    /* We're not threads here so no reason to lock */
+
+				    counters->bytes_total = counters->bytes_total + strlen( syslogstring );
 
                                     /* Check for "drop" to save CPU from "ignore list" */
 
@@ -1222,7 +1223,11 @@ int main(int argc, char **argv)
 
                                                     if (Sagan_strstr(syslogstring, SaganIgnorelist[i].ignore_string))
                                                         {
-                                                            __atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
+                                                            //__atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
+							   
+							    counters->bytes_ignored = counters->bytes_ignored + strlen( syslogstring );
+							    counters->ignore_count++;
+
                                                             ignore_flag = true;
                                                             break;
 

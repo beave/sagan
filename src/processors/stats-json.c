@@ -106,6 +106,8 @@ void Stats_JSON_Handler( void )
     uint64_t last_after = 0;
     uint64_t last_alert = 0;
     uint64_t last_match = 0;
+    uint64_t last_bytes_total = 0;
+    uint64_t last_bytes_ignored = 0; 
 
 #ifdef HAVE_LIBMAXMINDDB
 
@@ -202,8 +204,6 @@ void Stats_JSON_Handler( void )
             struct json_object *jobj_bluedot;
 #endif
 
-//            struct json_object *jobj_zeek;
-
             jobj = json_object_new_object();
             jobj_stats = json_object_new_object();
             jobj_captured = json_object_new_object();
@@ -217,11 +217,7 @@ void Stats_JSON_Handler( void )
             jobj_bluedot = json_object_new_object();
 #endif
 
-//            jobj_zeek = json_object_new_object();
-
-
             /* Top level */
-
 
             json_object *jdate = json_object_new_string(timebuf);
             json_object_object_add(jobj,"timestamp", jdate);
@@ -269,6 +265,14 @@ void Stats_JSON_Handler( void )
             json_object *jmatch = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->saganfound - last_match ) : ( counters->saganfound ) );
             json_object_object_add(jobj_captured,"match", jmatch);
             last_match = counters->saganfound;
+
+            json_object *jbytes_total = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bytes_total - last_bytes_total ) : ( counters->bytes_total ) );
+            json_object_object_add(jobj_captured,"bytes_total", jbytes_total);
+            last_bytes_total = counters->bytes_total;
+
+            json_object *jbytes_ignored = json_object_new_int64( config->stats_json_sub_old_values == true ? ( counters->bytes_ignored - last_bytes_ignored ) : ( counters->bytes_ignored ) );
+            json_object_object_add(jobj_captured,"bytes_ignored", jbytes_ignored);
+            last_bytes_ignored = counters->bytes_ignored;
 
             /* prevent floating point exceptions */
 
