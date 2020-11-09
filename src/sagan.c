@@ -536,7 +536,6 @@ int main(int argc, char **argv)
                             exit(1);
                         }
 
-
                     break;
 
                 case 'D':
@@ -1193,8 +1192,6 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-                            //__atomic_add_fetch(&counters->events_received, 1, __ATOMIC_SEQ_CST);
-
 			    counters->events_received++;
 
                             /* Copy log line to batch/queue if we haven't reached our batch limit */
@@ -1223,7 +1220,6 @@ int main(int argc, char **argv)
 
                                                     if (Sagan_strstr(syslogstring, SaganIgnorelist[i].ignore_string))
                                                         {
-                                                            //__atomic_add_fetch(&counters->ignore_count, 1, __ATOMIC_SEQ_CST);
 							   
 							    counters->bytes_ignored = counters->bytes_ignored + strlen( syslogstring );
 							    counters->ignore_count++;
