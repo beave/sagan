@@ -1961,7 +1961,9 @@ void Load_Rules( const char *ruleset )
 
                     /* Set the previous "json_strstr" to use strstr instead of strcmp */
 
-                    if (!strcmp(rulesplit, "json_strstr"))
+                    /* TODO:  Remove "json_strstr" */
+
+                    if ( !strcmp(rulesplit, "json_strstr") || !strcmp(rulesplit, "json_contains") )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].json_content_strstr[json_content_count-1] = 1;
@@ -1969,7 +1971,9 @@ void Load_Rules( const char *ruleset )
 
                     /* Set the previous "json_meta_strstr" to use strstr instead of strcmp */
 
-                    if (!strcmp(rulesplit, "json_meta_strstr"))
+                    /* TODO: Remove "json_meta_strstr" */
+
+                    if (!strcmp(rulesplit, "json_meta_strstr") || !strcmp(rulesplit, "json_meta_contains") )
                         {
                             strtok_r(NULL, ":", &saveptrrule2);
                             rulestruct[counters->rulecount].json_meta_strstr[json_content_count-1] = 1;

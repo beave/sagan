@@ -367,21 +367,21 @@ json_nocase
 This makes the previous ``json_content`` case insensitive (similar to the ``nocase`` option
 for ``content``). 
 
-json_strstr
------------
+json_contains
+-------------
 
-.. option:: json_strstr; 
+.. option:: json_contains; 
 
-Normally ``json_content`` will search for a literal match to a key/value pair.  This option makes
-the previous ``json_content`` do a string search for the value.  For example:
+Normally ``json_content`` will search for a literal match to a key/value pair.  The ``json_contains``
+makes the previous ``json_content`` do a full string search for a value.  For example:
 
-**json_content: "name", "example";** 
+**json_content: "name", "example"; json_contains;** 
 
-This will locate the key "name" and search that keys data for the word "example".  This example
-would __not__ trigger if the keys data was "this is an example of data".  This is because
-``json_content`` searches for a literal values (strcmp) rather than parsing the entire string. The
-``json_strstr`` option forces the previous ``json_content`` to do a string search (strstr) of
-the data. 
+This will search the key "name" for the word "example".  Without the ``json_contains`` the search
+is a literal match.  With the ``json_contains`` rule option,  it will search for the presences of 
+"example" within "name".   For example,  with ``json_contains``,   this would trigger on terms
+like "this is an example of data" or "example test".  Without the ``json_contains``, it would not trigger
+because it would be a literal search.
 
 json_pcre
 ---------
@@ -415,15 +415,15 @@ json_meta_nocase
 This makes the previous ``json_meta_content`` case insensitive (similar to the ``nocase`` option
 for ``content``).
 
-json_meta_strstr
-----------------
+json_meta_contains
+------------------
 
-.. option:: json_meta_strstr; 
+.. option:: json_meta_contains; 
 
-This is similar to ``json_strstr`` but works on the ``json_meta_content`` rule option.
+This is similar to ``json_contains`` but works on the ``json_meta_content`` rule option.
 
 Normally ``json_meta_content`` will search for a literal match to a key/value pair (strcmp).  
-This option makes the previous ``json_meta_content`` do a string search for the value (strstr). 
+This option makes the previous ``json_meta_content`` do a full string search for the value (strstr). 
 
 syslog_level
 ------------

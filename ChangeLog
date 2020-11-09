@@ -19,6 +19,9 @@
 
 		* Renamed all "Bro" references to "Zeek".
 
+		* Statistics can now be written in a JSON format similar to Suricata's JSON stats. 
+		  This will replace the "Perfmon" CSV stats in version 2.0.1. 
+
 		* New "event_id" rule option.  This autmagically gets the event ID (for
 		  example, from Microsoft Windows, etc) from standard syslog or JSON if
 		  present.

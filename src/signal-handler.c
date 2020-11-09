@@ -195,11 +195,8 @@ void Sig_Handler( void )
 
 #endif
 
-//                    if ( config->sagan_log_stream_status == true )
-//                        {
-                            fflush(config->sagan_log_stream);               /* Close the sagan.log */
-                            fclose(config->sagan_log_stream);
-//                        }
+                    fflush(config->sagan_log_stream);               /* Close the sagan.log */
+                    fclose(config->sagan_log_stream);
 
                     /* IPC Shared Memory */
 
@@ -293,11 +290,11 @@ void Sig_Handler( void )
 
                     if (( config->sagan_log_stream = fopen( config->sagan_log_filepath, "a" )) == NULL )
                         {
-                            Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+                            fprintf(stderr, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+                            exit(-1);
                         }
 
                     config->sagan_log_fd = fileno( config->sagan_log_stream );
-
 
                     /******************/
                     /* Reset counters */
@@ -326,7 +323,6 @@ void Sig_Handler( void )
                      * they cannot be disabled/re-enabled. */
 
                     /* Single Threaded processors */
-
 
                     /* Perfmon */
 

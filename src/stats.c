@@ -111,13 +111,13 @@ void Statistics( void )
             Sagan_Log(NORMAL, " \\/)\"(\\/");
             Sagan_Log(NORMAL, "  (_o_)    Received/Processed/Ignored : %" PRIu64 "/%" PRIu64 "/%" PRIu64 " (%.3f%%/%.3f%%)", counters->events_received, counters->events_processed, counters->ignore_count, CalcPct(counters->events_processed, counters->events_received), CalcPct(counters->ignore_count, counters->events_received));
             Sagan_Log(NORMAL, "  /   \\/)  Signatures matched         : %" PRIu64 " (%.3f%%)", counters->saganfound, CalcPct(counters->saganfound, counters->events_received ) );
-	    Sagan_Log(NORMAL, "           Bytes Processed            : %" PRIu64 "", counters->bytes_total);
+            Sagan_Log(NORMAL, "           Bytes Processed            : %" PRIu64 "", counters->bytes_total);
             Sagan_Log(NORMAL, " (|| ||)   Alerts                     : %" PRIu64 " (%.3f%%)",  counters->alert_total, CalcPct( counters->alert_total, counters->events_received) );
             Sagan_Log(NORMAL, "  oo-oo    After                      : %" PRIu64 " (%.3f%%)",  counters->after_total, CalcPct( counters->after_total, counters->events_received) );
             Sagan_Log(NORMAL, "           Threshold                  : %" PRIu64 " (%.3f%%)", counters->threshold_total, CalcPct( counters->threshold_total, counters->events_received) );
             Sagan_Log(NORMAL, "           Dropped                    : %" PRIu64 " (%.3f%%)", counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, CalcPct(counters->sagan_processor_drop + counters->sagan_output_drop + counters->sagan_log_drop, counters->events_received) );
-	    Sagan_Log(NORMAL, "           Bytes Processed            : %" PRIu64 "", counters->bytes_total);
-	    
+            Sagan_Log(NORMAL, "           Bytes Processed            : %" PRIu64 "", counters->bytes_total);
+
 //        Sagan_Log(NORMAL, "           Malformed                : h:%" PRIu64 "|f:%" PRIu64 "|p:%" PRIu64 "|l:%" PRIu64 "|T:%" PRIu64 "|d:%" PRIu64 "|T:%" PRIu64 "|P:%" PRIu64 "|M:%" PRIu64 "", counters->malformed_host, counters->malformed_facility, counters->malformed_priority, counters->malformed_level, counters->malformed_tag, counters->malformed_date, counters->malformed_time, counters->malformed_program, counters->malformed_message);
 
             Sagan_Log(NORMAL, "           Thread Exhaustion          : %" PRIu64 " (%.3f%%)", counters->worker_thread_exhaustion,  CalcPct( counters->worker_thread_exhaustion, counters->events_received) );
@@ -127,7 +127,7 @@ void Statistics( void )
             if (config->sagan_droplist_flag)
                 {
                     Sagan_Log(NORMAL, "           Ignored Input              : %" PRIu64 " (%.3f%%)", counters->ignore_count, CalcPct(counters->ignore_count, counters->events_received) );
-		    Sagan_Log(NORMAL, "           Bytes Ignored              : %" PRIu64 " (%.3f%%)", counters->bytes_ignored, CalcPct( counters->bytes_ignored, counters->bytes_total) );
+                    Sagan_Log(NORMAL, "           Bytes Ignored              : %" PRIu64 " (%.3f%%)", counters->bytes_ignored, CalcPct( counters->bytes_ignored, counters->bytes_total) );
                 }
 
 #ifdef HAVE_LIBFASTJSON

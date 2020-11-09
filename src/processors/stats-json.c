@@ -107,7 +107,7 @@ void Stats_JSON_Handler( void )
     uint64_t last_alert = 0;
     uint64_t last_match = 0;
     uint64_t last_bytes_total = 0;
-    uint64_t last_bytes_ignored = 0; 
+    uint64_t last_bytes_ignored = 0;
 
 #ifdef HAVE_LIBMAXMINDDB
 

@@ -324,17 +324,17 @@ processors:
       syslog: enabled
       time: 1440		# In minutes 
 
-  # The "stats-json" writes statistical information in a JSON format.  This
+  # "stats-json" writes statistical information in a JSON format.  This
   # format is similar to Suricata EVE/JSON stats output.  The option
   # "subtract_old_values" will subtract values from the previous execution.
-  # This give you the statistics over the specified period of "time".  If
-  # "subtract_old_values" is set to "false",  then each time "time" is 
-  # reached,  the values are added to the previous one.  When "false", this
-  # is how Suricata writes the data.
+  # This will record only the statistics over the specified period of "time".
+  # If "subtract_old_values" if set to false,  then when "time" is reached
+  # the previous values are added to the current statistics.  This is how
+  # Suricata writes statistical data.
 
   - stats-json:
       enabled: no
-      time: 1
+      time: 3600
       subtract_old_values: true
       filename: "$LOG_PATH/stats/stats.json"
  
@@ -342,6 +342,8 @@ processors:
   # number of seconds ("time") to a CSV file.  This data can be useful for 
   # tracking the performance of Sagan.  This data can also be used with 
   # RRDTool to generate graphs.  
+  #
+  # [WARNING: This option will be depreciated in 2.0.1.  See 'stats-json']
 
   - perfmonitor:
       enabled: no

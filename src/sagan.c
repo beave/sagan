@@ -573,11 +573,11 @@ int main(int argc, char **argv)
 
     if (( config->sagan_log_stream = fopen( config->sagan_log_filepath, "a" )) == NULL )
         {
-	
-	     /* We can't use Sagan_Log() because we can't _open_ the log! */
 
-	     fprintf(stderr, "[%s, line %d] Cannot open %s (%s). Abort.\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
-	     exit(-1);
+            /* We can't use Sagan_Log() because we can't _open_ the log! */
+
+            fprintf(stderr, "[%s, line %d] Cannot open %s (%s). Abort.\n", __FILE__, __LINE__, config->sagan_log_filepath, strerror(errno));
+            exit(-1);
 
         }
 
@@ -1192,7 +1192,7 @@ int main(int argc, char **argv)
                                     fifoerr = false;
                                 }
 
-			    counters->events_received++;
+                            counters->events_received++;
 
                             /* Copy log line to batch/queue if we haven't reached our batch limit */
 
@@ -1204,9 +1204,9 @@ int main(int argc, char **argv)
                                             Sagan_Log(DEBUG, "[%s, line %d] [batch position %d] Raw log: %s",  __FILE__, __LINE__, batch_count, syslogstring);
                                         }
 
-				    /* We're not threads here so no reason to lock */
+                                    /* We're not threads here so no reason to lock */
 
-				    counters->bytes_total = counters->bytes_total + strlen( syslogstring );
+                                    counters->bytes_total = counters->bytes_total + strlen( syslogstring );
 
                                     /* Check for "drop" to save CPU from "ignore list" */
 
@@ -1220,9 +1220,9 @@ int main(int argc, char **argv)
 
                                                     if (Sagan_strstr(syslogstring, SaganIgnorelist[i].ignore_string))
                                                         {
-							   
-							    counters->bytes_ignored = counters->bytes_ignored + strlen( syslogstring );
-							    counters->ignore_count++;
+
+                                                            counters->bytes_ignored = counters->bytes_ignored + strlen( syslogstring );
+                                                            counters->ignore_count++;
 
                                                             ignore_flag = true;
                                                             break;
