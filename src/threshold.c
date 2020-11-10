@@ -39,13 +39,13 @@
 
 pthread_mutex_t Thresh2_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
-struct _Threshold2_IPC *Threshold2_IPC;
-struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Threshold2_IPC *Threshold2_IPC;
+extern struct _Sagan_IPC_Counters *counters_ipc;
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 /***********************/
 /* Threshold2          */

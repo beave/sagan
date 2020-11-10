@@ -82,8 +82,8 @@
 #include "version.h"
 #include "parsers/parsers.h"
 
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
 int Parse_IP( char *syslog_message, struct _Sagan_Lookup_Cache_Entry *lookup_cache )
 {

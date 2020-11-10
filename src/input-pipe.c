@@ -33,10 +33,10 @@
 #include "version.h"
 #include "input-pipe.h"
 
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
-struct _SaganDNSCache *dnscache;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganDNSCache *dnscache;
 
 void SyslogInput_Pipe( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {

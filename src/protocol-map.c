@@ -36,11 +36,11 @@
 #include "sagan-defs.h"
 #include "protocol-map.h"
 
-struct _SaganCounters *counters;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
-struct _Sagan_Protocol_Map_Message *map_message;
-struct _Sagan_Protocol_Map_Program *map_program;
+extern struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
+extern struct _Sagan_Protocol_Map_Message *map_message;
+extern struct _Sagan_Protocol_Map_Program *map_program;
 
 void Load_Protocol_Map( const char *map )
 {

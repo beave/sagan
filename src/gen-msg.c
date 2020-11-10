@@ -37,10 +37,10 @@
 #include "sagan-defs.h"
 #include "gen-msg.h"
 
-struct _SaganCounters *counters;
-struct _Sagan_Processor_Generator *generator;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _Sagan_Processor_Generator *generator;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
 void Load_Gen_Map( const char *genmap )
 {

@@ -49,9 +49,9 @@
 #include "output-plugins/esmtp.h"
 #endif
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
 
 bool nonthread_alert_lock = false;
 

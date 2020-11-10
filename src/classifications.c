@@ -43,10 +43,10 @@
 #include "gen-msg.h"
 #include "classifications.h"
 
-struct _SaganCounters *counters;
-struct _Class_Struct *classstruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Class_Struct *classstruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 void Load_Classifications( const char *ruleset )
 {

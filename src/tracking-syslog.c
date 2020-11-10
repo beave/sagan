@@ -55,9 +55,9 @@
 #include "rules.h"
 #include "tracking-syslog.h"
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
-struct _Sagan_Ruleset_Track *Ruleset_Track;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Sagan_Ruleset_Track *Ruleset_Track;
 
 
 void RuleTracking_Syslog( void )

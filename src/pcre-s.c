@@ -33,7 +33,7 @@
 #include "sagan-defs.h"
 #include "rules.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 
 bool PcreS ( int rule_position, const char *syslog_message )

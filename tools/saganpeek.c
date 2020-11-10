@@ -140,12 +140,12 @@ int main(int argc, char **argv)
 
     int option_index = 0;
 
-    struct _Sagan_IPC_Counters *counters_ipc;
-    struct _Sagan_IPC_Flexbit *flexbit_ipc;
-    struct _Sagan_IPC_Xbit *xbit_ipc;
-    struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
-    struct _After2_IPC *After2_IPC;
-    struct _Threshold2_IPC *Threshold2_IPC;
+    extern struct _Sagan_IPC_Counters *counters_ipc;
+    extern struct _Sagan_IPC_Flexbit *flexbit_ipc;
+    extern struct _Sagan_IPC_Xbit *xbit_ipc;
+    extern struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
+    extern struct _After2_IPC *After2_IPC;
+    extern struct _Threshold2_IPC *Threshold2_IPC;
 
     signed char c;
 

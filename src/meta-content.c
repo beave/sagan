@@ -44,7 +44,7 @@
 #include "rules.h"
 #include "parsers/parsers.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 bool Meta_Content(int rule_position, const char *syslog_message)
 {

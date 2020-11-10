@@ -41,8 +41,8 @@ libfastjson is required for Sagan to function!
 #include "version.h"
 #include "input-pipe.h"
 
-struct _SaganConfig *config;
-struct _Syslog_JSON_Map *Syslog_JSON_Map;
+extern struct _SaganConfig *config;
+extern struct _Syslog_JSON_Map *Syslog_JSON_Map;
 
 void Load_Input_JSON_Map ( const char *json_map )
 {

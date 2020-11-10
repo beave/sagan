@@ -39,14 +39,14 @@
 
 pthread_mutex_t After2_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
-struct _After2_IPC *After2_IPC;
+extern struct _After2_IPC *After2_IPC;
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
-struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_IPC_Counters *counters_ipc;
 
 bool After2 ( int rule_position, char *ip_src, uint32_t src_port, char *ip_dst,  uint32_t dst_port, char *username, char *syslog_message )
 {

@@ -48,9 +48,9 @@
 #include "util-time.h"
 #include "output-plugins/external.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 pthread_mutex_t ext_mutex = PTHREAD_MUTEX_INITIALIZER;
 

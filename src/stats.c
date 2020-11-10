@@ -44,12 +44,12 @@
 #include "processors/client-stats.h"
 
 
-struct _SaganCounters *counters;
-struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_Ruleset_Track *Ruleset_Track;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_Ruleset_Track *Ruleset_Track;
+extern struct _SaganConfig *config;
 
-int proc_running; 	/* Count of executing threads */
+extern int proc_running; 	/* Count of executing threads */
 
 void Statistics( void )
 {

@@ -33,8 +33,8 @@
 #include "version.h"
 #include "debug.h"
 
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
 
 void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {

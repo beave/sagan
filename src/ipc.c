@@ -56,12 +56,12 @@
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
-pthread_mutex_t After2_Mutex;
-pthread_mutex_t Thresh2_Mutex;
-pthread_mutex_t Flexbit_Mutex;
-pthread_mutex_t Xbit_Mutex;
+extern pthread_mutex_t After2_Mutex;
+extern pthread_mutex_t Thresh2_Mutex;
+extern pthread_mutex_t Flexbit_Mutex;
+extern pthread_mutex_t Xbit_Mutex;
 
 struct _After2_IPC *After2_IPC;
 struct _Threshold2_IPC *Threshold2_IPC;
@@ -69,7 +69,7 @@ struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
 struct _Sagan_IPC_Flexbit *flexbit_ipc;
 struct _Sagan_IPC_Xbit *Xbit_IPC;
 
-struct _SaganDebug *debug;
+extern struct _SaganDebug *debug;
 
 /*****************************************************************************
  * Clean_IPC_Object - If the max IPC is hit,  we attempt to "clean" out

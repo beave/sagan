@@ -86,13 +86,13 @@
 
 #include "output-plugins/eve.h"
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _Sagan_Ruleset_Track *Ruleset_Track;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _Sagan_Ruleset_Track *Ruleset_Track;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
-struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_IPC_Counters *counters_ipc;
 
 void Sagan_Engine_Init ( void )
 {

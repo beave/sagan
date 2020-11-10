@@ -45,9 +45,9 @@
 
 #include "processors/blacklist.h"
 
-struct _SaganCounters *counters;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 struct _Sagan_Blacklist *SaganBlacklist;
 
 

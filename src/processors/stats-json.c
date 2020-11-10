@@ -57,9 +57,9 @@
 #include "util-time.h"
 #include "processors/stats-json.h"
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
-struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Sagan_IPC_Counters *counters_ipc;
 
 void Stats_JSON_Init( void )
 {

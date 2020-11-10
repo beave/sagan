@@ -43,7 +43,7 @@
 
 #include "sagan-config.h"
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
 void Alert_JSON( _Sagan_Event *Event )
 {

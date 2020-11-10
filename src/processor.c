@@ -56,15 +56,15 @@
 #include "processors/dynamic-rules.h"
 #include "processors/client-stats.h"
 
-struct _SaganCounters *counters;
-struct _Sagan_Proc_Syslog *SaganProcSyslog;
-struct _Sagan_Pass_Syslog *SaganPassSyslog;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _Sagan_Proc_Syslog *SaganProcSyslog;
+extern struct _Sagan_Pass_Syslog *SaganPassSyslog;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
 
-int proc_msgslot; 		/* Comes from sagan.c */
-int proc_running;   	        /* Comes from sagan.c */
+extern int proc_msgslot; 		/* Comes from sagan.c */
+extern int proc_running;   	        /* Comes from sagan.c */
 
 bool dynamic_rule_flag = NORMAL_RULE;
 uint32_t dynamic_line_count = 0;
@@ -72,13 +72,13 @@ uint32_t dynamic_line_count = 0;
 
 bool death=false;
 
-pthread_cond_t SaganProcDoWork;
-pthread_mutex_t SaganProcWorkMutex;
+extern pthread_cond_t SaganProcDoWork;
+extern pthread_mutex_t SaganProcWorkMutex;
 
-pthread_cond_t SaganReloadCond;
-pthread_mutex_t SaganReloadMutex;
+extern pthread_cond_t SaganReloadCond;
+extern pthread_mutex_t SaganReloadMutex;
 
-pthread_mutex_t SaganDynamicFlag;
+extern pthread_mutex_t SaganDynamicFlag;
 
 void Processor ( void )
 {

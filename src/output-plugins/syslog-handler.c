@@ -43,8 +43,8 @@
 
 #include "output-plugins/syslog-handler.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
 
 void Alert_Syslog( _Sagan_Event *Event )
 {

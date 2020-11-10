@@ -47,7 +47,7 @@
 #include "key.h"
 #include "stats.h"
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
 void Key_Handler( void )
 {

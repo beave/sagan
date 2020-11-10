@@ -43,7 +43,7 @@
 #include "aetas.h"
 #include "rules.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 int Check_Time(int rule_number)
 {

@@ -57,9 +57,9 @@
 
 uint64_t old_epoch = 0;
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
 
 struct _Client_Stats_Struct *Client_Stats = NULL;
 

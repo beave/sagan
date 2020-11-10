@@ -44,9 +44,9 @@
 #include "sagan-config.h"
 #include "json-handler.h"
 
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
-struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
+extern struct _Rule_Struct *rulestruct;
 
 /*****************************************************************************
  * Format_JSON_Alert_EVE - Sends only alerts out to eve file in JSON

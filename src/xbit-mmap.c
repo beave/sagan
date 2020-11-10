@@ -42,13 +42,13 @@
 #include "util-time.h"
 
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
-struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Xbit *Xbit_IPC;
+extern struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_IPC_Xbit *Xbit_IPC;
 
 pthread_mutex_t Xbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
 

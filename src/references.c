@@ -41,12 +41,12 @@
 #include "references.h"
 #include "rules.h"
 
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 struct _Ref_Struct *refstruct;
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 void Load_Reference( const char *ruleset )
 {

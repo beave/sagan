@@ -49,10 +49,10 @@
 #include "geoip.h"
 #include "sagan-config.h"
 
-struct _SaganConfig *config;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
 struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 
 void Open_GeoIP2_Database( void )
