@@ -47,6 +47,7 @@ struct _JSON_Message_Map
     char sha256[32];
     char filename[32];
     char hostname[32];
+    char username[32];
     char url[32];
     char ja3[32];
 
@@ -79,6 +80,7 @@ struct _JSON_Message_Map_Found
     char hostname[MAX_HOSTNAME_SIZE+1];
     char url[MAX_URL_SIZE+1];
     char ja3[MD5_HASH_SIZE+1];
+    char username[MAX_USERNAME_SIZE+1];
 
 };
 
