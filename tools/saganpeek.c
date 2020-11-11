@@ -59,6 +59,13 @@
 #define TRACK_TYPE 4
 #define XBIT_TYPE 5
 
+/* Linking with ../util.o pulls in dependencies on these globals. Provide them here,
+ * even though they do not appear to be used by any code that is executed in this program. */
+#include "../src/sagan-config.h"
+struct _SaganConfig config;
+struct _SaganCounters counters;
+
+
 /****************************************************************************
  * usage - Give the user some hints about how to use this utility!
  ****************************************************************************/
@@ -140,12 +147,12 @@ int main(int argc, char **argv)
 
     int option_index = 0;
 
-    extern struct _Sagan_IPC_Counters *counters_ipc;
-    extern struct _Sagan_IPC_Flexbit *flexbit_ipc;
-    extern struct _Sagan_IPC_Xbit *xbit_ipc;
-    extern struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
-    extern struct _After2_IPC *After2_IPC;
-    extern struct _Threshold2_IPC *Threshold2_IPC;
+    struct _Sagan_IPC_Counters *counters_ipc;
+    struct _Sagan_IPC_Flexbit *flexbit_ipc;
+    struct _Sagan_IPC_Xbit *xbit_ipc;
+    struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
+    struct _After2_IPC *After2_IPC;
+    struct _Threshold2_IPC *Threshold2_IPC;
 
     signed char c;
 
