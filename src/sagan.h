@@ -406,6 +406,7 @@ struct _Sagan_Proc_Syslog
     char hostname[MAX_HOSTNAME_SIZE+1];
     char url[MAX_URL_SIZE+1];
     char ja3[MD5_HASH_SIZE+1];
+    char username[MAX_USERNAME_SIZE+1];
 
     int json_count;
     char json_key[JSON_MAX_OBJECTS][JSON_MAX_KEY_SIZE];
@@ -453,7 +454,7 @@ struct _Syslog_JSON_Map
     char ja3[32];
     char flow_id[32];
     char event_id[32];
-
+    char username[32];
 
 };
 

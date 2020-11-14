@@ -52,8 +52,6 @@ void Load_Input_JSON_Map ( const char *json_map )
 
     FILE *json_map_file;
     char json_map_buf[10240] = { 0 };
-//    char is_nested_tmp[8] = { 0 };
-
 
     Sagan_Log(NORMAL, "Loading JSON FIFO mapping file. [%s]", json_map );
 
@@ -65,8 +63,6 @@ void Load_Input_JSON_Map ( const char *json_map )
         {
             Sagan_Log(ERROR, "[%s, line %d] Cannot open JSON map file (%s)", __FILE__, __LINE__, json_map);
         }
-
-
 
     while(fgets(json_map_buf, 10240, json_map_file) != NULL)
         {
@@ -146,6 +142,17 @@ void Load_Input_JSON_Map ( const char *json_map )
                                             if ( tag != NULL )
                                                 {
                                                     strlcpy(Syslog_JSON_Map->syslog_map_tag, tag, sizeof(Syslog_JSON_Map->syslog_map_tag));
+                                                }
+                                        }
+
+                                    if ( json_object_object_get_ex(json_obj, "username", &tmp))
+                                        {
+
+                                            const char *username = json_object_get_string(tmp);
+
+                                            if ( username != NULL )
+                                                {
+                                                    strlcpy(Syslog_JSON_Map->username, username, sizeof(Syslog_JSON_Map->username));
                                                 }
                                         }
 
@@ -378,7 +385,6 @@ void Load_Input_JSON_Map ( const char *json_map )
                                     return;
 
                                 }
-
                         }
                 }
         }

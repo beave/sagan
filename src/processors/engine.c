@@ -410,6 +410,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
 
+	    if ( SaganProcSyslog_LOCAL->username[0] != '\0' )
+	    	{
+		    normalize_username = SaganProcSyslog_LOCAL->username; 
+		}
+
+
 #endif
 
             /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
@@ -573,7 +579,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                     if ( pre_match == false && flag == true )
                         {
 
-
 #ifdef HAVE_LIBLOGNORM
                             if ( liblognorm_status == false && rulestruct[b].normalize == true )
                                 {
@@ -601,7 +606,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( SaganNormalizeLiblognorm.username[0] != '\0' )
                                         {
-
                                             liblognorm_status = true;
                                             normalize_username = SaganNormalizeLiblognorm.username;
                                         }

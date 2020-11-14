@@ -51,7 +51,6 @@ extern struct _SaganCounters *counters;
 extern struct _SaganDebug *debug;
 
 extern struct _JSON_Message_Map *JSON_Message_Map;
-struct _JSON_Message_Tmp *JSON_Message_Tmp;
 
 /*************************
  * Load JSON mapping file
@@ -102,27 +101,6 @@ void Load_Message_JSON_Map ( const char *json_map )
 
             memset(&JSON_Message_Map[counters->json_message_map], 0, sizeof(struct _JSON_Message_Map));
 
-
-            /* Set all values to NULL or 0 */
-
-            JSON_Message_Map[counters->json_message_map].software[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].program[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].src_ip[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].dst_ip[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].src_port[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].dst_port[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].proto[0] = '\0';
-
-            JSON_Message_Map[counters->json_message_map].md5[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].sha1[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].sha256[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].filename[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].hostname[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].url[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].ja3[0] = '\0';
-            JSON_Message_Map[counters->json_message_map].event_id[0] = '\0';
-
-
             json_obj = json_tokener_parse(json_message_map_buf);
 
             if ( json_obj == NULL )
@@ -152,6 +130,18 @@ void Load_Message_JSON_Map ( const char *json_map )
                     if ( program != NULL )
                         {
                             strlcpy(JSON_Message_Map[counters->json_message_map].program,  program, sizeof(JSON_Message_Map[counters->json_message_map].program));
+                        }
+
+                }
+
+            if ( json_object_object_get_ex(json_obj, "username", &tmp))
+                {
+
+                    const char *username = json_object_get_string(tmp);
+
+                    if ( username != NULL )
+                        {
+                            strlcpy(JSON_Message_Map[counters->json_message_map].username,  username, sizeof(JSON_Message_Map[counters->json_message_map].username));
                         }
 
                 }
@@ -445,6 +435,12 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
                             score++;
                         }
 
+                    if ( JSON_Message_Map[i].username[0] != '\0' && !strcmp(JSON_Message_Map[i].username, SaganProcSyslog_LOCAL->json_key[a] ) )
+                        {
+                            strlcpy(JSON_Message_Map_Found[i].username, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].username));
+                            score++;
+                        }
+
                     if ( JSON_Message_Map[i].src_ip[0] != '\0' && !strcmp(JSON_Message_Map[i].src_ip, SaganProcSyslog_LOCAL->json_key[a] ) )
                         {
                             strlcpy(JSON_Message_Map_Found[i].src_ip, SaganProcSyslog_LOCAL->json_value[a], sizeof(JSON_Message_Map_Found[i].src_ip));
@@ -573,7 +569,6 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 
             if ( strcmp( (const char*)JSON_Message_Map[pos].message, "%JSON%"))
                 {
-//                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, JSON_Message_Map_Found[pos].message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
                     snprintf(SaganProcSyslog_LOCAL->syslog_message, sizeof(SaganProcSyslog_LOCAL->syslog_message), " %s", JSON_Message_Map_Found[pos].message);
                     SaganProcSyslog_LOCAL->syslog_message[ sizeof(SaganProcSyslog_LOCAL->syslog_message) -1 ] = '\0';
 
@@ -583,6 +578,11 @@ void Parse_JSON_Message ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
             /* Adopt the "flow_id" */
 
             SaganProcSyslog_LOCAL->flow_id = JSON_Message_Map_Found[pos].flow_id;
+
+            if ( JSON_Message_Map_Found[pos].username[0] != '\0' )
+                {
+                    strlcpy(SaganProcSyslog_LOCAL->username, JSON_Message_Map_Found[pos].username, sizeof(SaganProcSyslog_LOCAL->username));
+                }
 
             if ( JSON_Message_Map_Found[pos].md5[0] != '\0' )
                 {
