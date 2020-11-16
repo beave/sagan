@@ -410,10 +410,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                 }
 
 
-	    if ( SaganProcSyslog_LOCAL->username[0] != '\0' )
-	    	{
-		    normalize_username = SaganProcSyslog_LOCAL->username; 
-		}
+            if ( SaganProcSyslog_LOCAL->username[0] != '\0' )
+                {
+                    normalize_username = SaganProcSyslog_LOCAL->username;
+                }
 
 
 #endif
