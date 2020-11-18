@@ -42,11 +42,17 @@ struct _Rule_Struct *rulestruct;
 bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 {
 
-    int i=0;
-    int a=0;
+    int i = 0;
+    int a = 0;
+
+    int count = 0;
+
+    bool key_search = false;
 
     for (i=0; i < rulestruct[rule_position].json_content_count; i++)
         {
+
+            key_search = false;
 
             for (a=0; a < SaganProcSyslog_LOCAL->json_count; a++)
                 {
@@ -55,6 +61,8 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 
                     if ( !strcmp(SaganProcSyslog_LOCAL->json_key[a], rulestruct[rule_position].json_content_key[i] ) )
                         {
+
+                            key_search = true;
 
                             /* Key was found,  is this a "nocase" rule or is it case sensitive */
 
@@ -72,8 +80,6 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
                                                     return(false);
 
                                                 }
-
-
 
                                         }
                                     else
@@ -115,6 +121,14 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
                                 }
                         }
                 }
+
+            /* If we don't find the key, there is no point going any further */
+
+            if ( key_search == false )
+                {
+                    return(false);
+                }
+
         }
 
     /* If everything lines up,  we have a full json_content match */

@@ -64,7 +64,7 @@ void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslo
         {
 
 
-            if ( SaganProcSyslog_LOCAL->json_value[i][0] == '{' )
+            if ( SaganProcSyslog_LOCAL->json_value[i][0] == '{' || SaganProcSyslog_LOCAL->json_value[i][1] == '{' )
                 {
 
                     json_obj = json_tokener_parse(SaganProcSyslog_LOCAL->json_value[i]);
