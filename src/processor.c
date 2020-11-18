@@ -219,9 +219,6 @@ void Processor ( void )
 
     /* Cleans up valgrind */
 
-//    free(SaganPassSyslog_LOCAL);
-//    free(SaganProcSyslog_LOCAL);
-
     pthread_exit(NULL);
 
 }
