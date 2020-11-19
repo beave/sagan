@@ -280,6 +280,7 @@ struct _SaganConfig
     MMDB_s 	geoip2;
     char        geoip2_country_file[MAXPATH];
     bool 	have_geoip2;
+    bool	geoip2_lookup_all_alerts;
 
 #endif
 

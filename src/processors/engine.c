@@ -220,6 +220,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #endif
 
+    char country_src[MAX_COUNTRY] = { 0 };
+    char country_dst[MAX_COUNTRY] = { 0 };
+
+    strlcpy(country_src, "NOT-ENABLED", MAX_COUNTRY);
+    strlcpy(country_dst, "NOT-ENABLED", MAX_COUNTRY);
+
     /* Needs to be outside ifdef */
 
     unsigned char bluedot_results = 0;
@@ -1000,6 +1006,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                              * Country code
                              ****************************************************************************/
 
+
+                            strlcpy(country_src, "NONE", MAX_COUNTRY);
+                            strlcpy(country_dst, "NONE", MAX_COUNTRY);
+
 #ifdef HAVE_LIBMAXMINDDB
 
                             if ( rulestruct[b].geoip2_flag )
@@ -1014,12 +1024,12 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                         {
-                                            geoip2_return = GeoIP2_Lookup_Country(ip_src, b );
+                                            geoip2_return = GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
                                         }
 
                                     else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 2 )
                                         {
-                                            geoip2_return = GeoIP2_Lookup_Country(ip_dst, b );
+                                            geoip2_return = GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
                                         }
 
                                     if ( geoip2_return != GEOIP_SKIP )
@@ -1062,6 +1072,23 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                         }
                                                 }
                                         }
+
+                                }
+                            else
+                                {
+
+
+                                    /* If we want to store all GeoIP information for all alerts event
+                                    not GeoIP related events */
+
+                                    if ( config->geoip2_lookup_all_alerts == true )
+                                        {
+
+                                            (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
+                                            (void)GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
+
+                                        }
+
                                 }
 
 #endif
@@ -1402,7 +1429,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                        rulestruct[b].s_sid,
                                                                        ip_srcport_u32,
                                                                        ip_dstport_u32,
-                                                                       b, tp, bluedot_json, bluedot_results );
+                                                                       b, tp, bluedot_json, bluedot_results, country_src,
+                                                                       country_dst);
 
 
                                                         }

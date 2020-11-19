@@ -911,8 +911,9 @@ geoip
 The ``geoip`` subsection where you can configure `Maxminds <https://github.com/maxmind/libmaxminddb/releases>`_ 
 GeoIP settings.  This includes enabling GeoIP lookups, where to find the Maxmind data files and
 what networks to "skip" GeoIP lookups.   The ``country_database`` is the Maxmind database to load.
-The ``skip_networks`` option tells Sagan what networks not to lookup. 
-
+The ``skip_networks`` option tells Sagan what networks not to lookup.  The ``lookup_all_alerts``
+forces Sagan to add GeoIP information to all alerts.  When disabled,  GeoIP information is only
+added to alerts when signatures with ``country_code`` is triggered.
 
 Example ``geoip`` subsection::
 
@@ -936,6 +937,7 @@ Example ``geoip`` subsection::
 
        enabled: no
        country_database: "/usr/local/share/GeoIP2/GeoLite2-Country.mmdb"
+       lookup_all_alerts: true
        skip_networks: "8.8.8.8/32, 8.8.4.4/32"
 
 

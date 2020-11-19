@@ -77,7 +77,7 @@ int ESMTP_Thread ( _Sagan_Event *Event )
                       "[**] [%lu:%" PRIu64" ] %s [**]\n"
                       "[Classification: %s] [Priority: %d] [%s]\n"
                       "[Alert Time: %s]\n"
-                      "%s %s %s:%d -> %s:%d %s %s %s\n"
+                      "%s %s %s:%d [%s] -> %s:%d [%s] %s %s %s\n"
                       "Syslog message: %s\r\n%s\n\r",
                       config->sagan_esmtp_from,
                       rulestruct[Event->found].email,
@@ -94,8 +94,10 @@ int ESMTP_Thread ( _Sagan_Event *Event )
                       Event->time,
                       Event->ip_src,
                       Event->src_port,
+                      Event->country_src,
                       Event->ip_dst,
                       Event->dst_port,
+                      Event->country_dst,
                       Event->facility,
                       Event->priority,
                       Event->program,

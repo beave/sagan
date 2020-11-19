@@ -517,6 +517,9 @@ struct _Sagan_Event
     char hostname[MAX_HOSTNAME_SIZE+1];
     char url[MAX_URL_SIZE+1];
 
+    char *country_src;
+    char *country_dst;
+
 #ifdef HAVE_LIBLOGNORM
 
     char *json_normalize;

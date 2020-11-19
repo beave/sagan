@@ -235,7 +235,7 @@ sagan-core:
   # successes" & associate the country the successful login came from.  If the
   # successful login is from outside your country code,  via the $HOME_COUNTRY
   # variable, an alert can be generated.  Sagan will need to be compiled with 
-  # --enable-geoip2 flag. 
+  # --enable-geoip flag. 
   #
   # Maxmind GeoLite2 Free database:
   # http://dev.maxmind.com/geoip/geoip2/geolite2/
@@ -250,6 +250,7 @@ sagan-core:
    
     enabled: no
     country_database: "/usr/local/share/GeoIP2/GeoLite2-Country.mmdb"
+    lookup_all_alerts: true
     skip_networks: "8.8.8.8/32, 8.8.4.4/32"
 
   # Liblognorm is a fast sample-base log normalization library.  Sagan uses

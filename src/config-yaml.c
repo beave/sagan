@@ -229,6 +229,8 @@ void Load_YAML_Config( char *yaml_file )
             config->parse_ip_ipv6 = true;
             config->parse_ip_ipv4_mapped_ipv6 = false;
 
+            config->geoip2_lookup_all_alerts = true;
+
             config->eve_alerts_base64 = true;
 
             config->max_after2 = DEFAULT_IPC_AFTER2_IPC;
@@ -1165,10 +1167,18 @@ void Load_YAML_Config( char *yaml_file )
 
                                             if (!strcasecmp(value, "yes") || !strcasecmp(value, "true") )
                                                 {
-
                                                     config->have_geoip2 = true;
-
                                                 }
+                                        }
+
+                                    if (!strcmp(last_pass, "lookup_all_alerts") && config->have_geoip2 == true)
+                                        {
+
+                                            if (!strcasecmp(value, "false") || !strcasecmp(value, "no") )
+                                                {
+                                                    config->geoip2_lookup_all_alerts = false;
+                                                }
+
                                         }
 
                                     if (!strcmp(last_pass, "country_database") && config->have_geoip2 == true)

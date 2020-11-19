@@ -155,11 +155,17 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     json_object *jsrc_port = json_object_new_int( Event->src_port );
     json_object_object_add(jobj,"src_port", jsrc_port);
 
+    json_object *jcountry_src = json_object_new_string( Event->country_src );
+    json_object_object_add(jobj,"src_country", jcountry_src);
+
     json_object *jip_dst = json_object_new_string( Event->ip_dst );
     json_object_object_add(jobj,"dest_ip", jip_dst);
 
     json_object *jdst_port = json_object_new_int( Event->dst_port );
     json_object_object_add(jobj,"dest_port", jdst_port);
+
+    json_object *jcountry_dst = json_object_new_string( Event->country_dst );
+    json_object_object_add(jobj,"dst_country", jcountry_src);
 
     json_object *jxff = json_object_new_string( Event->host );
     json_object_object_add(jobj,"xff", jxff);

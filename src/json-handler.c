@@ -144,11 +144,17 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jsrc_port = json_object_new_int( Event->src_port );
     json_object_object_add(jobj,"src_port", jsrc_port);
 
+    json_object *jcountry_src = json_object_new_string( Event->country_src );
+    json_object_object_add(jobj,"src_country", jcountry_src);
+
     json_object *jdest_ip = json_object_new_string( Event->ip_dst );
     json_object_object_add(jobj,"dest_ip", jdest_ip);
 
     json_object *jdest_port = json_object_new_int( Event->dst_port );
     json_object_object_add(jobj,"dest_port", jdest_port);
+
+    json_object *jcountry_dst = json_object_new_string( Event->country_dst );
+    json_object_object_add(jobj,"dest_country", jcountry_dst);
 
     json_object *jproto = json_object_new_string( proto );
     json_object_object_add(jobj,"proto", jproto);

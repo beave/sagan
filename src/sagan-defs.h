@@ -50,6 +50,8 @@ typedef void json_object;
 #define RULEBUF			5128
 #define CONFBUF			4096
 
+#define	MAX_COUNTRY		16
+
 #define	MAX_SYSLOG_HOST		50
 #define MAX_SYSLOG_FACILITY	50
 #define MAX_SYSLOG_PRIORITY	50

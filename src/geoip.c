@@ -90,7 +90,7 @@ void Open_GeoIP2_Database( void )
  * it is in/out of HOME_COUNTRY
  ****************************************************************************/
 
-int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
+int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t size )
 {
 
     int gai_error;
@@ -116,6 +116,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                     Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
+            snprintf(str, size, "%s", "NON-ROUTABLE");
             return(GEOIP_SKIP);
         }
 
@@ -130,6 +131,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                             Sagan_Log(DEBUG, "[%s, line %d] IP address %s is in GeoIP 'skip_networks'. Skipping lookup.", __FILE__, __LINE__, ipaddr);
                         }
 
+                    snprintf(str, size, "%s", "SKIP");
                     return(GEOIP_SKIP);
                 }
 
@@ -149,6 +151,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
 
             __atomic_add_fetch(&counters->geoip2_error, 1, __ATOMIC_SEQ_CST);
 
+            snprintf(str, size, "%s", "LOOKUP-FALURE");
             return(GEOIP_SKIP);
 
         }
@@ -161,6 +164,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
                     Sagan_Log(DEBUG, "Country code for %s not found in GeoIP DB", ipaddr);
                 }
 
+            snprintf(str, size, "%s", "NOT-FOUND");
             return(GEOIP_SKIP);
         }
 
@@ -170,10 +174,12 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position )
     if (debug->debuggeoip2)
         {
             Sagan_Log(DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
-            Sagan_Log(DEBUG, "Country Codes    : |%s|", rulestruct[rule_position].geoip2_country_codes);
+            Sagan_Log(DEBUG, "Country Codes    : %s", rulestruct[rule_position].geoip2_country_codes);
             Sagan_Log(DEBUG, "Found in GeoIP DB: %s", country);
         }
 
+
+    snprintf(str, size, "%s", country);
 
     ptmp = strtok_r(tmp, ",", &tok);
 
