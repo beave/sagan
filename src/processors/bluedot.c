@@ -866,7 +866,7 @@ unsigned char Sagan_Bluedot_Lookup(char *data,  unsigned char type, int rule_pos
 
             IP2Bit(data, ip_convert);
 
-            if ( is_notroutable(ip_convert) )
+            if ( is_notroutable(ip_convert) || !strcmp(data, "0.0.0.0" ) )
                 {
 
                     if ( debug->debugbluedot )
