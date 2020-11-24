@@ -427,34 +427,79 @@ typedef struct _Syslog_JSON_Map _Syslog_JSON_Map;
 struct _Syslog_JSON_Map
 {
 
-    char syslog_map_host[32];
-    char syslog_map_facility[32];
-    char syslog_map_priority[32];
-    char syslog_map_level[32];
-    char syslog_map_tag[32];
-    char syslog_map_date[32];
-    char syslog_map_time[32];
-    char syslog_map_program[32];
-    char syslog_map_message[32];
+    char syslog_map_host[JSON_INPUT_S_SOURCE_MAX_COUNT][JSON_INPUT_S_SOURCE_MAX_SIZE];
+    unsigned char syslog_map_host_count;
 
-    char src_ip[32];
-    char dst_ip[32];
+    char syslog_map_facility[JSON_INPUT_FACILITY_MAX_COUNT][JSON_INPUT_FACILITY_MAX_SIZE];
+    unsigned char syslog_map_facility_count;
 
-    char src_port[32];
-    char dst_port[32];
+    char syslog_map_level[JSON_INPUT_LEVEL_MAX_COUNT][JSON_INPUT_LEVEL_MAX_SIZE];
+    unsigned char syslog_map_level_count;
 
-    char proto[32];
+    char syslog_map_priority[JSON_INPUT_PRIORITY_MAX_COUNT][JSON_INPUT_PRIORITY_MAX_SIZE];
+    unsigned char syslog_map_priority_count;
 
-    char md5[32];
-    char sha1[32];
-    char sha256[32];
-    char filename[32];
-    char hostname[32];
-    char url[32];
-    char ja3[32];
-    char flow_id[32];
-    char event_id[32];
-    char username[32];
+    char syslog_map_tag[JSON_INPUT_TAG_MAX_COUNT][JSON_INPUT_TAG_MAX_SIZE];
+    unsigned char syslog_map_tag_count;
+
+    char syslog_map_program[JSON_INPUT_PROGRAM_MAX_COUNT][JSON_INPUT_PROGRAM_MAX_SIZE];
+    unsigned char syslog_map_program_count;
+
+    char syslog_map_message[JSON_INPUT_MESSAGE_MAX_COUNT][JSON_INPUT_MESSAGE_MAX_SIZE];
+    unsigned char syslog_map_message_count;
+
+    char syslog_map_time[JSON_INPUT_TIME_MAX_COUNT][JSON_INPUT_TIME_MAX_SIZE];
+    unsigned char syslog_map_time_count;
+
+    char syslog_map_date[JSON_INPUT_DATE_MAX_COUNT][JSON_INPUT_DATE_MAX_SIZE];
+    unsigned char syslog_map_date_count;
+
+    /* non-syslog maps */
+
+    char username[JSON_INPUT_USERNAME_MAX_COUNT][JSON_INPUT_USERNAME_MAX_SIZE];
+    unsigned char username_count;
+
+    char src_ip[JSON_INPUT_SRCIP_MAX_COUNT][JSON_INPUT_SRCIP_MAX_SIZE];
+    unsigned char src_ip_count;
+
+    char dst_ip[JSON_INPUT_DSTIP_MAX_COUNT][JSON_INPUT_DSTIP_MAX_SIZE];
+    unsigned char dst_ip_count;
+
+    char src_port[JSON_INPUT_SRCPORT_MAX_COUNT][JSON_INPUT_SRCPORT_MAX_SIZE];
+    unsigned char src_port_count;
+
+    char dst_port[JSON_INPUT_DSTPORT_MAX_COUNT][JSON_INPUT_DSTPORT_MAX_SIZE];
+    unsigned char dst_port_count;
+
+    char md5[JSON_INPUT_MD5_MAX_COUNT][JSON_INPUT_MD5_MAX_SIZE];
+    unsigned char md5_count;
+
+    char sha1[JSON_INPUT_SHA1_MAX_COUNT][JSON_INPUT_SHA1_MAX_SIZE];
+    unsigned char sha1_count;
+
+    char sha256[JSON_INPUT_SHA256_MAX_COUNT][JSON_INPUT_SHA256_MAX_SIZE];
+    unsigned char sha256_count;
+
+    char filename[JSON_INPUT_FILENAME_MAX_COUNT][JSON_INPUT_FILENAME_MAX_SIZE];
+    unsigned char filename_count;
+
+    char hostname[JSON_INPUT_HOSTNAME_MAX_COUNT][JSON_INPUT_HOSTNAME_MAX_SIZE];
+    unsigned char hostname_count;
+
+    char url[JSON_INPUT_URL_MAX_COUNT][JSON_INPUT_URL_MAX_SIZE];
+    unsigned char url_count;
+
+    char ja3[JSON_INPUT_JA3_MAX_COUNT][JSON_INPUT_JA3_MAX_SIZE];
+    unsigned char ja3_count;
+
+    char flow_id[JSON_INPUT_FLOW_ID_MAX_COUNT][JSON_INPUT_FLOW_ID_MAX_SIZE];
+    unsigned char flow_id_count;
+
+    char event_id[JSON_INPUT_EVENT_ID_MAX_COUNT][JSON_INPUT_EVENT_ID_MAX_SIZE];
+    unsigned char event_id_count;
+
+    char proto[JSON_INPUT_PROTO_MAX_COUNT][JSON_INPUT_PROTO_MAX_SIZE];
+    unsigned char proto_count;
 
 };
 
