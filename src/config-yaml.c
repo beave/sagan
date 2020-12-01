@@ -218,6 +218,9 @@ void Load_YAML_Config( char *yaml_file )
 
 #endif
 
+#ifdef HAVE_LIBMAXMINDDB
+            config->geoip2_lookup_all_alerts = true;
+#endif
 
             config->sagan_host[0] = '\0';
             config->sagan_port = 514;
@@ -228,8 +231,6 @@ void Load_YAML_Config( char *yaml_file )
 
             config->parse_ip_ipv6 = true;
             config->parse_ip_ipv4_mapped_ipv6 = false;
-
-            config->geoip2_lookup_all_alerts = true;
 
             config->eve_alerts_base64 = true;
 
