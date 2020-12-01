@@ -170,6 +170,8 @@ int main(int argc, char **argv)
 
     struct _Sagan_Pass_Syslog *SaganPassSyslog_LOCAL = NULL;
 
+    FILE *test_open;			/* Used to test file access */
+
     /****************************************************************************/
     /* libpcap/PLOG (syslog sniffer) local variables                            */
     /****************************************************************************/
@@ -846,9 +848,50 @@ int main(int argc, char **argv)
             if ( rc != 0 )
                 {
                     Remove_Lock_File();
-                    Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats  thread [error: %d].", __FILE__, __LINE__, rc);
+                    Sagan_Log(ERROR, "[%s, line %d] Error creating Clients Stats thread [error: %d].", __FILE__, __LINE__, rc);
                 }
         }
+
+    /****************************************************************************
+     * Test file append access
+     ****************************************************************************/
+
+    /* EVE log */
+
+    if ( config->eve_flag  )
+        {
+            if (( test_open = fopen( config->eve_filename, "a" )) == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->eve_filename, strerror(errno));
+                }
+
+            fclose(test_open);
+        }
+
+    /* Alert log */
+
+    if ( config->alert_flag )
+        {
+            if (( test_open = fopen( config->sagan_alert_filepath, "a" )) == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                }
+
+            fclose(test_open);
+        }
+
+    /* Fast log */
+
+    if ( config->fast_flag )
+        {
+            if (( test_open = fopen( config->fast_filename, "a" )) == NULL )
+                {
+                    Sagan_Log(ERROR, "[%s, line %d] Cannot open %s (%s). Abort", __FILE__, __LINE__, config->sagan_alert_filepath, strerror(errno));
+                }
+
+            fclose(test_open);
+        }
+
 
     /****************************************************************************
      * Display processor information as we load
