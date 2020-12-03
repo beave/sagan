@@ -64,7 +64,6 @@ void Alert_JSON( _Sagan_Event *Event )
 
     Format_JSON_Alert_EVE( Event, alert_data, sizeof(alert_data) );
     fprintf(eve_stream, "%s\n", alert_data);
-    fflush(eve_stream);
 
     File_Unlock( eve_stream_int );
     fclose(eve_stream);
@@ -90,7 +89,6 @@ void Log_JSON ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, struct timeval tp )
 
     Format_JSON_Log_EVE( SaganProcSyslog_LOCAL, tp, log_data, sizeof(log_data) );
     fprintf(eve_stream, "%s\n", log_data);
-    fflush(eve_stream);
 
     File_Unlock( eve_stream_int );
     fclose(eve_stream);

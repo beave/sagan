@@ -87,8 +87,6 @@ void Alert_File( _Sagan_Event *Event )
                 }
         }
 
-    fflush(sagan_alert_stream);
-
     File_Unlock( sagan_alert_stream_int );
     fclose(sagan_alert_stream);
 

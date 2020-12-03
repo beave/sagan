@@ -87,8 +87,6 @@ void Fast_File( _Sagan_Event *Event )
 
     fprintf(sagan_fast_stream," %s:%d [%s] -> %s:%d [%s]\n", Event->ip_src, Event->src_port, Event->country_src, Event->ip_dst, Event->dst_port, Event->country_dst);
 
-    fflush(sagan_fast_stream);
-
     File_Unlock( sagan_fast_stream_int );
 
     fclose(sagan_fast_stream);
