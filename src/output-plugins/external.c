@@ -165,7 +165,7 @@ void External_Thread ( _Sagan_Event *Event, char *execute_script )
     json_object_object_add(jobj,"dest_port", jdst_port);
 
     json_object *jcountry_dst = json_object_new_string( Event->country_dst );
-    json_object_object_add(jobj,"dst_country", jcountry_src);
+    json_object_object_add(jobj,"dst_country", jcountry_dst);
 
     json_object *jxff = json_object_new_string( Event->host );
     json_object_object_add(jobj,"xff", jxff);

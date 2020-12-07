@@ -1025,10 +1025,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                         {
                                             geoip2_return = GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
-					    if ( config->geoip2_lookup_all_alerts == true )
-					    {
-						    (void)GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
-					    }
+                                            if ( config->geoip2_lookup_all_alerts == true )
+                                                {
+                                                    (void)GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
+                                                }
 
                                         }
 
@@ -1036,10 +1036,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                         {
                                             geoip2_return = GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
 
-					    if ( config->geoip2_lookup_all_alerts == true )
-					    {
-						    (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
-					    }
+                                            if ( config->geoip2_lookup_all_alerts == true )
+                                                {
+                                                    (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
+                                                }
 
                                         }
 
