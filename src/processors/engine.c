@@ -1012,7 +1012,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
 #ifdef HAVE_LIBMAXMINDDB
 
-                            if ( rulestruct[b].geoip2_flag )
+                            if ( rulestruct[b].geoip2_flag && config->have_geoip2 == true )
                                 {
 
                                     /* Set geoip2_return to GEOIP_SKIP in case ip_src_flag
@@ -1092,7 +1092,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     /* If we want to store all GeoIP information for all alerts event
                                     not GeoIP related events */
 
-                                    if ( config->geoip2_lookup_all_alerts == true )
+                                    if ( config->geoip2_lookup_all_alerts == true && config->have_geoip2 == true )
                                         {
 
                                             (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
