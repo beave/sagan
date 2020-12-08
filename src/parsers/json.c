@@ -93,8 +93,8 @@ void Parse_JSON ( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslo
                                 }
                         }
 
-		json_object_put(json_obj);
-	
+                    json_object_put(json_obj);
+
                 }
         }
 
