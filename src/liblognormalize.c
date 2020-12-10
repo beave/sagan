@@ -67,7 +67,7 @@ struct _SaganCounters *counters;
  * Load in the normalization files into memory
  ************************************************************************/
 
-void Liblognorm_Load(char *infile)
+void Liblognorm_Load(const char *infile)
 {
 
     SaganNormalizeLiblognorm = malloc(sizeof(struct _SaganNormalizeLiblognorm));

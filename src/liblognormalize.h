@@ -76,5 +76,5 @@ typedef struct _SaganNormalizeLiblognorm
 #endif
 
 
-void Liblognorm_Load( char * );
+void Liblognorm_Load( const char * );
 void Normalize_Liblognorm(char *, struct _SaganNormalizeLiblognorm *);
