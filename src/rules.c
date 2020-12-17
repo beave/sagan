@@ -299,6 +299,16 @@ void Load_Rules( const char *ruleset )
 
             Remove_Return(rulebuf);
 
+
+            /* Store a copy of the rule */
+
+            unsigned long b64_len = strlen(rulebuf) * 2;
+            uint8_t b64_target[b64_len];
+
+            Base64Encode( (const unsigned char*)rulebuf, strlen(rulebuf), b64_target, &b64_len);
+
+            strlcpy(rulestruct[counters->rulecount].signature_copy, (const char *)b64_target, sizeof(rulestruct[counters->rulecount].signature_copy));
+
             /****************************************/
             /* Some really basic rule sanity checks */
             /****************************************/

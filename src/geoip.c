@@ -90,7 +90,7 @@ void Open_GeoIP2_Database( void )
  * it is in/out of HOME_COUNTRY
  ****************************************************************************/
 
-int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t size )
+int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, struct _GeoIP *GeoIP )
 {
 
     int gai_error;
@@ -100,8 +100,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
     char *ptmp = NULL;
     char *tok = NULL;
 
-    char country[2];
-    char tmp[1024];
+    char tmp[1024] = { 0 };
 
     unsigned char ip_convert[MAXIPBIT] = { 0 };
 
@@ -116,8 +115,10 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
                     Sagan_Log(DEBUG, "[%s, line %d] IP address %s is not routable. Skipping GeoIP lookup.", __FILE__, __LINE__, ipaddr);
                 }
 
-            snprintf(str, size, "%s", "NON-ROUTABLE");
+            snprintf(GeoIP->country, sizeof(GeoIP->country), "%s", "NON_ROUTABLE");
+            GeoIP->results = GEOIP_SKIP;
             return(GEOIP_SKIP);
+
         }
 
     for ( i = 0; i < counters->geoip_skip_count; i++ )
@@ -131,7 +132,8 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
                             Sagan_Log(DEBUG, "[%s, line %d] IP address %s is in GeoIP 'skip_networks'. Skipping lookup.", __FILE__, __LINE__, ipaddr);
                         }
 
-                    snprintf(str, size, "%s", "SKIP");
+                    snprintf(GeoIP->country, sizeof(GeoIP->country), "%s", "SKIP");
+                    GeoIP->results = GEOIP_SKIP;
                     return(GEOIP_SKIP);
                 }
 
@@ -151,7 +153,8 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
 
             __atomic_add_fetch(&counters->geoip2_error, 1, __ATOMIC_SEQ_CST);
 
-            snprintf(str, size, "%s", "LOOKUP-FALURE");
+            snprintf(GeoIP->country, sizeof(GeoIP->country), "%s", "LOOKUP_FAILURE");
+            GeoIP->results = GEOIP_SKIP;
             return(GEOIP_SKIP);
 
         }
@@ -164,22 +167,65 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
                     Sagan_Log(DEBUG, "Country code for %s not found in GeoIP DB", ipaddr);
                 }
 
-            snprintf(str, size, "%s", "NOT-FOUND");
+            snprintf(GeoIP->country, sizeof(GeoIP->country), "%s", "NOT_FOUND");
+            GeoIP->results = GEOIP_SKIP;
             return(GEOIP_SKIP);
         }
 
-    strlcpy(country, entry_data.utf8_string, 3);
+    strlcpy(GeoIP->country, entry_data.utf8_string, 3);
     strlcpy(tmp, rulestruct[rule_position].geoip2_country_codes, sizeof(tmp));
+
+    MMDB_get_value(&result.entry, &entry_data, "city", "names", "en", NULL);
+
+    if ( entry_data.has_data )
+        {
+            strlcpy(GeoIP->city, entry_data.utf8_string, entry_data.data_size+1);
+        }
+
+    MMDB_get_value(&result.entry, &entry_data, "subdivisions", "0", "iso_code", NULL);
+
+    if ( entry_data.has_data )
+        {
+            strlcpy(GeoIP->subdivision, entry_data.utf8_string, entry_data.data_size+1);
+        }
+
+    MMDB_get_value(&result.entry, &entry_data, "postal", "code", NULL);
+
+    if ( entry_data.has_data )
+        {
+            strlcpy(GeoIP->postal, entry_data.utf8_string, entry_data.data_size+1);
+        }
+
+    MMDB_get_value(&result.entry, &entry_data, "location", "time_zone", NULL);
+
+    if ( entry_data.has_data )
+        {
+            strlcpy(GeoIP->timezone, entry_data.utf8_string, entry_data.data_size+1);
+        }
+
+    MMDB_get_value(&result.entry, &entry_data, "location", "latitude", NULL);
+
+    if ( entry_data.has_data )
+        {
+            snprintf(GeoIP->latitude, sizeof(GeoIP->latitude), "%f", entry_data.double_value);
+            GeoIP->latitude[ sizeof(GeoIP->latitude) - 1 ] = '\0';
+        }
+
+    MMDB_get_value(&result.entry, &entry_data, "location", "longitude", NULL);
+
+    if ( entry_data.has_data )
+        {
+            snprintf(GeoIP->longitude, sizeof(GeoIP->longitude), "%f", entry_data.double_value);
+            GeoIP->longitude[ sizeof(GeoIP->longitude) - 1 ] = '\0';
+        }
 
     if (debug->debuggeoip2)
         {
             Sagan_Log(DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
             Sagan_Log(DEBUG, "Country Codes    : %s", rulestruct[rule_position].geoip2_country_codes);
-            Sagan_Log(DEBUG, "Found in GeoIP DB: %s", country);
+            Sagan_Log(DEBUG, "Found in GeoIP DB: %s", GeoIP->country);
         }
 
-
-    snprintf(str, size, "%s", country);
 
     ptmp = strtok_r(tmp, ",", &tok);
 
@@ -187,15 +233,17 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(DEBUG, "GeoIP rule string parsing %s|%s", ptmp, country);
+                    Sagan_Log(DEBUG, "GeoIP rule string parsing %s|%s", ptmp, GeoIP->country);
                 }
 
-            if (!strcmp(ptmp, country))
+            if (!strcmp(ptmp, GeoIP->country))
                 {
                     if (debug->debuggeoip2)
                         {
-                            Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", country);
+                            Sagan_Log(DEBUG, "GeoIP Status: Found in user defined values [%s].", GeoIP->country);
                         }
+
+                    GeoIP->results = GEOIP_HIT;
 
                     return(GEOIP_HIT);  /* GeoIP was found / there was a hit */
                 }
@@ -205,6 +253,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t si
 
     if (debug->debuggeoip2) Sagan_Log(DEBUG, "GeoIP Status: Not found in user defined values.");
 
+    GeoIP->results = GEOIP_MISS;
     return(GEOIP_MISS);
 }
 

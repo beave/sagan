@@ -86,6 +86,9 @@ struct json_meta_content_conversion
 typedef struct _Rule_Struct _Rule_Struct;
 struct _Rule_Struct
 {
+
+    char signature_copy[RULEBUF*2];
+
     char s_msg[MAX_SAGAN_MSG];
 
     int ruleset_id;

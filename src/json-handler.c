@@ -144,20 +144,104 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
     json_object *jsrc_port = json_object_new_int( Event->src_port );
     json_object_object_add(jobj,"src_port", jsrc_port);
 
-    json_object *jcountry_src = json_object_new_string( Event->country_src );
-    json_object_object_add(jobj,"src_country", jcountry_src);
-
     json_object *jdest_ip = json_object_new_string( Event->ip_dst );
     json_object_object_add(jobj,"dest_ip", jdest_ip);
 
     json_object *jdest_port = json_object_new_int( Event->dst_port );
     json_object_object_add(jobj,"dest_port", jdest_port);
 
-    json_object *jcountry_dst = json_object_new_string( Event->country_dst );
-    json_object_object_add(jobj,"dest_country", jcountry_dst);
-
     json_object *jproto = json_object_new_string( proto );
     json_object_object_add(jobj,"proto", jproto);
+
+    /* GeoIP by source */
+
+    if ( Event->country_src[0] != '\0' )
+        {
+            json_object *jcountry_src = json_object_new_string( Event->country_src );
+            json_object_object_add(jobj,"src_country", jcountry_src);
+        }
+
+    if ( Event->city_src[0] != '\0')
+        {
+            json_object *jcity_src = json_object_new_string( Event->city_src );
+            json_object_object_add(jobj,"src_city", jcity_src);
+        }
+
+    if ( Event->postal_src[0] != '\0' )
+        {
+            json_object *jpostal_src = json_object_new_string( Event->postal_src );
+            json_object_object_add(jobj,"src_postal", jpostal_src);
+        }
+
+    if ( Event->timezone_src[0] != '\0' )
+        {
+            json_object *jtimezone_src = json_object_new_string( Event->timezone_src );
+            json_object_object_add(jobj,"src_timezone", jtimezone_src);
+        }
+
+    if ( Event->subdivision_src[0] != '\0' )
+        {
+            json_object *jsubdivision_src = json_object_new_string( Event->subdivision_src );
+            json_object_object_add(jobj,"src_subdivision", jsubdivision_src);
+        }
+
+    if ( Event->latitude_src[0] != '\0' && Event->longitude_src[0] != '\0' )
+        {
+            json_object *jlatitude_src = json_object_new_string( Event->latitude_src );
+            json_object_object_add(jobj,"src_latitude", jlatitude_src);
+        }
+
+    if ( Event->latitude_src[0] != '\0' && Event->longitude_src[0] != '\0' )
+        {
+            json_object *jlongitude_src = json_object_new_string( Event->longitude_src );
+            json_object_object_add(jobj,"src_longitude", jlongitude_src);
+        }
+
+    /* GeoIP by destination */
+
+    if ( Event->country_dst[0] != '\0' )
+        {
+            json_object *jcountry_dst = json_object_new_string( Event->country_dst );
+            json_object_object_add(jobj,"dest_country", jcountry_dst);
+        }
+
+    if ( Event->city_dst[0] != '\0')
+        {
+            json_object *jcity_dst = json_object_new_string( Event->city_dst );
+            json_object_object_add(jobj,"dest_city", jcity_dst);
+        }
+
+    if ( Event->postal_dst[0] != '\0' )
+        {
+            json_object *jpostal_dst = json_object_new_string( Event->postal_dst );
+            json_object_object_add(jobj,"dest_postal", jpostal_dst);
+        }
+
+    if ( Event->timezone_dst[0] != '\0' )
+        {
+            json_object *jtimezone_dst = json_object_new_string( Event->timezone_dst );
+            json_object_object_add(jobj,"dest_timezone", jtimezone_dst);
+        }
+
+    if ( Event->subdivision_dst[0] != '\0' )
+        {
+            json_object *jsubdivision_dst = json_object_new_string( Event->subdivision_dst );
+            json_object_object_add(jobj,"dest_subdivision", jsubdivision_dst);
+        }
+
+    if ( Event->latitude_dst[0] != '\0' && Event->longitude_dst[0] != '\0' )
+        {
+            json_object *jlatitude_dst = json_object_new_string( Event->latitude_dst );
+            json_object_object_add(jobj,"dest_latitude", jlatitude_dst);
+        }
+
+    if ( Event->latitude_dst[0] != '\0' && Event->longitude_dst[0] != '\0' )
+        {
+            json_object *jlongitude_dst = json_object_new_string( Event->longitude_dst );
+            json_object_object_add(jobj,"dest_longitude", jlongitude_dst);
+        }
+
+    /* Store payload */
 
     if ( config->eve_alerts_base64 == true )
         {
@@ -201,6 +285,9 @@ void Format_JSON_Alert_EVE( _Sagan_Event *Event, char *str, size_t size )
 
     json_object *jsignature_alert = json_object_new_int64( Event->sid );
     json_object_object_add(jobj_alert,"signature_id", jsignature_alert);
+
+    json_object *jsignature_copy = json_object_new_string( rulestruct[Event->found].signature_copy );
+    json_object_object_add(jobj_alert,"signature_triggered", jsignature_copy);
 
     json_object *jrev_alert = json_object_new_int64( Event->rev );
     json_object_object_add(jobj_alert,"rev", jrev_alert);

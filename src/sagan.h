@@ -563,7 +563,20 @@ struct _Sagan_Event
     char url[MAX_URL_SIZE+1];
 
     char *country_src;
+    char *city_src;
+    char *postal_src;
+    char *timezone_src;
+    char *subdivision_src;
+    char *latitude_src;
+    char *longitude_src;
+
     char *country_dst;
+    char *city_dst;
+    char *postal_dst;
+    char *timezone_dst;
+    char *subdivision_dst;
+    char *latitude_dst;
+    char *longitude_dst;
 
 #ifdef HAVE_LIBLOGNORM
 

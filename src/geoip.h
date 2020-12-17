@@ -18,7 +18,7 @@
 ** Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-/* sagan-geoip.h
+/* geoip.h
  *
  * Sagan GeoIP prototypes
  */
@@ -27,14 +27,28 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-#ifdef HAVE_LIBMAXMINDDB
+//#ifdef HAVE_LIBMAXMINDDB
 
 #define GEOIP_MISS	0
 #define GEOIP_HIT	1
 #define GEOIP_SKIP	2
 
-void Open_GeoIP2_Database( void );
-int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, char *str, size_t size );
+typedef struct _GeoIP _GeoIP;
+struct _GeoIP
+{
+
+    unsigned char results;
+
+    char city[32];
+    char country[32];
+    char subdivision[3];
+    char postal[16];
+    char timezone[32];
+    char latitude[16];
+    char longitude[16];
+
+};
+
 
 typedef struct _Sagan_GeoIP_Skip _Sagan_GeoIP_Skip;
 struct _Sagan_GeoIP_Skip
@@ -48,5 +62,9 @@ struct _Sagan_GeoIP_Skip
 
 };
 
-#endif
+void Open_GeoIP2_Database( void );
+int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, struct _GeoIP *GeoIP );
+
+
+//#endif
 

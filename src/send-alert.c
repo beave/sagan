@@ -32,6 +32,10 @@
 #include "sagan.h"
 #include "version.h"
 
+
+#include "geoip.h"
+
+#include "send-alert.h"
 #include "output.h"
 #include "gen-msg.h"
 
@@ -39,7 +43,7 @@
 
 struct _SaganConfig *config;
 
-void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, char *json_normalize, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, uint64_t sid, int src_port, int dst_port, int pos, struct timeval tp, char *bluedot_json, unsigned char bluedot_results, char *country_src, char *country_dst  )
+void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, char *json_normalize, _Sagan_Processor_Info *processor_info, char *ip_src, char *ip_dst, char *normalize_http_uri, char *normalize_http_hostname, int proto, uint64_t sid, int src_port, int dst_port, int pos, struct timeval tp, char *bluedot_json, unsigned char bluedot_results, struct _GeoIP *GeoIP_SRC, struct _GeoIP *GeoIP_DEST )
 {
 
     char tmp[64] = { 0 };
@@ -106,9 +110,26 @@ void Send_Alert ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, char *json_normaliz
 
     SaganProcessorEvent->flow_id	    =    SaganProcSyslog_LOCAL->flow_id;
 
-    SaganProcessorEvent->country_src	    =	 country_src;
-    SaganProcessorEvent->country_dst	    =    country_dst;
+    SaganProcessorEvent->country_src	    =	 GeoIP_SRC->country;
+    SaganProcessorEvent->country_dst	    =    GeoIP_DEST->country;
 
+    SaganProcessorEvent->city_src	    =	 GeoIP_SRC->city;
+    SaganProcessorEvent->city_dst	    =    GeoIP_DEST->city;
+
+    SaganProcessorEvent->subdivision_src	    =	 GeoIP_SRC->subdivision;
+    SaganProcessorEvent->subdivision_dst	    =    GeoIP_DEST->subdivision;
+
+    SaganProcessorEvent->postal_src	    =	 GeoIP_SRC->postal;
+    SaganProcessorEvent->postal_dst	    =    GeoIP_DEST->postal;
+
+    SaganProcessorEvent->timezone_src	    =	 GeoIP_SRC->timezone;
+    SaganProcessorEvent->timezone_dst	    =    GeoIP_DEST->timezone;
+
+    SaganProcessorEvent->latitude_src	    =	 GeoIP_SRC->latitude;
+    SaganProcessorEvent->latitude_dst	    =    GeoIP_DEST->latitude;
+
+    SaganProcessorEvent->longitude_src	    =	 GeoIP_SRC->longitude;
+    SaganProcessorEvent->longitude_dst	    =    GeoIP_DEST->longitude;
 
     Output ( SaganProcessorEvent );
     free(SaganProcessorEvent);

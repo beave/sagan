@@ -43,6 +43,7 @@
 #include "sagan-defs.h"
 #include "aetas.h"
 #include "meta-content.h"
+#include "geoip.h"
 #include "send-alert.h"
 #include "flexbit.h"
 #include "flexbit-mmap.h"
@@ -76,9 +77,9 @@
 #include "liblognormalize.h"
 #endif
 
-#ifdef HAVE_LIBMAXMINDDB
-#include "geoip.h"
-#endif
+//#ifdef HAVE_LIBMAXMINDDB
+//#include "geoip.h"
+//#endif
 
 #ifdef HAVE_LIBFASTJSON
 #include "message-json-map.h"
@@ -101,6 +102,32 @@ void Sagan_Engine_Init ( void )
 
 int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_flag )
 {
+
+    /* GeoIP source information */
+
+    struct _GeoIP *GeoIP_SRC = NULL;
+    GeoIP_SRC = malloc(sizeof(struct _GeoIP));
+
+    if ( GeoIP_SRC == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for _GeoIP (SRC). Abort!", __FILE__, __LINE__);
+        }
+
+    memset(GeoIP_SRC, 0, sizeof(_GeoIP));
+
+    /* GeoIP destination information */
+
+    struct _GeoIP *GeoIP_DEST = NULL;
+    GeoIP_DEST = malloc(sizeof(struct _GeoIP));
+
+    if ( GeoIP_DEST == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for _GeoIP (DEST). Abort!", __FILE__, __LINE__);
+        }
+
+    memset(GeoIP_DEST, 0, sizeof(_GeoIP));
+
+    /* Routing data */
 
     struct _Sagan_Routing *SaganRouting = NULL;
     SaganRouting = malloc(sizeof(struct _Sagan_Routing));
@@ -186,6 +213,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     char s_msg[1024] = { 0 };
 
     char syslog_append_program[MAX_SYSLOGMSG] = { 0 };
+    char syslog_append_orig_message[MAX_SYSLOGMSG] = { 0 };
     bool append_program_flag = false;
 
     struct timeval tp;
@@ -219,12 +247,6 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     unsigned char geoip2_return = GEOIP_MISS;
 
 #endif
-
-    char country_src[MAX_COUNTRY] = { 0 };
-    char country_dst[MAX_COUNTRY] = { 0 };
-
-    strlcpy(country_src, "NOT-ENABLED", MAX_COUNTRY);
-    strlcpy(country_dst, "NOT-ENABLED", MAX_COUNTRY);
 
     /* Needs to be outside ifdef */
 
@@ -533,10 +555,22 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                             if ( rulestruct[b].append_program == true && append_program_flag == false &&
                                     SaganProcSyslog_LOCAL->syslog_program[0] != '\0' )
                                 {
+                                    memcpy(syslog_append_orig_message, SaganProcSyslog_LOCAL->syslog_message, sizeof( syslog_append_orig_message ));
+
                                     snprintf(syslog_append_program, sizeof(syslog_append_program), "%s | %s", SaganProcSyslog_LOCAL->syslog_message, SaganProcSyslog_LOCAL->syslog_program);
                                     syslog_append_program[ sizeof(syslog_append_program) - 1 ] = '\0';
-                                    strlcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+                                    memcpy(SaganProcSyslog_LOCAL->syslog_message, syslog_append_program, sizeof(SaganProcSyslog_LOCAL->syslog_message));
                                     append_program_flag = true;
+                                }
+
+                            /* If the signature _doesn't_ have an "append_program" but we've already
+                               appended,  we undo that action (back the the orginal string */
+
+                            if ( rulestruct[b].append_program == false && append_program_flag == true )
+                                {
+                                    memcpy(SaganProcSyslog_LOCAL->syslog_message,syslog_append_orig_message, sizeof(SaganProcSyslog_LOCAL->syslog_message));
+
+                                    append_program_flag = false;
                                 }
 
                             /* Start processing searches from rule optison */
@@ -1006,11 +1040,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                              * Country code
                              ****************************************************************************/
 
-
-                            strlcpy(country_src, "NONE", MAX_COUNTRY);
-                            strlcpy(country_dst, "NONE", MAX_COUNTRY);
-
 #ifdef HAVE_LIBMAXMINDDB
+
+
+                            GeoIP_SRC->country[0] = '\0';
+                            GeoIP_DEST->country[0] = '\0';
 
                             if ( rulestruct[b].geoip2_flag && config->have_geoip2 == true )
                                 {
@@ -1024,21 +1058,21 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
                                     if ( ip_src_flag == true && rulestruct[b].geoip2_src_or_dst == 1 )
                                         {
-                                            geoip2_return = GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
+                                            geoip2_return = GeoIP2_Lookup_Country(ip_src, b, GeoIP_SRC );
                                             if ( config->geoip2_lookup_all_alerts == true )
                                                 {
-                                                    (void)GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
+                                                    (void)GeoIP2_Lookup_Country(ip_dst, b, GeoIP_DEST );
                                                 }
 
                                         }
 
                                     else if ( ip_dst_flag == true && rulestruct[b].geoip2_src_or_dst == 2 )
                                         {
-                                            geoip2_return = GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
+                                            geoip2_return = GeoIP2_Lookup_Country(ip_dst, b, GeoIP_DEST );
 
                                             if ( config->geoip2_lookup_all_alerts == true )
                                                 {
-                                                    (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
+                                                    (void)GeoIP2_Lookup_Country(ip_src, b, GeoIP_SRC );
                                                 }
 
                                         }
@@ -1095,8 +1129,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                     if ( config->geoip2_lookup_all_alerts == true && config->have_geoip2 == true )
                                         {
 
-                                            (void)GeoIP2_Lookup_Country(ip_src, b, country_src, MAX_COUNTRY );
-                                            (void)GeoIP2_Lookup_Country(ip_dst, b, country_dst, MAX_COUNTRY );
+                                            (void)GeoIP2_Lookup_Country(ip_src, b, GeoIP_SRC );
+                                            (void)GeoIP2_Lookup_Country(ip_dst, b, GeoIP_DEST );
 
                                         }
 
@@ -1440,9 +1474,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
                                                                        rulestruct[b].s_sid,
                                                                        ip_srcport_u32,
                                                                        ip_dstport_u32,
-                                                                       b, tp, bluedot_json, bluedot_results, country_src,
-                                                                       country_dst);
-
+                                                                       b, tp,
+                                                                       bluedot_json,
+                                                                       bluedot_results,
+                                                                       GeoIP_SRC,
+                                                                       GeoIP_DEST);
 
                                                         }
                                                     else

@@ -48,6 +48,7 @@
 #include "sagan.h"
 #include "sagan-defs.h"
 #include "sagan-config.h"
+#include "geoip.h"
 #include "send-alert.h"
 #include "util-time.h"
 
@@ -287,7 +288,7 @@ void Track_Clients_Thread ( void )
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp, NULL, 0, "NONE", "NONE");
+                                               0, tp, NULL, 0, NULL, NULL);
                                 } /* End last seen check time */
 
                         }
@@ -354,7 +355,7 @@ void Track_Clients_Thread ( void )
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp, NULL, 0, "NONE", "NONE");
+                                               0, tp, NULL, 0, NULL, NULL);
 
                                 }  /* End of existing utime check */
 
