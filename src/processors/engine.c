@@ -20,7 +20,7 @@
 
 /* engine.c
  *
- * Threaded negine that looks for events & patterns based on 'Snort like'
+ * Threaded engine that looks for events & patterns based on 'Snort like'
  * rules.
  *
  */
@@ -76,10 +76,6 @@
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"
 #endif
-
-//#ifdef HAVE_LIBMAXMINDDB
-//#include "geoip.h"
-//#endif
 
 #ifdef HAVE_LIBFASTJSON
 #include "message-json-map.h"
@@ -1520,6 +1516,8 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     free(processor_info_engine);
     free(lookup_cache);
     free(SaganRouting);
+    free(GeoIP_SRC);
+    free(GeoIP_DEST); 
 
     return(0);
 }

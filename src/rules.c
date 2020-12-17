@@ -52,6 +52,7 @@
 #include "flexbit-mmap.h"
 #include "lockfile.h"
 #include "classifications.h"
+#include "util-base64.h"
 #include "rules.h"
 #include "sagan-config.h"
 #include "parsers/parsers.h"
