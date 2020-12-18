@@ -74,7 +74,6 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
         }
 
     memset(GeoIP, 0, sizeof(_GeoIP));
-
     memcpy(GeoIP->country, "NONE", 4);
 
     /* We don't want the array to be altered while we are working with it */
@@ -130,7 +129,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
             /* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
             Send_Alert(SaganProcSyslog_LOCAL,
-                       NULL,
+                       "null",
                        processor_info_engine,
                        ip_src,
                        ip_dst,
@@ -178,7 +177,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
             gettimeofday(&tp, 0);
 
             Send_Alert(SaganProcSyslog_LOCAL,
-                       NULL,
+                       "null",
                        processor_info_engine,
                        ip_src,
                        ip_dst,

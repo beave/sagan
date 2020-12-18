@@ -291,7 +291,7 @@ void Track_Clients_Thread ( void )
                                     /* Send alert to output plugins */
 
                                     Send_Alert(SaganProcSyslog_LOCAL,
-                                               NULL,
+                                               "null",
                                                processor_info_track_client,
                                                SaganProcSyslog_LOCAL->syslog_host,
                                                config->sagan_host,
@@ -358,7 +358,7 @@ void Track_Clients_Thread ( void )
                                     /* Send alert to output plugins */
 
                                     Send_Alert(SaganProcSyslog_LOCAL,
-                                               NULL,
+                                               "null",
                                                processor_info_track_client,
                                                SaganProcSyslog_LOCAL->syslog_host,
                                                config->sagan_host,
