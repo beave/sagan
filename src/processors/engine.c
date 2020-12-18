@@ -1517,7 +1517,7 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
     free(lookup_cache);
     free(SaganRouting);
     free(GeoIP_SRC);
-    free(GeoIP_DEST); 
+    free(GeoIP_DEST);
 
     return(0);
 }

@@ -178,6 +178,19 @@ void Track_Clients_Thread_Init ( void )
 void Track_Clients_Thread ( void )
 {
 
+    /* GeoIP struct for Send_Alert */
+
+    struct _GeoIP *GeoIP = NULL;
+    GeoIP = malloc(sizeof(struct _GeoIP));
+
+    if ( GeoIP == NULL )
+        {
+            Sagan_Log(ERROR, "[%s, line %d] Failed to allocate memory for _GeoIP (DEST). Abort!", __FILE__, __LINE__);
+        }
+
+    memset(GeoIP, 0, sizeof(_GeoIP));
+    memcpy(GeoIP->country, "NONE", 4);
+
     for(;;)
         {
 
@@ -282,13 +295,13 @@ void Track_Clients_Thread ( void )
                                                processor_info_track_client,
                                                SaganProcSyslog_LOCAL->syslog_host,
                                                config->sagan_host,
-                                               "\0",
-                                               "\0",
+                                               '\0',
+                                               '\0',
                                                config->sagan_proto,
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp, NULL, 0, NULL, NULL);
+                                               0, tp, NULL, 0, GeoIP, GeoIP);
                                 } /* End last seen check time */
 
                         }
@@ -349,13 +362,13 @@ void Track_Clients_Thread ( void )
                                                processor_info_track_client,
                                                SaganProcSyslog_LOCAL->syslog_host,
                                                config->sagan_host,
-                                               "\0",
-                                               "\0",
+                                               '\0',
+                                               '\0',
                                                config->sagan_proto,
                                                alertid,
                                                config->sagan_port,
                                                config->sagan_port,
-                                               0, tp, NULL, 0, NULL, NULL);
+                                               0, tp, NULL, 0, GeoIP, GeoIP);
 
                                 }  /* End of existing utime check */
 
