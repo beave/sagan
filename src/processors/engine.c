@@ -91,6 +91,8 @@ struct _SaganConfig *config;
 
 struct _Sagan_IPC_Counters *counters_ipc;
 
+bool reload_rules;
+
 void Sagan_Engine_Init ( void )
 {
     /* Nothing to do yet */
@@ -443,6 +445,11 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 #endif
 
             /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
+
+	    while ( reload_rules == true )
+		{
+		usleep(10);
+		}
 
             if ( rulestruct[b].type == NORMAL_RULE || ( rulestruct[b].type == DYNAMIC_RULE && dynamic_rule_flag == true ) )
                 {

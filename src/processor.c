@@ -184,7 +184,7 @@ void Processor ( void )
                                 }
                         }
 
-                    (void)Sagan_Engine(SaganProcSyslog_LOCAL, dynamic_rule_flag );
+                    (void)Sagan_Engine( SaganProcSyslog_LOCAL, dynamic_rule_flag );
 
                     /* If this is a dynamic run,  reset back to normal */
 
@@ -200,7 +200,6 @@ void Processor ( void )
                             Client_Stats_Add_Update_IP ( SaganProcSyslog_LOCAL->syslog_host, SaganProcSyslog_LOCAL->syslog_program, SaganProcSyslog_LOCAL->syslog_message );
 
                         }
-
 
                     if ( config->sagan_track_clients_flag )
                         {

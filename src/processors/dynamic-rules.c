@@ -79,7 +79,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
     /* We don't want the array to be altered while we are working with it */
 
     pthread_mutex_lock(&SaganRulesLoadedMutex);
-    reload_rules = 1;
+
+    reload_rules = true;
 
     for (i=0; i<counters->rules_loaded_count; i++)
         {
@@ -91,6 +92,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
                     /* Rule was already loaded.  Release mutex and continue as normal */
 
+		    reload_rules = false;
                     pthread_mutex_unlock(&SaganRulesLoadedMutex);
                     return(0);
                 }
@@ -113,7 +115,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
     /* Done here,  release so others can process */
 
-    reload_rules = 0;
+    reload_rules = false;
+
     pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
     /*****************************/
@@ -128,6 +131,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
             gettimeofday(&tp, 0);
 
             /* Process the alert _before_ loading rule set! Otherwise, mem will mismatch */
+
             Send_Alert(SaganProcSyslog_LOCAL,
                        "null",
                        processor_info_engine,
@@ -144,11 +148,11 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
             /* Lock rules so other threads don't try to use it while we alter/load new rules */
 
             pthread_mutex_lock(&SaganRulesLoadedMutex);
-            reload_rules = 1;
+            reload_rules = true;
 
             Load_Rules(rulestruct[rule_position].dynamic_ruleset);
 
-            reload_rules = 0;
+            reload_rules = false;
             pthread_mutex_unlock(&SaganRulesLoadedMutex);
 
         }
