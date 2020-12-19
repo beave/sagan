@@ -1781,6 +1781,7 @@ void Load_Rules( const char *ruleset )
                             strlcpy(rulestruct[counters->rulecount].geoip2_country_codes, tmp1, sizeof(rulestruct[counters->rulecount].geoip2_country_codes));
 
                             rulestruct[counters->rulecount].geoip2_flag = 1;
+
                         }
 #endif
 

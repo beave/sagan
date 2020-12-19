@@ -47,11 +47,8 @@ struct _Syslog_JSON_Map *Syslog_JSON_Map;
 void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
 
-    uint16_t i;
-    uint8_t a;
-
-    char *ptmp = NULL;
-    char *tok = NULL;
+    uint16_t i = 0;
+    uint8_t a = 0;
 
     bool program_found = false;
     bool message_found = false;

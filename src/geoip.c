@@ -221,9 +221,16 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, struct _GeoIP *GeoIP
 
     if (debug->debuggeoip2)
         {
-            Sagan_Log(DEBUG, "GeoIP Lookup IP  : %s", ipaddr);
-            Sagan_Log(DEBUG, "Country Codes    : %s", rulestruct[rule_position].geoip2_country_codes);
-            Sagan_Log(DEBUG, "Found in GeoIP DB: %s", GeoIP->country);
+            Sagan_Log(DEBUG, "----------------------------------------------------------------");
+            Sagan_Log(DEBUG, "GeoIP Lookup IP               : %s", ipaddr);
+            Sagan_Log(DEBUG, "Country                       : %s", GeoIP->country);
+            Sagan_Log(DEBUG, "City                          : %s", GeoIP->city);
+            Sagan_Log(DEBUG, "Subdivision                   : %s", GeoIP->subdivision);
+            Sagan_Log(DEBUG, "Postal Code                   : %s", GeoIP->postal);
+            Sagan_Log(DEBUG, "Timezone                      : %s", GeoIP->timezone);
+            Sagan_Log(DEBUG, "Longitude                     : %s", GeoIP->longitude);
+            Sagan_Log(DEBUG, "Latitude                      : %s", GeoIP->latitude);
+            Sagan_Log(DEBUG, "User Defined Country Codes    : %s", rulestruct[rule_position].geoip2_country_codes);
         }
 
 
@@ -233,7 +240,7 @@ int GeoIP2_Lookup_Country( char *ipaddr, int rule_position, struct _GeoIP *GeoIP
         {
             if (debug->debuggeoip2)
                 {
-                    Sagan_Log(DEBUG, "GeoIP rule string parsing %s|%s", ptmp, GeoIP->country);
+                    Sagan_Log(DEBUG, "GeoIP rule string parsing     : %s|%s", ptmp, GeoIP->country);
                 }
 
             if (!strcmp(ptmp, GeoIP->country))

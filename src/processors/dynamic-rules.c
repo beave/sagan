@@ -92,7 +92,7 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
 
                     /* Rule was already loaded.  Release mutex and continue as normal */
 
-		    reload_rules = false;
+                    reload_rules = false;
                     pthread_mutex_unlock(&SaganRulesLoadedMutex);
                     return(0);
                 }
@@ -137,8 +137,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                        processor_info_engine,
                        ip_src,
                        ip_dst,
-                       '\0',
-                       '\0',
+                       NULL,
+                       NULL,
                        config->sagan_proto,
                        rulestruct[rule_position].s_sid,
                        config->sagan_port,
@@ -185,8 +185,8 @@ int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_po
                        processor_info_engine,
                        ip_src,
                        ip_dst,
-                       '\0',
-                       '\0',
+                       NULL,
+                       NULL,
                        config->sagan_proto,
                        rulestruct[rule_position].s_sid,
                        config->sagan_port,

@@ -446,10 +446,10 @@ int Sagan_Engine ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, bool dynamic_rule_
 
             /* Process "normal" rules.  Skip dynamic rules if it's not time to process them */
 
-	    while ( reload_rules == true )
-		{
-		usleep(10);
-		}
+            while ( reload_rules == true )
+                {
+                    usleep(10);
+                }
 
             if ( rulestruct[b].type == NORMAL_RULE || ( rulestruct[b].type == DYNAMIC_RULE && dynamic_rule_flag == true ) )
                 {

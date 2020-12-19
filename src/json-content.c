@@ -45,8 +45,6 @@ bool JSON_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
     int i = 0;
     int a = 0;
 
-    int count = 0;
-
     bool key_search = false;
 
     for (i=0; i < rulestruct[rule_position].json_content_count; i++)
