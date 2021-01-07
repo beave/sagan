@@ -65,13 +65,13 @@
 #include <json.h>
 #endif
 
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 #ifdef WITH_BLUEDOT
 
-struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
+extern struct _Sagan_Bluedot_Cat_List *SaganBluedotCatList;
 
 char *bluedot_time = NULL;
 char *bluedot_type = NULL;
@@ -82,9 +82,9 @@ uint64_t bluedot_time_u32 = 0;
 
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"
-struct liblognorm_struct *liblognormstruct;
-struct liblognorm_toload_struct *liblognormtoloadstruct;
-int liblognorm_count;
+extern struct liblognorm_struct *liblognormstruct;
+extern struct liblognorm_toload_struct *liblognormtoloadstruct;
+extern int liblognorm_count;
 #endif
 
 /* For pre-8.20 PCRE compatibility */

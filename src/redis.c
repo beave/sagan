@@ -42,8 +42,8 @@
 #include "lockfile.h"
 #include "redis.h"
 
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
 int redis_msgslot = 0;
 

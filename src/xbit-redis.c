@@ -44,10 +44,10 @@
 
 #define 	REDIS_PREFIX	"sagan"
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 struct _Sagan_Redis_Write *Sagan_Redis_Write;
 

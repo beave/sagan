@@ -50,9 +50,9 @@
 
 #define MAX_BROINTEL_LINE_SIZE 10240
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
 
 struct _Sagan_Processor_Info *processor_info_brointel = NULL;
 

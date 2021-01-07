@@ -43,8 +43,8 @@
 #include "liblognormalize.h"
 #include "sagan-config.h"
 
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
 struct _SaganNormalizeLiblognorm *SaganNormalizeLiblognorm = NULL;
 
@@ -58,7 +58,7 @@ int liblognorm_count;
 
 static ln_ctx ctx;
 
-struct _SaganCounters *counters;
+extern struct _SaganCounters *counters;
 
 
 /************************************************************************

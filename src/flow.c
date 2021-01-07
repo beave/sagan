@@ -35,7 +35,7 @@
 #include "rules.h"
 #include "sagan-config.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 /********************/ /************************/ /*****************/
 /***** flow_type ****/ /******* flow_var *******/ /*** direction ***/

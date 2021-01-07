@@ -61,8 +61,8 @@
 #include "lockfile.h"
 #include "plog.h"
 
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 struct my_udphdr
 {

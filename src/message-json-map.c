@@ -46,11 +46,11 @@ libfastjson is required for Sagan to function!
 #include "parsers/json.h"
 
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
 
-struct _JSON_Message_Map *JSON_Message_Map;
+extern struct _JSON_Message_Map *JSON_Message_Map;
 
 /*************************
  * Load JSON mapping file

@@ -59,10 +59,10 @@ pthread_mutex_t IPCTrackClientsStatus=PTHREAD_MUTEX_INITIALIZER;
 
 struct _Sagan_Processor_Info *processor_info_track_client = NULL;
 struct _Sagan_Proc_Syslog *SaganProcSyslog;
-struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
-struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_Track_Clients_IPC *SaganTrackClients_ipc;
+extern struct _Sagan_IPC_Counters *counters_ipc;
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
 /****************************************************************************
  * Sagan_Track_Clients - Main routine to "tracks" via IPC/memory IPs that

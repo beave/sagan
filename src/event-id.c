@@ -56,8 +56,8 @@
 #include "config.h"             /* From autoconf */
 #endif
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
 
 bool Event_ID ( int position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {

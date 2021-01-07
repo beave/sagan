@@ -116,8 +116,8 @@ struct _JSON_Message_Map *JSON_Message_Map = NULL;
 
 /* Already Init'ed */
 
-struct _Rule_Struct *rulestruct;
-struct _Sagan_Ignorelist *SaganIgnorelist;
+extern struct _Rule_Struct *rulestruct;
+extern struct _Sagan_Ignorelist *SaganIgnorelist;
 
 #ifdef WITH_BLUEDOT
 #include "processors/bluedot.h"
@@ -137,7 +137,7 @@ int proc_running = 0;
 
 pthread_cond_t SaganProcDoWork=PTHREAD_COND_INITIALIZER;
 pthread_mutex_t SaganProcWorkMutex=PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
+extern pthread_mutex_t SaganRulesLoadedMutex;
 
 /* ########################################################################
  * Start of main() thread

@@ -37,7 +37,7 @@
 #include "sagan-config.h"
 #include "parsers/parsers.h"
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
 void Parse_Hash(char *syslog_message, int type, char *str, size_t size)
 {

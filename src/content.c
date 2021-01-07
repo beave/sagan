@@ -35,7 +35,7 @@
 
 #include "parsers/parsers.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 
 bool Content ( int rule_position, const char *syslog_message )

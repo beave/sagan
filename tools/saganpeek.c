@@ -59,6 +59,13 @@
 #define TRACK_TYPE 4
 #define XBIT_TYPE 5
 
+/* Linking with ../util.o pulls in dependencies on these globals. Provide them here,
+ * even though they do not appear to be used by any code that is executed in this program. */
+#include "../src/sagan-config.h"
+struct _SaganConfig config;
+struct _SaganCounters counters;
+
+
 /****************************************************************************
  * usage - Give the user some hints about how to use this utility!
  ****************************************************************************/

@@ -48,10 +48,10 @@
 #include "util-time.h"
 #include "version.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
 
 int ESMTP_Thread ( _Sagan_Event *Event )
 {

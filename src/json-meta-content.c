@@ -37,7 +37,7 @@
 
 #include "parsers/parsers.h"
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 bool JSON_Meta_Content(int rule_position, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL)
 {

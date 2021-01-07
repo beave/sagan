@@ -43,9 +43,9 @@
 #include "references.h"
 #include "sagan-config.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
 
 void Alert_File( _Sagan_Event *Event )
 {

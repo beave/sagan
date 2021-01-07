@@ -51,7 +51,7 @@
 #include "sagan-config.h"
 #include "parsers/parsers.h"
 
-struct _SaganConfig *config;
+extern struct _SaganConfig *config;
 
 int Parse_Src_Port (char *msg)
 {

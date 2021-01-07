@@ -43,15 +43,15 @@
 #include "sagan-config.h"
 #include "parsers/parsers.h"
 
-struct _SaganCounters *counters;
-struct _Rule_Struct *rulestruct;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
 
 pthread_mutex_t Flexbit_Mutex=PTHREAD_MUTEX_INITIALIZER;
 
-struct _Sagan_IPC_Counters *counters_ipc;
-struct _Sagan_IPC_Flexbit *flexbit_ipc;
+extern struct _Sagan_IPC_Counters *counters_ipc;
+extern struct _Sagan_IPC_Flexbit *flexbit_ipc;
 
 /*****************************************************************************
  * Flexbit_Condition - Used for testing "isset" & "isnotset".  Full

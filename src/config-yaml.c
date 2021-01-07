@@ -67,7 +67,7 @@
 #include "processors/bluedot.h"
 
 bool bluedot_load;
-struct _Sagan_Bluedot_Skip *Bluedot_Skip;
+extern struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 #endif
 
@@ -75,8 +75,8 @@ struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 #include <liblognorm.h>
 #include "liblognormalize.h"
-struct liblognorm_struct *liblognormstruct;
-int liblognorm_count;
+extern struct liblognorm_struct *liblognormstruct;
+extern int liblognorm_count;
 
 #endif
 
@@ -87,18 +87,18 @@ struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 
 #endif
 
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
-struct _SaganVar *var;
-struct _SaganCounters *counters;
-struct _Rules_Loaded *rules_loaded;
-struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
+extern struct _SaganVar *var;
+extern struct _SaganCounters *counters;
+extern struct _Rules_Loaded *rules_loaded;
+extern struct _Rule_Struct *rulestruct;
 
 #ifndef HAVE_LIBYAML
 ** You must of LIBYAML installed! **
 #endif
 
-bool reload_rules;
+extern bool reload_rules;
 
 #ifdef HAVE_LIBYAML
 

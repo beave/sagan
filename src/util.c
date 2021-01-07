@@ -59,8 +59,8 @@
 
 #include "version.h"
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
 struct _SaganVar *var;
 struct _Sagan_Processor_Generator *generator;
 

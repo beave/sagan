@@ -16,8 +16,8 @@
 #include "routing.h"
 #include "rules.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
 
 
 bool Sagan_Check_Routing(  _Sagan_Routing *SaganRouting )

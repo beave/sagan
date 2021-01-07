@@ -70,52 +70,52 @@
 #ifdef HAVE_LIBLOGNORM
 #include "liblognormalize.h"
 #include <liblognorm.h>
-int liblognorm_count;
+extern int liblognorm_count;
 #endif
 
 #ifdef HAVE_LIBMAXMINDDB
 #include <maxminddb.h>
 #include "geoip.h"
-struct _Sagan_GeoIP_Skip *GeoIP_Skip;
+extern struct _Sagan_GeoIP_Skip *GeoIP_Skip;
 #endif
 
 #ifdef WITH_BLUEDOT
 #include "processors/bluedot.h"
-struct _Sagan_Bluedot_Skip *Bluedot_Skip;
+extern struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 #endif
 
 #define MAX_DEATH_TIME 15
 
-struct _SaganCounters *counters;
-struct _SaganDebug *debug;
-struct _SaganConfig *config;
-struct _Rule_Struct *rulestruct;
-struct _Rules_Loaded *rules_loaded;
-struct _Class_Struct *classstruct;
-struct _Sagan_Processor_Generator *generator;
-struct _Sagan_Blacklist *SaganBlacklist;
+extern struct _SaganCounters *counters;
+extern struct _SaganDebug *debug;
+extern struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _Rules_Loaded *rules_loaded;
+extern struct _Class_Struct *classstruct;
+extern struct _Sagan_Processor_Generator *generator;
+extern struct _Sagan_Blacklist *SaganBlacklist;
 struct _Sagan_Track_Clients *SaganTrackClients;
-struct _SaganVar *var;
+extern struct _SaganVar *var;
 
-struct _Sagan_Ignorelist *SaganIgnorelist;
+extern struct _Sagan_Ignorelist *SaganIgnorelist;
 
-struct _Sagan_BroIntel_Intel_Addr *Sagan_BroIntel_Intel_Addr;
-struct _Sagan_BroIntel_Intel_Domain *Sagan_BroIntel_Intel_Domain;
-struct _Sagan_BroIntel_Intel_File_Hash *Sagan_BroIntel_Intel_File_Hash;
-struct _Sagan_BroIntel_Intel_URL *Sagan_BroIntel_Intel_URL;
-struct _Sagan_BroIntel_Intel_Software *Sagan_BroIntel_Intel_Software;
-struct _Sagan_BroIntel_Intel_Email *Sagan_BroIntel_Intel_Email;
-struct _Sagan_BroIntel_Intel_User_Name *Sagan_BroIntel_Intel_User_Name;
-struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
-struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
+extern struct _Sagan_BroIntel_Intel_Addr *Sagan_BroIntel_Intel_Addr;
+extern struct _Sagan_BroIntel_Intel_Domain *Sagan_BroIntel_Intel_Domain;
+extern struct _Sagan_BroIntel_Intel_File_Hash *Sagan_BroIntel_Intel_File_Hash;
+extern struct _Sagan_BroIntel_Intel_URL *Sagan_BroIntel_Intel_URL;
+extern struct _Sagan_BroIntel_Intel_Software *Sagan_BroIntel_Intel_Software;
+extern struct _Sagan_BroIntel_Intel_Email *Sagan_BroIntel_Intel_Email;
+extern struct _Sagan_BroIntel_Intel_User_Name *Sagan_BroIntel_Intel_User_Name;
+extern struct _Sagan_BroIntel_Intel_File_Name *Sagan_BroIntel_Intel_File_Name;
+extern struct _Sagan_BroIntel_Intel_Cert_Hash *Sagan_BroIntel_Intel_Cert_Hash;
 
 pthread_mutex_t SaganReloadMutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t SaganReloadCond = PTHREAD_COND_INITIALIZER;
 
-pthread_mutex_t SaganRulesLoadedMutex;
+extern pthread_mutex_t SaganRulesLoadedMutex;
 
-bool death;
-int proc_running;
+extern bool death;
+extern int proc_running;
 
 void Sig_Handler( void )
 {

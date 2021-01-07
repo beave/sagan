@@ -38,8 +38,8 @@
 
 #include "protocol-map.h"
 
-struct _SaganConfig *config;
-struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
 struct _Sagan_Protocol_Map_Message *map_message;
 struct _Sagan_Protocol_Map_Program *map_program;
 

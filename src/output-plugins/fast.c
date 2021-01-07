@@ -41,8 +41,8 @@
 
 #include "output-plugins/alert.h"
 
-struct _Rule_Struct *rulestruct;
-struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
 
 void Fast_File( _Sagan_Event *Event )
 {

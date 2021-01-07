@@ -46,14 +46,14 @@
 
 #include "processors/dynamic-rules.h"
 
-struct _SaganConfig *config;
-struct _Rule_Struct *rulestruct;
+extern struct _SaganConfig *config;
+extern struct _Rule_Struct *rulestruct;
 struct _Rules_Loaded *rules_loaded;
-struct _SaganCounters *counters;
+extern struct _SaganCounters *counters;
 
 bool reload_rules;
 
-pthread_mutex_t SaganRulesLoadedMutex;
+pthread_mutex_t SaganRulesLoadedMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t CounterDynamicGenericMutex=PTHREAD_MUTEX_INITIALIZER;
 
 int Sagan_Dynamic_Rules ( _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL, int rule_position, _Sagan_Processor_Info *processor_info_engine, char *ip_src, char *ip_dst )

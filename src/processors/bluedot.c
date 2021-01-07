@@ -50,9 +50,9 @@
 
 #include "parsers/parsers.h"
 
-struct _SaganCounters *counters;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 struct _Sagan_Bluedot_Skip *Bluedot_Skip;
 
 struct _Sagan_Bluedot_IP_Cache *SaganBluedotIPCache = NULL;
@@ -69,7 +69,7 @@ struct _Sagan_Bluedot_URL_Queue *SaganBluedotURLQueue = NULL;
 struct _Sagan_Bluedot_Filename_Queue *SaganBluedotFilenameQueue = NULL;
 struct _Sagan_Bluedot_JA3_Queue *SaganBluedotJA3Queue = NULL;
 
-struct _Rule_Struct *rulestruct;
+extern struct _Rule_Struct *rulestruct;
 
 pthread_mutex_t SaganProcBluedotWorkMutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t CounterBluedotGenericMutex=PTHREAD_MUTEX_INITIALIZER;

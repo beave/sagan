@@ -38,8 +38,8 @@
 #include "sagan-config.h"
 
 struct _Sagan_Ignorelist *SaganIgnorelist;
-struct _SaganCounters *counters;
-struct _SaganConfig *config;
+extern struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
 
 /****************************************************************************
  * "ignore" list.

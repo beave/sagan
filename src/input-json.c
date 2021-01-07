@@ -38,11 +38,11 @@
 
 #include "parsers/json.h"
 
-struct _SaganCounters *counters;
-struct _SaganConfig *config;
-struct _SaganDebug *debug;
+extern struct _SaganCounters *counters;
+extern struct _SaganConfig *config;
+extern struct _SaganDebug *debug;
 
-struct _Syslog_JSON_Map *Syslog_JSON_Map;
+extern struct _Syslog_JSON_Map *Syslog_JSON_Map;
 
 void SyslogInput_JSON( char *syslog_string, struct _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
