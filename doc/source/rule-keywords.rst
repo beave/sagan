@@ -303,7 +303,7 @@ The ``flexbits`` option is used in conjunction with ``unset``, ``isset``, ``isno
 
 We are "setting" a flexbit named "windows_reboot" for 30 seconds. This means that the "windows_reboot" flexbit will "expire" in 30 seconds. The flexbit set automatically records the source and destination of the message that triggered the event. It is important to point out, the source and destination addresses are what Sagan has normalized through parse_src_ip, parse_dst_ip or liblognorm.
 
-**flexbits: {unset|isset|isnotset},{by_src|by_dst|both|reverse|none},{flexbit name}**
+**flexbits: {unset|isset|isnotset},{by_src|by_dst|both|reverse|username|none},{flexbit name}**
 
 This option works in conjunction with the flexbit set option. In the flexbit set example above, we are trying to detect when a system's "anti-virus" has been disabled and is not related to a system reboot. If Sagan detects a system reboot, it will set flexbit "windows_reboot". Another rule can use the presence, or lack thereof, to trigger an event. For example:
 

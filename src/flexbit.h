@@ -21,7 +21,7 @@
 int  Flexbit_Type ( char *, int, const char *);
 
 bool Flexbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char );
-bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port );
-void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
+bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *username );
+void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *username, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL );
 
 

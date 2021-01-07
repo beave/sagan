@@ -42,9 +42,9 @@
 
 extern struct _SaganConfig *config;
 
-bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port )
+bool Flexbit_Condition(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *username )
 {
-    return(Flexbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port));
+    return(Flexbit_Condition_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, username));
 }
 
 
@@ -53,9 +53,9 @@ bool Flexbit_Count( int rule_position, char *ip_src_char, char *ip_dst_char )
     return(Flexbit_Count_MMAP(rule_position, ip_src_char, ip_dst_char));
 }
 
-void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
+void Flexbit_Set(int rule_position, char *ip_src_char, char *ip_dst_char, int src_port, int dst_port, char *username, _Sagan_Proc_Syslog *SaganProcSyslog_LOCAL )
 {
-    Flexbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, SaganProcSyslog_LOCAL->syslog_message );
+    Flexbit_Set_MMAP(rule_position, ip_src_char, ip_dst_char, src_port, dst_port, username, SaganProcSyslog_LOCAL->syslog_message );
 
 }
 
@@ -127,8 +127,13 @@ int Flexbit_Type ( char *type, int linecount, const char *ruleset )
         {
             return(12);
         }
+    
+    if (!strcmp(type, "username"))
+        {
+            return(13);
+        }
 
-    Sagan_Log(ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst', 'reverse', 'src_xbitdst', 'dst_xbitsrc','both_p', by_src_p', 'by_dst_p', 'reverse_p', 'src_xbitdst_p', or 'dst_xbitsrc_p'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
+    Sagan_Log(ERROR, "[%s, line %d] Expected 'none', 'both', by_src', 'by_dst', 'reverse', 'src_xbitdst', 'dst_xbitsrc','both_p', by_src_p', 'by_dst_p', 'reverse_p', 'src_xbitdst_p', or 'dst_xbitsrc_p' or 'username'.  Got '%s' at line %d.", __FILE__, __LINE__, type, linecount, ruleset);
 
     return(0); 	/* Should never make it here */
 
