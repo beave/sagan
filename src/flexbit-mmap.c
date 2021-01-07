@@ -75,7 +75,7 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
     char flexbit_username[MAX_USERNAME_SIZE] = {0};
     if ( username != NULL )
         {
-                memcpy(flexbit_username, username, sizeof(flexbit_username));
+            memcpy(flexbit_username, username, sizeof(flexbit_username));
         }
 
     t = time(NULL);
@@ -639,7 +639,7 @@ bool Flexbit_Condition_MMAP(int rule_position, char *ip_src, char *ip_dst, int s
                                                         }
                                                 }
                                         }
-                                    
+
                                     /* direction: username */
 
                                     else if ( rulestruct[rule_position].flexbit_direction[i] == 13 )
@@ -785,7 +785,7 @@ bool Flexbit_Count_MMAP( int rule_position, char *ip_src, char *ip_dst )
 
 void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_port, int dst_port, char *username, char *syslog_message )
 {
-    
+
     int i = 0;
     int a = 0;
 
@@ -800,9 +800,9 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
     char flexbit_username[MAX_USERNAME_SIZE] = {0};
     if ( username != NULL )
         {
-                memcpy(flexbit_username, username, sizeof(flexbit_username));
+            memcpy(flexbit_username, username, sizeof(flexbit_username));
         }
-    
+
     t = time(NULL);
     now=localtime(&t);
     strftime(timet, sizeof(timet), "%s",  now);
@@ -1155,7 +1155,7 @@ void Flexbit_Set_MMAP(int rule_position, char *ip_src, char *ip_dst, int src_por
                                             flexbit_unset_match = 1;
 
                                         }
-                                    
+
                                     /* direction: username */
 
                                     else if ( rulestruct[rule_position].flexbit_direction[i] == 13 &&

@@ -127,7 +127,7 @@ int Flexbit_Type ( char *type, int linecount, const char *ruleset )
         {
             return(12);
         }
-    
+
     if (!strcmp(type, "username"))
         {
             return(13);
